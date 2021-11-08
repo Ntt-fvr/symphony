@@ -35,6 +35,7 @@ import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidationEdit} from './common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -180,13 +181,9 @@ export const EditKpiItemForm = (props: Props) => {
     );
   };
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kpi name existing'};
-    }
-  };
-
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 4, inputFilter);
+
+  const validationName = useValidationEdit(inputFilter, 'Kpi');
 
   const handleClick = () => {
     const variables: EditKpiMutationVariables = {
@@ -229,9 +226,9 @@ export const EditKpiItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={5} xl={5}>
                 <FormField
+                  {...validationName}
                   className={classes.formField}
                   label="Name"
-                  {...validationName()}
                   required>
                   <TextInput
                     {...name}

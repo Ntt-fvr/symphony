@@ -37,6 +37,7 @@ import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
 import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
+import {useValidationEdit} from './common/useValidation';
 
 import {DARK} from '@symphony/design-system/theme/symphony';
 
@@ -132,18 +133,15 @@ const EditAlarmFilteringItemForm = (props: Props) => {
       ) || []
     );
   };
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
+
+  const validationName = useValidationEdit(inputFilter, 'Alarm');
+
   const handleRemove = id => {
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
     };
     RemoveAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
-  };
-  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
-
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Alarm name existing'};
-    }
   };
 
   function handleClickEdit() {
@@ -224,8 +222,13 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} label="Name">
-                  <TextInput {...name} autoComplete="off" name="name" />
+                <FormField {...validationName} label="Name">
+                  <TextInput
+                    {...name}
+                    autoComplete="off"
+                    name="name"
+                    type="string"
+                  />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>

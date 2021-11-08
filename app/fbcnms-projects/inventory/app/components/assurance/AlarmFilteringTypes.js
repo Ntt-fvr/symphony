@@ -11,7 +11,6 @@ import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';

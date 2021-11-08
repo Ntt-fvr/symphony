@@ -38,6 +38,7 @@ import moment from 'moment';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
+import {useValidationEdit} from './common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -171,17 +172,13 @@ const KqiFormEditTarget = (props: Props) => {
     );
   };
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi Target name existing'};
-    }
-  };
-
   const handleDisable = useDisabledButtonEdit(
     dataInputsObject,
     10,
     inputFilter,
   );
+
+  const validationName = useValidationEdit(inputFilter, 'Kqi Target');
 
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
@@ -292,7 +289,7 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} label="Target name">
+                <FormField {...validationName} label="Target name">
                   <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>
