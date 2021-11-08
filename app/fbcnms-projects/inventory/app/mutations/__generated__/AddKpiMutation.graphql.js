@@ -18,6 +18,7 @@ export type AddKpiInput = {|
   name: string,
   description: string,
   domainFk: string,
+  kpiCategoryFK: string,
   status: boolean,
 |};
 export type AddKpiMutationVariables = {|

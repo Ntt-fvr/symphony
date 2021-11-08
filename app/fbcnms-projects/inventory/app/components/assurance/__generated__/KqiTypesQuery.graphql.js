@@ -42,7 +42,31 @@ export type KqiTypesQueryResponse = {|
           +name: string,
         |},
         +kqiTarget: ?$ReadOnlyArray<{|
-          +id: string
+          +id: string,
+          +name: string,
+          +impact: string,
+          +allowedVariation: number,
+          +initTime: any,
+          +endTime: any,
+          +status: boolean,
+          +period: number,
+          +kqi: {|
+            +id: string,
+            +name: string,
+          |},
+          +kqiComparator: $ReadOnlyArray<?{|
+            +kqiTargetFk: {|
+              +id: string,
+              +name: string,
+            |},
+            +comparatorFk: {|
+              +id: string,
+              +name: string,
+            |},
+            +id: string,
+            +number: number,
+            +comparatorType: string,
+          |}>,
         |}>,
       |}
     |}>
@@ -85,11 +109,11 @@ export type KqiTypesQueryResponse = {|
         +id: string,
         +name: string,
         +impact: string,
-        +frame: number,
-        +alowedValidation: number,
+        +allowedVariation: number,
         +initTime: any,
         +endTime: any,
         +status: boolean,
+        +period: number,
         +kqi: {|
           +id: string,
           +name: string,
@@ -103,9 +127,18 @@ export type KqiTypesQueryResponse = {|
             +id: string,
             +name: string,
           |},
+          +id: string,
           +number: number,
           +comparatorType: string,
         |}>,
+      |}
+    |}>
+  |},
+  +comparators: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
       |}
     |}>
   |},
@@ -146,6 +179,30 @@ query KqiTypesQuery {
         }
         kqiTarget {
           id
+          name
+          impact
+          allowedVariation
+          initTime
+          endTime
+          status
+          period
+          kqi {
+            id
+            name
+          }
+          kqiComparator {
+            kqiTargetFk {
+              id
+              name
+            }
+            comparatorFk {
+              id
+              name
+            }
+            id
+            number
+            comparatorType
+          }
         }
       }
     }
@@ -188,11 +245,11 @@ query KqiTypesQuery {
         id
         name
         impact
-        frame
-        alowedValidation
+        allowedVariation
         initTime
         endTime
         status
+        period
         kqi {
           id
           name
@@ -206,10 +263,18 @@ query KqiTypesQuery {
             id
             name
           }
+          id
           number
           comparatorType
-          id
         }
+      }
+    }
+  }
+  comparators {
+    edges {
+      node {
+        id
+        name
       }
     }
   }
@@ -235,396 +300,211 @@ v2 = [
   (v0/*: any*/),
   (v1/*: any*/)
 ],
-v3 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "KqiConnection",
-  "kind": "LinkedField",
-  "name": "kqis",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "KqiEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "Kqi",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "description",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "formula",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "startDateTime",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "endDateTime",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "KqiCategory",
-              "kind": "LinkedField",
-              "name": "kqiCategory",
-              "plural": false,
-              "selections": (v2/*: any*/),
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "KqiPerspective",
-              "kind": "LinkedField",
-              "name": "kqiPerspective",
-              "plural": false,
-              "selections": (v2/*: any*/),
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "KqiSource",
-              "kind": "LinkedField",
-              "name": "kqiSource",
-              "plural": false,
-              "selections": (v2/*: any*/),
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "KqiTemporalFrequency",
-              "kind": "LinkedField",
-              "name": "kqiTemporalFrequency",
-              "plural": false,
-              "selections": (v2/*: any*/),
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "KqiTarget",
-              "kind": "LinkedField",
-              "name": "kqiTarget",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "KqiPerspectiveConnection",
-  "kind": "LinkedField",
-  "name": "kqiPerspectives",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "KqiPerspectiveEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "KqiPerspective",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": (v2/*: any*/),
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "KqiSourceConnection",
-  "kind": "LinkedField",
-  "name": "kqiSources",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "KqiSourceEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "KqiSource",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": (v2/*: any*/),
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "KqiCategoryConnection",
-  "kind": "LinkedField",
-  "name": "kqiCategories",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "KqiCategoryEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "KqiCategory",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": (v2/*: any*/),
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "KqiTemporalFrequencyConnection",
-  "kind": "LinkedField",
-  "name": "kqiTemporalFrequencies",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "KqiTemporalFrequencyEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "KqiTemporalFrequency",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": (v2/*: any*/),
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "impact",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "frame",
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "alowedValidation",
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "initTime",
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "endTime",
-  "storageKey": null
-},
-v13 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Kqi",
-  "kind": "LinkedField",
-  "name": "kqi",
-  "plural": false,
-  "selections": (v2/*: any*/),
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "KqiTarget",
-  "kind": "LinkedField",
-  "name": "kqiTargetFk",
-  "plural": false,
-  "selections": (v2/*: any*/),
-  "storageKey": null
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Comparator",
-  "kind": "LinkedField",
-  "name": "comparatorFk",
-  "plural": false,
-  "selections": (v2/*: any*/),
-  "storageKey": null
-},
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "number",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "comparatorType",
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "KqiTypesQuery",
+v3 = [
+  (v0/*: any*/),
+  (v1/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "impact",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "allowedVariation",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "initTime",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "endTime",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "status",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "period",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "Kqi",
+    "kind": "LinkedField",
+    "name": "kqi",
+    "plural": false,
+    "selections": (v2/*: any*/),
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiComparator",
+    "kind": "LinkedField",
+    "name": "kqiComparator",
+    "plural": true,
     "selections": [
-      (v3/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/),
-      (v7/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "KqiTargetConnection",
+        "concreteType": "KqiTarget",
         "kind": "LinkedField",
-        "name": "kqiTargets",
+        "name": "kqiTargetFk",
         "plural": false,
+        "selections": (v2/*: any*/),
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Comparator",
+        "kind": "LinkedField",
+        "name": "comparatorFk",
+        "plural": false,
+        "selections": (v2/*: any*/),
+        "storageKey": null
+      },
+      (v0/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "number",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "comparatorType",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+],
+v4 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiConnection",
+    "kind": "LinkedField",
+    "name": "kqis",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KqiEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "KqiTargetEdge",
+            "concreteType": "Kqi",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "node",
+            "plural": false,
             "selections": [
+              (v0/*: any*/),
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "formula",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "startDateTime",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "endDateTime",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "KqiCategory",
+                "kind": "LinkedField",
+                "name": "kqiCategory",
+                "plural": false,
+                "selections": (v2/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "KqiPerspective",
+                "kind": "LinkedField",
+                "name": "kqiPerspective",
+                "plural": false,
+                "selections": (v2/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "KqiSource",
+                "kind": "LinkedField",
+                "name": "kqiSource",
+                "plural": false,
+                "selections": (v2/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "KqiTemporalFrequency",
+                "kind": "LinkedField",
+                "name": "kqiTemporalFrequency",
+                "plural": false,
+                "selections": (v2/*: any*/),
+                "storageKey": null
+              },
               {
                 "alias": null,
                 "args": null,
                 "concreteType": "KqiTarget",
                 "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  (v11/*: any*/),
-                  (v12/*: any*/),
-                  (v13/*: any*/),
-                  (v14/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "KqiComparator",
-                    "kind": "LinkedField",
-                    "name": "kqiComparator",
-                    "plural": true,
-                    "selections": [
-                      (v15/*: any*/),
-                      (v16/*: any*/),
-                      (v17/*: any*/),
-                      (v18/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
+                "name": "kqiTarget",
+                "plural": true,
+                "selections": (v3/*: any*/),
                 "storageKey": null
               }
             ],
@@ -634,6 +514,208 @@ return {
         "storageKey": null
       }
     ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiPerspectiveConnection",
+    "kind": "LinkedField",
+    "name": "kqiPerspectives",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KqiPerspectiveEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KqiPerspective",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v2/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiSourceConnection",
+    "kind": "LinkedField",
+    "name": "kqiSources",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KqiSourceEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KqiSource",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v2/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiCategoryConnection",
+    "kind": "LinkedField",
+    "name": "kqiCategories",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KqiCategoryEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KqiCategory",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v2/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiTemporalFrequencyConnection",
+    "kind": "LinkedField",
+    "name": "kqiTemporalFrequencies",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KqiTemporalFrequencyEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KqiTemporalFrequency",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v2/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiTargetConnection",
+    "kind": "LinkedField",
+    "name": "kqiTargets",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KqiTargetEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KqiTarget",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v3/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ComparatorConnection",
+    "kind": "LinkedField",
+    "name": "comparators",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ComparatorEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Comparator",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v2/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "KqiTypesQuery",
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -642,83 +724,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "KqiTypesQuery",
-    "selections": [
-      (v3/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/),
-      (v7/*: any*/),
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "KqiTargetConnection",
-        "kind": "LinkedField",
-        "name": "kqiTargets",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KqiTargetEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "KqiTarget",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  (v11/*: any*/),
-                  (v12/*: any*/),
-                  (v13/*: any*/),
-                  (v14/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "KqiComparator",
-                    "kind": "LinkedField",
-                    "name": "kqiComparator",
-                    "plural": true,
-                    "selections": [
-                      (v15/*: any*/),
-                      (v16/*: any*/),
-                      (v17/*: any*/),
-                      (v18/*: any*/),
-                      (v0/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "cccc5bda7c56942b4a5cb4635163ca91",
+    "cacheID": "5cad19ec054960325e9510ee90fac237",
     "id": null,
     "metadata": {},
     "name": "KqiTypesQuery",
     "operationKind": "query",
-    "text": "query KqiTypesQuery {\n  kqis {\n    edges {\n      node {\n        id\n        name\n        description\n        formula\n        startDateTime\n        endDateTime\n        kqiCategory {\n          id\n          name\n        }\n        kqiPerspective {\n          id\n          name\n        }\n        kqiSource {\n          id\n          name\n        }\n        kqiTemporalFrequency {\n          id\n          name\n        }\n        kqiTarget {\n          id\n        }\n      }\n    }\n  }\n  kqiPerspectives {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiSources {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiCategories {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiTemporalFrequencies {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiTargets {\n    edges {\n      node {\n        id\n        name\n        impact\n        frame\n        alowedValidation\n        initTime\n        endTime\n        status\n        kqi {\n          id\n          name\n        }\n        kqiComparator {\n          kqiTargetFk {\n            id\n            name\n          }\n          comparatorFk {\n            id\n            name\n          }\n          number\n          comparatorType\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query KqiTypesQuery {\n  kqis {\n    edges {\n      node {\n        id\n        name\n        description\n        formula\n        startDateTime\n        endDateTime\n        kqiCategory {\n          id\n          name\n        }\n        kqiPerspective {\n          id\n          name\n        }\n        kqiSource {\n          id\n          name\n        }\n        kqiTemporalFrequency {\n          id\n          name\n        }\n        kqiTarget {\n          id\n          name\n          impact\n          allowedVariation\n          initTime\n          endTime\n          status\n          period\n          kqi {\n            id\n            name\n          }\n          kqiComparator {\n            kqiTargetFk {\n              id\n              name\n            }\n            comparatorFk {\n              id\n              name\n            }\n            id\n            number\n            comparatorType\n          }\n        }\n      }\n    }\n  }\n  kqiPerspectives {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiSources {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiCategories {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiTemporalFrequencies {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kqiTargets {\n    edges {\n      node {\n        id\n        name\n        impact\n        allowedVariation\n        initTime\n        endTime\n        status\n        period\n        kqi {\n          id\n          name\n        }\n        kqiComparator {\n          kqiTargetFk {\n            id\n            name\n          }\n          comparatorFk {\n            id\n            name\n          }\n          id\n          number\n          comparatorType\n        }\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7f0c3eea027834744b924a37f4f571a0';
+(node/*: any*/).hash = '9e520c88a25893d1635c768aff9304f2';
 
 module.exports = node;

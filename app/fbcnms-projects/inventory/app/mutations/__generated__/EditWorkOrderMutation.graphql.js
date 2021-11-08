@@ -38,6 +38,8 @@ export type EditWorkOrderInput = {|
   checkList?: ?$ReadOnlyArray<CheckListItemInput>,
   checkListCategories?: ?$ReadOnlyArray<CheckListCategoryInput>,
   locationId?: ?string,
+  duration?: ?number,
+  dueDate?: ?any,
 |};
 export type PropertyInput = {|
   id?: ?string,
@@ -137,6 +139,11 @@ export type EditWorkOrderMutationResponse = {|
     +id: string,
     +name: string,
     +description: ?string,
+    +organizationFk: ?{|
+      +id: string,
+      +name: string,
+      +description: string,
+    |},
     +owner: {|
       +id: string,
       +email: string,
@@ -167,6 +174,11 @@ mutation EditWorkOrderMutation(
     id
     name
     description
+    organizationFk {
+      id
+      name
+      description
+    }
     owner {
       id
       email
@@ -523,6 +535,11 @@ fragment WorkOrderDetails_workOrder on WorkOrder {
   id
   name
   description
+  organizationFk {
+    id
+    name
+    description
+  }
   workOrderType {
     name
     id
@@ -728,81 +745,95 @@ v4 = {
 v5 = {
   "alias": null,
   "args": null,
+  "concreteType": "Organization",
+  "kind": "LinkedField",
+  "name": "organizationFk",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    (v3/*: any*/),
+    (v4/*: any*/)
+  ],
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
   "kind": "ScalarField",
   "name": "email",
   "storageKey": null
 },
-v6 = [
+v7 = [
   (v2/*: any*/),
-  (v5/*: any*/)
+  (v6/*: any*/)
 ],
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "User",
   "kind": "LinkedField",
   "name": "owner",
   "plural": false,
-  "selections": (v6/*: any*/),
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "creationDate",
+  "selections": (v7/*: any*/),
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "installDate",
+  "name": "creationDate",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "status",
+  "name": "installDate",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "priority",
+  "name": "status",
   "storageKey": null
 },
 v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "priority",
+  "storageKey": null
+},
+v13 = {
   "alias": null,
   "args": null,
   "concreteType": "User",
   "kind": "LinkedField",
   "name": "assignedTo",
   "plural": false,
-  "selections": (v6/*: any*/),
+  "selections": (v7/*: any*/),
   "storageKey": null
 },
-v13 = [
+v14 = [
   (v3/*: any*/),
   (v2/*: any*/)
 ],
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "latitude",
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "longitude",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "concreteType": "Location",
@@ -819,37 +850,37 @@ v16 = {
       "kind": "LinkedField",
       "name": "locationType",
       "plural": false,
-      "selections": (v13/*: any*/),
+      "selections": (v14/*: any*/),
       "storageKey": null
     }
   ],
   "storageKey": null
 },
-v17 = [
+v18 = [
   (v2/*: any*/),
   (v3/*: any*/)
 ],
-v18 = {
+v19 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentType",
   "kind": "LinkedField",
   "name": "equipmentType",
   "plural": false,
-  "selections": (v17/*: any*/),
+  "selections": (v18/*: any*/),
   "storageKey": null
 },
-v19 = {
+v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "visibleLabel",
   "storageKey": null
 },
-v20 = [
+v21 = [
   (v2/*: any*/),
   (v3/*: any*/),
-  (v18/*: any*/),
+  (v19/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -867,7 +898,7 @@ v20 = [
         "kind": "LinkedField",
         "name": "locationType",
         "plural": false,
-        "selections": (v17/*: any*/),
+        "selections": (v18/*: any*/),
         "storageKey": null
       }
     ],
@@ -891,7 +922,7 @@ v20 = [
         "plural": false,
         "selections": [
           (v3/*: any*/),
-          (v19/*: any*/),
+          (v20/*: any*/),
           (v2/*: any*/)
         ],
         "storageKey": null
@@ -903,108 +934,108 @@ v20 = [
         "kind": "LinkedField",
         "name": "parentEquipment",
         "plural": false,
-        "selections": (v17/*: any*/),
+        "selections": (v18/*: any*/),
         "storageKey": null
       }
     ],
     "storageKey": null
   }
 ],
-v21 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "futureState",
   "storageKey": null
 },
-v22 = {
+v23 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "type",
   "storageKey": null
 },
-v23 = {
+v24 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "index",
   "storageKey": null
 },
-v24 = {
+v25 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "stringValue",
   "storageKey": null
 },
-v25 = {
+v26 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "intValue",
   "storageKey": null
 },
-v26 = {
+v27 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "booleanValue",
   "storageKey": null
 },
-v27 = {
+v28 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "floatValue",
   "storageKey": null
 },
-v28 = {
+v29 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "latitudeValue",
   "storageKey": null
 },
-v29 = {
+v30 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "longitudeValue",
   "storageKey": null
 },
-v30 = {
+v31 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "rangeFromValue",
   "storageKey": null
 },
-v31 = {
+v32 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "rangeToValue",
   "storageKey": null
 },
-v32 = {
+v33 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "isMandatory",
   "storageKey": null
 },
-v33 = {
+v34 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "category",
   "storageKey": null
 },
-v34 = [
+v35 = [
   (v2/*: any*/),
   (v3/*: any*/),
-  (v22/*: any*/),
+  (v23/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -1012,7 +1043,6 @@ v34 = [
     "name": "nodeType",
     "storageKey": null
   },
-  (v23/*: any*/),
   (v24/*: any*/),
   (v25/*: any*/),
   (v26/*: any*/),
@@ -1021,6 +1051,7 @@ v34 = [
   (v29/*: any*/),
   (v30/*: any*/),
   (v31/*: any*/),
+  (v32/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -1035,8 +1066,8 @@ v34 = [
     "name": "isInstanceProperty",
     "storageKey": null
   },
-  (v32/*: any*/),
   (v33/*: any*/),
+  (v34/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -1045,14 +1076,14 @@ v34 = [
     "storageKey": null
   }
 ],
-v35 = {
+v36 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v36 = {
+v37 = {
   "alias": null,
   "args": null,
   "concreteType": "Property",
@@ -1068,17 +1099,17 @@ v36 = {
       "kind": "LinkedField",
       "name": "propertyType",
       "plural": false,
-      "selections": (v34/*: any*/),
+      "selections": (v35/*: any*/),
       "storageKey": null
     },
-    (v24/*: any*/),
     (v25/*: any*/),
-    (v27/*: any*/),
     (v26/*: any*/),
     (v28/*: any*/),
+    (v27/*: any*/),
     (v29/*: any*/),
     (v30/*: any*/),
     (v31/*: any*/),
+    (v32/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -1087,7 +1118,7 @@ v36 = {
       "name": "nodeValue",
       "plural": false,
       "selections": [
-        (v35/*: any*/),
+        (v36/*: any*/),
         (v2/*: any*/),
         (v3/*: any*/)
       ],
@@ -1096,9 +1127,9 @@ v36 = {
   ],
   "storageKey": null
 },
-v37 = [
+v38 = [
   (v2/*: any*/),
-  (v21/*: any*/),
+  (v22/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -1118,7 +1149,7 @@ v37 = [
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
-          (v19/*: any*/),
+          (v20/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -1134,7 +1165,7 @@ v37 = [
                 "kind": "LinkedField",
                 "name": "linkPropertyTypes",
                 "plural": true,
-                "selections": (v34/*: any*/),
+                "selections": (v35/*: any*/),
                 "storageKey": null
               },
               (v2/*: any*/)
@@ -1154,9 +1185,9 @@ v37 = [
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
-          (v21/*: any*/),
-          (v18/*: any*/),
-          (v16/*: any*/),
+          (v22/*: any*/),
+          (v19/*: any*/),
+          (v17/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -1176,7 +1207,7 @@ v37 = [
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v19/*: any*/)
+                  (v20/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -1190,7 +1221,7 @@ v37 = [
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v18/*: any*/)
+                  (v19/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -1234,7 +1265,7 @@ v37 = [
             "kind": "LinkedField",
             "name": "service",
             "plural": false,
-            "selections": (v13/*: any*/),
+            "selections": (v14/*: any*/),
             "storageKey": null
           },
           (v2/*: any*/)
@@ -1253,11 +1284,11 @@ v37 = [
     "plural": false,
     "selections": [
       (v2/*: any*/),
-      (v10/*: any*/)
+      (v11/*: any*/)
     ],
     "storageKey": null
   },
-  (v36/*: any*/),
+  (v37/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -1265,70 +1296,70 @@ v37 = [
     "kind": "LinkedField",
     "name": "services",
     "plural": true,
-    "selections": (v17/*: any*/),
+    "selections": (v18/*: any*/),
     "storageKey": null
   }
 ],
-v38 = {
+v39 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "fileName",
   "storageKey": null
 },
-v39 = {
+v40 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "sizeInBytes",
   "storageKey": null
 },
-v40 = {
+v41 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "uploaded",
   "storageKey": null
 },
-v41 = {
+v42 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "fileType",
   "storageKey": null
 },
-v42 = {
+v43 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "storeKey",
   "storageKey": null
 },
-v43 = {
+v44 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "annotation",
   "storageKey": null
 },
-v44 = [
+v45 = [
   (v2/*: any*/),
-  (v38/*: any*/),
-  (v33/*: any*/),
   (v39/*: any*/),
+  (v34/*: any*/),
   (v40/*: any*/),
   (v41/*: any*/),
   (v42/*: any*/),
-  (v43/*: any*/)
+  (v43/*: any*/),
+  (v44/*: any*/)
 ],
-v45 = {
+v46 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "createTime",
   "storageKey": null
 },
-v46 = {
+v47 = {
   "alias": null,
   "args": null,
   "concreteType": "User",
@@ -1336,31 +1367,31 @@ v46 = {
   "name": "author",
   "plural": false,
   "selections": [
-    (v5/*: any*/),
+    (v6/*: any*/),
     (v2/*: any*/)
   ],
   "storageKey": null
 },
-v47 = [
-  (v35/*: any*/),
+v48 = [
+  (v36/*: any*/),
   (v2/*: any*/),
   {
     "kind": "InlineFragment",
     "selections": [
-      (v5/*: any*/)
+      (v6/*: any*/)
     ],
     "type": "User",
     "abstractKey": null
   }
 ],
-v48 = {
+v49 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "title",
   "storageKey": null
 },
-v49 = {
+v50 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -1385,12 +1416,13 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v7/*: any*/),
+          (v5/*: any*/),
           (v8/*: any*/),
           (v9/*: any*/),
           (v10/*: any*/),
           (v11/*: any*/),
           (v12/*: any*/),
+          (v13/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -1420,12 +1452,13 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v7/*: any*/),
+          (v5/*: any*/),
           (v8/*: any*/),
           (v9/*: any*/),
           (v10/*: any*/),
           (v11/*: any*/),
           (v12/*: any*/),
+          (v13/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -1433,7 +1466,7 @@ return {
             "kind": "LinkedField",
             "name": "workOrderType",
             "plural": false,
-            "selections": (v13/*: any*/),
+            "selections": (v14/*: any*/),
             "storageKey": null
           },
           {
@@ -1464,8 +1497,8 @@ return {
             "selections": [
               (v3/*: any*/),
               (v2/*: any*/),
-              (v14/*: any*/),
               (v15/*: any*/),
+              (v16/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1493,7 +1526,7 @@ return {
                 ],
                 "storageKey": null
               },
-              (v16/*: any*/)
+              (v17/*: any*/)
             ],
             "storageKey": null
           },
@@ -1504,7 +1537,7 @@ return {
             "kind": "LinkedField",
             "name": "equipmentToAdd",
             "plural": true,
-            "selections": (v20/*: any*/),
+            "selections": (v21/*: any*/),
             "storageKey": null
           },
           {
@@ -1514,7 +1547,7 @@ return {
             "kind": "LinkedField",
             "name": "equipmentToRemove",
             "plural": true,
-            "selections": (v20/*: any*/),
+            "selections": (v21/*: any*/),
             "storageKey": null
           },
           {
@@ -1524,7 +1557,7 @@ return {
             "kind": "LinkedField",
             "name": "linksToAdd",
             "plural": true,
-            "selections": (v37/*: any*/),
+            "selections": (v38/*: any*/),
             "storageKey": null
           },
           {
@@ -1534,10 +1567,10 @@ return {
             "kind": "LinkedField",
             "name": "linksToRemove",
             "plural": true,
-            "selections": (v37/*: any*/),
+            "selections": (v38/*: any*/),
             "storageKey": null
           },
-          (v36/*: any*/),
+          (v37/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -1545,7 +1578,7 @@ return {
             "kind": "LinkedField",
             "name": "images",
             "plural": true,
-            "selections": (v44/*: any*/),
+            "selections": (v45/*: any*/),
             "storageKey": null
           },
           {
@@ -1555,7 +1588,7 @@ return {
             "kind": "LinkedField",
             "name": "files",
             "plural": true,
-            "selections": (v44/*: any*/),
+            "selections": (v45/*: any*/),
             "storageKey": null
           },
           {
@@ -1567,7 +1600,7 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v33/*: any*/),
+              (v34/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1582,7 +1615,7 @@ return {
                 "name": "displayName",
                 "storageKey": null
               },
-              (v45/*: any*/)
+              (v46/*: any*/)
             ],
             "storageKey": null
           },
@@ -1595,8 +1628,8 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v45/*: any*/),
               (v46/*: any*/),
+              (v47/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1616,8 +1649,8 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v45/*: any*/),
               (v46/*: any*/),
+              (v47/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1639,7 +1672,7 @@ return {
                 "kind": "LinkedField",
                 "name": "newRelatedNode",
                 "plural": false,
-                "selections": (v47/*: any*/),
+                "selections": (v48/*: any*/),
                 "storageKey": null
               },
               {
@@ -1649,7 +1682,7 @@ return {
                 "kind": "LinkedField",
                 "name": "oldRelatedNode",
                 "plural": false,
-                "selections": (v47/*: any*/),
+                "selections": (v48/*: any*/),
                 "storageKey": null
               },
               {
@@ -1711,7 +1744,7 @@ return {
                 "kind": "LinkedField",
                 "name": "type",
                 "plural": false,
-                "selections": (v17/*: any*/),
+                "selections": (v18/*: any*/),
                 "storageKey": null
               }
             ],
@@ -1726,7 +1759,7 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v48/*: any*/),
+              (v49/*: any*/),
               (v4/*: any*/),
               {
                 "alias": null,
@@ -1737,10 +1770,10 @@ return {
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
+                  (v24/*: any*/),
+                  (v33/*: any*/),
                   (v23/*: any*/),
-                  (v32/*: any*/),
-                  (v22/*: any*/),
-                  (v48/*: any*/),
+                  (v49/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -1762,7 +1795,7 @@ return {
                     "name": "enumValues",
                     "storageKey": null
                   },
-                  (v24/*: any*/),
+                  (v25/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -1793,8 +1826,8 @@ return {
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
-                      (v38/*: any*/),
                       (v39/*: any*/),
+                      (v40/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1802,11 +1835,11 @@ return {
                         "name": "modified",
                         "storageKey": null
                       },
-                      (v40/*: any*/),
                       (v41/*: any*/),
                       (v42/*: any*/),
-                      (v33/*: any*/),
-                      (v43/*: any*/)
+                      (v43/*: any*/),
+                      (v34/*: any*/),
+                      (v44/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -1833,7 +1866,7 @@ return {
                         "name": "signalStrength",
                         "storageKey": null
                       },
-                      (v49/*: any*/),
+                      (v50/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1939,8 +1972,8 @@ return {
                         "name": "uarfcn",
                         "storageKey": null
                       },
-                      (v14/*: any*/),
-                      (v15/*: any*/)
+                      (v15/*: any*/),
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -1953,7 +1986,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
-                      (v49/*: any*/),
+                      (v50/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -2010,8 +2043,8 @@ return {
                         "name": "capabilities",
                         "storageKey": null
                       },
-                      (v14/*: any*/),
-                      (v15/*: any*/)
+                      (v15/*: any*/),
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -2037,6 +2070,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3233ea0b99861f51dfd94ba01367ad35';
+(node/*: any*/).hash = 'd7258f0b0aa11f53c0f2c855cb1166f3';
 
 module.exports = node;

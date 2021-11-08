@@ -387,6 +387,11 @@ fragment WorkOrderDetails_workOrder on WorkOrder {
   id
   name
   description
+  organizationFk {
+    id
+    name
+    description
+  }
   workOrderType {
     name
     id
@@ -1247,6 +1252,20 @@ return {
             "selections": [
               (v3/*: any*/),
               (v5/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Organization",
+                "kind": "LinkedField",
+                "name": "organizationFk",
+                "plural": false,
+                "selections": [
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  (v5/*: any*/)
+                ],
+                "storageKey": null
+              },
               {
                 "alias": null,
                 "args": null,

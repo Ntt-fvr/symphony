@@ -33,7 +33,6 @@ RUN apk add --no-cache musl curl
 
 # Copy artifacts from builder
 COPY --from=builder /build/* /bin/
-
 # Set exposed port and entrypoint
 EXPOSE 80
 ENTRYPOINT ["/bin/graph"]

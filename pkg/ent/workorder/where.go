@@ -153,6 +153,27 @@ func CloseDate(v time.Time) predicate.WorkOrder {
 	})
 }
 
+// Duration applies equality check predicate on the "duration" field. It's identical to DurationEQ.
+func Duration(v float64) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDuration), v))
+	})
+}
+
+// SchedulledAt applies equality check predicate on the "schedulled_at" field. It's identical to SchedulledAtEQ.
+func SchedulledAt(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSchedulledAt), v))
+	})
+}
+
+// DueDate applies equality check predicate on the "due_date" field. It's identical to DueDateEQ.
+func DueDate(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDueDate), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
@@ -983,6 +1004,276 @@ func CloseDateNotNil() predicate.WorkOrder {
 	})
 }
 
+// DurationEQ applies the EQ predicate on the "duration" field.
+func DurationEQ(v float64) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDuration), v))
+	})
+}
+
+// DurationNEQ applies the NEQ predicate on the "duration" field.
+func DurationNEQ(v float64) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDuration), v))
+	})
+}
+
+// DurationIn applies the In predicate on the "duration" field.
+func DurationIn(vs ...float64) predicate.WorkOrder {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDuration), v...))
+	})
+}
+
+// DurationNotIn applies the NotIn predicate on the "duration" field.
+func DurationNotIn(vs ...float64) predicate.WorkOrder {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDuration), v...))
+	})
+}
+
+// DurationGT applies the GT predicate on the "duration" field.
+func DurationGT(v float64) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDuration), v))
+	})
+}
+
+// DurationGTE applies the GTE predicate on the "duration" field.
+func DurationGTE(v float64) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDuration), v))
+	})
+}
+
+// DurationLT applies the LT predicate on the "duration" field.
+func DurationLT(v float64) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDuration), v))
+	})
+}
+
+// DurationLTE applies the LTE predicate on the "duration" field.
+func DurationLTE(v float64) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDuration), v))
+	})
+}
+
+// DurationIsNil applies the IsNil predicate on the "duration" field.
+func DurationIsNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldDuration)))
+	})
+}
+
+// DurationNotNil applies the NotNil predicate on the "duration" field.
+func DurationNotNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldDuration)))
+	})
+}
+
+// SchedulledAtEQ applies the EQ predicate on the "schedulled_at" field.
+func SchedulledAtEQ(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSchedulledAt), v))
+	})
+}
+
+// SchedulledAtNEQ applies the NEQ predicate on the "schedulled_at" field.
+func SchedulledAtNEQ(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSchedulledAt), v))
+	})
+}
+
+// SchedulledAtIn applies the In predicate on the "schedulled_at" field.
+func SchedulledAtIn(vs ...time.Time) predicate.WorkOrder {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSchedulledAt), v...))
+	})
+}
+
+// SchedulledAtNotIn applies the NotIn predicate on the "schedulled_at" field.
+func SchedulledAtNotIn(vs ...time.Time) predicate.WorkOrder {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSchedulledAt), v...))
+	})
+}
+
+// SchedulledAtGT applies the GT predicate on the "schedulled_at" field.
+func SchedulledAtGT(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSchedulledAt), v))
+	})
+}
+
+// SchedulledAtGTE applies the GTE predicate on the "schedulled_at" field.
+func SchedulledAtGTE(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSchedulledAt), v))
+	})
+}
+
+// SchedulledAtLT applies the LT predicate on the "schedulled_at" field.
+func SchedulledAtLT(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSchedulledAt), v))
+	})
+}
+
+// SchedulledAtLTE applies the LTE predicate on the "schedulled_at" field.
+func SchedulledAtLTE(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSchedulledAt), v))
+	})
+}
+
+// SchedulledAtIsNil applies the IsNil predicate on the "schedulled_at" field.
+func SchedulledAtIsNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSchedulledAt)))
+	})
+}
+
+// SchedulledAtNotNil applies the NotNil predicate on the "schedulled_at" field.
+func SchedulledAtNotNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSchedulledAt)))
+	})
+}
+
+// DueDateEQ applies the EQ predicate on the "due_date" field.
+func DueDateEQ(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDueDate), v))
+	})
+}
+
+// DueDateNEQ applies the NEQ predicate on the "due_date" field.
+func DueDateNEQ(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDueDate), v))
+	})
+}
+
+// DueDateIn applies the In predicate on the "due_date" field.
+func DueDateIn(vs ...time.Time) predicate.WorkOrder {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDueDate), v...))
+	})
+}
+
+// DueDateNotIn applies the NotIn predicate on the "due_date" field.
+func DueDateNotIn(vs ...time.Time) predicate.WorkOrder {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDueDate), v...))
+	})
+}
+
+// DueDateGT applies the GT predicate on the "due_date" field.
+func DueDateGT(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDueDate), v))
+	})
+}
+
+// DueDateGTE applies the GTE predicate on the "due_date" field.
+func DueDateGTE(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDueDate), v))
+	})
+}
+
+// DueDateLT applies the LT predicate on the "due_date" field.
+func DueDateLT(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDueDate), v))
+	})
+}
+
+// DueDateLTE applies the LTE predicate on the "due_date" field.
+func DueDateLTE(v time.Time) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDueDate), v))
+	})
+}
+
+// DueDateIsNil applies the IsNil predicate on the "due_date" field.
+func DueDateIsNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldDueDate)))
+	})
+}
+
+// DueDateNotNil applies the NotNil predicate on the "due_date" field.
+func DueDateNotNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldDueDate)))
+	})
+}
+
 // HasType applies the HasEdge predicate on the "type" edge.
 func HasType() predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
@@ -1394,6 +1685,34 @@ func HasAssigneeWith(preds ...predicate.User) predicate.WorkOrder {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(AssigneeInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, AssigneeTable, AssigneeColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAppointment applies the HasEdge predicate on the "appointment" edge.
+func HasAppointment() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AppointmentTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AppointmentTable, AppointmentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAppointmentWith applies the HasEdge predicate on the "appointment" edge with a given conditions (other predicates).
+func HasAppointmentWith(preds ...predicate.Appointment) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AppointmentInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AppointmentTable, AppointmentColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

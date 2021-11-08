@@ -35,6 +35,11 @@ export type WorkOrderDetails_workOrder = {|
   +id: string,
   +name: string,
   +description: ?string,
+  +organizationFk: ?{|
+    +id: string,
+    +name: string,
+    +description: string,
+  |},
   +workOrderType: {|
     +name: string,
     +id: string,
@@ -367,6 +372,20 @@ return {
     (v0/*: any*/),
     (v1/*: any*/),
     (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "Organization",
+      "kind": "LinkedField",
+      "name": "organizationFk",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        (v1/*: any*/),
+        (v2/*: any*/)
+      ],
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,

@@ -31,6 +31,8 @@ type WorkOrderTemplate struct {
 	Description *string `json:"description,omitempty"`
 	// AssigneeCanCompleteWorkOrder holds the value of the "assignee_can_complete_work_order" field.
 	AssigneeCanCompleteWorkOrder bool `json:"assignee_can_complete_work_order,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration *float64 `json:"duration,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderTemplateQuery when eager-loading is set.
 	Edges                    WorkOrderTemplateEdges `json:"edges"`
@@ -85,12 +87,13 @@ func (e WorkOrderTemplateEdges) TypeOrErr() (*WorkOrderType, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*WorkOrderTemplate) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{},  // id
-		&sql.NullTime{},   // create_time
-		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // name
-		&sql.NullString{}, // description
-		&sql.NullBool{},   // assignee_can_complete_work_order
+		&sql.NullInt64{},   // id
+		&sql.NullTime{},    // create_time
+		&sql.NullTime{},    // update_time
+		&sql.NullString{},  // name
+		&sql.NullString{},  // description
+		&sql.NullBool{},    // assignee_can_complete_work_order
+		&sql.NullFloat64{}, // duration
 	}
 }
 
@@ -139,7 +142,13 @@ func (wot *WorkOrderTemplate) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		wot.AssigneeCanCompleteWorkOrder = value.Bool
 	}
-	values = values[5:]
+	if value, ok := values[5].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field duration", values[5])
+	} else if value.Valid {
+		wot.Duration = new(float64)
+		*wot.Duration = value.Float64
+	}
+	values = values[6:]
 	if len(values) == len(workordertemplate.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_template_type", value)
@@ -201,6 +210,10 @@ func (wot *WorkOrderTemplate) String() string {
 	}
 	builder.WriteString(", assignee_can_complete_work_order=")
 	builder.WriteString(fmt.Sprintf("%v", wot.AssigneeCanCompleteWorkOrder))
+	if v := wot.Duration; v != nil {
+		builder.WriteString(", duration=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -27,7 +27,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+
 const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'white',
@@ -57,14 +59,24 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  viewFormEdit: () => void,
-  onChange: () => void,
+  viewFormEdit: ({}) => void,
   dataValues: any,
 |}>;
 
 const KqiTable = (props: Props) => {
   const {dataValues, viewFormEdit} = props;
   const classes = useStyles();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(Number(event.target.value));
+    setPage(0);
+  };
 
   return (
     <Paper className={classes.root}>
@@ -88,37 +100,48 @@ const KqiTable = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dataValues?.map((item, index) => (
-              <StyledTableRow key={index}>
-                <TableCell>
-                  <Button onClick={() => viewFormEdit({item})} variant="text">
-                    <Text
-                      variant={'subtitle1'}
-                      weight={'medium'}
-                      color={'primary'}>
-                      {item.name}
-                    </Text>
-                  </Button>
-                </TableCell>
-                <TableCell>{item.kqiCategory.name}</TableCell>
-                <TableCell>
-                  <Indicator>1</Indicator>
-                </TableCell>
-                <TableCell>{item.kqiPerspective.name}</TableCell>
-                <TableCell>{item.kqiSource.id}</TableCell>
-                <TableCell>
-                  {DateTimeFormat.dateOnly(item.startDateTime)}
-                </TableCell>
-                <TableCell>
-                  {DateTimeFormat.dateOnly(item.endDateTime)}
-                </TableCell>
-                <TableCell>{item.id}</TableCell>
-                <TableCell>{item.icon}</TableCell>
-              </StyledTableRow>
-            ))}
+            {dataValues
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((item, index) => (
+                <StyledTableRow key={index}>
+                  <TableCell>
+                    <Button onClick={() => viewFormEdit({item})} variant="text">
+                      <Text
+                        variant={'subtitle1'}
+                        weight={'medium'}
+                        color={'primary'}>
+                        {item.name}
+                      </Text>
+                    </Button>
+                  </TableCell>
+                  <TableCell>{item.kqiCategory.name}</TableCell>
+                  <TableCell>
+                    <Indicator>{item.kqiTarget.length}</Indicator>
+                  </TableCell>
+                  <TableCell>{item.kqiPerspective.name}</TableCell>
+                  <TableCell>{item.kqiSource.id}</TableCell>
+                  <TableCell>
+                    {DateTimeFormat.dateOnly(item.startDateTime)}
+                  </TableCell>
+                  <TableCell>
+                    {DateTimeFormat.dateOnly(item.endDateTime)}
+                  </TableCell>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.icon}</TableCell>
+                </StyledTableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 15]}
+        component="div"
+        count={dataValues?.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </Paper>
   );
 };

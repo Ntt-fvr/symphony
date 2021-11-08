@@ -23,6 +23,10 @@ const mutation = graphql`
   mutation AddWorkOrderMutation($input: AddWorkOrderInput!) {
     addWorkOrder(input: $input) {
       id
+      organizationFk {
+        id
+        name
+      }
     }
   }
 `;

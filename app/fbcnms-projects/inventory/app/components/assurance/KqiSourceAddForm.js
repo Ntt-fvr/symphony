@@ -11,7 +11,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import KqiSourceAddedSuccessfully from './KqiSourceAddedSuccessfully';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddKqiSourceMutationVariables} from '../../mutations/__generated__/AddKqiSourceMutation.graphql';
@@ -62,16 +62,16 @@ type KqiSources = {
   },
 };
 
-export const KqiAddItemForm = (props: Props) => {
-  const {kqiSourcesNames} = props;
+export const KqiSourceAddForm = (props: Props) => {
+  const {kqiSourcesNames, isCompleted} = props;
   const classes = useStyles();
-  const [kqiSource, setkqiSource] = useState<KqiSources>({data: {}});
+  const [kqiSource, setKqiSource] = useState<KqiSources>({data: {}});
   const [showChecking, setShowChecking] = useState();
 
   const names = kqiSourcesNames?.map(item => item.node.name);
 
   function handleChange({target}) {
-    setkqiSource({
+    setKqiSource({
       data: {
         ...kqiSource.data,
         [target.name]: target.value,
@@ -85,18 +85,22 @@ export const KqiAddItemForm = (props: Props) => {
         name: kqiSource.data.name,
       },
     };
+    setKqiSource({data: {}});
     setShowChecking(true);
-    AddKqiSourceMutation(variables);
+    AddKqiSourceMutation(variables, {onCompleted: () => isCompleted()});
   }
+
+  const setReturn = () => {
+    setShowChecking(false);
+  };
 
   if (showChecking) {
     return (
-      <KqiSourceAddedSuccessfully
-        data_entry="KQI Source"
+      <AddedSuccessfullyMessage
         card_header="Add KQI Source"
         title="KQI Source"
         text_button="Add new KQI Source"
-        names={kqiSourcesNames}
+        setReturn={setReturn}
       />
     );
   }

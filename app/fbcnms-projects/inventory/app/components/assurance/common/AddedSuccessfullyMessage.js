@@ -8,107 +8,51 @@
  * @format
  */
 
-import AddButton from './common/AddButton';
-import AddCounterItemForm from './AddCounterItemForm';
-import AddKpiItemForm from './AddKpiItemForm';
-import AddThresholdItemForm from './AddThresholdItemForm';
+import AddButton from './AddButton';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import Clickable from '@symphony/design-system/components/Core/Clickable';
 import Grid from '@material-ui/core/Grid';
-import React, {useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import {GREEN} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    width: '400px',
-    height: '611px',
-    padding: theme.spacing(0),
+    padding: '0px',
   },
   header: {
     margin: '20px 0 24px 20px',
   },
-  content: {
-    width: 'auto',
-    height: '450px',
-  },
   containerIcon: {
-    paddingBottom: '2rem',
+    paddingBottom: '1rem',
   },
   icon: {
     fontSize: '60px',
-    color: '#00AF5B',
+    color: GREEN.G600,
   },
   addButton: {
-    paddingTop: '9rem',
+    padding: '1rem 0 2rem 0',
   },
 }));
-
-type Node = {
-  node: {
-    name: string,
-  },
-};
-
-type Kpi = {
-  node: {
-    name: string,
-    kpi: {
-      name: string,
-      id: string,
-    },
-  },
-};
 
 type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
-  data_entry: string,
-  names?: Array<Node>,
-  thresholdNames?: Array<Kpi>,
+  setReturn: void => void,
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
-  const {
-    card_header,
-    title,
-    text_button,
-    data_entry,
-    names,
-    thresholdNames,
-  } = props;
+  const {card_header, title, text_button, setReturn} = props;
   const classes = useStyles();
-  const [returnForm, setReturnForm] = useState(false);
 
-  function handleClick() {
-    setReturnForm(true);
-  }
-
-  if (returnForm) {
-    return (
-      <>
-        {(data_entry === 'kpi' && <AddKpiItemForm kpiNames={names} />) ||
-          (data_entry === 'threshold' && (
-            <AddThresholdItemForm thresholdNames={thresholdNames} />
-          )) ||
-          (data_entry === 'counter' && (
-            <AddCounterItemForm counterNames={names} />
-          ))}
-      </>
-    );
-  }
   return (
-    <Card className={classes.root}>
+    <Card>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
-      <Grid
-        container
-        className={classes.content}
-        direction="column"
-        justify="center"
-        alignItems="center">
+      <Grid container direction="column" justify="center" alignItems="center">
         <Grid className={classes.containerIcon}>
           <CheckCircleOutlineOutlinedIcon className={classes.icon} />
         </Grid>
@@ -119,7 +63,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
           </Grid>
         </Grid>
         <Grid className={classes.addButton}>
-          <Clickable onClick={handleClick}>
+          <Clickable onClick={setReturn}>
             <AddButton textButton={text_button} disabled={false} />
           </Clickable>
         </Grid>
