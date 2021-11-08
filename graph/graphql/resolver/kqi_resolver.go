@@ -98,21 +98,21 @@ func (r mutationResolver) RemoveKqi(ctx context.Context, id int) (int, error) {
 	var kqiTargets, err1 = t.KqiTargetFk(ctx)
 	if err1 != nil {
 		return 0, errors.Wrap(err1, "has occurred error on process: %v")
-	} else {
-		for _, kqitarget := range kqiTargets {
-			kqicomparators, _ := kqitarget.Kqitargetcomparatorfk(ctx)
+	}
+	for _, kqitarget := range kqiTargets {
+		kqicomparators, _ := kqitarget.Kqitargetcomparatorfk(ctx)
 
-			for _, kqicomparator := range kqicomparators {
-				if err := client.KqiComparator.DeleteOne(kqicomparator).Exec(ctx); err != nil {
-					return id, errors.Wrap(err, "has occurred error on process: %v")
-				}
-			}
-
-			if err := client.KqiTarget.DeleteOne(kqitarget).Exec(ctx); err != nil {
+		for _, kqicomparator := range kqicomparators {
+			if err := client.KqiComparator.DeleteOne(kqicomparator).Exec(ctx); err != nil {
 				return id, errors.Wrap(err, "has occurred error on process: %v")
 			}
 		}
+
+		if err := client.KqiTarget.DeleteOne(kqitarget).Exec(ctx); err != nil {
+			return id, errors.Wrap(err, "has occurred error on process: %v")
+		}
 	}
+
 	if err := client.Kqi.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
@@ -136,16 +136,17 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 	var temporal, err3 = et.KqiTemporalFrequencyFk(ctx)
 	var source, err4 = et.KqiSourceFk(ctx)
 
-	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
+	switch {
+	case err1 != nil || err2 != nil || err3 != nil || err4 != nil:
 		er := errors.New(err1.Error() + err2.Error() + err3.Error() + err4.Error())
 		return nil, errors.Wrap(er, "has occurred error on process: %v")
-	} else if category != nil {
+	case category != nil:
 		categoryid = category.ID
-	} else if perspective != nil {
+	case perspective != nil:
 		perspectiveid = perspective.ID
-	} else if temporal != nil {
+	case temporal != nil:
 		temporalFrequencyid = temporal.ID
-	} else if source != nil {
+	case source != nil:
 		kqiSourceID = source.ID
 	}
 
