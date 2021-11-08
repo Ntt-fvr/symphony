@@ -26,12 +26,7 @@ func TestSurveyWiFiScanWritePolicyRule(t *testing.T) {
 		SetName("WorkOrderType").
 		SaveX(ctx)
 
-	organization := c.Organization.Create().
-		SetCreateTime(time.Now()).
-		SetDescription("Organization").
-		SetName("Organization").
-		SetUpdateTime(time.Now()).
-		SaveX(ctx)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 
 	workOrder := c.WorkOrder.Create().
 		SetName("WorkOrder").

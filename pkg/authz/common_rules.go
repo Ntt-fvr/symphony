@@ -6,7 +6,6 @@ package authz
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -62,11 +61,21 @@ func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, work
 	switch r.IsAllowed {
 	case models.PermissionValueYes:
 		if woOrganizationID != nil {
-			for _, typeInterID := range r.OrganizationIds {
-				if typeInterID == *woOrganizationID {
-					return true
-				}
+			userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+			if !ok {
+				return false
 			}
+
+			//  uOrg, err := userViewer.User().Organization(ctx)
+			uOrg, err := userViewer.User().QueryOrganization().OnlyID(ctx)
+			if err != nil {
+				return false
+			}
+
+			if uOrg == *woOrganizationID {
+				return true
+			}
+			// return false
 		} else {
 			return true
 		}
@@ -81,14 +90,7 @@ func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, work
 							}
 						}
 					} else {
-						userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
-						if !ok {
-							return false
-						}
-						if userViewer.User().Edges.Organization.ID == *woOrganizationID {
-							return true
-						}
-						return false
+						return true
 					}
 				}
 			}
@@ -129,7 +131,6 @@ func allowReadPermissionsRule() privacy.QueryRule {
 func denyIfNoPermissionSettingsRule() privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
 		if FromContext(ctx) == nil {
-			fmt.Println("aqui esta el detalle")
 			return privacy.Deny
 		}
 		return privacy.Skip

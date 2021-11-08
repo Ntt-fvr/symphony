@@ -95,8 +95,24 @@ func (r mutationResolver) RemoveKqi(ctx context.Context, id int) (int, error) {
 	if err != nil {
 		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	// TODO: borrar o editar los edges relacionados
+	var kqiTargets, err1 = t.KqiTargetFk(ctx)
+	if err1 != nil {
+		return 0, errors.Wrap(err1, "has occurred error on process: %v")
+	} else {
+		for _, kqitarget := range kqiTargets {
+			kqicomparators, _ := kqitarget.Kqitargetcomparatorfk(ctx)
 
+			for _, kqicomparator := range kqicomparators {
+				if err := client.KqiComparator.DeleteOne(kqicomparator).Exec(ctx); err != nil {
+					return id, errors.Wrap(err, "has occurred error on process: %v")
+				}
+			}
+
+			if err := client.KqiTarget.DeleteOne(kqitarget).Exec(ctx); err != nil {
+				return id, errors.Wrap(err, "has occurred error on process: %v")
+			}
+		}
+	}
 	if err := client.Kqi.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
@@ -116,27 +132,19 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 	var name, start, end, formula, description = et.Name, et.StartDateTime, et.EndDateTime, et.Formula, et.Description
 
 	var category, err1 = et.KqiCategoryFk(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err1, "has occurred error on process: %v")
+	var perspective, err2 = et.KqiPerspectiveFk(ctx)
+	var temporal, err3 = et.KqiTemporalFrequencyFk(ctx)
+	var source, err4 = et.KqiSourceFk(ctx)
+
+	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
+		er := errors.New(err1.Error() + err2.Error() + err3.Error() + err4.Error())
+		return nil, errors.Wrap(er, "has occurred error on process: %v")
 	} else if category != nil {
 		categoryid = category.ID
-	}
-	var perspective, err2 = et.KqiPerspectiveFk(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err2, "has occurred error on process: %v")
 	} else if perspective != nil {
 		perspectiveid = perspective.ID
-	}
-	var temporal, err3 = et.KqiTemporalFrequencyFk(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err3, "has occurred error on process: %v")
 	} else if temporal != nil {
 		temporalFrequencyid = temporal.ID
-	}
-
-	var source, err4 = et.KqiSourceFk(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err4, "has occurred error on process: %v")
 	} else if source != nil {
 		kqiSourceID = source.ID
 	}

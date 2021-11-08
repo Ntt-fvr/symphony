@@ -77,7 +77,7 @@ func TestHyperlinkReadPolicyRule(t *testing.T) {
 		require.NoError(t, err)
 		require.Zero(t, count)
 	})
-	organization, _ := wo1.Organization(ctx)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 	t.Run("PartialPermissions", func(t *testing.T) {
 		permissions := authz.EmptyPermissions()
 		permissions.WorkforcePolicy.Read.IsAllowed = models.PermissionValueByCondition
@@ -171,12 +171,7 @@ func TestWorkOrderHyperlinkPolicyRule(t *testing.T) {
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
-	organization := c.Organization.Create().
-		SetCreateTime(time.Now()).
-		SetDescription("Organization").
-		SetName("Organization").
-		SetUpdateTime(time.Now()).
-		SaveX(ctx)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 	workOrder := c.WorkOrder.Create().
 		SetName("workOrder").
 		SetType(workOrderType).
