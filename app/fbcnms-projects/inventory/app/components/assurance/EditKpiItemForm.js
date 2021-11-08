@@ -30,6 +30,7 @@ import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import TableFormulas from './TableFormulas';
+import TextField from '@material-ui/core/TextField';
 import {Grid, MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -43,6 +44,32 @@ const useStyles = makeStyles(() => ({
   },
   formField: {
     margin: '0 43px 22px 30px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.75)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
   cardHeader: {
     margin: '20px 43px 22px 30px',
@@ -51,7 +78,11 @@ const useStyles = makeStyles(() => ({
     minHeight: '36px',
   },
   description: {
-    minHeight: '60px',
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
   },
   addKpi: {
     marginRight: '1rem',
@@ -228,97 +259,104 @@ export const EditKpiItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={5} xl={5}>
-                <FormField
-                  className={classes.formField}
-                  label="Name"
-                  {...validationName()}
-                  required>
-                  <TextInput
-                    {...name}
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
                     className={classes.textInput}
+                    id="kpi-name"
+                    label="Name"
+                    variant="outlined"
                     name="name"
-                    type="string"
+                    fullWidth
+                    {...name}
+                    {...validationName()}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField
-                  label="Network Type"
-                  className={classes.formField}
-                  required>
-                  <Select
-                    {...kpiCategoryFK}
-                    className={classes.select}
-                    disableUnderline
-                    name="network">
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    id="outlined-select-vendor"
+                    select
+                    required
+                    label="Network Type"
+                    fullWidth
+                    name="network"
+                    variant="outlined"
+                    {...kpiCategoryFK}>
                     {data.kpiCategories.edges.map((item, index) => (
                       <MenuItem key={index} value={item.node?.id}>
                         {item.node?.name}
                       </MenuItem>
                     ))}
-                  </Select>
-                </FormField>
+                  </TextField>
+                </form>
               </Grid>
-
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField className={classes.formField} label="ID">
-                  <TextInput
-                    value={formValues.id}
-                    className={classes.textInput}
-                    name="Id"
-                    type="string"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
                     disabled
+                    className={classes.textInput}
+                    label="ID"
+                    variant="outlined"
+                    name="Id"
+                    fullWidth
+                    value={formValues.id}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField
-                  label="Domain"
-                  className={classes.formField}
-                  required>
-                  <Select
-                    {...domainFk}
-                    className={classes.select}
-                    disableUnderline
-                    name="domains">
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    select
+                    required
+                    label="Domain"
+                    fullWidth
+                    name="domains"
+                    variant="outlined"
+                    {...domainFk}>
                     {data.domains.edges.map((item, index) => (
                       <MenuItem key={index} value={item.node?.id}>
                         {item.node?.name}
                       </MenuItem>
                     ))}
-                  </Select>
-                </FormField>
+                  </TextField>
+                </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField
-                  label="Associated Threshold"
-                  className={classes.formField}
-                  required>
-                  <TextInput
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    disabled
+                    className={classes.textInput}
+                    label="Associated Threshold"
+                    variant="outlined"
+                    name="threshold"
+                    fullWidth
                     value={
                       thresholdFromKpi === undefined
                         ? 'none'
                         : thresholdFromKpi.node.name
                     }
-                    className={classes.textInput}
-                    name="threshold"
-                    type="string"
-                    disabled
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={6} xl={6}>
-                <FormField
-                  className={classes.formField}
-                  label="Description"
-                  required>
-                  <TextInput
-                    {...description}
-                    type="multiline"
-                    name="description"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    multiline
                     rows={3}
+                    required
+                    className={classes.description}
+                    label="Description"
+                    variant="outlined"
+                    name="description"
+                    inputProps={{maxLength: 120}}
+                    fullWidth
+                    {...description}
                   />
-                </FormField>
+                </form>
               </Grid>
             </Grid>
             <Grid container justify="flex-end">

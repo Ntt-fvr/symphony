@@ -19,8 +19,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import ConfigureTitle from './common/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-
+import TextField from '@material-ui/core/TextField';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 
@@ -32,7 +31,33 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 18px 22px 18px',
+    margin: '0 43px 22px 30px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.75)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
   formFieldStatus: {
     marginTop: '1rem',
@@ -81,12 +106,8 @@ type Props = $ReadOnly<{|
   isCompleted: void => void,
 |}>;
 const KqiSourceFormEdit = (props: Props) => {
-  const {
-    formValues,
-    hideKqiSourceFormEdit,
-    kqiSourcesNames,
-    isCompleted,
-  } = props;
+  const {formValues, hideKqiSourceFormEdit, kqiSourcesNames, isCompleted} =
+    props;
   const classes = useStyles();
 
   const id = useFormInput(formValues.id);
@@ -162,29 +183,32 @@ const KqiSourceFormEdit = (props: Props) => {
           <Card>
             <Grid container>
               <Grid item xs={6}>
-                <FormField
-                  label="Name"
-                  className={classes.formField}
-                  {...validationName()}
-                  required>
-                  <TextInput
-                    {...name}
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
                     className={classes.textInput}
+                    label="Name"
+                    variant="outlined"
                     name="name"
-                    autoComplete="off"
+                    fullWidth
+                    {...name}
+                    {...validationName()}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid item xs={6}>
-                <FormField className={classes.formField} label="ID">
-                  <TextInput
-                    {...id}
-                    className={classes.textInput}
-                    name="iD"
-                    autoComplete="off"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
                     disabled
+                    className={classes.textInput}
+                    label="ID"
+                    variant="outlined"
+                    name="iD"
+                    fullWidth
+                    {...id}
                   />
-                </FormField>
+                </form>
               </Grid>
             </Grid>
           </Card>

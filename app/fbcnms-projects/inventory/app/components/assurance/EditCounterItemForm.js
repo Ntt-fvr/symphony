@@ -23,7 +23,6 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 
 import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
@@ -254,7 +253,8 @@ const EditCounterItemForm = (props: Props) => {
                   label="Vendor name*"
                   fullWidth
                   name="vendor"
-                  variant="outlined">
+                  variant="outlined"
+                  {...vendor}>
                   {data.vendors.edges.map((item, index) => (
                     <MenuItem key={index} value={item.node?.id}>
                       {item.node?.name}

@@ -20,6 +20,7 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
 
@@ -186,7 +187,12 @@ export default function AddThresholdItemForm(props: Props) {
 
   return (
     <Card className={classes.root}>
-      <CardHeader className={classes.header}>Add Threshold</CardHeader>
+      <CardHeader className={classes.header}>
+        <Text useEllipsis={true} variant="h6" weight="bold">
+          Add Threshold
+        </Text>
+      </CardHeader>
+
       <form className={classes.formField} autoComplete="off">
         <TextField
           required
