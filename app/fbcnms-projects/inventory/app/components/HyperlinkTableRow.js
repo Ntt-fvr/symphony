@@ -176,10 +176,10 @@ class HyperlinkTableRow extends React.Component<Props, State> {
             scope="row">
             <FormField label="" disabled={!this.state.isChecked}>
               <Select
-                options={categories.map(x => ({
-                  key: x.id,
-                  value: x,
-                  label: x.name || '',
+                options={categories.map(category => ({
+                  key: category.id,
+                  value: category,
+                  label: category.name || '',
                 }))}
                 onChange={value => {
                   this.setState(
