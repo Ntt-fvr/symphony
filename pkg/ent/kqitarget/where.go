@@ -118,17 +118,17 @@ func Name(v string) predicate.KqiTarget {
 	})
 }
 
-// Frame applies equality check predicate on the "frame" field. It's identical to FrameEQ.
-func Frame(v float64) predicate.KqiTarget {
+// Period applies equality check predicate on the "period" field. It's identical to PeriodEQ.
+func Period(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFrame), v))
+		s.Where(sql.EQ(s.C(FieldPeriod), v))
 	})
 }
 
-// AlowedValidation applies equality check predicate on the "alowedValidation" field. It's identical to AlowedValidationEQ.
-func AlowedValidation(v float64) predicate.KqiTarget {
+// AllowedVariation applies equality check predicate on the "allowedVariation" field. It's identical to AllowedVariationEQ.
+func AllowedVariation(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlowedValidation), v))
+		s.Where(sql.EQ(s.C(FieldAllowedVariation), v))
 	})
 }
 
@@ -423,22 +423,22 @@ func NameContainsFold(v string) predicate.KqiTarget {
 	})
 }
 
-// FrameEQ applies the EQ predicate on the "frame" field.
-func FrameEQ(v float64) predicate.KqiTarget {
+// PeriodEQ applies the EQ predicate on the "period" field.
+func PeriodEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFrame), v))
+		s.Where(sql.EQ(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameNEQ applies the NEQ predicate on the "frame" field.
-func FrameNEQ(v float64) predicate.KqiTarget {
+// PeriodNEQ applies the NEQ predicate on the "period" field.
+func PeriodNEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFrame), v))
+		s.Where(sql.NEQ(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameIn applies the In predicate on the "frame" field.
-func FrameIn(vs ...float64) predicate.KqiTarget {
+// PeriodIn applies the In predicate on the "period" field.
+func PeriodIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -450,12 +450,12 @@ func FrameIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldFrame), v...))
+		s.Where(sql.In(s.C(FieldPeriod), v...))
 	})
 }
 
-// FrameNotIn applies the NotIn predicate on the "frame" field.
-func FrameNotIn(vs ...float64) predicate.KqiTarget {
+// PeriodNotIn applies the NotIn predicate on the "period" field.
+func PeriodNotIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -467,54 +467,54 @@ func FrameNotIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldFrame), v...))
+		s.Where(sql.NotIn(s.C(FieldPeriod), v...))
 	})
 }
 
-// FrameGT applies the GT predicate on the "frame" field.
-func FrameGT(v float64) predicate.KqiTarget {
+// PeriodGT applies the GT predicate on the "period" field.
+func PeriodGT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldFrame), v))
+		s.Where(sql.GT(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameGTE applies the GTE predicate on the "frame" field.
-func FrameGTE(v float64) predicate.KqiTarget {
+// PeriodGTE applies the GTE predicate on the "period" field.
+func PeriodGTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldFrame), v))
+		s.Where(sql.GTE(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameLT applies the LT predicate on the "frame" field.
-func FrameLT(v float64) predicate.KqiTarget {
+// PeriodLT applies the LT predicate on the "period" field.
+func PeriodLT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldFrame), v))
+		s.Where(sql.LT(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameLTE applies the LTE predicate on the "frame" field.
-func FrameLTE(v float64) predicate.KqiTarget {
+// PeriodLTE applies the LTE predicate on the "period" field.
+func PeriodLTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldFrame), v))
+		s.Where(sql.LTE(s.C(FieldPeriod), v))
 	})
 }
 
-// AlowedValidationEQ applies the EQ predicate on the "alowedValidation" field.
-func AlowedValidationEQ(v float64) predicate.KqiTarget {
+// AllowedVariationEQ applies the EQ predicate on the "allowedVariation" field.
+func AllowedVariationEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlowedValidation), v))
+		s.Where(sql.EQ(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationNEQ applies the NEQ predicate on the "alowedValidation" field.
-func AlowedValidationNEQ(v float64) predicate.KqiTarget {
+// AllowedVariationNEQ applies the NEQ predicate on the "allowedVariation" field.
+func AllowedVariationNEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlowedValidation), v))
+		s.Where(sql.NEQ(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationIn applies the In predicate on the "alowedValidation" field.
-func AlowedValidationIn(vs ...float64) predicate.KqiTarget {
+// AllowedVariationIn applies the In predicate on the "allowedVariation" field.
+func AllowedVariationIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -526,12 +526,12 @@ func AlowedValidationIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldAlowedValidation), v...))
+		s.Where(sql.In(s.C(FieldAllowedVariation), v...))
 	})
 }
 
-// AlowedValidationNotIn applies the NotIn predicate on the "alowedValidation" field.
-func AlowedValidationNotIn(vs ...float64) predicate.KqiTarget {
+// AllowedVariationNotIn applies the NotIn predicate on the "allowedVariation" field.
+func AllowedVariationNotIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -543,35 +543,35 @@ func AlowedValidationNotIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldAlowedValidation), v...))
+		s.Where(sql.NotIn(s.C(FieldAllowedVariation), v...))
 	})
 }
 
-// AlowedValidationGT applies the GT predicate on the "alowedValidation" field.
-func AlowedValidationGT(v float64) predicate.KqiTarget {
+// AllowedVariationGT applies the GT predicate on the "allowedVariation" field.
+func AllowedVariationGT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAlowedValidation), v))
+		s.Where(sql.GT(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationGTE applies the GTE predicate on the "alowedValidation" field.
-func AlowedValidationGTE(v float64) predicate.KqiTarget {
+// AllowedVariationGTE applies the GTE predicate on the "allowedVariation" field.
+func AllowedVariationGTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAlowedValidation), v))
+		s.Where(sql.GTE(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationLT applies the LT predicate on the "alowedValidation" field.
-func AlowedValidationLT(v float64) predicate.KqiTarget {
+// AllowedVariationLT applies the LT predicate on the "allowedVariation" field.
+func AllowedVariationLT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAlowedValidation), v))
+		s.Where(sql.LT(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationLTE applies the LTE predicate on the "alowedValidation" field.
-func AlowedValidationLTE(v float64) predicate.KqiTarget {
+// AllowedVariationLTE applies the LTE predicate on the "allowedVariation" field.
+func AllowedVariationLTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAlowedValidation), v))
+		s.Where(sql.LTE(s.C(FieldAllowedVariation), v))
 	})
 }
 

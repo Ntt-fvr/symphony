@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -54,6 +55,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
@@ -64,6 +66,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -115,6 +118,8 @@ type Client struct {
 	AlarmFilter *AlarmFilterClient
 	// AlarmStatus is the client for interacting with the AlarmStatus builders.
 	AlarmStatus *AlarmStatusClient
+	// Appointment is the client for interacting with the Appointment builders.
+	Appointment *AppointmentClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -191,6 +196,8 @@ type Client struct {
 	Hyperlink *HyperlinkClient
 	// Kpi is the client for interacting with the Kpi builders.
 	Kpi *KpiClient
+	// KpiCategory is the client for interacting with the KpiCategory builders.
+	KpiCategory *KpiCategoryClient
 	// Kqi is the client for interacting with the Kqi builders.
 	Kqi *KqiClient
 	// KqiCategory is the client for interacting with the KqiCategory builders.
@@ -211,6 +218,8 @@ type Client struct {
 	Location *LocationClient
 	// LocationType is the client for interacting with the LocationType builders.
 	LocationType *LocationTypeClient
+	// NetworkType is the client for interacting with the NetworkType builders.
+	NetworkType *NetworkTypeClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
@@ -297,6 +306,7 @@ func (c *Client) init() {
 	c.Activity = NewActivityClient(c.config)
 	c.AlarmFilter = NewAlarmFilterClient(c.config)
 	c.AlarmStatus = NewAlarmStatusClient(c.config)
+	c.Appointment = NewAppointmentClient(c.config)
 	c.Block = NewBlockClient(c.config)
 	c.BlockInstance = NewBlockInstanceClient(c.config)
 	c.CheckListCategory = NewCheckListCategoryClient(c.config)
@@ -335,6 +345,7 @@ func (c *Client) init() {
 	c.Formula = NewFormulaClient(c.config)
 	c.Hyperlink = NewHyperlinkClient(c.config)
 	c.Kpi = NewKpiClient(c.config)
+	c.KpiCategory = NewKpiCategoryClient(c.config)
 	c.Kqi = NewKqiClient(c.config)
 	c.KqiCategory = NewKqiCategoryClient(c.config)
 	c.KqiComparator = NewKqiComparatorClient(c.config)
@@ -345,6 +356,7 @@ func (c *Client) init() {
 	c.Link = NewLinkClient(c.config)
 	c.Location = NewLocationClient(c.config)
 	c.LocationType = NewLocationTypeClient(c.config)
+	c.NetworkType = NewNetworkTypeClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
 	c.PermissionsPolicy = NewPermissionsPolicyClient(c.config)
 	c.Project = NewProjectClient(c.config)
@@ -414,6 +426,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Activity:                    NewActivityClient(cfg),
 		AlarmFilter:                 NewAlarmFilterClient(cfg),
 		AlarmStatus:                 NewAlarmStatusClient(cfg),
+		Appointment:                 NewAppointmentClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
@@ -452,6 +465,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Formula:                     NewFormulaClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Kpi:                         NewKpiClient(cfg),
+		KpiCategory:                 NewKpiCategoryClient(cfg),
 		Kqi:                         NewKqiClient(cfg),
 		KqiCategory:                 NewKqiCategoryClient(cfg),
 		KqiComparator:               NewKqiComparatorClient(cfg),
@@ -462,6 +476,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
+		NetworkType:                 NewNetworkTypeClient(cfg),
 		Organization:                NewOrganizationClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Project:                     NewProjectClient(cfg),
@@ -514,6 +529,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Activity:                    NewActivityClient(cfg),
 		AlarmFilter:                 NewAlarmFilterClient(cfg),
 		AlarmStatus:                 NewAlarmStatusClient(cfg),
+		Appointment:                 NewAppointmentClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
@@ -552,6 +568,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Formula:                     NewFormulaClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Kpi:                         NewKpiClient(cfg),
+		KpiCategory:                 NewKpiCategoryClient(cfg),
 		Kqi:                         NewKqiClient(cfg),
 		KqiCategory:                 NewKqiCategoryClient(cfg),
 		KqiComparator:               NewKqiComparatorClient(cfg),
@@ -562,6 +579,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
+		NetworkType:                 NewNetworkTypeClient(cfg),
 		Organization:                NewOrganizationClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Project:                     NewProjectClient(cfg),
@@ -627,6 +645,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Activity.Use(hooks...)
 	c.AlarmFilter.Use(hooks...)
 	c.AlarmStatus.Use(hooks...)
+	c.Appointment.Use(hooks...)
 	c.Block.Use(hooks...)
 	c.BlockInstance.Use(hooks...)
 	c.CheckListCategory.Use(hooks...)
@@ -665,6 +684,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Formula.Use(hooks...)
 	c.Hyperlink.Use(hooks...)
 	c.Kpi.Use(hooks...)
+	c.KpiCategory.Use(hooks...)
 	c.Kqi.Use(hooks...)
 	c.KqiCategory.Use(hooks...)
 	c.KqiComparator.Use(hooks...)
@@ -675,6 +695,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Link.Use(hooks...)
 	c.Location.Use(hooks...)
 	c.LocationType.Use(hooks...)
+	c.NetworkType.Use(hooks...)
 	c.Organization.Use(hooks...)
 	c.PermissionsPolicy.Use(hooks...)
 	c.Project.Use(hooks...)
@@ -1040,6 +1061,127 @@ func (c *AlarmStatusClient) QueryAlarmStatusFk(as *AlarmStatus) *AlarmFilterQuer
 func (c *AlarmStatusClient) Hooks() []Hook {
 	hooks := c.hooks.AlarmStatus
 	return append(hooks[:len(hooks):len(hooks)], alarmstatus.Hooks[:]...)
+}
+
+// AppointmentClient is a client for the Appointment schema.
+type AppointmentClient struct {
+	config
+}
+
+// NewAppointmentClient returns a client for the Appointment from the given config.
+func NewAppointmentClient(c config) *AppointmentClient {
+	return &AppointmentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appointment.Hooks(f(g(h())))`.
+func (c *AppointmentClient) Use(hooks ...Hook) {
+	c.hooks.Appointment = append(c.hooks.Appointment, hooks...)
+}
+
+// Create returns a create builder for Appointment.
+func (c *AppointmentClient) Create() *AppointmentCreate {
+	mutation := newAppointmentMutation(c.config, OpCreate)
+	return &AppointmentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Appointment entities.
+func (c *AppointmentClient) CreateBulk(builders ...*AppointmentCreate) *AppointmentCreateBulk {
+	return &AppointmentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Appointment.
+func (c *AppointmentClient) Update() *AppointmentUpdate {
+	mutation := newAppointmentMutation(c.config, OpUpdate)
+	return &AppointmentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppointmentClient) UpdateOne(a *Appointment) *AppointmentUpdateOne {
+	mutation := newAppointmentMutation(c.config, OpUpdateOne, withAppointment(a))
+	return &AppointmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppointmentClient) UpdateOneID(id int) *AppointmentUpdateOne {
+	mutation := newAppointmentMutation(c.config, OpUpdateOne, withAppointmentID(id))
+	return &AppointmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Appointment.
+func (c *AppointmentClient) Delete() *AppointmentDelete {
+	mutation := newAppointmentMutation(c.config, OpDelete)
+	return &AppointmentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AppointmentClient) DeleteOne(a *Appointment) *AppointmentDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AppointmentClient) DeleteOneID(id int) *AppointmentDeleteOne {
+	builder := c.Delete().Where(appointment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppointmentDeleteOne{builder}
+}
+
+// Query returns a query builder for Appointment.
+func (c *AppointmentClient) Query() *AppointmentQuery {
+	return &AppointmentQuery{config: c.config}
+}
+
+// Get returns a Appointment entity by its id.
+func (c *AppointmentClient) Get(ctx context.Context, id int) (*Appointment, error) {
+	return c.Query().Where(appointment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppointmentClient) GetX(ctx context.Context, id int) *Appointment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryWorkorder queries the workorder edge of a Appointment.
+func (c *AppointmentClient) QueryWorkorder(a *Appointment) *WorkOrderQuery {
+	query := &WorkOrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appointment.Table, appointment.FieldID, id),
+			sqlgraph.To(workorder.Table, workorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, appointment.WorkorderTable, appointment.WorkorderColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAssignee queries the assignee edge of a Appointment.
+func (c *AppointmentClient) QueryAssignee(a *Appointment) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appointment.Table, appointment.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, appointment.AssigneeTable, appointment.AssigneeColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AppointmentClient) Hooks() []Hook {
+	hooks := c.hooks.Appointment
+	return append(hooks[:len(hooks):len(hooks)], appointment.Hooks[:]...)
 }
 
 // BlockClient is a client for the Block schema.
@@ -5904,6 +6046,22 @@ func (c *FormulaClient) GetX(ctx context.Context, id int) *Formula {
 	return obj
 }
 
+// QueryNetworkType queries the networkType edge of a Formula.
+func (c *FormulaClient) QueryNetworkType(f *Formula) *NetworkTypeQuery {
+	query := &NetworkTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(formula.Table, formula.FieldID, id),
+			sqlgraph.To(networktype.Table, networktype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, formula.NetworkTypeTable, formula.NetworkTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryTech queries the tech edge of a Formula.
 func (c *FormulaClient) QueryTech(f *Formula) *TechQuery {
 	query := &TechQuery{config: c.config}
@@ -6210,6 +6368,22 @@ func (c *KpiClient) QueryDomain(k *Kpi) *DomainQuery {
 	return query
 }
 
+// QueryKpiCategory queries the KpiCategory edge of a Kpi.
+func (c *KpiClient) QueryKpiCategory(k *Kpi) *KpiCategoryQuery {
+	query := &KpiCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := k.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpi.Table, kpi.FieldID, id),
+			sqlgraph.To(kpicategory.Table, kpicategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kpi.KpiCategoryTable, kpi.KpiCategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryFormulakpi queries the formulakpi edge of a Kpi.
 func (c *KpiClient) QueryFormulakpi(k *Kpi) *FormulaQuery {
 	query := &FormulaQuery{config: c.config}
@@ -6246,6 +6420,111 @@ func (c *KpiClient) QueryThresholdkpi(k *Kpi) *ThresholdQuery {
 func (c *KpiClient) Hooks() []Hook {
 	hooks := c.hooks.Kpi
 	return append(hooks[:len(hooks):len(hooks)], kpi.Hooks[:]...)
+}
+
+// KpiCategoryClient is a client for the KpiCategory schema.
+type KpiCategoryClient struct {
+	config
+}
+
+// NewKpiCategoryClient returns a client for the KpiCategory from the given config.
+func NewKpiCategoryClient(c config) *KpiCategoryClient {
+	return &KpiCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `kpicategory.Hooks(f(g(h())))`.
+func (c *KpiCategoryClient) Use(hooks ...Hook) {
+	c.hooks.KpiCategory = append(c.hooks.KpiCategory, hooks...)
+}
+
+// Create returns a create builder for KpiCategory.
+func (c *KpiCategoryClient) Create() *KpiCategoryCreate {
+	mutation := newKpiCategoryMutation(c.config, OpCreate)
+	return &KpiCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of KpiCategory entities.
+func (c *KpiCategoryClient) CreateBulk(builders ...*KpiCategoryCreate) *KpiCategoryCreateBulk {
+	return &KpiCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for KpiCategory.
+func (c *KpiCategoryClient) Update() *KpiCategoryUpdate {
+	mutation := newKpiCategoryMutation(c.config, OpUpdate)
+	return &KpiCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KpiCategoryClient) UpdateOne(kc *KpiCategory) *KpiCategoryUpdateOne {
+	mutation := newKpiCategoryMutation(c.config, OpUpdateOne, withKpiCategory(kc))
+	return &KpiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KpiCategoryClient) UpdateOneID(id int) *KpiCategoryUpdateOne {
+	mutation := newKpiCategoryMutation(c.config, OpUpdateOne, withKpiCategoryID(id))
+	return &KpiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for KpiCategory.
+func (c *KpiCategoryClient) Delete() *KpiCategoryDelete {
+	mutation := newKpiCategoryMutation(c.config, OpDelete)
+	return &KpiCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *KpiCategoryClient) DeleteOne(kc *KpiCategory) *KpiCategoryDeleteOne {
+	return c.DeleteOneID(kc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *KpiCategoryClient) DeleteOneID(id int) *KpiCategoryDeleteOne {
+	builder := c.Delete().Where(kpicategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KpiCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for KpiCategory.
+func (c *KpiCategoryClient) Query() *KpiCategoryQuery {
+	return &KpiCategoryQuery{config: c.config}
+}
+
+// Get returns a KpiCategory entity by its id.
+func (c *KpiCategoryClient) Get(ctx context.Context, id int) (*KpiCategory, error) {
+	return c.Query().Where(kpicategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KpiCategoryClient) GetX(ctx context.Context, id int) *KpiCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryKpicategory queries the kpicategory edge of a KpiCategory.
+func (c *KpiCategoryClient) QueryKpicategory(kc *KpiCategory) *KpiQuery {
+	query := &KpiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := kc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpicategory.Table, kpicategory.FieldID, id),
+			sqlgraph.To(kpi.Table, kpi.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kpicategory.KpicategoryTable, kpicategory.KpicategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(kc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *KpiCategoryClient) Hooks() []Hook {
+	hooks := c.hooks.KpiCategory
+	return append(hooks[:len(hooks):len(hooks)], kpicategory.Hooks[:]...)
 }
 
 // KqiClient is a client for the Kqi schema.
@@ -7664,6 +7943,111 @@ func (c *LocationTypeClient) QueryDocumentCategory(lt *LocationType) *DocumentCa
 func (c *LocationTypeClient) Hooks() []Hook {
 	hooks := c.hooks.LocationType
 	return append(hooks[:len(hooks):len(hooks)], locationtype.Hooks[:]...)
+}
+
+// NetworkTypeClient is a client for the NetworkType schema.
+type NetworkTypeClient struct {
+	config
+}
+
+// NewNetworkTypeClient returns a client for the NetworkType from the given config.
+func NewNetworkTypeClient(c config) *NetworkTypeClient {
+	return &NetworkTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `networktype.Hooks(f(g(h())))`.
+func (c *NetworkTypeClient) Use(hooks ...Hook) {
+	c.hooks.NetworkType = append(c.hooks.NetworkType, hooks...)
+}
+
+// Create returns a create builder for NetworkType.
+func (c *NetworkTypeClient) Create() *NetworkTypeCreate {
+	mutation := newNetworkTypeMutation(c.config, OpCreate)
+	return &NetworkTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NetworkType entities.
+func (c *NetworkTypeClient) CreateBulk(builders ...*NetworkTypeCreate) *NetworkTypeCreateBulk {
+	return &NetworkTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NetworkType.
+func (c *NetworkTypeClient) Update() *NetworkTypeUpdate {
+	mutation := newNetworkTypeMutation(c.config, OpUpdate)
+	return &NetworkTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NetworkTypeClient) UpdateOne(nt *NetworkType) *NetworkTypeUpdateOne {
+	mutation := newNetworkTypeMutation(c.config, OpUpdateOne, withNetworkType(nt))
+	return &NetworkTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NetworkTypeClient) UpdateOneID(id int) *NetworkTypeUpdateOne {
+	mutation := newNetworkTypeMutation(c.config, OpUpdateOne, withNetworkTypeID(id))
+	return &NetworkTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NetworkType.
+func (c *NetworkTypeClient) Delete() *NetworkTypeDelete {
+	mutation := newNetworkTypeMutation(c.config, OpDelete)
+	return &NetworkTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *NetworkTypeClient) DeleteOne(nt *NetworkType) *NetworkTypeDeleteOne {
+	return c.DeleteOneID(nt.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *NetworkTypeClient) DeleteOneID(id int) *NetworkTypeDeleteOne {
+	builder := c.Delete().Where(networktype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NetworkTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for NetworkType.
+func (c *NetworkTypeClient) Query() *NetworkTypeQuery {
+	return &NetworkTypeQuery{config: c.config}
+}
+
+// Get returns a NetworkType entity by its id.
+func (c *NetworkTypeClient) Get(ctx context.Context, id int) (*NetworkType, error) {
+	return c.Query().Where(networktype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NetworkTypeClient) GetX(ctx context.Context, id int) *NetworkType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFormulaNetworkTypeFK queries the formulaNetworkType_FK edge of a NetworkType.
+func (c *NetworkTypeClient) QueryFormulaNetworkTypeFK(nt *NetworkType) *FormulaQuery {
+	query := &FormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := nt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(networktype.Table, networktype.FieldID, id),
+			sqlgraph.To(formula.Table, formula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, networktype.FormulaNetworkTypeFKTable, networktype.FormulaNetworkTypeFKColumn),
+		)
+		fromV = sqlgraph.Neighbors(nt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NetworkTypeClient) Hooks() []Hook {
+	hooks := c.hooks.NetworkType
+	return append(hooks[:len(hooks):len(hooks)], networktype.Hooks[:]...)
 }
 
 // OrganizationClient is a client for the Organization schema.
@@ -11743,6 +12127,22 @@ func (c *UserClient) QueryFeatures(u *User) *FeatureQuery {
 	return query
 }
 
+// QueryAppointment queries the appointment edge of a User.
+func (c *UserClient) QueryAppointment(u *User) *AppointmentQuery {
+	query := &AppointmentQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(appointment.Table, appointment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AppointmentTable, user.AppointmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -12323,6 +12723,22 @@ func (c *WorkOrderClient) QueryAssignee(wo *WorkOrder) *UserQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workorder.AssigneeTable, workorder.AssigneeColumn),
+		)
+		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppointment queries the appointment edge of a WorkOrder.
+func (c *WorkOrderClient) QueryAppointment(wo *WorkOrder) *AppointmentQuery {
+	query := &AppointmentQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, id),
+			sqlgraph.To(appointment.Table, appointment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, workorder.AppointmentTable, workorder.AppointmentColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil

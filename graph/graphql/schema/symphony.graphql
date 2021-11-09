@@ -806,6 +806,7 @@ input AddWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input EditWorkOrderTypeInput {
@@ -816,6 +817,7 @@ input EditWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input AddWorkOrderInput {
@@ -833,6 +835,8 @@ input AddWorkOrderInput {
   organizationFk:ID
   status: WorkOrderStatus
   priority: WorkOrderPriority
+  duration: Float
+  dueDate: Time
 }
 
 input EditWorkOrderInput {
@@ -851,6 +855,8 @@ input EditWorkOrderInput {
   checkList: [CheckListItemInput!]
   checkListCategories: [CheckListCategoryInput!]
   locationId: ID
+  duration: Float
+  dueDate: Time
 }
 
 input TechnicianCheckListItemInput {
@@ -2069,7 +2075,20 @@ input EditOrganizationInput {
   description: String!  
   
 }
+enum OrganizationFilterType {
+  ID
+  NAME
+  DESCRIPTION
+}
 
+input OrganizationFilterInput {
+  filterType: OrganizationFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
 
 """
 A connection to a list of permissions policies.
@@ -2677,6 +2696,73 @@ type KpiEdge {
   """
   cursor: Cursor!
 }
+"""
+Properties by which kpiCategoriess connections can be ordered.
+"""
+enum KpiCategoryOrderField {
+  """
+  Order kpiCategoriess by name.
+  """
+  NAME
+
+  """
+  Order kpiCategoriess by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kpiCategoriess by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kpiCategoriess connections.
+"""
+input KpiCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kpiCategoriess by.
+  """
+  field: KpiCategoryOrderField
+}
+
+"""
+A connection to a list of kpiCategoriess.
+"""
+type KpiCategoryConnection {
+  """
+  Total kpiCategoriess of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kpiCategoriess edges.
+  """
+  edges: [KpiCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kpiCategoriess edge in a connection.
+"""
+type KpiCategoryEdge {
+  """
+  The kpiCategoriess at the end of the edge.
+  """
+  node: KpiCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 
 """
 Properties by which Threshold connections can be ordered.
@@ -4082,6 +4168,74 @@ type TechEdge {
   The techs at the end of the edge.
   """
   node: Tech
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+
+"""
+Properties by which network types connections can be ordered.
+"""
+enum NetworkTypeOrderField {
+  """
+  Order network types by name.
+  """
+  NAME
+
+  """
+  Order network types by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order network types by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for network types connections.
+"""
+input NetworkTypeOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order network types by.
+  """
+  field: NetworkTypeOrderField
+}
+
+"""
+A connection to a list of network types.
+"""
+type NetworkTypeConnection {
+  """
+  Total network types of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of network types edges.
+  """
+  edges: [NetworkTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A network types edge in a connection.
+"""
+type NetworkTypeEdge {
+  """
+  The network types at the end of the edge.
+  """
+  node: NetworkType
   """
   A cursor for use in pagination.
   """
@@ -6001,6 +6155,41 @@ type Query {
   ): KpiConnection!
 
   """
+  A list of kpiCategories.
+  """
+  kpiCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kpiCategoriess.
+    """
+    orderBy: KpiCategoryOrder
+
+    
+    #Filtering options for the returned kpiCategoriess.
+    
+    filterBy: [KpiCategoryFilterInput!]
+  ): KpiCategoryConnection!
+
+  """
   A list of thresholds.
   """
   thresholds(
@@ -6734,6 +6923,55 @@ type Query {
     
     filterBy: [TechFilterInput!]
   ): TechConnection!
+
+  """
+  A list of networkTypes.
+  """
+  networkTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned networkTypes.
+    """
+    orderBy: NetworkTypeOrder
+
+    
+    #Filtering options for the returned networkTypes.
+    
+    filterBy: [NetworkTypeFilterInput!]
+  ): NetworkTypeConnection!
+ 
+  appointments(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+    slotFilterBy: SlotFilterInput
+  ): AppointmentConnection!
+  usersAvailability(
+    filterBy: [UserFilterInput!]
+    slotFilterBy: SlotFilterInput!
+    duration: Float!
+    regularHours: RegularHoursInput!
+  ): [UserAvailability!]
 }
 
 type Mutation {
@@ -6969,12 +7207,18 @@ type Mutation {
   addKpi(input: AddKpiInput!):Kpi!
   editKpi(input: EditKpiInput!): Kpi!
   removeKpi(id: ID!): ID!
+  addKpiCategory(input: AddKpiCategoryInput!):KpiCategory!
+  editKpiCategory(input: EditKpiCategoryInput!): KpiCategory!
+  removeKpiCategory(id: ID!): ID!
   addDomain(input: AddDomainInput!):Domain!
   editDomain(input: EditDomainInput!): Domain!
   removeDomain(id: ID!): ID!
   addTech(input: AddTechInput!):Tech!
   editTech(input: EditTechInput!): Tech!
   removeTech(id: ID!): ID!
+  addNetworkType(input: AddNetworkTypeInput!):NetworkType!
+  editNetworkType(input: EditNetworkTypeInput!): NetworkType!
+  removeNetworkType(id: ID!): ID!
   addCounterFormula(input: AddCounterFormulaInput!):CounterFormula!
   editCounterFormula(input: EditCounterFormulaInput!):CounterFormula!
   removeCounterFormula(id: ID!): ID!
@@ -7036,6 +7280,9 @@ type Mutation {
   addRecommendationsCategory(input: AddRecommendationsCategoryInput!):RecommendationsCategory!
   editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory!
   removeRecommendationsCategory(id: ID!): ID!
+  addAppointment(input: AddAppointmentInput!): Appointment!
+  editAppointment(input: EditAppointmentInput!): Appointment!
+  removeAppointment(id: ID!): ID!
 }
 
 """
@@ -7193,6 +7440,33 @@ input DomainFilterInput {
   stringSet: [String!]
 }
 
+type KpiCategory implements Node {
+  id: ID!
+  name: String!
+}
+
+input AddKpiCategoryInput {
+  name: String!
+}
+
+input EditKpiCategoryInput {
+  id: ID!
+  name: String!
+}
+
+enum KpiCategoryFilterType{
+  NAME
+}
+
+input KpiCategoryFilterInput {
+  filterType: KpiCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 type Kpi implements Node {
   id: ID!
   name: String!
@@ -7201,12 +7475,14 @@ type Kpi implements Node {
   status: Boolean!
   domainFk: Domain!
   formulaFk: [Formula]
+  kpiCategoryFK: KpiCategory!
 }
 
 input AddKpiInput {
   name: String!
   description: String!
   domainFk: ID!
+  kpiCategoryFK: ID!
   status: Boolean!
 }
 
@@ -7215,6 +7491,7 @@ input EditKpiInput {
   name: String!
   description: String!
   domainFk: ID!
+  kpiCategoryFK: ID!
   status: Boolean!
 }
 
@@ -7235,11 +7512,39 @@ input EditTechInput {
   domainFk: ID!
 }
 
+type NetworkType implements Node {
+  id: ID!
+  name: String!
+}
+
+input AddNetworkTypeInput {
+  name: String!
+}
+
+input EditNetworkTypeInput {
+  id: ID!
+  name: String!
+}
+
+enum NetworkTypeFilterType {
+  NAME
+}
+
+input NetworkTypeFilterInput {
+  filterType: NetworkTypeFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 type Formula implements Node {
   id: ID!
   textFormula: String!
   status: Boolean!
   techFk: Tech!
+  networkTypeFk: NetworkType!
   kpiFk: Kpi!
   counterformulaFk: [CounterFormula]
 }
@@ -7248,6 +7553,7 @@ input AddFormulaInput {
   textFormula: String!
   status: Boolean!
   techFk: ID!
+  networkTypeFk: ID!
   kpiFk: ID!
 }
 
@@ -7256,6 +7562,7 @@ input EditFormulaInput {
   textFormula: String!
   status: Boolean!
   techFk: ID!
+  networkTypeFk: ID!
   kpiFk: ID!
 }
 
@@ -7638,21 +7945,6 @@ input KqiFilterInput {
   stringSet: [String!]
 }
 
-enum OrganizationFilterType {
-  ID
-  NAME
-  DESCRIPTION
-}
-
-input OrganizationFilterInput {
-  filterType: OrganizationFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
 type KqiCategory implements Node {
   id: ID!
   name: String! 
@@ -7769,8 +8061,8 @@ type KqiTarget implements Node {
   id: ID!
   name: String! 
   impact: String!
-  frame: Float!
-  alowedValidation: Float!
+  period: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -7781,8 +8073,8 @@ type KqiTarget implements Node {
 input AddKqiTargetInput {
   name: String! 
   impact: String!
-  frame: Float!
-  alowedValidation: Float!
+  period: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -7793,8 +8085,8 @@ input EditKqiTargetInput {
   id: ID!
   name: String! 
   impact: String!
-  frame: Float!
-  alowedValidation: Float!
+  period: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -7981,4 +8273,105 @@ input RecommendationsCategoryFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+}
+
+## scheduling
+"""
+A connection to a list of appoinments.
+"""
+type AppointmentConnection {
+  """
+  Total count of appoinments in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of project edges.
+  """
+  edges: [AppointmentEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+"""
+A project edge in a connection.
+"""
+type AppointmentEdge {
+  """
+  The project at the end of the edge.
+  """
+  node: Appointment
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Properties by which project connections can be ordered.
+"""
+enum AppointmentOrderField {
+  """
+  Order appoinments by date.
+  """
+  DATE
+  """
+  Order appoinments by creation time.
+  """
+  CREATED_AT
+  """
+  Order appoinments by update time.
+  """
+  UPDATED_AT
+}
+"""
+Ordering options for project connections.
+"""
+input AppointmentOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+  """
+  The field to order appoinments by.
+  """
+  field: AppointmentOrderField
+}
+type Appointment implements Node {
+  id: ID!
+  creationDate: Time!
+  assignee: User!
+  workOrder: WorkOrder!
+  start: Time!
+  end: Time!
+  duration: Float!
+}
+input AddAppointmentInput {
+  creatorId: ID
+  assigneeID: ID!
+  workorderID: ID!
+  date: Time!
+  duration: Float!
+}
+input EditAppointmentInput {
+  id: ID!
+  assigneeID: ID!
+  workorderID: ID!
+  date: Time!
+  duration: Float!
+}
+type UserAvailability {
+  user: User!
+  slotStartDate: Time!
+  slotEndDate: Time!
+}
+input SlotFilterInput {
+  slotStartDate: Time!
+  slotEndDate: Time!
+}
+input RegularHoursInput {
+  workdayStartHour: Int!
+  workdayStartMinute: Int!
+  workdayEndHour: Int!
+  workdayEndMinute: Int!
+  timezone: String
 }

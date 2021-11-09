@@ -23,10 +23,10 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldFrame holds the string denoting the frame field in the database.
-	FieldFrame = "frame"
-	// FieldAlowedValidation holds the string denoting the alowedvalidation field in the database.
-	FieldAlowedValidation = "alowed_validation"
+	// FieldPeriod holds the string denoting the period field in the database.
+	FieldPeriod = "period"
+	// FieldAllowedVariation holds the string denoting the allowedvariation field in the database.
+	FieldAllowedVariation = "allowed_variation"
 	// FieldInitTime holds the string denoting the inittime field in the database.
 	FieldInitTime = "init_time"
 	// FieldEndTime holds the string denoting the endtime field in the database.
@@ -65,8 +65,8 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
-	FieldFrame,
-	FieldAlowedValidation,
+	FieldPeriod,
+	FieldAllowedVariation,
 	FieldInitTime,
 	FieldEndTime,
 	FieldImpact,

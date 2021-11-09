@@ -25,6 +25,12 @@ func (c *AlarmStatusClient) Instantiate(as *AlarmStatus) *AlarmStatus {
 }
 
 // Instantiate entity configuration.
+func (c *AppointmentClient) Instantiate(a *Appointment) *Appointment {
+	a.config = c.config
+	return a
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b
@@ -253,6 +259,12 @@ func (c *KpiClient) Instantiate(k *Kpi) *Kpi {
 }
 
 // Instantiate entity configuration.
+func (c *KpiCategoryClient) Instantiate(kc *KpiCategory) *KpiCategory {
+	kc.config = c.config
+	return kc
+}
+
+// Instantiate entity configuration.
 func (c *KqiClient) Instantiate(k *Kqi) *Kqi {
 	k.config = c.config
 	return k
@@ -310,6 +322,12 @@ func (c *LocationClient) Instantiate(l *Location) *Location {
 func (c *LocationTypeClient) Instantiate(lt *LocationType) *LocationType {
 	lt.config = c.config
 	return lt
+}
+
+// Instantiate entity configuration.
+func (c *NetworkTypeClient) Instantiate(nt *NetworkType) *NetworkType {
+	nt.config = c.config
+	return nt
 }
 
 // Instantiate entity configuration.

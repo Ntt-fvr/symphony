@@ -89,6 +89,20 @@ func (wotc *WorkOrderTemplateCreate) SetNillableAssigneeCanCompleteWorkOrder(b *
 	return wotc
 }
 
+// SetDuration sets the duration field.
+func (wotc *WorkOrderTemplateCreate) SetDuration(f float64) *WorkOrderTemplateCreate {
+	wotc.mutation.SetDuration(f)
+	return wotc
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wotc *WorkOrderTemplateCreate) SetNillableDuration(f *float64) *WorkOrderTemplateCreate {
+	if f != nil {
+		wotc.SetDuration(*f)
+	}
+	return wotc
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (wotc *WorkOrderTemplateCreate) AddPropertyTypeIDs(ids ...int) *WorkOrderTemplateCreate {
 	wotc.mutation.AddPropertyTypeIDs(ids...)
@@ -281,6 +295,14 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
 		})
 		_node.AssigneeCanCompleteWorkOrder = value
+	}
+	if value, ok := wotc.mutation.Duration(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertemplate.FieldDuration,
+		})
+		_node.Duration = &value
 	}
 	if nodes := wotc.mutation.PropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

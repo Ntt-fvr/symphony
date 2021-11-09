@@ -12,12 +12,11 @@ import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 import ConfigureTitle from './common/ConfigureTitle';
-import PowerSearchBar from '../power_search/PowerSearchBar';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
@@ -85,10 +84,14 @@ const AlarmFilteringTypes = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, AlarmFilteringQuery, {}).then(data => {
       setDataAlarms(data);
     });
-  }, [DataAlarms]);
+  }, [setDataAlarms]);
 
   const handleClickEdit = (alarm: Alarms) => {
     setShowEditForm(true);
@@ -102,7 +105,10 @@ const AlarmFilteringTypes = () => {
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
-        returnTableAlarm={() => setShowForm(false)}
+        returnTableAlarm={() => {
+          setShowForm(false);
+          isCompleted();
+        }}
       />
     );
   }
@@ -110,7 +116,10 @@ const AlarmFilteringTypes = () => {
   if (showEditForm) {
     return (
       <EditAlarmFilteringItemForm
-        closeEditForm={() => setShowEditForm(false)}
+        closeEditForm={() => {
+          setShowEditForm(false);
+          isCompleted();
+        }}
         formValues={dataEdit}
       />
     );

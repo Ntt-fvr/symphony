@@ -20,8 +20,8 @@ type KqiTarget struct {
 func (KqiTarget) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().Annotations(entgql.OrderField("NAME")),
-		field.Float("frame"),
-		field.Float("alowedValidation"),
+		field.Float("period"),
+		field.Float("allowedVariation"),
 		field.Time("initTime"),
 		field.Time("endTime"),
 		field.String("impact"),

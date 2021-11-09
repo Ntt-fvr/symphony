@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
@@ -282,6 +283,21 @@ func (uu *UserUpdate) AddFeatures(f ...*Feature) *UserUpdate {
 	return uu.AddFeatureIDs(ids...)
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (uu *UserUpdate) AddAppointmentIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAppointmentIDs(ids...)
+	return uu
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (uu *UserUpdate) AddAppointment(a ...*Appointment) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAppointmentIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -444,6 +460,27 @@ func (uu *UserUpdate) RemoveFeatures(f ...*Feature) *UserUpdate {
 		ids[i] = f[i].ID
 	}
 	return uu.RemoveFeatureIDs(ids...)
+}
+
+// ClearAppointment clears all "appointment" edges to type Appointment.
+func (uu *UserUpdate) ClearAppointment() *UserUpdate {
+	uu.mutation.ClearAppointment()
+	return uu
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (uu *UserUpdate) RemoveAppointmentIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAppointmentIDs(ids...)
+	return uu
+}
+
+// RemoveAppointment removes appointment edges to Appointment.
+func (uu *UserUpdate) RemoveAppointment(a ...*Appointment) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAppointmentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1080,6 +1117,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppointmentTable,
+			Columns: []string{user.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAppointmentIDs(); len(nodes) > 0 && !uu.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppointmentTable,
+			Columns: []string{user.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppointmentTable,
+			Columns: []string{user.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -1343,6 +1434,21 @@ func (uuo *UserUpdateOne) AddFeatures(f ...*Feature) *UserUpdateOne {
 	return uuo.AddFeatureIDs(ids...)
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (uuo *UserUpdateOne) AddAppointmentIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAppointmentIDs(ids...)
+	return uuo
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (uuo *UserUpdateOne) AddAppointment(a ...*Appointment) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAppointmentIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1505,6 +1611,27 @@ func (uuo *UserUpdateOne) RemoveFeatures(f ...*Feature) *UserUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return uuo.RemoveFeatureIDs(ids...)
+}
+
+// ClearAppointment clears all "appointment" edges to type Appointment.
+func (uuo *UserUpdateOne) ClearAppointment() *UserUpdateOne {
+	uuo.mutation.ClearAppointment()
+	return uuo
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (uuo *UserUpdateOne) RemoveAppointmentIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAppointmentIDs(ids...)
+	return uuo
+}
+
+// RemoveAppointment removes appointment edges to Appointment.
+func (uuo *UserUpdateOne) RemoveAppointment(a ...*Appointment) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAppointmentIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -2131,6 +2258,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppointmentTable,
+			Columns: []string{user.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAppointmentIDs(); len(nodes) > 0 && !uuo.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppointmentTable,
+			Columns: []string{user.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppointmentTable,
+			Columns: []string{user.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
 				},
 			},
 		}

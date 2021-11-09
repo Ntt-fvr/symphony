@@ -36,6 +36,8 @@ export type AddWorkOrderInput = {|
   organizationFk?: ?string,
   status?: ?WorkOrderStatus,
   priority?: ?WorkOrderPriority,
+  duration?: ?number,
+  dueDate?: ?any,
 |};
 export type PropertyInput = {|
   id?: ?string,
@@ -132,7 +134,11 @@ export type AddWorkOrderMutationVariables = {|
 |};
 export type AddWorkOrderMutationResponse = {|
   +addWorkOrder: {|
-    +id: string
+    +id: string,
+    +organizationFk: ?{|
+      +id: string,
+      +name: string,
+    |},
   |}
 |};
 export type AddWorkOrderMutation = {|
@@ -148,6 +154,10 @@ mutation AddWorkOrderMutation(
 ) {
   addWorkOrder(input: $input) {
     id
+    organizationFk {
+      id
+      name
+    }
   }
 }
 */
@@ -160,7 +170,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -175,11 +192,24 @@ v1 = [
     "name": "addWorkOrder",
     "plural": false,
     "selections": [
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "id",
+        "concreteType": "Organization",
+        "kind": "LinkedField",
+        "name": "organizationFk",
+        "plural": false,
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -192,7 +222,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddWorkOrderMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -201,19 +231,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddWorkOrderMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "ee2594628e3b68db6a7ef05aa66bc864",
+    "cacheID": "182fb6cdeb0767aa667d029444722316",
     "id": null,
     "metadata": {},
     "name": "AddWorkOrderMutation",
     "operationKind": "mutation",
-    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n    organizationFk {\n      id\n      name\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a0413f2e12266ba09820d28eaa879aa5';
+(node/*: any*/).hash = 'fb996588ebca77a8fb81d745d24fa138';
 
 module.exports = node;

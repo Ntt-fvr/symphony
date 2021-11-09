@@ -45,8 +45,11 @@ const useStyles = makeStyles(() => ({
   textInput: {
     minHeight: '36px',
   },
-  addKpi: {
-    margin: '20px',
+  action: {
+    paddingRight: '1.3rem',
+  },
+  addThreshold: {
+    marginRight: '1rem',
     width: '111px',
     alignSelf: 'flex-end',
   },
@@ -88,10 +91,17 @@ type Props = $ReadOnly<{|
   thresholdNames: Array<string>,
   hideEditThresholdForm: void => void,
   editRule: void => void,
+  isCompleted: void => void,
 |}>;
 
 export const EditThresholdItemForm = (props: Props) => {
-  const {thresholdNames, formValues, hideEditThresholdForm, editRule} = props;
+  const {
+    thresholdNames,
+    formValues,
+    hideEditThresholdForm,
+    editRule,
+    isCompleted,
+  } = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -107,7 +117,12 @@ export const EditThresholdItemForm = (props: Props) => {
         status: checked,
       },
     };
-    EditTresholdMutation(variables);
+    EditTresholdMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        hideEditThresholdForm();
+      },
+    });
   };
 
   return (
@@ -189,31 +204,32 @@ export const EditThresholdItemForm = (props: Props) => {
                 </FormField>
               </Grid>
             </Grid>
-            <Grid container justify="flex-end">
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      handleClick();
-                      hideEditThresholdForm();
-                    }}>
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      hideEditThresholdForm();
-                    }}
-                    skin="brightGray">
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
+            <Grid
+              className={classes.action}
+              item
+              xs={12}
+              container
+              justify="flex-end">
+              <FormField>
+                <Button
+                  className={classes.addThreshold}
+                  onClick={() => {
+                    handleClick();
+                    hideEditThresholdForm();
+                  }}>
+                  Save
+                </Button>
+              </FormField>
+              <FormField>
+                <Button
+                  className={classes.addThreshold}
+                  onClick={() => {
+                    hideEditThresholdForm();
+                  }}
+                  skin="brightGray">
+                  Cancel
+                </Button>
+              </FormField>
             </Grid>
           </Card>
         </Grid>

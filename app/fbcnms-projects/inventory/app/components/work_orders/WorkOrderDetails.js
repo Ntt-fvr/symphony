@@ -8,26 +8,27 @@
  * @format
  */
 
-import type {AddImageMutationResponse} from '../../mutations/__generated__/AddImageMutation.graphql';
-import type {AddImageMutationVariables} from '../../mutations/__generated__/AddImageMutation.graphql';
 import type {
   AddHyperlinkInput,
   AddHyperlinkMutationResponse,
   AddHyperlinkMutationVariables,
 } from '../../mutations/__generated__/AddHyperlinkMutation.graphql';
+import type {AddImageMutationResponse} from '../../mutations/__generated__/AddImageMutation.graphql';
+import type {AddImageMutationVariables} from '../../mutations/__generated__/AddImageMutation.graphql';
 import type {ChecklistCategoriesMutateStateActionType} from '../checklist/ChecklistCategoriesMutateAction';
 import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategoriesMutateState';
 import type {ContextRouter} from 'react-router-dom';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Property} from '../../common/Property';
+import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql.js';
-import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
-import AddImageMutation from '../../mutations/AddImageMutation';
 import AddHyperlinkMutation from '../../mutations/AddHyperlinkMutation';
+import AddImageMutation from '../../mutations/AddImageMutation';
 import AppContext from '@fbcnms/ui/context/AppContext';
+import ApplyIcon from '@symphony/design-system/icons/Actions/ApplyIcon';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -41,7 +42,6 @@ import FormFieldWithPermissions from '../../common/FormFieldWithPermissions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LinkIcon from '@symphony/design-system/icons/Actions/LinkIcon';
-import ApplyIcon from '@symphony/design-system/icons/Actions/ApplyIcon';
 import LocationBreadcrumbsTitle from '../location/LocationBreadcrumbsTitle';
 import LocationMapSnippet from '../location/LocationMapSnippet';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
@@ -72,7 +72,10 @@ import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
+
+import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import {useSnackbar} from 'notistack';
+import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
 import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
 type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
@@ -165,6 +168,12 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
+
+  const useCategories = useDocumentCategoryByLocationTypeNodes(
+    workOrder.location?.locationType.id,
+  );
+  const disabledLinkToLocation = !!useCategories.length;
+
   const [properties, setProperties] = useState<Array<Property>>(
     propsWorkOrder.properties
       .filter(Boolean)
@@ -371,7 +380,8 @@ const WorkOrderDetails = ({
         fileSize: file.sizeInBytes,
         modified: file.uploaded,
         contentType: file.fileType,
-        category: category,
+        category: category.name,
+        documentCategoryId: category.id,
       },
     };
 
@@ -397,7 +407,7 @@ const WorkOrderDetails = ({
         enqueueSnackbar(
           file.fileName +
             ' linked to location with category "' +
-            category +
+            category.name +
             '"',
         );
       },
@@ -406,7 +416,7 @@ const WorkOrderDetails = ({
           'There was an error linking ' +
             file.fileName +
             ' to location with category "' +
-            category +
+            category.name +
             '"',
         );
       },
@@ -428,7 +438,8 @@ const WorkOrderDetails = ({
         entityType: 'LOCATION',
         url: link.url,
         displayName: link?.displayName,
-        category: category,
+        category: category.name,
+        documentCategoryId: category.id,
       },
     };
 
@@ -450,12 +461,12 @@ const WorkOrderDetails = ({
     const callbacks: MutationCallbacks<AddHyperlinkMutationResponse> = {
       onCompleted: () => {
         enqueueSnackbar(
-          `${link?.displayName} linked to location with category ${category}`,
+          `${link?.displayName} linked to location with category ${category.name}`,
         );
       },
       onError: () => {
         enqueueSnackbar(
-          `There was an error linking ${link?.displayName} to location with category ${category}`,
+          `There was an error linking ${link?.displayName} to location with category ${category.name}`,
         );
       },
     };
@@ -526,6 +537,7 @@ const WorkOrderDetails = ({
       return !isDone;
     });
   };
+
   const _setWorkOrderDetail = (
     key:
       | 'name'
@@ -534,7 +546,8 @@ const WorkOrderDetails = ({
       | 'installDate'
       | 'assignedTo'
       | 'priority'
-      | 'project',
+      | 'project'
+      | 'organizationFk',
     value,
   ) => {
     setWorkOrder(prevWorkOrder => ({...prevWorkOrder, [`${key}`]: value}));
@@ -806,23 +819,26 @@ const WorkOrderDetails = ({
                       title="Attachments"
                       rightContent={
                         <div className={classes.uploadButtonContainer}>
-                          <IconButton
-                            icon={ApplyIcon}
-                            disabled={
-                              state.isApplyButtonEnabled === false
-                                ? true
-                                : state.checkCount === 0
-                                ? true
-                                : false
-                            }
-                            onClick={() => {
-                              linkFiles();
-                            }}
-                          />
+                          {disabledLinkToLocation ? (
+                            <IconButton
+                              icon={ApplyIcon}
+                              disabled={
+                                state.isApplyButtonEnabled === false
+                                  ? true
+                                  : state.checkCount === 0
+                                  ? true
+                                  : false
+                              }
+                              onClick={() => {
+                                linkFiles();
+                              }}
+                            />
+                          ) : null}
                           <AddHyperlinkButton
                             className={classes.minimizedButton}
                             variant="text"
                             entityType="WORK_ORDER"
+                            categories={[]}
                             allowCategories={false}
                             entityId={workOrder.id}>
                             <IconButton icon={LinkIcon} />
@@ -852,9 +868,10 @@ const WorkOrderDetails = ({
                           ...propsWorkOrder.files,
                           ...propsWorkOrder.images,
                         ]}
+                        categories={useCategories}
                         hyperlinks={propsWorkOrder.hyperlinks}
                         onChecked={countDispatch}
-                        linkToLocationOptions={true}
+                        linkToLocationOptions={disabledLinkToLocation}
                       />
                     </ExpandingPanel>
                     <ChecklistCategoriesMutateDispatchContext.Provider
@@ -866,6 +883,16 @@ const WorkOrderDetails = ({
                   </Grid>
                   <Grid item xs={4} sm={4} lg={4} xl={4}>
                     <ExpandingPanel title="Team" className={classes.card}>
+                      <FormField className={classes.input} label="Organization">
+                        <OrganizationTypeahead
+                          selectedOrganization={workOrder.organizationFk}
+                          onOrganizationSelected={organization =>
+                            _setWorkOrderDetail('organizationFk', organization)
+                          }
+                          margin="dense"
+                        />
+                      </FormField>
+
                       <FormFieldWithPermissions
                         className={classes.input}
                         label="Owner"
@@ -936,6 +963,11 @@ export default withRouter(
           id
           name
           description
+          organizationFk {
+            id
+            name
+            description
+          }
           workOrderType {
             name
             id
@@ -949,6 +981,7 @@ export default withRouter(
             latitude
             longitude
             locationType {
+              id
               mapType
               mapZoomLevel
             }

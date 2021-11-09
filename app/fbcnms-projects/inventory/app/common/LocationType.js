@@ -76,7 +76,6 @@ const locationType2DocumentCategoryNodesQuery = graphql`
     }
   }
 `;
-//LocationType2DocumentCategoryNodesQueryVariables
 export type LocationTypeNode = $Exact<NamedNode>;
 export type DocumentCategoryNode = $Exact<OptionalNamedNode>;
 
