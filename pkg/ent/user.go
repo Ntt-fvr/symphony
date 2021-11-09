@@ -66,9 +66,11 @@ type UserEdges struct {
 	CreatedProjects []*Project
 	// Features holds the value of the features edge.
 	Features []*Feature
+	// Appointment holds the value of the appointment edge.
+	Appointment []*Appointment
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 }
 
 // ProfilePhotoOrErr returns the ProfilePhoto value or an error if the edge
@@ -160,6 +162,15 @@ func (e UserEdges) FeaturesOrErr() ([]*Feature, error) {
 		return e.Features, nil
 	}
 	return nil, &NotLoadedError{edge: "features"}
+}
+
+// AppointmentOrErr returns the Appointment value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AppointmentOrErr() ([]*Appointment, error) {
+	if e.loadedTypes[9] {
+		return e.Appointment, nil
+	}
+	return nil, &NotLoadedError{edge: "appointment"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -297,6 +308,11 @@ func (u *User) QueryCreatedProjects() *ProjectQuery {
 // QueryFeatures queries the features edge of the User.
 func (u *User) QueryFeatures() *FeatureQuery {
 	return (&UserClient{config: u.config}).QueryFeatures(u)
+}
+
+// QueryAppointment queries the appointment edge of the User.
+func (u *User) QueryAppointment() *AppointmentQuery {
+	return (&UserClient{config: u.config}).QueryAppointment(u)
 }
 
 // Update returns a builder for updating this User.

@@ -25,6 +25,14 @@ func (formulaResolver) TechFk(ctx context.Context, formula *ent.Formula) (*ent.T
 	return variable, nil
 }
 
+func (formulaResolver) NetworkTypeFk(ctx context.Context, formula *ent.Formula) (*ent.NetworkType, error) {
+	variable, err := formula.NetworkType(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return variable, nil
+}
+
 func (formulaResolver) KpiFk(ctx context.Context, formula *ent.Formula) (*ent.Kpi, error) {
 	variable, err := formula.Kpi(ctx)
 	if err != nil {
@@ -49,6 +57,7 @@ func (r mutationResolver) AddFormula(ctx context.Context, input models.AddFormul
 		SetStatus(input.Status).
 		SetKpiID(input.KpiFk).
 		SetTechID(input.TechFk).
+		SetNetworkTypeID(input.NetworkTypeFk).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -74,6 +83,37 @@ func (r mutationResolver) RemoveFormula(ctx context.Context, id int) (int, error
 	}
 	return id, nil
 }
+func ChangeValidation(ctx context.Context, et *ent.Formula, input models.EditFormulaInput) (bool, error) {
+	var change = false
+	var kpi, err1 = et.Kpi(ctx)
+	if err1 != nil {
+		return false, errors.Wrap(err1, "has occurred error on process: %w")
+	}
+	var tech, err2 = et.Tech(ctx)
+	if err2 != nil {
+		return false, errors.Wrap(err2, "has occurred error on process: %w")
+	}
+	var networkType, err3 = et.NetworkType(ctx)
+	if err3 != nil {
+		return false, errors.Wrap(err3, "has occurred error on process: %w")
+	}
+	if et.TextFormula != input.TextFormula {
+		change = true
+	}
+	if et.Status != input.Status {
+		change = true
+	}
+	if (kpi != nil && kpi.ID != input.KpiFk) || kpi == nil {
+		change = true
+	}
+	if (tech != nil && tech.ID != input.TechFk) || tech == nil {
+		change = true
+	}
+	if (networkType != nil && networkType.ID != input.NetworkTypeFk) || networkType == nil {
+		change = true
+	}
+	return change, nil
+}
 
 func (r mutationResolver) EditFormula(ctx context.Context, input models.EditFormulaInput) (*ent.Formula, error) {
 	client := r.ClientFrom(ctx)
@@ -84,13 +124,20 @@ func (r mutationResolver) EditFormula(ctx context.Context, input models.EditForm
 		}
 		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	if input.TextFormula != et.TextFormula || input.Status != et.Status || input.KpiFk != et.Edges.Kpi.ID || input.TechFk != et.Edges.Tech.ID {
+
+	var change, err1 = ChangeValidation(ctx, et, input)
+	if err != nil {
+		return nil, errors.Wrap(err1, "has occurred error on process: %w")
+	}
+
+	if change {
 		if et, err = client.Formula.
 			UpdateOne(et).
 			SetTextFormula(input.TextFormula).
 			SetStatus(input.Status).
 			SetKpiID(input.KpiFk).
 			SetTechID(input.TechFk).
+			SetNetworkTypeID(input.NetworkTypeFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has occurred error on process: %v", err)

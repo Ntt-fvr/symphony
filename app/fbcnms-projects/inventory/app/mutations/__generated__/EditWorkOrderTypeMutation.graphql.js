@@ -25,6 +25,7 @@ export type EditWorkOrderTypeInput = {|
   properties?: ?$ReadOnlyArray<?PropertyTypeInput>,
   checkListCategories?: ?$ReadOnlyArray<CheckListCategoryDefinitionInput>,
   assigneeCanCompleteWorkOrder?: ?boolean,
+  duration?: ?number,
 |};
 export type PropertyTypeInput = {|
   id?: ?string,

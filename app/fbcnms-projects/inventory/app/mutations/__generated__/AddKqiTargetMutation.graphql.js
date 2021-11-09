@@ -17,8 +17,8 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type AddKqiTargetInput = {|
   name: string,
   impact: string,
-  frame: number,
-  alowedValidation: number,
+  period: number,
+  allowedVariation: number,
   initTime: any,
   endTime: any,
   status: boolean,
@@ -32,8 +32,7 @@ export type AddKqiTargetMutationResponse = {|
     +id: string,
     +name: string,
     +impact: string,
-    +frame: number,
-    +alowedValidation: number,
+    +allowedVariation: number,
     +initTime: any,
     +endTime: any,
     +status: boolean,
@@ -67,8 +66,7 @@ mutation AddKqiTargetMutation(
     id
     name
     impact
-    frame
-    alowedValidation
+    allowedVariation
     initTime
     endTime
     status
@@ -143,14 +141,7 @@ v4 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "frame",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "alowedValidation",
+        "name": "allowedVariation",
         "storageKey": null
       },
       {
@@ -242,16 +233,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "22a3370eef2d7429938d14941f418672",
+    "cacheID": "a2acf355f4cf473e18d055c99d028af7",
     "id": null,
     "metadata": {},
     "name": "AddKqiTargetMutation",
     "operationKind": "mutation",
-    "text": "mutation AddKqiTargetMutation(\n  $input: AddKqiTargetInput!\n) {\n  addKqiTarget(input: $input) {\n    id\n    name\n    impact\n    frame\n    alowedValidation\n    initTime\n    endTime\n    status\n    kqiComparator {\n      id\n      number\n      comparatorType\n      kqiTargetFk {\n        id\n        name\n      }\n      comparatorFk {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "mutation AddKqiTargetMutation(\n  $input: AddKqiTargetInput!\n) {\n  addKqiTarget(input: $input) {\n    id\n    name\n    impact\n    allowedVariation\n    initTime\n    endTime\n    status\n    kqiComparator {\n      id\n      number\n      comparatorType\n      kqiTargetFk {\n        id\n        name\n      }\n      comparatorFk {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c5ded0fc594e649036c584cf86a799d7';
+(node/*: any*/).hash = '3c333cd5f77fdea21da4f9992d2ab0f5';
 
 module.exports = node;

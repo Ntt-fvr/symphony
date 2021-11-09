@@ -64,12 +64,14 @@ const WorkOrderSaveButton = (props: Props) => {
       priority,
       assignedTo,
       project,
+      organizationFk,
     } = workOrder;
     const variables: EditWorkOrderMutationVariables = {
       input: {
         id,
         name,
         description,
+        organizationFk: organizationFk?.id || null,
         ownerId: owner.id,
         installDate: installDate ? installDate.toString() : null,
         status,

@@ -167,6 +167,7 @@ const initialWorkforceRules = {
     ...initialBasicRule,
     projectTypeIds: null,
     workOrderTypeIds: null,
+    organizationIds: null,
   },
   data: {
     ...initialWorkforceCUDRules,

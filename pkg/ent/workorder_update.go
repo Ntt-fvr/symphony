@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -170,6 +171,73 @@ func (wou *WorkOrderUpdate) SetNillableCloseDate(t *time.Time) *WorkOrderUpdate 
 // ClearCloseDate clears the value of close_date.
 func (wou *WorkOrderUpdate) ClearCloseDate() *WorkOrderUpdate {
 	wou.mutation.ClearCloseDate()
+	return wou
+}
+
+// SetDuration sets the duration field.
+func (wou *WorkOrderUpdate) SetDuration(f float64) *WorkOrderUpdate {
+	wou.mutation.ResetDuration()
+	wou.mutation.SetDuration(f)
+	return wou
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableDuration(f *float64) *WorkOrderUpdate {
+	if f != nil {
+		wou.SetDuration(*f)
+	}
+	return wou
+}
+
+// AddDuration adds f to duration.
+func (wou *WorkOrderUpdate) AddDuration(f float64) *WorkOrderUpdate {
+	wou.mutation.AddDuration(f)
+	return wou
+}
+
+// ClearDuration clears the value of duration.
+func (wou *WorkOrderUpdate) ClearDuration() *WorkOrderUpdate {
+	wou.mutation.ClearDuration()
+	return wou
+}
+
+// SetSchedulledAt sets the schedulled_at field.
+func (wou *WorkOrderUpdate) SetSchedulledAt(t time.Time) *WorkOrderUpdate {
+	wou.mutation.SetSchedulledAt(t)
+	return wou
+}
+
+// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableSchedulledAt(t *time.Time) *WorkOrderUpdate {
+	if t != nil {
+		wou.SetSchedulledAt(*t)
+	}
+	return wou
+}
+
+// ClearSchedulledAt clears the value of schedulled_at.
+func (wou *WorkOrderUpdate) ClearSchedulledAt() *WorkOrderUpdate {
+	wou.mutation.ClearSchedulledAt()
+	return wou
+}
+
+// SetDueDate sets the due_date field.
+func (wou *WorkOrderUpdate) SetDueDate(t time.Time) *WorkOrderUpdate {
+	wou.mutation.SetDueDate(t)
+	return wou
+}
+
+// SetNillableDueDate sets the due_date field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableDueDate(t *time.Time) *WorkOrderUpdate {
+	if t != nil {
+		wou.SetDueDate(*t)
+	}
+	return wou
+}
+
+// ClearDueDate clears the value of due_date.
+func (wou *WorkOrderUpdate) ClearDueDate() *WorkOrderUpdate {
+	wou.mutation.ClearDueDate()
 	return wou
 }
 
@@ -418,6 +486,21 @@ func (wou *WorkOrderUpdate) SetAssignee(u *User) *WorkOrderUpdate {
 	return wou.SetAssigneeID(u.ID)
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (wou *WorkOrderUpdate) AddAppointmentIDs(ids ...int) *WorkOrderUpdate {
+	wou.mutation.AddAppointmentIDs(ids...)
+	return wou
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (wou *WorkOrderUpdate) AddAppointment(a ...*Appointment) *WorkOrderUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wou.AddAppointmentIDs(ids...)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wou *WorkOrderUpdate) Mutation() *WorkOrderMutation {
 	return wou.mutation
@@ -633,6 +716,27 @@ func (wou *WorkOrderUpdate) ClearAssignee() *WorkOrderUpdate {
 	return wou
 }
 
+// ClearAppointment clears all "appointment" edges to type Appointment.
+func (wou *WorkOrderUpdate) ClearAppointment() *WorkOrderUpdate {
+	wou.mutation.ClearAppointment()
+	return wou
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (wou *WorkOrderUpdate) RemoveAppointmentIDs(ids ...int) *WorkOrderUpdate {
+	wou.mutation.RemoveAppointmentIDs(ids...)
+	return wou
+}
+
+// RemoveAppointment removes appointment edges to Appointment.
+func (wou *WorkOrderUpdate) RemoveAppointment(a ...*Appointment) *WorkOrderUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wou.RemoveAppointmentIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (wou *WorkOrderUpdate) Save(ctx context.Context) (int, error) {
 	var (
@@ -832,6 +936,52 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldCloseDate,
+		})
+	}
+	if value, ok := wou.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wou.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if wou.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wou.mutation.SchedulledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if wou.mutation.SchedulledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if value, ok := wou.mutation.DueDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldDueDate,
+		})
+	}
+	if wou.mutation.DueDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldDueDate,
 		})
 	}
 	if wou.mutation.TypeCleared() {
@@ -1511,6 +1661,60 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if wou.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedAppointmentIDs(); len(nodes) > 0 && !wou.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorder.Label}
@@ -1653,6 +1857,73 @@ func (wouo *WorkOrderUpdateOne) SetNillableCloseDate(t *time.Time) *WorkOrderUpd
 // ClearCloseDate clears the value of close_date.
 func (wouo *WorkOrderUpdateOne) ClearCloseDate() *WorkOrderUpdateOne {
 	wouo.mutation.ClearCloseDate()
+	return wouo
+}
+
+// SetDuration sets the duration field.
+func (wouo *WorkOrderUpdateOne) SetDuration(f float64) *WorkOrderUpdateOne {
+	wouo.mutation.ResetDuration()
+	wouo.mutation.SetDuration(f)
+	return wouo
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableDuration(f *float64) *WorkOrderUpdateOne {
+	if f != nil {
+		wouo.SetDuration(*f)
+	}
+	return wouo
+}
+
+// AddDuration adds f to duration.
+func (wouo *WorkOrderUpdateOne) AddDuration(f float64) *WorkOrderUpdateOne {
+	wouo.mutation.AddDuration(f)
+	return wouo
+}
+
+// ClearDuration clears the value of duration.
+func (wouo *WorkOrderUpdateOne) ClearDuration() *WorkOrderUpdateOne {
+	wouo.mutation.ClearDuration()
+	return wouo
+}
+
+// SetSchedulledAt sets the schedulled_at field.
+func (wouo *WorkOrderUpdateOne) SetSchedulledAt(t time.Time) *WorkOrderUpdateOne {
+	wouo.mutation.SetSchedulledAt(t)
+	return wouo
+}
+
+// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableSchedulledAt(t *time.Time) *WorkOrderUpdateOne {
+	if t != nil {
+		wouo.SetSchedulledAt(*t)
+	}
+	return wouo
+}
+
+// ClearSchedulledAt clears the value of schedulled_at.
+func (wouo *WorkOrderUpdateOne) ClearSchedulledAt() *WorkOrderUpdateOne {
+	wouo.mutation.ClearSchedulledAt()
+	return wouo
+}
+
+// SetDueDate sets the due_date field.
+func (wouo *WorkOrderUpdateOne) SetDueDate(t time.Time) *WorkOrderUpdateOne {
+	wouo.mutation.SetDueDate(t)
+	return wouo
+}
+
+// SetNillableDueDate sets the due_date field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableDueDate(t *time.Time) *WorkOrderUpdateOne {
+	if t != nil {
+		wouo.SetDueDate(*t)
+	}
+	return wouo
+}
+
+// ClearDueDate clears the value of due_date.
+func (wouo *WorkOrderUpdateOne) ClearDueDate() *WorkOrderUpdateOne {
+	wouo.mutation.ClearDueDate()
 	return wouo
 }
 
@@ -1901,6 +2172,21 @@ func (wouo *WorkOrderUpdateOne) SetAssignee(u *User) *WorkOrderUpdateOne {
 	return wouo.SetAssigneeID(u.ID)
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (wouo *WorkOrderUpdateOne) AddAppointmentIDs(ids ...int) *WorkOrderUpdateOne {
+	wouo.mutation.AddAppointmentIDs(ids...)
+	return wouo
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (wouo *WorkOrderUpdateOne) AddAppointment(a ...*Appointment) *WorkOrderUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wouo.AddAppointmentIDs(ids...)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wouo *WorkOrderUpdateOne) Mutation() *WorkOrderMutation {
 	return wouo.mutation
@@ -2116,6 +2402,27 @@ func (wouo *WorkOrderUpdateOne) ClearAssignee() *WorkOrderUpdateOne {
 	return wouo
 }
 
+// ClearAppointment clears all "appointment" edges to type Appointment.
+func (wouo *WorkOrderUpdateOne) ClearAppointment() *WorkOrderUpdateOne {
+	wouo.mutation.ClearAppointment()
+	return wouo
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (wouo *WorkOrderUpdateOne) RemoveAppointmentIDs(ids ...int) *WorkOrderUpdateOne {
+	wouo.mutation.RemoveAppointmentIDs(ids...)
+	return wouo
+}
+
+// RemoveAppointment removes appointment edges to Appointment.
+func (wouo *WorkOrderUpdateOne) RemoveAppointment(a ...*Appointment) *WorkOrderUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wouo.RemoveAppointmentIDs(ids...)
+}
+
 // Save executes the query and returns the updated entity.
 func (wouo *WorkOrderUpdateOne) Save(ctx context.Context) (*WorkOrder, error) {
 	var (
@@ -2313,6 +2620,52 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldCloseDate,
+		})
+	}
+	if value, ok := wouo.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wouo.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if wouo.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wouo.mutation.SchedulledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if wouo.mutation.SchedulledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if value, ok := wouo.mutation.DueDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldDueDate,
+		})
+	}
+	if wouo.mutation.DueDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldDueDate,
 		})
 	}
 	if wouo.mutation.TypeCleared() {
@@ -2984,6 +3337,60 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wouo.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedAppointmentIDs(); len(nodes) > 0 && !wouo.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
 				},
 			},
 		}

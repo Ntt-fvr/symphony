@@ -6,6 +6,7 @@ package authz
 
 import (
 	"context"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 
@@ -123,19 +124,22 @@ func FileCreatePolicyRule() privacy.MutationRule {
 // FileReadPolicyRule grants read permission to file based on policy.
 func FileReadPolicyRule() privacy.QueryRule {
 	return privacy.FileQueryRuleFunc(func(ctx context.Context, q *ent.FileQuery) error {
+		var predicates []predicate.File
 		woPredicate := workOrderReadPredicate(ctx)
 		if woPredicate != nil {
-			q.Where(
-				file.Or(
-					file.Not(file.HasWorkOrder()),
-					file.HasWorkOrderWith(woPredicate)),
-				file.Or(
-					file.Not(file.HasChecklistItem()),
-					file.HasChecklistItemWith(
-						checklistitem.HasCheckListCategoryWith(
-							checklistcategory.HasWorkOrderWith(woPredicate)))),
-			)
+			predicates = append(predicates, file.Or(
+				file.Not(file.HasWorkOrder()), file.HasWorkOrderWith(woPredicate)))
+			predicates = append(predicates, file.Or(
+				file.Not(file.HasChecklistItem()),
+				file.HasChecklistItemWith(
+					checklistitem.HasCheckListCategoryWith(
+						checklistcategory.HasWorkOrderWith(woPredicate)))))
 		}
+		docCatePredicate := DocumentCategoryReadRule(ctx)
+		if docCatePredicate != nil {
+			predicates = append(predicates, file.Or(file.Not(file.HasDocumentCategory()), file.HasDocumentCategoryWith(docCatePredicate)))
+		}
+		q.Where(predicates...)
 		return privacy.Skip
 	})
 }

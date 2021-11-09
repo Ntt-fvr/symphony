@@ -6,6 +6,7 @@ package authz
 
 import (
 	"context"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
@@ -17,13 +18,18 @@ import (
 // HyperlinkReadPolicyRule grants read permission to hyperlink based on policy.
 func HyperlinkReadPolicyRule() privacy.QueryRule {
 	return privacy.HyperlinkQueryRuleFunc(func(ctx context.Context, q *ent.HyperlinkQuery) error {
+		var predicates []predicate.Hyperlink
 		woPredicate := workOrderReadPredicate(ctx)
 		if woPredicate != nil {
-			q.Where(
-				hyperlink.Or(
-					hyperlink.Not(hyperlink.HasWorkOrder()),
-					hyperlink.HasWorkOrderWith(woPredicate)))
+			predicates = append(predicates, hyperlink.Or(
+				hyperlink.Not(hyperlink.HasWorkOrder()),
+				hyperlink.HasWorkOrderWith(woPredicate)))
 		}
+		docCatePredicate := DocumentCategoryReadRule(ctx)
+		if docCatePredicate != nil {
+			predicates = append(predicates, hyperlink.Or(hyperlink.Not(hyperlink.HasDocumentCategory()), hyperlink.HasDocumentCategoryWith(docCatePredicate)))
+		}
+		q.Where(predicates...)
 		return privacy.Skip
 	})
 }

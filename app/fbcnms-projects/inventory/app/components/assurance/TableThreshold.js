@@ -98,10 +98,11 @@ type Rule = {
 type Props = $ReadOnly<{|
   rule: Array<Rule>,
   editRule: void => void,
+  isCompleted: void => void,
 |}>;
 
 export default function DenseTable(props: Props) {
-  const {rule, editRule} = props;
+  const {rule, editRule, isCompleted} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
 
@@ -111,7 +112,7 @@ export default function DenseTable(props: Props) {
     const variables: RemoveRuleMutationVariables = {
       id: id,
     };
-    RemoveRuleMutation(variables);
+    RemoveRuleMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const handleClick = row => {

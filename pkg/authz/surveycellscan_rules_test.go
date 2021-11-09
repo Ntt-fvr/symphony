@@ -22,15 +22,10 @@ func TestSurveyCellScanWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUser)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
+	u.Update().SetOrganizationID(organization.ID).SaveX(ctx)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
-		SaveX(ctx)
-
-	organization := c.Organization.Create().
-		SetCreateTime(time.Now()).
-		SetDescription("Organization").
-		SetName("Organization").
-		SetUpdateTime(time.Now()).
 		SaveX(ctx)
 
 	workOrder := c.WorkOrder.Create().

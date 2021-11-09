@@ -240,6 +240,30 @@ func (f AlarmStatusMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AlarmStatusMutation", m)
 }
 
+// The AppointmentQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AppointmentQueryRuleFunc func(context.Context, *ent.AppointmentQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AppointmentQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppointmentQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AppointmentQuery", q)
+}
+
+// The AppointmentMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AppointmentMutationRuleFunc func(context.Context, *ent.AppointmentMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AppointmentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AppointmentMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppointmentMutation", m)
+}
+
 // The BlockQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type BlockQueryRuleFunc func(context.Context, *ent.BlockQuery) error
@@ -1152,6 +1176,30 @@ func (f KpiMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) e
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.KpiMutation", m)
 }
 
+// The KpiCategoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type KpiCategoryQueryRuleFunc func(context.Context, *ent.KpiCategoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f KpiCategoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.KpiCategoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.KpiCategoryQuery", q)
+}
+
+// The KpiCategoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type KpiCategoryMutationRuleFunc func(context.Context, *ent.KpiCategoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f KpiCategoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.KpiCategoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.KpiCategoryMutation", m)
+}
+
 // The KqiQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type KqiQueryRuleFunc func(context.Context, *ent.KqiQuery) error
@@ -1390,6 +1438,30 @@ func (f LocationTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.LocationTypeMutation", m)
+}
+
+// The NetworkTypeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NetworkTypeQueryRuleFunc func(context.Context, *ent.NetworkTypeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NetworkTypeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NetworkTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NetworkTypeQuery", q)
+}
+
+// The NetworkTypeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NetworkTypeMutationRuleFunc func(context.Context, *ent.NetworkTypeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NetworkTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NetworkTypeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NetworkTypeMutation", m)
 }
 
 // The OrganizationQueryRuleFunc type is an adapter to allow the use of ordinary

@@ -40,6 +40,14 @@ export type AddFormulaItemFormQueryResponse = {|
       |}
     |}>
   |},
+  +networkTypes: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
 |};
 export type AddFormulaItemFormQuery = {|
   variables: AddFormulaItemFormQueryVariables,
@@ -67,6 +75,14 @@ query AddFormulaItemFormQuery {
     }
   }
   techs {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  networkTypes {
     edges {
       node {
         id
@@ -190,6 +206,38 @@ v1 = [
       }
     ],
     "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "NetworkTypeConnection",
+    "kind": "LinkedField",
+    "name": "networkTypes",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "NetworkTypeEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "NetworkType",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v0/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -210,16 +258,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f9929192c6cec2612095aa19cba4b6bc",
+    "cacheID": "3d280dca4f0396b4fdb97a30b4e817ad",
     "id": null,
     "metadata": {},
     "name": "AddFormulaItemFormQuery",
     "operationKind": "query",
-    "text": "query AddFormulaItemFormQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  techs {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddFormulaItemFormQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  techs {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  networkTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0d901e1711014704d0c2e85d9ba09379';
+(node/*: any*/).hash = '1a271a36b7f64330e684f3f06de4f5b5';
 
 module.exports = node;

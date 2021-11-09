@@ -23,6 +23,7 @@ export type UserManagementUtils_workforcePolicy = {|
     +isAllowed: PermissionValue,
     +projectTypeIds: ?$ReadOnlyArray<string>,
     +workOrderTypeIds: ?$ReadOnlyArray<string>,
+    +organizationIds: ?$ReadOnlyArray<string>,
   |},
   +templates: {|
     +create: {|
@@ -101,6 +102,13 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "workOrderTypeIds",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "organizationIds",
           "storageKey": null
         }
       ],
@@ -214,6 +222,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd110f4f516c9551f09b4cd7f70c6849b';
+(node/*: any*/).hash = '6e0ede76cc84c737b1384c598f467940';
 
 module.exports = node;

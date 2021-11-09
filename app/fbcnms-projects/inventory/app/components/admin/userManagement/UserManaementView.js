@@ -26,6 +26,8 @@ import PermissionsPolicyCard from './policies/PermissionsPolicyCard';
 import PopoverMenu from '@symphony/design-system/components/Select/PopoverMenu';
 import Strings from '@fbcnms/strings/Strings';
 import UsersView from './users/UsersView';
+import OrganizationsView, { ORGANIZATION_HEADER, ORGANIZATION_SUBHEADER} from './organizations/OrganizationsView';
+import OrganizationsCard from './organizations/OrganizationsCard';
 import fbt from 'fbt';
 import {ALL_USERS_PATH_PARAM, USER_PATH_PARAM} from './users/UsersTable';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
@@ -49,6 +51,8 @@ const UserManaementForm = () => {
   const match = useRouteMatch();
   const basePath = match.path;
   const [addingNewUser, setAddingNewUser] = useState(false);
+
+  const gotoOrganizationsPage = useCallback(()=> history.push(`${basePath}/organizations`), [history, basePath]);
   const gotoGroupsPage = useCallback(() => history.push(`${basePath}/groups`), [
     history,
     basePath,
@@ -157,8 +161,40 @@ const UserManaementForm = () => {
         },
         relatedMenuItemIndex: 3,
       },
+      {
+        routingPath: 'organizations',
+        menuItem: {
+          label: ORGANIZATION_HEADER,
+          tooltip: `${ORGANIZATION_HEADER}`,
+        },
+        component: {
+          header: {
+            title: `${ORGANIZATION_HEADER}`,
+            subtitle: `${ORGANIZATION_SUBHEADER}`,
+            actionButtons: [
+              <Button onClick={() => history.push(`organization/${NEW_DIALOG_PARAM}`)}>
+                <fbt desc="">Create organization</fbt>
+              </Button>,
+            ],
+          },
+          children: <OrganizationsView />,
+        },
+
+      },
+      {
+        routingPath: 'organization/:id',
+        component: {
+          children: (
+            <OrganizationsCard
+              redirectToOrganizationsView={gotoOrganizationsPage}
+              onClose={gotoOrganizationsPage}
+            />
+          ),
+        },
+        relatedMenuItemIndex: 5,
+      },
     ],
-    [gotoGroupsPage, gotoPoliciesPage, history],
+    [gotoGroupsPage, gotoPoliciesPage, gotoOrganizationsPage, history],
   );
 
   return (

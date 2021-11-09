@@ -21,30 +21,30 @@ import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation AddKqiMutation($input: AddKqiInput!) {
-		addKqi(input: $input) {
-			id
-			name
-			description
-			formula
-			startDateTime
-			endDateTime
-			kqiCategory {
-				id
-				name
-			}
-			kqiPerspective {
-				id
-				name
-			}
-			kqiSource {
-				id
-				name
-			}
-			kqiTemporalFrequency {
-				id
-				name
-			}
-		}
+    addKqi(input: $input) {
+      id
+      name
+      description
+      formula
+      startDateTime
+      endDateTime
+      kqiCategory {
+        id
+        name
+      }
+      kqiPerspective {
+        id
+        name
+      }
+      kqiSource {
+        id
+        name
+      }
+      kqiTemporalFrequency {
+        id
+        name
+      }
+    }
   }
 `;
 

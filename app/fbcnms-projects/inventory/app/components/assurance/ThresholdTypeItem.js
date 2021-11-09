@@ -22,9 +22,9 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import DialogConfirmDelete from './DialogConfirmDelete';
 import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -33,62 +33,39 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
     marginBottom: '7px',
   },
-  panel: {
-    cursor: 'default',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
   container: {
     align: 'center',
+    '& .MuiAccordionSummary-root': {
+      padding: '1px 16px',
+    },
     '&.MuiPaper-elevation1': {
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  details: {},
-  rootGrid: {
-    flexGrow: '1',
-    alignSelf: 'center',
+  switchButton: {
+    flexWrap: 'nowrap',
   },
   nameThreshold: {
-    fontWeight: 'bold',
-    paddingLeft: '15px',
-  },
-  thr: {
-    color: '#3984FF',
-    fontWeight: 'bold',
-  },
-  typeRed: {
-    color: '#3984FF',
-    fontWeight: 'bold',
-  },
-  editIcon: {
-    flexGrow: '1',
-    margin: '10px',
+    paddingLeft: '0.25rem',
   },
   deleteIcon: {
-    flexGrow: '1',
-    margin: '10px',
+    marginRight: '1rem',
     color: DARK.D300,
-  },
-  button: {
-    marginLeft: '20%',
   },
   rulesContained: {
     margin: '10px 0',
   },
-  description: {
+  descriptionKpi: {
     marginBottom: '20px',
   },
-  table: {
+  tableRules: {
     marginBottom: '30px',
   },
 }));
@@ -134,11 +111,13 @@ type Props = $ReadOnly<{|
   kpi: {
     name: string,
   },
+  deleteItem: string,
   edit: void,
   status: boolean,
   addRule: void => void,
   editRule: void => void,
   handleRemove: void => void,
+  isCompleted: void => void,
   rule: Array<Rule>,
 |}>;
 
@@ -153,11 +132,13 @@ export default function ThresholdTypeItem(props: Props) {
     addRule,
     editRule,
     rule,
-    handleRemove,
+    deleteItem,
+    isCompleted,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(status);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleClick = () => {
     const variables: EditThresholdMutationVariables = {
@@ -176,52 +157,81 @@ export default function ThresholdTypeItem(props: Props) {
       <Accordion className={classes.container} expanded={open}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
-          classes={{
-            root: classes.panel,
-          }}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs={3} container alignItems="center">
-            <FormField label="">
+          <Grid container xs={12}>
+            <Grid
+              className={classes.switchButton}
+              xs={2}
+              md={3}
+              container
+              alignItems="center">
               <Switch
                 title={''}
                 checked={status}
                 onChange={setChecked}
                 onClick={handleClick}
               />
-            </FormField>
-            <Text className={classes.nameThreshold}>{name}</Text>
-          </Grid>
+              <Text
+                weight="bold"
+                useEllipsis={true}
+                className={classes.nameThreshold}>
+                {name}
+              </Text>
+            </Grid>
 
-          <Grid xs={3} container alignItems="center">
-            <Button variant="text">
-              <Text>{id}</Text>
-            </Button>
-          </Grid>
+            <Grid
+              xs={2}
+              md={3}
+              container
+              alignItems="center"
+              justifyContent="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true}>{id}</Text>
+              </Button>
+            </Grid>
 
-          <Grid xs={3} container className={classes.rootGrid}>
-            <Button variant="text">
-              <Text className={classes.typeRed}>{kpi?.name}</Text>
-            </Button>
-          </Grid>
+            <Grid
+              xs={3}
+              md={2}
+              container
+              alignItems="center"
+              justifyContent="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true} weight="bold" color="primary">
+                  {kpi?.name}
+                </Text>
+              </Button>
+            </Grid>
 
-          <Grid xs={3} container className={classes.rootGrid}>
-            <AddButton
-              disabled={false}
-              textButton={'Add rule'}
-              onClick={addRule}
-            />
-          </Grid>
-          <Grid xs={1} container justify="flex-end" alignItems="center">
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-              onClick={handleRemove}
-            />
-            <IconButton
-              className={classes.editIcon}
-              icon={EditIcon}
-              onClick={edit}
-            />
+            <Grid
+              xs={3}
+              md={2}
+              lg={2}
+              xl={3}
+              container
+              justify="center"
+              alignItems="center">
+              <AddButton
+                disabled={false}
+                textButton={'Add rule'}
+                onClick={addRule}
+              />
+            </Grid>
+            <Grid
+              xs={2}
+              md={2}
+              lg={2}
+              xl={1}
+              container
+              justify="flex-end"
+              alignItems="center">
+              <DeleteOutlinedIcon
+                className={classes.deleteIcon}
+                onClick={() => setDialogOpen(true)}
+              />
+              <IconButton icon={EditIcon} onClick={edit} />
+            </Grid>
           </Grid>
         </AccordionSummary>
 
@@ -233,21 +243,33 @@ export default function ThresholdTypeItem(props: Props) {
             xs={12}
             justify="center"
             alignItems="center">
-            <Grid xs={10} className={classes.description}>
+            <Grid xs={10} className={classes.descriptionKpi}>
               Description: {description}
             </Grid>
-            <Grid className={classes.table} xs={10}>
+            <Grid className={classes.tableRules} xs={10}>
               <Text
                 className={classes.rulesContained}
                 weight="bold"
                 variant="subtitle1">
                 {'Rules contained'}
               </Text>
-              <TableThreshold rule={rule} editRule={editRule} />
+              <TableThreshold
+                rule={rule}
+                editRule={editRule}
+                isCompleted={isCompleted}
+              />
             </Grid>
           </Grid>
         </AccordionDetails>
       </Accordion>
+      {dialogOpen && (
+        <DialogConfirmDelete
+          name={'threshold'}
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          deleteItem={deleteItem}
+        />
+      )}
     </div>
   );
 }
