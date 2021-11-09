@@ -310,10 +310,12 @@ const KqiFormCreate = (props: Props) => {
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Start" className={classes.formField}>
+                  <FormField className={classes.formField}>
                     <TextField
                       name="startDateTime"
                       variant="outlined"
+                      label="Start"
+                      InputLabelProps={{ shrink: true }}
                       id="datetime-local"
                       type="datetime-local"
                       className={classes.calendar}
@@ -322,10 +324,12 @@ const KqiFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="End" className={classes.formField}>
+                  <FormField className={classes.formField}>
                     <TextField
                       name="endDateTime"
                       variant="outlined"
+                      label="End"
+                      InputLabelProps={{ shrink: true }}
                       id="datetime-local"
                       type="datetime-local"
                       className={classes.calendar}

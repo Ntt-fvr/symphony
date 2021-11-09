@@ -89,16 +89,16 @@ const useStyles = makeStyles(() => ({
   },
   calendar: {
     '& .MuiOutlinedInput-input': {
-      height: '12px',
+      height: '24px',
     },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: 'rgba(157, 169, 190, 0.49)',
-      },
-      '&:hover fieldset': {
-        borderColor: 'rgba(157, 169, 190, 0.49)',
-      },
-    },
+    // '& .MuiOutlinedInput-root': {
+    //   '& fieldset': {
+    //     borderColor: 'rgba(157, 169, 190, 0.49)',
+    //   },
+    //   '&:hover fieldset': {
+    //     borderColor: 'rgba(157, 169, 190, 0.49)',
+    //   },
+    // },
   },
 }));
 
@@ -249,10 +249,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Start">
+                  <FormField className={classes.formField}>
                     <TextField
                       className={classes.calendar}
                       variant="outlined"
+                      label="Start"
+                      InputLabelProps={{ shrink: true }}
                       id="datetime-local"
                       type="datetime-local"
                       name="beginTime"
@@ -261,10 +263,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="End">
+                  <FormField className={classes.formField}>
                     <TextField
                       className={classes.calendar}
                       variant="outlined"
+                      label="End"
+                      InputLabelProps={{ shrink: true }}
                       id="datetime-local"
                       type="datetime-local"
                       name="endTime"
