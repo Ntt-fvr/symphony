@@ -56,16 +56,30 @@ const EquipmentDocumentsCard = (props: Props) => {
         hyperlinks {
           ...EntityDocumentsTable_hyperlinks
         }
+        parentLocation {
+          locationType {
+            documentCategories {
+              id
+              name
+            }
+          }
+        }
       }
     `,
     equipment,
   );
-
   const documents = useMemo(
     () => [...data.files.filter(Boolean), ...data.images.filter(Boolean)],
     [data],
   );
 
+  const categories = useMemo(
+    () => {
+      const parentLocation = data?.parentLocation || {}
+      return [...parentLocation.locationType?.documentCategories.map((item: any) => ({id: item.id, name: item.name}))] 
+    },
+    [data],
+  );
   return (
     <Card className={className}>
       <CardHeader
@@ -77,20 +91,12 @@ const EquipmentDocumentsCard = (props: Props) => {
             <AddHyperlinkButton
               entityType="EQUIPMENT"
               entityId={data.id}
-              categories={[
-                {id: '279172874268', name: 'ATP'},
-                {id: '279172874269', name: 'Correo de notificación'},
-                {id: '279172874275', name: 'Categoria nueva'},
-              ]}
+              categories={categories}
             />
             <DocumentsAddButton
               entityType="EQUIPMENT"
               entityId={data.id}
-              categories={[
-                {id: '279172874268', name: 'ATP'},
-                {id: '279172874269', name: 'Correo de notificación'},
-                {id: '279172874275', name: 'Categoria nueva'},
-              ]}
+              categories={categories}
             />
           </div>
         }>

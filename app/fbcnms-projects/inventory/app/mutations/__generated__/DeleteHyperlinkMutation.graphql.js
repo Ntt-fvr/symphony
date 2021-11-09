@@ -52,6 +52,10 @@ fragment HyperlinkTableRow_hyperlink on Hyperlink {
   url
   displayName
   createTime
+  documentCategory {
+    id
+    name
+  }
   ...HyperlinkTableMenu_hyperlink
 }
 */
@@ -70,7 +74,14 @@ v1 = [
     "name": "id",
     "variableName": "id"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -112,13 +123,7 @@ return {
         "name": "deleteHyperlink",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -146,6 +151,25 @@ return {
             "kind": "ScalarField",
             "name": "createTime",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "DocumentCategory",
+            "kind": "LinkedField",
+            "name": "documentCategory",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -153,12 +177,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0fc995c7813121e9e5a2debc4ac5f652",
+    "cacheID": "3caa1d8fe7eabbbaeca1f2462ace2997",
     "id": null,
     "metadata": {},
     "name": "DeleteHyperlinkMutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteHyperlinkMutation(\n  $id: ID!\n) {\n  deleteHyperlink(id: $id) {\n    ...HyperlinkTableRow_hyperlink\n    id\n  }\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  ...HyperlinkTableMenu_hyperlink\n}\n"
+    "text": "mutation DeleteHyperlinkMutation(\n  $id: ID!\n) {\n  deleteHyperlink(id: $id) {\n    ...HyperlinkTableRow_hyperlink\n    id\n  }\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  documentCategory {\n    id\n    name\n  }\n  ...HyperlinkTableMenu_hyperlink\n}\n"
   }
 };
 })();

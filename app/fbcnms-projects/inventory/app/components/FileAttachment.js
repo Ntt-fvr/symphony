@@ -161,7 +161,7 @@ class FileAttachment extends React.Component<Props, State> {
       <TableRow key={file.id} hover={false}>
         {categoriesEnabled && (
           <TableCell padding="none" component="th" scope="row">
-            {file.category}
+            {file?.documentCategory?.name || file?.category}
           </TableCell>
         )}
         <TableCell padding="none" component="th" scope="row">
@@ -273,6 +273,10 @@ export default withStyles(styles)(
         storeKey
         category
         annotation
+        documentCategory{
+          id
+          name
+        }
         ...ImageDialog_img
       }
     `,

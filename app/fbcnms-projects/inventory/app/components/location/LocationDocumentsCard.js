@@ -41,15 +41,9 @@ type Props = $ReadOnly<{|
   location: LocationDocumentsCard_location$key,
 |}>;
 
-type dcCat = $ReadOnly<{|
-  id?: number,
-  name?: string,
-|}>;
-
 const LocationDocumentsCard = (props: Props) => {
   const {className, location} = props;
   const classes = useStyles();
-  console.log('===location ====', location);
 
   const data: LocationDocumentsCard_location$data = useFragment(
     graphql`
@@ -62,83 +56,32 @@ const LocationDocumentsCard = (props: Props) => {
           ...EntityDocumentsTable_files
         }
         hyperlinks {
-          ...EntityDocumentsTable_hyperlinks @relay(mask: false)
+          ...EntityDocumentsTable_hyperlinks
         }
         locationType {
           documentCategories {
             id
             name
-            index
-            filesByEntity(entity: LOCATION, entityID: $locationId) {
-              id
-              fileName
-              sizeInBytes
-              modified
-              uploaded
-              fileType
-              mimeType
-              storeKey
-              category
-              annotation
-            }
-            hyperlinksByEntity(entity: LOCATION, entityID: $locationId) {
-              id
-              url
-              displayName
-              category
-              createTime
-            }
           }
         }
       }
     `,
     location,
   );
-
-  console.log('===DATA v2====', data);
-
-  const documents = useMemo(() => {
-    return data.locationType.documentCategories.map(item => {
-      const category = item?.name;
-      const files = [
-        ...(item?.filesByEntity.map(doc => {
-          return {...doc, category};
-        }) || []),
-      ];
-      const hyperlinks = [
-        ...(item?.hyperlinksByEntity.map(doc => {
-          return {...doc, category};
-        }) || []),
-      ];
-      return {files, hyperlinks};
-    });
-  }, [data]);
-  console.log('===documents====', documents);
-
-  const files = useMemo(() => [...documents.flatMap(item => item.files)], [
-    documents,
-  ]);
-
-  console.log('===files====', files);
-
-  const hyperlinks = useMemo(
-    () => [...documents.flatMap(item => item.hyperlinks)],
-    [documents],
+  console.log("data", data)
+  const documents = useMemo(
+    () => [...data.files.filter(Boolean), ...data.images.filter(Boolean)],
+    [data],
   );
-
   const categories = useMemo(
-    () => [
-      ...data.locationType.documentCategories.map((item: any) => {
-        return {id: item.id, name: item.name};
-      }),
-    ],
+    () => [...data.locationType.documentCategories.map((item: any) => ({id: item.id, name: item.name}))],
     [data],
   );
   return (
     <Card className={className}>
       <CardHeader
         className={classNames({
-          [classes.cardHasNoContent]: files.length === 0,
+          [classes.cardHasNoContent]: documents.length === 0,
         })}
         rightContent={
           <div className={classes.actionButtonsContainer}>
@@ -159,8 +102,8 @@ const LocationDocumentsCard = (props: Props) => {
       <EntityDocumentsTable
         entityType="LOCATION"
         entityId={data.id}
-        files={files}
-        hyperlinks={hyperlinks}
+        files={documents}
+        hyperlinks={data.hyperlinks}
       />
     </Card>
   );
