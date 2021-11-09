@@ -24,7 +24,8 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
-import TextInput from '@symphony/design-system/components/Input/TextInput';
+import Text from '@symphony/design-system/components/Text';
+import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useValidation} from './common/useValidation';
@@ -36,14 +37,42 @@ const useStyles = makeStyles(theme => ({
   formField: {
     margin: '0 20px 30px 20px',
   },
+  formField: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
+  },
   textInput: {
     minHeight: '36px',
   },
   header: {
-    margin: '20px 0 30px 20px',
+    margin: '20px 0 24px 0',
   },
   addCounter: {
-    margin: '20px',
+    margin: '15px 0',
     width: '135px',
     alignSelf: 'flex-end',
   },
@@ -116,20 +145,23 @@ export const KqiSourceAddForm = (props: Props) => {
 
   return (
     <Card className={classes.root}>
-      <CardHeader className={classes.header}>Add KQI Source</CardHeader>
-      <FormField
-        {...validationName}
-        className={classes.formField}
-        label="Name"
-        required>
-        <TextInput
+      <CardHeader className={classes.header}>
+        <Text useEllipsis={true} variant="h6" weight="bold">
+          Add KQI Source
+        </Text>
+      </CardHeader>
+      <form className={classes.formField} autoComplete="off">
+        <TextField
+          {...validationName}
+          required
+          fullWidth
           className={classes.textInput}
+          label="Name"
+          variant="outlined"
           name="name"
-          type="string"
           onChange={handleChange}
-          autoComplete="off"
         />
-      </FormField>
+      </form>
       <FormField>
         <Button
           className={classes.addCounter}
