@@ -20,9 +20,10 @@ import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategorie
 import type {ContextRouter} from 'react-router-dom';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Property} from '../../common/Property';
-import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
+import type {DocumentCategoryNode} from '../../common/LocationType';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql.js';
+import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
 import AddHyperlinkMutation from '../../mutations/AddHyperlinkMutation';
@@ -73,10 +74,12 @@ import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
 
+import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import {useSnackbar} from 'notistack';
-import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
 import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
+
+type LocationNamedNode = {id: string, name: ?string};
 type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
   onWorkOrderRemoved: () => void,
@@ -168,11 +171,16 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
+  const locationTypeID = workOrder.location?.locationType.id;
 
-  const useCategories = useDocumentCategoryByLocationTypeNodes(
-    workOrder.location?.locationType.id,
+  const [
+    locationType,
+    setLocationType,
+  ] = useState<?$ReadOnlyArray<DocumentCategoryNode>>(
+    !!locationTypeID
+      ? useDocumentCategoryByLocationTypeNodes(locationTypeID)
+      : null,
   );
-  const disabledLinkToLocation = !!useCategories.length;
 
   const [properties, setProperties] = useState<Array<Property>>(
     propsWorkOrder.properties
@@ -819,7 +827,7 @@ const WorkOrderDetails = ({
                       title="Attachments"
                       rightContent={
                         <div className={classes.uploadButtonContainer}>
-                          {disabledLinkToLocation ? (
+                          {!!locationType ? (
                             <IconButton
                               icon={ApplyIcon}
                               disabled={
@@ -868,10 +876,10 @@ const WorkOrderDetails = ({
                           ...propsWorkOrder.files,
                           ...propsWorkOrder.images,
                         ]}
-                        categories={useCategories}
+                        categories={locationType || [{id: '', name: ''}]}
                         hyperlinks={propsWorkOrder.hyperlinks}
                         onChecked={countDispatch}
-                        linkToLocationOptions={disabledLinkToLocation}
+                        linkToLocationOptions={!!locationType}
                       />
                     </ExpandingPanel>
                     <ChecklistCategoriesMutateDispatchContext.Provider
