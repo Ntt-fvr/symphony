@@ -35,20 +35,17 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 0,
     padding: '30px',
     margin: '0',
-    maxHeight: 'calc(100vh - 57px)',
   },
-  table: {
-    height: 'calc(100% - 69px)',
+  titleKpi: {
+    margin: '0 0 1rem 0',
   },
   listContainer: {
-    width: '100%',
-    position: 'relative',
     overflow: 'auto',
     paddingRight: '9px',
-    height: 'calc(100% - 30.49px)',
+    maxHeight: 'calc(95vh - 156px)',
     '&::-webkit-scrollbar': {
       width: '9px',
     },
@@ -70,9 +67,6 @@ const useStyles = makeStyles(() => ({
     '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
       background: '#d4d4d4',
     },
-  },
-  listCarKpi: {
-    listStyle: 'none',
   },
 }));
 
@@ -247,8 +241,8 @@ const KpiTypes = () => {
   }
 
   return (
-    <Grid className={classes.root} container spacing={2}>
-      <Grid item xs={12}>
+    <Grid className={classes.root} container spacing={0}>
+      <Grid className={classes.titleKpi} item xs={12}>
         <ConfigureTitle
           title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
           subtitle={fbt(
@@ -257,62 +251,57 @@ const KpiTypes = () => {
           )}
         />
       </Grid>
-      <Grid
-        className={classes.table}
-        item
-        xs={12}
-        sm={12}
-        md={12}
-        lg={9}
-        xl={9}>
-        <TitleTextCardsKpi />
-        <List disablePadding className={classes.listContainer}>
-          {dataKpis.kpis?.edges.map((item, index) => (
-            <KpiTypeItem
-              key={index}
-              threshold={dataKpis.thresholds?.edges}
-              deleteItem={() => handleRemove(item.node.id)}
-              edit={() => showEditKpiItemForm({item})}
-              handleFormulaClick={handleFormulaClick}
-              parentCallback={handleCallback}
-              handleEditFormulaClick={handleEditFormulaClick}
-              parentEditCallback={handleEditCallback}
+      <Grid spacing={1} container>
+        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+          <TitleTextCardsKpi />
+          <List disablePadding className={classes.listContainer}>
+            {dataKpis.kpis?.edges.map((item, index) => (
+              <KpiTypeItem
+                key={index}
+                threshold={dataKpis.thresholds?.edges}
+                deleteItem={() => handleRemove(item.node.id)}
+                edit={() => showEditKpiItemForm({item})}
+                handleFormulaClick={handleFormulaClick}
+                parentCallback={handleCallback}
+                handleEditFormulaClick={handleEditFormulaClick}
+                parentEditCallback={handleEditCallback}
+                isCompleted={isCompleted}
+                {...item.node}
+              />
+            ))}
+          </List>
+        </Grid>
+        <Grid item xs={12} sm={12} lg={3} xl={3}>
+          <AddKpiItemForm
+            kpiNames={dataKpis.kpis?.edges}
+            isCompleted={isCompleted}
+          />
+          <AddFormulaItemForm
+            parentCallback={handleCallback}
+            handleClick={handleFormulaClick}
+          />
+          {openDialog && (
+            <AddFormulaDialog
+              open={openDialog}
+              dataFormula={formulaForm}
+              dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+              onClose={() => {
+                setOpenDialog(false);
+              }}
               isCompleted={isCompleted}
-              {...item.node}
             />
-          ))}
-        </List>
-      </Grid>
-      <Grid item xs={12} sm={12} lg={3} xl={3}>
-        <AddKpiItemForm
-          kpiNames={dataKpis.kpis?.edges}
-          isCompleted={isCompleted}
-        />
-        <AddFormulaItemForm
-          parentCallback={handleCallback}
-          handleClick={handleFormulaClick}
-        />
-        {openDialog && (
-          <AddFormulaDialog
-            open={openDialog}
-            dataFormula={formulaForm}
-            dataCounter={dataKpis.counters?.edges.map(item => item.node)}
-            onClose={() => {
-              setOpenDialog(false);
-            }}
-            isCompleted={isCompleted}
-          />
-        )}
-        {openEditDialog && (
-          <EditFormulaDialog
-            open={openEditDialog}
-            dataFormula={formulaEditForm}
-            onClose={() => {
-              setOpenEditDialog(false);
-            }}
-            isCompleted={isCompleted}
-          />
-        )}
+          )}
+          {openEditDialog && (
+            <EditFormulaDialog
+              open={openEditDialog}
+              dataFormula={formulaEditForm}
+              onClose={() => {
+                setOpenEditDialog(false);
+              }}
+              isCompleted={isCompleted}
+            />
+          )}
+        </Grid>
       </Grid>
     </Grid>
   );
