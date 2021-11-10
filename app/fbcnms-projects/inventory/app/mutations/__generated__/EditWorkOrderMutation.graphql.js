@@ -1350,7 +1350,17 @@ v44 = {
   "name": "annotation",
   "storageKey": null
 },
-v45 = [
+v45 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "DocumentCategory",
+  "kind": "LinkedField",
+  "name": "documentCategory",
+  "plural": false,
+  "selections": (v18/*: any*/),
+  "storageKey": null
+},
+v46 = [
   (v2/*: any*/),
   (v39/*: any*/),
   (v34/*: any*/),
@@ -1358,16 +1368,17 @@ v45 = [
   (v41/*: any*/),
   (v42/*: any*/),
   (v43/*: any*/),
-  (v44/*: any*/)
+  (v44/*: any*/),
+  (v45/*: any*/)
 ],
-v46 = {
+v47 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "createTime",
   "storageKey": null
 },
-v47 = {
+v48 = {
   "alias": null,
   "args": null,
   "concreteType": "User",
@@ -1380,7 +1391,7 @@ v47 = {
   ],
   "storageKey": null
 },
-v48 = [
+v49 = [
   (v36/*: any*/),
   (v2/*: any*/),
   {
@@ -1392,14 +1403,14 @@ v48 = [
     "abstractKey": null
   }
 ],
-v49 = {
+v50 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "title",
   "storageKey": null
 },
-v50 = {
+v51 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -1586,7 +1597,7 @@ return {
             "kind": "LinkedField",
             "name": "images",
             "plural": true,
-            "selections": (v45/*: any*/),
+            "selections": (v46/*: any*/),
             "storageKey": null
           },
           {
@@ -1596,7 +1607,7 @@ return {
             "kind": "LinkedField",
             "name": "files",
             "plural": true,
-            "selections": (v45/*: any*/),
+            "selections": (v46/*: any*/),
             "storageKey": null
           },
           {
@@ -1623,7 +1634,8 @@ return {
                 "name": "displayName",
                 "storageKey": null
               },
-              (v46/*: any*/)
+              (v47/*: any*/),
+              (v45/*: any*/)
             ],
             "storageKey": null
           },
@@ -1636,8 +1648,8 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v46/*: any*/),
               (v47/*: any*/),
+              (v48/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1657,8 +1669,8 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v46/*: any*/),
               (v47/*: any*/),
+              (v48/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1680,7 +1692,7 @@ return {
                 "kind": "LinkedField",
                 "name": "newRelatedNode",
                 "plural": false,
-                "selections": (v48/*: any*/),
+                "selections": (v49/*: any*/),
                 "storageKey": null
               },
               {
@@ -1690,7 +1702,7 @@ return {
                 "kind": "LinkedField",
                 "name": "oldRelatedNode",
                 "plural": false,
-                "selections": (v48/*: any*/),
+                "selections": (v49/*: any*/),
                 "storageKey": null
               },
               {
@@ -1767,7 +1779,7 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v49/*: any*/),
+              (v50/*: any*/),
               (v4/*: any*/),
               {
                 "alias": null,
@@ -1781,7 +1793,7 @@ return {
                   (v24/*: any*/),
                   (v33/*: any*/),
                   (v23/*: any*/),
-                  (v49/*: any*/),
+                  (v50/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -1874,7 +1886,7 @@ return {
                         "name": "signalStrength",
                         "storageKey": null
                       },
-                      (v50/*: any*/),
+                      (v51/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1994,7 +2006,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
-                      (v50/*: any*/),
+                      (v51/*: any*/),
                       {
                         "alias": null,
                         "args": null,
