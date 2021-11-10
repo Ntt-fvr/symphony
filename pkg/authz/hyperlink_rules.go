@@ -6,12 +6,12 @@ package authz
 
 import (
 	"context"
-	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 

@@ -6,9 +6,9 @@ package authz
 
 import (
 	"context"
-	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
