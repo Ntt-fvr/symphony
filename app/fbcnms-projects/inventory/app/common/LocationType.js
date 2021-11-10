@@ -63,8 +63,8 @@ const locationTypeNodesQuery = graphql`
   }
 `;
 
-const locationTypeNodessQuery = graphql`
-  query LocationTypeNodessQuery {
+const locationTypeNodesOnDocumentQuery = graphql`
+  query LocationTypeNodesOnDocumentQuery {
     locationTypes {
       edges {
         node {
@@ -103,9 +103,9 @@ export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   return locationTypes;
 }
 
-export function useLocationTypeNodess(): $ReadOnlyArray<LocationTypeNode> {
+export function useLocationTypeNodesOnDocuments(): $ReadOnlyArray<LocationTypeNode> {
   const response = useLazyLoadQuery<LocationTypeNodesQuery>(
-    locationTypeNodessQuery,
+    locationTypeNodesOnDocumentQuery,
     {},
   );
   const locationTypesData = response.locationTypes?.edges || [];

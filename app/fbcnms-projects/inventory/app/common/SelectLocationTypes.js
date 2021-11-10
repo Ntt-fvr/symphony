@@ -17,7 +17,7 @@ import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {
-  useLocationTypeNodess,
+  useLocationTypeNodesOnDocuments,
   useDocumentCategoryByLocationTypeNodes,
 } from './LocationType';
 import {useState, useCallback} from 'react';
@@ -48,14 +48,14 @@ function SelectLocationTypes(props: LocationTypesTokenizerProps) {
     onSelectChange,
     ...rest
   } = props;
-  const locationTypes = useLocationTypeNodess();
+  const locationTypes = useLocationTypeNodesOnDocuments();
 
   const [selectedLocationValue, setSelectedLocationValue] = useState(
     selectLocationIdOnDocumentCategory !== 0
       ? selectLocationIdOnDocumentCategory?.toString()
       : null,
   );
-  
+
   const documentCategoriesByLocationTypeID = useDocumentCategoryByLocationTypeNodes(selectedLocationValue);
 
   const callOnSelectChange = useCallback(

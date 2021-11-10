@@ -14,8 +14,8 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type LocationTypeNodessQueryVariables = {||};
-export type LocationTypeNodessQueryResponse = {|
+export type LocationTypeNodesOnDocumentQueryVariables = {||};
+export type LocationTypeNodesOnDocumentQueryResponse = {|
   +locationTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -25,15 +25,15 @@ export type LocationTypeNodessQueryResponse = {|
     |}>
   |}
 |};
-export type LocationTypeNodessQuery = {|
-  variables: LocationTypeNodessQueryVariables,
-  response: LocationTypeNodessQueryResponse,
+export type LocationTypeNodesOnDocumentQuery = {|
+  variables: LocationTypeNodesOnDocumentQueryVariables,
+  response: LocationTypeNodesOnDocumentQueryResponse,
 |};
 */
 
 
 /*
-query LocationTypeNodessQuery {
+query LocationTypeNodesOnDocumentQuery {
   locationTypes {
     edges {
       node {
@@ -100,7 +100,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "LocationTypeNodessQuery",
+    "name": "LocationTypeNodesOnDocumentQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -109,20 +109,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "LocationTypeNodessQuery",
+    "name": "LocationTypeNodesOnDocumentQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "02f2ce3546ca7eb7186147b541f8927c",
+    "cacheID": "2bacf18a6a4f17e3083c359fb736f16e",
     "id": null,
     "metadata": {},
-    "name": "LocationTypeNodessQuery",
+    "name": "LocationTypeNodesOnDocumentQuery",
     "operationKind": "query",
-    "text": "query LocationTypeNodessQuery {\n  locationTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query LocationTypeNodesOnDocumentQuery {\n  locationTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '53cb1c9988e6fb5712e89c0cbb7da269';
+(node/*: any*/).hash = 'f497bfe184cf51ac72c5dbdf06c4c24b';
 
 module.exports = node;
