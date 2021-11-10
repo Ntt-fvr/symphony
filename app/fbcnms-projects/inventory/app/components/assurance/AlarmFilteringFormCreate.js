@@ -10,7 +10,7 @@
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -30,6 +30,8 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useValidation} from './common/useValidation';
+
+import type {Node} from './AlarmFilteringTypes';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 
@@ -64,15 +66,31 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  button: {
+    width: '100%',
+    height: '36px',
+  },
+  buttonActive: {
+    border: '1px solid #00AF5B',
+    color: '#00AF5B',
+    fontSize: '14px',
+  },
+  buttonPending: {
+    border: '1px solid #FFB63E',
+    color: '#FFB63E',
+    fontSize: '14px',
+  },
+  buttonClosed: {
+    border: '1px solid #8895AD',
+    color: '#8895AD',
+    fontSize: '14px',
+  },
 }));
 
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
   isCompleted: void => void,
-  alarms: {
-    id: string,
-    name: string,
-  },
+  alarms?: Array<Node>,
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
@@ -81,8 +99,9 @@ const AlarmFilteringFormCreate = (props: Props) => {
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
+  const elementRef = useRef();
 
-  const namesAlarms = alarms.map(item => item.node.name);
+  const namesAlarms = alarms?.map(item => item.node.name);
 
   const handleDisable = useDisabledButton(AlarmFilter.data, namesAlarms, 5);
 
@@ -239,6 +258,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     ).format()}
                     beginDate={moment(AlarmFilter.data.beginTime).format()}
                     endDate={moment(AlarmFilter.data.endTime).format()}
+                    forwardedRef={elementRef}
                   />
                 </Grid>
                 <Grid

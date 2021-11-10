@@ -9,7 +9,7 @@
  */
 import Button from '@material-ui/core/Button';
 
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
 
@@ -55,8 +55,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  edit: () => void,
-  onChange: () => void,
+  edit: ({}) => void,
   dataValues: any,
 |}>;
 
@@ -66,6 +65,7 @@ const AlarmFilteringTable = (props: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [checked, setChecked] = useState();
+  const elementRef = useRef();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -118,6 +118,7 @@ const AlarmFilteringTable = (props: Props) => {
                       creationDate={item.creationTime}
                       beginDate={item.beginTime}
                       endDate={item.endTime}
+                      forwardedRef={elementRef}
                     />
                   </TableCell>
                   <TableCell>

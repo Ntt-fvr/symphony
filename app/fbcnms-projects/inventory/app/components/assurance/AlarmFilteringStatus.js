@@ -41,38 +41,46 @@ type Props = $ReadOnly<{|
   creationDate: string,
   beginDate: string,
   endDate: string,
+  forwardedRef: any,
 |}>;
 
 export const AlarmFilteringStatus = (props: Props) => {
-  const {creationDate, beginDate, endDate} = props;
+  const {beginDate, endDate, forwardedRef} = props;
   const classes = useStyles();
 
   return (
     <>
-      {moment(creationDate).format() <= moment(beginDate).format() ||
-        (moment(creationDate).format() <= moment(endDate).format() && (
+      {moment().format() <= moment(beginDate).format() ||
+        (moment().format() <= moment(endDate).format() && (
           <Button
+            ref={forwardedRef}
             variant="outlined"
+            weight="bold"
             name="alarmStatus"
+            value="Active"
             className={classNames(classes.button, classes.buttonActive)}>
             {'Active'}
           </Button>
         ))}
-      {moment(creationDate).format() > moment(endDate).format() && (
+      {moment().format() > moment(endDate).format() && (
         <Button
+          ref={forwardedRef}
           variant="outlined"
           weight="bold"
           name="alarmStatus"
+          value="Closed"
           className={classNames(classes.button, classes.buttonClosed)}>
           {'Closed'}
         </Button>
       )}
-      {moment(creationDate).format() < moment(beginDate).format() &&
-        moment(creationDate).format() < moment(endDate).format() && (
+      {moment().format() < moment(beginDate).format() &&
+        moment().format() < moment(endDate).format() && (
           <Button
+            ref={forwardedRef}
             variant="outlined"
             weight="bold"
             name="alarmStatus"
+            value="Pending"
             className={classNames(classes.button, classes.buttonPending)}>
             {'Pending'}
           </Button>
