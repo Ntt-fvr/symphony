@@ -345,8 +345,6 @@ function PermissionsPolicyCard(props: Props) {
   if (policy == null) {
     return null;
   }
-  console.log('F---Document--\n', policy.inventoryRules?.documentCategory);
-  console.log('F---Location--\n', policy.inventoryRules?.location);
   return (
     <InventoryErrorBoundary>
       <FormContextProvider permissions={{adminRightsRequired: true}}>

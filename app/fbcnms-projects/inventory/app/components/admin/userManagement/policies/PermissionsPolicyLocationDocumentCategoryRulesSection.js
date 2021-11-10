@@ -41,7 +41,6 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   ...PermissionsPolicyRulesSectionDisplayProps,
-  locationRule: LocationCUDPermissions,
   documentRule: DocumentCRUDPermissions,
   onChange?: DocumentCRUDPermissions => void,
 |}>;
@@ -50,7 +49,6 @@ const PermissionsPolicyLocationDocumentCategoryRulesSection = (
   props: Props,
 ) => {
   const {
-    locationRule,
     onChange,
     documentRule,
     disabled,
@@ -86,43 +84,19 @@ const PermissionsPolicyLocationDocumentCategoryRulesSection = (
     [onChange],
   );
 
-  // const callOnChangeWithCUDPermissions = useCallback(
-  //   (readRule: DocumentCRUDPermissions) => {
-  //     callOnChange({
-  //       ...documentRule,
-  //       ...readRule,
-  //       locationTypeID: readRule.locationTypeID,
-  //       read: {
-  //         ...documentRule.update,
-  //         ...readRule.update,
-  //       },
-  //     });
-  //   },
-  //   [documentRule, callOnChange],
-  // );
-  const callOnChangeWithCUDPermissions = useCallback(
-    (readRule: DocumentCRUDPermissions) => {
-      console.log('pepe');
-      console.log(readRule);
-    },
-    [documentRule, callOnChange],
-  );
-
   return (
     <PermissionsPolicySelectRulesSection
       rule={rule}
-      onChange={callOnChangeWithCUDPermissions}
+      onChange={()=>{}}
       secondLevelRulesClassName={classes.secondLevelBox}
       policySpecifications={
         <PermissionsPolicyLocationSelectRulesSpecification
-          locationRule={locationRule}
           documentRule={documentRule}
           onChange={callOnChange}
           disabled={disabled}
           className={classes.secondLevelBox}
         />
       }
-      // disabled={disabled}
       {...permissionsPolicyRulesSectionDisplayProps}
     />
   );

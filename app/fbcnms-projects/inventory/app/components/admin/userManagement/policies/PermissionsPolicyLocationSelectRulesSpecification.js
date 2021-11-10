@@ -74,10 +74,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  locationRule: LocationCUDPermissions,
   documentRule: DocumentCRUDPermissions,
   onChange: DocumentCRUDPermissions => void,
-
   disabled?: ?boolean,
   className?: ?string,
 |}>;
@@ -88,23 +86,8 @@ const METHOD_SELECTED_LOCATIONS_VALUE = 1;
 export default function PermissionsPolicyLocationSelectRulesSpecification(
   props: Props,
 ) {
-  const {locationRule, documentRule, onChange, disabled, className} = props;
+  const {documentRule, onChange, disabled, className} = props;
   const classes = useStyles();
-
-  const policyMethods = useMemo(() => {
-    const methods = [];
-    methods[METHOD_ALL_LOCATIONS_VALUE] = {
-      label: <fbt desc="">All locations</fbt>,
-      value: METHOD_ALL_LOCATIONS_VALUE,
-      key: METHOD_ALL_LOCATIONS_VALUE,
-    };
-    methods[METHOD_SELECTED_LOCATIONS_VALUE] = {
-      label: <fbt desc="">Selected</fbt>,
-      value: METHOD_SELECTED_LOCATIONS_VALUE,
-      key: METHOD_SELECTED_LOCATIONS_VALUE,
-    };
-    return methods;
-  }, []);
 
   const options = useMemo(() => {
     const methods = [];
@@ -123,18 +106,10 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
     return methods;
   }, []);
 
-  const selectedLocationTypesCount =
-    locationRule.update.locationTypeIds?.length || 0;
-  const selectedLocationForCategoriesTypesCount =
-    documentRule.locationTypeID || 0;
+  const selectedLocationType = documentRule.locationTypeID || 0;
 
-  const [policyMethod, setPolicyMethod] = useState(
-    selectedLocationTypesCount > 0
-      ? METHOD_SELECTED_LOCATIONS_VALUE
-      : METHOD_ALL_LOCATIONS_VALUE,
-  );
   const [policySelectMethod, setPolicySelectMethod] = useState(
-    selectedLocationForCategoriesTypesCount > 0
+    selectedLocationType > 0
       ? METHOD_SELECTED_LOCATIONS_VALUE.toString()
       : METHOD_ALL_LOCATIONS_VALUE.toString(),
   );
@@ -162,7 +137,7 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
     },
     [onChange, documentRule],
   );
-
+  
   const callSetPermissionSelectMethod = useCallback(
     newPermissionMethod => {
       setPolicySelectMethod(newPermissionMethod);
@@ -170,32 +145,11 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
     },
     [updateUpdateRuleByMethod],
   );
-
-  const callSetPermissionMethod = useCallback(
-    newPermissionMethod => {
-      setPolicyMethod(newPermissionMethod);
-      updateUpdateRuleByMethod(newPermissionMethod);
-    },
-    [updateUpdateRuleByMethod],
-  );
-
-  useEffect(() => {
-    if (
-      locationRule.update.isAllowed === PERMISSION_RULE_VALUES.YES &&
-      policyMethod === METHOD_SELECTED_LOCATIONS_VALUE
-    ) {
-      updateUpdateRuleByMethod(policyMethod);
-    }
-  }, [locationRule.update.isAllowed, policyMethod, updateUpdateRuleByMethod]);
-
   const alerts = useFormAlertsContext();
   const emptyRequiredTypesSelectionErrorMessage = alerts.error.check({
     fieldId: 'location_types_selection',
     fieldDisplayName: 'Policies applied location types selection',
-    value:
-      permissionRuleValue2Bool(locationRule.update.isAllowed) &&
-      policyMethod === METHOD_SELECTED_LOCATIONS_VALUE &&
-      selectedLocationTypesCount === 0,
+    value: policySelectMethod === METHOD_SELECTED_LOCATIONS_VALUE.toString() && !((documentRule.read?.documentCategoryIds || []).length),
     checkCallback: missingRequiredSelection =>
       missingRequiredSelection
         ? `${fbt('At least one location type must be selected.', '')}`
@@ -229,7 +183,6 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
           errorText={emptyRequiredTypesSelectionErrorMessage}
           hasError={!!emptyRequiredTypesSelectionErrorMessage}>
           <SelectLocationTypes
-            selectedLocationTypeIds={locationRule.update.locationTypeIds}
             disabled={policySelectMethod === '0' ? true : false}
             selectLocationIdOnDocumentCategory={documentRule?.locationTypeID}
             selectedDocumentCategoriesIds={
@@ -239,6 +192,7 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
               onChange({
                 ...documentRule,
                 read: {
+                  ...documentRule.read,
                   documentCategoryIds: newDocumentCategoryIds,
                   isAllowed: 'BY_CONDITION',
                 },

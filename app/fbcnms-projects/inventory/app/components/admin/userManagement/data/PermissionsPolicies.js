@@ -469,7 +469,6 @@ function response2PermissionsPolicies(
 export function addPermissionsPolicy(
   newPolicyValue: PermissionsPolicy,
 ): Promise<PermissionsPolicy> {
-  console.log(newPolicyValue);
   return new Promise<PermissionsPolicy>((resolve, reject) => {
     const callbacks: MutationCallbacks<AddPermissionsPolicyMutationResponse> = {
       onCompleted: (response, errors) => {

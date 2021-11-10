@@ -17,7 +17,7 @@ import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {
-  useLocationTypeNodes,
+  useLocationTypeNodess,
   useDocumentCategoryByLocationTypeNodes,
 } from './LocationType';
 import {useState, useCallback} from 'react';
@@ -33,7 +33,6 @@ const useStyles = makeStyles(() => ({
 
 type LocationTypesTokenizerProps = $ReadOnly<{|
   ...TokenizerDisplayProps,
-  selectedLocationTypeIds?: ?$ReadOnlyArray<string>,
   selectLocationIdOnDocumentCategory: ?number,
   selectedDocumentCategoriesIds?: ?$ReadOnlyArray<string>,
   onSelectedLocationTypesIdsChange?: ($ReadOnlyArray<string>) => void,
@@ -43,24 +42,21 @@ type LocationTypesTokenizerProps = $ReadOnly<{|
 function SelectLocationTypes(props: LocationTypesTokenizerProps) {
   const classes = useStyles();
   const {
-    selectedLocationTypeIds,
     selectLocationIdOnDocumentCategory,
     onSelectedLocationTypesIdsChange,
     selectedDocumentCategoriesIds,
     onSelectChange,
     ...rest
   } = props;
-  const locationTypes = useLocationTypeNodes();
+  const locationTypes = useLocationTypeNodess();
 
   const [selectedLocationValue, setSelectedLocationValue] = useState(
     selectLocationIdOnDocumentCategory !== 0
       ? selectLocationIdOnDocumentCategory?.toString()
       : null,
   );
-
-  const documentCategoriesByLocationTypeID = useDocumentCategoryByLocationTypeNodes(
-    selectedLocationValue,
-  );
+  
+  const documentCategoriesByLocationTypeID = useDocumentCategoryByLocationTypeNodes(selectedLocationValue);
 
   const callOnSelectChange = useCallback(
     (newLocation: string) => {
@@ -94,12 +90,12 @@ function SelectLocationTypes(props: LocationTypesTokenizerProps) {
       <Text variant="body2" color="gray" className={classes.paddingBottom}>
         <fbt desc="">Choose Document Categories this policy applies to</fbt>
       </Text>
-      <StaticNamedNodesTokenizerBySelect
+      {selectedLocationValue && <StaticNamedNodesTokenizerBySelect
         allNamedNodes={documentCategoriesByLocationTypeID}
         selectedNodeIds={selectedDocumentCategoriesIds}
         onSelectedNodeIdsChange={onSelectedLocationTypesIdsChange}
         {...rest}
-      />
+      />}
     </>
   );
 }

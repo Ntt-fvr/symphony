@@ -50,7 +50,7 @@ type ViewTab = $ReadOnly<{|
 export default function PermissionsPolicyRulesPane(props: Props) {
   const {policy, onChange, className} = props;
   const classes = useStyles();
-  const [activeTab, setActiveTab] = useState(2);
+  const [activeTab, setActiveTab] = useState(0);
   const callOnInventoryChange = useCallback(
     inventoryRules =>
       onChange({

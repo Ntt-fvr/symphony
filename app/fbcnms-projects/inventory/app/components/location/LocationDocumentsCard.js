@@ -68,7 +68,6 @@ const LocationDocumentsCard = (props: Props) => {
     `,
     location,
   );
-  console.log("data", data)
   const documents = useMemo(
     () => [...data.files.filter(Boolean), ...data.images.filter(Boolean)],
     [data],

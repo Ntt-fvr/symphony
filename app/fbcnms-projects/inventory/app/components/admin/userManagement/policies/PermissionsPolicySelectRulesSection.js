@@ -146,42 +146,9 @@ export default function PermissionsPolicySelectRulesSection(props: Props) {
   const [rule, setRule] = useState<DocumentCRUDPermissions>(ruleProp);
   useEffect(() => setRule(ruleProp), [ruleProp]);
 
-  const updateRuleChange = useCallback(
-    (cudAction: string & DocumentCRUDPermissionsKey) => (
-      actionValue: BasicPermissionRule, //TODO-Revisar si es basic
-    ) => {
-      setRule(currentRule => {
-        const newRuleValue: DocumentCRUDPermissions = {
-          ...currentRule,
-          [cudAction]: actionValue,
-        };
-        if (onChange != null) {
-          onChange(newRuleValue);
-        }
-        return newRuleValue;
-      });
-    },
-    [onChange],
-  );
-
   if (rule == null) {
     return null;
   }
-
-  const dependantDataRules: Array<{
-    key: DocumentCRUDPermissionsKey,
-    title: React.Node,
-  }> = [
-    {
-      key: 'create',
-      title: fbt('Add', ''),
-    },
-    {
-      key: 'delete',
-      title: fbt('Delete', ''),
-    },
-  ];
-
   return (
     <div className={classNames(classes.section, className)}>
       <div className={classes.header}>

@@ -63,6 +63,19 @@ const locationTypeNodesQuery = graphql`
   }
 `;
 
+const locationTypeNodessQuery = graphql`
+  query LocationTypeNodessQuery {
+    locationTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 const locationType2DocumentCategoryNodesQuery = graphql`
   query LocationType2DocumentCategoryNodesQuery($ltID: ID) {
     documentCategories(locationTypeID: $ltID) {
@@ -82,6 +95,17 @@ export type DocumentCategoryNode = $Exact<OptionalNamedNode>;
 export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   const response = useLazyLoadQuery<LocationTypeNodesQuery>(
     locationTypeNodesQuery,
+    {},
+  );
+  const locationTypesData = response.locationTypes?.edges || [];
+  const locationTypes = locationTypesData.map(p => p.node).filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+  return locationTypes;
+}
+
+export function useLocationTypeNodess(): $ReadOnlyArray<LocationTypeNode> {
+  const response = useLazyLoadQuery<LocationTypeNodesQuery>(
+    locationTypeNodessQuery,
     {},
   );
   const locationTypesData = response.locationTypes?.edges || [];

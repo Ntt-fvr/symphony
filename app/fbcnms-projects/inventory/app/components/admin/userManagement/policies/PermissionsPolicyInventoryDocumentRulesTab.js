@@ -29,15 +29,6 @@ import Tokenizer from '@symphony/design-system/components/Token/Tokenizer';
 import {makeStyles} from '@material-ui/styles';
 import {useContext} from 'react';
 
-export const ALL_TOKENS = [
-  {key: '0', label: 'ATP'},
-  {key: '1', label: 'Topología'},
-  {key: '2', label: 'Site Folder'},
-  {key: '3', label: 'Correo de notificación'},
-  {key: '4', label: 'Archivos de TSS'},
-  {key: '5', label: 'Archivos de simulación'},
-];
-
 const useStyles = makeStyles(() => ({
   root: {
     marginLeft: '4px',
@@ -98,23 +89,6 @@ export default function PermissionsPolicyInventoryDocumentRulesTab(
   const readAllowed = permissionRuleValue2Bool(policy.read.isAllowed);
   const isDisabled = onChange == null;
 
-  const [selectedLocationValue, setSelectedLocationValue] = useState(null);
-  const [queryString, setQueryString] = useState('');
-  const [tokens, setTokens] = useState([
-    {
-      key: '0',
-      label: 'ATP',
-    },
-    {
-      key: '1',
-      label: 'Topología',
-    },
-    {
-      key: '2',
-      label: 'Site Folder',
-    },
-  ]);
-
   return (
     <div className={classNames(classes.root, className)}>
       {userManagementDevMode ? (
@@ -143,7 +117,6 @@ export default function PermissionsPolicyInventoryDocumentRulesTab(
           '',
         )}
         disabled={isDisabled || !readAllowed}
-        locationRule={policy.location}
         documentRule={policy.documentCategory}
         className={classes.section}
         onChange={
@@ -156,52 +129,6 @@ export default function PermissionsPolicyInventoryDocumentRulesTab(
             : undefined
         }
       />
-
-      {/* <div className={classes.radioGroup}>
-        <RadioGroup
-          options={options}
-          value={selectedValue}
-          onChange={value => setSelectedValue(value)}
-          className={classes.radioGroupInline}
-          optionClassName={classes.radioGroupInlineItem}
-        />
-      </div>
-      <div className={classes.radioGroup}>
-        <Select
-          className={classes.select}
-          disabled={selectedValue == 'all' ? true : false}
-          label="Location"
-          options={locationTypes.map(location => ({
-            key: location.id,
-            label: location.name,
-            value: location.id,
-          }))}
-          selectedValue={selectedLocationValue}
-          size="full"
-          onChange={value => setSelectedLocationValue(value)}
-        />
-      </div>
-      <div className={classes.sectionHeader}>
-        <Text variant="subtitle1">
-          <fbt desc="">Documents</fbt>
-        </Text>
-        <Text variant="subtitle2" color="gray">
-          <fbt desc="">
-            Mauris vel turpis felis. Integer viverra ac lorem et rutrum.
-          </fbt>
-        </Text>
-      </div>
-      <div className="classes">
-        <Tokenizer
-          tokens={tokens}
-          onTokensChange={setTokens}
-          queryString={queryString}
-          onQueryStringChange={setQueryString}
-          dataSource={{
-            fetchNetwork: _searchTerm => Promise.resolve(ALL_TOKENS),
-          }}
-        />
-      </div> */}
     </div>
   );
 }
