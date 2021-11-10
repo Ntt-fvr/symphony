@@ -35,17 +35,17 @@ function TitleTextCardsCounter() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={3}>
+      <Grid item xs={6}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Counter name
         </Text>
       </Grid>
-      <Grid xs={4}>
+      <Grid item xs={3}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Network Manager System
         </Text>
       </Grid>
-      <Grid xs={3}>
+      <Grid item xs={2}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Vendor name
         </Text>
@@ -55,7 +55,7 @@ function TitleTextCardsCounter() {
         alignItems="center"
         justify="flex-end"
         className={classes.action}
-        xs={2}>
+        xs={1}>
         <Text
           className={classes.accionDelete}
           useEllipsis={true}
