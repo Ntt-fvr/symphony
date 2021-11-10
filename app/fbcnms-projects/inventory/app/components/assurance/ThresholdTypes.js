@@ -63,9 +63,6 @@ const useStyles = makeStyles(() => ({
       background: '#d4d4d4',
     },
   },
-  // table: {
-  //   height: 'calc(100% - 69px)',
-  // },
 }));
 
 const ThresholdQuery = graphql`
