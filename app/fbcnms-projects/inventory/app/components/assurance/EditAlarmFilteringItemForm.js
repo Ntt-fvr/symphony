@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -39,6 +39,9 @@ import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useValidationEdit} from './common/useValidation';
 
+import type {Node} from './AlarmFilteringTypes';
+
+import classNames from 'classnames';
 import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
@@ -72,6 +75,25 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  button: {
+    width: '100%',
+    height: '36px',
+  },
+  buttonActive: {
+    border: '1px solid #00AF5B',
+    color: '#00AF5B',
+    fontSize: '14px',
+  },
+  buttonPending: {
+    border: '1px solid #FFB63E',
+    color: '#FFB63E',
+    fontSize: '14px',
+  },
+  buttonClosed: {
+    border: '1px solid #8895AD',
+    color: '#8895AD',
+    fontSize: '14px',
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -87,17 +109,10 @@ type Props = $ReadOnly<{|
       reason: string,
       user: string,
       creationTime: string,
-      alarmStatus: {
-        id: string,
-        name: string,
-      },
     },
   },
   isCompleted: void => void,
-  alarms: {
-    id: string,
-    name: string,
-  },
+  alarms?: Array<Node>,
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
@@ -115,8 +130,16 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
   const [checked, setChecked] = useState(formValues.item.enable);
+  const [valueStatus, setValueStatus] = useState();
+  const elementRef = useRef();
 
-  const namesAlarms = alarms.map(item => item.node.name);
+  useEffect(() => {
+    setValueStatus(elementRef.current?.value);
+  }, []);
+
+  const DisableButton = valueStatus === 'Active';
+
+  const namesAlarms = alarms?.map(item => item.node.name);
 
   const dataInputsObject = [
     name.value.trim(),
@@ -226,6 +249,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <TextInput
                     {...name}
                     autoComplete="off"
+                    disabled
                     name="name"
                     type="string"
                   />
@@ -261,6 +285,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="Start">
                     <TextField
                       {...beginTime}
+                      disabled={DisableButton}
                       className={classes.calendar}
                       autoComplete="off"
                       variant="outlined"
@@ -296,6 +321,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     creationDate={creationTime.value}
                     beginDate={beginTime.value}
                     endDate={endTime.value}
+                    forwardedRef={elementRef}
                   />
                 </Grid>
                 <Grid
@@ -305,7 +331,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   xl={10}
                   className={classes.gridStyleRight}>
                   <FormField label="ID">
-                    <TextInput name="id" disabled {...id} />
+                    <TextInput name="id" {...id} disabled />
                   </FormField>
                 </Grid>
               </Grid>
