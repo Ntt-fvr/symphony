@@ -93,14 +93,6 @@ const useStyles = makeStyles(() => ({
     '& .MuiOutlinedInput-input': {
       height: '24px',
     },
-    // '& .MuiOutlinedInput-root': {
-    //   '& fieldset': {
-    //     borderColor: 'rgba(157, 169, 190, 0.49)',
-    //   },
-    //   '&:hover fieldset': {
-    //     borderColor: 'rgba(157, 169, 190, 0.49)',
-    //   },
-    // },
   },
   button: {
     width: '100%',
@@ -273,7 +265,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                       className={classes.calendar}
                       variant="outlined"
                       label="Start"
-                      InputLabelProps={{ shrink: true }}
+                      InputLabelProps={{shrink: true}}
                       id="datetime-local"
                       type="datetime-local"
                       name="beginTime"
@@ -287,7 +279,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                       className={classes.calendar}
                       variant="outlined"
                       label="End"
-                      InputLabelProps={{ shrink: true }}
+                      InputLabelProps={{shrink: true}}
                       id="datetime-local"
                       type="datetime-local"
                       name="endTime"

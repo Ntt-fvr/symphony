@@ -35,9 +35,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
   },
   formField: {
-    margin: '0 20px 30px 20px',
-  },
-  formField: {
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#B8C2D3',
     },
