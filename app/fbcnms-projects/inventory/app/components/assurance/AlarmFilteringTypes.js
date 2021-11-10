@@ -53,20 +53,24 @@ const AlarmFilteringQuery = graphql`
     }
   }
 `;
-type Alarms = {
+
+export type Node = {
+  node: {
+    name: string,
+  },
+};
+
+export type Alarms = {
   item: {
-    node: {
-      id: string,
-      name: string,
-      networkResource: string,
-      enable: boolean,
-      beginTime: string,
-      endTime: string,
-      reason: string,
-      user: string,
-      creationTime: string,
-      alarmStatus: string,
-    },
+    id: string,
+    name: string,
+    networkResource: string,
+    enable: boolean,
+    beginTime: string,
+    endTime: string,
+    reason: string,
+    user: string,
+    creationTime: string,
   },
 };
 

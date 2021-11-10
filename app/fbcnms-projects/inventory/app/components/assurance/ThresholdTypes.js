@@ -30,17 +30,17 @@ import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    padding: '40px',
+    flexGrow: 0,
+    padding: '30px',
     margin: '0',
-    maxHeight: 'calc(100vh - 57px)',
+  },
+  titleThreshold: {
+    margin: '0 0 1rem 0',
   },
   listContainer: {
-    width: '100%',
-    position: 'relative',
     overflow: 'auto',
     paddingRight: '9px',
-    height: 'calc(100% - 31.74px)',
+    maxHeight: 'calc(95vh - 156px)',
     '&::-webkit-scrollbar': {
       width: '9px',
     },
@@ -62,9 +62,6 @@ const useStyles = makeStyles(() => ({
     '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
       background: '#d4d4d4',
     },
-  },
-  table: {
-    height: 'calc(100% - 69px)',
   },
 }));
 
@@ -246,8 +243,14 @@ const ThresholdTypes = () => {
 
   return (
     <ThresholdProvider>
-      <Grid className={classes.root} container spacing={3}>
-        <Grid item xs={12} sm={12} lg={9} xl={9}>
+      <Grid className={classes.root} container spacing={0}>
+        <Grid
+          className={classes.titleThreshold}
+          item
+          xs={12}
+          sm={12}
+          lg={9}
+          xl={9}>
           <ConfigureTitle
             title={fbt('Thresholds', 'Threshold Title')}
             subtitle={fbt(
@@ -256,28 +259,29 @@ const ThresholdTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.table} item xs={12} sm={12} lg={9} xl={9}>
-          <TitleTextCardsThresholds />
-
-          <List disablePadding className={classes.listContainer}>
-            {dataThreshold.thresholds?.edges.map((item, index) => (
-              <ThresholdTypeItem
-                key={index}
-                deleteItem={() => handleRemove(item.node?.id)}
-                edit={() => showEditThresholdItemForm({item})}
-                addRule={() => showAddRuleItemForm({item})}
-                editRule={() => showEditRuleItemForm({item})}
-                isCompleted={isCompleted}
-                {...item?.node}
-              />
-            ))}
-          </List>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={3} xl={3}>
-          <AddThresholdItemForm
-            thresholdNames={dataThreshold.thresholds?.edges}
-            isCompleted={isCompleted}
-          />
+        <Grid spacing={1} container>
+          <Grid item xs={12} sm={12} lg={9} xl={9}>
+            <TitleTextCardsThresholds />
+            <List disablePadding className={classes.listContainer}>
+              {dataThreshold.thresholds?.edges.map((item, index) => (
+                <ThresholdTypeItem
+                  key={index}
+                  deleteItem={() => handleRemove(item.node?.id)}
+                  edit={() => showEditThresholdItemForm({item})}
+                  addRule={() => showAddRuleItemForm({item})}
+                  editRule={() => showEditRuleItemForm({item})}
+                  isCompleted={isCompleted}
+                  {...item?.node}
+                />
+              ))}
+            </List>
+          </Grid>
+          <Grid item xs={12} sm={12} lg={3} xl={3}>
+            <AddThresholdItemForm
+              thresholdNames={dataThreshold.thresholds?.edges}
+              isCompleted={isCompleted}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </ThresholdProvider>
