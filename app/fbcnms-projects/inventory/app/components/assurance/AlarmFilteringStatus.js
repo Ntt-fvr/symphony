@@ -45,7 +45,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 export const AlarmFilteringStatus = (props: Props) => {
-  const {creationDate, beginDate, endDate, forwardedRef} = props;
+  const {beginDate, endDate, forwardedRef} = props;
   const classes = useStyles();
 
   return (
@@ -57,7 +57,7 @@ export const AlarmFilteringStatus = (props: Props) => {
             variant="outlined"
             weight="bold"
             name="alarmStatus"
-            value='Active'
+            value="Active"
             className={classNames(classes.button, classes.buttonActive)}>
             {'Active'}
           </Button>
@@ -68,7 +68,7 @@ export const AlarmFilteringStatus = (props: Props) => {
           variant="outlined"
           weight="bold"
           name="alarmStatus"
-          value='Closed'
+          value="Closed"
           className={classNames(classes.button, classes.buttonClosed)}>
           {'Closed'}
         </Button>
@@ -80,7 +80,7 @@ export const AlarmFilteringStatus = (props: Props) => {
             variant="outlined"
             weight="bold"
             name="alarmStatus"
-            value='Pending'
+            value="Pending"
             className={classNames(classes.button, classes.buttonPending)}>
             {'Pending'}
           </Button>

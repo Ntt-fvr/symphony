@@ -9,7 +9,7 @@
  */
 import Button from '@material-ui/core/Button';
 
-import React, {useState, useRef} from 'react';
+import React, {useRef, useState} from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
 
@@ -65,8 +65,8 @@ const AlarmFilteringTable = (props: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [checked, setChecked] = useState();
-  const elementRef = useRef()
-  
+  const elementRef = useRef();
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };

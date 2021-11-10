@@ -10,7 +10,7 @@
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useRef, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -31,9 +31,9 @@ import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useValidation} from './common/useValidation';
 
-import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
-import classNames from 'classnames';
 import type {Node} from './AlarmFilteringTypes';
+
+import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -99,7 +99,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
-  const elementRef = useRef()
+  const elementRef = useRef();
 
   const namesAlarms = alarms?.map(item => item.node.name);
 

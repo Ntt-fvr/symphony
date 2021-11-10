@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -39,9 +39,10 @@ import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useValidationEdit} from './common/useValidation';
 
-import {DARK} from '@symphony/design-system/theme/symphony';
-import classNames from 'classnames';
 import type {Node} from './AlarmFilteringTypes';
+
+import classNames from 'classnames';
+import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -111,16 +112,11 @@ type Props = $ReadOnly<{|
     },
   },
   isCompleted: void => void,
-  alarms?: Array<Node>
+  alarms?: Array<Node>,
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
-  const {
-    closeEditForm,
-    formValues,
-    isCompleted,
-    alarms,
-  } = props;
+  const {closeEditForm, formValues, isCompleted, alarms} = props;
   const classes = useStyles();
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
@@ -135,14 +131,14 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const creationTime = useFormInput(formValues.item.creationTime);
   const [checked, setChecked] = useState(formValues.item.enable);
   const [valueStatus, setValueStatus] = useState();
-  let elementRef = useRef();
-  
+  const elementRef = useRef();
+
   useEffect(() => {
-    setValueStatus(elementRef.current?.value)
+    setValueStatus(elementRef.current?.value);
   }, []);
-  
+
   const DisableButton = valueStatus === 'Active';
-  
+
   const namesAlarms = alarms?.map(item => item.node.name);
 
   const dataInputsObject = [
