@@ -11,7 +11,6 @@ import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -52,34 +51,26 @@ const AlarmFilteringQuery = graphql`
         }
       }
     }
-    alarmStatus {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
   }
 `;
-export type alarmStatus = {
-  id: string;
-  name: string;
-}
-type Alarms = {
+
+export type Node = {
+  node: {
+    name: string,
+  },
+};
+
+export type Alarms = {
   item: {
-    node: {
-      id: string,
-      name: string,
-      networkResource: string,
-      enable: boolean,
-      beginTime: string,
-      endTime: string,
-      reason: string,
-      user: string,
-      creationTime: string,
-      alarmStatus: string,
-    },
+    id: string,
+    name: string,
+    networkResource: string,
+    enable: boolean,
+    beginTime: string,
+    endTime: string,
+    reason: string,
+    user: string,
+    creationTime: string,
   },
 };
 
@@ -115,7 +106,6 @@ const AlarmFilteringTypes = () => {
     return (
       <AlarmFilteringFormCreate
         alarms={alarms}
-        dataAlarmStatus={DataAlarms.alarmStatus?.edges.map(item => item.node)}
         returnTableAlarm={() => setShowForm(false)}
         isCompleted={isCompleted}
       />
@@ -126,7 +116,6 @@ const AlarmFilteringTypes = () => {
     return (
       <EditAlarmFilteringItemForm
         alarms={alarms}
-        dataAlarmStatus={DataAlarms.alarmStatus?.edges.map(item => item.node)}
         closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
         isCompleted={isCompleted}

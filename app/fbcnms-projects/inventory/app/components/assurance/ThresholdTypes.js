@@ -28,7 +28,7 @@ import AddRuleItemForm from './AddRuleItemForm';
 import EditRuleItemForm from './EditRuleItemForm';
 import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
     padding: '40px',
@@ -273,7 +273,7 @@ const ThresholdTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
+        <Grid item xs={12} sm={12} lg={3} xl={3}>
           <AddThresholdItemForm
             thresholdNames={dataThreshold.thresholds?.edges}
             isCompleted={isCompleted}

@@ -38,6 +38,7 @@ import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidation} from './common/useValidation';
 
 const AddRuleQuery = graphql`
   query AddRuleItemFormQuery {
@@ -203,11 +204,7 @@ const AddRuleItemForm = (props: Props) => {
 
   const handleDisable = useDisabledButton(rule.data, namesRules, numberFields);
 
-  const validationName = () => {
-    if (namesRules?.some(item => item === rule.data.name)) {
-      return {hasError: true, errorText: 'Rule name existing'};
-    }
-  };
+  const validationName = useValidation(rule.data.name, namesRules, 'Rule');
 
   function handleChange({target}) {
     setRule({
@@ -291,7 +288,7 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField
-                  {...validationName()}
+                  {...validationName}
                   className={classes.formField}
                   label="Rule Name"
                   required>

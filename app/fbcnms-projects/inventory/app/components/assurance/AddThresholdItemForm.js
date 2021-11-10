@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 
 import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
@@ -29,6 +29,7 @@ import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidation} from './common/useValidation';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -137,9 +138,10 @@ export default function AddThresholdItemForm(props: Props) {
   );
   const handleDisable = useDisabledButton(thresholds.data, names, 3);
 
-  const handleHasError = useMemo(
-    () => names?.some(item => item === thresholds.data.name),
-    [names, thresholds.data.name],
+  const validationName = useValidation(
+    thresholds.data.name,
+    names,
+    'Threshold',
   );
 
   function handleChange({target}) {
@@ -190,18 +192,13 @@ export default function AddThresholdItemForm(props: Props) {
       <form className={classes.formField} autoComplete="off">
         <TextField
           required
+          {...validationName}
           className={classes.input}
           id="threshold-name"
           label="Threshold Name"
           variant="outlined"
           name="name"
           onChange={handleChange}
-          error={handleHasError}
-          helperText={
-            names?.some(item => item === thresholds.data.name)
-              ? 'Threshold name existing'
-              : ''
-          }
         />
         <TextField
           required

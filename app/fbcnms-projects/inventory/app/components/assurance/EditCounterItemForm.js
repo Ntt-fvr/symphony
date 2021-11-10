@@ -23,14 +23,14 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 
 import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
-import {MenuItem, Select} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidationEdit} from './common/useValidation';
 
 const EditCountersQuery = graphql`
   query EditCounterItemFormQuery {
@@ -148,11 +148,7 @@ const EditCounterItemForm = (props: Props) => {
     );
   };
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {error: true, helperText: 'Counter name existing'};
-    }
-  };
+  const validationName = useValidationEdit(inputFilter, 'Counter');
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
 
@@ -193,14 +189,13 @@ const EditCounterItemForm = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    className={classes.input}
                     id="counter-name"
                     label="Name"
                     variant="outlined"
                     name="name"
                     fullWidth
                     {...name}
-                    {...validationName()}
+                    {...validationName}
                   />
                 </form>
               </Grid>
@@ -208,7 +203,6 @@ const EditCounterItemForm = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     disabled
-                    className={classes.input}
                     id="counter-name"
                     label="Counter Family"
                     variant="outlined"
@@ -222,7 +216,6 @@ const EditCounterItemForm = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    className={classes.input}
                     id="counter-name"
                     label="Network Manager System"
                     variant="outlined"
@@ -236,7 +229,6 @@ const EditCounterItemForm = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    className={classes.input}
                     label="Counter ID"
                     variant="outlined"
                     name="CounterID"

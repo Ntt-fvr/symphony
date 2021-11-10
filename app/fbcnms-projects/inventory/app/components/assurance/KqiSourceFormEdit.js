@@ -23,6 +23,7 @@ import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
+import {useValidationEdit} from './common/useValidation';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -102,11 +103,7 @@ const KqiSourceFormEdit = (props: Props) => {
     );
   };
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi Source name existing'};
-    }
-  };
+  const validationName = useValidationEdit(inputFilter, 'Kqi Source');
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 1, inputFilter);
 
@@ -165,7 +162,7 @@ const KqiSourceFormEdit = (props: Props) => {
                 <FormField
                   label="Name"
                   className={classes.formField}
-                  {...validationName()}
+                  {...validationName}
                   required>
                   <TextInput
                     {...name}

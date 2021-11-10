@@ -37,6 +37,7 @@ import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useStore} from './ThresholdProvider';
+import {useValidationEdit} from './common/useValidation';
 
 const EditRuleQuery = graphql`
   query EditRuleItemFormQuery {
@@ -207,6 +208,8 @@ const EditRuleItemForm = (props: Props) => {
     inputFilter,
   );
 
+  const validationName = useValidationEdit(inputFilter, 'Rule');
+
   function handleChange({target}) {
     setRuleData({
       data: {
@@ -215,12 +218,6 @@ const EditRuleItemForm = (props: Props) => {
       },
     });
   }
-
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Rule name existing'};
-    }
-  };
 
   const handleClick = () => {
     const variables: EditRuleMutationVariables = {
@@ -282,7 +279,7 @@ const EditRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField
-                  {...validationName()}
+                  {...validationName}
                   className={classes.formField}
                   label="Rule Name"
                   required>

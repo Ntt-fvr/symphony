@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState, useMemo, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -37,10 +37,11 @@ import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
 import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
+import {useValidationEdit} from './common/useValidation';
 
 import {DARK} from '@symphony/design-system/theme/symphony';
 import classNames from 'classnames';
-import type {alarmStatus} from './AlarmFilteringTypes'
+import type {Node} from './AlarmFilteringTypes';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -94,7 +95,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-
 type Props = $ReadOnly<{|
   closeEditForm: () => void,
   formValues: {
@@ -108,18 +108,10 @@ type Props = $ReadOnly<{|
       reason: string,
       user: string,
       creationTime: string,
-      alarmStatus: {
-        id: string,
-        name: string,
-      },
     },
   },
   isCompleted: void => void,
-  dataAlarmStatus: alarmStatus,
-  alarms: {
-    id: string,
-    name: string,
-  },
+  alarms?: Array<Node>
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
@@ -127,7 +119,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     closeEditForm,
     formValues,
     isCompleted,
-    dataAlarmStatus,
     alarms,
   } = props;
   const classes = useStyles();
@@ -142,11 +133,17 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   );
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
-  const alarmStatus = useFormInput(formValues.item.alarmStatus.id);
   const [checked, setChecked] = useState(formValues.item.enable);
-  const dataRefName = useRef(alarmStatus.value);
-
-  const namesAlarms = alarms.map(item => item.node.name);
+  const [valueStatus, setValueStatus] = useState();
+  let elementRef = useRef();
+  
+  useEffect(() => {
+    setValueStatus(elementRef.current?.value)
+  }, []);
+  
+  const DisableButton = valueStatus === 'Active';
+  
+  const namesAlarms = alarms?.map(item => item.node.name);
 
   const dataInputsObject = [
     name.value.trim(),
@@ -163,21 +160,16 @@ const EditAlarmFilteringItemForm = (props: Props) => {
       ) || []
     );
   };
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
+
+  const validationName = useValidationEdit(inputFilter, 'Alarm');
+
   const handleRemove = id => {
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
     };
     RemoveAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
   };
-  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
-
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Alarm name existing'};
-    }
-  };
-
-  const DisableButton = dataRefName.current === dataAlarmStatus?.[0].id;
 
   function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
@@ -189,7 +181,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         beginTime: moment(beginTime.value).format(),
         endTime: moment(endTime.value).format(),
         reason: reason.value,
-        alarmStatus: dataRefName.current,
       },
     };
     EditAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
@@ -258,12 +249,13 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} label="Name">
+                <FormField {...validationName} label="Name">
                   <TextInput
                     {...name}
-                    disabled
                     autoComplete="off"
+                    disabled
                     name="name"
+                    type="string"
                   />
                 </FormField>
               </Grid>
@@ -329,55 +321,12 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   xl={2}
                   className={classes.gridStyleLeft}
                   style={{marginTop: '25px'}}>
-                  {moment(creationTime.value).format() <=
-                    moment(beginTime.value).format() ||
-                    (moment(creationTime.value).format() <=
-                      moment(endTime.value).format() && (
-                      <Button
-                        {...alarmStatus}
-                        variant="outlined"
-                        weight="bold"
-                        name="alarmStatus"
-                        value={(dataRefName.current = dataAlarmStatus?.[0].id)}
-                        className={classNames(
-                          classes.button,
-                          classes.buttonActive,
-                        )}>
-                        {'Active'}
-                      </Button>
-                    ))}
-                  {moment(creationTime.value).format() >
-                    moment(endTime.value).format() && (
-                    <Button
-                      {...alarmStatus}
-                      variant="outlined"
-                      weight="bold"
-                      name="alarmStatus"
-                      value={(dataRefName.current = dataAlarmStatus?.[1].id)}
-                      className={classNames(
-                        classes.button,
-                        classes.buttonClosed,
-                      )}>
-                      {'Closed'}
-                    </Button>
-                  )}
-                  {moment(creationTime.value).format() <
-                    moment(beginTime.value).format() &&
-                    moment(creationTime.value).format() <
-                      moment(endTime.value).format() && (
-                      <Button
-                        {...alarmStatus}
-                        variant="outlined"
-                        weight="bold"
-                        name="alarmStatus"
-                        value={(dataRefName.current = dataAlarmStatus?.[2].id)}
-                        className={classNames(
-                          classes.button,
-                          classes.buttonPending,
-                        )}>
-                        {'Pending'}
-                      </Button>
-                    )}
+                  <AlarmFilteringStatus
+                    creationDate={creationTime.value}
+                    beginDate={beginTime.value}
+                    endDate={endTime.value}
+                    forwardedRef={elementRef}
+                  />
                 </Grid>
                 <Grid
                   item
