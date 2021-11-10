@@ -592,6 +592,7 @@ type Hyperlink implements Node {
   displayName: String
   category: String
   createTime: Time!
+  documentCategory: DocumentCategory
 }
 
 input AddHyperlinkInput {
@@ -1601,8 +1602,8 @@ type DocumentCategory implements Node {
   files: [File]!
   hyperlinks: [Hyperlink]!
   numberOfDocuments: Int!
-  filesByLocation(locationID: ID!): [File]!
-  hyperlinksByLocation(locationID: ID!): [Hyperlink]!
+  filesByEntity(entity: ImageEntity!, entityID: ID): [File]!
+  hyperlinksByEntity(entity: ImageEntity!, entityID: ID): [Hyperlink]!
 }
 
 input PropertyTypeInput

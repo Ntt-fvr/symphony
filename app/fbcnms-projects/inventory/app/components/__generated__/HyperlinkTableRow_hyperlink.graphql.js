@@ -24,6 +24,10 @@ export type HyperlinkTableRow_hyperlink = {|
   +url: string,
   +displayName: ?string,
   +createTime: any,
+  +documentCategory: ?{|
+    +id: string,
+    +name: ?string,
+  |},
   +$fragmentRefs: HyperlinkTableMenu_hyperlink$ref,
   +$refType: HyperlinkTableRow_hyperlink$ref,
 |};
@@ -36,19 +40,21 @@ export type HyperlinkTableRow_hyperlink$key = {
 */
 
 
-const node/*: ReaderFragment*/ = {
+const node/*: ReaderFragment*/ = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "HyperlinkTableRow_hyperlink",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -78,6 +84,25 @@ const node/*: ReaderFragment*/ = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "concreteType": "DocumentCategory",
+      "kind": "LinkedField",
+      "name": "documentCategory",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "HyperlinkTableMenu_hyperlink"
@@ -86,7 +111,8 @@ const node/*: ReaderFragment*/ = {
   "type": "Hyperlink",
   "abstractKey": null
 };
+})();
 // prettier-ignore
-(node/*: any*/).hash = '12532e9e490dca8b3ac9d28fe9d58718';
+(node/*: any*/).hash = 'ef14736933385473d66c5a8a57f3634b';
 
 module.exports = node;
