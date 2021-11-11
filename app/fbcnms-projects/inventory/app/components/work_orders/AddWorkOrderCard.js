@@ -40,9 +40,12 @@ import ProjectTypeahead from '../typeahead/ProjectTypeahead';
 import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useCallback, useContext, useReducer, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
-import SelectAvailabilityAssignee from './SelectAvailabilityAssignee';
+import SelectAvailabilityAssignee, {
+  AppointmentData,
+} from './SelectAvailabilityAssignee';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextField from '@material-ui/core/TextField';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
@@ -199,9 +202,10 @@ const AddWorkOrderCard = (props: Props) => {
     },
   );
 
-  const [appointmentData, setAppointmentData] = useState({
+  const [appointmentData, setAppointmentData] = useState<AppointmentData>({
     duration: 0,
     date: null,
+    saveAppointment: false,
   });
 
   const [workOrder, setWorkOrder] = useState<?WorkOrder>(
@@ -326,13 +330,17 @@ const AddWorkOrderCard = (props: Props) => {
     AddWorkOrderMutation(variables, callbacks);
   };
 
-  const _saveAppointment = id => {
+  const _saveAppointment = workorderID => {
+    const assigneeID = workOrder?.assignedTo?.id;
+    const {duration, date, saveAppointment} = appointmentData;
+
+    if (!saveAppointment || !assigneeID) return history.push(match.url);
     const variables: AddAppointmentMutationVariables = {
       input: {
-        workorderID: id,
-        assigneeID: workOrder?.assignedTo?.id,
-        duration: appointmentData.duration,
-        date: appointmentData.date,
+        workorderID,
+        assigneeID,
+        duration,
+        date,
       },
     };
     AddAppointmentMutation(variables, {
@@ -506,6 +514,14 @@ const AddWorkOrderCard = (props: Props) => {
                           />
                         </FormField>
                       </Grid>
+                      <Grid item xs={12} sm={6} lg={4} xl={4}>
+                        <FormField label="Scheduled at">
+                          <TextInput
+                            type="date"
+                            className={classes.gridInput}
+                          />
+                        </FormField>
+                      </Grid>
                       {workOrder.properties
                         .filter(property => !property.propertyType.isDeleted)
                         .map((property, index) => (
@@ -546,8 +562,10 @@ const AddWorkOrderCard = (props: Props) => {
                 </Grid>
                 <Grid item xs={4} sm={4} lg={4} xl={4}>
                   <SelectAvailabilityAssignee
-                    statusValues={statusValues}
                     workOrder={workOrder}
+                    isOwner={false}
+                    isAssignee={false}
+                    title={'Select availabilty assignee'}
                     setAppointmentData={setAppointmentData}
                     _setWorkOrderDetail={_setWorkOrderDetail}
                   />
