@@ -74,26 +74,7 @@ const useStyles = makeStyles(() => ({
         borderColor: 'rgba(157, 169, 190, 0.49)',
       },
     },
-  },
-  button: {
-    width: '100%',
-    height: '36px',
-  },
-  buttonActive: {
-    border: '1px solid #00AF5B',
-    color: '#00AF5B',
-    fontSize: '14px',
-  },
-  buttonPending: {
-    border: '1px solid #FFB63E',
-    color: '#FFB63E',
-    fontSize: '14px',
-  },
-  buttonClosed: {
-    border: '1px solid #8895AD',
-    color: '#8895AD',
-    fontSize: '14px',
-  },
+  }
 }));
 
 type Props = $ReadOnly<{|
