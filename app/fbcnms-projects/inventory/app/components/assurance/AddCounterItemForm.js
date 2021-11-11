@@ -93,7 +93,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
   },
   header: {
-    margin: '20px 0 24px 0',
+    margin: '4px 0 24px 0',
   },
   addCounter: {
     margin: '15px 0',

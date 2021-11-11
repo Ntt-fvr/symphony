@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
   },
   header: {
-    margin: '20px 0 24px 0',
+    margin: '4px 0 24px 0',
   },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
