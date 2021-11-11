@@ -130,7 +130,7 @@ class HyperlinkTableRow extends React.Component<Props, State> {
       <TableRow key={hyperlink.id} hover={false}>
         {categoriesEnabled && (
           <TableCell padding="none" component="th" scope="row">
-            {hyperlink.category}
+            {hyperlink?.documentCategory?.name || hyperlink?.category}
           </TableCell>
         )}
         <TableCell
@@ -218,6 +218,10 @@ export default withStyles(styles)(
         url
         displayName
         createTime
+        documentCategory{
+          id
+          name
+        }
         ...HyperlinkTableMenu_hyperlink
       }
     `,

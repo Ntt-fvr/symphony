@@ -442,14 +442,14 @@ type ComplexityRoot struct {
 	}
 
 	DocumentCategory struct {
-		Files                func(childComplexity int) int
-		FilesByLocation      func(childComplexity int, locationID int) int
-		Hyperlinks           func(childComplexity int) int
-		HyperlinksByLocation func(childComplexity int, locationID int) int
-		ID                   func(childComplexity int) int
-		Index                func(childComplexity int) int
-		Name                 func(childComplexity int) int
-		NumberOfDocuments    func(childComplexity int) int
+		Files              func(childComplexity int) int
+		FilesByEntity      func(childComplexity int, entity models.ImageEntity, entityID *int) int
+		Hyperlinks         func(childComplexity int) int
+		HyperlinksByEntity func(childComplexity int, entity models.ImageEntity, entityID *int) int
+		ID                 func(childComplexity int) int
+		Index              func(childComplexity int) int
+		Name               func(childComplexity int) int
+		NumberOfDocuments  func(childComplexity int) int
 	}
 
 	DocumentCategoryCud struct {
@@ -841,11 +841,12 @@ type ComplexityRoot struct {
 	}
 
 	Hyperlink struct {
-		Category   func(childComplexity int) int
-		CreateTime func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Name       func(childComplexity int) int
-		URL        func(childComplexity int) int
+		Category         func(childComplexity int) int
+		CreateTime       func(childComplexity int) int
+		DocumentCategory func(childComplexity int) int
+		ID               func(childComplexity int) int
+		Name             func(childComplexity int) int
+		URL              func(childComplexity int) int
 	}
 
 	InventoryPolicy struct {
@@ -2252,8 +2253,8 @@ type CounterFormulaResolver interface {
 }
 type DocumentCategoryResolver interface {
 	NumberOfDocuments(ctx context.Context, obj *ent.DocumentCategory) (int, error)
-	FilesByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.File, error)
-	HyperlinksByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.Hyperlink, error)
+	FilesByEntity(ctx context.Context, obj *ent.DocumentCategory, entity models.ImageEntity, entityID *int) ([]*ent.File, error)
+	HyperlinksByEntity(ctx context.Context, obj *ent.DocumentCategory, entity models.ImageEntity, entityID *int) ([]*ent.Hyperlink, error)
 }
 type EquipmentResolver interface {
 	Ports(ctx context.Context, obj *ent.Equipment, availableOnly *bool) ([]*ent.EquipmentPort, error)
@@ -3979,17 +3980,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DocumentCategory.Files(childComplexity), true
 
-	case "DocumentCategory.filesByLocation":
-		if e.complexity.DocumentCategory.FilesByLocation == nil {
+	case "DocumentCategory.filesByEntity":
+		if e.complexity.DocumentCategory.FilesByEntity == nil {
 			break
 		}
 
-		args, err := ec.field_DocumentCategory_filesByLocation_args(context.TODO(), rawArgs)
+		args, err := ec.field_DocumentCategory_filesByEntity_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.DocumentCategory.FilesByLocation(childComplexity, args["locationID"].(int)), true
+		return e.complexity.DocumentCategory.FilesByEntity(childComplexity, args["entity"].(models.ImageEntity), args["entityID"].(*int)), true
 
 	case "DocumentCategory.hyperlinks":
 		if e.complexity.DocumentCategory.Hyperlinks == nil {
@@ -3998,17 +3999,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DocumentCategory.Hyperlinks(childComplexity), true
 
-	case "DocumentCategory.hyperlinksByLocation":
-		if e.complexity.DocumentCategory.HyperlinksByLocation == nil {
+	case "DocumentCategory.hyperlinksByEntity":
+		if e.complexity.DocumentCategory.HyperlinksByEntity == nil {
 			break
 		}
 
-		args, err := ec.field_DocumentCategory_hyperlinksByLocation_args(context.TODO(), rawArgs)
+		args, err := ec.field_DocumentCategory_hyperlinksByEntity_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.DocumentCategory.HyperlinksByLocation(childComplexity, args["locationID"].(int)), true
+		return e.complexity.DocumentCategory.HyperlinksByEntity(childComplexity, args["entity"].(models.ImageEntity), args["entityID"].(*int)), true
 
 	case "DocumentCategory.id":
 		if e.complexity.DocumentCategory.ID == nil {
@@ -5638,6 +5639,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Hyperlink.CreateTime(childComplexity), true
+
+	case "Hyperlink.documentCategory":
+		if e.complexity.Hyperlink.DocumentCategory == nil {
+			break
+		}
+
+		return e.complexity.Hyperlink.DocumentCategory(childComplexity), true
 
 	case "Hyperlink.id":
 		if e.complexity.Hyperlink.ID == nil {
@@ -14114,6 +14122,7 @@ type Hyperlink implements Node {
   displayName: String
   category: String
   createTime: Time!
+  documentCategory: DocumentCategory
 }
 
 input AddHyperlinkInput {
@@ -15123,8 +15132,8 @@ type DocumentCategory implements Node {
   files: [File]!
   hyperlinks: [Hyperlink]!
   numberOfDocuments: Int!
-  filesByLocation(locationID: ID!): [File]!
-  hyperlinksByLocation(locationID: ID!): [Hyperlink]!
+  filesByEntity(entity: ImageEntity!, entityID: ID): [File]!
+  hyperlinksByEntity(entity: ImageEntity!, entityID: ID): [Hyperlink]!
 }
 
 input PropertyTypeInput
@@ -22140,33 +22149,51 @@ func (ec *executionContext) dir_uniqueField_args(ctx context.Context, rawArgs ma
 	return args, nil
 }
 
-func (ec *executionContext) field_DocumentCategory_filesByLocation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_DocumentCategory_filesByEntity_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["locationID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locationID"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+	var arg0 models.ImageEntity
+	if tmp, ok := rawArgs["entity"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entity"))
+		arg0, err = ec.unmarshalNImageEntity2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐImageEntity(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["locationID"] = arg0
+	args["entity"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["entityID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entityID"))
+		arg1, err = ec.unmarshalOID2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["entityID"] = arg1
 	return args, nil
 }
 
-func (ec *executionContext) field_DocumentCategory_hyperlinksByLocation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_DocumentCategory_hyperlinksByEntity_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["locationID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locationID"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+	var arg0 models.ImageEntity
+	if tmp, ok := rawArgs["entity"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entity"))
+		arg0, err = ec.unmarshalNImageEntity2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐImageEntity(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["locationID"] = arg0
+	args["entity"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["entityID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entityID"))
+		arg1, err = ec.unmarshalOID2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["entityID"] = arg1
 	return args, nil
 }
 
@@ -36663,7 +36690,7 @@ func (ec *executionContext) _DocumentCategory_numberOfDocuments(ctx context.Cont
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _DocumentCategory_filesByLocation(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _DocumentCategory_filesByEntity(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -36680,7 +36707,7 @@ func (ec *executionContext) _DocumentCategory_filesByLocation(ctx context.Contex
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_DocumentCategory_filesByLocation_args(ctx, rawArgs)
+	args, err := ec.field_DocumentCategory_filesByEntity_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -36688,7 +36715,7 @@ func (ec *executionContext) _DocumentCategory_filesByLocation(ctx context.Contex
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.DocumentCategory().FilesByLocation(rctx, obj, args["locationID"].(int))
+		return ec.resolvers.DocumentCategory().FilesByEntity(rctx, obj, args["entity"].(models.ImageEntity), args["entityID"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -36705,7 +36732,7 @@ func (ec *executionContext) _DocumentCategory_filesByLocation(ctx context.Contex
 	return ec.marshalNFile2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFile(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _DocumentCategory_hyperlinksByLocation(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _DocumentCategory_hyperlinksByEntity(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -36722,7 +36749,7 @@ func (ec *executionContext) _DocumentCategory_hyperlinksByLocation(ctx context.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_DocumentCategory_hyperlinksByLocation_args(ctx, rawArgs)
+	args, err := ec.field_DocumentCategory_hyperlinksByEntity_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -36730,7 +36757,7 @@ func (ec *executionContext) _DocumentCategory_hyperlinksByLocation(ctx context.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.DocumentCategory().HyperlinksByLocation(rctx, obj, args["locationID"].(int))
+		return ec.resolvers.DocumentCategory().HyperlinksByEntity(rctx, obj, args["entity"].(models.ImageEntity), args["entityID"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44636,6 +44663,38 @@ func (ec *executionContext) _Hyperlink_createTime(ctx context.Context, field gra
 	res := resTmp.(time.Time)
 	fc.Result = res
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Hyperlink_documentCategory(ctx context.Context, field graphql.CollectedField, obj *ent.Hyperlink) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Hyperlink",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentCategory(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.DocumentCategory)
+	fc.Result = res
+	return ec.marshalODocumentCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _InventoryPolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.InventoryPolicy) (ret graphql.Marshaler) {
@@ -95008,7 +95067,7 @@ func (ec *executionContext) _DocumentCategory(ctx context.Context, sel ast.Selec
 				}
 				return res
 			})
-		case "filesByLocation":
+		case "filesByEntity":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -95016,13 +95075,13 @@ func (ec *executionContext) _DocumentCategory(ctx context.Context, sel ast.Selec
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._DocumentCategory_filesByLocation(ctx, field, obj)
+				res = ec._DocumentCategory_filesByEntity(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "hyperlinksByLocation":
+		case "hyperlinksByEntity":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -95030,7 +95089,7 @@ func (ec *executionContext) _DocumentCategory(ctx context.Context, sel ast.Selec
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._DocumentCategory_hyperlinksByLocation(ctx, field, obj)
+				res = ec._DocumentCategory_hyperlinksByEntity(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -97724,12 +97783,12 @@ func (ec *executionContext) _Hyperlink(ctx context.Context, sel ast.SelectionSet
 		case "id":
 			out.Values[i] = ec._Hyperlink_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "url":
 			out.Values[i] = ec._Hyperlink_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "displayName":
 			out.Values[i] = ec._Hyperlink_displayName(ctx, field, obj)
@@ -97738,8 +97797,19 @@ func (ec *executionContext) _Hyperlink(ctx context.Context, sel ast.SelectionSet
 		case "createTime":
 			out.Values[i] = ec._Hyperlink_createTime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "documentCategory":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Hyperlink_documentCategory(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

@@ -122,7 +122,7 @@ const AddHyperlinkButton = (props: Props) => {
     },
     [enqueueSnackbar, entityId, entityType, selectedCategory, categories],
   );
-
+  
   return (
     <FormAction>
       {categoriesEnabled ? (

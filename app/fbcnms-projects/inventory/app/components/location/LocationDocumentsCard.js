@@ -68,13 +68,12 @@ const LocationDocumentsCard = (props: Props) => {
     `,
     location,
   );
-
   const documents = useMemo(
     () => [...data.files.filter(Boolean), ...data.images.filter(Boolean)],
     [data],
   );
   const categories = useMemo(
-    () => [...data.locationType.documentCategories.filter(Boolean)],
+    () => [...data.locationType.documentCategories.map((item: any) => ({id: item.id, name: item.name}))],
     [data],
   );
   return (

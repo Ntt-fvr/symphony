@@ -160,10 +160,10 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.DocumentCategories = func(childComplexity int, locationTypeID *int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.DocumentCategory.FilesByLocation = func(childComplexity int, locationID int) int {
+	complexity.DocumentCategory.FilesByEntity = func(childComplexity int, _ models.ImageEntity, _ *int) int {
 		return SearchComplexity(childComplexity, nil)
 	}
-	complexity.DocumentCategory.HyperlinksByLocation = func(childComplexity int, locationID int) int {
+	complexity.DocumentCategory.HyperlinksByEntity = func(childComplexity int, _ models.ImageEntity, _ *int) int {
 		return SearchComplexity(childComplexity, nil)
 	}
 

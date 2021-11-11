@@ -12,8 +12,7 @@ import type {InventoryPolicy} from '../data/PermissionsPolicies';
 
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
-import PermissionsPolicyLocationRulesSection from './PermissionsPolicyLocationRulesSection';
-import PermissionsPolicyRulesSection from './PermissionsPolicyRulesSection';
+import PermissionsPolicyLocationDocumentCategoryRulesSection from './PermissionsPolicyLocationDocumentCategoryRulesSection';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import classNames from 'classnames';
 import fbt from 'fbt';
@@ -21,6 +20,10 @@ import {
   bool2PermissionRuleValue,
   permissionRuleValue2Bool,
 } from '../data/PermissionsPolicies';
+import Text from '@symphony/design-system/components/Text';
+import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
+import Select from '@symphony/design-system/components/Select/Select';
+import Tokenizer from '@symphony/design-system/components/Token/Tokenizer';
 import {makeStyles} from '@material-ui/styles';
 import {useContext} from 'react';
 
@@ -36,6 +39,30 @@ const useStyles = makeStyles(() => ({
   },
   section: {
     marginTop: '32px',
+  },
+  radioGroup: {
+    marginLeft: '4px',
+    maxHeight: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  radioGroupInline: {
+    display: 'flex',
+  },
+  radioGroupInlineItem: {
+    '&:nth-of-type(even)': {
+      marginLeft: '8px',
+    },
+  },
+  sectionHeader: {
+    paddingTop: '16px',
+    marginBottom: '16px',
+    '&>span': {
+      display: 'block',
+    },
+  },
+  select: {
+    maxWidth: '350px',
   },
 }));
 
@@ -81,40 +108,21 @@ export default function PermissionsPolicyInventoryDocumentRulesTab(
           }
         />
       ) : null}
-      <PermissionsPolicyLocationRulesSection
+      <PermissionsPolicyLocationDocumentCategoryRulesSection
         title={fbt('Locations', '')}
         subtitle={fbt(
           'Location data includes location details, properties, floor plans and coverage maps.',
           '',
         )}
         disabled={isDisabled || !readAllowed}
-        locationRule={policy.location}
+        documentRule={policy.documentCategory}
         className={classes.section}
         onChange={
           onChange != null
-            ? location =>
+            ? documentCategory =>
                 onChange({
                   ...policy,
-                  location,
-                })
-            : undefined
-        }
-      />
-      <PermissionsPolicyRulesSection
-        title={fbt('Equipment', '')}
-        subtitle={fbt(
-          'Equipment data includes equipment items, ports, links, services and network maps.',
-          '',
-        )}
-        className={classes.section}
-        disabled={isDisabled || !readAllowed}
-        rule={policy.equipment}
-        onChange={
-          onChange != null
-            ? equipment =>
-                onChange({
-                  ...policy,
-                  equipment,
+                  documentCategory,
                 })
             : undefined
         }

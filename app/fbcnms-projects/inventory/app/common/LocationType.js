@@ -63,6 +63,19 @@ const locationTypeNodesQuery = graphql`
   }
 `;
 
+const locationTypeNodesOnDocumentQuery = graphql`
+  query LocationTypeNodesOnDocumentQuery {
+    locationTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 const locationType2DocumentCategoryNodesQuery = graphql`
   query LocationType2DocumentCategoryNodesQuery($ltID: ID) {
     documentCategories(locationTypeID: $ltID) {
@@ -76,13 +89,23 @@ const locationType2DocumentCategoryNodesQuery = graphql`
     }
   }
 `;
-
 export type LocationTypeNode = $Exact<NamedNode>;
 export type DocumentCategoryNode = $Exact<OptionalNamedNode>;
 
 export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   const response = useLazyLoadQuery<LocationTypeNodesQuery>(
     locationTypeNodesQuery,
+    {},
+  );
+  const locationTypesData = response.locationTypes?.edges || [];
+  const locationTypes = locationTypesData.map(p => p.node).filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+  return locationTypes;
+}
+
+export function useLocationTypeNodesOnDocuments(): $ReadOnlyArray<LocationTypeNode> {
+  const response = useLazyLoadQuery<LocationTypeNodesQuery>(
+    locationTypeNodesOnDocumentQuery,
     {},
   );
   const locationTypesData = response.locationTypes?.edges || [];

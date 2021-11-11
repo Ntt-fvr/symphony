@@ -56,16 +56,30 @@ const EquipmentDocumentsCard = (props: Props) => {
         hyperlinks {
           ...EntityDocumentsTable_hyperlinks
         }
+        parentLocation {
+          locationType {
+            documentCategories {
+              id
+              name
+            }
+          }
+        }
       }
     `,
     equipment,
   );
-
   const documents = useMemo(
     () => [...data.files.filter(Boolean), ...data.images.filter(Boolean)],
     [data],
   );
 
+  const categories = useMemo(
+    () => {
+      const parentLocation = data?.parentLocation || {}
+      return [...parentLocation.locationType?.documentCategories.map((item: any) => ({id: item.id, name: item.name}))] 
+    },
+    [data],
+  );
   return (
     <Card className={className}>
       <CardHeader
@@ -74,8 +88,16 @@ const EquipmentDocumentsCard = (props: Props) => {
         })}
         rightContent={
           <div className={classes.actionButtonsContainer}>
-            <AddHyperlinkButton entityType="EQUIPMENT" entityId={data.id} />
-            <DocumentsAddButton entityType="EQUIPMENT" entityId={data.id} />
+            <AddHyperlinkButton
+              entityType="EQUIPMENT"
+              entityId={data.id}
+              categories={categories}
+            />
+            <DocumentsAddButton
+              entityType="EQUIPMENT"
+              entityId={data.id}
+              categories={categories}
+            />
           </div>
         }>
         Documents
