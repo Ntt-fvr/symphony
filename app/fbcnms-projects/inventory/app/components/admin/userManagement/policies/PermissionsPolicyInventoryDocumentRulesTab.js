@@ -13,7 +13,6 @@ import type {InventoryPolicy} from '../data/PermissionsPolicies';
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import PermissionsPolicyLocationDocumentCategoryRulesSection from './PermissionsPolicyLocationDocumentCategoryRulesSection';
-// import PermissionsPolicyRulesSection from './PermissionsPolicyRulesSection';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import classNames from 'classnames';
 import fbt from 'fbt';
@@ -21,7 +20,6 @@ import {
   bool2PermissionRuleValue,
   permissionRuleValue2Bool,
 } from '../data/PermissionsPolicies';
-import {useCallback, useMemo, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
 import Select from '@symphony/design-system/components/Select/Select';

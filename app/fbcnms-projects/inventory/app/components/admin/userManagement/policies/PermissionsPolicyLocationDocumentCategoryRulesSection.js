@@ -9,8 +9,6 @@
  */
 
 import type {
-  CUDPermissions,
-  LocationCUDPermissions,
   InventoryPolicy,
   DocumentCRUDPermissions,
 } from '../data/PermissionsPolicies';
@@ -64,16 +62,9 @@ const PermissionsPolicyLocationDocumentCategoryRulesSection = (
       update: documentRule.update,
       delete: documentRule.delete,
     }),
-    [
-      documentRule.create,
-      documentRule.delete,
-      documentRule.update,
-      documentRule.locationTypeID,
-      documentRule.read?.isAllowed,
-    ],
+    [documentRule.create],
   );
 
-  //TODO: verificar si es update rule o read rule
   const callOnChange = useCallback(
     (updatedRule: DocumentCRUDPermissions) => {
       if (onChange == null) {
@@ -87,7 +78,7 @@ const PermissionsPolicyLocationDocumentCategoryRulesSection = (
   return (
     <PermissionsPolicySelectRulesSection
       rule={rule}
-      onChange={()=>{}}
+      onChange={() => {}}
       secondLevelRulesClassName={classes.secondLevelBox}
       policySpecifications={
         <PermissionsPolicyLocationSelectRulesSpecification
