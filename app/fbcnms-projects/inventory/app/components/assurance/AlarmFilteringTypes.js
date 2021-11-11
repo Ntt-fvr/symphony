@@ -147,6 +147,7 @@ const AlarmFilteringTypes = () => {
         <AlarmFilteringTable
           dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
           edit={handleClickEdit}
+          isCompleted={isCompleted}
         />
       </Grid>
     </Grid>
