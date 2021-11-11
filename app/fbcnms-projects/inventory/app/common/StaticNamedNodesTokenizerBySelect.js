@@ -9,7 +9,6 @@
  */
 
 import type {
-  Entries,
   OptionalEntries,
   TokenizerDisplayProps,
 } from '@symphony/design-system/components/Token/Tokenizer';

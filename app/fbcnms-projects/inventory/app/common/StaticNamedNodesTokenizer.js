@@ -18,9 +18,8 @@ import * as React from 'react';
 import Tokenizer from '@symphony/design-system/components/Token/Tokenizer';
 import withSuspense from './withSuspense';
 import {useCallback, useMemo, useState} from 'react';
-//TODO: definir cual queda
-export type ExactNamedNode = $Exact<NamedNode>; //Original
-export type ExactNamedNodeDC = $Exact<OptionalNamedNode>; //Fer
+export type ExactNamedNode = $Exact<NamedNode>;
+export type ExactNamedNodeDC = $Exact<OptionalNamedNode>;
 
 const wrapAsEntries = (items: $ReadOnlyArray<ExactNamedNode>) =>
   (items || []).map(item => ({
@@ -32,19 +31,15 @@ const wrapAsEntries = (items: $ReadOnlyArray<ExactNamedNode>) =>
 type StaticNamedNodesTokenizerProps = $ReadOnly<{|
   ...TokenizerDisplayProps,
   allNamedNodes: $ReadOnlyArray<ExactNamedNode>,
-  allNameDocumentCategoriesNodes?: ?$ReadOnlyArray<ExactNamedNodeDC>,
   selectedNodeIds?: ?$ReadOnlyArray<string>,
-  selectDocumentCategoriesIds?: ?$ReadOnlyArray<string>,
   onSelectedNodeIdsChange?: ($ReadOnlyArray<string>) => void,
 |}>;
 
 function StaticNamedNodesTokenizer(props: StaticNamedNodesTokenizerProps) {
   const {
     allNamedNodes,
-    allNameDocumentCategoriesNodes,
     onSelectedNodeIdsChange,
     selectedNodeIds,
-    selectDocumentCategoriesIds,
     disabled: disabledProp,
     ...tokenizerDisplayProps
   } = props;

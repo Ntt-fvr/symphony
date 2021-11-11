@@ -172,15 +172,9 @@ const WorkOrderDetails = ({
   );
   const locationTypeID = workOrder.location?.locationType.id;
 
-  const [
-    locationType,
-    setLocationType,
-  ] = useState<?$ReadOnlyArray<DocumentCategoryNode>>(
-    !!locationTypeID
-      ? useDocumentCategoryByLocationTypeNodes(locationTypeID)
-      : null,
-  );
-
+  const locationType = !!locationTypeID
+    ? useDocumentCategoryByLocationTypeNodes(locationTypeID)
+    : null;
   const [properties, setProperties] = useState<Array<Property>>(
     propsWorkOrder.properties
       .filter(Boolean)

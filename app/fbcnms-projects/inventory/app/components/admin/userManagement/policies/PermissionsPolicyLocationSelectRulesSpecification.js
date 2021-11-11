@@ -21,13 +21,9 @@ import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import {
-  PERMISSION_RULE_VALUES,
-  permissionRuleValue2Bool,
-} from '../data/PermissionsPolicies';
+import {PERMISSION_RULE_VALUES} from '../data/PermissionsPolicies';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo, useState} from 'react';
-import {useEffect} from 'react';
 import {useFormAlertsContext} from '@symphony/design-system/components/Form/FormAlertsContext';
 
 const ERROR_MESSAGE_HEIGHT = '6px';
@@ -137,7 +133,7 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
     },
     [onChange, documentRule],
   );
-  
+
   const callSetPermissionSelectMethod = useCallback(
     newPermissionMethod => {
       setPolicySelectMethod(newPermissionMethod);
@@ -149,7 +145,9 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
   const emptyRequiredTypesSelectionErrorMessage = alerts.error.check({
     fieldId: 'location_types_selection',
     fieldDisplayName: 'Policies applied location types selection',
-    value: policySelectMethod === METHOD_SELECTED_LOCATIONS_VALUE.toString() && !((documentRule.read?.documentCategoryIds || []).length),
+    value:
+      policySelectMethod === METHOD_SELECTED_LOCATIONS_VALUE.toString() &&
+      !(documentRule.read?.documentCategoryIds || []).length,
     checkCallback: missingRequiredSelection =>
       missingRequiredSelection
         ? `${fbt('At least one location type must be selected.', '')}`
@@ -161,7 +159,7 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
       className={classNames(classes.policySpecificationContainer, className)}>
       <div className={classes.policyMethodSelection}>
         <Text className={classes.paddingBottom}>
-          {disabled == true ? (
+          {disabled === true ? (
             <fbt desc="">Location types this policy applies to</fbt>
           ) : (
             <fbt desc="">Choose location types this policy applies to</fbt>

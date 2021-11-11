@@ -278,7 +278,7 @@ export default withStyles(styles)(
         storeKey
         category
         annotation
-        documentCategory{
+        documentCategory {
           id
           name
         }

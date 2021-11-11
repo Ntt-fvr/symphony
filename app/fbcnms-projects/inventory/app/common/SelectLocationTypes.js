@@ -56,7 +56,9 @@ function SelectLocationTypes(props: LocationTypesTokenizerProps) {
       : null,
   );
 
-  const documentCategoriesByLocationTypeID = useDocumentCategoryByLocationTypeNodes(selectedLocationValue);
+  const documentCategoriesByLocationTypeID = useDocumentCategoryByLocationTypeNodes(
+    selectedLocationValue,
+  );
 
   const callOnSelectChange = useCallback(
     (newLocation: string) => {
@@ -90,12 +92,14 @@ function SelectLocationTypes(props: LocationTypesTokenizerProps) {
       <Text variant="body2" color="gray" className={classes.paddingBottom}>
         <fbt desc="">Choose Document Categories this policy applies to</fbt>
       </Text>
-      {selectedLocationValue && <StaticNamedNodesTokenizerBySelect
-        allNamedNodes={documentCategoriesByLocationTypeID}
-        selectedNodeIds={selectedDocumentCategoriesIds}
-        onSelectedNodeIdsChange={onSelectedLocationTypesIdsChange}
-        {...rest}
-      />}
+      {selectedLocationValue && (
+        <StaticNamedNodesTokenizerBySelect
+          allNamedNodes={documentCategoriesByLocationTypeID}
+          selectedNodeIds={selectedDocumentCategoriesIds}
+          onSelectedNodeIdsChange={onSelectedLocationTypesIdsChange}
+          {...rest}
+        />
+      )}
     </>
   );
 }
