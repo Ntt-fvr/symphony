@@ -64,6 +64,16 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  textArea: {
+    width: '100%',
+    height: '100%',
+    '& .MuiOutlinedInput-multiline': {
+      height: '100%',
+      '& textarea': {
+        height: '100% !important',
+      },
+    },
+  },
   styleSearch: {
     [theme.breakpoints.down('md')]: {
       height: 'calc(100% - 120px)',
@@ -72,6 +82,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     paddingBottom: '1.5rem',
     overflow: 'auto',
+    overflowX: 'hidden',
     '&::-webkit-scrollbar': {
       width: '8px',
       height: '8px',
@@ -266,15 +277,15 @@ const AddFormulaDialog = (props: Props) => {
             </Grid>
           </Grid>
           <Grid item xs={7}>
-            <FormField>
-              <TextInput
-                name="formula"
-                type="multiline"
-                autoComplete="off"
-                onChange={handleChange}
-                style={{height: '40vh'}}
-              />
-            </FormField>
+            <TextField
+              className={classes.textArea}
+              name="formula"
+              variant="outlined"
+              multiline
+              autoComplete="off"
+              onChange={handleChange}
+              style={{height: '100%'}}
+            />
           </Grid>
         </Grid>
       </DialogContent>

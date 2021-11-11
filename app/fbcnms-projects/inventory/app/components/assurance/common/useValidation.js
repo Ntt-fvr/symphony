@@ -11,8 +11,8 @@
 import {useMemo} from 'react';
 
 export const useValidation = (
-  element: any,
-  name: any,
+  element: string,
+  name: Array<string>,
   nameExisting: string,
 ) => {
   return useMemo(
