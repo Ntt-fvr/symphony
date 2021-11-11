@@ -13,6 +13,7 @@ import * as React from 'react';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
@@ -129,6 +130,9 @@ const AddFormulaQuery = graphql`
 type Props = $ReadOnly<{|
   handleClick: any,
   parentCallback: any,
+  checking: boolean,
+  changeChecking: () => void,
+  isCompleted: () => void,
 |}>;
 
 type Formula = {
@@ -139,7 +143,13 @@ type Formula = {
 };
 
 export default function AddFormulaItemForm(props: Props) {
-  const {handleClick, parentCallback} = props;
+  const {
+    handleClick,
+    parentCallback,
+    checking,
+    changeChecking,
+    isCompleted,
+  } = props;
   const [formula, setFormula] = useState<Formula>({});
   const [open, setOpen] = useState(false);
   const data = useLazyLoadQuery<AddFormulaItemFormQuery>(AddFormulaQuery, {});
@@ -156,6 +166,21 @@ export default function AddFormulaItemForm(props: Props) {
 
   function handleCallback() {
     parentCallback(formula);
+  }
+
+  if (checking) {
+    return (
+      <AddedSuccessfullyMessage
+        card_header="Add Formula"
+        title="Formula"
+        text_button="Add new Formula"
+        setReturn={() => {
+          changeChecking();
+          isCompleted();
+          setFormula({});
+        }}
+      />
+    );
   }
 
   return (
@@ -186,6 +211,7 @@ export default function AddFormulaItemForm(props: Props) {
               </MenuItem>
             ))}
           </TextField>
+
           <TextField
             required
             id="outlined-select-vendors"
