@@ -27,6 +27,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
@@ -92,7 +93,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
   },
   header: {
-    margin: '20px 0 24px 0',
+    margin: '4px 0 24px 0',
   },
   addCounter: {
     margin: '15px 0',
@@ -186,7 +187,11 @@ export default function AddCounterItemForm(props: Props) {
 
   return (
     <Card className={classes.root}>
-      <CardHeader className={classes.header}>Add Counter</CardHeader>
+      <CardHeader className={classes.header}>
+        <Text useEllipsis={true} variant="h6" weight="bold">
+          Add Counter
+        </Text>
+      </CardHeader>
       <form className={classes.formField} autoComplete="off">
         <TextField
           {...validationName}

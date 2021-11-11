@@ -246,7 +246,8 @@ const EditCounterItemForm = (props: Props) => {
                   label="Vendor name*"
                   fullWidth
                   name="vendor"
-                  variant="outlined">
+                  variant="outlined"
+                  {...vendor}>
                   {data.vendors.edges.map((item, index) => (
                     <MenuItem key={index} value={item.node?.id}>
                       {item.node?.name}

@@ -24,9 +24,10 @@ const useStyles = makeStyles(() => ({
     padding: '0px',
   },
   header: {
-    margin: '20px 0 24px 20px',
+    margin: '4px',
   },
   containerIcon: {
+    marginTop: '3rem',
     paddingBottom: '1rem',
   },
   icon: {
@@ -34,6 +35,7 @@ const useStyles = makeStyles(() => ({
     color: GREEN.G600,
   },
   addButton: {
+    marginTop: '3rem',
     padding: '2rem 0',
   },
 }));
