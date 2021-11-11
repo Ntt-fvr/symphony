@@ -24,12 +24,13 @@ import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {useState, useMemo} from 'react';
+import {useState} from 'react';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    padding: theme.spacing(0),
+    padding: '8px 0',
     borderRadius: '4px',
     boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     '&::before': {
@@ -144,14 +145,7 @@ export default function AddFormulaItemForm(props: Props) {
   const data = useLazyLoadQuery<AddFormulaItemFormQuery>(AddFormulaQuery, {});
   const classes = useStyles();
 
-  const handleDisable = useMemo(
-    () =>
-      !(
-        Object.values(formula).length === 4 &&
-        !Object.values(formula).some(item => item === '')
-      ),
-    [formula],
-  );
+  const handleDisable = useDisabledButton(formula, null, 4);
 
   function handleChange({target}) {
     setFormula({

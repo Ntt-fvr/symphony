@@ -10,10 +10,9 @@
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
-import React, {useMemo, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import fbt from 'fbt';
 
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import moment from 'moment';
 
 import AlarmFilteringAddDialog from './AlarmFilteringAddDialog';
@@ -29,6 +28,9 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
+import {useValidation} from './common/useValidation';
+
+import type {Node} from './AlarmFilteringTypes';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 
@@ -38,6 +40,43 @@ const useStyles = makeStyles(() => ({
   },
   header: {
     marginBottom: '1rem',
+  },
+  formField: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      width: '100%',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
+  },
+  reason: {
+    minHeight: '60px',
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
   },
   gridStyleLeft: {
     paddingRight: '0.5rem',
@@ -52,26 +91,15 @@ const useStyles = makeStyles(() => ({
   },
   calendar: {
     '& .MuiOutlinedInput-input': {
-      height: '12px',
+      height: '24px',
     },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: 'rgba(157, 169, 190, 0.49)',
-      },
-      '&:hover fieldset': {
-        borderColor: 'rgba(157, 169, 190, 0.49)',
-      },
-    },
-  },
+  }
 }));
 
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
   isCompleted: void => void,
-  alarms: {
-    id: string,
-    name: string,
-  },
+  alarms?: Array<Node>,
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
@@ -80,10 +108,17 @@ const AlarmFilteringFormCreate = (props: Props) => {
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
+  const elementRef = useRef();
 
-  const namesAlarms = alarms.map(item => item.node.name);
+  const namesAlarms = alarms?.map(item => item.node.name);
 
   const handleDisable = useDisabledButton(AlarmFilter.data, namesAlarms, 5);
+
+  const validationName = useValidation(
+    AlarmFilter.data.name,
+    namesAlarms,
+    'Alarm',
+  );
 
   function handleChange({target}) {
     setAlarmFilter({
@@ -93,11 +128,6 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
-  const validationName = () => {
-    if (namesAlarms?.some(item => item === AlarmFilter.data.name)) {
-      return {hasError: true, errorText: 'Alarm name existing'};
-    }
-  };
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -164,45 +194,59 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} label="Name">
-                  <TextInput
-                    autoComplete="off"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullwidth
+                    label="Name"
+                    variant="outlined"
                     name="name"
                     onChange={handleChange}
+                    {...validationName}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={12}>
-                  <FormField label="Network Resource">
-                    <TextInput
-                      autoComplete="off"
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      required
+                      fullwidth
+                      label="Network Resource"
+                      variant="outlined"
                       name="networkResource"
                       onChange={handleChange}
                     />
-                  </FormField>
+                  </form>
                 </Grid>
                 <Grid item xs={12}>
                   <Text variant="subtitle1">Exception period</Text>
                 </Grid>
               </Grid>
               <Grid item xs={6}>
-                <FormField label="Reason">
-                  <TextInput
-                    type="multiline"
-                    rows={4}
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullwidth
+                    multiline
+                    rows={3}
+                    label="Reason"
+                    variant="outlined"
                     name="reason"
-                    autoComplete="off"
+                    className={classes.reason}
+                    inputProps={{maxLength: 120}}
                     onChange={handleChange}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Start">
+                  <FormField className={classes.formField}>
                     <TextField
                       className={classes.calendar}
                       variant="outlined"
+                      label="Start"
+                      InputLabelProps={{shrink: true}}
                       id="datetime-local"
                       type="datetime-local"
                       name="beginTime"
@@ -211,10 +255,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="End">
+                  <FormField className={classes.formField}>
                     <TextField
                       className={classes.calendar}
                       variant="outlined"
+                      label="End"
+                      InputLabelProps={{shrink: true}}
                       id="datetime-local"
                       type="datetime-local"
                       name="endTime"
@@ -237,6 +283,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     ).format()}
                     beginDate={moment(AlarmFilter.data.beginTime).format()}
                     endDate={moment(AlarmFilter.data.endTime).format()}
+                    forwardedRef={elementRef}
                   />
                 </Grid>
                 <Grid
@@ -245,9 +292,16 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   lg={9}
                   xl={10}
                   className={classes.gridStyleRight}>
-                  <FormField label="ID">
-                    <TextInput autoComplete="off" name="id" disabled />
-                  </FormField>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      disabled
+                      className={classes.textInput}
+                      label="ID"
+                      variant="outlined"
+                      name="id"
+                      onChange={handleChange}
+                    />
+                  </form>
                 </Grid>
               </Grid>
             </Grid>

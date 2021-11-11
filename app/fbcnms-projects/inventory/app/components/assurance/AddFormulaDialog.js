@@ -21,19 +21,12 @@ import type {AddFormulaMutationVariables} from '../../mutations/__generated__/Ad
 
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import FormGroup from '@material-ui/core/FormGroup';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import Chip from '@material-ui/core/Chip';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
-import Table from '@material-ui/core/Table';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -71,6 +64,16 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  textArea: {
+    width: '100%',
+    height: '100%',
+    '& .MuiOutlinedInput-multiline': {
+      height: '100%',
+      '& textarea': {
+        height: '100% !important',
+      },
+    },
+  },
   styleSearch: {
     [theme.breakpoints.down('md')]: {
       height: 'calc(100% - 120px)',
@@ -79,6 +82,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     paddingBottom: '1.5rem',
     overflow: 'auto',
+    overflowX: 'hidden',
     '&::-webkit-scrollbar': {
       width: '8px',
       height: '8px',
@@ -262,15 +266,15 @@ const AddFormulaDialog = (props: Props) => {
             </Grid>
           </Grid>
           <Grid item xs={7}>
-            <FormField>
-              <TextInput
-                name="formula"
-                type="multiline"
-                autoComplete="off"
-                onChange={handleChange}
-                style={{height: '40vh'}}
-              />
-            </FormField>
+            <TextField
+              className={classes.textArea}
+              name="formula"
+              variant="outlined"
+              multiline
+              autoComplete="off"
+              onChange={handleChange}
+              style={{height: '100%'}}
+            />
           </Grid>
         </Grid>
       </DialogContent>

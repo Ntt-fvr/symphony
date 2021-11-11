@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 
 import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
@@ -20,6 +20,7 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
 
@@ -29,13 +30,14 @@ import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidation} from './common/useValidation';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
   },
   header: {
-    margin: '20px 0 24px 0',
+    margin: '4px 0 24px 0',
   },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
@@ -137,9 +139,10 @@ export default function AddThresholdItemForm(props: Props) {
   );
   const handleDisable = useDisabledButton(thresholds.data, names, 3);
 
-  const handleHasError = useMemo(
-    () => names?.some(item => item === thresholds.data.name),
-    [names, thresholds.data.name],
+  const validationName = useValidation(
+    thresholds.data.name,
+    names,
+    'Threshold',
   );
 
   function handleChange({target}) {
@@ -186,22 +189,22 @@ export default function AddThresholdItemForm(props: Props) {
 
   return (
     <Card className={classes.root}>
-      <CardHeader className={classes.header}>Add Threshold</CardHeader>
+      <CardHeader className={classes.header}>
+        <Text useEllipsis={true} variant="h6" weight="bold">
+          Add Threshold
+        </Text>
+      </CardHeader>
+
       <form className={classes.formField} autoComplete="off">
         <TextField
           required
+          {...validationName}
           className={classes.input}
           id="threshold-name"
           label="Threshold Name"
           variant="outlined"
           name="name"
           onChange={handleChange}
-          error={handleHasError}
-          helperText={
-            names?.some(item => item === thresholds.data.name)
-              ? 'Threshold name existing'
-              : ''
-          }
         />
         <TextField
           required

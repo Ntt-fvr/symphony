@@ -7,7 +7,7 @@
  * @flow strict-local
  * @format
  */
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
@@ -33,10 +33,11 @@ import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidation} from './common/useValidation';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0),
+    padding: '8px 0',
     margin: '16px 0',
     borderRadius: '4px',
     boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
@@ -149,12 +150,19 @@ export default function AddKpiItemForm(props: Props) {
 
   const handleDisable = useDisabledButton(kpis.data, names, 5);
 
-  const handleHasError = useMemo(
-    () => names?.some(item => item === kpis.data.name),
-    [names, kpis.data.name],
-  );
+  const validationName = useValidation(kpis.data.name, names, 'Kpi');
 
+  // this function is for inputs or selects that accept metod trim()
   function handleChange({target}) {
+    setKpis({
+      data: {
+        ...kpis.data,
+        [target.name]: target.value.trim(),
+      },
+    });
+  }
+  //It worked only for the status select for being a boolean
+  function handleChangeStatus({target}) {
     setKpis({
       data: {
         ...kpis.data,
@@ -211,6 +219,7 @@ export default function AddKpiItemForm(props: Props) {
       <AccordionDetails>
         <form className={classes.formField} autoComplete="off">
           <TextField
+            {...validationName}
             required
             className={classes.input}
             id="kpi-name"
@@ -218,12 +227,6 @@ export default function AddKpiItemForm(props: Props) {
             variant="outlined"
             name="name"
             onChange={handleChange}
-            error={handleHasError}
-            helperText={
-              names?.some(item => item === kpis.data.name)
-                ? 'KPI name existing'
-                : ''
-            }
           />
           <TextField
             required
@@ -231,7 +234,7 @@ export default function AddKpiItemForm(props: Props) {
             select
             className={classes.select}
             label="Status"
-            onChange={handleChange}
+            onChange={handleChangeStatus}
             name="status"
             variant="outlined">
             <MenuItem value={true}>Enabled</MenuItem>

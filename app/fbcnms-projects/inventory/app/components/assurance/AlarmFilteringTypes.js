@@ -11,7 +11,6 @@ import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -54,20 +53,24 @@ const AlarmFilteringQuery = graphql`
     }
   }
 `;
-type Alarms = {
+
+export type Node = {
+  node: {
+    name: string,
+  },
+};
+
+export type Alarms = {
   item: {
-    node: {
-      id: string,
-      name: string,
-      networkResource: string,
-      enable: boolean,
-      beginTime: string,
-      endTime: string,
-      reason: string,
-      user: string,
-      creationTime: string,
-      alarmStatus: string,
-    },
+    id: string,
+    name: string,
+    networkResource: string,
+    enable: boolean,
+    beginTime: string,
+    endTime: string,
+    reason: string,
+    user: string,
+    creationTime: string,
   },
 };
 
@@ -144,6 +147,7 @@ const AlarmFilteringTypes = () => {
         <AlarmFilteringTable
           dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
           edit={handleClickEdit}
+          isCompleted={isCompleted}
         />
       </Grid>
     </Grid>

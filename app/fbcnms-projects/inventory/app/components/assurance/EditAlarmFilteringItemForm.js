@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -37,7 +37,11 @@ import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
 import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
+import {useValidationEdit} from './common/useValidation';
 
+import type {Node} from './AlarmFilteringTypes';
+
+import classNames from 'classnames';
 import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
@@ -70,7 +74,7 @@ const useStyles = makeStyles(() => ({
         borderColor: 'rgba(157, 169, 190, 0.49)',
       },
     },
-  },
+  }
 }));
 
 type Props = $ReadOnly<{|
@@ -86,17 +90,10 @@ type Props = $ReadOnly<{|
       reason: string,
       user: string,
       creationTime: string,
-      alarmStatus: {
-        id: string,
-        name: string,
-      },
     },
   },
   isCompleted: void => void,
-  alarms: {
-    id: string,
-    name: string,
-  },
+  alarms?: Array<Node>,
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
@@ -114,8 +111,16 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
   const [checked, setChecked] = useState(formValues.item.enable);
+  const [valueStatus, setValueStatus] = useState();
+  const elementRef = useRef();
 
-  const namesAlarms = alarms.map(item => item.node.name);
+  useEffect(() => {
+    setValueStatus(elementRef.current?.value);
+  }, []);
+
+  const DisableButton = valueStatus === 'Active';
+
+  const namesAlarms = alarms?.map(item => item.node.name);
 
   const dataInputsObject = [
     name.value.trim(),
@@ -132,18 +137,15 @@ const EditAlarmFilteringItemForm = (props: Props) => {
       ) || []
     );
   };
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
+
+  const validationName = useValidationEdit(inputFilter, 'Alarm');
+
   const handleRemove = id => {
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
     };
     RemoveAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
-  };
-  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
-
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Alarm name existing'};
-    }
   };
 
   function handleClickEdit() {
@@ -224,8 +226,14 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} label="Name">
-                  <TextInput {...name} autoComplete="off" name="name" />
+                <FormField {...validationName} label="Name">
+                  <TextInput
+                    {...name}
+                    autoComplete="off"
+                    disabled
+                    name="name"
+                    type="string"
+                  />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
@@ -258,6 +266,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="Start">
                     <TextField
                       {...beginTime}
+                      disabled={DisableButton}
                       className={classes.calendar}
                       autoComplete="off"
                       variant="outlined"
@@ -293,6 +302,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     creationDate={creationTime.value}
                     beginDate={beginTime.value}
                     endDate={endTime.value}
+                    forwardedRef={elementRef}
                   />
                 </Grid>
                 <Grid
@@ -302,7 +312,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   xl={10}
                   className={classes.gridStyleRight}>
                   <FormField label="ID">
-                    <TextInput name="id" disabled {...id} />
+                    <TextInput name="id" {...id} disabled />
                   </FormField>
                 </Grid>
               </Grid>

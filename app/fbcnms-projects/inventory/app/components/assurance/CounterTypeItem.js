@@ -89,21 +89,21 @@ export default function CounterTypeItem(props: Props) {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <Grid container xs={12}>
-            <Grid xs={3} container justify="flex-start" alignItems="center">
+            <Grid xs={6} container justify="flex-start" alignItems="center">
               <Text useEllipsis={true} weight="bold">
                 {name}
               </Text>
             </Grid>
 
-            <Grid xs={4} container alignItems="center">
+            <Grid xs={3} container alignItems="center">
               <Text useEllipsis={true} color="primary" weight="bold">
                 {networkManagerSystem}
               </Text>
             </Grid>
 
             <Grid
-              xs={3}
-              sm={3}
+              xs={2}
+              sm={2}
               container
               justify="flex-start"
               alignItems="center">
@@ -112,7 +112,7 @@ export default function CounterTypeItem(props: Props) {
               </Text>
             </Grid>
 
-            <Grid xs={2} container justify="flex-end" alignItems="center">
+            <Grid xs={1} container justify="flex-end" alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
                 onClick={handleRemove}

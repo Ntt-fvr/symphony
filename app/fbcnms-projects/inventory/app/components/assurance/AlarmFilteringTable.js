@@ -9,7 +9,7 @@
  */
 import Button from '@material-ui/core/Button';
 
-import React, {useState} from 'react';
+import React, {useRef, useState, useCallback} from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
 
@@ -27,6 +27,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
+import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
+import moment from 'moment';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -55,17 +58,20 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  edit: () => void,
-  onChange: () => void,
+  edit: ({}) => void,
   dataValues: any,
+  isCompleted: void => void,
 |}>;
 
 const AlarmFilteringTable = (props: Props) => {
-  const {dataValues, edit} = props;
+  const {dataValues, edit, isCompleted} = props;
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [checked, setChecked] = useState();
+  const [checked, setChecked] = useState(true);
+  const toggleSwitch = useCallback(() => setChecked(!checked));
+  
+  const elementRef = useRef();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -101,7 +107,23 @@ const AlarmFilteringTable = (props: Props) => {
                     <Switch
                       title={''}
                       checked={item.enable}
-                      onChange={setChecked}
+                      onChange={toggleSwitch}
+                      onClick={() => {
+                        const variables: EditAlarmFilterMutationVariables = {
+                          input: {
+                            id: item.id,
+                            name: item.name,
+                            networkResource: item.networkResource,
+                            enable: checked,
+                            beginTime: moment(item.beginTime).format(),
+                            endTime: moment(item.endTime).format(),
+                            reason: item.reason,
+                          },
+                        };
+                        EditAlarmFilterMutation(variables, {
+                          onCompleted: () => isCompleted(),
+                        });
+                      }}
                     />
                   </TableCell>
                   <TableCell>
@@ -118,6 +140,7 @@ const AlarmFilteringTable = (props: Props) => {
                       creationDate={item.creationTime}
                       beginDate={item.beginTime}
                       endDate={item.endTime}
+                      forwardedRef={elementRef}
                     />
                   </TableCell>
                   <TableCell>

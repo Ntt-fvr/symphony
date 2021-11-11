@@ -19,7 +19,6 @@ import {useFormInput} from './common/useFormInput';
 import type {EditThresholdMutationVariables} from '../../mutations/__generated__/EditThresholdMutation.graphql';
 
 import EditTresholdMutation from '../../mutations/EditThresholdMutation';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 // DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
@@ -29,8 +28,10 @@ import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@symphony/design-system/components/switch/Switch';
+import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
+import {useValidationEdit} from './common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -38,13 +39,46 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 43px 22px 30px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.75)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
   cardHeader: {
     margin: '20px 43px 22px 40px',
   },
   textInput: {
     minHeight: '36px',
+  },
+  description: {
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
   },
   action: {
     paddingRight: '1.3rem',
@@ -118,11 +152,7 @@ export const EditThresholdItemForm = (props: Props) => {
     );
   };
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Threshold name existing'};
-    }
-  };
+  const validationName = useValidationEdit(inputFilter, 'Threshold');
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 2, inputFilter);
 
@@ -164,53 +194,62 @@ export const EditThresholdItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
-                <FormField
-                  className={classes.formField}
-                  label="Name"
-                  {...validationName()}
-                  required>
-                  <TextInput
-                    {...name}
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
                     className={classes.textInput}
+                    label="Name"
+                    variant="outlined"
                     name="name"
-                    type="string"
+                    fullWidth
+                    {...name}
+                    {...validationName}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField className={classes.formField} label="ID" required>
-                  <TextInput
-                    value={formValues?.id}
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullWidth
                     className={classes.textInput}
+                    label="ID"
+                    variant="outlined"
                     name="id"
-                    type="string"
+                    value={formValues?.id}
                     disabled
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField className={classes.formField} label="Associated KPI">
-                  <TextInput
-                    value={formValues.kpi?.name}
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullWidth
                     className={classes.textInput}
+                    label="Associated KPI"
+                    variant="outlined"
                     name="kpi"
-                    type="string"
+                    value={formValues?.kpi.name}
                     disabled
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={6} xl={6}>
-                <FormField
-                  className={classes.formField}
-                  label="Description"
-                  required>
-                  <TextInput
-                    {...description}
-                    type="multiline"
-                    name="description"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    multiline
                     rows={3}
+                    required
+                    className={classes.description}
+                    label="Description"
+                    variant="outlined"
+                    name="description"
+                    inputProps={{maxLength: 120}}
+                    fullWidth
+                    {...description}
                   />
-                </FormField>
+                </form>
               </Grid>
             </Grid>
             <Grid
