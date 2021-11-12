@@ -125,11 +125,11 @@ class CategoryTypeTable extends React.Component<Props> {
                       <IconButton
                         skin="primary"
                         disabled={
-                          !property.numberOfDocuments &&
+                          !!property.numberOfDocuments &&
                           !property.id.includes('@tmp')
                         }
                         tooltip={
-                          !property.numberOfDocuments
+                          !!property.numberOfDocuments
                             ? 'it is already used'
                             : ''
                         }
