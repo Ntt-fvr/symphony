@@ -136,11 +136,20 @@ const KpiQuery = graphql`
   }
 `;
 
-type Formula = {
+export type Counter = {
+  id: string,
+  name: string,
+};
+
+export type Formula = {
   id: string,
   textFormula: string,
   status: true,
   techFk: {
+    id: string,
+    name: string,
+  },
+  kpiFk: {
     id: string,
     name: string,
   },
@@ -150,7 +159,7 @@ type Formula = {
   },
 };
 
-type FormulaForm = {
+export type FormulaForm = {
   data: {
     kpi: string,
     vendors: string,
@@ -166,6 +175,10 @@ type Kpis = {
       name: string,
       status: boolean,
       domainFk: {
+        id: string,
+        name: string,
+      },
+      kpiCategoryFK: {
         id: string,
         name: string,
       },
@@ -232,9 +245,13 @@ const KpiTypes = () => {
     return (
       <EditKpiItemForm
         kpi={dataKpis.kpis?.edges.map(item => item.node)}
+        dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+        dataFormula={formulaEditForm}
         formValues={dataEdit.item.node}
         threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
+        handleEditFormulaClick={handleEditFormulaClick}
+        parentEditCallback={handleEditCallback}
         isCompleted={isCompleted}
       />
     );
@@ -295,6 +312,7 @@ const KpiTypes = () => {
             <EditFormulaDialog
               open={openEditDialog}
               dataFormula={formulaEditForm}
+              dataCounter={dataKpis.counters?.edges.map(item => item.node)}
               onClose={() => {
                 setOpenEditDialog(false);
               }}

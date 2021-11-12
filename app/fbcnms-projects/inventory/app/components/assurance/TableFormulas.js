@@ -28,6 +28,7 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
+import type {Formula} from './KpiTypes';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -58,29 +59,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Formula = {
-  id: string,
-  textFormula: string,
-  status: true,
-  techFk: {
-    id: string,
-    name: string,
-  },
-  kpiFk: {
-    id: string,
-    name: string,
-  },
-  networkTypeFk: {
-    id: string,
-    name: string,
-  },
-};
-
 type Props = $ReadOnly<{|
   formulas: Array<Formula>,
-  parentEditCallback: any,
-  handleEditFormulaClick: any,
-  isCompleted: any,
+  parentEditCallback: {} => void,
+  handleEditFormulaClick: void => void,
+  isCompleted: void => void,
 |}>;
 
 const DenseTable = (props: Props) => {
