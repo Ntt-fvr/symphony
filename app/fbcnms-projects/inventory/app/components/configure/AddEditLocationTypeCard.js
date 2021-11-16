@@ -121,6 +121,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
 
     const {mapType, mapZoomLevel} = editingLocationType;
     const isOnEdit = !!this.props.editingLocationType;
+
     return (
       <FormContextProvider
         permissions={{
@@ -251,6 +252,12 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
     };
   };
 
+  withoutProperty(obj, property) {
+    const {[property]: unused, ...rest} = obj;
+
+    return rest;
+  }
+
   buildEditLocationTypeMutationVariables = () => {
     const {
       id,
@@ -272,7 +279,16 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
           .map(this.deleteTempId),
         documentCategories: documentCategories
           .filter(propType => !!propType.name)
-          .map(this.deleteTempId),
+          .map(cat => {
+            const category = cat.id.includes('@tmp')
+              ? {
+                  ['numberOfDocuments']: cat.numberOfDocuments,
+                  ...this.deleteTempId(cat),
+                }
+              : this.withoutProperty(cat, 'numberOfDocuments');
+
+            return category;
+          }),
       },
     };
   };
@@ -490,6 +506,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         id: d.id,
         name: d.name,
         index: d.index,
+        numberOfDocuments: d.numberOfDocuments,
       }));
     return {
       id: editingLocationType?.id ?? 'LocationType@tmp0',
