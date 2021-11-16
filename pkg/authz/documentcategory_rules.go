@@ -21,6 +21,7 @@ func DocumentCategoryWritePolicyRule() privacy.MutationRule {
 	})
 }
 
+// DocumentCategoryReadPolicyRule grants read permission to Category Document based on policy.
 func DocumentCategoryReadPolicyRule() privacy.QueryRule {
 	return privacy.DocumentCategoryQueryRuleFunc(func(ctx context.Context, q *ent.DocumentCategoryQuery) error {
 		dcPredicate := DocumentCategoryReadRule(ctx)
@@ -37,6 +38,8 @@ func DocumentCategoryReadRule(ctx context.Context) predicate.DocumentCategory {
 	switch rule.IsAllowed {
 	case models.PermissionValueYes:
 		return nil
+	case models.PermissionValueNo:
+		predicatesDc = append(predicatesDc, documentcategory.Or(documentcategory.Not(documentcategory.HasLocationType())))
 	case models.PermissionValueByCondition:
 		predicatesDc = append(predicatesDc, documentcategory.IDIn(rule.DocumentCategoryIds...))
 	}

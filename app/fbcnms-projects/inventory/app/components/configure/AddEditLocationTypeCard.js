@@ -122,7 +122,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
     const {mapType, mapZoomLevel} = editingLocationType;
     const isOnEdit = !!this.props.editingLocationType;
 
-    console.log(this.props.editingLocationType?.documentCategories);
     return (
       <FormContextProvider
         permissions={{
