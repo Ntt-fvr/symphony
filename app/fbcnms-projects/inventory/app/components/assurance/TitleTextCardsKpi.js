@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
     padding: '0 4rem 0.5rem 1rem',
   },
   nameKpi: {
-    paddingLeft: '0.7rem',
+    paddingLeft: '1.3rem',
   },
   editButton: {
     paddingLeft: '1rem',
@@ -40,7 +40,7 @@ function TitleTextCardsKpi() {
       justifyContent="center"
       alignItems="center"
       className={classes.root}>
-      <Grid container className={classes.status} xs={2}>
+      <Grid container className={classes.status} xs={4} md={3}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Status
         </Text>
@@ -52,12 +52,12 @@ function TitleTextCardsKpi() {
           Kpi name
         </Text>
       </Grid>
-      <Grid xs={2} md={3}>
+      <Grid xs={3} md={4}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Domain
         </Text>
       </Grid>
-      <Grid xs={6} md={5} xl={6}>
+      <Grid xs={3} md={3} lg={3} xl={4}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Category
         </Text>

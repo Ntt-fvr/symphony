@@ -131,10 +131,17 @@ type Props = $ReadOnly<{|
   dataFormula: Formula,
   isCompleted: void => void,
   dataCounter: any,
+  changeChecking: () => void,
 |}>;
 
 const AddFormulaDialog = (props: Props) => {
-  const {onClose, dataFormula, dataCounter, isCompleted} = props;
+  const {
+    onClose,
+    dataFormula,
+    dataCounter,
+    isCompleted,
+    changeChecking,
+  } = props;
   const [checked, setChecked] = useState();
   const [textFormula, setTextFormula] = useState<TextFormula>({});
   const classes = useStyles();
@@ -170,7 +177,11 @@ const AddFormulaDialog = (props: Props) => {
         networkTypeFk: dataFormula.data.networkTypes,
       },
     };
-    AddFormulaMutation(variables, {onCompleted: () => isCompleted()});
+    AddFormulaMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+      },
+    });
   }
 
   return (
@@ -285,6 +296,7 @@ const AddFormulaDialog = (props: Props) => {
           onClick={() => {
             handleClick();
             onClose();
+            changeChecking();
           }}>
           Save Formula
         </Button>
