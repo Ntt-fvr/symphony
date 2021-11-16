@@ -16,13 +16,6 @@ const useStyles = makeStyles(() => ({
   root: {
     padding: '0  4rem 0.5rem 1rem',
   },
-  globalCenter: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  titleGeneral: {
-    justifyContent: 'flex-start',
-  },
   accionDelete: {
     marginRight: '1rem',
   },
@@ -35,18 +28,30 @@ function TitleTextCardsCounter() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid item xs={6}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid item xs={5}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="regular">
           Counter name
         </Text>
       </Grid>
       <Grid item xs={3}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="regular">
           Network Manager System
         </Text>
       </Grid>
       <Grid item xs={2}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="regular">
           Vendor name
         </Text>
       </Grid>
@@ -55,15 +60,20 @@ function TitleTextCardsCounter() {
         alignItems="center"
         justify="flex-end"
         className={classes.action}
-        xs={1}>
+        xs={2}>
         <Text
           className={classes.accionDelete}
           useEllipsis={true}
           color="primary"
-          variant="subtitle2">
+          variant="body2"
+          weight="regular">
           Delete
         </Text>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="regular">
           Edit
         </Text>
       </Grid>

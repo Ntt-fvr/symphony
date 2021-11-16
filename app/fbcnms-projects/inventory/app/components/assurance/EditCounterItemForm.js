@@ -21,6 +21,7 @@ import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
+import symphony from '@symphony/design-system/theme/symphony';
 
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
@@ -50,13 +51,16 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     margin: '40px',
   },
+  header: {
+    margin: '0 0 1rem 1.4rem',
+  },
   formField: {
-    margin: '0 43px 22px 30px',
+    margin: '0 22px 0px 22px',
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
+      borderColor: symphony.palette.D200,
     },
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
+      borderColor: symphony.palette.B600,
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -3px) scale(0.75)',
@@ -64,7 +68,7 @@ const useStyles = makeStyles(() => ({
     '& .MuiFormControl-root': {
       marginBottom: '41px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
+        borderColor: symphony.palette.B600,
       },
     },
     '& .MuiOutlinedInput-input': {
@@ -80,21 +84,12 @@ const useStyles = makeStyles(() => ({
     },
   },
   cardHeader: {
-    margin: '20px 43px 22px 30px',
-  },
-  textInput: {
-    minHeight: '36px',
-  },
-  action: {
-    paddingRight: '1.3rem',
+    margin: '26px 43px 22px 23px',
   },
   addCounter: {
-    marginRight: '1rem',
-    width: '111px',
+    marginRight: '1.5rem',
+    width: '98px',
     alignSelf: 'flex-end',
-  },
-  title: {
-    padding: '20px 0 0 30px',
   },
 }));
 
@@ -172,20 +167,51 @@ const EditCounterItemForm = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <ConfigureTitleSubItem
-            title={fbt('Counters Catalog/', 'Counters Catalog')}
-            tag={` ${formValues.name}`}
-          />
+      <Grid container>
+        <Grid
+          className={classes.header}
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center">
+          <Grid xs>
+            <ConfigureTitleSubItem
+              title={fbt('Counters Catalog/', 'Counters Catalog')}
+              tag={` ${formValues.name}`}
+            />
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                className={classes.addCounter}
+                onClick={() => {
+                  handleClick();
+                }}
+                disabled={handleDisable}>
+                Save
+              </Button>
+            </FormField>
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                className={classes.addCounter}
+                skin="brightGray"
+                onClick={() => {
+                  hideEditCounterForm();
+                }}>
+                Cancel
+              </Button>
+            </FormField>
+          </Grid>
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card>
+          <Card margins={'none'}>
             <CardHeader className={classes.cardHeader}>
               Edit container detail
             </CardHeader>
             <Grid container>
-              <Grid item xs={12} sm={12} lg={12} xl={12}>
+              <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -202,14 +228,19 @@ const EditCounterItemForm = (props: Props) => {
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
-                    disabled
-                    id="counter-name"
-                    label="Counter Family"
-                    variant="outlined"
-                    name="counterFamily"
+                    id="outlined-select-vendor"
+                    select
+                    label="Vendor name*"
                     fullWidth
-                    {...counterFamily}
-                  />
+                    name="vendor"
+                    variant="outlined"
+                    {...vendor}>
+                    {data.vendors.edges.map((item, index) => (
+                      <MenuItem key={index} value={item.node?.id}>
+                        {item.node?.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </form>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
@@ -237,49 +268,18 @@ const EditCounterItemForm = (props: Props) => {
                   />
                 </form>
               </Grid>
-            </Grid>
-            <Grid item xs={12} sm={12} lg={4} xl={4}>
-              <form className={classes.formField} autoComplete="off">
-                <TextField
-                  id="outlined-select-vendor"
-                  select
-                  label="Vendor name*"
-                  fullWidth
-                  name="vendor"
-                  variant="outlined"
-                  {...vendor}>
-                  {data.vendors.edges.map((item, index) => (
-                    <MenuItem key={index} value={item.node?.id}>
-                      {item.node?.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </form>
-            </Grid>
-            <Grid container justify="flex-end">
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addCounter}
-                    onClick={() => {
-                      handleClick();
-                    }}
-                    disabled={handleDisable}>
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addCounter}
-                    skin="brightGray"
-                    onClick={() => {
-                      hideEditCounterForm();
-                    }}>
-                    Cancel
-                  </Button>
-                </FormField>
+              <Grid item xs={12} sm={12} lg={4} xl={4}>
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    disabled
+                    id="counter-name"
+                    label="Counter Family"
+                    variant="outlined"
+                    name="counterFamily"
+                    fullWidth
+                    {...counterFamily}
+                  />
+                </form>
               </Grid>
             </Grid>
           </Card>

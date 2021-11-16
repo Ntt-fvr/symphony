@@ -68,8 +68,6 @@ import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useHistory, useRouteMatch} from 'react-router';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
-// import {SchedulingQueryRenderer} from './SchedulingQueryRenderer';
-
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100%',

@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
-    marginBottom: '7px',
+    marginBottom: '10px',
   },
   container: {
     '& .MuiAccordionSummary-root': {
@@ -42,11 +42,16 @@ const useStyles = makeStyles(() => ({
     },
   },
   familyName: {
-    marginLeft: '-16px',
     paddingBottom: '12px',
   },
+  counterId: {
+    paddingBottom: '12px',
+  },
+  titles: {
+    marginRight: '0.8rem',
+  },
   detailsRoot: {
-    marginLeft: '11px',
+    margin: '0.1rem 2.7rem 0 0.7rem',
   },
   deleteIcon: {
     marginRight: '1rem',
@@ -89,14 +94,14 @@ export default function CounterTypeItem(props: Props) {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <Grid container xs={12}>
-            <Grid xs={6} container justify="flex-start" alignItems="center">
+            <Grid xs={5} container justify="flex-start" alignItems="center">
               <Text useEllipsis={true} weight="bold">
                 {name}
               </Text>
             </Grid>
 
             <Grid xs={3} container alignItems="center">
-              <Text useEllipsis={true} color="primary" weight="bold">
+              <Text useEllipsis={true} color="primary" weight="regular">
                 {networkManagerSystem}
               </Text>
             </Grid>
@@ -107,12 +112,12 @@ export default function CounterTypeItem(props: Props) {
               container
               justify="flex-start"
               alignItems="center">
-              <Text useEllipsis={true} weight="bold">
+              <Text useEllipsis={true} weight="regular">
                 {vendorFk.name}
               </Text>
             </Grid>
 
-            <Grid xs={1} container justify="flex-end" alignItems="center">
+            <Grid xs={2} container justify="flex-end" alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
                 onClick={handleRemove}
@@ -124,13 +129,21 @@ export default function CounterTypeItem(props: Props) {
 
         <AccordionDetails className={classes.detailsRoot}>
           <Grid container spacing={3}>
-            <Grid xs={4}>
-              <strong>Counter ID: </strong>
-              {externalID}
+            <Grid xs={5} className={classes.counterId}>
+              <Text className={classes.titles} variant={'body2'} weight="bold">
+                Counter ID:
+              </Text>
+              <Text variant={'body2'} weight="regular">
+                {externalID}
+              </Text>
             </Grid>
-            <Grid xs={8} className={classes.familyName}>
-              <strong>Family Name: </strong>
-              {counterFamily.name}
+            <Grid xs={7} className={classes.familyName}>
+              <Text className={classes.titles} variant={'body2'} weight="bold">
+                Family Name:
+              </Text>
+              <Text variant={'body2'} weight="regular">
+                {counterFamily.name}
+              </Text>
             </Grid>
           </Grid>
         </AccordionDetails>
