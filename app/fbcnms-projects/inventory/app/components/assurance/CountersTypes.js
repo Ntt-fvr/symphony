@@ -23,55 +23,35 @@ import CounterTypeItem from './CounterTypeItem';
 import EditCounterItemForm from './EditCounterItemForm';
 import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
+import symphony from '@symphony/design-system/theme/symphony';
 
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: '1',
-    padding: '40px',
+    flexGrow: '0',
+    padding: '30px',
     margin: '0',
-    maxHeight: 'calc(100vh - 57px)',
   },
-  table: {
-    height: 'calc(100% - 46.25px)',
+  titleCounter: {
+    margin: '0 0 1rem 0',
   },
   listContainer: {
-    width: '100%',
-    position: 'relative',
     overflow: 'auto',
     paddingRight: '9px',
-    height: 'calc(100% - 31.74px)',
+    maxHeight: 'calc(95vh - 156px)',
     '&::-webkit-scrollbar': {
       width: '9px',
     },
     '&::-webkit-scrollbar-thumb': {
-      background: '#9DA9BE',
+      background: symphony.palette.D300,
       borderRadius: '4px',
-    },
-    '&::-webkit-scrollbar-thumb:active': {
-      background: '#999999',
-    },
-    '&::-webkit-scrollbar-thumb:hover': {
-      background: '#313C48',
-      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
     },
     '&::-webkit-scrollbar-track': {
-      background: '#e5e5e5',
+      background: symphony.palette.D100,
       borderRadius: '4px',
     },
-    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
-      background: '#d4d4d4',
-    },
-  },
-  listCarCounter: {
-    listStyle: 'none',
-  },
-  powerSearchContainer: {
-    margin: '10px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
   },
 }));
 
@@ -163,8 +143,8 @@ const CountersTypes = () => {
   }
 
   return (
-    <Grid className={classes.root} container spacing={2}>
-      <Grid item xs={12}>
+    <Grid className={classes.root} container spacing={0}>
+      <Grid className={classes.titleCounter} item xs={12}>
         <ConfigureTitle
           title={fbt('Counters Catalog', 'Counters Title')}
           subtitle={fbt(
@@ -173,32 +153,27 @@ const CountersTypes = () => {
           )}
         />
       </Grid>
-      <Grid
-        className={classes.table}
-        item
-        xs={12}
-        sm={12}
-        md={12}
-        lg={9}
-        xl={9}>
-        <TitleTextCardsCounter />
+      <Grid spacing={1} container>
+        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+          <TitleTextCardsCounter />
 
-        <List disablePadding className={classes.listContainer}>
-          {counterTypes.counters?.edges.map(item => (
-            <CounterTypeItem
-              key={item.node?.id}
-              handleRemove={() => handleRemove(item.node?.id)}
-              edit={() => showEditCounterItemForm({item})}
-              {...item.node}
-            />
-          ))}
-        </List>
-      </Grid>
-      <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
-        <AddCounterItemForm
-          isCompleted={isCompleted}
-          counterNames={counterTypes.counters?.edges}
-        />
+          <List disablePadding className={classes.listContainer}>
+            {counterTypes.counters?.edges.map(item => (
+              <CounterTypeItem
+                key={item.node?.id}
+                handleRemove={() => handleRemove(item.node?.id)}
+                edit={() => showEditCounterItemForm({item})}
+                {...item.node}
+              />
+            ))}
+          </List>
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+          <AddCounterItemForm
+            isCompleted={isCompleted}
+            counterNames={counterTypes.counters?.edges}
+          />
+        </Grid>
       </Grid>
     </Grid>
   );

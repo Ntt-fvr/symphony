@@ -26,13 +26,12 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import symphony from '@symphony/design-system/theme/symphony';
 
-import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-
 import {useDisabledButton} from './common/useDisabledButton';
 import {useValidation} from './common/useValidation';
 
@@ -57,24 +56,21 @@ const AddCountersQuery = graphql`
   }
 `;
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(0),
-  },
+const useStyles = makeStyles(() => ({
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
+      borderColor: symphony.palette.D200,
     },
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
+      borderColor: symphony.palette.B600,
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '36px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
+        borderColor: symphony.palette.B600,
       },
     },
     '& .MuiOutlinedInput-input': {
@@ -89,21 +85,18 @@ const useStyles = makeStyles(theme => ({
       lineHeight: '8px',
     },
   },
-  textInput: {
-    minHeight: '36px',
-  },
   header: {
     margin: '4px 0 24px 0',
   },
   addCounter: {
-    margin: '15px 0',
+    margin: '0',
     width: '111px',
     alignSelf: 'flex-end',
   },
-  input: {
+  inputField: {
     width: '100%',
   },
-  select: {
+  selectField: {
     width: '100%',
   },
 }));
@@ -186,17 +179,13 @@ export default function AddCounterItemForm(props: Props) {
   }
 
   return (
-    <Card className={classes.root}>
-      <CardHeader className={classes.header}>
-        <Text useEllipsis={true} variant="h6" weight="bold">
-          Add Counter
-        </Text>
-      </CardHeader>
+    <Card>
+      <CardHeader className={classes.header}>Add Counter</CardHeader>
       <form className={classes.formField} autoComplete="off">
         <TextField
           {...validationName}
           required
-          className={classes.input}
+          className={classes.inputField}
           id="counter-name"
           label="Counter name"
           variant="outlined"
@@ -205,7 +194,7 @@ export default function AddCounterItemForm(props: Props) {
         />
         <TextField
           required
-          className={classes.input}
+          className={classes.inputField}
           id="counter-id"
           label="Counter ID"
           variant="outlined"
@@ -216,7 +205,7 @@ export default function AddCounterItemForm(props: Props) {
           required
           id="outlined-select-family"
           select
-          className={classes.select}
+          className={classes.selectField}
           label="Family name"
           onChange={handleChange}
           name="family"
@@ -230,7 +219,7 @@ export default function AddCounterItemForm(props: Props) {
         <TextField
           id="outlined-select-vendor"
           select
-          className={classes.select}
+          className={classes.selectField}
           label="Vendor name*"
           onChange={handleChange}
           name="vendor"
@@ -243,7 +232,7 @@ export default function AddCounterItemForm(props: Props) {
         </TextField>
         <TextField
           required
-          className={classes.input}
+          className={classes.inputField}
           id="network-manager-system"
           label="Network Manager System"
           variant="outlined"
