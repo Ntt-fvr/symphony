@@ -35,12 +35,13 @@ function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid
-      container
+      item
       xs={12}
-      justifyContent="center"
+      container
+      justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid container className={classes.status} xs={4} md={3}>
+      <Grid item className={classes.status} xs={4} md={3}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Status
         </Text>
@@ -52,12 +53,12 @@ function TitleTextCardsKpi() {
           Kpi name
         </Text>
       </Grid>
-      <Grid xs={3} md={4}>
+      <Grid item xs={3} md={4}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Domain
         </Text>
       </Grid>
-      <Grid xs={3} md={3} lg={3} xl={4}>
+      <Grid item xs={3} md={3} lg={3} xl={4}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Category
         </Text>
@@ -67,6 +68,7 @@ function TitleTextCardsKpi() {
         alignItems="center"
         justify="flex-end"
         className={classes.actions}
+        item
         xs={2}
         md={2}
         xl={1}>

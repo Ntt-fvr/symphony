@@ -168,6 +168,11 @@ export default function AddFormulaItemForm(props: Props) {
     parentCallback(formula);
   }
 
+  function handleOpen (event) {
+    event.stopPropagation();
+    setOpen(!open);
+  }
+
   if (checking) {
     return (
       <AddedSuccessfullyMessage
@@ -184,9 +189,9 @@ export default function AddFormulaItemForm(props: Props) {
   }
 
   return (
-    <Accordion className={classes.root} expanded={open}>
+    <Accordion className={classes.root} expanded={open} onChange={handleOpen}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+        expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
         className={classes.accordionSummary}
         id="panel1a-header">
@@ -203,6 +208,7 @@ export default function AddFormulaItemForm(props: Props) {
             className={classes.select}
             label="KPI"
             onChange={handleChange}
+            defaultValue=""
             name="kpi"
             variant="outlined">
             {data.kpis?.edges.map((item, index) => (
@@ -219,6 +225,7 @@ export default function AddFormulaItemForm(props: Props) {
             className={classes.select}
             label="Vendors"
             onChange={handleChange}
+            defaultValue=""
             name="vendors"
             variant="outlined">
             {data.vendors?.edges.map((item, index) => (
@@ -234,6 +241,7 @@ export default function AddFormulaItemForm(props: Props) {
             className={classes.select}
             label="Technology"
             onChange={handleChange}
+            defaultValue=""
             name="technology"
             variant="outlined">
             {data.techs?.edges.map((item, index) => (
@@ -249,6 +257,7 @@ export default function AddFormulaItemForm(props: Props) {
             className={classes.select}
             label="Network Type"
             onChange={handleChange}
+            defaultValue=""
             name="networkTypes"
             variant="outlined">
             {data.networkTypes?.edges.map((item, index) => (
