@@ -12,6 +12,7 @@ import React, {useState} from 'react';
 
 import type {RemoveFormulaMutationVariables} from '../../mutations/__generated__/RemoveFormulaMutation.graphql';
 
+import type {Formula} from './KpiTypes';
 import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
@@ -28,7 +29,6 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
-import type {Formula} from './KpiTypes';
 
 const StyledTableCell = withStyles(() => ({
   head: {
