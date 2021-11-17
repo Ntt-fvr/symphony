@@ -20,11 +20,13 @@ import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditK
 import EditKpiMutation from '../../mutations/EditKpiMutation';
 
 // DESIGN SYSTEM //
+import type {Counter, Formula} from './KpiTypes';
 import type {EditKpiItemFormQuery} from './__generated__/EditKpiItemFormQuery.graphql';
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
+import EditFormulaDialog from './EditFormulaDialog';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import TableFormulas from './TableFormulas';
@@ -152,15 +154,6 @@ type Kpi = {
   },
 };
 
-type Formula = {
-  id: string,
-  textFormula: string,
-  status: true,
-  techFk: {
-    name: string,
-  },
-};
-
 type Props = $ReadOnly<{|
   formValues: {
     id: string,
@@ -181,10 +174,22 @@ type Props = $ReadOnly<{|
   isCompleted: void => void,
   kpi: Array<Kpi>,
   threshold: Array<KpiThreshold>,
+  parentEditCallback: ({}) => void,
+  dataCounter: Array<Counter>,
+  dataFormula: Array<Formula>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
-  const {kpi, formValues, hideEditKpiForm, threshold, isCompleted} = props;
+  const {
+    kpi,
+    formValues,
+    hideEditKpiForm,
+    threshold,
+    isCompleted,
+    parentEditCallback,
+    dataCounter,
+    dataFormula,
+  } = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -192,6 +197,7 @@ export const EditKpiItemForm = (props: Props) => {
   const description = useFormInput(formValues.description);
   const kpiCategoryFK = useFormInput(formValues.kpiCategoryFK.id);
   const [checked, setChecked] = useState(formValues.status);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});
 
@@ -237,6 +243,10 @@ export const EditKpiItemForm = (props: Props) => {
         hideEditKpiForm();
       },
     });
+  };
+
+  const handleEditFormulaKqiTable = () => {
+    setOpenEditDialog(true);
   };
 
   return (
@@ -430,7 +440,23 @@ export const EditKpiItemForm = (props: Props) => {
               Formulas contained
             </Text>
           </Grid>
-          <TableFormulas formulas={formValues.formulaFk} />
+          <TableFormulas
+            formulas={formValues.formulaFk}
+            handleEditFormulaClick={handleEditFormulaKqiTable}
+            parentEditCallback={parentEditCallback}
+            isCompleted={isCompleted}
+          />
+          {openEditDialog && (
+            <EditFormulaDialog
+              open={openEditDialog}
+              dataFormula={dataFormula}
+              dataCounter={dataCounter}
+              onClose={() => {
+                setOpenEditDialog(false);
+              }}
+              isCompleted={isCompleted}
+            />
+          )}
         </Grid>
       </Grid>
     </div>

@@ -12,6 +12,7 @@ import React, {useState} from 'react';
 
 import type {RemoveFormulaMutationVariables} from '../../mutations/__generated__/RemoveFormulaMutation.graphql';
 
+import type {Formula} from './KpiTypes';
 import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
@@ -58,29 +59,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Formula = {
-  id: string,
-  textFormula: string,
-  status: true,
-  techFk: {
-    id: string,
-    name: string,
-  },
-  kpiFk: {
-    id: string,
-    name: string,
-  },
-  networkTypeFk: {
-    id: string,
-    name: string,
-  },
-};
-
 type Props = $ReadOnly<{|
   formulas: Array<Formula>,
-  parentEditCallback: any,
-  handleEditFormulaClick: any,
-  isCompleted: any,
+  parentEditCallback: {} => void,
+  handleEditFormulaClick: void => void,
+  isCompleted: void => void,
 |}>;
 
 const DenseTable = (props: Props) => {
