@@ -18,8 +18,9 @@ import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 
 import type {AddFormulaMutationVariables} from '../../mutations/__generated__/AddFormulaMutation.graphql';
-
+import type {EditFormulaMutationVariables} from '../../mutations/__generated__/EditFormulaMutation.graphql';
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
+import EditFormulaMutation from '../../mutations/EditFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -31,6 +32,8 @@ import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
+import type {Counter} from './KpiTypes';
+
 const useStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
@@ -87,8 +90,6 @@ const useStyles = makeStyles(theme => ({
       width: '8px',
       height: '8px',
     },
-
-    /* Estilos barra (thumb) de scroll */
     '&::-webkit-scrollbar-thumb': {
       background: '#9DA9BE',
       borderRadius: '4px',
@@ -100,7 +101,6 @@ const useStyles = makeStyles(theme => ({
       background: '#313C48',
       boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
     },
-    /* Estilos track de scroll */
     '&::-webkit-scrollbar-track': {
       background: '#e5e5e5',
       borderRadius: '4px',
@@ -203,12 +203,13 @@ const AddFormulaDialog = (props: Props) => {
           </Grid>
           <Grid item xs={7}>
             <TextField
+              className={classes.textField}
               placeholder="Add counter"
               color="primary"
               type="text"
-              className={classes.textField}
               variant="outlined"
               name="search"
+              autoComplete="off"
               onChange={handleChange}
               InputProps={{
                 startAdornment: (
@@ -263,7 +264,6 @@ const AddFormulaDialog = (props: Props) => {
                         key={index}
                         label={item.name}
                         style={{
-                          backgroundColor: item.color,
                           color: 'black',
                           fontWeight: '500',
                         }}
@@ -284,7 +284,6 @@ const AddFormulaDialog = (props: Props) => {
               multiline
               autoComplete="off"
               onChange={handleChange}
-              style={{height: '100%'}}
             />
           </Grid>
         </Grid>
