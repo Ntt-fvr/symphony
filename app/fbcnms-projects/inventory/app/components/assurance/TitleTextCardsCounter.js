@@ -56,6 +56,8 @@ function TitleTextCardsCounter() {
         </Text>
       </Grid>
       <Grid
+        item
+        xs={2}
         container
         alignItems="center"
         justify="flex-end"

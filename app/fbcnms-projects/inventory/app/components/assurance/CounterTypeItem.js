@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 
 // DESING SYSTEM //
 import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
@@ -85,6 +85,11 @@ export default function CounterTypeItem(props: Props) {
   } = props;
   const classes = useStyles();
 
+  const handleDelete = event => {
+    event.stopPropagation();
+    handleRemove();
+  };
+
   return (
     <div className={classes.root}>
       <Accordion className={classes.container}>
@@ -114,7 +119,7 @@ export default function CounterTypeItem(props: Props) {
             <Grid item xs={2} container justify="flex-end">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={handleRemove}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>
