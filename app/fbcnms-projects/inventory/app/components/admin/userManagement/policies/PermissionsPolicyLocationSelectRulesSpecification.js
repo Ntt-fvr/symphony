@@ -107,7 +107,9 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
   const [policySelectMethod, setPolicySelectMethod] = useState(
     selectedLocationType > 0
       ? METHOD_SELECTED_LOCATIONS_VALUE.toString()
-      : METHOD_ALL_LOCATIONS_VALUE.toString(),
+      : documentRule.read?.isAllowed === 'YES'
+      ? METHOD_ALL_LOCATIONS_VALUE.toString()
+      : '',
   );
 
   const updateUpdateRuleByMethod = useCallback(
@@ -181,7 +183,12 @@ export default function PermissionsPolicyLocationSelectRulesSpecification(
           errorText={emptyRequiredTypesSelectionErrorMessage}
           hasError={!!emptyRequiredTypesSelectionErrorMessage}>
           <SelectLocationTypes
-            disabled={policySelectMethod === '0' ? true : false}
+            disabled={
+              policySelectMethod === '0' ||
+              documentRule.read?.isAllowed === 'NO'
+                ? true
+                : false
+            }
             selectLocationIdOnDocumentCategory={documentRule?.locationTypeID}
             selectedDocumentCategoriesIds={
               documentRule.read?.documentCategoryIds
