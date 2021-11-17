@@ -192,6 +192,7 @@ const KpiTypes = () => {
   const classes = useStyles();
 
   const [dataKpis, setDataKpis] = useState({});
+  const [showChecking, setShowChecking] = useState(false);
   const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState<Kpis>({});
   const [openDialog, setOpenDialog] = useState(false);
@@ -278,8 +279,6 @@ const KpiTypes = () => {
                 threshold={dataKpis.thresholds?.edges}
                 deleteItem={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
-                handleFormulaClick={handleFormulaClick}
-                parentCallback={handleCallback}
                 handleEditFormulaClick={handleEditFormulaClick}
                 parentEditCallback={handleEditCallback}
                 isCompleted={isCompleted}
@@ -296,6 +295,9 @@ const KpiTypes = () => {
           <AddFormulaItemForm
             parentCallback={handleCallback}
             handleClick={handleFormulaClick}
+            checking={showChecking}
+            changeChecking={() => setShowChecking(false)}
+            isCompleted={isCompleted}
           />
           {openDialog && (
             <AddFormulaDialog
@@ -306,6 +308,7 @@ const KpiTypes = () => {
                 setOpenDialog(false);
               }}
               isCompleted={isCompleted}
+              changeChecking={() => setShowChecking(true)}
             />
           )}
           {openEditDialog && (

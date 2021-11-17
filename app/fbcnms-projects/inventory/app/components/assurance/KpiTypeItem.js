@@ -10,7 +10,6 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddButton from './common/AddButton';
 import TableFormulas from './TableFormulas';
 
 // DESIGN SYSTEM //
@@ -51,7 +50,7 @@ const useStyles = makeStyles(() => ({
   },
   nameKpi: {
     fontWeight: 'bold',
-    paddingLeft: '0.25rem',
+    paddingLeft: '1rem',
   },
   editIcon: {
     flexGrow: '1',
@@ -106,8 +105,6 @@ type Props = $ReadOnly<{|
   threshold: Array<KpiThreshold>,
   edit: void,
   onChange: void,
-  handleFormulaClick: void => void,
-  parentCallback: any,
   handleEditFormulaClick: void => void,
   parentEditCallback: any,
   isCompleted: void => void,
@@ -125,8 +122,6 @@ const KpiTypeItem = (props: Props) => {
     threshold,
     edit,
     deleteItem,
-    handleFormulaClick,
-    parentCallback,
     handleEditFormulaClick,
     parentEditCallback,
     isCompleted,
@@ -152,14 +147,6 @@ const KpiTypeItem = (props: Props) => {
     EditKpiMutation(variables, {onCompleted: () => isCompleted()});
   };
 
-  function handleCallback() {
-    parentCallback({
-      kpi: id,
-      technology: formulaFk[0]?.techFk?.id,
-      networkTypes: formulaFk[0]?.networkTypeFk?.id,
-    });
-  }
-
   return (
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
@@ -174,8 +161,8 @@ const KpiTypeItem = (props: Props) => {
               container
               alignItems="center"
               className={classes.switch}
-              xs={2}
-              md={2}>
+              xs={4}
+              md={3}>
               <Switch
                 title={''}
                 checked={status}
@@ -188,8 +175,8 @@ const KpiTypeItem = (props: Props) => {
             </Grid>
 
             <Grid
-              xs={2}
-              md={3}
+              xs={3}
+              md={4}
               container
               alignItems="center"
               justifyContent="flex-start">
@@ -203,6 +190,8 @@ const KpiTypeItem = (props: Props) => {
             <Grid
               xs={3}
               md={3}
+              lg={3}
+              xl={4}
               container
               alignItems="center"
               justifyContent="flex-start">
@@ -212,25 +201,6 @@ const KpiTypeItem = (props: Props) => {
                 </Text>
               </Button>
             </Grid>
-
-            <Grid
-              xs={3}
-              md={2}
-              lg={2}
-              xl={3}
-              container
-              justify="center"
-              alignItems="center">
-              <AddButton
-                disabled={false}
-                textButton={'Add formula'}
-                onClick={() => {
-                  handleCallback();
-                  handleFormulaClick();
-                }}
-              />
-            </Grid>
-
             <Grid
               xs={2}
               md={2}
