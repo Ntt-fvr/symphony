@@ -24,6 +24,7 @@ import WorkOrderExportButton from './WorkOrderExportButton';
 import WorkOrderSaveButton from './WorkOrderSaveButton';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
+import {AppointmentData} from './SelectAvailabilityAssignee';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {
   blockedStatus,
@@ -87,6 +88,7 @@ type Props = $ReadOnly<{|
   onCancelClicked: () => void,
   onPriorityChanged: (value: string) => void,
   onStatusChanged: (value: GraphQLWorkOrderStatus) => void,
+  appointmentData: AppointmentData,
 |}>;
 
 const WorkOrderHeader = (props: Props) => {
@@ -98,6 +100,7 @@ const WorkOrderHeader = (props: Props) => {
     properties,
     checkListCategories,
     locationId,
+    appointmentData,
     onWorkOrderRemoved,
     onCancelClicked,
     onPriorityChanged,
@@ -171,6 +174,7 @@ const WorkOrderHeader = (props: Props) => {
             workOrder={workOrder}
             properties={properties}
             checkListCategories={checkListCategories}
+            appointmentData={appointmentData}
             locationId={locationId}
           />
         </div>
