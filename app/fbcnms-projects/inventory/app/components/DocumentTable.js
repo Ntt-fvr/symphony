@@ -57,7 +57,7 @@ class DocumentTable extends React.Component<Props> {
   render() {
     const {classes, onDocumentDeleted, entityId, categories} = this.props;
     const categoriesEnabled = this.context.isFeatureEnabled('file_categories');
-    const files = this.props.files.map(file => ({
+    const files = this.props.files.filter(Boolean).map(file => ({
       ...file,
       isFile: true,
       sortingValue: getFileSortingValue(file, categoriesEnabled),
