@@ -128,7 +128,17 @@ func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
 		if rule.OrganizationIds != nil {
 			predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
 		} else {
-			return nil
+			userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+			if !ok {
+				return nil
+			}
+
+			uOrg, err := userViewer.User().QueryOrganization().OnlyID(ctx)
+			if err != nil {
+				return nil
+			} else {
+				predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(uOrg)))
+			}
 		}
 	case models.PermissionValueByCondition:
 		predicatesWo = append(predicatesWo, workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
