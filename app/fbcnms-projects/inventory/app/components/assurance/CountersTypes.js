@@ -48,6 +48,12 @@ const useStyles = makeStyles(() => ({
       background: symphony.palette.D300,
       borderRadius: '4px',
     },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
+    },
     '&::-webkit-scrollbar-track': {
       background: symphony.palette.D100,
       borderRadius: '4px',

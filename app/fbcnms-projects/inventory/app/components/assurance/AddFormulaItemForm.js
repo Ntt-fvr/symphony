@@ -8,8 +8,9 @@
  * @format
  */
 
-import * as React from 'react';
+import type {AddFormulaItemFormQuery} from './__generated__/AddFormulaItemFormQuery.graphql';
 
+import * as React from 'react';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -17,8 +18,7 @@ import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-
-import type {AddFormulaItemFormQuery} from './__generated__/AddFormulaItemFormQuery.graphql';
+import symphony from '@symphony/design-system/theme/symphony';
 
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
@@ -31,35 +31,35 @@ import {useState} from 'react';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '8px 0',
+    padding: '6px 0',
     borderRadius: '4px',
     boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     '&::before': {
       display: 'none',
     },
   },
-  header: {
-    margin: '20px 0 24px 0',
-  },
   accordionSummary: {
     marginLeft: '12px',
+    '& .MuiIconButton-edgeEnd': {
+      marginRight: '-3px',
+    },
   },
   formField: {
     width: '100%',
     padding: '0 12px',
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
+      borderColor: symphony.palette.D200,
     },
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
+      borderColor: symphony.palette.B600,
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -3px) scale(0.75)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '36px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
+        borderColor: symphony.palette.B600,
       },
     },
     '& .MuiOutlinedInput-input': {
@@ -74,18 +74,12 @@ const useStyles = makeStyles(() => ({
       lineHeight: '8px',
     },
   },
-  textInput: {
-    minHeight: '36px',
-  },
   addCounter: {
-    margin: '15px 0',
+    margin: '0 0 15px 0',
     width: '111px',
     alignSelf: 'flex-end',
   },
-  input: {
-    width: '100%',
-  },
-  select: {
+  selectKpi: {
     width: '100%',
   },
 }));
@@ -200,7 +194,7 @@ export default function AddFormulaItemForm(props: Props) {
             required
             id="outlined-select-kpi"
             select
-            className={classes.select}
+            className={classes.selectKpi}
             label="KPI"
             onChange={handleChange}
             name="kpi"
@@ -216,7 +210,7 @@ export default function AddFormulaItemForm(props: Props) {
             required
             id="outlined-select-vendors"
             select
-            className={classes.select}
+            className={classes.selectKpi}
             label="Vendors"
             onChange={handleChange}
             name="vendors"
@@ -231,7 +225,7 @@ export default function AddFormulaItemForm(props: Props) {
             required
             id="outlined-select-technology"
             select
-            className={classes.select}
+            className={classes.selectKpi}
             label="Technology"
             onChange={handleChange}
             name="technology"
@@ -246,7 +240,7 @@ export default function AddFormulaItemForm(props: Props) {
             required
             id="outlined-select-vendors"
             select
-            className={classes.select}
+            className={classes.selectKpi}
             label="Network Type"
             onChange={handleChange}
             name="networkTypes"
