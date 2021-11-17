@@ -56,11 +56,12 @@ function TitleTextCardsCounter() {
         </Text>
       </Grid>
       <Grid
+        item
+        xs={2}
         container
         alignItems="center"
         justify="flex-end"
-        className={classes.action}
-        xs={2}>
+        className={classes.action}>
         <Text
           className={classes.accionDelete}
           useEllipsis={true}

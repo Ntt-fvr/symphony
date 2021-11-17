@@ -209,6 +209,7 @@ export default function AddCounterItemForm(props: Props) {
           label="Family name"
           onChange={handleChange}
           name="family"
+          defaultValue=""
           variant="outlined">
           {data.counterFamilies.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
@@ -223,6 +224,7 @@ export default function AddCounterItemForm(props: Props) {
           label="Vendor name*"
           onChange={handleChange}
           name="vendor"
+          defaultValue=""
           variant="outlined">
           {data.vendors.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
