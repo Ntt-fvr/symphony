@@ -184,9 +184,7 @@ export default function AddFormulaItemForm(props: Props) {
         aria-controls="panel1a-content"
         className={classes.accordionSummary}
         id="panel1a-header">
-        <Text variant="h6" >
-          Add formula
-        </Text>
+        <Text variant="h6">Add formula</Text>
       </AccordionSummary>
       <AccordionDetails>
         <form className={classes.formField} autoComplete="off">
