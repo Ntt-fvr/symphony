@@ -5,6 +5,7 @@ import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_
 import type {ShortUser} from '../../common/EntUtils';
 
 import MomentUtils from '@date-io/moment';
+import moment from 'moment';
 
 import Button from '@symphony/design-system/components/Button';
 import CalendarTodayIcon from '@material-ui/core/SvgIcon';
@@ -96,10 +97,11 @@ const SelectAvailabilityAssignee = (props: Props) => {
   } = props;
 
   const classes = useStyles();
-  const [slotStartDate, setSlotStartDate] = useState(new Date());
-  const [slotEndDate, setSlotEndDate] = useState(new Date());
+  const [slotStartDate, setSlotStartDate] = useState(moment);
+  const [slotEndDate, setSlotEndDate] = useState(moment);
   const [duration, setDuration] = useState('0');
   const [useFilters, setUseFilters] = useState(false);
+  const [invalidForm, setInvalidForm] = useState(false);
 
   useEffect(() => {
     setAppointment(false);
@@ -127,6 +129,24 @@ const SelectAvailabilityAssignee = (props: Props) => {
     });
   };
 
+  const orderDatesValidation = () => {
+    durationValidation(duration);
+    moment(slotStartDate).isAfter(slotEndDate)
+      ? setInvalidForm(true)
+      : setInvalidForm(false);
+  };
+
+  const durationValidation = duration => {
+    const interval = slotEndDate.diff(slotStartDate, 'hours');
+    if (interval >= duration) {
+      setDuration(duration);
+      setInvalidForm(false);
+    } else {
+      setDuration('0');
+      setInvalidForm(true);
+    }
+  };
+
   return (
     <ExpandingPanel title={title} className={classes.card}>
       <Button
@@ -146,6 +166,7 @@ const SelectAvailabilityAssignee = (props: Props) => {
               inputVariant="outlined"
               value={slotStartDate}
               onChange={setSlotStartDate}
+              onClose={orderDatesValidation}
               className={classes.inputFilter}
               disabled={useFilters}
             />
@@ -155,9 +176,11 @@ const SelectAvailabilityAssignee = (props: Props) => {
           <MuiPickersUtilsProvider utils={MomentUtils}>
             <DateTimePicker
               variant="inline"
+              minDate={slotStartDate}
               inputVariant="outlined"
               value={slotEndDate}
               onChange={setSlotEndDate}
+              onClose={orderDatesValidation}
               className={classes.inputFilter}
               disabled={useFilters}
             />
@@ -177,7 +200,8 @@ const SelectAvailabilityAssignee = (props: Props) => {
             disabled={useFilters}
             selectedValue={duration}
             className={classes.inputFilter}
-            onChange={setDuration}
+            onChange={duration => durationValidation(duration)}
+            onClose={durationValidation}
           />
         </FormField>
         <div className={classes.actionButtons}>
@@ -191,7 +215,7 @@ const SelectAvailabilityAssignee = (props: Props) => {
           <Button
             className={classes.filterButton}
             onClick={applyFilters}
-            disabled={useFilters}>
+            disabled={invalidForm || useFilters}>
             Filter
           </Button>
         </div>
