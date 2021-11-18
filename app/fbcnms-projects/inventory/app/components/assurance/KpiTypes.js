@@ -14,6 +14,8 @@ import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 
+import symphony from '@symphony/design-system/theme/symphony';
+
 // COMPONENTS //
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
@@ -50,22 +52,18 @@ const useStyles = makeStyles(() => ({
       width: '9px',
     },
     '&::-webkit-scrollbar-thumb': {
-      background: '#9DA9BE',
+      background: symphony.palette.D300,
       borderRadius: '4px',
     },
     '&::-webkit-scrollbar-thumb:active': {
-      background: '#999999',
+      background: symphony.palette.D200,
     },
     '&::-webkit-scrollbar-thumb:hover': {
-      background: '#313C48',
-      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+      background: symphony.palette.D400,
     },
     '&::-webkit-scrollbar-track': {
-      background: '#e5e5e5',
+      background: symphony.palette.D100,
       borderRadius: '4px',
-    },
-    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
-      background: '#d4d4d4',
     },
   },
 }));
@@ -136,11 +134,20 @@ const KpiQuery = graphql`
   }
 `;
 
-type Formula = {
+export type Counter = {
+  id: string,
+  name: string,
+};
+
+export type Formula = {
   id: string,
   textFormula: string,
   status: true,
   techFk: {
+    id: string,
+    name: string,
+  },
+  kpiFk: {
     id: string,
     name: string,
   },
@@ -150,7 +157,7 @@ type Formula = {
   },
 };
 
-type FormulaForm = {
+export type FormulaForm = {
   data: {
     kpi: string,
     vendors: string,
@@ -166,6 +173,10 @@ type Kpis = {
       name: string,
       status: boolean,
       domainFk: {
+        id: string,
+        name: string,
+      },
+      kpiCategoryFK: {
         id: string,
         name: string,
       },
@@ -233,9 +244,13 @@ const KpiTypes = () => {
     return (
       <EditKpiItemForm
         kpi={dataKpis.kpis?.edges.map(item => item.node)}
+        dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+        dataFormula={formulaEditForm}
         formValues={dataEdit.item.node}
         threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
+        handleEditFormulaClick={handleEditFormulaClick}
+        parentEditCallback={handleEditCallback}
         isCompleted={isCompleted}
       />
     );
@@ -298,6 +313,7 @@ const KpiTypes = () => {
             <EditFormulaDialog
               open={openEditDialog}
               dataFormula={formulaEditForm}
+              dataCounter={dataKpis.counters?.edges.map(item => item.node)}
               onClose={() => {
                 setOpenEditDialog(false);
               }}
