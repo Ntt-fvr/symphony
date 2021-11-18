@@ -152,16 +152,22 @@ export default function ThresholdTypeItem(props: Props) {
     EditTresholdMutation(variables);
   };
 
+  const handleDelete = event => {
+    event.stopPropagation();
+    setDialogOpen(true);
+  }
+
   return (
     <div className={classes.root}>
-      <Accordion className={classes.container} expanded={open}>
+      <Accordion className={classes.container}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid container xs={12}>
+          <Grid container item xs={12}>
             <Grid
               className={classes.switchButton}
+              item
               xs={2}
               md={3}
               container
@@ -181,22 +187,24 @@ export default function ThresholdTypeItem(props: Props) {
             </Grid>
 
             <Grid
+              item
               xs={2}
               md={3}
               container
               alignItems="center"
-              justifyContent="flex-start">
+              justify="flex-start">
               <Button variant="text">
                 <Text useEllipsis={true}>{id}</Text>
               </Button>
             </Grid>
 
             <Grid
+              item
               xs={3}
               md={2}
               container
               alignItems="center"
-              justifyContent="flex-start">
+              justify="flex-start">
               <Button variant="text">
                 <Text useEllipsis={true} weight="bold" color="primary">
                   {kpi?.name}
@@ -205,6 +213,7 @@ export default function ThresholdTypeItem(props: Props) {
             </Grid>
 
             <Grid
+              item
               xs={3}
               md={2}
               lg={2}
@@ -219,6 +228,7 @@ export default function ThresholdTypeItem(props: Props) {
               />
             </Grid>
             <Grid
+              item
               xs={2}
               md={2}
               lg={2}
@@ -228,7 +238,7 @@ export default function ThresholdTypeItem(props: Props) {
               alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={() => setDialogOpen(true)}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>
@@ -243,10 +253,10 @@ export default function ThresholdTypeItem(props: Props) {
             xs={12}
             justify="center"
             alignItems="center">
-            <Grid xs={10} className={classes.descriptionKpi}>
+            <Grid item xs={10} className={classes.descriptionKpi}>
               Description: {description}
             </Grid>
-            <Grid className={classes.tableRules} xs={10}>
+            <Grid className={classes.tableRules} item xs={10}>
               <Text
                 className={classes.rulesContained}
                 weight="bold"
