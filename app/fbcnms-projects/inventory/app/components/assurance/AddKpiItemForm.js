@@ -210,7 +210,7 @@ export default function AddKpiItemForm(props: Props) {
         aria-controls="panel1a-content"
         className={classes.accordionSummary}
         id="panel1a-header">
-        <Text useEllipsis={true} variant="h6" weight="bold">
+        <Text variant="h6">
           Add KPI
         </Text>
       </AccordionSummary>
