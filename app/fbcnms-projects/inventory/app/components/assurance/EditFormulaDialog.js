@@ -19,19 +19,17 @@ import Text from '@symphony/design-system/components/Text';
 
 import type {EditFormulaMutationVariables} from '../../mutations/__generated__/EditFormulaMutation.graphql';
 
+import Chip from '@material-ui/core/Chip';
 import CloseIcon from '@material-ui/icons/Close';
 import EditFormulaMutation from '../../mutations/EditFormulaMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import Switch from '@symphony/design-system/components/switch/Switch';
-import Chip from '@material-ui/core/Chip';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import TextField from '@material-ui/core/TextField';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {useFormInput} from './common/useFormInput';
-import type {Formula, Counter} from './KpiTypes';
 
 const useStyles = makeStyles(theme => ({
   root: {

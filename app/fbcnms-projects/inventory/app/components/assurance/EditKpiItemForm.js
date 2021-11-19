@@ -20,12 +20,14 @@ import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditK
 import EditKpiMutation from '../../mutations/EditKpiMutation';
 
 // DESIGN SYSTEM //
+import type {Counter, Formula} from './KpiTypes';
 import type {EditKpiItemFormQuery} from './__generated__/EditKpiItemFormQuery.graphql';
-import EditFormulaDialog from './EditFormulaDialog';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
+import EditFormulaDialog from './EditFormulaDialog';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import TableFormulas from './TableFormulas';
@@ -36,7 +38,6 @@ import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useValidationEdit} from './common/useValidation';
-import type {Counter, Formula} from './KpiTypes';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -168,7 +169,6 @@ type Props = $ReadOnly<{|
   isCompleted: void => void,
   kpi: Array<Kpi>,
   threshold: Array<KpiThreshold>,
-  handleEditFormulaClick: void => void,
   parentEditCallback: ({}) => void,
   dataCounter: Array<Counter>,
   dataFormula: Array<Formula>,
@@ -182,7 +182,6 @@ export const EditKpiItemForm = (props: Props) => {
     hideEditKpiForm,
     threshold,
     isCompleted,
-    handleEditFormulaClick,
     parentEditCallback,
     dataCounter,
     dataFormula,
