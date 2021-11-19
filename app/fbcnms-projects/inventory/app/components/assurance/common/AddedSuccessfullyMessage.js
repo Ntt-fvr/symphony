@@ -21,7 +21,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0px',
+    padding: '0 0 14px 0',
   },
   header: {
     margin: '4px',
@@ -52,7 +52,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
   const classes = useStyles();
 
   return (
-    <Card>
+    <Card className={classes.root}>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
       <Grid container direction="column" justify="center" alignItems="center">
         <Grid className={classes.containerIcon}>

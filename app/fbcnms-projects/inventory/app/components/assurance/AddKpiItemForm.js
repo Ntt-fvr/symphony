@@ -28,6 +28,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -35,35 +36,35 @@ import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useValidation} from './common/useValidation';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    padding: '8px 0',
-    margin: '16px 0',
+    padding: '6px 0',
+    margin: '0 0 16px 0',
     borderRadius: '4px',
     boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
   },
-  header: {
-    margin: '20px 0 24px 0',
-  },
   accordionSummary: {
     marginLeft: '12px',
+    '& .MuiIconButton-edgeEnd': {
+      marginRight: '-3px',
+    },
   },
   formField: {
     width: '100%',
     padding: '0 12px',
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
+      borderColor: symphony.palette.D200,
     },
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
+      borderColor: symphony.palette.B600,
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '36px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
+        borderColor: symphony.palette.B600,
       },
     },
     '& .MuiOutlinedInput-input': {
@@ -78,17 +79,14 @@ const useStyles = makeStyles(theme => ({
       lineHeight: '8px',
     },
   },
-  input: {
+  inputField: {
     width: '100%',
   },
-  select: {
+  selectField: {
     width: '100%',
-  },
-  textInput: {
-    minHeight: '36px',
   },
   addCounter: {
-    margin: '15px 0',
+    margin: '0 0 5px 0',
     width: '111px',
     alignSelf: 'flex-end',
   },
@@ -212,7 +210,7 @@ export default function AddKpiItemForm(props: Props) {
         aria-controls="panel1a-content"
         className={classes.accordionSummary}
         id="panel1a-header">
-        <Text useEllipsis={true} variant="h6" weight="bold">
+        <Text variant="h6">
           Add KPI
         </Text>
       </AccordionSummary>
@@ -221,7 +219,7 @@ export default function AddKpiItemForm(props: Props) {
           <TextField
             {...validationName}
             required
-            className={classes.input}
+            className={classes.inputField}
             id="kpi-name"
             label="Kpi name"
             variant="outlined"
@@ -232,7 +230,7 @@ export default function AddKpiItemForm(props: Props) {
             required
             id="outlined-select-status"
             select
-            className={classes.select}
+            className={classes.selectField}
             label="Status"
             onChange={handleChangeStatus}
             name="status"
@@ -244,7 +242,7 @@ export default function AddKpiItemForm(props: Props) {
             required
             id="outlined-select-domain"
             select
-            className={classes.select}
+            className={classes.selectField}
             label="Domain"
             onChange={handleChange}
             name="domain"
@@ -259,7 +257,7 @@ export default function AddKpiItemForm(props: Props) {
             required
             id="outlined-select-category"
             select
-            className={classes.select}
+            className={classes.selectField}
             label="Category"
             onChange={handleChange}
             name="category"
@@ -273,7 +271,7 @@ export default function AddKpiItemForm(props: Props) {
           <TextField
             multiline
             required
-            className={classes.input}
+            className={classes.inputField}
             id="description"
             label="Description"
             variant="outlined"

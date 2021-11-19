@@ -87,7 +87,7 @@ const useStyles = makeStyles(() => ({
     margin: '26px 43px 22px 23px',
   },
   addCounter: {
-    marginRight: '1.5rem',
+    marginRight: '1rem',
     width: '98px',
     alignSelf: 'flex-end',
   },

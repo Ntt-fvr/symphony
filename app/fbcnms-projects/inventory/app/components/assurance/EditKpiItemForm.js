@@ -25,13 +25,14 @@ import type {EditKpiItemFormQuery} from './__generated__/EditKpiItemFormQuery.gr
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import EditFormulaDialog from './EditFormulaDialog';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import TableFormulas from './TableFormulas';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import symphony from '@symphony/design-system/theme/symphony';
 import {Grid, MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -44,21 +45,24 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     margin: '40px',
   },
+  header: {
+    margin: '0 0 1rem 1.4rem',
+  },
   formField: {
-    margin: '0 43px 22px 30px',
+    margin: '0 22px 0px 22px',
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
+      borderColor: symphony.palette.D200,
     },
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
+      borderColor: symphony.palette.B600,
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -3px) scale(0.75)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '36px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
+        borderColor: symphony.palette.B600,
       },
     },
     '& .MuiOutlinedInput-input': {
@@ -73,8 +77,27 @@ const useStyles = makeStyles(() => ({
       lineHeight: '8px',
     },
   },
+  containerTable: {
+    margin: '25px 0 20px 0',
+  },
+  headerTable: {
+    padding: '0 0 0 22px',
+  },
+  headerTableContainer: {
+    paddingBottom: '10px',
+  },
+  headerCardEdit: {
+    padding: '17px 22px 17px 0',
+  },
   cardHeader: {
-    margin: '20px 43px 22px 30px',
+    margin: '32px 43px 22px 22px',
+  },
+  containerEnabled: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  EnabledName: {
+    paddingRight: '7px',
   },
   textInput: {
     minHeight: '36px',
@@ -87,27 +110,9 @@ const useStyles = makeStyles(() => ({
     },
   },
   addKpi: {
-    marginRight: '1rem',
-    width: '111px',
+    marginRight: '1.5rem',
+    width: '98px',
     alignSelf: 'flex-end',
-  },
-  action: {
-    paddingRight: '1.3rem',
-  },
-  title: {
-    marginLeft: '10px',
-  },
-  select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    position: 'relative',
-    boxSizing: 'border-box',
-    minHeight: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
   },
 }));
 
@@ -246,163 +251,201 @@ export const EditKpiItemForm = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <ConfigureTitleSubItem
-            title={fbt('KPI Catalog/', 'KPI Catalog')}
-            tag={` ${formValues.name}`}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card>
-            <CardHeader className={classes.cardHeader}>
-              Edit Kpi detail
-            </CardHeader>
-            <Grid container>
-              <Grid item xs={12} sm={12} lg={1} xl={1}>
-                <FormField className={classes.formField} label="Enabled">
-                  <Switch title={''} checked={checked} onChange={setChecked} />
-                </FormField>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={5} xl={5}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    className={classes.textInput}
-                    id="kpi-name"
-                    label="Name"
-                    variant="outlined"
-                    name="name"
-                    fullWidth
-                    {...name}
-                    {...validationName}
-                  />
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    id="outlined-select-vendor"
-                    select
-                    required
-                    label="Network Type"
-                    fullWidth
-                    name="network"
-                    variant="outlined"
-                    {...kpiCategoryFK}>
-                    {data.kpiCategories.edges.map((item, index) => (
-                      <MenuItem key={index} value={item.node?.id}>
-                        {item.node?.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    disabled
-                    className={classes.textInput}
-                    label="ID"
-                    variant="outlined"
-                    name="Id"
-                    fullWidth
-                    value={formValues.id}
-                  />
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    select
-                    required
-                    label="Domain"
-                    fullWidth
-                    name="domains"
-                    variant="outlined"
-                    {...domainFk}>
-                    {data.domains.edges.map((item, index) => (
-                      <MenuItem key={index} value={item.node?.id}>
-                        {item.node?.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    disabled
-                    className={classes.textInput}
-                    label="Associated Threshold"
-                    variant="outlined"
-                    name="threshold"
-                    fullWidth
-                    value={
-                      thresholdFromKpi === undefined
-                        ? 'none'
-                        : thresholdFromKpi.node.name
-                    }
-                  />
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={6} xl={6}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    multiline
-                    rows={3}
-                    required
-                    className={classes.description}
-                    label="Description"
-                    variant="outlined"
-                    name="description"
-                    inputProps={{maxLength: 120}}
-                    fullWidth
-                    {...description}
-                  />
-                </form>
-              </Grid>
-            </Grid>
-            <Grid container justify="flex-end">
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      handleClick();
-                    }}
-                    disabled={handleDisable}>
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      hideEditKpiForm();
-                    }}
-                    skin="brightGray">
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
-            </Grid>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card>
-            <CardHeader>Formulas contained</CardHeader>
-            <TableFormulas
-              formulas={formValues.formulaFk}
-              handleEditFormulaClick={handleEditFormulaKqiTable}
-              parentEditCallback={parentEditCallback}
-              isCompleted={isCompleted}
+      <Grid container>
+        <Grid
+          className={classes.header}
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center">
+          <Grid xs>
+            <ConfigureTitleSubItem
+              title={fbt('KPI Catalog/', 'KPI Catalog')}
+              tag={` ${formValues.name}`}
             />
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                className={classes.addKpi}
+                onClick={() => {
+                  handleClick();
+                }}
+                disabled={handleDisable}>
+                Save
+              </Button>
+            </FormField>
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                className={classes.addKpi}
+                onClick={() => {
+                  hideEditKpiForm();
+                }}
+                skin="brightGray">
+                Cancel
+              </Button>
+            </FormField>
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
+          <Card margins={'none'}>
+            <Grid
+              className={classes.headerCardEdit}
+              container
+              direction="row"
+              justifyContent="space-evenly"
+              alignItems="center">
+              <Grid xs>
+                <Text
+                  weight={'bold'}
+                  variant={'h6'}
+                  className={classes.cardHeader}>
+                  Edit Kpi detail
+                </Text>
+              </Grid>
+              <Grid className={classes.containerEnabled}>
+                <Text
+                  className={classes.EnabledName}
+                  color={'primary'}
+                  variant={'caption'}>
+                  Enabled
+                </Text>
+                <Switch title={''} checked={checked} onChange={setChecked} />
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid xs={12} sm={12} md={4} lg={4} xl={4}>
+                <Grid item xs={12}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      required
+                      className={classes.textInput}
+                      id="kpi-name"
+                      label="Name"
+                      variant="outlined"
+                      name="name"
+                      fullWidth
+                      {...name}
+                      {...validationName}
+                    />
+                  </form>
+                </Grid>
+                <Grid item xs={12}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      required
+                      disabled
+                      className={classes.textInput}
+                      label="ID"
+                      variant="outlined"
+                      name="Id"
+                      fullWidth
+                      value={formValues.id}
+                    />
+                  </form>
+                </Grid>
+                <Grid item xs={12}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      required
+                      disabled
+                      className={classes.textInput}
+                      label="Associated Threshold"
+                      variant="outlined"
+                      name="threshold"
+                      fullWidth
+                      value={
+                        thresholdFromKpi === undefined
+                          ? 'none'
+                          : thresholdFromKpi.node.name
+                      }
+                    />
+                  </form>
+                </Grid>
+              </Grid>
+              <Grid xs={12} sm={12} md={4} lg={4} xl={4}>
+                <Grid item xs={12}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      id="outlined-select-vendor"
+                      select
+                      required
+                      label="Network Type"
+                      fullWidth
+                      name="network"
+                      variant="outlined"
+                      {...kpiCategoryFK}>
+                      {data.kpiCategories.edges.map((item, index) => (
+                        <MenuItem key={index} value={item.node?.id}>
+                          {item.node?.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
+                </Grid>
+                <Grid item xs={12}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      select
+                      required
+                      label="Domain"
+                      fullWidth
+                      name="domains"
+                      variant="outlined"
+                      {...domainFk}>
+                      {data.domains.edges.map((item, index) => (
+                        <MenuItem key={index} value={item.node?.id}>
+                          {item.node?.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
+                </Grid>
+              </Grid>
+              <Grid xs={12} sm={12} md={4} lg={4} xl={4}>
+                <Grid item xs={12}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      multiline
+                      rows={3}
+                      required
+                      className={classes.description}
+                      label="Description"
+                      variant="outlined"
+                      name="description"
+                      inputProps={{maxLength: 120}}
+                      fullWidth
+                      {...description}
+                    />
+                  </form>
+                </Grid>
+              </Grid>
+            </Grid>
           </Card>
+        </Grid>
+        <Grid
+          className={classes.containerTable}
+          item
+          xs={12}
+          sm={12}
+          lg={12}
+          xl={12}>
+          <Grid className={classes.headerTableContainer}>
+            <Text
+              weight={'bold'}
+              variant={'h6'}
+              className={classes.headerTable}>
+              Formulas contained
+            </Text>
+          </Grid>
+          <TableFormulas
+            formulas={formValues.formulaFk}
+            handleEditFormulaClick={handleEditFormulaKqiTable}
+            parentEditCallback={parentEditCallback}
+            isCompleted={isCompleted}
+          />
           {openEditDialog && (
             <EditFormulaDialog
               open={openEditDialog}
