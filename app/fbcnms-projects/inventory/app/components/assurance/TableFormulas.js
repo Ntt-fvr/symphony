@@ -11,7 +11,8 @@
 import React, {useState} from 'react';
 
 import type {RemoveFormulaMutationVariables} from '../../mutations/__generated__/RemoveFormulaMutation.graphql';
-
+import type {EditFormulaMutationVariables} from '../../mutations/__generated__/EditFormulaMutation.graphql';
+import EditFormulaMutation from '../../mutations/EditFormulaMutation';
 import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
@@ -61,7 +62,7 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   formulas: Array<Formula>,
-  parentEditCallback: {} => void,
+  parentEditCallback: ({}) => void,
   handleEditFormulaClick: void => void,
   isCompleted: void => void,
 |}>;
@@ -86,7 +87,7 @@ const DenseTable = (props: Props) => {
   function handleEditCallback(editFormula: {}) {
     parentEditCallback(editFormula);
   }
-
+  
   return (
     <Paper variant="outlined">
       <TableContainer className={classes.root}>
@@ -102,26 +103,41 @@ const DenseTable = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {formulas.map(row => (
-              <StyledTableRow key={row?.id}>
+            {formulas?.map(row => (
+              <StyledTableRow key={row.id}>
                 <TableCell component="th" scope="row">
                   <Switch
                     title={''}
-                    checked={row?.status}
+                    checked={row.status}
                     onChange={setChecked}
+                    onClick={() => {
+                      const variables: EditFormulaMutationVariables = {
+                        input: {
+                          id: row.id,
+                          textFormula: row.textFormula,
+                          status: checked,
+                          techFk: row.techFk.id,
+                          kpiFk: row.kpiFk.id,
+                          networkTypeFk: row.networkTypeFk.id,
+                        },
+                      };
+                      EditFormulaMutation(variables, {
+                        onCompleted: () => isCompleted(),
+                      });
+                    }}
                   />
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row?.id}
+                  {row.id}
                 </TableCell>
-                <TableCell>{row?.techFk?.name}</TableCell>
-                <TableCell>{row?.networkTypeFk?.name}</TableCell>
+                <TableCell>{row.techFk.name}</TableCell>
+                <TableCell>{row.networkTypeFk.name}</TableCell>
                 <TableCell>
                   <Button>
                     <DeleteOutlinedIcon
                       style={{color: DARK.D300}}
                       onClick={() => {
-                        handleRemove(row?.id);
+                        handleRemove(row.id);
                       }}
                     />
                   </Button>
@@ -131,12 +147,13 @@ const DenseTable = (props: Props) => {
                     icon={EditIcon}
                     onClick={() => {
                       handleEditCallback({
-                        formula: row?.id,
-                        textFormula: row?.textFormula,
-                        tech: row?.techFk?.id,
-                        kpiId: row?.kpiFk?.id,
-                        kpiFk: row?.kpiFk?.name,
-                        networkTypes: row?.networkTypeFk?.id,
+                        formula: row.id,
+                        status: row.status,
+                        textFormula: row.textFormula,
+                        tech: row.techFk.id,
+                        kpiId: row.kpiFk.id,
+                        kpiFk: row.kpiFk.name,
+                        networkTypes: row.networkTypeFk.id,
                       });
                       handleEditFormulaClick();
                     }}

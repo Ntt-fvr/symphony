@@ -172,6 +172,7 @@ type Props = $ReadOnly<{|
   parentEditCallback: ({}) => void,
   dataCounter: Array<Counter>,
   dataFormula: Array<Formula>,
+  dataFormulaTable: Array<Formula>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
@@ -185,6 +186,7 @@ export const EditKpiItemForm = (props: Props) => {
     parentEditCallback,
     dataCounter,
     dataFormula,
+    dataFormulaTable,
   } = props;
   const classes = useStyles();
 
@@ -193,12 +195,16 @@ export const EditKpiItemForm = (props: Props) => {
   const description = useFormInput(formValues.description);
   const kpiCategoryFK = useFormInput(formValues.kpiCategoryFK.id);
   const [checked, setChecked] = useState(formValues.status);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openEditDialogFormula, setOpenEditDialogFormula] = useState(false);
 
   const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});
 
   const thresholdFromKpi = threshold.find(
     ({node}) => node.kpi?.name === formValues.name,
+  );
+
+  const filterFormulaTableById = dataFormulaTable?.filter(
+    kqiData => kqiData?.kpiFk?.id === formValues.id,
   );
 
   const kpiNames = kpi?.map(item => item.name);
@@ -242,7 +248,7 @@ export const EditKpiItemForm = (props: Props) => {
   };
 
   const handleEditFormulaKqiTable = () => {
-    setOpenEditDialog(true);
+    setOpenEditDialogFormula(true);
   };
 
   return (
@@ -398,21 +404,21 @@ export const EditKpiItemForm = (props: Props) => {
           <Card>
             <CardHeader>Formulas contained</CardHeader>
             <TableFormulas
-              formulas={formValues.formulaFk}
+              isCompleted={isCompleted}
+              formulas={filterFormulaTableById}
               handleEditFormulaClick={handleEditFormulaKqiTable}
               parentEditCallback={parentEditCallback}
-              isCompleted={isCompleted}
             />
           </Card>
-          {openEditDialog && (
+          {openEditDialogFormula && (
             <EditFormulaDialog
-              open={openEditDialog}
+              isCompleted={isCompleted}
+              open={openEditDialogFormula}
               dataFormula={dataFormula}
               dataCounter={dataCounter}
               onClose={() => {
-                setOpenEditDialog(false);
+                setOpenEditDialogFormula(false);
               }}
-              isCompleted={isCompleted}
             />
           )}
         </Grid>

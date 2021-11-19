@@ -129,7 +129,7 @@ const EditFormulaDialog = (props: Props) => {
   const [textFormulaSearch, setTextFormulaSearch] = useState<TextFormula>({});
   const classes = useStyles();
   const textFormula = useFormInput(dataFormula.data.textFormula);
-
+  const statusCheck = useFormInput(dataFormula.data.status);
   function handleChange({target}) {
     setTextFormulaSearch({
       ...textFormulaSearch,
@@ -156,7 +156,7 @@ const EditFormulaDialog = (props: Props) => {
       input: {
         id: dataFormula.data.formula,
         textFormula: textFormula.value,
-        status: true,
+        status: Boolean(statusCheck.value),
         techFk: dataFormula.data.tech,
         kpiFk: dataFormula.data.kpiId,
         networkTypeFk: dataFormula.data.networkTypes,
