@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   titleKpi: {
-    margin: '0 0 1rem 0',
+    margin: '0 0 40px 0',
   },
   listContainer: {
     overflow: 'auto',

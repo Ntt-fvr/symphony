@@ -15,7 +15,7 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
-    padding: '0 4rem 0.5rem 1rem',
+    padding: '0 3.8rem 0.5rem 1rem',
   },
   nameKpi: {
     paddingLeft: '1.3rem',
@@ -41,25 +41,38 @@ function TitleTextCardsKpi() {
       justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid item className={classes.status} xs={4} md={3}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid container className={classes.status} xs={4} md={3}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Status
         </Text>
         <Text
           useEllipsis={true}
           className={classes.nameKpi}
           color="primary"
-          variant="subtitle2">
+          variant="subtitle2"
+          weight={'medium'}>
           Kpi name
         </Text>
       </Grid>
       <Grid item xs={3} md={4}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Domain
         </Text>
       </Grid>
       <Grid item xs={3} md={3} lg={3} xl={4}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Category
         </Text>
       </Grid>
@@ -72,14 +85,19 @@ function TitleTextCardsKpi() {
         xs={2}
         md={2}
         xl={1}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Delete
         </Text>
         <Text
           useEllipsis={true}
           color="primary"
           className={classes.editButton}
-          variant="subtitle2">
+          variant="subtitle2"
+          weight={'medium'}>
           Edit
         </Text>
       </Grid>

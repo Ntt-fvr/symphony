@@ -14,9 +14,9 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0  4rem 0.5rem 1rem',
+    padding: '0 3.8rem 0.5rem 0.7rem',
   },
-  accionDelete: {
+  actionDelete: {
     marginRight: '1rem',
   },
   action: {
@@ -33,7 +33,7 @@ function TitleTextCardsCounter() {
           useEllipsis={true}
           color="primary"
           variant="body2"
-          weight="regular">
+          weight="medium">
           Counter name
         </Text>
       </Grid>
@@ -42,7 +42,7 @@ function TitleTextCardsCounter() {
           useEllipsis={true}
           color="primary"
           variant="body2"
-          weight="regular">
+          weight="medium">
           Network Manager System
         </Text>
       </Grid>
@@ -51,7 +51,7 @@ function TitleTextCardsCounter() {
           useEllipsis={true}
           color="primary"
           variant="body2"
-          weight="regular">
+          weight="medium">
           Vendor name
         </Text>
       </Grid>
@@ -63,18 +63,18 @@ function TitleTextCardsCounter() {
         justify="flex-end"
         className={classes.action}>
         <Text
-          className={classes.accionDelete}
+          className={classes.actionDelete}
           useEllipsis={true}
           color="primary"
           variant="body2"
-          weight="regular">
+          weight="medium">
           Delete
         </Text>
         <Text
           useEllipsis={true}
           color="primary"
           variant="body2"
-          weight="regular">
+          weight="medium">
           Edit
         </Text>
       </Grid>
