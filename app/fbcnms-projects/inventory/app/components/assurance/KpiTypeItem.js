@@ -49,7 +49,6 @@ const useStyles = makeStyles(() => ({
     },
   },
   nameKpi: {
-    fontWeight: 'bold',
     paddingLeft: '1rem',
   },
   deleteIcon: {
@@ -166,7 +165,10 @@ const KpiTypeItem = (props: Props) => {
                 onChange={setChecked}
                 onClick={handleClick}
               />
-              <Text useEllipsis={true} className={classes.nameKpi}>
+              <Text
+                useEllipsis={true}
+                className={classes.nameKpi}
+                weight={'bold'}>
                 {name}
               </Text>
             </Grid>
