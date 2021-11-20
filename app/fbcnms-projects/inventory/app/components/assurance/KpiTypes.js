@@ -131,6 +131,27 @@ const KpiQuery = graphql`
         }
       }
     }
+    formulas {
+      edges {
+        node {
+          id
+          networkTypeFk {
+            id
+            name
+          }
+          textFormula
+          status
+          techFk {
+            id
+            name
+          }
+          kpiFk {
+            id
+            name
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -142,7 +163,7 @@ export type Counter = {
 export type Formula = {
   id: string,
   textFormula: string,
-  status: true,
+  status: boolean,
   techFk: {
     id: string,
     name: string,
@@ -243,15 +264,16 @@ const KpiTypes = () => {
   if (showEditCard) {
     return (
       <EditKpiItemForm
+        isCompleted={isCompleted}
         kpi={dataKpis.kpis?.edges.map(item => item.node)}
         dataCounter={dataKpis.counters?.edges.map(item => item.node)}
         dataFormula={formulaEditForm}
+        dataFormulaTable={dataKpis.formulas?.edges.map(item => item.node)}
         formValues={dataEdit.item.node}
         threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
         handleEditFormulaClick={handleEditFormulaClick}
         parentEditCallback={handleEditCallback}
-        isCompleted={isCompleted}
       />
     );
   }
