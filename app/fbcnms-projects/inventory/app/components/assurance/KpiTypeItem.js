@@ -30,6 +30,8 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
+import type {Formula} from './KpiTypes';
+
 import DialogConfirmDelete from './DialogConfirmDelete';
 
 const useStyles = makeStyles(() => ({
@@ -70,20 +72,6 @@ type KpiThreshold = {
   },
 };
 
-type Formula = {
-  id: string,
-  textFormula: string,
-  status: true,
-  techFk: {
-    id: string,
-    name: string,
-  },
-  networkTypeFk: {
-    id: string,
-    name: string,
-  },
-};
-
 type Props = $ReadOnly<{|
   id: string,
   name: string,
@@ -97,7 +85,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   formulaFk: Array<Formula>,
-  deleteItem: string,
+  deleteItem: () => void,
   description: string,
   threshold: Array<KpiThreshold>,
   edit: void,
