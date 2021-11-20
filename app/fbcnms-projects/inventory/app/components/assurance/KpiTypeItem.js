@@ -26,12 +26,13 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
-import DialogConfirmDelete from './DialogConfirmDelete';
 import type {Formula} from './KpiTypes';
+
+import DialogConfirmDelete from './DialogConfirmDelete';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -43,7 +44,7 @@ const useStyles = makeStyles(() => ({
   container: {
     align: 'center',
     '& .MuiAccordionSummary-root': {
-      padding: '1px 16px',
+      padding: '5px 16px',
     },
     '&.MuiPaper-elevation1': {
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
@@ -53,12 +54,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     paddingLeft: '1rem',
   },
-  editIcon: {
-    flexGrow: '1',
-  },
   deleteIcon: {
     marginRight: '1rem',
-    color: DARK.D300,
+    color: symphony.palette.D300,
   },
   switch: {
     flexWrap: 'nowrap',
@@ -168,7 +166,7 @@ const KpiTypeItem = (props: Props) => {
               alignItems="center"
               justifyContent="flex-start">
               <Button variant="text">
-                <Text useEllipsis={true} color="primary" weight="bold">
+                <Text useEllipsis={true} color="primary" weight="regular">
                   {domainFk?.name}
                 </Text>
               </Button>
@@ -183,7 +181,7 @@ const KpiTypeItem = (props: Props) => {
               alignItems="center"
               justifyContent="flex-start">
               <Button variant="text">
-                <Text useEllipsis={true} color="primary" weight="bold">
+                <Text useEllipsis={true} color="primary" weight="regular">
                   {kpiCategoryFK?.name}
                 </Text>
               </Button>
@@ -210,7 +208,13 @@ const KpiTypeItem = (props: Props) => {
             <Grid item xs={3}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  {`Associated threshold: `}
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                      paddingRight: '0.5rem',
+                    }}>
+                    Associated threshold:
+                  </Text>
                   <Button variant="text">
                     <Text color="primary" weight="bold">
                       {thresholdFromKpi === undefined
@@ -220,12 +224,22 @@ const KpiTypeItem = (props: Props) => {
                   </Button>
                 </Grid>
                 <Grid item xs={12}>
-                  {`ID: ${id}`}
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                    }}>
+                    ID:
+                  </Text>
+                  {`  ${id}`}
                 </Grid>
                 <Grid item xs={12}>
-                  {`Description: ${
-                    description === '' ? 'No description' : description
-                  }`}
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                    }}>
+                    Description:
+                  </Text>
+                  {` ${description === '' ? 'No description' : description}`}
                 </Grid>
               </Grid>
             </Grid>

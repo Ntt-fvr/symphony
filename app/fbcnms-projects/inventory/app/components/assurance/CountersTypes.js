@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   titleCounter: {
-    margin: '0 0 1rem 0',
+    margin: '0 0 40px 0',
   },
   listContainer: {
     overflow: 'auto',
@@ -47,6 +47,12 @@ const useStyles = makeStyles(() => ({
     '&::-webkit-scrollbar-thumb': {
       background: symphony.palette.D300,
       borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
     },
     '&::-webkit-scrollbar-track': {
       background: symphony.palette.D100,

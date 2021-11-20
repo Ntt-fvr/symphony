@@ -18,21 +18,16 @@ import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 
 import type {AddFormulaMutationVariables} from '../../mutations/__generated__/AddFormulaMutation.graphql';
-import type {EditFormulaMutationVariables} from '../../mutations/__generated__/EditFormulaMutation.graphql';
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
-import EditFormulaMutation from '../../mutations/EditFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import Chip from '@material-ui/core/Chip';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
-import type {Counter} from './KpiTypes';
 
 const useStyles = makeStyles(theme => ({
   root: {
