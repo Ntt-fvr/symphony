@@ -74,6 +74,7 @@ import SelectAvailabilityAssignee, {
   AppointmentData,
 } from './SelectAvailabilityAssignee';
 
+
 import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useSnackbar} from 'notistack';
