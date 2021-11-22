@@ -1472,6 +1472,34 @@ func HasSurveyQuestionWith(preds ...predicate.SurveyQuestion) predicate.File {
 	})
 }
 
+// HasDocumentCategory applies the HasEdge predicate on the "document_category" edge.
+func HasDocumentCategory() predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DocumentCategoryTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, DocumentCategoryTable, DocumentCategoryColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDocumentCategoryWith applies the HasEdge predicate on the "document_category" edge with a given conditions (other predicates).
+func HasDocumentCategoryWith(preds ...predicate.DocumentCategory) predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DocumentCategoryInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, DocumentCategoryTable, DocumentCategoryColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.File) predicate.File {
 	return predicate.File(func(s *sql.Selector) {

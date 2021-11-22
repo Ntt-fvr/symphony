@@ -86,6 +86,10 @@ func (resolver) LocationType() generated.LocationTypeResolver {
 	return locationTypeResolver{}
 }
 
+func (resolver) DocumentCategory() generated.DocumentCategoryResolver {
+	return documentCategoryResolver{}
+}
+
 func (resolver) FloorPlan() generated.FloorPlanResolver {
 	return floorPlanResolver{}
 }
@@ -136,10 +140,6 @@ func (r resolver) PropertyType() generated.PropertyTypeResolver {
 
 func (r resolver) Property() generated.PropertyResolver {
 	return propertyResolver{}
-}
-
-func (r resolver) FileCategoryType() generated.FileCategoryTypeResolver {
-	return fileCategoryTypeResolver{}
 }
 
 func (resolver) Service() generated.ServiceResolver {
@@ -288,12 +288,3 @@ func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
-
-func (r resolver) ResourceRelationship() generated.ResourceRelationshipResolver {
-	return resourceRelationshipResolver{}
-}
-
-func (r resolver) ResourceType() generated.ResourceTypeResolver {
-	return resourceTypeResolver{}
-}
-

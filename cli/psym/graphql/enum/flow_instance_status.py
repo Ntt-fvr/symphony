@@ -8,7 +8,7 @@ class FlowInstanceStatus(Enum):
     IN_PROGRESS = "IN_PROGRESS"
     FAILED = "FAILED"
     COMPLETED = "COMPLETED"
-    CANCELLED = "CANCELLED"
+    CANCELED = "CANCELED"
     MISSING_ENUM = ""
 
     @classmethod

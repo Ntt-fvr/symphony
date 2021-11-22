@@ -12,6 +12,8 @@ class WorkOrderStatus(Enum):
     CLOSED = "CLOSED"
     DONE = "DONE"
     BLOCKED = "BLOCKED"
+    CANCELED = "CANCELED"
+    SUSPENDED = "SUSPENDED"
     MISSING_ENUM = ""
 
     @classmethod

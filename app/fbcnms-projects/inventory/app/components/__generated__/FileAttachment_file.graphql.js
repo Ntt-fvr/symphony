@@ -28,6 +28,10 @@ export type FileAttachment_file = {|
   +storeKey: ?string,
   +category: ?string,
   +annotation: ?string,
+  +documentCategory: ?{|
+    +id: string,
+    +name: ?string,
+  |},
   +$fragmentRefs: ImageDialog_img$ref,
   +$refType: FileAttachment_file$ref,
 |};
@@ -40,19 +44,21 @@ export type FileAttachment_file$key = {
 */
 
 
-const node/*: ReaderFragment*/ = {
+const node/*: ReaderFragment*/ = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "FileAttachment_file",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -103,6 +109,25 @@ const node/*: ReaderFragment*/ = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "concreteType": "DocumentCategory",
+      "kind": "LinkedField",
+      "name": "documentCategory",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "ImageDialog_img"
@@ -111,7 +136,8 @@ const node/*: ReaderFragment*/ = {
   "type": "File",
   "abstractKey": null
 };
+})();
 // prettier-ignore
-(node/*: any*/).hash = '8395b83ef23cea08db66b4e2d8c09c9f';
+(node/*: any*/).hash = 'b37826afc3b4851ca9d92ea51ff93c0e';
 
 module.exports = node;

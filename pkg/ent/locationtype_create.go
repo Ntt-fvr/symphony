@@ -14,11 +14,10 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 )
 
@@ -149,21 +148,6 @@ func (ltc *LocationTypeCreate) AddPropertyTypes(p ...*PropertyType) *LocationTyp
 	return ltc.AddPropertyTypeIDs(ids...)
 }
 
-// AddFileCategoryTypeIDs adds the file_category_type edge to FileCategoryType by ids.
-func (ltc *LocationTypeCreate) AddFileCategoryTypeIDs(ids ...int) *LocationTypeCreate {
-	ltc.mutation.AddFileCategoryTypeIDs(ids...)
-	return ltc
-}
-
-// AddFileCategoryType adds the file_category_type edges to FileCategoryType.
-func (ltc *LocationTypeCreate) AddFileCategoryType(f ...*FileCategoryType) *LocationTypeCreate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return ltc.AddFileCategoryTypeIDs(ids...)
-}
-
 // AddSurveyTemplateCategoryIDs adds the survey_template_categories edge to SurveyTemplateCategory by ids.
 func (ltc *LocationTypeCreate) AddSurveyTemplateCategoryIDs(ids ...int) *LocationTypeCreate {
 	ltc.mutation.AddSurveyTemplateCategoryIDs(ids...)
@@ -179,19 +163,19 @@ func (ltc *LocationTypeCreate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 	return ltc.AddSurveyTemplateCategoryIDs(ids...)
 }
 
-// AddResourceRelationshipFkIDs adds the resource_relationship_fk edge to ResourceRelationship by ids.
-func (ltc *LocationTypeCreate) AddResourceRelationshipFkIDs(ids ...int) *LocationTypeCreate {
-	ltc.mutation.AddResourceRelationshipFkIDs(ids...)
+// AddDocumentCategoryIDs adds the document_category edge to DocumentCategory by ids.
+func (ltc *LocationTypeCreate) AddDocumentCategoryIDs(ids ...int) *LocationTypeCreate {
+	ltc.mutation.AddDocumentCategoryIDs(ids...)
 	return ltc
 }
 
-// AddResourceRelationshipFk adds the resource_relationship_fk edges to ResourceRelationship.
-func (ltc *LocationTypeCreate) AddResourceRelationshipFk(r ...*ResourceRelationship) *LocationTypeCreate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
+// AddDocumentCategory adds the document_category edges to DocumentCategory.
+func (ltc *LocationTypeCreate) AddDocumentCategory(d ...*DocumentCategory) *LocationTypeCreate {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
 	}
-	return ltc.AddResourceRelationshipFkIDs(ids...)
+	return ltc.AddDocumentCategoryIDs(ids...)
 }
 
 // Mutation returns the LocationTypeMutation object of the builder.
@@ -406,25 +390,6 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ltc.mutation.FileCategoryTypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   locationtype.FileCategoryTypeTable,
-			Columns: []string{locationtype.FileCategoryTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: filecategorytype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := ltc.mutation.SurveyTemplateCategoriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -444,17 +409,17 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ltc.mutation.ResourceRelationshipFkIDs(); len(nodes) > 0 {
+	if nodes := ltc.mutation.DocumentCategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.DocumentCategoryTable,
+			Columns: []string{locationtype.DocumentCategoryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: documentcategory.FieldID,
 				},
 			},
 		}

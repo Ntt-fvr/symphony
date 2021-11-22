@@ -24,12 +24,11 @@ func TestAddRemoveCounter(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2, vnd := AddCounterTest(t, ctx, mr)
-	EditCounterTest(t, ctx, mr, id1, id2, vnd)
-	RemoveCounterTest(t, ctx, mr, id1, id2)
-
+	id1, id2, vnd := AddCounterTest(ctx, t, mr)
+	EditCounterTest(ctx, t, mr, id1, id2, vnd)
+	RemoveCounterTest(ctx, t, mr, id1, id2)
 }
-func AddCounterTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int, int) {
+func AddCounterTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
 	vendor1, err := mr.AddVendor(ctx, models.AddVendorInput{
 		Name: "vendor_test_1",
 	})
@@ -61,7 +60,7 @@ func AddCounterTest(t *testing.T, ctx context.Context, mr generated.MutationReso
 	return id1, id2, vendor1.ID
 }
 
-func EditCounterTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int, vnd int) {
+func EditCounterTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int, vnd int) {
 	_, err := mr.EditCounter(ctx, models.EditCounterInput{
 		ID:       id1,
 		Name:     "counter_test_1.1",
@@ -76,7 +75,7 @@ func EditCounterTest(t *testing.T, ctx context.Context, mr generated.MutationRes
 	require.Error(t, err)
 }
 
-func RemoveCounterTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveCounterTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveCounter(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveCounter(ctx, id2)

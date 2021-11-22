@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
@@ -323,6 +324,25 @@ func (fc *FileCreate) SetNillableSurveyQuestionID(id *int) *FileCreate {
 // SetSurveyQuestion sets the survey_question edge to SurveyQuestion.
 func (fc *FileCreate) SetSurveyQuestion(s *SurveyQuestion) *FileCreate {
 	return fc.SetSurveyQuestionID(s.ID)
+}
+
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (fc *FileCreate) SetDocumentCategoryID(id int) *FileCreate {
+	fc.mutation.SetDocumentCategoryID(id)
+	return fc
+}
+
+// SetNillableDocumentCategoryID sets the document_category edge to DocumentCategory by id if the given value is not nil.
+func (fc *FileCreate) SetNillableDocumentCategoryID(id *int) *FileCreate {
+	if id != nil {
+		fc = fc.SetDocumentCategoryID(*id)
+	}
+	return fc
+}
+
+// SetDocumentCategory sets the document_category edge to DocumentCategory.
+func (fc *FileCreate) SetDocumentCategory(d *DocumentCategory) *FileCreate {
+	return fc.SetDocumentCategoryID(d.ID)
 }
 
 // Mutation returns the FileMutation object of the builder.
@@ -695,6 +715,25 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: surveyquestion.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.DocumentCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.DocumentCategoryTable,
+			Columns: []string{file.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
 				},
 			},
 		}

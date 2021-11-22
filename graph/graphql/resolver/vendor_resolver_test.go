@@ -24,12 +24,11 @@ func TestAddRemoveVendor(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddVendorTest(t, ctx, mr)
-	EditVendorTest(t, ctx, mr, id1, id2)
-	RemoveVendorTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddVendorTest(ctx, t, mr)
+	EditVendorTest(ctx, t, mr, id1, id2)
+	RemoveVendorTest(ctx, t, mr, id1, id2)
 }
-func AddVendorTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddVendorTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	vendor1, err := mr.AddVendor(ctx, models.AddVendorInput{
 		Name: "vendor_test_1",
 	})
@@ -47,7 +46,7 @@ func AddVendorTest(t *testing.T, ctx context.Context, mr generated.MutationResol
 	return id1, id2
 }
 
-func EditVendorTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditVendorTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditVendor(ctx, models.EditVendorInput{
 		ID:   id1,
 		Name: "vendor_test_1.1",
@@ -60,7 +59,7 @@ func EditVendorTest(t *testing.T, ctx context.Context, mr generated.MutationReso
 	require.Error(t, err)
 }
 
-func RemoveVendorTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveVendorTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveVendor(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveVendor(ctx, id2)

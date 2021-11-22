@@ -24,12 +24,11 @@ func TestAddRemoveDomain(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddDomainTest(t, ctx, mr)
-	EditDomainTest(t, ctx, mr, id1, id2)
-	RemoveDomainTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddDomainTest(ctx, t, mr)
+	EditDomainTest(ctx, t, mr, id1, id2)
+	RemoveDomainTest(ctx, t, mr, id1, id2)
 }
-func AddDomainTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddDomainTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	domain1, err := mr.AddDomain(ctx, models.AddDomainInput{
 		Name: "domain_test_1",
 	})
@@ -47,7 +46,7 @@ func AddDomainTest(t *testing.T, ctx context.Context, mr generated.MutationResol
 	return id1, id2
 }
 
-func EditDomainTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditDomainTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditDomain(ctx, models.EditDomainInput{
 		ID:   id1,
 		Name: "domain_test_1.1",
@@ -60,7 +59,7 @@ func EditDomainTest(t *testing.T, ctx context.Context, mr generated.MutationReso
 	require.Error(t, err)
 }
 
-func RemoveDomainTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveDomainTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveDomain(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveDomain(ctx, id2)
