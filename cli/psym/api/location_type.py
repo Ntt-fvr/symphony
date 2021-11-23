@@ -5,7 +5,10 @@
 
 from typing import Iterator, List, Mapping, Optional
 
-from psym._utils import get_graphql_property_type_inputs
+from psym._utils import (
+    get_graphql_property_type_inputs,
+    get_graphql_document_category_inputs,
+)
 from psym.client import SymphonyClient
 from psym.common.cache import LOCATION_TYPES
 from psym.common.data_class import (
@@ -13,9 +16,11 @@ from psym.common.data_class import (
     LocationType,
     PropertyDefinition,
     PropertyValue,
+    DocumentCategory,
 )
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
+    format_to_document_category_inputs,
     format_to_location_type,
     format_to_property_type_inputs,
 )
@@ -52,6 +57,7 @@ def add_location_type(
     map_type: Optional[str] = None,
     map_zoom_level: int = 8,
     is_site: bool = False,
+    document_categories: List[DocumentCategory] = None,
 ) -> LocationType:
     """This function creates new location type.
 
@@ -59,6 +65,8 @@ def add_location_type(
     :type name: str
     :param properties: List of property definitions
     :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param document_categories: List of documents category
+    :type document_categories: List[ :class:`~psym.common.data_class.DocumentCategory` ]
     :param map_type: Map type
     :type map_type: str, optional
     :param map_zoom_level: Map zoom level
@@ -83,13 +91,27 @@ def add_location_type(
                     property_name="Contact",
                     property_kind=PropertyKind.string,
                     default_raw_value=None,
-                    is_fixed=True
+                    is_fixed=False
                 )
+            ],
+            document_categories=[
+                DocumentCategory(
+                    index=0,
+                    name="DATAFILLS"
+                ),
+                DocumentCategory(
+                    index=1,
+                    name="TOPOLOGIA"
+                ),
             ],
             map_zoom_level=5,
         )
     """
     new_property_types = format_to_property_type_inputs(data=properties)
+    new_document_categories = format_to_document_category_inputs(
+        document_category_list=document_categories
+    )
+
     result = AddLocationTypeMutation.execute(
         client,
         AddLocationTypeInput(
@@ -98,6 +120,7 @@ def add_location_type(
             mapType=map_type if map_type else None,
             isSite=is_site,
             properties=new_property_types,
+            documentCategories=new_document_categories,
             surveyTemplateCategories=[],
         ),
     )
@@ -143,6 +166,9 @@ def add_property_types_to_location_type(
     """
     location_type = get_location_type_by_id(client=client, id=location_type_id)
     new_property_type_inputs = format_to_property_type_inputs(data=new_properties)
+    new_document_categories = format_to_document_category_inputs(
+        document_category_list = location_type.document_categories
+    )
     result = EditLocationTypeMutation.execute(
         client,
         EditLocationTypeInput(
@@ -152,6 +178,7 @@ def add_property_types_to_location_type(
             mapZoomLevel=location_type.map_zoom_level,
             isSite=location_type.is_site,
             properties=new_property_type_inputs,
+            documentCategories=new_document_categories,
         ),
     )
     edited = format_to_location_type(location_type_fragment=result)
@@ -168,6 +195,7 @@ def edit_location_type(
     new_map_type: Optional[str] = None,
     new_map_zoom_level: Optional[int] = 8,
     new_is_site: Optional[bool] = False,
+    new_document_categories: Optional[List[DocumentCategory]] = None,
 ) -> LocationType:
     """This function edits existing LocationType.
 
@@ -187,6 +215,8 @@ def edit_location_type(
     :type map_zoom_level: int, optional
     :param new_is_site: New is site flag
     :type new_is_site: bool, optional
+    :param new_document_categories: List of documents category
+    :type new_document_categories: List[ :class:`~psym.common.data_class.DocumentCategory` ]
 
     :raises:
         * FailedOperationException: Internal symphony error
@@ -203,6 +233,15 @@ def edit_location_type(
             location_type_id="12345678,
             new_name="New name",
             new_description="New description",
+            new_properties_defaults = {
+                "CONTACT": "ALEN",
+                "DATE": date(2021, 9, 1),
+                "DATETIME": datetime(2021, 11, 28, 23, 55)
+            },
+            document_categories= {
+                "DATAFILLS": "NEW_DATAFILLS",
+                "TOPOLOGIA": "NEW_TOPOLOGIA"
+            }
         )
     """
     location_type = get_location_type_by_id(client=client, id=location_type_id)
@@ -214,6 +253,13 @@ def edit_location_type(
         new_property_type_inputs = get_graphql_property_type_inputs(
             property_types, new_properties_defaults
         )
+
+    new_document_categories_inputs = []
+    if new_document_categories:
+        new_document_categories_inputs = get_graphql_document_category_inputs(
+            location_type.document_categories, new_document_categories
+        )
+
     result = EditLocationTypeMutation.execute(
         client,
         EditLocationTypeInput(
@@ -223,6 +269,7 @@ def edit_location_type(
             mapZoomLevel=new_map_zoom_level,
             isSite=new_is_site,
             properties=new_property_type_inputs,
+            documentCategories=new_document_categories_inputs,
         ),
     )
     edited = format_to_location_type(location_type_fragment=result)
@@ -282,6 +329,38 @@ def get_location_type_by_id(client: SymphonyClient, id: str) -> LocationType:
         raise EntityNotFoundError(entity=Entity.WorkOrderType, entity_id=id)
 
     return format_to_location_type(location_type_fragment=result)
+
+
+def get_location_type_by_name(client: SymphonyClient, name: str) -> LocationType:
+    """This function gets existing LocationType by its name.
+
+    :param name: Location type name
+    :type name: str
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Location type does not exist
+
+    :return: Location type
+    :rtype: :class:`~psym.common.data_class.LocationType`
+
+    **Example**
+
+    .. code-block:: python
+
+        client.get_location_type_by_name(name="COUNTRY")
+    """
+    all_location_types = get_location_types(client)
+    location_type_searched = None
+    for item in all_location_types:
+        if item.name == name:
+            location_type_searched = item
+            break
+
+    if location_type_searched is None:
+        raise EntityNotFoundError(entity=Entity.LocationType, entity_name=name)
+
+    return location_type_searched
 
 
 def delete_locations_by_location_type(

@@ -43,8 +43,16 @@ export type TokenizerEntryType<T> = $ReadOnly<{|
   label: string,
   ...T,
 |}>;
+export type TokenizerOptionalEntryType<T> = $ReadOnly<{|
+  key: string,
+  label: ?string,
+  ...T,
+|}>;
 
 export type Entries<TEntry> = $ReadOnlyArray<TokenizerEntryType<TEntry>>;
+export type OptionalEntries<TEntry> = $ReadOnlyArray<
+  TokenizerOptionalEntryType<TEntry>,
+>;
 
 export type NetworkDataSource<TEntry> = $ReadOnly<{|
   fetchNetwork: (query: string) => Promise<Entries<TEntry>>,

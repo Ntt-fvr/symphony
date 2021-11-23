@@ -24,12 +24,11 @@ func TestAddRemoveEventSeverity(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddEventSeverityTest(t, ctx, mr)
-	EditEventSeverityTest(t, ctx, mr, id1, id2)
-	RemoveEventSeverityTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddEventSeverityTest(ctx, t, mr)
+	EditEventSeverityTest(ctx, t, mr, id1, id2)
+	RemoveEventSeverityTest(ctx, t, mr, id1, id2)
 }
-func AddEventSeverityTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddEventSeverityTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	eventSeverity1, err := mr.AddEventSeverity(ctx, models.AddEventSeverityInput{
 		Name: "eventSeverity_test_1",
 	})
@@ -47,7 +46,7 @@ func AddEventSeverityTest(t *testing.T, ctx context.Context, mr generated.Mutati
 	return id1, id2
 }
 
-func EditEventSeverityTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditEventSeverityTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditEventSeverity(ctx, models.EditEventSeverityInput{
 		ID:   id1,
 		Name: "eventSeverity_test_1.1",
@@ -60,7 +59,7 @@ func EditEventSeverityTest(t *testing.T, ctx context.Context, mr generated.Mutat
 	require.Error(t, err)
 }
 
-func RemoveEventSeverityTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveEventSeverityTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveEventSeverity(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveEventSeverity(ctx, id2)

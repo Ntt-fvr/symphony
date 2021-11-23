@@ -26,6 +26,7 @@ export type AddImageInput = {|
   contentType: string,
   category?: ?string,
   annotation?: ?string,
+  documentCategoryId?: ?string,
 |};
 export type AddImageMutationVariables = {|
   input: AddImageInput
@@ -61,6 +62,10 @@ fragment FileAttachment_file on File {
   storeKey
   category
   annotation
+  documentCategory {
+    id
+    name
+  }
   ...ImageDialog_img
 }
 
@@ -84,7 +89,14 @@ v1 = [
     "name": "input",
     "variableName": "input"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -126,13 +138,7 @@ return {
         "name": "addImage",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -181,6 +187,25 @@ return {
             "kind": "ScalarField",
             "name": "annotation",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "DocumentCategory",
+            "kind": "LinkedField",
+            "name": "documentCategory",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -188,12 +213,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f17b43755d5e1dbd7de29a2a7559c388",
+    "cacheID": "42a6821cef7ee7f30eb42ece0d4d18b1",
     "id": null,
     "metadata": {},
     "name": "AddImageMutation",
     "operationKind": "mutation",
-    "text": "mutation AddImageMutation(\n  $input: AddImageInput!\n) {\n  addImage(input: $input) {\n    ...FileAttachment_file\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
+    "text": "mutation AddImageMutation(\n  $input: AddImageInput!\n) {\n  addImage(input: $input) {\n    ...FileAttachment_file\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  documentCategory {\n    id\n    name\n  }\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
   }
 };
 })();

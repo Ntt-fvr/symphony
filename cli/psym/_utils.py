@@ -13,11 +13,13 @@ from dacite import Config, from_dict
 from psym.common.data_class import (
     TYPE_AND_FIELD_NAME,
     DataTypeName,
+    DocumentCategory,
     PropertyDefinition,
     PropertyValue,
     ReturnType,
 )
 from psym.common.data_enum import Entity
+from psym.graphql.input.document_category_input import DocumentCategoryInput
 
 from .exceptions import EntityNotFoundError
 from .graphql.enum.property_kind import PropertyKind
@@ -161,6 +163,52 @@ def get_graphql_property_type_inputs(
         )
 
     return properties
+
+
+def get_graphql_document_category_inputs(
+    document_categories: Sequence[DocumentCategory],
+    categories_name_dict: Mapping[str, str],
+) -> List[DocumentCategoryInput]:
+    """This function gets existing document categories and dictionary, where key - are current names, and keys - new name,
+    validates existence of keys from `categories_name_dict` in `document_categories` and returns list of DocumentCategoryInput
+
+        Args:
+            document_categories (List[ `psym.common.data_class.DocumentCategory` ]): list of existing document categories
+            categories_name_dict (Dict[str, str]): dictionary of categories name, where
+            - str - name of existing category
+            - str - new document category name
+
+        Returns:
+            List[ `psym.graphql.input.document_category.DocumentCategoryInput` ]
+
+        Raises:
+            `psym.exceptions.EntityNotFoundError`: if there any unknown category name in `categories_name_dict` keys
+    """
+    document_categories_list = []
+    document_category_names = {}
+    for doc_category in document_categories:
+        document_category_names[doc_category.name] = doc_category
+    for name, value in categories_name_dict.items():
+        if name not in document_category_names:
+            raise EntityNotFoundError(entity=Entity.DocumentCategory, entity_name=name)
+        document_category_id = document_category_names[name].id
+        document_category_index = document_category_names[name].dc_index
+        assert document_category_id is not None, f"document category {name} has no id"
+        result: Dict[str, str] = {
+            "id": document_category_id,
+            "index": document_category_index,
+            "name": value,
+        }
+
+        document_categories_list.append(
+            from_dict(
+                data_class=DocumentCategoryInput,
+                data=result,
+                config=Config(strict=True),
+            )
+        )
+
+    return document_categories_list
 
 
 def get_graphql_property_inputs(

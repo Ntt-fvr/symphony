@@ -5,11 +5,19 @@ query LocationDocumentsQuery($id: ID!) {
         id
         fileName
         category
+        documentCategory {
+          id
+          name
+        }
       }
       images {
         id
         fileName
         category
+        documentCategory {
+          id
+          name
+        }
       }
     }
   }

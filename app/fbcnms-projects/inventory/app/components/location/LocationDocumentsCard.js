@@ -12,6 +12,7 @@ import type {
   LocationDocumentsCard_location$data,
   LocationDocumentsCard_location$key,
 } from './__generated__/LocationDocumentsCard_location.graphql';
+import type {CategoryItem} from '../DocumentsAddButton';
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -57,16 +58,24 @@ const LocationDocumentsCard = (props: Props) => {
         hyperlinks {
           ...EntityDocumentsTable_hyperlinks
         }
+        locationType {
+          documentCategories {
+            id
+            name
+          }
+        }
       }
     `,
     location,
   );
-
   const documents = useMemo(
     () => [...data.files.filter(Boolean), ...data.images.filter(Boolean)],
     [data],
   );
-
+  const categories = useMemo(
+    () => [...data.locationType.documentCategories.map((item: any) => ({id: item.id, name: item.name}))],
+    [data],
+  );
   return (
     <Card className={className}>
       <CardHeader
@@ -75,8 +84,16 @@ const LocationDocumentsCard = (props: Props) => {
         })}
         rightContent={
           <div className={classes.actionButtonsContainer}>
-            <AddHyperlinkButton entityType="LOCATION" entityId={data.id} />
-            <DocumentsAddButton entityType="LOCATION" entityId={data.id} />
+            <AddHyperlinkButton
+              entityType="LOCATION"
+              entityId={data.id}
+              categories={categories}
+            />
+            <DocumentsAddButton
+              entityType="LOCATION"
+              entityId={data.id}
+              categories={categories}
+            />
           </div>
         }>
         {InventoryStrings.documents.viewHeader}

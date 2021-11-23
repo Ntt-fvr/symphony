@@ -33,6 +33,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -48,7 +49,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -82,12 +82,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshiptype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -1470,6 +1464,79 @@ func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (dc *DocumentCategory) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     dc.ID,
+		Type:   "DocumentCategory",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(dc.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(dc.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(dc.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(dc.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "int",
+		Name:  "index",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "LocationType",
+		Name: "location_type",
+	}
+	node.Edges[0].IDs, err = dc.QueryLocationType().
+		Select(locationtype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "File",
+		Name: "files",
+	}
+	node.Edges[1].IDs, err = dc.QueryFiles().
+		Select(file.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "Hyperlink",
+		Name: "hyperlinks",
+	}
+	node.Edges[2].IDs, err = dc.QueryHyperlinks().
+		Select(hyperlink.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (d *Domain) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     d.ID,
@@ -2525,7 +2592,7 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 		ID:     f.ID,
 		Type:   "File",
 		Fields: make([]*Field, 11),
-		Edges:  make([]*Edge, 9),
+		Edges:  make([]*Edge, 10),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(f.CreateTime); err != nil {
@@ -2706,47 +2773,12 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	return node, nil
-}
-
-func (fct *FileCategoryType) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     fct.ID,
-		Type:   "FileCategoryType",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 1),
+	node.Edges[9] = &Edge{
+		Type: "DocumentCategory",
+		Name: "document_category",
 	}
-	var buf []byte
-	if buf, err = json.Marshal(fct.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "LocationType",
-		Name: "location_type",
-	}
-	node.Edges[0].IDs, err = fct.QueryLocationType().
-		Select(locationtype.FieldID).
+	node.Edges[9].IDs, err = f.QueryDocumentCategory().
+		Select(documentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3393,7 +3425,7 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 		ID:     h.ID,
 		Type:   "Hyperlink",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(h.CreateTime); err != nil {
@@ -3462,6 +3494,16 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = h.QueryWorkOrder().
 		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "DocumentCategory",
+		Name: "document_category",
+	}
+	node.Edges[3].IDs, err = h.QueryDocumentCategory().
+		Select(documentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -4335,7 +4377,7 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     lt.ID,
 		Type:   "LocationType",
 		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 5),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(lt.CreateTime); err != nil {
@@ -4415,31 +4457,21 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "FileCategoryType",
-		Name: "file_category_type",
-	}
-	node.Edges[2].IDs, err = lt.QueryFileCategoryType().
-		Select(filecategorytype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[3] = &Edge{
 		Type: "SurveyTemplateCategory",
 		Name: "survey_template_categories",
 	}
-	node.Edges[3].IDs, err = lt.QuerySurveyTemplateCategories().
+	node.Edges[2].IDs, err = lt.QuerySurveyTemplateCategories().
 		Select(surveytemplatecategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
-		Type: "ResourceRelationship",
-		Name: "resource_relationship_fk",
+	node.Edges[3] = &Edge{
+		Type: "DocumentCategory",
+		Name: "document_category",
 	}
-	node.Edges[4].IDs, err = lt.QueryResourceRelationshipFk().
-		Select(resourcerelationship.FieldID).
+	node.Edges[3].IDs, err = lt.QueryDocumentCategory().
+		Select(documentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -5741,386 +5773,6 @@ func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 		Type:  "string",
 		Name:  "filters",
 		Value: string(buf),
-	}
-	return node, nil
-}
-
-func (rr *ResourceRelationship) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     rr.ID,
-		Type:   "ResourceRelationship",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 5),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(rr.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rr.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rr.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "ResourceType",
-		Name: "resourcetypea",
-	}
-	node.Edges[0].IDs, err = rr.QueryResourcetypea().
-		Select(resourcetype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "ResourceType",
-		Name: "resourcetypeb",
-	}
-	node.Edges[1].IDs, err = rr.QueryResourcetypeb().
-		Select(resourcetype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		Type: "ResourceRelationshipType",
-		Name: "resourcerelationshiptypefk",
-	}
-	node.Edges[2].IDs, err = rr.QueryResourcerelationshiptypefk().
-		Select(resourcerelationshiptype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		Type: "LocationType",
-		Name: "locationtypefk",
-	}
-	node.Edges[3].IDs, err = rr.QueryLocationtypefk().
-		Select(locationtype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[4] = &Edge{
-		Type: "ResourceRelationshipMultiplicity",
-		Name: "resource_relationship_multiplicity_fk",
-	}
-	node.Edges[4].IDs, err = rr.QueryResourceRelationshipMultiplicityFk().
-		Select(resourcerelationshipmultiplicity.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-func (rrm *ResourceRelationshipMultiplicity) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     rrm.ID,
-		Type:   "ResourceRelationshipMultiplicity",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(rrm.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rrm.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rrm.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "ResourceRelationship",
-		Name: "resource_relationship_fk",
-	}
-	node.Edges[0].IDs, err = rrm.QueryResourceRelationshipFk().
-		Select(resourcerelationship.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "PermissionsPolicy",
-		Name: "policies",
-	}
-	node.Edges[1].IDs, err = rrm.QueryPolicies().
-		Select(permissionspolicy.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-func (rrt *ResourceRelationshipType) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     rrt.ID,
-		Type:   "ResourceRelationshipType",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(rrt.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rrt.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rrt.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "ResourceRelationship",
-		Name: "resource_relationship_fk",
-	}
-	node.Edges[0].IDs, err = rrt.QueryResourceRelationshipFk().
-		Select(resourcerelationship.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "PermissionsPolicy",
-		Name: "policies",
-	}
-	node.Edges[1].IDs, err = rrt.QueryPolicies().
-		Select(permissionspolicy.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-func (rt *ResourceType) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     rt.ID,
-		Type:   "ResourceType",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 4),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(rt.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rt.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rt.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "ResourceTypeClass",
-		Name: "resourcetypeclass",
-	}
-	node.Edges[0].IDs, err = rt.QueryResourcetypeclass().
-		Select(resourcetypeclass.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "ResourceTypeBaseType",
-		Name: "resourcetypebasetype",
-	}
-	node.Edges[1].IDs, err = rt.QueryResourcetypebasetype().
-		Select(resourcetypebasetype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		Type: "ResourceRelationship",
-		Name: "resource_relationship_fk_a",
-	}
-	node.Edges[2].IDs, err = rt.QueryResourceRelationshipFkA().
-		Select(resourcerelationship.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		Type: "ResourceRelationship",
-		Name: "resource_relationship_fk_b",
-	}
-	node.Edges[3].IDs, err = rt.QueryResourceRelationshipFkB().
-		Select(resourcerelationship.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-func (rtbt *ResourceTypeBaseType) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     rtbt.ID,
-		Type:   "ResourceTypeBaseType",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(rtbt.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rtbt.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rtbt.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "ResourceType",
-		Name: "resource_type_fk",
-	}
-	node.Edges[0].IDs, err = rtbt.QueryResourceTypeFk().
-		Select(resourcetype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "PermissionsPolicy",
-		Name: "policies",
-	}
-	node.Edges[1].IDs, err = rtbt.QueryPolicies().
-		Select(permissionspolicy.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-func (rtc *ResourceTypeClass) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     rtc.ID,
-		Type:   "ResourceTypeClass",
-		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(rtc.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rtc.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(rtc.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "ResourceType",
-		Name: "resource_type_fk",
-	}
-	node.Edges[0].IDs, err = rtc.QueryResourceTypeFk().
-		Select(resourcetype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "PermissionsPolicy",
-		Name: "policies",
-	}
-	node.Edges[1].IDs, err = rtc.QueryPolicies().
-		Select(permissionspolicy.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
 	}
 	return node, nil
 }
@@ -8809,6 +8461,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case documentcategory.Table:
+		n, err := c.DocumentCategory.Query().
+			Where(documentcategory.ID(id)).
+			CollectFields(ctx, "DocumentCategory").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case domain.Table:
 		n, err := c.Domain.Query().
 			Where(domain.ID(id)).
@@ -8939,15 +8600,6 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.File.Query().
 			Where(file.ID(id)).
 			CollectFields(ctx, "File").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case filecategorytype.Table:
-		n, err := c.FileCategoryType.Query().
-			Where(filecategorytype.ID(id)).
-			CollectFields(ctx, "FileCategoryType").
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -9245,60 +8897,6 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.ReportFilter.Query().
 			Where(reportfilter.ID(id)).
 			CollectFields(ctx, "ReportFilter").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case resourcerelationship.Table:
-		n, err := c.ResourceRelationship.Query().
-			Where(resourcerelationship.ID(id)).
-			CollectFields(ctx, "ResourceRelationship").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case resourcerelationshipmultiplicity.Table:
-		n, err := c.ResourceRelationshipMultiplicity.Query().
-			Where(resourcerelationshipmultiplicity.ID(id)).
-			CollectFields(ctx, "ResourceRelationshipMultiplicity").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case resourcerelationshiptype.Table:
-		n, err := c.ResourceRelationshipType.Query().
-			Where(resourcerelationshiptype.ID(id)).
-			CollectFields(ctx, "ResourceRelationshipType").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case resourcetype.Table:
-		n, err := c.ResourceType.Query().
-			Where(resourcetype.ID(id)).
-			CollectFields(ctx, "ResourceType").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case resourcetypebasetype.Table:
-		n, err := c.ResourceTypeBaseType.Query().
-			Where(resourcetypebasetype.ID(id)).
-			CollectFields(ctx, "ResourceTypeBaseType").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case resourcetypeclass.Table:
-		n, err := c.ResourceTypeClass.Query().
-			Where(resourcetypeclass.ID(id)).
-			CollectFields(ctx, "ResourceTypeClass").
 			Only(ctx)
 		if err != nil {
 			return nil, err

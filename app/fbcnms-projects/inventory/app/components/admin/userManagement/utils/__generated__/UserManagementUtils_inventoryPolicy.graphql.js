@@ -22,6 +22,25 @@ export type UserManagementUtils_inventoryPolicy = {|
   +read: {|
     +isAllowed: PermissionValue
   |},
+  +documentCategory: {|
+    +locationTypeID: ?number,
+    +read: ?{|
+      +isAllowed: PermissionValue,
+      +documentCategoryIds: ?$ReadOnlyArray<string>,
+    |},
+    +create: ?{|
+      +isAllowed: PermissionValue,
+      +documentCategoryIds: ?$ReadOnlyArray<string>,
+    |},
+    +update: ?{|
+      +isAllowed: PermissionValue,
+      +documentCategoryIds: ?$ReadOnlyArray<string>,
+    |},
+    +delete: ?{|
+      +isAllowed: PermissionValue,
+      +documentCategoryIds: ?$ReadOnlyArray<string>,
+    |},
+  |},
   +location: {|
     +create: {|
       +isAllowed: PermissionValue
@@ -112,6 +131,16 @@ v1 = [
   (v0/*: any*/)
 ],
 v2 = [
+  (v0/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "documentCategoryIds",
+    "storageKey": null
+  }
+],
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -157,6 +186,64 @@ return {
       "name": "read",
       "plural": false,
       "selections": (v1/*: any*/),
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "DocumentCategoryCUD",
+      "kind": "LinkedField",
+      "name": "documentCategory",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "locationTypeID",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "DocumentCategoryPermissionRule",
+          "kind": "LinkedField",
+          "name": "read",
+          "plural": false,
+          "selections": (v2/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "DocumentCategoryPermissionRule",
+          "kind": "LinkedField",
+          "name": "create",
+          "plural": false,
+          "selections": (v2/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "DocumentCategoryPermissionRule",
+          "kind": "LinkedField",
+          "name": "update",
+          "plural": false,
+          "selections": (v2/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "DocumentCategoryPermissionRule",
+          "kind": "LinkedField",
+          "name": "delete",
+          "plural": false,
+          "selections": (v2/*: any*/),
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
@@ -216,7 +303,7 @@ return {
       "kind": "LinkedField",
       "name": "equipment",
       "plural": false,
-      "selections": (v2/*: any*/),
+      "selections": (v3/*: any*/),
       "storageKey": null
     },
     {
@@ -226,7 +313,7 @@ return {
       "kind": "LinkedField",
       "name": "equipmentType",
       "plural": false,
-      "selections": (v2/*: any*/),
+      "selections": (v3/*: any*/),
       "storageKey": null
     },
     {
@@ -236,7 +323,7 @@ return {
       "kind": "LinkedField",
       "name": "locationType",
       "plural": false,
-      "selections": (v2/*: any*/),
+      "selections": (v3/*: any*/),
       "storageKey": null
     },
     {
@@ -246,7 +333,7 @@ return {
       "kind": "LinkedField",
       "name": "portType",
       "plural": false,
-      "selections": (v2/*: any*/),
+      "selections": (v3/*: any*/),
       "storageKey": null
     },
     {
@@ -256,7 +343,7 @@ return {
       "kind": "LinkedField",
       "name": "serviceType",
       "plural": false,
-      "selections": (v2/*: any*/),
+      "selections": (v3/*: any*/),
       "storageKey": null
     }
   ],
@@ -265,6 +352,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '68ace9bf65bb53be9b160062c73a22d2';
+(node/*: any*/).hash = '1496aad8ce54552fd5e2a7ddea6c0f72';
 
 module.exports = node;

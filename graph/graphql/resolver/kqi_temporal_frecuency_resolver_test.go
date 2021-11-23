@@ -24,12 +24,11 @@ func TestAddRemoveKqiTemporalFrequency(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddKqiTemporalFrequencyTest(t, ctx, mr)
-	EditKqiTemporalFrequencyTest(t, ctx, mr, id1, id2)
-	RemoveKqiTemporalFrequencyTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddKqiTemporalFrequencyTest(ctx, t, mr)
+	EditKqiTemporalFrequencyTest(ctx, t, mr, id1, id2)
+	RemoveKqiTemporalFrequencyTest(ctx, t, mr, id1, id2)
 }
-func AddKqiTemporalFrequencyTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddKqiTemporalFrequencyTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	kqiTemporalFrequency1, err := mr.AddKqiTemporalFrequency(ctx, models.AddKqiTemporalFrequencyInput{
 		Name: "kqiTemporalFrequency_test_1",
 	})
@@ -47,7 +46,7 @@ func AddKqiTemporalFrequencyTest(t *testing.T, ctx context.Context, mr generated
 	return id1, id2
 }
 
-func EditKqiTemporalFrequencyTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditKqiTemporalFrequencyTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditKqiTemporalFrequency(ctx, models.EditKqiTemporalFrequencyInput{
 		ID:   id1,
 		Name: "kqiTemporalFrequency_test_1.1",
@@ -60,7 +59,7 @@ func EditKqiTemporalFrequencyTest(t *testing.T, ctx context.Context, mr generate
 	require.Error(t, err)
 }
 
-func RemoveKqiTemporalFrequencyTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveKqiTemporalFrequencyTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveKqiTemporalFrequency(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveKqiTemporalFrequency(ctx, id2)

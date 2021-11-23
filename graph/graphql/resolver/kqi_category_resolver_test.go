@@ -24,12 +24,11 @@ func TestAddRemoveKqiCategory(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddKqiCategoryTest(t, ctx, mr)
-	EditKqiCategoryTest(t, ctx, mr, id1, id2)
-	RemoveKqiCategoryTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddKqiCategoryTest(ctx, t, mr)
+	EditKqiCategoryTest(ctx, t, mr, id1, id2)
+	RemoveKqiCategoryTest(ctx, t, mr, id1, id2)
 }
-func AddKqiCategoryTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddKqiCategoryTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	kqiCategory1, err := mr.AddKqiCategory(ctx, models.AddKqiCategoryInput{
 		Name: "kqiCategory_test_1",
 	})
@@ -47,7 +46,7 @@ func AddKqiCategoryTest(t *testing.T, ctx context.Context, mr generated.Mutation
 	return id1, id2
 }
 
-func EditKqiCategoryTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditKqiCategoryTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditKqiCategory(ctx, models.EditKqiCategoryInput{
 		ID:   id1,
 		Name: "kqiCategory_test_1.1",
@@ -60,7 +59,7 @@ func EditKqiCategoryTest(t *testing.T, ctx context.Context, mr generated.Mutatio
 	require.Error(t, err)
 }
 
-func RemoveKqiCategoryTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveKqiCategoryTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveKqiCategory(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveKqiCategory(ctx, id2)

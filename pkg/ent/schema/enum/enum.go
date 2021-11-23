@@ -355,6 +355,7 @@ type FilterOperator string
 
 const (
 	FilterOperatorIs                     FilterOperator = "IS"
+	FilterOperatorIsNil                  FilterOperator = "IS_NIL"
 	FilterOperatorContains               FilterOperator = "CONTAINS"
 	FilterOperatorIsOneOf                FilterOperator = "IS_ONE_OF"
 	FilterOperatorIsNotOneOf             FilterOperator = "IS_NOT_ONE_OF"

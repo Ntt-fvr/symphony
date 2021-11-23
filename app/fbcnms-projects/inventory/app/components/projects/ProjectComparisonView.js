@@ -16,6 +16,7 @@ import AddProjectCard from './AddProjectCard';
 import AddProjectDialog from './AddProjectDialog';
 import Button from '@symphony/design-system/components/Button';
 import ErrorBoundary from '@fbcnms/ui/components/ErrorBoundary/ErrorBoundary';
+import ProjectErrorBoundary from '../../common/ProjectErrorBoundary';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventorySuspense from '../../common/InventorySuspense';
 import InventoryView, {DisplayOptions} from '../InventoryViewContainer';
@@ -67,8 +68,9 @@ const ProjectComparisonView = () => {
 
   //orderPropertyType
   const [orderPropertyType, setOrderPropertyType] = useState('');
-  const [orderPropertyTypeDirection, setOrderPropertyTypeDirection] =
-    useState('');
+  const [orderPropertyTypeDirection, setOrderPropertyTypeDirection] = useState(
+    '',
+  );
 
   const [visibleColumns, setVisibleColumns] = useState(
     Object.values(defaultVisibleColumnsKeys).map(columnKey =>
@@ -88,8 +90,9 @@ const ProjectComparisonView = () => {
 
   const locationTypesFilterConfigs = useLocationTypes();
   const possibleProperties = usePropertyFilters('project');
-  const projectPropertiesFilterConfigs =
-    buildPropertyFilterConfigs(possibleProperties);
+  const projectPropertiesFilterConfigs = buildPropertyFilterConfigs(
+    possibleProperties,
+  );
 
   const filterConfigs = useMemo(
     () =>
@@ -240,7 +243,7 @@ const ProjectComparisonView = () => {
     actionButtons: [createProjectButton],
   };
   return (
-    <ErrorBoundary>
+    <ProjectErrorBoundary>
       <InventorySuspense>
         <InventoryView
           header={header}
@@ -261,7 +264,7 @@ const ProjectComparisonView = () => {
           />
         </InventoryView>
       </InventorySuspense>
-    </ErrorBoundary>
+    </ProjectErrorBoundary>
   );
 };
 

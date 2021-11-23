@@ -27,7 +27,6 @@ func prepareWOData(ctx context.Context, c *ent.Client, setWorkOrderType func(wc 
 	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderTypeName := uuid.New().String()
 	workOrderName := uuid.New().String()
-	organizationName := uuid.New().String()
 	workOrderTypeMutation := c.WorkOrderType.Create().
 		SetName(workOrderTypeName)
 	if setWorkOrderType != nil {
@@ -35,12 +34,8 @@ func prepareWOData(ctx context.Context, c *ent.Client, setWorkOrderType func(wc 
 	}
 	workOrderType := workOrderTypeMutation.SaveX(ctx)
 
-	organization := c.Organization.Create().
-		SetCreateTime(time.Now()).
-		SetDescription(organizationName).
-		SetName(organizationName).
-		SetUpdateTime(time.Now()).
-		SaveX(ctx)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
+	u.Update().SetOrganizationID(organization.ID).SaveX(ctx)
 
 	workOrder := c.WorkOrder.Create().
 		SetName(workOrderName).
