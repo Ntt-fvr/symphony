@@ -112,13 +112,13 @@ const KpiTypeItem = (props: Props) => {
     isCompleted,
   } = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(status);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
 
-  const handleClick = () => {
+  const handleClick = event => {
+    event.stopPropagation();
     const variables: EditKpiMutationVariables = {
       input: {
         id: id,
@@ -135,7 +135,7 @@ const KpiTypeItem = (props: Props) => {
   const handleDelete = event => {
     event.stopPropagation();
     setDialogOpen(true);
-  }
+  };
 
   return (
     <div className={classes.root}>

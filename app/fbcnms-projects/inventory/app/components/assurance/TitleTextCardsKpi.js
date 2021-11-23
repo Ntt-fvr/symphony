@@ -41,7 +41,7 @@ function TitleTextCardsKpi() {
       justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid container className={classes.status} xs={4} md={3}>
+      <Grid container item className={classes.status} xs={4} md={3}>
         <Text
           useEllipsis={true}
           color="primary"

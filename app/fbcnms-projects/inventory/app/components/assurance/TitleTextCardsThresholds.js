@@ -35,13 +35,13 @@ function TitleTextCardsThresholds() {
   const classes = useStyles();
   return (
     <Grid
-      item
-      xs={12}
       container
+      xs={12}
+      item
       justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid item className={classes.status} xs={2} md={3}>
+      <Grid container item className={classes.status} xs={2} md={3}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Enable
         </Text>
@@ -66,10 +66,10 @@ function TitleTextCardsThresholds() {
       </Grid>
       <Grid
         container
+        item
         alignItems="center"
         justify="flex-end"
         className={classes.actions}
-        item
         xs={2}
         md={1}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">

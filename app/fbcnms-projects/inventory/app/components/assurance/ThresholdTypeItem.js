@@ -14,7 +14,7 @@ import React, {useState} from 'react';
 import AddButton from './common/AddButton';
 import TableThreshold from './TableThreshold';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
 import type {EditThresholdMutationVariables} from '../../mutations/__generated__/EditThresholdMutation.graphql';
 
 import Accordion from '@material-ui/core/Accordion';
@@ -136,11 +136,11 @@ export default function ThresholdTypeItem(props: Props) {
     isCompleted,
   } = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(status);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleClick = () => {
+  const handleClick = event => {
+    event.stopPropagation();
     const variables: EditThresholdMutationVariables = {
       input: {
         id: id,
@@ -155,7 +155,7 @@ export default function ThresholdTypeItem(props: Props) {
   const handleDelete = event => {
     event.stopPropagation();
     setDialogOpen(true);
-  }
+  };
 
   return (
     <div className={classes.root}>
