@@ -112,13 +112,13 @@ const KpiTypeItem = (props: Props) => {
     isCompleted,
   } = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(status);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
 
-  const handleClick = () => {
+  const handleClick = event => {
+    event.stopPropagation();
     const variables: EditKpiMutationVariables = {
       input: {
         id: id,
@@ -132,20 +132,25 @@ const KpiTypeItem = (props: Props) => {
     EditKpiMutation(variables, {onCompleted: () => isCompleted()});
   };
 
+  const handleDelete = event => {
+    event.stopPropagation();
+    setDialogOpen(true);
+  };
+
   return (
     <div className={classes.root}>
-      <Accordion className={classes.container} expanded={open}>
+      <Accordion className={classes.container}>
         <AccordionSummary
-          container
           xs={12}
-          expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid container xs={12}>
+          <Grid container item xs={12}>
             <Grid
               container
               alignItems="center"
               className={classes.switch}
+              item
               xs={4}
               md={3}>
               <Switch
@@ -160,11 +165,12 @@ const KpiTypeItem = (props: Props) => {
             </Grid>
 
             <Grid
+              item
               xs={3}
               md={4}
               container
               alignItems="center"
-              justifyContent="flex-start">
+              justify="flex-start">
               <Button variant="text">
                 <Text useEllipsis={true} color="primary" weight="regular">
                   {domainFk?.name}
@@ -173,13 +179,14 @@ const KpiTypeItem = (props: Props) => {
             </Grid>
 
             <Grid
+              item
               xs={3}
               md={3}
               lg={3}
               xl={4}
               container
               alignItems="center"
-              justifyContent="flex-start">
+              justify="flex-start">
               <Button variant="text">
                 <Text useEllipsis={true} color="primary" weight="regular">
                   {kpiCategoryFK?.name}
@@ -187,6 +194,7 @@ const KpiTypeItem = (props: Props) => {
               </Button>
             </Grid>
             <Grid
+              item
               xs={2}
               md={2}
               lg={2}
@@ -196,7 +204,7 @@ const KpiTypeItem = (props: Props) => {
               alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={() => setDialogOpen(true)}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>

@@ -261,6 +261,7 @@ export const EditKpiItemForm = (props: Props) => {
         <Grid
           className={classes.header}
           container
+          item
           direction="row"
           justifyContent="flex-end"
           alignItems="center">
@@ -300,6 +301,7 @@ export const EditKpiItemForm = (props: Props) => {
             <Grid
               className={classes.headerCardEdit}
               container
+              item
               direction="row"
               justifyContent="space-evenly"
               alignItems="center">
@@ -371,7 +373,7 @@ export const EditKpiItemForm = (props: Props) => {
                   </form>
                 </Grid>
               </Grid>
-              <Grid xs={12} sm={12} md={4} lg={4} xl={4}>
+              <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                 <Grid item xs={12}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
