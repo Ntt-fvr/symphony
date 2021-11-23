@@ -12,6 +12,7 @@ import type {RemoveThresholdMutationVariables} from '../../mutations/__generated
 
 import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+import EditThresholdItemForm from './EditThresholdItemForm';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ThresholdProvider from './ThresholdProvider';
@@ -19,7 +20,6 @@ import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
-import {EditThresholdItemForm} from './EditThresholdItemForm';
 import {Grid, List} from '@material-ui/core';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
