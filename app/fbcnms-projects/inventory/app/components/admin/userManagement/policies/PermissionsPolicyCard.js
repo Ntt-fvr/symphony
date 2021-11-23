@@ -104,12 +104,36 @@ const initialLocationCUDRule = {
   },
 };
 
+//TODO: cHECK IDS null
+const initialdocumentCategoryCRUDRule = {
+  locationTypeID: 0,
+  create: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+  delete: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+  update: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+  read: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+};
+
 const initialInventoryRules = {
   read: {
     isAllowed: PERMISSION_RULE_VALUES.YES,
   },
   location: {
     ...initialLocationCUDRule,
+  },
+  documentCategory: {
+    ...initialdocumentCategoryCRUDRule,
   },
   equipment: {
     ...initialCUDRule,
@@ -321,7 +345,6 @@ function PermissionsPolicyCard(props: Props) {
   if (policy == null) {
     return null;
   }
-
   return (
     <InventoryErrorBoundary>
       <FormContextProvider permissions={{adminRightsRequired: true}}>

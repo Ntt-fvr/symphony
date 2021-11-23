@@ -21,6 +21,7 @@ export type AddHyperlinkInput = {|
   url: string,
   displayName?: ?string,
   category?: ?string,
+  documentCategoryId?: ?string,
 |};
 export type AddHyperlinkMutationVariables = {|
   input: AddHyperlinkInput

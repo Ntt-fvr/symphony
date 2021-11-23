@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -136,6 +137,25 @@ func (hu *HyperlinkUpdate) SetWorkOrder(w *WorkOrder) *HyperlinkUpdate {
 	return hu.SetWorkOrderID(w.ID)
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (hu *HyperlinkUpdate) SetDocumentCategoryID(id int) *HyperlinkUpdate {
+	hu.mutation.SetDocumentCategoryID(id)
+	return hu
+}
+
+// SetNillableDocumentCategoryID sets the document_category edge to DocumentCategory by id if the given value is not nil.
+func (hu *HyperlinkUpdate) SetNillableDocumentCategoryID(id *int) *HyperlinkUpdate {
+	if id != nil {
+		hu = hu.SetDocumentCategoryID(*id)
+	}
+	return hu
+}
+
+// SetDocumentCategory sets the document_category edge to DocumentCategory.
+func (hu *HyperlinkUpdate) SetDocumentCategory(d *DocumentCategory) *HyperlinkUpdate {
+	return hu.SetDocumentCategoryID(d.ID)
+}
+
 // Mutation returns the HyperlinkMutation object of the builder.
 func (hu *HyperlinkUpdate) Mutation() *HyperlinkMutation {
 	return hu.mutation
@@ -156,6 +176,12 @@ func (hu *HyperlinkUpdate) ClearLocation() *HyperlinkUpdate {
 // ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (hu *HyperlinkUpdate) ClearWorkOrder() *HyperlinkUpdate {
 	hu.mutation.ClearWorkOrder()
+	return hu
+}
+
+// ClearDocumentCategory clears the "document_category" edge to type DocumentCategory.
+func (hu *HyperlinkUpdate) ClearDocumentCategory() *HyperlinkUpdate {
+	hu.mutation.ClearDocumentCategory()
 	return hu
 }
 
@@ -382,6 +408,41 @@ func (hu *HyperlinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if hu.mutation.DocumentCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   hyperlink.DocumentCategoryTable,
+			Columns: []string{hyperlink.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := hu.mutation.DocumentCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   hyperlink.DocumentCategoryTable,
+			Columns: []string{hyperlink.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, hu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{hyperlink.Label}
@@ -503,6 +564,25 @@ func (huo *HyperlinkUpdateOne) SetWorkOrder(w *WorkOrder) *HyperlinkUpdateOne {
 	return huo.SetWorkOrderID(w.ID)
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (huo *HyperlinkUpdateOne) SetDocumentCategoryID(id int) *HyperlinkUpdateOne {
+	huo.mutation.SetDocumentCategoryID(id)
+	return huo
+}
+
+// SetNillableDocumentCategoryID sets the document_category edge to DocumentCategory by id if the given value is not nil.
+func (huo *HyperlinkUpdateOne) SetNillableDocumentCategoryID(id *int) *HyperlinkUpdateOne {
+	if id != nil {
+		huo = huo.SetDocumentCategoryID(*id)
+	}
+	return huo
+}
+
+// SetDocumentCategory sets the document_category edge to DocumentCategory.
+func (huo *HyperlinkUpdateOne) SetDocumentCategory(d *DocumentCategory) *HyperlinkUpdateOne {
+	return huo.SetDocumentCategoryID(d.ID)
+}
+
 // Mutation returns the HyperlinkMutation object of the builder.
 func (huo *HyperlinkUpdateOne) Mutation() *HyperlinkMutation {
 	return huo.mutation
@@ -523,6 +603,12 @@ func (huo *HyperlinkUpdateOne) ClearLocation() *HyperlinkUpdateOne {
 // ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (huo *HyperlinkUpdateOne) ClearWorkOrder() *HyperlinkUpdateOne {
 	huo.mutation.ClearWorkOrder()
+	return huo
+}
+
+// ClearDocumentCategory clears the "document_category" edge to type DocumentCategory.
+func (huo *HyperlinkUpdateOne) ClearDocumentCategory() *HyperlinkUpdateOne {
+	huo.mutation.ClearDocumentCategory()
 	return huo
 }
 
@@ -739,6 +825,41 @@ func (huo *HyperlinkUpdateOne) sqlSave(ctx context.Context) (_node *Hyperlink, e
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workorder.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if huo.mutation.DocumentCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   hyperlink.DocumentCategoryTable,
+			Columns: []string{hyperlink.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := huo.mutation.DocumentCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   hyperlink.DocumentCategoryTable,
+			Columns: []string{hyperlink.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
 				},
 			},
 		}

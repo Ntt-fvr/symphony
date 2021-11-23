@@ -121,6 +121,8 @@ func closeDateFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInp
 		return q.Where(workorder.CloseDateGT(*filter.TimeValue)), nil
 	case enum.FilterOperatorDateGreaterOrEqualThan:
 		return q.Where(workorder.CloseDateGTE(*filter.TimeValue)), nil
+	case enum.FilterOperatorIsNil:
+		return q.Where(workorder.CloseDateIsNil()), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

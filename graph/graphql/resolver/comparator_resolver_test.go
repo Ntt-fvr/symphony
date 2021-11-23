@@ -24,12 +24,11 @@ func TestAddRemoveComparator(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddComparatorTest(t, ctx, mr)
-	EditComparatorTest(t, ctx, mr, id1, id2)
-	RemoveComparatorTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddComparatorTest(ctx, t, mr)
+	EditComparatorTest(ctx, t, mr, id1, id2)
+	RemoveComparatorTest(ctx, t, mr, id1, id2)
 }
-func AddComparatorTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddComparatorTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	comparator1, err := mr.AddComparator(ctx, models.AddComparatorInput{
 		Name: "comparator_test_1",
 	})
@@ -47,7 +46,7 @@ func AddComparatorTest(t *testing.T, ctx context.Context, mr generated.MutationR
 	return id1, id2
 }
 
-func EditComparatorTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditComparatorTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditComparator(ctx, models.EditComparatorInput{
 		ID:   id1,
 		Name: "comparator_test_1.1",
@@ -60,7 +59,7 @@ func EditComparatorTest(t *testing.T, ctx context.Context, mr generated.Mutation
 	require.Error(t, err)
 }
 
-func RemoveComparatorTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveComparatorTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveComparator(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveComparator(ctx, id2)

@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -31,10 +32,11 @@ type HyperlinkQuery struct {
 	unique     []string
 	predicates []predicate.Hyperlink
 	// eager-loading edges.
-	withEquipment *EquipmentQuery
-	withLocation  *LocationQuery
-	withWorkOrder *WorkOrderQuery
-	withFKs       bool
+	withEquipment        *EquipmentQuery
+	withLocation         *LocationQuery
+	withWorkOrder        *WorkOrderQuery
+	withDocumentCategory *DocumentCategoryQuery
+	withFKs              bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -123,6 +125,28 @@ func (hq *HyperlinkQuery) QueryWorkOrder() *WorkOrderQuery {
 			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, hyperlink.WorkOrderTable, hyperlink.WorkOrderColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDocumentCategory chains the current query on the document_category edge.
+func (hq *HyperlinkQuery) QueryDocumentCategory() *DocumentCategoryQuery {
+	query := &DocumentCategoryQuery{config: hq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := hq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := hq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, selector),
+			sqlgraph.To(documentcategory.Table, documentcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, hyperlink.DocumentCategoryTable, hyperlink.DocumentCategoryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
 		return fromU, nil
@@ -300,15 +324,16 @@ func (hq *HyperlinkQuery) Clone() *HyperlinkQuery {
 		return nil
 	}
 	return &HyperlinkQuery{
-		config:        hq.config,
-		limit:         hq.limit,
-		offset:        hq.offset,
-		order:         append([]OrderFunc{}, hq.order...),
-		unique:        append([]string{}, hq.unique...),
-		predicates:    append([]predicate.Hyperlink{}, hq.predicates...),
-		withEquipment: hq.withEquipment.Clone(),
-		withLocation:  hq.withLocation.Clone(),
-		withWorkOrder: hq.withWorkOrder.Clone(),
+		config:               hq.config,
+		limit:                hq.limit,
+		offset:               hq.offset,
+		order:                append([]OrderFunc{}, hq.order...),
+		unique:               append([]string{}, hq.unique...),
+		predicates:           append([]predicate.Hyperlink{}, hq.predicates...),
+		withEquipment:        hq.withEquipment.Clone(),
+		withLocation:         hq.withLocation.Clone(),
+		withWorkOrder:        hq.withWorkOrder.Clone(),
+		withDocumentCategory: hq.withDocumentCategory.Clone(),
 		// clone intermediate query.
 		sql:  hq.sql.Clone(),
 		path: hq.path,
@@ -345,6 +370,17 @@ func (hq *HyperlinkQuery) WithWorkOrder(opts ...func(*WorkOrderQuery)) *Hyperlin
 		opt(query)
 	}
 	hq.withWorkOrder = query
+	return hq
+}
+
+//  WithDocumentCategory tells the query-builder to eager-loads the nodes that are connected to
+// the "document_category" edge. The optional arguments used to configure the query builder of the edge.
+func (hq *HyperlinkQuery) WithDocumentCategory(opts ...func(*DocumentCategoryQuery)) *HyperlinkQuery {
+	query := &DocumentCategoryQuery{config: hq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	hq.withDocumentCategory = query
 	return hq
 }
 
@@ -418,13 +454,14 @@ func (hq *HyperlinkQuery) sqlAll(ctx context.Context) ([]*Hyperlink, error) {
 		nodes       = []*Hyperlink{}
 		withFKs     = hq.withFKs
 		_spec       = hq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			hq.withEquipment != nil,
 			hq.withLocation != nil,
 			hq.withWorkOrder != nil,
+			hq.withDocumentCategory != nil,
 		}
 	)
-	if hq.withEquipment != nil || hq.withLocation != nil || hq.withWorkOrder != nil {
+	if hq.withEquipment != nil || hq.withLocation != nil || hq.withWorkOrder != nil || hq.withDocumentCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -525,6 +562,31 @@ func (hq *HyperlinkQuery) sqlAll(ctx context.Context) ([]*Hyperlink, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.WorkOrder = n
+			}
+		}
+	}
+
+	if query := hq.withDocumentCategory; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Hyperlink)
+		for i := range nodes {
+			if fk := nodes[i].document_category_hyperlinks; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(documentcategory.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "document_category_hyperlinks" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.DocumentCategory = n
 			}
 		}
 	}

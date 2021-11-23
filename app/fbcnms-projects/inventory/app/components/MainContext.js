@@ -99,6 +99,24 @@ const meQuery = graphql`
               locationTypeIds
             }
           }
+          documentCategory {
+            read {
+              isAllowed
+              documentCategoryIds
+            }
+            create {
+              isAllowed
+              documentCategoryIds
+            }
+            update {
+              isAllowed
+              documentCategoryIds 
+            }
+            delete {
+              isAllowed
+              documentCategoryIds
+            }
+          }
           equipment {
             create {
               isAllowed

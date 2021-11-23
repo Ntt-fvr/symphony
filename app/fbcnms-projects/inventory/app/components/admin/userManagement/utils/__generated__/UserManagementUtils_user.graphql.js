@@ -63,6 +63,25 @@ export type UserManagementUtils_user = {|
         +read: {|
           +isAllowed: PermissionValue
         |},
+        +documentCategory: {|
+          +locationTypeID: ?number,
+          +read: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +create: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +update: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +delete: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+        |},
         +location: {|
           +create: {|
             +isAllowed: PermissionValue
@@ -273,6 +292,16 @@ v11 = [
   (v10/*: any*/)
 ],
 v12 = [
+  (v10/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "documentCategoryIds",
+    "storageKey": null
+  }
+],
+v13 = [
   {
     "alias": null,
     "args": null,
@@ -398,6 +427,64 @@ return {
                     {
                       "alias": null,
                       "args": null,
+                      "concreteType": "DocumentCategoryCUD",
+                      "kind": "LinkedField",
+                      "name": "documentCategory",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "locationTypeID",
+                          "storageKey": null
+                        },
+                        {
+                          "alias": null,
+                          "args": null,
+                          "concreteType": "DocumentCategoryPermissionRule",
+                          "kind": "LinkedField",
+                          "name": "read",
+                          "plural": false,
+                          "selections": (v12/*: any*/),
+                          "storageKey": null
+                        },
+                        {
+                          "alias": null,
+                          "args": null,
+                          "concreteType": "DocumentCategoryPermissionRule",
+                          "kind": "LinkedField",
+                          "name": "create",
+                          "plural": false,
+                          "selections": (v12/*: any*/),
+                          "storageKey": null
+                        },
+                        {
+                          "alias": null,
+                          "args": null,
+                          "concreteType": "DocumentCategoryPermissionRule",
+                          "kind": "LinkedField",
+                          "name": "update",
+                          "plural": false,
+                          "selections": (v12/*: any*/),
+                          "storageKey": null
+                        },
+                        {
+                          "alias": null,
+                          "args": null,
+                          "concreteType": "DocumentCategoryPermissionRule",
+                          "kind": "LinkedField",
+                          "name": "delete",
+                          "plural": false,
+                          "selections": (v12/*: any*/),
+                          "storageKey": null
+                        }
+                      ],
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
                       "concreteType": "LocationCUD",
                       "kind": "LinkedField",
                       "name": "location",
@@ -452,7 +539,7 @@ return {
                       "kind": "LinkedField",
                       "name": "equipment",
                       "plural": false,
-                      "selections": (v12/*: any*/),
+                      "selections": (v13/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -462,7 +549,7 @@ return {
                       "kind": "LinkedField",
                       "name": "equipmentType",
                       "plural": false,
-                      "selections": (v12/*: any*/),
+                      "selections": (v13/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -472,7 +559,7 @@ return {
                       "kind": "LinkedField",
                       "name": "locationType",
                       "plural": false,
-                      "selections": (v12/*: any*/),
+                      "selections": (v13/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -482,7 +569,7 @@ return {
                       "kind": "LinkedField",
                       "name": "portType",
                       "plural": false,
-                      "selections": (v12/*: any*/),
+                      "selections": (v13/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -492,7 +579,7 @@ return {
                       "kind": "LinkedField",
                       "name": "serviceType",
                       "plural": false,
-                      "selections": (v12/*: any*/),
+                      "selections": (v13/*: any*/),
                       "storageKey": null
                     }
                   ],
@@ -542,7 +629,7 @@ return {
                       "kind": "LinkedField",
                       "name": "templates",
                       "plural": false,
-                      "selections": (v12/*: any*/),
+                      "selections": (v13/*: any*/),
                       "storageKey": null
                     },
                     {

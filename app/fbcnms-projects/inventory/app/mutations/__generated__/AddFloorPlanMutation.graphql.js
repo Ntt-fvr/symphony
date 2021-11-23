@@ -40,6 +40,7 @@ export type AddImageInput = {|
   contentType: string,
   category?: ?string,
   annotation?: ?string,
+  documentCategoryId?: ?string,
 |};
 export type AddFloorPlanMutationVariables = {|
   input: AddFloorPlanInput
@@ -83,6 +84,10 @@ fragment FileAttachment_file on File {
   storeKey
   category
   annotation
+  documentCategory {
+    id
+    name
+  }
   ...ImageDialog_img
 }
 
@@ -234,6 +239,19 @@ return {
                 "kind": "ScalarField",
                 "name": "annotation",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "DocumentCategory",
+                "kind": "LinkedField",
+                "name": "documentCategory",
+                "plural": false,
+                "selections": [
+                  (v2/*: any*/),
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -244,12 +262,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4361d48a743e04320d3993a5fd4bb567",
+    "cacheID": "f4e30167d30f6870583e6982147acd98",
     "id": null,
     "metadata": {},
     "name": "AddFloorPlanMutation",
     "operationKind": "mutation",
-    "text": "mutation AddFloorPlanMutation(\n  $input: AddFloorPlanInput!\n) {\n  addFloorPlan(input: $input) {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
+    "text": "mutation AddFloorPlanMutation(\n  $input: AddFloorPlanInput!\n) {\n  addFloorPlan(input: $input) {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  documentCategory {\n    id\n    name\n  }\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
   }
 };
 })();

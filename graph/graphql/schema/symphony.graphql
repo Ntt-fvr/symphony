@@ -112,6 +112,14 @@ type LocationPermissionRule
   locationTypeIds: [ID!]
 }
 
+type DocumentCategoryPermissionRule
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRule"
+) {
+  isAllowed: PermissionValue!
+  documentCategoryIds: [ID!]
+}
+
 type WorkforcePermissionRule
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.WorkforcePermissionRule"
@@ -135,6 +143,14 @@ input LocationPermissionRuleInput
   ) {
   isAllowed: PermissionValue!
   locationTypeIds: [ID!]
+}
+
+input DocumentCategoryPermissionRuleInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRuleInput"
+) {
+  isAllowed: PermissionValue!
+  documentCategoryIds: [ID!]
 }
 
 input WorkforcePermissionRuleInput
@@ -165,6 +181,17 @@ type LocationCUD
   delete: LocationPermissionRule!
 }
 
+type DocumentCategoryCUD
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
+) {
+  locationTypeID: Int
+  read  : DocumentCategoryPermissionRule
+  create: DocumentCategoryPermissionRule
+  update: DocumentCategoryPermissionRule
+  delete: DocumentCategoryPermissionRule
+}
+
 input BasicCUDInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.BasicCUDInput"
@@ -181,6 +208,17 @@ input LocationCUDInput
   create: BasicPermissionRuleInput
   update: LocationPermissionRuleInput
   delete: BasicPermissionRuleInput
+}
+
+input DocumentCategoryCUDInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCUDInput"
+) {
+  locationTypeID: Int
+  read  : DocumentCategoryPermissionRuleInput
+  create: DocumentCategoryPermissionRuleInput
+  update: DocumentCategoryPermissionRuleInput
+  delete: DocumentCategoryPermissionRuleInput
 }
 
 type AdministrativePolicy
@@ -228,6 +266,7 @@ type InventoryPolicy
   ) {
   read: BasicPermissionRule!
   location: LocationCUD!
+  documentCategory: DocumentCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
@@ -241,6 +280,7 @@ input InventoryPolicyInput
   ) {
   read: BasicPermissionRuleInput
   location: LocationCUDInput
+  documentCategory: DocumentCategoryCUDInput
   equipment: BasicCUDInput
   equipmentType: BasicCUDInput
   locationType: BasicCUDInput
@@ -470,7 +510,7 @@ type LocationType implements Node {
   index: Int
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
-  fileCategoryType: [FileCategoryType]!
+  documentCategories: [DocumentCategory]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
@@ -482,7 +522,7 @@ input AddLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
+  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
@@ -494,9 +534,18 @@ input EditLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
+  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
+}
+
+input DocumentCategoryInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.DocumentCategoryInput"
+) {
+  id: ID
+  name: String!
+  index: Int!
 }
 
 type NetworkTopology {
@@ -533,7 +582,8 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
-  workorder: WorkOrder	
+  workorder: WorkOrder
+  documentCategory: DocumentCategory
 }
 
 type Hyperlink implements Node {
@@ -542,6 +592,7 @@ type Hyperlink implements Node {
   displayName: String
   category: String
   createTime: Time!
+  documentCategory: DocumentCategory
 }
 
 input AddHyperlinkInput {
@@ -550,6 +601,7 @@ input AddHyperlinkInput {
   url: String!
   displayName: String
   category: String
+  documentCategoryId: ID
 }
 
 input AddImageInput {
@@ -562,6 +614,7 @@ input AddImageInput {
   contentType: String!
   category: String
   annotation: String
+  documentCategoryId: ID
 }
 
 type Comment implements Node {
@@ -1289,6 +1342,17 @@ type LocationTypeEdge {
   cursor: Cursor!
 }
 
+type DocumentCategoryConnection {
+  totalCount: Int!
+  edges: [DocumentCategoryEdge!]!
+  pageInfo: PageInfo!
+}
+
+type DocumentCategoryEdge {
+  node: DocumentCategory
+  cursor: Cursor!
+}
+
 """
 A connection to a list of locations.
 """
@@ -1508,20 +1572,6 @@ enum PropertyKind
   node
 }
 
-type FileCategoryType implements Node {
-  id: ID!
-  name: String!
-  rawValue: String
-}
-
-input FileCategoryTypeInput
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
-  ) {
-  id: ID
-  name: String!
-}
-
 type PropertyType implements Node {
   id: ID!
   externalId: String
@@ -1543,6 +1593,17 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+}
+
+type DocumentCategory implements Node {
+  id: ID!
+  name: String
+  index: Int
+  files: [File]!
+  hyperlinks: [Hyperlink]!
+  numberOfDocuments: Int!
+  filesByEntity(entity: ImageEntity!, entityID: ID): [File]!
+  hyperlinksByEntity(entity: ImageEntity!, entityID: ID): [Hyperlink]!
 }
 
 input PropertyTypeInput
@@ -2029,38 +2090,6 @@ input OrganizationFilterInput {
   stringSet: [String!]
 }
 
-type ResourceTypeClass implements Node {
-  id: ID!
-  name: String!
-  
-}
-
-
-input AddResourceTypeClassInput {  
-  name: String!   
-}
-
-input EditResourceTypeClassInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceTypeClassFilterType {
-  ID
-  NAME
-  
-}
-
-input ResourceTypeClassFilterInput {
-  filterType: ResourceTypeClassFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-
 """
 A connection to a list of permissions policies.
 """
@@ -2511,12 +2540,13 @@ enum ProjectOrderField {
   Order projects by priority.
   """
   PRIORITY
-  
+
   """
   Order projects by property type.
   """
   PROPERTY
 }
+
 
 """
 Ordering options for project connections.
@@ -3405,7 +3435,7 @@ type KqiEdge {
   """
   cursor: Cursor!
 }
-
+################################ conection Organization ###############################################
 """
 Properties by which Organization connections can be ordered.
 """
@@ -3473,7 +3503,7 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
-
+################################ conection recommendations ###############################################
 """
 Properties by which Recommendations connections can be ordered.
 """
@@ -3541,7 +3571,7 @@ type RecommendationsEdge {
   cursor: Cursor!
 }
 
-
+################################ conection recommendationsSources ###############################################
 """
 Properties by which RecommendationsSources connections can be ordered.
 """
@@ -3609,7 +3639,7 @@ type RecommendationsSourcesEdge {
   cursor: Cursor!
 }
 
-
+################################ conection recommendationsCategory ###############################################
 """
 Properties by which RecommendationsCategory connections can be ordered.
 """
@@ -4145,7 +4175,6 @@ type TechEdge {
 }
 
 
-
 """
 Properties by which network types connections can be ordered.
 """
@@ -4213,408 +4242,6 @@ type NetworkTypeEdge {
   cursor: Cursor!
 }
 
-"""
-Properties by which ResourceTypeClass connections can be ordered.
-"""
-enum ResourceTypeClassOrderField {
-  """
-  Order ResourceTypeClass by name.
-  """
-  NAME
-
-  """
-  Order ResourceTypeClass by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceTypeClass by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceTypeClass connections.
-"""
-input ResourceTypeClassOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceTypeClass by.
-  """
-  field: ResourceTypeClassOrderField
-}
-
-"""
-A connection to a list of ResourceTypeClass.
-"""
-type ResourceTypeClassConnection {
-  """
-  Total ResourceTypeClass of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceTypeClass edges.
-  """
-  edges: [ResourceTypeClassEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceTypeClass edge in a connection.
-"""
-type ResourceTypeClassEdge {
-  """
-  The ResourceTypeClass at the end of the edge.
-  """
-  node: ResourceTypeClass
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceTypeBaseType connections can be ordered.
-"""
-enum ResourceTypeBaseTypeOrderField {
-  """
-  Order ResourceTypeBaseType by name.
-  """
-  NAME
-
-  """
-  Order ResourceTypeBaseType by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceTypeBaseType by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceTypeBaseType connections.
-"""
-input ResourceTypeBaseTypeOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceTypeBaseType by.
-  """
-  field: ResourceTypeBaseTypeOrderField
-}
-
-"""
-A connection to a list of ResourceTypeBaseType.
-"""
-type ResourceTypeBaseTypeConnection {
-  """
-  Total ResourceTypeBaseType of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceTypeBaseType edges.
-  """
-  edges: [ResourceTypeBaseTypeEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceTypeBaseType edge in a connection.
-"""
-type ResourceTypeBaseTypeEdge {
-  """
-  The ResourceTypeBaseType at the end of the edge.
-  """
-  node: ResourceTypeBaseType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceType connections can be ordered.
-"""
-enum ResourceTypeOrderField {
-  """
-  Order ResourceType by name.
-  """
-  NAME
-
-  """
-  Order ResourceType by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceType by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceType connections.
-"""
-input ResourceTypeOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceType by.
-  """
-  field: ResourceTypeOrderField
-}
-
-"""
-A connection to a list of ResourceType.
-"""
-type ResourceTypeConnection {
-  """
-  Total ResourceType of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceType edges.
-  """
-  edges: [ResourceTypeEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceType edge in a connection.
-"""
-type ResourceTypeEdge {
-  """
-  The ResourceType at the end of the edge.
-  """
-  node: ResourceType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceRelationshipType connections can be ordered.
-"""
-enum ResourceRelationshipTypeOrderField {
-  """
-  Order ResourceRelationshipType by name.
-  """
-  NAME
-
-  """
-  Order ResourceRelationshipType by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceRelationshipType by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceRelationshipType connections.
-"""
-input ResourceRelationshipTypeOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceRelationshipType by.
-  """
-  field: ResourceRelationshipTypeOrderField
-}
-
-"""
-A connection to a list of ResourceRelationshipType.
-"""
-type ResourceRelationshipTypeConnection {
-  """
-  Total ResourceRelationshipType of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceRelationshipType edges.
-  """
-  edges: [ResourceRelationshipTypeEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceRelationshipType edge in a connection.
-"""
-type ResourceRelationshipTypeEdge {
-  """
-  The ResourceRelationshipType at the end of the edge.
-  """
-  node: ResourceRelationshipType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceRelationshipMultiplicity connections can be ordered.
-"""
-enum ResourceRelationshipMultiplicityOrderField {
-  """
-  Order ResourceRelationshipMultiplicity by name.
-  """
-  NAME
-
-  """
-  Order ResourceRelationshipMultiplicity by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceRelationshipMultiplicity by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceRelationshipMultiplicity connections.
-"""
-input ResourceRelationshipMultiplicityOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceRelationshipMultiplicity by.
-  """
-  field: ResourceRelationshipMultiplicityOrderField
-}
-
-"""
-A connection to a list of ResourceRelationshipMultiplicity.
-"""
-type ResourceRelationshipMultiplicityConnection {
-  """
-  Total ResourceRelationshipMultiplicity of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceRelationshipMultiplicity edges.
-  """
-  edges: [ResourceRelationshipMultiplicityEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceRelationshipMultiplicity edge in a connection.
-"""
-type ResourceRelationshipMultiplicityEdge {
-  """
-  The ResourceRelationshipMultiplicity at the end of the edge.
-  """
-  node: ResourceRelationshipMultiplicity
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceRelationship connections can be ordered.
-"""
-enum ResourceRelationshipOrderField {
-  """
-  Order ResourceRelationship by name.
-  """
-  NAME
-  """
-  Order ResourceRelationship by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceRelationship by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceRelationship connections.
-"""
-input ResourceRelationshipOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceRelationship by.
-  """
-  field: ResourceRelationshipOrderField
-}
-
-"""
-A connection to a list of ResourceRelationship.
-"""
-type ResourceRelationshipConnection {
-  """
-  Total ResourceRelationship of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceRelationship edges.
-  """
-  edges: [ResourceRelationshipEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceRelationship edge in a connection.
-"""
-type ResourceRelationshipEdge {
-  """
-  The ResourceRelationship at the end of the edge.
-  """
-  node: ResourceRelationship
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -4671,6 +4298,7 @@ enum FilterOperator
     model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
   ) {
   IS
+  IS_NIL
   CONTAINS
   IS_ONE_OF
   IS_NOT_ONE_OF
@@ -6125,7 +5753,16 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
-
+  documentCategories(
+    """
+    Filter by location type ID
+    """
+    locationTypeID: ID
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): DocumentCategoryConnection
   """
   Fetches end to end path of links
   """
@@ -6516,6 +6153,7 @@ type Query {
     
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
+
   """
   A list of kpiCategories.
   """
@@ -6550,9 +6188,6 @@ type Query {
     
     filterBy: [KpiCategoryFilterInput!]
   ): KpiCategoryConnection!
-
-
-
 
   """
   A list of thresholds.
@@ -7254,7 +6889,7 @@ type Query {
     filterBy: [FormulaFilterInput!]
   ): FormulaConnection!
 
-  """
+    """
   A list of techs.
   """
   techs(
@@ -7323,218 +6958,6 @@ type Query {
     
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
-
-  
-  """
-  A list of resourceTypeClasses.
-  """
-  
-  resourceTypeClasses(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeClass.
-    """
-    orderBy: ResourceTypeClassOrder
-
-    
-    #Filtering options for the returned resourceTypeClass.
-    
-    filterBy: [ResourceTypeClassFilterInput!]
-  ): ResourceTypeClassConnection!
-
-  """
-  A list of resourceTypeBaseTypes.
-  """
-  resourceTypeBaseTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeBaseTypes.
-    """
-    orderBy: ResourceTypeBaseTypeOrder
-
-    
-    #Filtering options for the returned resourceTypeBaseTypes.
-    
-    filterBy: [ResourceTypeBaseTypeFilterInput!]
-  ): ResourceTypeBaseTypeConnection!
-    """
-  A list of resourceTypes.
-  """
-  resourceTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypes.
-    """
-    orderBy: ResourceTypeOrder
-
-    
-    #Filtering options for the returned resourceTypes.
-    
-    filterBy: [ResourceTypeFilterInput!]
-  ): ResourceTypeConnection!
-  
-  
-  
-  """
-  A list of resourceRelationshipTypes.
-  """
-  resourceRelationshipTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceRelationshipTypes.
-    """
-    orderBy: ResourceRelationshipTypeOrder
-
-    
-    #Filtering options for the returned resourceRelationshipTypes.
-    
-    filterBy: [ResourceRelationshipTypeFilterInput!]
-  ): ResourceRelationshipTypeConnection!
-  """
-  A list of resourceRelationshipMultiplicities.
-  """
-  resourceRelationshipMultiplicities(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceRelationshipMultiplicities.
-    """
-    orderBy: ResourceRelationshipMultiplicityOrder
-
-    
-    #Filtering options for the returned resourceRelationshipMultiplicities.
-    
-    filterBy: [ResourceRelationshipMultiplicityFilterInput!]
-  ): ResourceRelationshipMultiplicityConnection!
-
-  """
-  A list of resourceRelationships.
-  """
-  resourceRelationships(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceRelationships.
-    """
-    orderBy: ResourceRelationshipOrder
-
-    
-    #Filtering options for the returned resourceRelationships.
-    
-    filterBy: [ResourceRelationshipFilterInput!]
-  ): ResourceRelationshipConnection!
  
   appointments(
     after: Cursor
@@ -7564,6 +6987,7 @@ type Mutation {
   addLocationType(input: AddLocationTypeInput!): LocationType!
   editLocationType(input: EditLocationTypeInput!): LocationType!
   removeLocationType(id: ID!): ID!
+  removeDocumentCategory(id: ID!): ID!
   addEquipment(input: AddEquipmentInput!): Equipment!
   editEquipment(input: EditEquipmentInput!): Equipment!
   removeEquipment(id: ID!, workOrderId: ID): ID!
@@ -7825,24 +7249,6 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
-  addResourceTypeBaseType(input: AddResourceTypeBaseTypeInput!):ResourceTypeBaseType!
-  editResourceTypeBaseType(input: EditResourceTypeBaseTypeInput!): ResourceTypeBaseType!
-  removeResourceTypeBaseType(id: ID!): ID!
-  addResourceTypeClass(input: AddResourceTypeClassInput!):ResourceTypeClass!
-  editResourceTypeClass(input: EditResourceTypeClassInput!): ResourceTypeClass!
-  removeResourceTypeClass(id: ID!): ID!
-  addResourceType(input: AddResourceTypeInput!):ResourceType!
-  editResourceType(input: EditResourceTypeInput!): ResourceType!
-  removeResourceType(id: ID!): ID!
-  addResourceRelationship(input: AddResourceRelationshipInput!):ResourceRelationship!
-  editResourceRelationship(input: EditResourceRelationshipInput!): ResourceRelationship!
-  removeResourceRelationship(id: ID!): ID!
-  addResourceRelationshipType(input: AddResourceRelationshipTypeInput!):ResourceRelationshipType!
-  editResourceRelationshipType(input: EditResourceRelationshipTypeInput!): ResourceRelationshipType!
-  removeResourceRelationshipType(id: ID!): ID!
-  addResourceRelationshipMultiplicity(input: AddResourceRelationshipMultiplicityInput!):ResourceRelationshipMultiplicity!
-  editResourceRelationshipMultiplicity(input: EditResourceRelationshipMultiplicityInput!): ResourceRelationshipMultiplicity!
-  removeResourceRelationshipMultiplicity(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -8033,6 +7439,7 @@ input DomainFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
 }
+
 type KpiCategory implements Node {
   id: ID!
   name: String!
@@ -8158,7 +7565,6 @@ input EditFormulaInput {
   networkTypeFk: ID!
   kpiFk: ID!
 }
-
 
 type CounterFormula implements Node {
   id: ID!
@@ -8723,6 +8129,8 @@ input EditKqiComparatorInput {
   comparatorType: String!
 }
 
+##################### RECOMMENDATIONS #######################
+
 type Recommendations implements Node {
   id: ID!
   externalID: String!
@@ -8781,7 +8189,7 @@ input EditRecommendationsInput {
   userApprobed: ID
   vendor: ID!
 }
-
+######################## filter ###################
 enum RecommendationsFilterType {
   EXTERNALID
   RESOURCE
@@ -8865,178 +8273,6 @@ input RecommendationsCategoryFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
-}
-type ResourceTypeBaseType implements Node {
-  id: ID!
-  name: String!
-  
-}
-input AddResourceTypeBaseTypeInput {  
-  name: String!   
-}
-input EditResourceTypeBaseTypeInput {
-  id: ID!
-  name: String!  
-}
-enum ResourceTypeBaseTypeFilterType {
-  ID
-  NAME
-  
-}
-
-input ResourceTypeBaseTypeFilterInput {
-  filterType: ResourceTypeBaseTypeFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-  
-}
-
-type ResourceType implements Node {
-  id: ID!
-  name: String!
-  
-  resourceTypeBaseTypeFk: ResourceTypeBaseType
-  resourceTypeClassFk: ResourceTypeClass
-  
-}
-
-input AddResourceTypeInput {  
-  name: String!
-  resourceTypeBaseTypeFk: ID!
-  resourceTypeClassFk: ID!
-}
-
-input EditResourceTypeInput {
-  id: ID!
-  name: String!
-  resourceTypeBaseTypeFk: ID
-  resourceTypeClassFk: ID 
-}
-
-enum ResourceTypeFilterType {
-  ID
-  NAME
-  
-}
-
-input ResourceTypeFilterInput {
-  filterType: ResourceTypeFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-  
-}
-
-type ResourceRelationshipType implements Node {
-  id: ID!
-  name: String!
-    
-}
-input AddResourceRelationshipTypeInput {  
-  name: String!   
-}
-
-input EditResourceRelationshipTypeInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceRelationshipTypeFilterType {
-  ID
-  NAME
-  
-}
-
-input ResourceRelationshipTypeFilterInput {
-  filterType: ResourceRelationshipTypeFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-  
-}
-
-type ResourceRelationshipMultiplicity implements Node {
-  id: ID!
-  name: String!
-  
-}
-input AddResourceRelationshipMultiplicityInput {  
-  name: String!   
-}
-
-input EditResourceRelationshipMultiplicityInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceRelationshipMultiplicityFilterType {
-  ID
-  NAME
-  
-}
-
-input ResourceRelationshipMultiplicityFilterInput {
-  filterType: ResourceRelationshipMultiplicityFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-  
-}
-
-type ResourceRelationship implements Node {
-  id: ID!
-  name: String!
-  resourceRelationshipMultiplicityFk: ResourceRelationshipMultiplicity!
-  resourceRelationshipTypeFk: ResourceRelationshipType!
-  locationTypeFk: LocationType
-  resourceTypeFkA: ResourceType!
-  resourceTypeFkB: ResourceType
-}
-input AddResourceRelationshipInput {
-  name: String!  
-  resourceRelationshipTypeFk: ID!
-  resourceRelationshipMultiplicityFk:ID!
-  locationTypeFk: ID
-  resourceTypeFkA: ID!
-  resourceTypeFkB: ID 
-}
-
-input EditResourceRelationshipInput {
-  id: ID!
-  name: String!
-  resourceRelationshipMultiplicityFk: ID!
-  resourceRelationshipTypeFk: ID!
-  locationTypeFk: ID
-  resourceTypeFkA: ID!
-  resourceTypeFkB: ID
-}
-
-enum ResourceRelationshipFilterType {
-  ID 
-  NAME
-  RESOURCE_RELATIONSHIP_MULTIPLICITY
-  RESOURCE_RELATIONSHIP_FILTER
-  RESOURCE_RELATIONSHIP_TYPE
-  RESOURCE_RELATIONSHIP_RESOURCE
-
-}
-input ResourceRelationshipFilterInput {
-  filterType: ResourceRelationshipFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-  
 }
 
 ## scheduling

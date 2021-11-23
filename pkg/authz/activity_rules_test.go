@@ -62,8 +62,12 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUser)
+	u2 := viewer.MustGetOrCreateUser(ctx, "tester@example.com", user.RoleUser)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 	woType1, wo1 := prepareWorkOrderData(ctx, c)
 	_, wo2 := prepareWorkOrderData(ctx, c)
+	u.Update().SetOrganizationID(organization.ID).SaveX(ctx)
+	u2.Update().SetOrganizationID(organization.ID).SaveX(ctx)
 	c.Activity.Create().
 		SetAuthor(u).
 		SetWorkOrder(wo1).
@@ -90,7 +94,7 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 		require.NoError(t, err)
 		require.Zero(t, count)
 	})
-	organization, _ := wo1.Organization(ctx)
+
 	t.Run("PartialPermissions", func(t *testing.T) {
 		permissions := authz.EmptyPermissions()
 		permissions.WorkforcePolicy.Read.IsAllowed = models.PermissionValueByCondition
@@ -124,16 +128,13 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 func TestWorkOrderActivityPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
+	u.Update().SetNillableOrganizationID(&organization.ID).SaveX(ctx)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
-	organization := c.Organization.Create().
-		SetCreateTime(time.Now()).
-		SetDescription("Organization").
-		SetName("Organization").
-		SetUpdateTime(time.Now()).
-		SaveX(ctx)
+
 	workOrder := c.WorkOrder.Create().
 		SetName("workOrder").
 		SetType(workOrderType).

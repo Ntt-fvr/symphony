@@ -12,10 +12,12 @@ from typing import Any, AsyncGenerator, Dict, List, Generator, Optional
 from time import perf_counter
 from dataclasses_json import DataClassJsonMixin, config
 
+from .document_category import DocumentCategoryFragment, QUERY as DocumentCategoryFragmentQuery
+
 from .property_type import PropertyTypeFragment, QUERY as PropertyTypeFragmentQuery
 
 # fmt: off
-QUERY: List[str] = PropertyTypeFragmentQuery + ["""
+QUERY: List[str] = DocumentCategoryFragmentQuery + PropertyTypeFragmentQuery + ["""
 fragment LocationTypeFragment on LocationType {
   id
   name
@@ -24,6 +26,9 @@ fragment LocationTypeFragment on LocationType {
   mapZoomLevel
   propertyTypes {
     ...PropertyTypeFragment
+  }
+  documentCategories {
+    ...DocumentCategoryFragment
   }
 }
 
@@ -35,9 +40,14 @@ class LocationTypeFragment(DataClassJsonMixin):
     class PropertyType(PropertyTypeFragment):
         pass
 
+    @dataclass(frozen=True)
+    class DocumentCategory(DocumentCategoryFragment):
+        pass
+
     id: str
     name: str
     mapType: Optional[str]
     isSite: bool
     mapZoomLevel: Optional[int]
     propertyTypes: List[PropertyType]
+    documentCategories: List[DocumentCategory]

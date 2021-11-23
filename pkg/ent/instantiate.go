@@ -103,6 +103,12 @@ func (c *CustomerClient) Instantiate(cu *Customer) *Customer {
 }
 
 // Instantiate entity configuration.
+func (c *DocumentCategoryClient) Instantiate(dc *DocumentCategory) *DocumentCategory {
+	dc.config = c.config
+	return dc
+}
+
+// Instantiate entity configuration.
 func (c *DomainClient) Instantiate(d *Domain) *Domain {
 	d.config = c.config
 	return d
@@ -190,12 +196,6 @@ func (c *FeatureClient) Instantiate(f *Feature) *Feature {
 func (c *FileClient) Instantiate(f *File) *File {
 	f.config = c.config
 	return f
-}
-
-// Instantiate entity configuration.
-func (c *FileCategoryTypeClient) Instantiate(fct *FileCategoryType) *FileCategoryType {
-	fct.config = c.config
-	return fct
 }
 
 // Instantiate entity configuration.
@@ -394,42 +394,6 @@ func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf
-}
-
-// Instantiate entity configuration.
-func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *ResourceRelationship {
-	rr.config = c.config
-	return rr
-}
-
-// Instantiate entity configuration.
-func (c *ResourceRelationshipMultiplicityClient) Instantiate(rrm *ResourceRelationshipMultiplicity) *ResourceRelationshipMultiplicity {
-	rrm.config = c.config
-	return rrm
-}
-
-// Instantiate entity configuration.
-func (c *ResourceRelationshipTypeClient) Instantiate(rrt *ResourceRelationshipType) *ResourceRelationshipType {
-	rrt.config = c.config
-	return rrt
-}
-
-// Instantiate entity configuration.
-func (c *ResourceTypeClient) Instantiate(rt *ResourceType) *ResourceType {
-	rt.config = c.config
-	return rt
-}
-
-// Instantiate entity configuration.
-func (c *ResourceTypeBaseTypeClient) Instantiate(rtbt *ResourceTypeBaseType) *ResourceTypeBaseType {
-	rtbt.config = c.config
-	return rtbt
-}
-
-// Instantiate entity configuration.
-func (c *ResourceTypeClassClient) Instantiate(rtc *ResourceTypeClass) *ResourceTypeClass {
-	rtc.config = c.config
-	return rtc
 }
 
 // Instantiate entity configuration.
