@@ -58,6 +58,9 @@ type CounterFormula func(*sql.Selector)
 // Customer is the predicate function for customer builders.
 type Customer func(*sql.Selector)
 
+// DocumentCategory is the predicate function for documentcategory builders.
+type DocumentCategory func(*sql.Selector)
+
 // Domain is the predicate function for domain builders.
 type Domain func(*sql.Selector)
 
@@ -102,9 +105,6 @@ type Feature func(*sql.Selector)
 
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
-
-// FileCategoryType is the predicate function for filecategorytype builders.
-type FileCategoryType func(*sql.Selector)
 
 // FloorPlan is the predicate function for floorplan builders.
 type FloorPlan func(*sql.Selector)
@@ -204,24 +204,6 @@ type RecommendationsSources func(*sql.Selector)
 
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
-
-// ResourceRelationship is the predicate function for resourcerelationship builders.
-type ResourceRelationship func(*sql.Selector)
-
-// ResourceRelationshipMultiplicity is the predicate function for resourcerelationshipmultiplicity builders.
-type ResourceRelationshipMultiplicity func(*sql.Selector)
-
-// ResourceRelationshipType is the predicate function for resourcerelationshiptype builders.
-type ResourceRelationshipType func(*sql.Selector)
-
-// ResourceType is the predicate function for resourcetype builders.
-type ResourceType func(*sql.Selector)
-
-// ResourceTypeBaseType is the predicate function for resourcetypebasetype builders.
-type ResourceTypeBaseType func(*sql.Selector)
-
-// ResourceTypeClass is the predicate function for resourcetypeclass builders.
-type ResourceTypeClass func(*sql.Selector)
 
 // Rule is the predicate function for rule builders.
 type Rule func(*sql.Selector)

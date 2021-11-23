@@ -194,7 +194,7 @@ class LocationPropertiesCard extends React.Component<Props, State> {
       <InventoryQueryRenderer
         query={locationsPropertiesCardQuery}
         variables={{
-          locationId: locationId,
+          locationId: locationId
         }}
         render={props => {
           const location = props.location;

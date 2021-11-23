@@ -34,6 +34,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -49,7 +50,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -83,12 +83,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshiptype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -4190,6 +4184,225 @@ var DefaultCustomerOrder = &CustomerOrder{
 	},
 }
 
+// DocumentCategoryEdge is the edge representation of DocumentCategory.
+type DocumentCategoryEdge struct {
+	Node   *DocumentCategory `json:"node"`
+	Cursor Cursor            `json:"cursor"`
+}
+
+// DocumentCategoryConnection is the connection containing edges to DocumentCategory.
+type DocumentCategoryConnection struct {
+	Edges      []*DocumentCategoryEdge `json:"edges"`
+	PageInfo   PageInfo                `json:"pageInfo"`
+	TotalCount int                     `json:"totalCount"`
+}
+
+// DocumentCategoryPaginateOption enables pagination customization.
+type DocumentCategoryPaginateOption func(*documentCategoryPager) error
+
+// WithDocumentCategoryOrder configures pagination ordering.
+func WithDocumentCategoryOrder(order *DocumentCategoryOrder) DocumentCategoryPaginateOption {
+	if order == nil {
+		order = DefaultDocumentCategoryOrder
+	}
+	o := *order
+	return func(pager *documentCategoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultDocumentCategoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithDocumentCategoryFilter configures pagination filter.
+func WithDocumentCategoryFilter(filter func(*DocumentCategoryQuery) (*DocumentCategoryQuery, error)) DocumentCategoryPaginateOption {
+	return func(pager *documentCategoryPager) error {
+		if filter == nil {
+			return errors.New("DocumentCategoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type documentCategoryPager struct {
+	order  *DocumentCategoryOrder
+	filter func(*DocumentCategoryQuery) (*DocumentCategoryQuery, error)
+}
+
+func newDocumentCategoryPager(opts []DocumentCategoryPaginateOption) (*documentCategoryPager, error) {
+	pager := &documentCategoryPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultDocumentCategoryOrder
+	}
+	return pager, nil
+}
+
+func (p *documentCategoryPager) applyFilter(query *DocumentCategoryQuery) (*DocumentCategoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *documentCategoryPager) toCursor(dc *DocumentCategory) Cursor {
+	return p.order.Field.toCursor(dc)
+}
+
+func (p *documentCategoryPager) applyCursors(query *DocumentCategoryQuery, after, before *Cursor) *DocumentCategoryQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultDocumentCategoryOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *documentCategoryPager) applyOrder(query *DocumentCategoryQuery, reverse bool) *DocumentCategoryQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultDocumentCategoryOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultDocumentCategoryOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to DocumentCategory.
+func (dc *DocumentCategoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...DocumentCategoryPaginateOption,
+) (*DocumentCategoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newDocumentCategoryPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if dc, err = pager.applyFilter(dc); err != nil {
+		return nil, err
+	}
+
+	conn := &DocumentCategoryConnection{Edges: []*DocumentCategoryEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := dc.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := dc.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	dc = pager.applyCursors(dc, after, before)
+	dc = pager.applyOrder(dc, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		dc = dc.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		dc = dc.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := dc.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *DocumentCategory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *DocumentCategory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *DocumentCategory {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*DocumentCategoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &DocumentCategoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// DocumentCategoryOrderField defines the ordering field of DocumentCategory.
+type DocumentCategoryOrderField struct {
+	field    string
+	toCursor func(*DocumentCategory) Cursor
+}
+
+// DocumentCategoryOrder defines the ordering of DocumentCategory.
+type DocumentCategoryOrder struct {
+	Direction OrderDirection              `json:"direction"`
+	Field     *DocumentCategoryOrderField `json:"field"`
+}
+
+// DefaultDocumentCategoryOrder is the default ordering of DocumentCategory.
+var DefaultDocumentCategoryOrder = &DocumentCategoryOrder{
+	Direction: OrderDirectionAsc,
+	Field: &DocumentCategoryOrderField{
+		field: documentcategory.FieldID,
+		toCursor: func(dc *DocumentCategory) Cursor {
+			return Cursor{ID: dc.ID}
+		},
+	},
+}
+
 // DomainEdge is the edge representation of Domain.
 type DomainEdge struct {
 	Node   *Domain `json:"node"`
@@ -7614,225 +7827,6 @@ var DefaultFileOrder = &FileOrder{
 		field: file.FieldID,
 		toCursor: func(f *File) Cursor {
 			return Cursor{ID: f.ID}
-		},
-	},
-}
-
-// FileCategoryTypeEdge is the edge representation of FileCategoryType.
-type FileCategoryTypeEdge struct {
-	Node   *FileCategoryType `json:"node"`
-	Cursor Cursor            `json:"cursor"`
-}
-
-// FileCategoryTypeConnection is the connection containing edges to FileCategoryType.
-type FileCategoryTypeConnection struct {
-	Edges      []*FileCategoryTypeEdge `json:"edges"`
-	PageInfo   PageInfo                `json:"pageInfo"`
-	TotalCount int                     `json:"totalCount"`
-}
-
-// FileCategoryTypePaginateOption enables pagination customization.
-type FileCategoryTypePaginateOption func(*fileCategoryTypePager) error
-
-// WithFileCategoryTypeOrder configures pagination ordering.
-func WithFileCategoryTypeOrder(order *FileCategoryTypeOrder) FileCategoryTypePaginateOption {
-	if order == nil {
-		order = DefaultFileCategoryTypeOrder
-	}
-	o := *order
-	return func(pager *fileCategoryTypePager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultFileCategoryTypeOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithFileCategoryTypeFilter configures pagination filter.
-func WithFileCategoryTypeFilter(filter func(*FileCategoryTypeQuery) (*FileCategoryTypeQuery, error)) FileCategoryTypePaginateOption {
-	return func(pager *fileCategoryTypePager) error {
-		if filter == nil {
-			return errors.New("FileCategoryTypeQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type fileCategoryTypePager struct {
-	order  *FileCategoryTypeOrder
-	filter func(*FileCategoryTypeQuery) (*FileCategoryTypeQuery, error)
-}
-
-func newFileCategoryTypePager(opts []FileCategoryTypePaginateOption) (*fileCategoryTypePager, error) {
-	pager := &fileCategoryTypePager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultFileCategoryTypeOrder
-	}
-	return pager, nil
-}
-
-func (p *fileCategoryTypePager) applyFilter(query *FileCategoryTypeQuery) (*FileCategoryTypeQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *fileCategoryTypePager) toCursor(fct *FileCategoryType) Cursor {
-	return p.order.Field.toCursor(fct)
-}
-
-func (p *fileCategoryTypePager) applyCursors(query *FileCategoryTypeQuery, after, before *Cursor) *FileCategoryTypeQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultFileCategoryTypeOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *fileCategoryTypePager) applyOrder(query *FileCategoryTypeQuery, reverse bool) *FileCategoryTypeQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultFileCategoryTypeOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultFileCategoryTypeOrder.Field.field))
-	}
-	return query
-}
-
-// Paginate executes the query and returns a relay based cursor connection to FileCategoryType.
-func (fct *FileCategoryTypeQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...FileCategoryTypePaginateOption,
-) (*FileCategoryTypeConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newFileCategoryTypePager(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if fct, err = pager.applyFilter(fct); err != nil {
-		return nil, err
-	}
-
-	conn := &FileCategoryTypeConnection{Edges: []*FileCategoryTypeEdge{}}
-	if !hasCollectedField(ctx, edgesField) ||
-		first != nil && *first == 0 ||
-		last != nil && *last == 0 {
-		if hasCollectedField(ctx, totalCountField) ||
-			hasCollectedField(ctx, pageInfoField) {
-			count, err := fct.Count(ctx)
-			if err != nil {
-				return nil, err
-			}
-			conn.TotalCount = count
-			conn.PageInfo.HasNextPage = first != nil && count > 0
-			conn.PageInfo.HasPreviousPage = last != nil && count > 0
-		}
-		return conn, nil
-	}
-
-	if (after != nil || first != nil || before != nil || last != nil) &&
-		hasCollectedField(ctx, totalCountField) {
-		count, err := fct.Clone().Count(ctx)
-		if err != nil {
-			return nil, err
-		}
-		conn.TotalCount = count
-	}
-
-	fct = pager.applyCursors(fct, after, before)
-	fct = pager.applyOrder(fct, last != nil)
-	var limit int
-	if first != nil {
-		limit = *first + 1
-	} else if last != nil {
-		limit = *last + 1
-	}
-	if limit > 0 {
-		fct = fct.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		fct = fct.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := fct.All(ctx)
-	if err != nil || len(nodes) == 0 {
-		return conn, err
-	}
-
-	if len(nodes) == limit {
-		conn.PageInfo.HasNextPage = first != nil
-		conn.PageInfo.HasPreviousPage = last != nil
-		nodes = nodes[:len(nodes)-1]
-	}
-
-	var nodeAt func(int) *FileCategoryType
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *FileCategoryType {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *FileCategoryType {
-			return nodes[i]
-		}
-	}
-
-	conn.Edges = make([]*FileCategoryTypeEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &FileCategoryTypeEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-
-	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
-	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
-	if conn.TotalCount == 0 {
-		conn.TotalCount = len(nodes)
-	}
-
-	return conn, nil
-}
-
-// FileCategoryTypeOrderField defines the ordering field of FileCategoryType.
-type FileCategoryTypeOrderField struct {
-	field    string
-	toCursor func(*FileCategoryType) Cursor
-}
-
-// FileCategoryTypeOrder defines the ordering of FileCategoryType.
-type FileCategoryTypeOrder struct {
-	Direction OrderDirection              `json:"direction"`
-	Field     *FileCategoryTypeOrderField `json:"field"`
-}
-
-// DefaultFileCategoryTypeOrder is the default ordering of FileCategoryType.
-var DefaultFileCategoryTypeOrder = &FileCategoryTypeOrder{
-	Direction: OrderDirectionAsc,
-	Field: &FileCategoryTypeOrderField{
-		field: filecategorytype.FieldID,
-		toCursor: func(fct *FileCategoryType) Cursor {
-			return Cursor{ID: fct.ID}
 		},
 	},
 }
@@ -16001,1578 +15995,6 @@ var DefaultReportFilterOrder = &ReportFilterOrder{
 		field: reportfilter.FieldID,
 		toCursor: func(rf *ReportFilter) Cursor {
 			return Cursor{ID: rf.ID}
-		},
-	},
-}
-
-// ResourceRelationshipEdge is the edge representation of ResourceRelationship.
-type ResourceRelationshipEdge struct {
-	Node   *ResourceRelationship `json:"node"`
-	Cursor Cursor                `json:"cursor"`
-}
-
-// ResourceRelationshipConnection is the connection containing edges to ResourceRelationship.
-type ResourceRelationshipConnection struct {
-	Edges      []*ResourceRelationshipEdge `json:"edges"`
-	PageInfo   PageInfo                    `json:"pageInfo"`
-	TotalCount int                         `json:"totalCount"`
-}
-
-// ResourceRelationshipPaginateOption enables pagination customization.
-type ResourceRelationshipPaginateOption func(*resourceRelationshipPager) error
-
-// WithResourceRelationshipOrder configures pagination ordering.
-func WithResourceRelationshipOrder(order *ResourceRelationshipOrder) ResourceRelationshipPaginateOption {
-	if order == nil {
-		order = DefaultResourceRelationshipOrder
-	}
-	o := *order
-	return func(pager *resourceRelationshipPager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultResourceRelationshipOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithResourceRelationshipFilter configures pagination filter.
-func WithResourceRelationshipFilter(filter func(*ResourceRelationshipQuery) (*ResourceRelationshipQuery, error)) ResourceRelationshipPaginateOption {
-	return func(pager *resourceRelationshipPager) error {
-		if filter == nil {
-			return errors.New("ResourceRelationshipQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type resourceRelationshipPager struct {
-	order  *ResourceRelationshipOrder
-	filter func(*ResourceRelationshipQuery) (*ResourceRelationshipQuery, error)
-}
-
-func newResourceRelationshipPager(opts []ResourceRelationshipPaginateOption) (*resourceRelationshipPager, error) {
-	pager := &resourceRelationshipPager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultResourceRelationshipOrder
-	}
-	return pager, nil
-}
-
-func (p *resourceRelationshipPager) applyFilter(query *ResourceRelationshipQuery) (*ResourceRelationshipQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *resourceRelationshipPager) toCursor(rr *ResourceRelationship) Cursor {
-	return p.order.Field.toCursor(rr)
-}
-
-func (p *resourceRelationshipPager) applyCursors(query *ResourceRelationshipQuery, after, before *Cursor) *ResourceRelationshipQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultResourceRelationshipOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *resourceRelationshipPager) applyOrder(query *ResourceRelationshipQuery, reverse bool) *ResourceRelationshipQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultResourceRelationshipOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultResourceRelationshipOrder.Field.field))
-	}
-	return query
-}
-
-// Paginate executes the query and returns a relay based cursor connection to ResourceRelationship.
-func (rr *ResourceRelationshipQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...ResourceRelationshipPaginateOption,
-) (*ResourceRelationshipConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newResourceRelationshipPager(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if rr, err = pager.applyFilter(rr); err != nil {
-		return nil, err
-	}
-
-	conn := &ResourceRelationshipConnection{Edges: []*ResourceRelationshipEdge{}}
-	if !hasCollectedField(ctx, edgesField) ||
-		first != nil && *first == 0 ||
-		last != nil && *last == 0 {
-		if hasCollectedField(ctx, totalCountField) ||
-			hasCollectedField(ctx, pageInfoField) {
-			count, err := rr.Count(ctx)
-			if err != nil {
-				return nil, err
-			}
-			conn.TotalCount = count
-			conn.PageInfo.HasNextPage = first != nil && count > 0
-			conn.PageInfo.HasPreviousPage = last != nil && count > 0
-		}
-		return conn, nil
-	}
-
-	if (after != nil || first != nil || before != nil || last != nil) &&
-		hasCollectedField(ctx, totalCountField) {
-		count, err := rr.Clone().Count(ctx)
-		if err != nil {
-			return nil, err
-		}
-		conn.TotalCount = count
-	}
-
-	rr = pager.applyCursors(rr, after, before)
-	rr = pager.applyOrder(rr, last != nil)
-	var limit int
-	if first != nil {
-		limit = *first + 1
-	} else if last != nil {
-		limit = *last + 1
-	}
-	if limit > 0 {
-		rr = rr.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		rr = rr.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := rr.All(ctx)
-	if err != nil || len(nodes) == 0 {
-		return conn, err
-	}
-
-	if len(nodes) == limit {
-		conn.PageInfo.HasNextPage = first != nil
-		conn.PageInfo.HasPreviousPage = last != nil
-		nodes = nodes[:len(nodes)-1]
-	}
-
-	var nodeAt func(int) *ResourceRelationship
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *ResourceRelationship {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *ResourceRelationship {
-			return nodes[i]
-		}
-	}
-
-	conn.Edges = make([]*ResourceRelationshipEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &ResourceRelationshipEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-
-	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
-	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
-	if conn.TotalCount == 0 {
-		conn.TotalCount = len(nodes)
-	}
-
-	return conn, nil
-}
-
-var (
-	// ResourceRelationshipOrderFieldName orders ResourceRelationship by name.
-	ResourceRelationshipOrderFieldName = &ResourceRelationshipOrderField{
-		field: resourcerelationship.FieldName,
-		toCursor: func(rr *ResourceRelationship) Cursor {
-			return Cursor{
-				ID:    rr.ID,
-				Value: rr.Name,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f ResourceRelationshipOrderField) String() string {
-	var str string
-	switch f.field {
-	case resourcerelationship.FieldName:
-		str = "NAME"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f ResourceRelationshipOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *ResourceRelationshipOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("ResourceRelationshipOrderField %T must be a string", v)
-	}
-	switch str {
-	case "NAME":
-		*f = *ResourceRelationshipOrderFieldName
-	default:
-		return fmt.Errorf("%s is not a valid ResourceRelationshipOrderField", str)
-	}
-	return nil
-}
-
-// ResourceRelationshipOrderField defines the ordering field of ResourceRelationship.
-type ResourceRelationshipOrderField struct {
-	field    string
-	toCursor func(*ResourceRelationship) Cursor
-}
-
-// ResourceRelationshipOrder defines the ordering of ResourceRelationship.
-type ResourceRelationshipOrder struct {
-	Direction OrderDirection                  `json:"direction"`
-	Field     *ResourceRelationshipOrderField `json:"field"`
-}
-
-// DefaultResourceRelationshipOrder is the default ordering of ResourceRelationship.
-var DefaultResourceRelationshipOrder = &ResourceRelationshipOrder{
-	Direction: OrderDirectionAsc,
-	Field: &ResourceRelationshipOrderField{
-		field: resourcerelationship.FieldID,
-		toCursor: func(rr *ResourceRelationship) Cursor {
-			return Cursor{ID: rr.ID}
-		},
-	},
-}
-
-// ResourceRelationshipMultiplicityEdge is the edge representation of ResourceRelationshipMultiplicity.
-type ResourceRelationshipMultiplicityEdge struct {
-	Node   *ResourceRelationshipMultiplicity `json:"node"`
-	Cursor Cursor                            `json:"cursor"`
-}
-
-// ResourceRelationshipMultiplicityConnection is the connection containing edges to ResourceRelationshipMultiplicity.
-type ResourceRelationshipMultiplicityConnection struct {
-	Edges      []*ResourceRelationshipMultiplicityEdge `json:"edges"`
-	PageInfo   PageInfo                                `json:"pageInfo"`
-	TotalCount int                                     `json:"totalCount"`
-}
-
-// ResourceRelationshipMultiplicityPaginateOption enables pagination customization.
-type ResourceRelationshipMultiplicityPaginateOption func(*resourceRelationshipMultiplicityPager) error
-
-// WithResourceRelationshipMultiplicityOrder configures pagination ordering.
-func WithResourceRelationshipMultiplicityOrder(order *ResourceRelationshipMultiplicityOrder) ResourceRelationshipMultiplicityPaginateOption {
-	if order == nil {
-		order = DefaultResourceRelationshipMultiplicityOrder
-	}
-	o := *order
-	return func(pager *resourceRelationshipMultiplicityPager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultResourceRelationshipMultiplicityOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithResourceRelationshipMultiplicityFilter configures pagination filter.
-func WithResourceRelationshipMultiplicityFilter(filter func(*ResourceRelationshipMultiplicityQuery) (*ResourceRelationshipMultiplicityQuery, error)) ResourceRelationshipMultiplicityPaginateOption {
-	return func(pager *resourceRelationshipMultiplicityPager) error {
-		if filter == nil {
-			return errors.New("ResourceRelationshipMultiplicityQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type resourceRelationshipMultiplicityPager struct {
-	order  *ResourceRelationshipMultiplicityOrder
-	filter func(*ResourceRelationshipMultiplicityQuery) (*ResourceRelationshipMultiplicityQuery, error)
-}
-
-func newResourceRelationshipMultiplicityPager(opts []ResourceRelationshipMultiplicityPaginateOption) (*resourceRelationshipMultiplicityPager, error) {
-	pager := &resourceRelationshipMultiplicityPager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultResourceRelationshipMultiplicityOrder
-	}
-	return pager, nil
-}
-
-func (p *resourceRelationshipMultiplicityPager) applyFilter(query *ResourceRelationshipMultiplicityQuery) (*ResourceRelationshipMultiplicityQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *resourceRelationshipMultiplicityPager) toCursor(rrm *ResourceRelationshipMultiplicity) Cursor {
-	return p.order.Field.toCursor(rrm)
-}
-
-func (p *resourceRelationshipMultiplicityPager) applyCursors(query *ResourceRelationshipMultiplicityQuery, after, before *Cursor) *ResourceRelationshipMultiplicityQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultResourceRelationshipMultiplicityOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *resourceRelationshipMultiplicityPager) applyOrder(query *ResourceRelationshipMultiplicityQuery, reverse bool) *ResourceRelationshipMultiplicityQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultResourceRelationshipMultiplicityOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultResourceRelationshipMultiplicityOrder.Field.field))
-	}
-	return query
-}
-
-// Paginate executes the query and returns a relay based cursor connection to ResourceRelationshipMultiplicity.
-func (rrm *ResourceRelationshipMultiplicityQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...ResourceRelationshipMultiplicityPaginateOption,
-) (*ResourceRelationshipMultiplicityConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newResourceRelationshipMultiplicityPager(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if rrm, err = pager.applyFilter(rrm); err != nil {
-		return nil, err
-	}
-
-	conn := &ResourceRelationshipMultiplicityConnection{Edges: []*ResourceRelationshipMultiplicityEdge{}}
-	if !hasCollectedField(ctx, edgesField) ||
-		first != nil && *first == 0 ||
-		last != nil && *last == 0 {
-		if hasCollectedField(ctx, totalCountField) ||
-			hasCollectedField(ctx, pageInfoField) {
-			count, err := rrm.Count(ctx)
-			if err != nil {
-				return nil, err
-			}
-			conn.TotalCount = count
-			conn.PageInfo.HasNextPage = first != nil && count > 0
-			conn.PageInfo.HasPreviousPage = last != nil && count > 0
-		}
-		return conn, nil
-	}
-
-	if (after != nil || first != nil || before != nil || last != nil) &&
-		hasCollectedField(ctx, totalCountField) {
-		count, err := rrm.Clone().Count(ctx)
-		if err != nil {
-			return nil, err
-		}
-		conn.TotalCount = count
-	}
-
-	rrm = pager.applyCursors(rrm, after, before)
-	rrm = pager.applyOrder(rrm, last != nil)
-	var limit int
-	if first != nil {
-		limit = *first + 1
-	} else if last != nil {
-		limit = *last + 1
-	}
-	if limit > 0 {
-		rrm = rrm.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		rrm = rrm.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := rrm.All(ctx)
-	if err != nil || len(nodes) == 0 {
-		return conn, err
-	}
-
-	if len(nodes) == limit {
-		conn.PageInfo.HasNextPage = first != nil
-		conn.PageInfo.HasPreviousPage = last != nil
-		nodes = nodes[:len(nodes)-1]
-	}
-
-	var nodeAt func(int) *ResourceRelationshipMultiplicity
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *ResourceRelationshipMultiplicity {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *ResourceRelationshipMultiplicity {
-			return nodes[i]
-		}
-	}
-
-	conn.Edges = make([]*ResourceRelationshipMultiplicityEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &ResourceRelationshipMultiplicityEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-
-	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
-	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
-	if conn.TotalCount == 0 {
-		conn.TotalCount = len(nodes)
-	}
-
-	return conn, nil
-}
-
-var (
-	// ResourceRelationshipMultiplicityOrderFieldName orders ResourceRelationshipMultiplicity by name.
-	ResourceRelationshipMultiplicityOrderFieldName = &ResourceRelationshipMultiplicityOrderField{
-		field: resourcerelationshipmultiplicity.FieldName,
-		toCursor: func(rrm *ResourceRelationshipMultiplicity) Cursor {
-			return Cursor{
-				ID:    rrm.ID,
-				Value: rrm.Name,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f ResourceRelationshipMultiplicityOrderField) String() string {
-	var str string
-	switch f.field {
-	case resourcerelationshipmultiplicity.FieldName:
-		str = "NAME"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f ResourceRelationshipMultiplicityOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *ResourceRelationshipMultiplicityOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("ResourceRelationshipMultiplicityOrderField %T must be a string", v)
-	}
-	switch str {
-	case "NAME":
-		*f = *ResourceRelationshipMultiplicityOrderFieldName
-	default:
-		return fmt.Errorf("%s is not a valid ResourceRelationshipMultiplicityOrderField", str)
-	}
-	return nil
-}
-
-// ResourceRelationshipMultiplicityOrderField defines the ordering field of ResourceRelationshipMultiplicity.
-type ResourceRelationshipMultiplicityOrderField struct {
-	field    string
-	toCursor func(*ResourceRelationshipMultiplicity) Cursor
-}
-
-// ResourceRelationshipMultiplicityOrder defines the ordering of ResourceRelationshipMultiplicity.
-type ResourceRelationshipMultiplicityOrder struct {
-	Direction OrderDirection                              `json:"direction"`
-	Field     *ResourceRelationshipMultiplicityOrderField `json:"field"`
-}
-
-// DefaultResourceRelationshipMultiplicityOrder is the default ordering of ResourceRelationshipMultiplicity.
-var DefaultResourceRelationshipMultiplicityOrder = &ResourceRelationshipMultiplicityOrder{
-	Direction: OrderDirectionAsc,
-	Field: &ResourceRelationshipMultiplicityOrderField{
-		field: resourcerelationshipmultiplicity.FieldID,
-		toCursor: func(rrm *ResourceRelationshipMultiplicity) Cursor {
-			return Cursor{ID: rrm.ID}
-		},
-	},
-}
-
-// ResourceRelationshipTypeEdge is the edge representation of ResourceRelationshipType.
-type ResourceRelationshipTypeEdge struct {
-	Node   *ResourceRelationshipType `json:"node"`
-	Cursor Cursor                    `json:"cursor"`
-}
-
-// ResourceRelationshipTypeConnection is the connection containing edges to ResourceRelationshipType.
-type ResourceRelationshipTypeConnection struct {
-	Edges      []*ResourceRelationshipTypeEdge `json:"edges"`
-	PageInfo   PageInfo                        `json:"pageInfo"`
-	TotalCount int                             `json:"totalCount"`
-}
-
-// ResourceRelationshipTypePaginateOption enables pagination customization.
-type ResourceRelationshipTypePaginateOption func(*resourceRelationshipTypePager) error
-
-// WithResourceRelationshipTypeOrder configures pagination ordering.
-func WithResourceRelationshipTypeOrder(order *ResourceRelationshipTypeOrder) ResourceRelationshipTypePaginateOption {
-	if order == nil {
-		order = DefaultResourceRelationshipTypeOrder
-	}
-	o := *order
-	return func(pager *resourceRelationshipTypePager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultResourceRelationshipTypeOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithResourceRelationshipTypeFilter configures pagination filter.
-func WithResourceRelationshipTypeFilter(filter func(*ResourceRelationshipTypeQuery) (*ResourceRelationshipTypeQuery, error)) ResourceRelationshipTypePaginateOption {
-	return func(pager *resourceRelationshipTypePager) error {
-		if filter == nil {
-			return errors.New("ResourceRelationshipTypeQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type resourceRelationshipTypePager struct {
-	order  *ResourceRelationshipTypeOrder
-	filter func(*ResourceRelationshipTypeQuery) (*ResourceRelationshipTypeQuery, error)
-}
-
-func newResourceRelationshipTypePager(opts []ResourceRelationshipTypePaginateOption) (*resourceRelationshipTypePager, error) {
-	pager := &resourceRelationshipTypePager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultResourceRelationshipTypeOrder
-	}
-	return pager, nil
-}
-
-func (p *resourceRelationshipTypePager) applyFilter(query *ResourceRelationshipTypeQuery) (*ResourceRelationshipTypeQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *resourceRelationshipTypePager) toCursor(rrt *ResourceRelationshipType) Cursor {
-	return p.order.Field.toCursor(rrt)
-}
-
-func (p *resourceRelationshipTypePager) applyCursors(query *ResourceRelationshipTypeQuery, after, before *Cursor) *ResourceRelationshipTypeQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultResourceRelationshipTypeOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *resourceRelationshipTypePager) applyOrder(query *ResourceRelationshipTypeQuery, reverse bool) *ResourceRelationshipTypeQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultResourceRelationshipTypeOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultResourceRelationshipTypeOrder.Field.field))
-	}
-	return query
-}
-
-// Paginate executes the query and returns a relay based cursor connection to ResourceRelationshipType.
-func (rrt *ResourceRelationshipTypeQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...ResourceRelationshipTypePaginateOption,
-) (*ResourceRelationshipTypeConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newResourceRelationshipTypePager(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if rrt, err = pager.applyFilter(rrt); err != nil {
-		return nil, err
-	}
-
-	conn := &ResourceRelationshipTypeConnection{Edges: []*ResourceRelationshipTypeEdge{}}
-	if !hasCollectedField(ctx, edgesField) ||
-		first != nil && *first == 0 ||
-		last != nil && *last == 0 {
-		if hasCollectedField(ctx, totalCountField) ||
-			hasCollectedField(ctx, pageInfoField) {
-			count, err := rrt.Count(ctx)
-			if err != nil {
-				return nil, err
-			}
-			conn.TotalCount = count
-			conn.PageInfo.HasNextPage = first != nil && count > 0
-			conn.PageInfo.HasPreviousPage = last != nil && count > 0
-		}
-		return conn, nil
-	}
-
-	if (after != nil || first != nil || before != nil || last != nil) &&
-		hasCollectedField(ctx, totalCountField) {
-		count, err := rrt.Clone().Count(ctx)
-		if err != nil {
-			return nil, err
-		}
-		conn.TotalCount = count
-	}
-
-	rrt = pager.applyCursors(rrt, after, before)
-	rrt = pager.applyOrder(rrt, last != nil)
-	var limit int
-	if first != nil {
-		limit = *first + 1
-	} else if last != nil {
-		limit = *last + 1
-	}
-	if limit > 0 {
-		rrt = rrt.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		rrt = rrt.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := rrt.All(ctx)
-	if err != nil || len(nodes) == 0 {
-		return conn, err
-	}
-
-	if len(nodes) == limit {
-		conn.PageInfo.HasNextPage = first != nil
-		conn.PageInfo.HasPreviousPage = last != nil
-		nodes = nodes[:len(nodes)-1]
-	}
-
-	var nodeAt func(int) *ResourceRelationshipType
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *ResourceRelationshipType {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *ResourceRelationshipType {
-			return nodes[i]
-		}
-	}
-
-	conn.Edges = make([]*ResourceRelationshipTypeEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &ResourceRelationshipTypeEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-
-	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
-	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
-	if conn.TotalCount == 0 {
-		conn.TotalCount = len(nodes)
-	}
-
-	return conn, nil
-}
-
-var (
-	// ResourceRelationshipTypeOrderFieldName orders ResourceRelationshipType by name.
-	ResourceRelationshipTypeOrderFieldName = &ResourceRelationshipTypeOrderField{
-		field: resourcerelationshiptype.FieldName,
-		toCursor: func(rrt *ResourceRelationshipType) Cursor {
-			return Cursor{
-				ID:    rrt.ID,
-				Value: rrt.Name,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f ResourceRelationshipTypeOrderField) String() string {
-	var str string
-	switch f.field {
-	case resourcerelationshiptype.FieldName:
-		str = "NAME"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f ResourceRelationshipTypeOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *ResourceRelationshipTypeOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("ResourceRelationshipTypeOrderField %T must be a string", v)
-	}
-	switch str {
-	case "NAME":
-		*f = *ResourceRelationshipTypeOrderFieldName
-	default:
-		return fmt.Errorf("%s is not a valid ResourceRelationshipTypeOrderField", str)
-	}
-	return nil
-}
-
-// ResourceRelationshipTypeOrderField defines the ordering field of ResourceRelationshipType.
-type ResourceRelationshipTypeOrderField struct {
-	field    string
-	toCursor func(*ResourceRelationshipType) Cursor
-}
-
-// ResourceRelationshipTypeOrder defines the ordering of ResourceRelationshipType.
-type ResourceRelationshipTypeOrder struct {
-	Direction OrderDirection                      `json:"direction"`
-	Field     *ResourceRelationshipTypeOrderField `json:"field"`
-}
-
-// DefaultResourceRelationshipTypeOrder is the default ordering of ResourceRelationshipType.
-var DefaultResourceRelationshipTypeOrder = &ResourceRelationshipTypeOrder{
-	Direction: OrderDirectionAsc,
-	Field: &ResourceRelationshipTypeOrderField{
-		field: resourcerelationshiptype.FieldID,
-		toCursor: func(rrt *ResourceRelationshipType) Cursor {
-			return Cursor{ID: rrt.ID}
-		},
-	},
-}
-
-// ResourceTypeEdge is the edge representation of ResourceType.
-type ResourceTypeEdge struct {
-	Node   *ResourceType `json:"node"`
-	Cursor Cursor        `json:"cursor"`
-}
-
-// ResourceTypeConnection is the connection containing edges to ResourceType.
-type ResourceTypeConnection struct {
-	Edges      []*ResourceTypeEdge `json:"edges"`
-	PageInfo   PageInfo            `json:"pageInfo"`
-	TotalCount int                 `json:"totalCount"`
-}
-
-// ResourceTypePaginateOption enables pagination customization.
-type ResourceTypePaginateOption func(*resourceTypePager) error
-
-// WithResourceTypeOrder configures pagination ordering.
-func WithResourceTypeOrder(order *ResourceTypeOrder) ResourceTypePaginateOption {
-	if order == nil {
-		order = DefaultResourceTypeOrder
-	}
-	o := *order
-	return func(pager *resourceTypePager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultResourceTypeOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithResourceTypeFilter configures pagination filter.
-func WithResourceTypeFilter(filter func(*ResourceTypeQuery) (*ResourceTypeQuery, error)) ResourceTypePaginateOption {
-	return func(pager *resourceTypePager) error {
-		if filter == nil {
-			return errors.New("ResourceTypeQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type resourceTypePager struct {
-	order  *ResourceTypeOrder
-	filter func(*ResourceTypeQuery) (*ResourceTypeQuery, error)
-}
-
-func newResourceTypePager(opts []ResourceTypePaginateOption) (*resourceTypePager, error) {
-	pager := &resourceTypePager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultResourceTypeOrder
-	}
-	return pager, nil
-}
-
-func (p *resourceTypePager) applyFilter(query *ResourceTypeQuery) (*ResourceTypeQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *resourceTypePager) toCursor(rt *ResourceType) Cursor {
-	return p.order.Field.toCursor(rt)
-}
-
-func (p *resourceTypePager) applyCursors(query *ResourceTypeQuery, after, before *Cursor) *ResourceTypeQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultResourceTypeOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *resourceTypePager) applyOrder(query *ResourceTypeQuery, reverse bool) *ResourceTypeQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultResourceTypeOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultResourceTypeOrder.Field.field))
-	}
-	return query
-}
-
-// Paginate executes the query and returns a relay based cursor connection to ResourceType.
-func (rt *ResourceTypeQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...ResourceTypePaginateOption,
-) (*ResourceTypeConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newResourceTypePager(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if rt, err = pager.applyFilter(rt); err != nil {
-		return nil, err
-	}
-
-	conn := &ResourceTypeConnection{Edges: []*ResourceTypeEdge{}}
-	if !hasCollectedField(ctx, edgesField) ||
-		first != nil && *first == 0 ||
-		last != nil && *last == 0 {
-		if hasCollectedField(ctx, totalCountField) ||
-			hasCollectedField(ctx, pageInfoField) {
-			count, err := rt.Count(ctx)
-			if err != nil {
-				return nil, err
-			}
-			conn.TotalCount = count
-			conn.PageInfo.HasNextPage = first != nil && count > 0
-			conn.PageInfo.HasPreviousPage = last != nil && count > 0
-		}
-		return conn, nil
-	}
-
-	if (after != nil || first != nil || before != nil || last != nil) &&
-		hasCollectedField(ctx, totalCountField) {
-		count, err := rt.Clone().Count(ctx)
-		if err != nil {
-			return nil, err
-		}
-		conn.TotalCount = count
-	}
-
-	rt = pager.applyCursors(rt, after, before)
-	rt = pager.applyOrder(rt, last != nil)
-	var limit int
-	if first != nil {
-		limit = *first + 1
-	} else if last != nil {
-		limit = *last + 1
-	}
-	if limit > 0 {
-		rt = rt.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		rt = rt.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := rt.All(ctx)
-	if err != nil || len(nodes) == 0 {
-		return conn, err
-	}
-
-	if len(nodes) == limit {
-		conn.PageInfo.HasNextPage = first != nil
-		conn.PageInfo.HasPreviousPage = last != nil
-		nodes = nodes[:len(nodes)-1]
-	}
-
-	var nodeAt func(int) *ResourceType
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *ResourceType {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *ResourceType {
-			return nodes[i]
-		}
-	}
-
-	conn.Edges = make([]*ResourceTypeEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &ResourceTypeEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-
-	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
-	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
-	if conn.TotalCount == 0 {
-		conn.TotalCount = len(nodes)
-	}
-
-	return conn, nil
-}
-
-var (
-	// ResourceTypeOrderFieldName orders ResourceType by name.
-	ResourceTypeOrderFieldName = &ResourceTypeOrderField{
-		field: resourcetype.FieldName,
-		toCursor: func(rt *ResourceType) Cursor {
-			return Cursor{
-				ID:    rt.ID,
-				Value: rt.Name,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f ResourceTypeOrderField) String() string {
-	var str string
-	switch f.field {
-	case resourcetype.FieldName:
-		str = "NAME"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f ResourceTypeOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *ResourceTypeOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("ResourceTypeOrderField %T must be a string", v)
-	}
-	switch str {
-	case "NAME":
-		*f = *ResourceTypeOrderFieldName
-	default:
-		return fmt.Errorf("%s is not a valid ResourceTypeOrderField", str)
-	}
-	return nil
-}
-
-// ResourceTypeOrderField defines the ordering field of ResourceType.
-type ResourceTypeOrderField struct {
-	field    string
-	toCursor func(*ResourceType) Cursor
-}
-
-// ResourceTypeOrder defines the ordering of ResourceType.
-type ResourceTypeOrder struct {
-	Direction OrderDirection          `json:"direction"`
-	Field     *ResourceTypeOrderField `json:"field"`
-}
-
-// DefaultResourceTypeOrder is the default ordering of ResourceType.
-var DefaultResourceTypeOrder = &ResourceTypeOrder{
-	Direction: OrderDirectionAsc,
-	Field: &ResourceTypeOrderField{
-		field: resourcetype.FieldID,
-		toCursor: func(rt *ResourceType) Cursor {
-			return Cursor{ID: rt.ID}
-		},
-	},
-}
-
-// ResourceTypeBaseTypeEdge is the edge representation of ResourceTypeBaseType.
-type ResourceTypeBaseTypeEdge struct {
-	Node   *ResourceTypeBaseType `json:"node"`
-	Cursor Cursor                `json:"cursor"`
-}
-
-// ResourceTypeBaseTypeConnection is the connection containing edges to ResourceTypeBaseType.
-type ResourceTypeBaseTypeConnection struct {
-	Edges      []*ResourceTypeBaseTypeEdge `json:"edges"`
-	PageInfo   PageInfo                    `json:"pageInfo"`
-	TotalCount int                         `json:"totalCount"`
-}
-
-// ResourceTypeBaseTypePaginateOption enables pagination customization.
-type ResourceTypeBaseTypePaginateOption func(*resourceTypeBaseTypePager) error
-
-// WithResourceTypeBaseTypeOrder configures pagination ordering.
-func WithResourceTypeBaseTypeOrder(order *ResourceTypeBaseTypeOrder) ResourceTypeBaseTypePaginateOption {
-	if order == nil {
-		order = DefaultResourceTypeBaseTypeOrder
-	}
-	o := *order
-	return func(pager *resourceTypeBaseTypePager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultResourceTypeBaseTypeOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithResourceTypeBaseTypeFilter configures pagination filter.
-func WithResourceTypeBaseTypeFilter(filter func(*ResourceTypeBaseTypeQuery) (*ResourceTypeBaseTypeQuery, error)) ResourceTypeBaseTypePaginateOption {
-	return func(pager *resourceTypeBaseTypePager) error {
-		if filter == nil {
-			return errors.New("ResourceTypeBaseTypeQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type resourceTypeBaseTypePager struct {
-	order  *ResourceTypeBaseTypeOrder
-	filter func(*ResourceTypeBaseTypeQuery) (*ResourceTypeBaseTypeQuery, error)
-}
-
-func newResourceTypeBaseTypePager(opts []ResourceTypeBaseTypePaginateOption) (*resourceTypeBaseTypePager, error) {
-	pager := &resourceTypeBaseTypePager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultResourceTypeBaseTypeOrder
-	}
-	return pager, nil
-}
-
-func (p *resourceTypeBaseTypePager) applyFilter(query *ResourceTypeBaseTypeQuery) (*ResourceTypeBaseTypeQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *resourceTypeBaseTypePager) toCursor(rtbt *ResourceTypeBaseType) Cursor {
-	return p.order.Field.toCursor(rtbt)
-}
-
-func (p *resourceTypeBaseTypePager) applyCursors(query *ResourceTypeBaseTypeQuery, after, before *Cursor) *ResourceTypeBaseTypeQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultResourceTypeBaseTypeOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *resourceTypeBaseTypePager) applyOrder(query *ResourceTypeBaseTypeQuery, reverse bool) *ResourceTypeBaseTypeQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultResourceTypeBaseTypeOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultResourceTypeBaseTypeOrder.Field.field))
-	}
-	return query
-}
-
-// Paginate executes the query and returns a relay based cursor connection to ResourceTypeBaseType.
-func (rtbt *ResourceTypeBaseTypeQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...ResourceTypeBaseTypePaginateOption,
-) (*ResourceTypeBaseTypeConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newResourceTypeBaseTypePager(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if rtbt, err = pager.applyFilter(rtbt); err != nil {
-		return nil, err
-	}
-
-	conn := &ResourceTypeBaseTypeConnection{Edges: []*ResourceTypeBaseTypeEdge{}}
-	if !hasCollectedField(ctx, edgesField) ||
-		first != nil && *first == 0 ||
-		last != nil && *last == 0 {
-		if hasCollectedField(ctx, totalCountField) ||
-			hasCollectedField(ctx, pageInfoField) {
-			count, err := rtbt.Count(ctx)
-			if err != nil {
-				return nil, err
-			}
-			conn.TotalCount = count
-			conn.PageInfo.HasNextPage = first != nil && count > 0
-			conn.PageInfo.HasPreviousPage = last != nil && count > 0
-		}
-		return conn, nil
-	}
-
-	if (after != nil || first != nil || before != nil || last != nil) &&
-		hasCollectedField(ctx, totalCountField) {
-		count, err := rtbt.Clone().Count(ctx)
-		if err != nil {
-			return nil, err
-		}
-		conn.TotalCount = count
-	}
-
-	rtbt = pager.applyCursors(rtbt, after, before)
-	rtbt = pager.applyOrder(rtbt, last != nil)
-	var limit int
-	if first != nil {
-		limit = *first + 1
-	} else if last != nil {
-		limit = *last + 1
-	}
-	if limit > 0 {
-		rtbt = rtbt.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		rtbt = rtbt.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := rtbt.All(ctx)
-	if err != nil || len(nodes) == 0 {
-		return conn, err
-	}
-
-	if len(nodes) == limit {
-		conn.PageInfo.HasNextPage = first != nil
-		conn.PageInfo.HasPreviousPage = last != nil
-		nodes = nodes[:len(nodes)-1]
-	}
-
-	var nodeAt func(int) *ResourceTypeBaseType
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *ResourceTypeBaseType {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *ResourceTypeBaseType {
-			return nodes[i]
-		}
-	}
-
-	conn.Edges = make([]*ResourceTypeBaseTypeEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &ResourceTypeBaseTypeEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-
-	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
-	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
-	if conn.TotalCount == 0 {
-		conn.TotalCount = len(nodes)
-	}
-
-	return conn, nil
-}
-
-var (
-	// ResourceTypeBaseTypeOrderFieldName orders ResourceTypeBaseType by name.
-	ResourceTypeBaseTypeOrderFieldName = &ResourceTypeBaseTypeOrderField{
-		field: resourcetypebasetype.FieldName,
-		toCursor: func(rtbt *ResourceTypeBaseType) Cursor {
-			return Cursor{
-				ID:    rtbt.ID,
-				Value: rtbt.Name,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f ResourceTypeBaseTypeOrderField) String() string {
-	var str string
-	switch f.field {
-	case resourcetypebasetype.FieldName:
-		str = "NAME"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f ResourceTypeBaseTypeOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *ResourceTypeBaseTypeOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("ResourceTypeBaseTypeOrderField %T must be a string", v)
-	}
-	switch str {
-	case "NAME":
-		*f = *ResourceTypeBaseTypeOrderFieldName
-	default:
-		return fmt.Errorf("%s is not a valid ResourceTypeBaseTypeOrderField", str)
-	}
-	return nil
-}
-
-// ResourceTypeBaseTypeOrderField defines the ordering field of ResourceTypeBaseType.
-type ResourceTypeBaseTypeOrderField struct {
-	field    string
-	toCursor func(*ResourceTypeBaseType) Cursor
-}
-
-// ResourceTypeBaseTypeOrder defines the ordering of ResourceTypeBaseType.
-type ResourceTypeBaseTypeOrder struct {
-	Direction OrderDirection                  `json:"direction"`
-	Field     *ResourceTypeBaseTypeOrderField `json:"field"`
-}
-
-// DefaultResourceTypeBaseTypeOrder is the default ordering of ResourceTypeBaseType.
-var DefaultResourceTypeBaseTypeOrder = &ResourceTypeBaseTypeOrder{
-	Direction: OrderDirectionAsc,
-	Field: &ResourceTypeBaseTypeOrderField{
-		field: resourcetypebasetype.FieldID,
-		toCursor: func(rtbt *ResourceTypeBaseType) Cursor {
-			return Cursor{ID: rtbt.ID}
-		},
-	},
-}
-
-// ResourceTypeClassEdge is the edge representation of ResourceTypeClass.
-type ResourceTypeClassEdge struct {
-	Node   *ResourceTypeClass `json:"node"`
-	Cursor Cursor             `json:"cursor"`
-}
-
-// ResourceTypeClassConnection is the connection containing edges to ResourceTypeClass.
-type ResourceTypeClassConnection struct {
-	Edges      []*ResourceTypeClassEdge `json:"edges"`
-	PageInfo   PageInfo                 `json:"pageInfo"`
-	TotalCount int                      `json:"totalCount"`
-}
-
-// ResourceTypeClassPaginateOption enables pagination customization.
-type ResourceTypeClassPaginateOption func(*resourceTypeClassPager) error
-
-// WithResourceTypeClassOrder configures pagination ordering.
-func WithResourceTypeClassOrder(order *ResourceTypeClassOrder) ResourceTypeClassPaginateOption {
-	if order == nil {
-		order = DefaultResourceTypeClassOrder
-	}
-	o := *order
-	return func(pager *resourceTypeClassPager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultResourceTypeClassOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithResourceTypeClassFilter configures pagination filter.
-func WithResourceTypeClassFilter(filter func(*ResourceTypeClassQuery) (*ResourceTypeClassQuery, error)) ResourceTypeClassPaginateOption {
-	return func(pager *resourceTypeClassPager) error {
-		if filter == nil {
-			return errors.New("ResourceTypeClassQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type resourceTypeClassPager struct {
-	order  *ResourceTypeClassOrder
-	filter func(*ResourceTypeClassQuery) (*ResourceTypeClassQuery, error)
-}
-
-func newResourceTypeClassPager(opts []ResourceTypeClassPaginateOption) (*resourceTypeClassPager, error) {
-	pager := &resourceTypeClassPager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultResourceTypeClassOrder
-	}
-	return pager, nil
-}
-
-func (p *resourceTypeClassPager) applyFilter(query *ResourceTypeClassQuery) (*ResourceTypeClassQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *resourceTypeClassPager) toCursor(rtc *ResourceTypeClass) Cursor {
-	return p.order.Field.toCursor(rtc)
-}
-
-func (p *resourceTypeClassPager) applyCursors(query *ResourceTypeClassQuery, after, before *Cursor) *ResourceTypeClassQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultResourceTypeClassOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *resourceTypeClassPager) applyOrder(query *ResourceTypeClassQuery, reverse bool) *ResourceTypeClassQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultResourceTypeClassOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultResourceTypeClassOrder.Field.field))
-	}
-	return query
-}
-
-// Paginate executes the query and returns a relay based cursor connection to ResourceTypeClass.
-func (rtc *ResourceTypeClassQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...ResourceTypeClassPaginateOption,
-) (*ResourceTypeClassConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newResourceTypeClassPager(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if rtc, err = pager.applyFilter(rtc); err != nil {
-		return nil, err
-	}
-
-	conn := &ResourceTypeClassConnection{Edges: []*ResourceTypeClassEdge{}}
-	if !hasCollectedField(ctx, edgesField) ||
-		first != nil && *first == 0 ||
-		last != nil && *last == 0 {
-		if hasCollectedField(ctx, totalCountField) ||
-			hasCollectedField(ctx, pageInfoField) {
-			count, err := rtc.Count(ctx)
-			if err != nil {
-				return nil, err
-			}
-			conn.TotalCount = count
-			conn.PageInfo.HasNextPage = first != nil && count > 0
-			conn.PageInfo.HasPreviousPage = last != nil && count > 0
-		}
-		return conn, nil
-	}
-
-	if (after != nil || first != nil || before != nil || last != nil) &&
-		hasCollectedField(ctx, totalCountField) {
-		count, err := rtc.Clone().Count(ctx)
-		if err != nil {
-			return nil, err
-		}
-		conn.TotalCount = count
-	}
-
-	rtc = pager.applyCursors(rtc, after, before)
-	rtc = pager.applyOrder(rtc, last != nil)
-	var limit int
-	if first != nil {
-		limit = *first + 1
-	} else if last != nil {
-		limit = *last + 1
-	}
-	if limit > 0 {
-		rtc = rtc.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		rtc = rtc.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := rtc.All(ctx)
-	if err != nil || len(nodes) == 0 {
-		return conn, err
-	}
-
-	if len(nodes) == limit {
-		conn.PageInfo.HasNextPage = first != nil
-		conn.PageInfo.HasPreviousPage = last != nil
-		nodes = nodes[:len(nodes)-1]
-	}
-
-	var nodeAt func(int) *ResourceTypeClass
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *ResourceTypeClass {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *ResourceTypeClass {
-			return nodes[i]
-		}
-	}
-
-	conn.Edges = make([]*ResourceTypeClassEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &ResourceTypeClassEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-
-	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
-	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
-	if conn.TotalCount == 0 {
-		conn.TotalCount = len(nodes)
-	}
-
-	return conn, nil
-}
-
-var (
-	// ResourceTypeClassOrderFieldName orders ResourceTypeClass by name.
-	ResourceTypeClassOrderFieldName = &ResourceTypeClassOrderField{
-		field: resourcetypeclass.FieldName,
-		toCursor: func(rtc *ResourceTypeClass) Cursor {
-			return Cursor{
-				ID:    rtc.ID,
-				Value: rtc.Name,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f ResourceTypeClassOrderField) String() string {
-	var str string
-	switch f.field {
-	case resourcetypeclass.FieldName:
-		str = "NAME"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f ResourceTypeClassOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *ResourceTypeClassOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("ResourceTypeClassOrderField %T must be a string", v)
-	}
-	switch str {
-	case "NAME":
-		*f = *ResourceTypeClassOrderFieldName
-	default:
-		return fmt.Errorf("%s is not a valid ResourceTypeClassOrderField", str)
-	}
-	return nil
-}
-
-// ResourceTypeClassOrderField defines the ordering field of ResourceTypeClass.
-type ResourceTypeClassOrderField struct {
-	field    string
-	toCursor func(*ResourceTypeClass) Cursor
-}
-
-// ResourceTypeClassOrder defines the ordering of ResourceTypeClass.
-type ResourceTypeClassOrder struct {
-	Direction OrderDirection               `json:"direction"`
-	Field     *ResourceTypeClassOrderField `json:"field"`
-}
-
-// DefaultResourceTypeClassOrder is the default ordering of ResourceTypeClass.
-var DefaultResourceTypeClassOrder = &ResourceTypeClassOrder{
-	Direction: OrderDirectionAsc,
-	Field: &ResourceTypeClassOrderField{
-		field: resourcetypeclass.FieldID,
-		toCursor: func(rtc *ResourceTypeClass) Cursor {
-			return Cursor{ID: rtc.ID}
 		},
 	},
 }

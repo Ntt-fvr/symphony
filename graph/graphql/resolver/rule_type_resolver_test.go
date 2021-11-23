@@ -24,12 +24,11 @@ func TestAddRemoveRuleType(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddRuleTypeTest(t, ctx, mr)
-	EditRuleTypeTest(t, ctx, mr, id1, id2)
-	RemoveRuleTypeTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddRuleTypeTest(ctx, t, mr)
+	EditRuleTypeTest(ctx, t, mr, id1, id2)
+	RemoveRuleTypeTest(ctx, t, mr, id1, id2)
 }
-func AddRuleTypeTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddRuleTypeTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	ruleType1, err := mr.AddRuleType(ctx, models.AddRuleTypeInput{
 		Name: "ruleType_test_1",
 	})
@@ -47,7 +46,7 @@ func AddRuleTypeTest(t *testing.T, ctx context.Context, mr generated.MutationRes
 	return id1, id2
 }
 
-func EditRuleTypeTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditRuleTypeTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditRuleType(ctx, models.EditRuleTypeInput{
 		ID:   id1,
 		Name: "ruleType_test_1.1",
@@ -60,7 +59,7 @@ func EditRuleTypeTest(t *testing.T, ctx context.Context, mr generated.MutationRe
 	require.Error(t, err)
 }
 
-func RemoveRuleTypeTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveRuleTypeTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveRuleType(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveRuleType(ctx, id2)

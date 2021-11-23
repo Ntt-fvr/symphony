@@ -42,11 +42,7 @@ type PermissionsPolicy struct {
 	AssurancePolicy *models.AssurancePolicyInput `json:"assurance_policy,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PermissionsPolicyQuery when eager-loading is set.
-	Edges                                       PermissionsPolicyEdges `json:"edges"`
-	resource_relationship_multiplicity_policies *int
-	resource_relationship_type_policies         *int
-	resource_type_base_type_policies            *int
-	resource_type_class_policies                *int
+	Edges PermissionsPolicyEdges `json:"edges"`
 }
 
 // PermissionsPolicyEdges holds the relations/edges for other nodes in the graph.
@@ -91,16 +87,6 @@ func (*PermissionsPolicy) scanValues() []interface{} {
 		&[]byte{},         // workforce_policy
 		&[]byte{},         // automation_policy
 		&[]byte{},         // assurance_policy
-	}
-}
-
-// fkValues returns the types for scanning foreign-keys values from sql.Rows.
-func (*PermissionsPolicy) fkValues() []interface{} {
-	return []interface{}{
-		&sql.NullInt64{}, // resource_relationship_multiplicity_policies
-		&sql.NullInt64{}, // resource_relationship_type_policies
-		&sql.NullInt64{}, // resource_type_base_type_policies
-		&sql.NullInt64{}, // resource_type_class_policies
 	}
 }
 
@@ -171,33 +157,6 @@ func (pp *PermissionsPolicy) assignValues(values ...interface{}) error {
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &pp.AssurancePolicy); err != nil {
 			return fmt.Errorf("unmarshal field assurance_policy: %v", err)
-		}
-	}
-	values = values[9:]
-	if len(values) == len(permissionspolicy.ForeignKeys) {
-		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_relationship_multiplicity_policies", value)
-		} else if value.Valid {
-			pp.resource_relationship_multiplicity_policies = new(int)
-			*pp.resource_relationship_multiplicity_policies = int(value.Int64)
-		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_relationship_type_policies", value)
-		} else if value.Valid {
-			pp.resource_relationship_type_policies = new(int)
-			*pp.resource_relationship_type_policies = int(value.Int64)
-		}
-		if value, ok := values[2].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_type_base_type_policies", value)
-		} else if value.Valid {
-			pp.resource_type_base_type_policies = new(int)
-			*pp.resource_type_base_type_policies = int(value.Int64)
-		}
-		if value, ok := values[3].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_type_class_policies", value)
-		} else if value.Valid {
-			pp.resource_type_class_policies = new(int)
-			*pp.resource_type_class_policies = int(value.Int64)
 		}
 	}
 	return nil

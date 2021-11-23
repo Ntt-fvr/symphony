@@ -24,12 +24,11 @@ func TestAddRemoveKqiPerspective(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddKqiPerspectiveTest(t, ctx, mr)
-	EditKqiPerspectiveTest(t, ctx, mr, id1, id2)
-	RemoveKqiPerspectiveTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddKqiPerspectiveTest(ctx, t, mr)
+	EditKqiPerspectiveTest(ctx, t, mr, id1, id2)
+	RemoveKqiPerspectiveTest(ctx, t, mr, id1, id2)
 }
-func AddKqiPerspectiveTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddKqiPerspectiveTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	kqiPerspective1, err := mr.AddKqiPerspective(ctx, models.AddKqiPerspectiveInput{
 		Name: "kqiPerspective_test_1",
 	})
@@ -47,7 +46,7 @@ func AddKqiPerspectiveTest(t *testing.T, ctx context.Context, mr generated.Mutat
 	return id1, id2
 }
 
-func EditKqiPerspectiveTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditKqiPerspectiveTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditKqiPerspective(ctx, models.EditKqiPerspectiveInput{
 		ID:   id1,
 		Name: "kqiPerspective_test_1.1",
@@ -60,7 +59,7 @@ func EditKqiPerspectiveTest(t *testing.T, ctx context.Context, mr generated.Muta
 	require.Error(t, err)
 }
 
-func RemoveKqiPerspectiveTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveKqiPerspectiveTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveKqiPerspective(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveKqiPerspective(ctx, id2)

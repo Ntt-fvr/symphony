@@ -15,7 +15,7 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
-    padding: '0 4rem 0.5rem 1rem',
+    padding: '0 3.8rem 0.5rem 1rem',
   },
   nameKpi: {
     paddingLeft: '1.3rem',
@@ -35,12 +35,13 @@ function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid
-      container
+      item
       xs={12}
-      justifyContent="center"
+      container
+      justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid container className={classes.status} xs={4} md={3}>
+      <Grid container item className={classes.status} xs={4} md={3}>
         <Text
           useEllipsis={true}
           color="primary"
@@ -57,7 +58,7 @@ function TitleTextCardsKpi() {
           Kpi name
         </Text>
       </Grid>
-      <Grid xs={3} md={4}>
+      <Grid item xs={3} md={4}>
         <Text
           useEllipsis={true}
           color="primary"
@@ -66,7 +67,7 @@ function TitleTextCardsKpi() {
           Domain
         </Text>
       </Grid>
-      <Grid xs={3} md={3} lg={3} xl={4}>
+      <Grid item xs={3} md={3} lg={3} xl={4}>
         <Text
           useEllipsis={true}
           color="primary"
@@ -80,6 +81,7 @@ function TitleTextCardsKpi() {
         alignItems="center"
         justify="flex-end"
         className={classes.actions}
+        item
         xs={2}
         md={2}
         xl={1}>

@@ -37,7 +37,8 @@ function TitleTextCardsThresholds() {
     <Grid
       container
       xs={12}
-      justifyContent="center"
+      item
+      justify="center"
       alignItems="center"
       className={classes.root}>
       <Grid container className={classes.status} xs={2} md={3}>
@@ -74,6 +75,7 @@ function TitleTextCardsThresholds() {
       </Grid>
       <Grid
         container
+        item
         alignItems="center"
         justify="flex-end"
         className={classes.actions}

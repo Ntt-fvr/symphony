@@ -177,6 +177,7 @@ type Props = $ReadOnly<{|
   parentEditCallback: ({}) => void,
   dataCounter: Array<Counter>,
   dataFormula: Array<Formula>,
+  dataFormulaTable: Array<Formula>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
@@ -189,6 +190,7 @@ export const EditKpiItemForm = (props: Props) => {
     parentEditCallback,
     dataCounter,
     dataFormula,
+    dataFormulaTable,
   } = props;
   const classes = useStyles();
 
@@ -197,12 +199,16 @@ export const EditKpiItemForm = (props: Props) => {
   const description = useFormInput(formValues.description);
   const kpiCategoryFK = useFormInput(formValues.kpiCategoryFK.id);
   const [checked, setChecked] = useState(formValues.status);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openEditDialogFormula, setOpenEditDialogFormula] = useState(false);
 
   const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});
 
   const thresholdFromKpi = threshold.find(
     ({node}) => node.kpi?.name === formValues.name,
+  );
+
+  const filterFormulaTableById = dataFormulaTable?.filter(
+    kpiData => kpiData?.kpiFk?.id === formValues.id,
   );
 
   const kpiNames = kpi?.map(item => item.name);
@@ -245,8 +251,8 @@ export const EditKpiItemForm = (props: Props) => {
     });
   };
 
-  const handleEditFormulaKqiTable = () => {
-    setOpenEditDialog(true);
+  const handleEditFormulaKpiTable = () => {
+    setOpenEditDialogFormula(true);
   };
 
   return (
@@ -255,6 +261,7 @@ export const EditKpiItemForm = (props: Props) => {
         <Grid
           className={classes.header}
           container
+          item
           direction="row"
           justifyContent="flex-end"
           alignItems="center">
@@ -294,6 +301,7 @@ export const EditKpiItemForm = (props: Props) => {
             <Grid
               className={classes.headerCardEdit}
               container
+              item
               direction="row"
               justifyContent="space-evenly"
               alignItems="center">
@@ -365,7 +373,7 @@ export const EditKpiItemForm = (props: Props) => {
                   </form>
                 </Grid>
               </Grid>
-              <Grid xs={12} sm={12} md={4} lg={4} xl={4}>
+              <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                 <Grid item xs={12}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
@@ -441,20 +449,20 @@ export const EditKpiItemForm = (props: Props) => {
             </Text>
           </Grid>
           <TableFormulas
-            formulas={formValues.formulaFk}
-            handleEditFormulaClick={handleEditFormulaKqiTable}
-            parentEditCallback={parentEditCallback}
             isCompleted={isCompleted}
+            formulas={filterFormulaTableById}
+            handleEditFormulaClick={handleEditFormulaKpiTable}
+            parentEditCallback={parentEditCallback}
           />
-          {openEditDialog && (
+          {openEditDialogFormula && (
             <EditFormulaDialog
-              open={openEditDialog}
+              isCompleted={isCompleted}
+              open={openEditDialogFormula}
               dataFormula={dataFormula}
               dataCounter={dataCounter}
               onClose={() => {
-                setOpenEditDialog(false);
+                setOpenEditDialogFormula(false);
               }}
-              isCompleted={isCompleted}
             />
           )}
         </Grid>

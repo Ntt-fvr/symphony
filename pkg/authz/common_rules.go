@@ -57,15 +57,27 @@ func privacyDecision(allowed bool) error {
 	return privacy.Skip
 }
 
-func checkWorkforce(r *models.WorkforcePermissionRule, workOrderTypeID *int, projectTypeID *int, woOrganizationID *int, ctx context.Context) bool {
+func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, workOrderTypeID *int, projectTypeID *int, woOrganizationID *int) bool {
 	switch r.IsAllowed {
 	case models.PermissionValueYes:
 		if woOrganizationID != nil {
-			for _, typeInterID := range r.OrganizationIds {
-				if typeInterID == *woOrganizationID {
-					return true
-				}
+			userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+			if !ok {
+				return false
 			}
+
+			//  uOrg, err := userViewer.User().Organization(ctx)
+			uOrg, err := userViewer.User().QueryOrganization().OnlyID(ctx)
+			if err != nil {
+				return false
+			}
+
+			if uOrg == *woOrganizationID {
+				return true
+			}
+			// return false
+		} else {
+			return true
 		}
 	case models.PermissionValueByCondition:
 		if workOrderTypeID != nil {
@@ -78,14 +90,7 @@ func checkWorkforce(r *models.WorkforcePermissionRule, workOrderTypeID *int, pro
 							}
 						}
 					} else {
-						userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
-						if !ok {
-							return false
-						}
-						if userViewer.User().Edges.Organization.ID == *woOrganizationID {
-							return true
-						}
-						return false
+						return true
 					}
 				}
 			}
@@ -143,10 +148,17 @@ func allowOrSkipWorkOrder(ctx context.Context, p *models.PermissionSettings, wo 
 	if err != nil {
 		return privacy.Denyf("cannot fetch work order type id: %w", err)
 	}
-	organizationID, _ := wo.QueryOrganization().OnlyID(ctx)
+	organizationID, err := wo.QueryOrganization().OnlyID(ctx)
+	if err != nil {
+		return privacyDecision(
+			checkWorkforce(
+				ctx, p.WorkforcePolicy.Data.Update, &workOrderTypeID, nil, nil,
+			),
+		)
+	}
 	return privacyDecision(
 		checkWorkforce(
-			p.WorkforcePolicy.Data.Update, &workOrderTypeID, nil, &organizationID, ctx,
+			ctx, p.WorkforcePolicy.Data.Update, &workOrderTypeID, nil, &organizationID,
 		),
 	)
 }
@@ -167,7 +179,7 @@ func allowOrSkipProject(ctx context.Context, p *models.PermissionSettings, proj 
 	}
 	return privacyDecision(
 		checkWorkforce(
-			p.WorkforcePolicy.Data.Update, nil, &projectTypeID, nil, ctx,
+			ctx, p.WorkforcePolicy.Data.Update, nil, &projectTypeID, nil,
 		),
 	)
 }

@@ -24,12 +24,11 @@ func TestAddRemoveCounterFamily(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddCounterFamilyTest(t, ctx, mr)
-	EditCounterFamilyTest(t, ctx, mr, id1, id2)
-	RemoveCounterFamilyTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddCounterFamilyTest(ctx, t, mr)
+	EditCounterFamilyTest(ctx, t, mr, id1, id2)
+	RemoveCounterFamilyTest(ctx, t, mr, id1, id2)
 }
-func AddCounterFamilyTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddCounterFamilyTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	counterFamily1, err := mr.AddCounterFamily(ctx, models.AddCounterFamilyInput{
 		Name: "counterFamily_test_1",
 	})
@@ -47,7 +46,7 @@ func AddCounterFamilyTest(t *testing.T, ctx context.Context, mr generated.Mutati
 	return id1, id2
 }
 
-func EditCounterFamilyTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditCounterFamilyTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditCounterFamily(ctx, models.EditCounterFamilyInput{
 		ID:   id1,
 		Name: "counterFamily_test_1.1",
@@ -60,7 +59,7 @@ func EditCounterFamilyTest(t *testing.T, ctx context.Context, mr generated.Mutat
 	require.Error(t, err)
 }
 
-func RemoveCounterFamilyTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveCounterFamilyTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveCounterFamily(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveCounterFamily(ctx, id2)

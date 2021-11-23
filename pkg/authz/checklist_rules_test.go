@@ -59,16 +59,13 @@ func TestCheckListCategoryDefinitionWritePolicyRule(t *testing.T) {
 func TestCheckListCategoryWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUser)
+	u2 := viewer.MustGetOrCreateUser(ctx, "tester@example.com", user.RoleUser)
+	u.Update().SetOrganizationID(organization.ID).SaveX(ctx)
+	u2.Update().SetOrganizationID(organization.ID).SaveX(ctx)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
-		SaveX(ctx)
-
-	organization := c.Organization.Create().
-		SetCreateTime(time.Now()).
-		SetDescription("Organization").
-		SetName("Organization").
-		SetUpdateTime(time.Now()).
 		SaveX(ctx)
 
 	workOrder := c.WorkOrder.Create().
@@ -169,12 +166,7 @@ func TestCheckListItemWritePolicyRule(t *testing.T) {
 		SetName("WorkOrderType").
 		SaveX(ctx)
 
-	organization := c.Organization.Create().
-		SetCreateTime(time.Now()).
-		SetDescription("Organization").
-		SetName("Organization").
-		SetUpdateTime(time.Now()).
-		SaveX(ctx)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 
 	workOrder := c.WorkOrder.Create().
 		SetName("WorkOrder").

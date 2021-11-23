@@ -206,6 +206,7 @@ export default function AddThresholdItemForm(props: Props) {
           className={classes.select}
           label="Associated KPI"
           onChange={handleChange}
+          defaultValue=""
           name="kpi"
           variant="outlined">
           {kpiSelect.map((kpiDataResponse, index) => (
@@ -222,7 +223,7 @@ export default function AddThresholdItemForm(props: Props) {
           label="Description"
           variant="outlined"
           name="description"
-          minRows={4}
+          rows={4}
           inputProps={{maxLength: 120}}
           onChange={handleChange}
         />

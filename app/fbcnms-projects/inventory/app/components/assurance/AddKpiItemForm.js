@@ -188,6 +188,11 @@ export default function AddKpiItemForm(props: Props) {
     });
   }
 
+  function handleOpen(event) {
+    event.stopPropagation();
+    setOpen(!open);
+  }
+
   const setReturn = () => {
     setShowChecking(false);
   };
@@ -204,9 +209,9 @@ export default function AddKpiItemForm(props: Props) {
   }
 
   return (
-    <Accordion className={classes.root} expanded={open}>
+    <Accordion className={classes.root} expanded={open} onChange={handleOpen}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+        expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
         className={classes.accordionSummary}
         id="panel1a-header">
@@ -233,6 +238,7 @@ export default function AddKpiItemForm(props: Props) {
             className={classes.selectField}
             label="Status"
             onChange={handleChangeStatus}
+            defaultValue=""
             name="status"
             variant="outlined">
             <MenuItem value={true}>Enabled</MenuItem>
@@ -245,6 +251,7 @@ export default function AddKpiItemForm(props: Props) {
             className={classes.selectField}
             label="Domain"
             onChange={handleChange}
+            defaultValue=""
             name="domain"
             variant="outlined">
             {data?.domains.edges.map((item, index) => (
@@ -260,6 +267,7 @@ export default function AddKpiItemForm(props: Props) {
             className={classes.selectField}
             label="Category"
             onChange={handleChange}
+            defaultValue=""
             name="category"
             variant="outlined">
             {data?.kpiCategories.edges.map((item, index) => (
@@ -276,7 +284,7 @@ export default function AddKpiItemForm(props: Props) {
             label="Description"
             variant="outlined"
             name="description"
-            minRows={10}
+            rows={10}
             inputProps={{maxLength: 120}}
             onChange={handleChange}
           />

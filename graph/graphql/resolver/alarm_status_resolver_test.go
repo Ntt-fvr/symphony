@@ -24,12 +24,11 @@ func TestAddRemoveAlarmStatus(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddAlarmStatusTest(t, ctx, mr)
-	EditAlarmStatusTest(t, ctx, mr, id1, id2)
-	RemoveAlarmStatusTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddAlarmStatusTest(ctx, t, mr)
+	EditAlarmStatusTest(ctx, t, mr, id1, id2)
+	RemoveAlarmStatusTest(ctx, t, mr, id1, id2)
 }
-func AddAlarmStatusTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddAlarmStatusTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	alarmStatus1, err := mr.AddAlarmStatus(ctx, models.AddAlarmStatusInput{
 		Name: "alarmStatus_test_1",
 	})
@@ -47,7 +46,7 @@ func AddAlarmStatusTest(t *testing.T, ctx context.Context, mr generated.Mutation
 	return id1, id2
 }
 
-func EditAlarmStatusTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditAlarmStatusTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditAlarmStatus(ctx, models.EditAlarmStatusInput{
 		ID:   id1,
 		Name: "alarmStatus_test_1.1",
@@ -60,7 +59,7 @@ func EditAlarmStatusTest(t *testing.T, ctx context.Context, mr generated.Mutatio
 	require.Error(t, err)
 }
 
-func RemoveAlarmStatusTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveAlarmStatusTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveAlarmStatus(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveAlarmStatus(ctx, id2)

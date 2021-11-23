@@ -31,5 +31,6 @@ class AddWorkOrderInput(DataClassJsonMixin):
     ownerId: Optional[str] = None
     assigneeId: Optional[str] = None
     index: Optional[int] = None
+    organizationFk: Optional[str] = None
     status: Optional[WorkOrderStatus] = None
     priority: Optional[WorkOrderPriority] = None
