@@ -34,13 +34,17 @@ import {withSnackbar} from 'notistack';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = {
-  // uploadCategory: {
-  //   padding: '0px',
-  // },
+  uploadCategory: {
+    padding: '0px',
+  },
   uploadCategoryButton: {
+    padding: '8px 16px',
     display: 'block',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
+    width: '100%',
+  },
+  autoWidth: {
     width: '100%',
   },
 };
@@ -95,7 +99,9 @@ class DocumentsAddButton extends React.Component<Props, State> {
                   key={category.id}
                   onFileUploaded={this.onDocumentUploaded(category)}>
                   {openFileUploadDialog => (
-                    <Clickable onClick={openFileUploadDialog}>
+                    <Clickable
+                      onClick={openFileUploadDialog}
+                      className={classes.autoWidth}>
                       <Text
                         className={classes.uploadCategoryButton}
                         variant="body2">
@@ -106,7 +112,7 @@ class DocumentsAddButton extends React.Component<Props, State> {
                 </FileUploadButton>
               ),
               value: category.name,
-              // className: classes.uploadCategory,
+              className: classes.uploadCategory,
             }))}>
             {Strings.documents.uploadButton}
           </PopoverMenu>

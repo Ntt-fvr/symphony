@@ -56,6 +56,7 @@ const useStyles = makeStyles(() => ({
   contentContainer: {
     display: 'flex',
     flexDirection: 'column',
+    width: '100%',
   },
 }));
 
