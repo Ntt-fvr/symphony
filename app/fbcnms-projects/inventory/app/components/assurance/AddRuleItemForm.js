@@ -141,6 +141,10 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     minHeight: '36px',
   },
+  textDescription: {
+    width: '100%',
+    // minHeight: '36px',
+  },
   addRule: {
     margin: '20px',
     width: '111px',
@@ -150,15 +154,23 @@ const useStyles = makeStyles(() => ({
     marginLeft: '10px',
   },
   selectAlarm: {
+    // margin: '0 5px 36px 5px',
+    '& .MuiOutlinedInput-root ': {
+      color: '#FFFFFF',
+      height: '38px',
+    },
+    '& .MuiSelect-iconOutlined': {
+      color: '#FFFFFF',
+    },
     '& .MuiSelect-select': {
       padding: '9px 0 0 10px',
     },
     width: '100%',
     // border: '1px solid #D2DAE7',
-    color: 'white',
+    // color: '#FFFFFF',
     fontWeight: '700',
     borderRadius: '4px',
-    // backgroundColor: '#556072',
+    background: '#556072',
   },
   paper: {
     height: '240px',
@@ -167,7 +179,7 @@ const useStyles = makeStyles(() => ({
   },
   fieldUpper: {
     '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
+      // padding: '9px 0 0 10px',
     },
     '& .MuiSelect-select:focus': {
       borderRadius: '4px',
@@ -216,8 +228,7 @@ const useStyles = makeStyles(() => ({
       },
     },
     '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
+      padding: '6px 0 6px 10px',
       fontSize: '14px',
       display: 'flex',
       alignItems: 'center',
@@ -226,7 +237,11 @@ const useStyles = makeStyles(() => ({
     },
   },
   grilla: {
-    border: '1px solid red',
+    marginTop: '20px',
+    borderTop: '1px solid #D2DAE7',
+  },
+  grillaInterna: {
+    paddingTop: '10px',
   },
   formFieldLower: {
     padding: '0 5px ',
@@ -244,8 +259,7 @@ const useStyles = makeStyles(() => ({
       },
     },
     '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
+      padding: '6px 0 6px 10px',
       fontSize: '14px',
       display: 'flex',
       alignItems: 'center',
@@ -615,7 +629,6 @@ const AddRuleItemForm = (props: Props) => {
                         variant="outlined"
                         type="number"
                         placeholder="Number"
-                        // ${classes.textInput} ${classes.green}
                         className={`${classes.textInput}`}
                         name="upperLimit"
                         onChange={handleChange}
@@ -670,7 +683,74 @@ const AddRuleItemForm = (props: Props) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid className={classes.grilla} />
+            <Grid className={classes.grilla}>
+              <Grid className={classes.grillaInterna} xs={8} container>
+                <Grid xs={12}>
+                  <Text weight="medium" variant="subtitle4">
+                    Alarm severity
+                  </Text>
+                </Grid>
+                <Grid xs>
+                  <FormField className={classes.selectAlarm}>
+                    <TextField
+                      required
+                      select
+                      // className={classes.selectAlarm}
+                      variant="outlined"
+                      name="alarmSeverities"
+                      onChange={handleChange}
+                      inputProps>
+                      {data.eventSeverities.edges.map((item, index) => (
+                        <MenuItem key={index} value={item.node?.id}>
+                          {item.node?.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </FormField>
+                </Grid>
+                <Grid xs>
+                  <FormField className={classes.formField}>
+                    <TextField
+                      required
+                      variant="outlined"
+                      label="Alarm type name"
+                      autoComplete="off"
+                      className={classes.textInput}
+                      name="alarmType"
+                      onChange={handleChange}
+                    />
+                  </FormField>
+                </Grid>
+              </Grid>
+              <Grid>
+                <Grid>
+                  <form className={classes.formField}>
+                    <TextField
+                      variant="outlined"
+                      label="Specific problem"
+                      className={classes.textInput}
+                      multiline
+                      rows={3}
+                      name="specificProblem"
+                      onChange={handleChange}
+                    />
+                  </form>
+                </Grid>
+                <Grid>
+                  <form className={classes.formField}>
+                    <TextField
+                      variant="outlined"
+                      label="Additional info"
+                      className={classes.textInput}
+                      multiline
+                      rows={3}
+                      name="additionalInfo"
+                      onChange={handleChange}
+                    />
+                  </form>
+                </Grid>
+              </Grid>
+            </Grid>
           </Card>
         </Grid>
       </Grid>
