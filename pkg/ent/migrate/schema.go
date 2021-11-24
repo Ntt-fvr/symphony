@@ -1780,6 +1780,7 @@ var (
 		{Name: "property_work_order_value", Type: field.TypeInt, Nullable: true},
 		{Name: "property_user_value", Type: field.TypeInt, Nullable: true},
 		{Name: "property_project_value", Type: field.TypeInt, Nullable: true},
+		{Name: "property_category_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "service_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_properties", Type: field.TypeInt, Nullable: true},
 	}
@@ -1874,15 +1875,22 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "properties_services_properties",
+				Symbol:  "properties_property_categories_properties",
 				Columns: []*schema.Column{PropertiesColumns[23]},
+
+				RefColumns: []*schema.Column{PropertyCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "properties_services_properties",
+				Columns: []*schema.Column{PropertiesColumns[24]},
 
 				RefColumns: []*schema.Column{ServicesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "properties_work_orders_properties",
-				Columns: []*schema.Column{PropertiesColumns[24]},
+				Columns: []*schema.Column{PropertiesColumns[25]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1902,7 +1910,7 @@ var (
 			{
 				Name:    "property_property_type_service_properties",
 				Unique:  true,
-				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[23]},
+				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[24]},
 			},
 			{
 				Name:    "property_property_type_equipment_port_properties",
@@ -1917,12 +1925,39 @@ var (
 			{
 				Name:    "property_property_type_work_order_properties",
 				Unique:  true,
-				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[24]},
+				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[25]},
 			},
 			{
 				Name:    "property_property_type_project_properties",
 				Unique:  true,
 				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[15]},
+			},
+			{
+				Name:    "property_property_type_property_category_properties",
+				Unique:  true,
+				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[23]},
+			},
+		},
+	}
+	// PropertyCategoriesColumns holds the columns for the "property_categories" table.
+	PropertyCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "index", Type: field.TypeInt},
+	}
+	// PropertyCategoriesTable holds the schema information for the "property_categories" table.
+	PropertyCategoriesTable = &schema.Table{
+		Name:        "property_categories",
+		Columns:     PropertyCategoriesColumns,
+		PrimaryKey:  []*schema.Column{PropertyCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+		Indexes: []*schema.Index{
+			{
+				Name:    "propertycategory_name",
+				Unique:  false,
+				Columns: []*schema.Column{PropertyCategoriesColumns[3]},
 			},
 		},
 	}
@@ -3319,6 +3354,7 @@ var (
 		ProjectTemplatesTable,
 		ProjectTypesTable,
 		PropertiesTable,
+		PropertyCategoriesTable,
 		PropertyTypesTable,
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
@@ -3455,8 +3491,9 @@ func init() {
 	PropertiesTable.ForeignKeys[9].RefTable = WorkOrdersTable
 	PropertiesTable.ForeignKeys[10].RefTable = UsersTable
 	PropertiesTable.ForeignKeys[11].RefTable = ProjectsTable
-	PropertiesTable.ForeignKeys[12].RefTable = ServicesTable
-	PropertiesTable.ForeignKeys[13].RefTable = WorkOrdersTable
+	PropertiesTable.ForeignKeys[12].RefTable = PropertyCategoriesTable
+	PropertiesTable.ForeignKeys[13].RefTable = ServicesTable
+	PropertiesTable.ForeignKeys[14].RefTable = WorkOrdersTable
 	PropertyTypesTable.ForeignKeys[0].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[1].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[2].RefTable = EquipmentTypesTable

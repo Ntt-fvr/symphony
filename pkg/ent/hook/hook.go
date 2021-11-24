@@ -793,6 +793,19 @@ func (f PropertyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The PropertyCategoryFunc type is an adapter to allow the use of ordinary
+// function as PropertyCategory mutator.
+type PropertyCategoryFunc func(context.Context, *ent.PropertyCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PropertyCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PropertyCategoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PropertyCategoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The PropertyTypeFunc type is an adapter to allow the use of ordinary
 // function as PropertyType mutator.
 type PropertyTypeFunc func(context.Context, *ent.PropertyTypeMutation) (ent.Value, error)

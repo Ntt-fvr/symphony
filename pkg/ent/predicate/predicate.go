@@ -190,6 +190,9 @@ type ProjectType func(*sql.Selector)
 // Property is the predicate function for property builders.
 type Property func(*sql.Selector)
 
+// PropertyCategory is the predicate function for propertycategory builders.
+type PropertyCategory func(*sql.Selector)
+
 // PropertyType is the predicate function for propertytype builders.
 type PropertyType func(*sql.Selector)
 

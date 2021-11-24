@@ -1215,6 +1215,10 @@ func (pr *PropertyQuery) collectField(ctx *graphql.OperationContext, field graph
 			pr = pr.WithLocation(func(query *LocationQuery) {
 				query.collectField(ctx, field)
 			})
+		case "propertyCategory":
+			pr = pr.WithPropertyCategory(func(query *PropertyCategoryQuery) {
+				query.collectField(ctx, field)
+			})
 		case "serviceValue":
 			pr = pr.WithService(func(query *ServiceQuery) {
 				query.collectField(ctx, field)
@@ -1226,6 +1230,18 @@ func (pr *PropertyQuery) collectField(ctx *graphql.OperationContext, field graph
 		}
 	}
 	return pr
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pc *PropertyCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *PropertyCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pc
+}
+
+func (pc *PropertyCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyCategoryQuery {
+	return pc
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

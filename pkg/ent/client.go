@@ -73,6 +73,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
@@ -232,6 +233,8 @@ type Client struct {
 	ProjectType *ProjectTypeClient
 	// Property is the client for interacting with the Property builders.
 	Property *PropertyClient
+	// PropertyCategory is the client for interacting with the PropertyCategory builders.
+	PropertyCategory *PropertyCategoryClient
 	// PropertyType is the client for interacting with the PropertyType builders.
 	PropertyType *PropertyTypeClient
 	// Recommendations is the client for interacting with the Recommendations builders.
@@ -363,6 +366,7 @@ func (c *Client) init() {
 	c.ProjectTemplate = NewProjectTemplateClient(c.config)
 	c.ProjectType = NewProjectTypeClient(c.config)
 	c.Property = NewPropertyClient(c.config)
+	c.PropertyCategory = NewPropertyCategoryClient(c.config)
 	c.PropertyType = NewPropertyTypeClient(c.config)
 	c.Recommendations = NewRecommendationsClient(c.config)
 	c.RecommendationsCategory = NewRecommendationsCategoryClient(c.config)
@@ -483,6 +487,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ProjectTemplate:             NewProjectTemplateClient(cfg),
 		ProjectType:                 NewProjectTypeClient(cfg),
 		Property:                    NewPropertyClient(cfg),
+		PropertyCategory:            NewPropertyCategoryClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
 		Recommendations:             NewRecommendationsClient(cfg),
 		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
@@ -586,6 +591,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ProjectTemplate:             NewProjectTemplateClient(cfg),
 		ProjectType:                 NewProjectTypeClient(cfg),
 		Property:                    NewPropertyClient(cfg),
+		PropertyCategory:            NewPropertyCategoryClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
 		Recommendations:             NewRecommendationsClient(cfg),
 		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
@@ -702,6 +708,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ProjectTemplate.Use(hooks...)
 	c.ProjectType.Use(hooks...)
 	c.Property.Use(hooks...)
+	c.PropertyCategory.Use(hooks...)
 	c.PropertyType.Use(hooks...)
 	c.Recommendations.Use(hooks...)
 	c.RecommendationsCategory.Use(hooks...)
@@ -9090,10 +9097,131 @@ func (c *PropertyClient) QueryProjectValue(pr *Property) *ProjectQuery {
 	return query
 }
 
+// QueryPropertyCategory queries the property_category edge of a Property.
+func (c *PropertyClient) QueryPropertyCategory(pr *Property) *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(property.Table, property.FieldID, id),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, property.PropertyCategoryTable, property.PropertyCategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PropertyClient) Hooks() []Hook {
 	hooks := c.hooks.Property
 	return append(hooks[:len(hooks):len(hooks)], property.Hooks[:]...)
+}
+
+// PropertyCategoryClient is a client for the PropertyCategory schema.
+type PropertyCategoryClient struct {
+	config
+}
+
+// NewPropertyCategoryClient returns a client for the PropertyCategory from the given config.
+func NewPropertyCategoryClient(c config) *PropertyCategoryClient {
+	return &PropertyCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `propertycategory.Hooks(f(g(h())))`.
+func (c *PropertyCategoryClient) Use(hooks ...Hook) {
+	c.hooks.PropertyCategory = append(c.hooks.PropertyCategory, hooks...)
+}
+
+// Create returns a create builder for PropertyCategory.
+func (c *PropertyCategoryClient) Create() *PropertyCategoryCreate {
+	mutation := newPropertyCategoryMutation(c.config, OpCreate)
+	return &PropertyCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PropertyCategory entities.
+func (c *PropertyCategoryClient) CreateBulk(builders ...*PropertyCategoryCreate) *PropertyCategoryCreateBulk {
+	return &PropertyCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PropertyCategory.
+func (c *PropertyCategoryClient) Update() *PropertyCategoryUpdate {
+	mutation := newPropertyCategoryMutation(c.config, OpUpdate)
+	return &PropertyCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PropertyCategoryClient) UpdateOne(pc *PropertyCategory) *PropertyCategoryUpdateOne {
+	mutation := newPropertyCategoryMutation(c.config, OpUpdateOne, withPropertyCategory(pc))
+	return &PropertyCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PropertyCategoryClient) UpdateOneID(id int) *PropertyCategoryUpdateOne {
+	mutation := newPropertyCategoryMutation(c.config, OpUpdateOne, withPropertyCategoryID(id))
+	return &PropertyCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PropertyCategory.
+func (c *PropertyCategoryClient) Delete() *PropertyCategoryDelete {
+	mutation := newPropertyCategoryMutation(c.config, OpDelete)
+	return &PropertyCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *PropertyCategoryClient) DeleteOne(pc *PropertyCategory) *PropertyCategoryDeleteOne {
+	return c.DeleteOneID(pc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *PropertyCategoryClient) DeleteOneID(id int) *PropertyCategoryDeleteOne {
+	builder := c.Delete().Where(propertycategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PropertyCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for PropertyCategory.
+func (c *PropertyCategoryClient) Query() *PropertyCategoryQuery {
+	return &PropertyCategoryQuery{config: c.config}
+}
+
+// Get returns a PropertyCategory entity by its id.
+func (c *PropertyCategoryClient) Get(ctx context.Context, id int) (*PropertyCategory, error) {
+	return c.Query().Where(propertycategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PropertyCategoryClient) GetX(ctx context.Context, id int) *PropertyCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProperties queries the properties edge of a PropertyCategory.
+func (c *PropertyCategoryClient) QueryProperties(pc *PropertyCategory) *PropertyQuery {
+	query := &PropertyQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, id),
+			sqlgraph.To(property.Table, property.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTable, propertycategory.PropertiesColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PropertyCategoryClient) Hooks() []Hook {
+	hooks := c.hooks.PropertyCategory
+	return append(hooks[:len(hooks):len(hooks)], propertycategory.Hooks[:]...)
 }
 
 // PropertyTypeClient is a client for the PropertyType schema.

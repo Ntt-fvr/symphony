@@ -40,6 +40,13 @@ import (
 
 type queryResolver struct{ resolver }
 
+func (r queryResolver) PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.PropertyCategoryConnection, error) {
+	return r.ClientFrom(ctx).
+		PropertyCategory.
+		Query().
+		Paginate(ctx, after, first, before, last)
+}
+
 func (r queryResolver) DocumentCategories(ctx context.Context, locationTypeID *int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.DocumentCategoryConnection, error) {
 	filter := func(query *ent.DocumentCategoryQuery) (*ent.DocumentCategoryQuery, error) {
 		if locationTypeID != nil {

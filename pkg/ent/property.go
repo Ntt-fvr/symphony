@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -51,21 +52,22 @@ type Property struct {
 	StringVal *string `json:"stringValue" gqlgen:"stringValue"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PropertyQuery when eager-loading is set.
-	Edges                     PropertyEdges `json:"edges"`
-	equipment_properties      *int
-	equipment_port_properties *int
-	link_properties           *int
-	location_properties       *int
-	project_properties        *int
-	property_type             *int
-	property_equipment_value  *int
-	property_location_value   *int
-	property_service_value    *int
-	property_work_order_value *int
-	property_user_value       *int
-	property_project_value    *int
-	service_properties        *int
-	work_order_properties     *int
+	Edges                        PropertyEdges `json:"edges"`
+	equipment_properties         *int
+	equipment_port_properties    *int
+	link_properties              *int
+	location_properties          *int
+	project_properties           *int
+	property_type                *int
+	property_equipment_value     *int
+	property_location_value      *int
+	property_service_value       *int
+	property_work_order_value    *int
+	property_user_value          *int
+	property_project_value       *int
+	property_category_properties *int
+	service_properties           *int
+	work_order_properties        *int
 }
 
 // PropertyEdges holds the relations/edges for other nodes in the graph.
@@ -98,9 +100,11 @@ type PropertyEdges struct {
 	UserValue *User
 	// ProjectValue holds the value of the project_value edge.
 	ProjectValue *Project
+	// PropertyCategory holds the value of the property_category edge.
+	PropertyCategory *PropertyCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [14]bool
+	loadedTypes [15]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -299,6 +303,20 @@ func (e PropertyEdges) ProjectValueOrErr() (*Project, error) {
 	return nil, &NotLoadedError{edge: "project_value"}
 }
 
+// PropertyCategoryOrErr returns the PropertyCategory value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PropertyEdges) PropertyCategoryOrErr() (*PropertyCategory, error) {
+	if e.loadedTypes[14] {
+		if e.PropertyCategory == nil {
+			// The edge property_category was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: propertycategory.Label}
+		}
+		return e.PropertyCategory, nil
+	}
+	return nil, &NotLoadedError{edge: "property_category"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Property) scanValues() []interface{} {
 	return []interface{}{
@@ -331,6 +349,7 @@ func (*Property) fkValues() []interface{} {
 		&sql.NullInt64{}, // property_work_order_value
 		&sql.NullInt64{}, // property_user_value
 		&sql.NullInt64{}, // property_project_value
+		&sql.NullInt64{}, // property_category_properties
 		&sql.NullInt64{}, // service_properties
 		&sql.NullInt64{}, // work_order_properties
 	}
@@ -481,12 +500,18 @@ func (pr *Property) assignValues(values ...interface{}) error {
 			*pr.property_project_value = int(value.Int64)
 		}
 		if value, ok := values[12].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field property_category_properties", value)
+		} else if value.Valid {
+			pr.property_category_properties = new(int)
+			*pr.property_category_properties = int(value.Int64)
+		}
+		if value, ok := values[13].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field service_properties", value)
 		} else if value.Valid {
 			pr.service_properties = new(int)
 			*pr.service_properties = int(value.Int64)
 		}
-		if value, ok := values[13].(*sql.NullInt64); !ok {
+		if value, ok := values[14].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_properties", value)
 		} else if value.Valid {
 			pr.work_order_properties = new(int)
@@ -564,6 +589,11 @@ func (pr *Property) QueryUserValue() *UserQuery {
 // QueryProjectValue queries the project_value edge of the Property.
 func (pr *Property) QueryProjectValue() *ProjectQuery {
 	return (&PropertyClient{config: pr.config}).QueryProjectValue(pr)
+}
+
+// QueryPropertyCategory queries the property_category edge of the Property.
+func (pr *Property) QueryPropertyCategory() *PropertyCategoryQuery {
+	return (&PropertyClient{config: pr.config}).QueryPropertyCategory(pr)
 }
 
 // Update returns a builder for updating this Property.

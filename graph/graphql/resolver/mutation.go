@@ -3393,3 +3393,53 @@ func (r mutationResolver) RemoveDocumentCategory(ctx context.Context, id int) (i
 	}
 	return id, nil
 }
+
+func (r mutationResolver) EditPropertyCategories(ctx context.Context, propertyCategories []*models.EditPropertyCategoryInput) ([]*ent.PropertyCategory, error) {
+	var (
+		builders []*ent.PropertyCategory
+		property *ent.PropertyCategory
+		err error
+	)
+	for _, pc := range propertyCategories {
+		if pc.ID != nil {
+			property, err = r.UpdatePropertyCategories(ctx, pc)
+		} else {
+			property, err = r.AddPropertyCategories(ctx, pc)
+		}
+		fmt.Println("==========ERROR===", err != nil, err)
+		if err != nil{
+			return nil, err
+		}
+		builders = append(builders, property)
+	}
+	return builders, nil
+}
+
+func (r mutationResolver) AddPropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) (*ent.PropertyCategory, error) {
+	propertyCategory, err := r.ClientFrom(ctx).PropertyCategory.Create().
+		SetName(propertyCategoryInput.Name).
+		SetIndex(propertyCategoryInput.Index).
+		Save(ctx)
+	if err != nil{
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("There's already a saved builder category with that name. Please choose a different name.")
+		}
+		return nil, err
+	}
+	return propertyCategory, err
+}
+
+func (r mutationResolver) UpdatePropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) (*ent.PropertyCategory, error) {
+	pc , err:= r.ClientFrom(ctx).PropertyCategory.
+		UpdateOneID(*propertyCategoryInput.ID).
+		SetName(propertyCategoryInput.Name).
+		SetIndex(propertyCategoryInput.Index).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("There's already a saved builder category with that name. Please choose a different name.")
+		}
+		return nil, err
+	}
+	return pc, nil
+}

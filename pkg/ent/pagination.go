@@ -78,6 +78,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
@@ -14645,6 +14646,225 @@ var DefaultPropertyOrder = &PropertyOrder{
 		field: property.FieldID,
 		toCursor: func(pr *Property) Cursor {
 			return Cursor{ID: pr.ID}
+		},
+	},
+}
+
+// PropertyCategoryEdge is the edge representation of PropertyCategory.
+type PropertyCategoryEdge struct {
+	Node   *PropertyCategory `json:"node"`
+	Cursor Cursor            `json:"cursor"`
+}
+
+// PropertyCategoryConnection is the connection containing edges to PropertyCategory.
+type PropertyCategoryConnection struct {
+	Edges      []*PropertyCategoryEdge `json:"edges"`
+	PageInfo   PageInfo                `json:"pageInfo"`
+	TotalCount int                     `json:"totalCount"`
+}
+
+// PropertyCategoryPaginateOption enables pagination customization.
+type PropertyCategoryPaginateOption func(*propertyCategoryPager) error
+
+// WithPropertyCategoryOrder configures pagination ordering.
+func WithPropertyCategoryOrder(order *PropertyCategoryOrder) PropertyCategoryPaginateOption {
+	if order == nil {
+		order = DefaultPropertyCategoryOrder
+	}
+	o := *order
+	return func(pager *propertyCategoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultPropertyCategoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithPropertyCategoryFilter configures pagination filter.
+func WithPropertyCategoryFilter(filter func(*PropertyCategoryQuery) (*PropertyCategoryQuery, error)) PropertyCategoryPaginateOption {
+	return func(pager *propertyCategoryPager) error {
+		if filter == nil {
+			return errors.New("PropertyCategoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type propertyCategoryPager struct {
+	order  *PropertyCategoryOrder
+	filter func(*PropertyCategoryQuery) (*PropertyCategoryQuery, error)
+}
+
+func newPropertyCategoryPager(opts []PropertyCategoryPaginateOption) (*propertyCategoryPager, error) {
+	pager := &propertyCategoryPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultPropertyCategoryOrder
+	}
+	return pager, nil
+}
+
+func (p *propertyCategoryPager) applyFilter(query *PropertyCategoryQuery) (*PropertyCategoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *propertyCategoryPager) toCursor(pc *PropertyCategory) Cursor {
+	return p.order.Field.toCursor(pc)
+}
+
+func (p *propertyCategoryPager) applyCursors(query *PropertyCategoryQuery, after, before *Cursor) *PropertyCategoryQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultPropertyCategoryOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *propertyCategoryPager) applyOrder(query *PropertyCategoryQuery, reverse bool) *PropertyCategoryQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultPropertyCategoryOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultPropertyCategoryOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to PropertyCategory.
+func (pc *PropertyCategoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...PropertyCategoryPaginateOption,
+) (*PropertyCategoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newPropertyCategoryPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if pc, err = pager.applyFilter(pc); err != nil {
+		return nil, err
+	}
+
+	conn := &PropertyCategoryConnection{Edges: []*PropertyCategoryEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := pc.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := pc.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	pc = pager.applyCursors(pc, after, before)
+	pc = pager.applyOrder(pc, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		pc = pc.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := pc.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *PropertyCategory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *PropertyCategory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *PropertyCategory {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*PropertyCategoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &PropertyCategoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// PropertyCategoryOrderField defines the ordering field of PropertyCategory.
+type PropertyCategoryOrderField struct {
+	field    string
+	toCursor func(*PropertyCategory) Cursor
+}
+
+// PropertyCategoryOrder defines the ordering of PropertyCategory.
+type PropertyCategoryOrder struct {
+	Direction OrderDirection              `json:"direction"`
+	Field     *PropertyCategoryOrderField `json:"field"`
+}
+
+// DefaultPropertyCategoryOrder is the default ordering of PropertyCategory.
+var DefaultPropertyCategoryOrder = &PropertyCategoryOrder{
+	Direction: OrderDirectionAsc,
+	Field: &PropertyCategoryOrderField{
+		field: propertycategory.FieldID,
+		toCursor: func(pc *PropertyCategory) Cursor {
+			return Cursor{ID: pc.ID}
 		},
 	},
 }

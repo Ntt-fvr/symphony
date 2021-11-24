@@ -88,6 +88,7 @@ type hooks struct {
 	ProjectTemplate             []ent.Hook
 	ProjectType                 []ent.Hook
 	Property                    []ent.Hook
+	PropertyCategory            []ent.Hook
 	PropertyType                []ent.Hook
 	Recommendations             []ent.Hook
 	RecommendationsCategory     []ent.Hook

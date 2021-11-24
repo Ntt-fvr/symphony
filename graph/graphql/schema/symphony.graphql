@@ -1606,6 +1606,13 @@ type DocumentCategory implements Node {
   hyperlinksByEntity(entity: ImageEntity!, entityID: ID): [Hyperlink]!
 }
 
+type PropertyCategory implements Node {
+  id: ID!
+  name: String
+  index: Int
+  propertiesByEntity(entityType: PropertyEntity!, entityID: ID): [Property]!
+}
+
 input PropertyTypeInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
@@ -1644,6 +1651,7 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
+  propertyCategory: PropertyCategory
 }
 
 input PropertyInput {
@@ -2216,6 +2224,38 @@ type WorkOrderConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+}
+
+"""
+A connection to a list of Property Category.
+"""
+type PropertyCategoryConnection {
+  """
+  Total count of Property Category in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Property Category edges.
+  """
+  edges: [PropertyCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Property Category edge in a connection.
+"""
+type PropertyCategoryEdge {
+  """
+  The Property Category at the end of the edge.
+  """
+  node: PropertyCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 
 """
@@ -6972,6 +7012,27 @@ type Query {
     duration: Float!
     regularHours: RegularHoursInput!
   ): [UserAvailability!]
+  propertyCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+  ): PropertyCategoryConnection!
 }
 
 type Mutation {
@@ -7283,6 +7344,7 @@ type Mutation {
   addAppointment(input: AddAppointmentInput!): Appointment!
   editAppointment(input: EditAppointmentInput!): Appointment!
   removeAppointment(id: ID!): ID!
+  editPropertyCategories(propertyCategories: [EditPropertyCategoryInput]): [PropertyCategory!]
 }
 
 """
@@ -8374,4 +8436,10 @@ input RegularHoursInput {
   workdayEndHour: Int!
   workdayEndMinute: Int!
   timezone: String
+}
+
+input EditPropertyCategoryInput {
+  id: ID
+  name: String!
+  index: Int!
 }

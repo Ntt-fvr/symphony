@@ -90,6 +90,10 @@ func (resolver) DocumentCategory() generated.DocumentCategoryResolver {
 	return documentCategoryResolver{}
 }
 
+func (resolver) PropertyCategory() generated.PropertyCategoryResolver {
+	return propertyCategoryResolver{}
+}
+
 func (resolver) FloorPlan() generated.FloorPlanResolver {
 	return floorPlanResolver{}
 }

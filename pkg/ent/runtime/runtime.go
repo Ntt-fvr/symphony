@@ -70,6 +70,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
@@ -1718,6 +1719,33 @@ func init() {
 	property.DefaultUpdateTime = propertyDescUpdateTime.Default.(func() time.Time)
 	// property.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	property.UpdateDefaultUpdateTime = propertyDescUpdateTime.UpdateDefault.(func() time.Time)
+	propertycategoryMixin := schema.PropertyCategory{}.Mixin()
+	propertycategory.Policy = privacy.NewPolicies(schema.PropertyCategory{})
+	propertycategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := propertycategory.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	propertycategoryMixinFields0 := propertycategoryMixin[0].Fields()
+	propertycategoryFields := schema.PropertyCategory{}.Fields()
+	_ = propertycategoryFields
+	// propertycategoryDescCreateTime is the schema descriptor for create_time field.
+	propertycategoryDescCreateTime := propertycategoryMixinFields0[0].Descriptor()
+	// propertycategory.DefaultCreateTime holds the default value on creation for the create_time field.
+	propertycategory.DefaultCreateTime = propertycategoryDescCreateTime.Default.(func() time.Time)
+	// propertycategoryDescUpdateTime is the schema descriptor for update_time field.
+	propertycategoryDescUpdateTime := propertycategoryMixinFields0[1].Descriptor()
+	// propertycategory.DefaultUpdateTime holds the default value on creation for the update_time field.
+	propertycategory.DefaultUpdateTime = propertycategoryDescUpdateTime.Default.(func() time.Time)
+	// propertycategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	propertycategory.UpdateDefaultUpdateTime = propertycategoryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// propertycategoryDescName is the schema descriptor for name field.
+	propertycategoryDescName := propertycategoryFields[0].Descriptor()
+	// propertycategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	propertycategory.NameValidator = propertycategoryDescName.Validators[0].(func(string) error)
 	propertytypeMixin := schema.PropertyType{}.Mixin()
 	propertytype.Policy = privacy.NewPolicies(schema.PropertyType{})
 	propertytype.Hooks[0] = func(next ent.Mutator) ent.Mutator {

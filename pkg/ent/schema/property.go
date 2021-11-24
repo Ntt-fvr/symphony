@@ -249,6 +249,10 @@ func (Property) Edges() []ent.Edge {
 			Unique(),
 		edge.To("project_value", Project.Type).
 			Unique(),
+		edge.From("property_category", PropertyCategory.Type).
+			Ref("properties").
+			Unique().
+			Annotations(entgql.MapsTo("propertyCategory")),
 	}
 }
 
@@ -268,6 +272,8 @@ func (Property) Indexes() []ent.Index {
 		index.Edges("type", "work_order").
 			Unique(),
 		index.Edges("type", "project").
+			Unique(),
+		index.Edges("type", "property_category").
 			Unique(),
 	}
 }

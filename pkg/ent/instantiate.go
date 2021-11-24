@@ -367,6 +367,12 @@ func (c *PropertyClient) Instantiate(pr *Property) *Property {
 }
 
 // Instantiate entity configuration.
+func (c *PropertyCategoryClient) Instantiate(pc *PropertyCategory) *PropertyCategory {
+	pc.config = c.config
+	return pc
+}
+
+// Instantiate entity configuration.
 func (c *PropertyTypeClient) Instantiate(pt *PropertyType) *PropertyType {
 	pt.config = c.config
 	return pt

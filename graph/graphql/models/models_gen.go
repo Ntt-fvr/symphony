@@ -888,6 +888,12 @@ type EditProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
+type EditPropertyCategoryInput struct {
+	ID    *int   `json:"id"`
+	Name  string `json:"name"`
+	Index int    `json:"index"`
+}
+
 type EditRecommendationsCategoryInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
