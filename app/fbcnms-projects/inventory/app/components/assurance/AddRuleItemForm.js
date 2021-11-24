@@ -16,6 +16,8 @@ import type {AddRuleItemFormQuery} from './__generated__/AddRuleItemFormQuery.gr
 
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
+import classNames from 'classnames';
+
 import AddRuleLimitMutation from '../../mutations/AddRuleLimitMutation';
 import AddRuleMutation from '../../mutations/AddRuleMutation';
 import Button from '@symphony/design-system/components/Button';
@@ -29,6 +31,7 @@ import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import TextPairingContainer from '@symphony/design-system/components/helpers/TextPairingContainer';
 import fbt from 'fbt';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -74,147 +77,32 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   header: {
-    margin: '0 0 1rem 1.4rem',
+    margin: '0 17px 0px 36px',
   },
   headerCardEdit: {
-    padding: '17px 22px 17px 0',
-  },
-  containerComponents: {
-    // border: '1px solid red',
-  },
-  containerComponents2: {
-    // border: '1px solid blue',
-  },
-  fecha: {
-    // border: '1px solid green',
+    padding: '17px 10px 17px 0',
   },
   checkFecha: {
-    // border: '1px solid black',
+    padding: '0 0 7px 7px',
   },
-  inicioFecha: {
-    // border: '1px solid blue',
-  },
-  finFecha: {
-    // border: '1px solid red',
-  },
-  formField: {
-    // width: '100%',
-    padding: '0 5px 36px 5px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: symphony.palette.D200,
-    },
-    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: symphony.palette.B600,
-    },
-    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.85)',
-    },
-    '& .MuiFormControl-root': {
-      // margin: '0 10px 36px 5px',
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: symphony.palette.B600,
-      },
-    },
-    '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
-      fontSize: '14px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    '& label': {
-      fontSize: '14px',
-      lineHeight: '8px',
-    },
-  },
-  cardHeader: {
-    margin: '20px 43px 22px 40px',
-  },
-  containerEnabled: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  EnabledName: {
-    paddingRight: '7px',
-  },
-  textInput: {
-    width: '100%',
-    minHeight: '36px',
-  },
-  textDescription: {
-    width: '100%',
-    // minHeight: '36px',
-  },
-  addRule: {
-    margin: '20px',
-    width: '111px',
-    alignSelf: 'flex-end',
-  },
-  title: {
-    marginLeft: '10px',
-  },
-  selectAlarm: {
-    // margin: '0 5px 36px 5px',
-    '& .MuiOutlinedInput-root ': {
-      color: '#FFFFFF',
-      height: '38px',
-    },
-    '& .MuiSelect-iconOutlined': {
-      color: '#FFFFFF',
-    },
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
-    width: '100%',
-    // border: '1px solid #D2DAE7',
-    // color: '#FFFFFF',
-    fontWeight: '700',
-    borderRadius: '4px',
-    background: '#556072',
-  },
-  paper: {
-    height: '240px',
-    margin: '0 43px 22px 43px',
-    backgroundColor: '#F5F7FC',
-  },
-  fieldUpper: {
-    '& .MuiSelect-select': {
-      // padding: '9px 0 0 10px',
-    },
+  fieldSelectLimitUpper: {
     '& .MuiSelect-select:focus': {
       borderRadius: '4px',
-      border: '1px solid #00AF5B',
       background: '#FFFFFF',
+      border: '2px solid #00AF5B',
     },
     fontWeight: '700',
   },
-  fieldLower: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
+  fieldSelectLimitLower: {
     '& .MuiSelect-select:focus': {
       borderRadius: '4px',
-      border: '1px solid #FA383E',
       background: '#FFFFFF',
+      border: '2px solid #FA383E',
     },
     fontWeight: '700',
-  },
-  limitRange: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '20px',
-  },
-  limitRangeInputs: {
-    margin: '0px 26px 20px 0',
-  },
-  limitRangeSelect: {
-    margin: '0 10px 10px 10px',
-    display: 'flex',
   },
   formFieldUpper: {
-    padding: '0 5px ',
-
+    padding: '0 10px ',
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
       borderColor: '#00AF5B',
     },
@@ -233,19 +121,11 @@ const useStyles = makeStyles(() => ({
       display: 'flex',
       alignItems: 'center',
       borderRadius: '4px',
-      border: '1px solid #00AF5B',
+      border: '2px solid #00AF5B',
     },
   },
-  grilla: {
-    marginTop: '20px',
-    borderTop: '1px solid #D2DAE7',
-  },
-  grillaInterna: {
-    paddingTop: '10px',
-  },
   formFieldLower: {
-    padding: '0 5px ',
-
+    padding: '0 10px ',
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
       borderColor: '#FA383E',
     },
@@ -264,23 +144,83 @@ const useStyles = makeStyles(() => ({
       display: 'flex',
       alignItems: 'center',
       borderRadius: '4px',
-      border: '1px solid #FA383E',
+      border: '2px solid #FA383E',
     },
   },
+  formField: {
+    padding: '0 10px 36px 10px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: symphony.palette.D200,
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: symphony.palette.B600,
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: symphony.palette.B600,
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
+  },
+  cardHeader: {
+    margin: '0px 0px 0px 10px',
+  },
+  titleSwitch: {
+    '& .followingText': {
+      color: '#3984FF',
+    },
+  },
+  textInput: {
+    width: '100%',
+    minHeight: '36px',
+  },
+  actionAddRule: {
+    margin: '20px',
+    width: '111px',
+    alignSelf: 'flex-end',
+  },
+  selectAlarm: {
+    '& .MuiOutlinedInput-root ': {
+      color: '#FFFFFF',
+      height: '38px',
+    },
+    '& .MuiSelect-iconOutlined': {
+      color: '#FFFFFF',
+    },
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    width: '100%',
+    fontWeight: '700',
+    borderRadius: '4px',
+    background: '#556072',
+  },
+  secondSection: {
+    marginTop: '20px',
+    borderTop: '1px solid #D2DAE7',
+  },
+  sectionAlarm: {
+    paddingTop: '10px',
+  },
+  fieldAlarmSeverity: {
+    padding: '0 10px 0 10px',
+  },
   titleLimit: {
-    // marginLeft: '26px',
+    padding: '0 0 5px 10px',
   },
-  red: {
-    // border: '1px solid #FA383E',
-    // borderRadius: '4px',
-  },
-  green: {
-    // border: '1px solid #00AF5B',
-    // borderRadius: '4px',
-  },
-  // icon: {
-  //   fill: 'white',
-  // },
 }));
 
 type Props = $ReadOnly<{|
@@ -393,9 +333,6 @@ const AddRuleItemForm = (props: Props) => {
 
     AddRuleMutation(variables, response);
   }
-  //"2017-05-24T10:30"
-  const fechaActual = moment().format('yyyy-MM-DDTHH:mm');
-  // console.log(fechaActual);
   return (
     <div className={classes.root}>
       <Grid container>
@@ -414,7 +351,7 @@ const AddRuleItemForm = (props: Props) => {
           <Grid>
             <FormField>
               <Button
-                className={classes.addRule}
+                className={classes.actionAddRule}
                 onClick={() => {
                   handleClick();
                   hideAddRuleForm();
@@ -427,7 +364,7 @@ const AddRuleItemForm = (props: Props) => {
           <Grid>
             <FormField>
               <Button
-                className={classes.addRule}
+                className={classes.actionAddRule}
                 onClick={() => {
                   hideAddRuleForm();
                 }}
@@ -454,15 +391,10 @@ const AddRuleItemForm = (props: Props) => {
                   Build Rule
                 </Text>
               </Grid>
-              <Grid className={classes.containerEnabled}>
-                <Text
-                  className={classes.EnabledName}
-                  color={'primary'}
-                  variant={'caption'}>
-                  Enabled
-                </Text>
+              <Grid>
                 <Switch
-                  title={''}
+                  className={classes.titleSwitch}
+                  title={'Enabled'}
                   checked={checked}
                   onChange={setChecked}
                   onClick={handleClick}
@@ -470,16 +402,9 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
             </Grid>
 
-            <Grid container xs={12} className={classes.containerComponents}>
-              <Grid
-                className={classes.containerComponents}
-                container
-                item
-                xs={8}
-                sm={8}
-                lg={8}
-                xl={8}>
-                <Grid className={classes.containerComponents} xs>
+            <Grid container xs={12}>
+              <Grid container item xs={12} sm={12} md={8}>
+                <Grid xs={12} sm={12} md={6}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
                       {...validationName}
@@ -493,7 +418,7 @@ const AddRuleItemForm = (props: Props) => {
                     />
                   </form>
                 </Grid>
-                <Grid xs>
+                <Grid xs={12} sm={12} md={6}>
                   <FormField className={classes.formField}>
                     <TextField
                       required
@@ -506,7 +431,7 @@ const AddRuleItemForm = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid item xs={2} sm={2} lg={2} xl={2}>
+              <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -519,7 +444,7 @@ const AddRuleItemForm = (props: Props) => {
                   />
                 </form>
               </Grid>
-              <Grid item xs={2} sm={2} lg={2} xl={2}>
+              <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -534,14 +459,7 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
             </Grid>
 
-            <Grid
-              className={classes.fecha}
-              container
-              item
-              xs={8}
-              sm={8}
-              lg={8}
-              xl={8}>
+            <Grid container item xs={12} sm={12} md={8} lg={8} xl={8}>
               <Grid className={classes.checkFecha} xs={12}>
                 <Checkbox
                   checked={checkedCheckbox}
@@ -551,7 +469,7 @@ const AddRuleItemForm = (props: Props) => {
                   }
                 />
               </Grid>
-              <Grid className={classes.inicioFecha} xs>
+              <Grid xs={6}>
                 <FormField className={classes.formField}>
                   <TextField
                     label="Start"
@@ -560,13 +478,12 @@ const AddRuleItemForm = (props: Props) => {
                     type="datetime-local"
                     name="startTime"
                     InputLabelProps={{shrink: true}}
-                    defaultValue={fechaActual}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />{' '}
                 </FormField>
               </Grid>
-              <Grid className={classes.finFecha} xs>
+              <Grid xs={6}>
                 <FormField className={classes.formField}>
                   <TextField
                     label="End"
@@ -575,7 +492,6 @@ const AddRuleItemForm = (props: Props) => {
                     type="datetime-local"
                     name="endTime"
                     InputLabelProps={{shrink: true}}
-                    defaultValue={fechaActual}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />
@@ -583,119 +499,106 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
             </Grid>
 
-            <Grid className={classes.containerComponents} container>
-              <Grid className={classes.containerComponents2} container xs={8}>
-                <Grid xs={12}>
-                  <Text weight="bold" variant="h6">
-                    Limits Range
-                  </Text>
-                </Grid>
-
-                <Grid
-                  container
-                  direction="row"
-                  justifyContent="flex-start"
-                  alignItems="center"
-                  item
-                  xs={6}
-                  sm={6}
-                  lg={6}
-                  xl={6}>
-                  <Grid xs={12}>
-                    <Text weight="medium" variant="subtitle4">
-                      Upper target
-                    </Text>
-                  </Grid>
-                  <Grid xs>
-                    <FormField className={classes.formFieldUpper}>
-                      <TextField
-                        disableUnderline
-                        select
-                        name="upperTarget"
-                        variant="outlined"
-                        className={`${classes.fieldUpper}`}
-                        onChange={handleChange}>
-                        {data.comparators.edges.map((item, index) => (
-                          <MenuItem key={index} value={item.node?.id}>
-                            {item.node?.name}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    </FormField>
-                  </Grid>
-                  <Grid xs>
-                    <FormField className={classes.formFieldUpper}>
-                      <TextField
-                        variant="outlined"
-                        type="number"
-                        placeholder="Number"
-                        className={`${classes.textInput}`}
-                        name="upperLimit"
-                        onChange={handleChange}
-                      />
-                    </FormField>
-                  </Grid>
-                </Grid>
-
-                <Grid
-                  container
-                  direction="row"
-                  item
-                  xs={6}
-                  sm={6}
-                  lg={6}
-                  xl={6}>
-                  <Grid xs={12}>
-                    <Text weight="medium" variant="subtitle4">
-                      Lower limit'
-                    </Text>
-                  </Grid>
-                  <Grid xs>
-                    <FormField className={classes.formFieldLower}>
-                      <TextField
-                        required
-                        select
-                        className={classes.fieldLower}
-                        disableUnderline
-                        variant="outlined"
-                        name="lowerTarget"
-                        onChange={handleChange}>
-                        {data.comparators.edges.map((item, index) => (
-                          <MenuItem key={index} value={item.node?.id}>
-                            {item.node?.name}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    </FormField>
-                  </Grid>
-                  <Grid xs>
-                    <FormField className={classes.formFieldLower}>
-                      <TextField
-                        type="number"
-                        variant="outlined"
-                        placeholder="Number"
-                        className={`${classes.textInput}`}
-                        name="lowerLimit"
-                        onChange={handleChange}
-                      />
-                    </FormField>
-                  </Grid>
-                </Grid>
+            <Grid container xs={12} sm={12} md={8}>
+              <Grid className={classes.titleLimit} xs={12}>
+                <Text weight="bold" variant="h6">
+                  Limits Range
+                </Text>
               </Grid>
-            </Grid>
-            <Grid className={classes.grilla}>
-              <Grid className={classes.grillaInterna} xs={8} container>
-                <Grid xs={12}>
-                  <Text weight="medium" variant="subtitle4">
-                    Alarm severity
+
+              <Grid container item xs={6} sm={6} lg={6} xl={6}>
+                <Grid className={classes.titleLimit} xs={12}>
+                  <Text weight="medium" variant="subtitle2">
+                    Upper target
                   </Text>
                 </Grid>
                 <Grid xs>
+                  <FormField className={classes.formFieldUpper}>
+                    <TextField
+                      disableUnderline
+                      select
+                      name="upperTarget"
+                      variant="outlined"
+                      className={classes.fieldSelectLimitUpper}
+                      onChange={handleChange}>
+                      {data.comparators.edges.map((item, index) => (
+                        <MenuItem key={index} value={item.node?.id}>
+                          {item.node?.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </FormField>
+                </Grid>
+                <Grid xs>
+                  <FormField className={classes.formFieldUpper}>
+                    <TextField
+                      variant="outlined"
+                      type="number"
+                      placeholder="Number"
+                      className={`${classes.textInput}`}
+                      name="upperLimit"
+                      onChange={handleChange}
+                    />
+                  </FormField>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6} sm={6} lg={6} xl={6}>
+                <Grid className={classes.titleLimit} xs={12}>
+                  <Text weight="medium" variant="subtitle2">
+                    Lower limit
+                  </Text>
+                </Grid>
+                <Grid xs>
+                  <FormField className={classes.formFieldLower}>
+                    <TextField
+                      required
+                      select
+                      className={classes.fieldSelectLimitLower}
+                      disableUnderline
+                      variant="outlined"
+                      name="lowerTarget"
+                      onChange={handleChange}>
+                      {data.comparators.edges.map((item, index) => (
+                        <MenuItem key={index} value={item.node?.id}>
+                          {item.node?.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </FormField>
+                </Grid>
+                <Grid xs>
+                  <FormField className={classes.formFieldLower}>
+                    <TextField
+                      type="number"
+                      variant="outlined"
+                      placeholder="Number"
+                      className={`${classes.textInput}`}
+                      name="lowerLimit"
+                      onChange={handleChange}
+                    />
+                  </FormField>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid className={classes.secondSection}>
+              <Grid
+                className={classes.sectionAlarm}
+                container
+                xs={12}
+                sm={12}
+                md={8}>
+                <Grid className={classes.titleLimit} xs={12}>
+                  <Text weight="medium" variant="subtitle2">
+                    Alarm severity
+                  </Text>
+                </Grid>
+                <Grid xs={6} className={classes.fieldAlarmSeverity}>
                   <FormField className={classes.selectAlarm}>
                     <TextField
                       required
                       select
-                      // className={classes.selectAlarm}
                       variant="outlined"
                       name="alarmSeverities"
                       onChange={handleChange}
@@ -708,7 +611,7 @@ const AddRuleItemForm = (props: Props) => {
                     </TextField>
                   </FormField>
                 </Grid>
-                <Grid xs>
+                <Grid xs={6}>
                   <FormField className={classes.formField}>
                     <TextField
                       required
@@ -759,66 +662,3 @@ const AddRuleItemForm = (props: Props) => {
 };
 
 export default AddRuleItemForm;
-
-/**
-<Grid item xs={12} sm={12} lg={2} xl={2}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    select
-                    className={classes.selectAlarm}
-                    label="Alarm severity"
-                    variant="outlined"
-                    name="alarmSeverities"
-                    onChange={handleChange}
-                    inputProps>
-                    {data.eventSeverities.edges.map((item, index) => (
-                      <MenuItem key={index} value={item.node?.id}>
-                        {item.node?.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    variant="outlined"
-                    label="Alarm type name"
-                    autoComplete="off"
-                    className={classes.textInput}
-                    name="alarmType"
-                    onChange={handleChange}
-                  />
-                </form>
-              </Grid>
-
-
-              <Grid item xs={12} sm={12} lg={5} xl={5}>
-                <form className={classes.formField}>
-                  <TextField
-                    variant="outlined"
-                    label="Specific problem"
-                    className={classes.textInput}
-                    type="multiline"
-                    rows={3}
-                    name="specificProblem"
-                    onChange={handleChange}
-                  />
-                </form>
-                <form className={classes.formField}>
-                  <TextField
-                    variant="outlined"
-                    label="Additional info"
-                    className={classes.textInput}
-                    type="multiline"
-                    rows={3}
-                    name="additionalInfo"
-                    onChange={handleChange}
-                  />
-                </form>
-              </Grid>
-
-
- */
