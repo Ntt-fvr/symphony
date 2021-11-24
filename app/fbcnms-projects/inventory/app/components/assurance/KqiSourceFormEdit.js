@@ -32,7 +32,6 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 43px 22px 30px',
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#B8C2D3',
     },
@@ -43,7 +42,6 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.75)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
       },
@@ -182,7 +180,7 @@ const KqiSourceFormEdit = (props: Props) => {
         </Grid>
         <Grid item xs={12}>
           <Card>
-            <Grid container>
+            <Grid style={{padding: '21px'}} container spacing={2}>
               <Grid item xs={6}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField

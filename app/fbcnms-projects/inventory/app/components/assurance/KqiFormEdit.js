@@ -55,6 +55,35 @@ const useStyles = makeStyles(() => ({
   header: {
     marginBottom: '1rem',
   },
+  formField: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      width: '100%',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
+  },
   select: {
     '& .MuiSelect-select': {
       padding: '9px 0 0 10px',
@@ -69,6 +98,14 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     fontSize: '14px',
   },
+  textarea: {
+    minHeight: '60px',
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
+  },
   gridStyleLeft: {
     paddingRight: '0.5rem',
   },
@@ -82,7 +119,7 @@ const useStyles = makeStyles(() => ({
   },
   calendar: {
     '& .MuiOutlinedInput-input': {
-      height: '12px',
+      height: '24px',
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
@@ -364,143 +401,180 @@ const KqiFormEdit = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name" required {...validationName}>
-                  <TextInput {...name} autoComplete="off" name="name" />
-                </FormField>
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullwidth
+                    label="Name"
+                    variant="outlined"
+                    name="name"
+                    {...name}
+                    {...validationName}
+                  />
+                </form>
               </Grid>
               <Grid item xs={6}>
-                <FormField label="ID">
-                  <TextInput
-                    value={formValues.item.id}
-                    autoComplete="off"
-                    name="id"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
                     disabled
+                    required
+                    className={classes.textInput}
+                    label="ID"
+                    variant="outlined"
+                    name="id"
+                    value={formValues.item.id}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Category">
-                    <Select
-                      {...kqiCategory}
-                      className={classes.select}
-                      disableUnderline
-                      name="kqiCategory">
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      select
+                      required
+                      label="Category"
+                      fullWidth
+                      name="kqiCategory"
+                      variant="outlined"
+                      {...kqiCategory}>
                       {dataCategories?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
                           {item.name}
                         </MenuItem>
                       ))}
-                    </Select>
-                  </FormField>
+                    </TextField>
+                  </form>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="Perspective">
-                    <Select
-                      {...kqiPerspective}
-                      className={classes.select}
-                      disableUnderline
-                      name="kqiPerspective">
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      select
+                      required
+                      label="Perspective"
+                      fullWidth
+                      name="kqiPerspective"
+                      variant="outlined"
+                      {...kqiPerspective}>
                       {dataPerspectives?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
                           {item.name}
                         </MenuItem>
                       ))}
-                    </Select>
-                  </FormField>
+                    </TextField>
+                  </form>
                 </Grid>
                 <Grid item xs={12}>
                   <Text variant="subtitle1">Activation period</Text>
                 </Grid>
               </Grid>
               <Grid item xs={6}>
-                <FormField label="Description">
-                  <TextInput
-                    {...description}
-                    autoComplete="off"
-                    name="description"
-                    type="multiline"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullwidth
+                    multiline
                     rows={4}
+                    label="Description"
+                    variant="outlined"
+                    name="description"
+                    className={classes.textarea}
+                    inputProps={{maxLength: 200}}
+                    {...description}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Start">
+                  <FormField className={classes.formField}>
                     <TextField
-                      {...startDateTime}
-                      disabled
+                      required
                       name="startDateTime"
                       variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
+                      label="Start"
                       className={classes.calendar}
+                      InputLabelProps={{ shrink: true }}
+                      {...startDateTime}
                     />
                   </FormField>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="End">
+                  <FormField className={classes.formField}>
                     <TextField
-                      {...endDateTime}
+                      required
                       name="endDateTime"
                       variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
+                      label="End"
+                      InputLabelProps={{ shrink: true }}
                       className={classes.calendar}
+                      {...endDateTime}
                     />
                   </FormField>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Source">
-                    <Select
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      select
+                      required
+                      label="Source"
+                      fullWidth
+                      name="kqiSource"
+                      variant="outlined"
                       {...kqiSource}
-                      className={classes.select}
-                      disableUnderline
-                      name="kqiSource">
+                    >
                       {dataSources?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
                           {item.name}
                         </MenuItem>
                       ))}
-                    </Select>
-                  </FormField>
+                    </TextField>
+                  </form>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <Grid style={{marginBottom: '6px'}}>
-                    <Text style={{fontSize: '14px'}}>Temporal frequency</Text>
-                  </Grid>
                   <Grid container alignItems="center">
-                    <Grid item xs={5} lg={3}>
+                    <Grid style={{marginBottom: '41px'}} item xs={5} lg={3}>
                       <Text variant={'caption'}>Repeat every</Text>
                     </Grid>
                     <Grid item xs>
-                      <FormField>
-                        <Select
+                      <form className={classes.formField} autoComplete="off">
+                        <TextField
+                          required
+                          select
+                          label="Temporal frequency"
+                          fullWidth
+                          name="kqiTemporalFrequency"
+                          variant="outlined"
                           {...kqiTemporalFrequency}
-                          className={classes.select}
-                          disableUnderline
-                          name="kqiTemporalFrequency">
+                        >
                           {dataTemporalFrequencies.map((item, index) => (
                             <MenuItem key={index} value={item.id}>
                               {item.name}
                             </MenuItem>
                           ))}
-                        </Select>
-                      </FormField>
+                        </TextField>
+                      </form>
                     </Grid>
                   </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={6}>
-                <FormField label="Formula">
-                  <TextInput
-                    {...formula}
-                    autoComplete="off"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullwidth
+                    multiline
+                    rows={4}
+                    label="Formula"
+                    variant="outlined"
                     name="formula"
-                    type="multiline"
-                    rows={10}
+                    className={classes.textarea}
+                    inputProps={{maxLength: 1000}}
+                    {...formula}
                   />
-                </FormField>
+                </form>
               </Grid>
             </Grid>
           </Card>

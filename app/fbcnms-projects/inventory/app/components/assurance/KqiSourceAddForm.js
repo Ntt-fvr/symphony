@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     margin: '4px 0 24px 0',
   },
   addCounter: {
-    margin: '15px 0',
+    marginBottom: '17px',
     width: '135px',
     alignSelf: 'flex-end',
   },

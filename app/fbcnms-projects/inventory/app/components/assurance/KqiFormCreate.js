@@ -18,7 +18,6 @@ import Grid from '@material-ui/core/Grid';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
@@ -238,6 +237,7 @@ const KqiFormCreate = (props: Props) => {
                     variant="outlined"
                     name="name"
                     onChange={handleChange}
+                    {...validationName}
                   />
                 </form>
               </Grid>
@@ -249,7 +249,6 @@ const KqiFormCreate = (props: Props) => {
                     label="ID"
                     variant="outlined"
                     name="id"
-                    onChange={handleChange}
                   />
                 </form>
               </Grid>
@@ -262,6 +261,7 @@ const KqiFormCreate = (props: Props) => {
                       label="Category"
                       fullWidth
                       name="kqiCategory"
+                      onChange={handleChange}
                       variant="outlined">
                       {dataCategories?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
@@ -279,6 +279,7 @@ const KqiFormCreate = (props: Props) => {
                       label="Perspective"
                       fullWidth
                       name="kqiPerspective"
+                      onChange={handleChange}
                       variant="outlined">
                       {dataPerspectives?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
@@ -345,6 +346,7 @@ const KqiFormCreate = (props: Props) => {
                       label="Source"
                       fullWidth
                       name="kqiSource"
+                      onChange={handleChange}
                       variant="outlined">
                       {dataSources?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
@@ -355,9 +357,6 @@ const KqiFormCreate = (props: Props) => {
                   </form>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  {/* <Grid style={{marginBottom: '6px'}}>
-                    <Text style={{fontSize: '14px'}}>Temporal frequency</Text>
-                  </Grid> */}
                   <Grid container alignItems="center">
                     <Grid style={{marginBottom: '41px'}} item xs={5} lg={3}>
                       <Text variant={'caption'}>Repeat every</Text>
@@ -370,6 +369,7 @@ const KqiFormCreate = (props: Props) => {
                           label="Temporal frequency"
                           fullWidth
                           name="kqiTemporalFrequency"
+                          onChange={handleChange}
                           variant="outlined">
                           {dataTemporalFrequencies.map((item, index) => (
                             <MenuItem key={index} value={item.id}>

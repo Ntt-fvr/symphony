@@ -13,6 +13,7 @@ import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import Button from '@material-ui/core/Button';
@@ -21,6 +22,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
+import TextField from '@material-ui/core/TextField';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {MenuItem, Select} from '@material-ui/core';
 
@@ -47,19 +49,42 @@ const useStyles = makeStyles(() => ({
   header: {
     marginBottom: '1rem',
   },
-  select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-      width: '100%',
+  formField: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
     },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    overflow: 'hidden',
-    position: 'relative',
-    boxSizing: 'border-box',
-    minHeight: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      width: '100%',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
+  },
+  textarea: {
+    minHeight: '60px',
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
   },
   gridStyleLeft: {
     paddingRight: '0.5rem',
@@ -283,36 +308,43 @@ const KqiFormEditTarget = (props: Props) => {
         <Grid xs>
           <Card>
             <Grid container spacing={3}>
-              <Grid item xs={1}>
-                <FormField label="Enabled">
-                  <Switch checked={checked} title={''} onChange={setChecked} />
-                </FormField>
+              <Grid style={{marginTop: '-10px'}} item xs={1}>
+                <Text style={{fontSize: '12px'}}>Enable</Text><br />
+                <Switch checked={checked} title={''} onChange={setChecked} />
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName} label="Target name">
-                  <TextInput {...name} autoComplete="off" name="name" />
-                </FormField>
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullwidth
+                    label="Target name"
+                    variant="outlined"
+                    name="name"
+                    {...name}
+                    {...validationName}
+                  />
+                </form>
               </Grid>
               <Grid container item xs={8} lg={7}>
                 <Grid item xs={6} style={{paddingRight: '1.3rem'}}>
-                  <Grid style={{marginBottom: '6px'}}>
-                    <Text style={{fontSize: '14px'}}>Comparator</Text>
-                  </Grid>
                   <Grid container>
                     <Grid item xs={6} className={classes.gridStyleLeft}>
-                      <FormField>
-                        <Select
+                      <form className={classes.formField} autoComplete="off">
+                        <TextField
+                          select
+                          required
+                          label="Comparator"
+                          fullWidth
+                          name="comparatorSelect"
                           {...comparatorSelect}
-                          className={classes.select}
-                          disableUnderline
-                          name="comparatorSelect">
+                          variant="outlined">
                           {dataComparatorSelect?.map((item, index) => (
                             <MenuItem key={index} value={item.id}>
                               {item.name}
                             </MenuItem>
                           ))}
-                        </Select>
-                      </FormField>
+                        </TextField>
+                      </form>
                     </Grid>
                     <Grid item xs={6} className={classes.gridStyleRight}>
                       <FormField>
@@ -328,24 +360,25 @@ const KqiFormEditTarget = (props: Props) => {
                   </Grid>
                 </Grid>
                 <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
-                  <Grid style={{marginBottom: '6px'}}>
-                    <Text style={{fontSize: '14px'}}>Warning comparator</Text>
-                  </Grid>
                   <Grid container>
                     <Grid item xs={6} className={classes.gridStyleLeft}>
-                      <FormField>
-                        <Select
+                      <form className={classes.formField} autoComplete="off">
+                        <TextField
+                          select
+                          required
+                          label="Warning comparator"
+                          fullWidth
+                          name="warningComparatorSelect"
+                          variant="outlined"
                           {...warningComparatorSelect}
-                          className={classes.select}
-                          disableUnderline
-                          name="warningComparatorSelect">
+                        >
                           {dataComparatorSelect?.map((item, index) => (
                             <MenuItem key={index} value={item.id}>
                               {item.name}
                             </MenuItem>
                           ))}
-                        </Select>
-                      </FormField>
+                        </TextField>
+                      </form>
                     </Grid>
                     <Grid item xs={6} className={classes.gridStyleRight}>
                       <FormField>
@@ -362,46 +395,54 @@ const KqiFormEditTarget = (props: Props) => {
                 </Grid>
               </Grid>
               <Grid item xs={4} lg={5}>
-                <FormField label="Impact">
-                  <TextInput
-                    {...impact}
-                    autoComplete="off"
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    fullwidth
+                    multiline
+                    rows={2}
+                    label="Impact"
+                    variant="outlined"
                     name="impact"
-                    type="multiline"
-                    rows={4}
+                    className={classes.textarea}
+                    inputProps={{maxLength: 200}}
+                    {...impact}
                   />
-                </FormField>
+                </form>
               </Grid>
               <Grid container item xs={8} lg={7}>
                 <Grid container item xs={6} style={{paddingRight: '1.3rem'}}>
                   <Grid item xs={6} className={classes.gridStyleLeft}>
-                    <FormField label="Periods">
-                      <TextInput
-                        {...period}
-                        autoComplete="off"
-                        name="period"
-                        placeholder="Number"
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                        required
+                        fullwidth
                         type="number"
+                        label="Periods"
+                        placeholder="Number"
+                        variant="outlined"
+                        name="period"
+                        {...period}
                       />
-                    </FormField>
+                    </form>
                   </Grid>
                   <Grid item xs={6} className={classes.gridStyleRight}>
-                    <Grid style={{marginBottom: '6px'}}>
-                      <Text style={{fontSize: '14px'}}>Allowed Variation</Text>
-                    </Grid>
-                    <FormField>
-                      <TextInput
-                        {...allowedVariation}
-                        autoComplete="off"
-                        name="allowedVariation"
-                        placeholder="Number"
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                        required
+                        fullwidth
                         type="number"
+                        label="Allowed Variation"
+                        placeholder="Number"
+                        variant="outlined"
+                        name="allowedVariation"
+                        {...allowedVariation}
                       />
-                    </FormField>
+                    </form>
                   </Grid>
                 </Grid>
                 <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
-                  <Grid style={{marginBottom: '6px'}}>
+                  <Grid style={{marginBottom: '6px', marginTop: '-26px'}}>
                     <Text style={{fontSize: '14px'}}>Active Hours</Text>
                   </Grid>
                   <Grid container>
@@ -411,20 +452,23 @@ const KqiFormEditTarget = (props: Props) => {
                       xs={6}
                       alignItems="center"
                       className={classes.gridStyleLeft}>
-                      <Grid item xs={4} lg={3} xl={2}>
+                      <Grid style={{marginBottom: '41px'}} item xs={4} lg={3} xl={2}>
                         <Text variant="caption">From</Text>
                       </Grid>
                       <Grid item xs={8} lg={9} xl={10}>
-                        <FormField>
-                          <TextInput
-                            {...initTime}
-                            autoComplete="off"
+                        <form className={classes.formField} autoComplete="off">
+                          <TextField
+                            required
+                            fullwidth
+                            variant="outlined"
                             name="initTime"
-                            placeholder="Number"
                             type="number"
-                            suffix="hrs"
+                            InputProps={{
+                              endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
+                            }}
+                            {...initTime}
                           />
-                        </FormField>
+                        </form>
                       </Grid>
                     </Grid>
                     <Grid
@@ -433,20 +477,23 @@ const KqiFormEditTarget = (props: Props) => {
                       xs={6}
                       alignItems="center"
                       className={classes.gridStyleRight}>
-                      <Grid item xs={2} xl={1}>
+                      <Grid style={{marginBottom: '41px'}} item xs={2} xl={1}>
                         <Text variant="caption">to</Text>
                       </Grid>
                       <Grid item xs={10} xl={11}>
-                        <FormField>
-                          <TextInput
-                            {...endTime}
-                            autoComplete="off"
+                        <form className={classes.formField} autoComplete="off">
+                          <TextField
+                            required
+                            fullwidth
+                            variant="outlined"
                             name="endTime"
-                            suffix="hrs"
-                            placeholder="Number"
                             type="number"
+                            InputProps={{
+                              endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
+                            }}
+                            {...endTime}
                           />
-                        </FormField>
+                        </form>
                       </Grid>
                     </Grid>
                   </Grid>
