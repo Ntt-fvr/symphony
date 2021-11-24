@@ -80,22 +80,22 @@ const useStyles = makeStyles(() => ({
     padding: '17px 22px 17px 0',
   },
   containerComponents: {
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   containerComponents2: {
-    border: '1px solid blue',
+    // border: '1px solid blue',
   },
   fecha: {
-    border: '1px solid green',
+    // border: '1px solid green',
   },
   checkFecha: {
-    border: '1px solid black',
+    // border: '1px solid black',
   },
   inicioFecha: {
-    border: '1px solid blue',
+    // border: '1px solid blue',
   },
   finFecha: {
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   formField: {
     // width: '100%',
@@ -165,25 +165,27 @@ const useStyles = makeStyles(() => ({
     margin: '0 43px 22px 43px',
     backgroundColor: '#F5F7FC',
   },
-  selectUpper: {
-    // width: '100%',
-    '& .MuiSelect-select': {
-      // padding: '9px 0 0 10px',
-    },
-    border: '1px solid #00AF5B',
-    fontWeight: '700',
-    borderRadius: '4px',
-    backgroundColor: 'white',
-  },
-  selectLower: {
-    width: '25%',
+  fieldUpper: {
     '& .MuiSelect-select': {
       padding: '9px 0 0 10px',
     },
-    border: '1px solid #FA383E',
+    '& .MuiSelect-select:focus': {
+      borderRadius: '4px',
+      border: '1px solid #00AF5B',
+      background: '#FFFFFF',
+    },
     fontWeight: '700',
-    borderRadius: '4px',
-    backgroundColor: 'white',
+  },
+  fieldLower: {
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    '& .MuiSelect-select:focus': {
+      borderRadius: '4px',
+      border: '1px solid #FA383E',
+      background: '#FFFFFF',
+    },
+    fontWeight: '700',
   },
   limitRange: {
     display: 'flex',
@@ -198,16 +200,69 @@ const useStyles = makeStyles(() => ({
     margin: '0 10px 10px 10px',
     display: 'flex',
   },
+  formFieldUpper: {
+    padding: '0 5px ',
+
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#00AF5B',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      width: '100%',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#00AF5B',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+      borderRadius: '4px',
+      border: '1px solid #00AF5B',
+    },
+  },
+  grilla: {
+    border: '1px solid red',
+  },
+  formFieldLower: {
+    padding: '0 5px ',
+
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#FA383E',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      width: '100%',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#FA383E',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+      borderRadius: '4px',
+      border: '1px solid #FA383E',
+    },
+  },
   titleLimit: {
     // marginLeft: '26px',
   },
   red: {
-    border: '1px solid #FA383E',
-    borderRadius: '4px',
+    // border: '1px solid #FA383E',
+    // borderRadius: '4px',
   },
   green: {
-    border: '1px solid #00AF5B',
-    borderRadius: '4px',
+    // border: '1px solid #00AF5B',
+    // borderRadius: '4px',
   },
   // icon: {
   //   fill: 'white',
@@ -325,7 +380,7 @@ const AddRuleItemForm = (props: Props) => {
     AddRuleMutation(variables, response);
   }
   //"2017-05-24T10:30"
-  // const fechaActual = moment().format('yyyy-MM-DDTHH:mm');
+  const fechaActual = moment().format('yyyy-MM-DDTHH:mm');
   // console.log(fechaActual);
   return (
     <div className={classes.root}>
@@ -490,7 +545,8 @@ const AddRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="startTime"
-                    // defaultValue={fechaActual}
+                    InputLabelProps={{shrink: true}}
+                    defaultValue={fechaActual}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />{' '}
@@ -504,7 +560,8 @@ const AddRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="endTime"
-                    // defaultValue={fechaActual}
+                    InputLabelProps={{shrink: true}}
+                    defaultValue={fechaActual}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />
@@ -530,18 +587,19 @@ const AddRuleItemForm = (props: Props) => {
                   sm={6}
                   lg={6}
                   xl={6}>
-                  <Grid>
-                    <Text variant={'subtitle4'} className={classes.titleLimit}>
-                      Upper limit
+                  <Grid xs={12}>
+                    <Text weight="medium" variant="subtitle4">
+                      Upper target
                     </Text>
                   </Grid>
-                  <Grid md>
-                    <FormField className={classes.limitRangeSelect}>
+                  <Grid xs>
+                    <FormField className={classes.formFieldUpper}>
                       <TextField
-                        className={classes.selectUpper}
                         disableUnderline
                         select
                         name="upperTarget"
+                        variant="outlined"
+                        className={`${classes.fieldUpper}`}
                         onChange={handleChange}>
                         {data.comparators.edges.map((item, index) => (
                           <MenuItem key={index} value={item.node?.id}>
@@ -551,30 +609,21 @@ const AddRuleItemForm = (props: Props) => {
                       </TextField>
                     </FormField>
                   </Grid>
-                  <Grid md>
-                    <FormField className={classes.limitRangeSelect}>
+                  <Grid xs>
+                    <FormField className={classes.formFieldUpper}>
                       <TextField
                         variant="outlined"
                         type="number"
                         placeholder="Number"
-                        // ${classes.textInput}
-                        className={`${classes.green}`}
+                        // ${classes.textInput} ${classes.green}
+                        className={`${classes.textInput}`}
                         name="upperLimit"
                         onChange={handleChange}
                       />
                     </FormField>
                   </Grid>
                 </Grid>
-                {/* <Grid item xs={4} sm={4} lg={6} xl={6}>
-                    <form
-                      // className={classes.formField}
-                      autoComplete="off"
-                      className={classes.limitRangeInputs}>
-                     
-                    </form>
-                  </Grid> */}
-                {/* <Grid item xs={12} sm={12}>
-                  </Grid> */}
+
                 <Grid
                   container
                   direction="row"
@@ -583,39 +632,45 @@ const AddRuleItemForm = (props: Props) => {
                   sm={6}
                   lg={6}
                   xl={6}>
-                  <Text className={classes.titleLimit}>Lower limit</Text>
-                  <form autoComplete="off" className={classes.limitRangeSelect}>
-                    <TextField
-                      required
-                      select
-                      className={classes.selectLower}
-                      disableUnderline
-                      name="lowerTarget"
-                      onChange={handleChange}>
-                      {data.comparators.edges.map((item, index) => (
-                        <MenuItem key={index} value={item.node?.id}>
-                          {item.node?.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                    <TextField
-                      type="number"
-                      placeholder="Number"
-                      className={`${classes.textInput} ${classes.red}`}
-                      name="lowerLimit"
-                      onChange={handleChange}
-                    />
-                  </form>
+                  <Grid xs={12}>
+                    <Text weight="medium" variant="subtitle4">
+                      Lower limit'
+                    </Text>
+                  </Grid>
+                  <Grid xs>
+                    <FormField className={classes.formFieldLower}>
+                      <TextField
+                        required
+                        select
+                        className={classes.fieldLower}
+                        disableUnderline
+                        variant="outlined"
+                        name="lowerTarget"
+                        onChange={handleChange}>
+                        {data.comparators.edges.map((item, index) => (
+                          <MenuItem key={index} value={item.node?.id}>
+                            {item.node?.name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </FormField>
+                  </Grid>
+                  <Grid xs>
+                    <FormField className={classes.formFieldLower}>
+                      <TextField
+                        type="number"
+                        variant="outlined"
+                        placeholder="Number"
+                        className={`${classes.textInput}`}
+                        name="lowerLimit"
+                        onChange={handleChange}
+                      />
+                    </FormField>
+                  </Grid>
                 </Grid>
-                {/* <Grid item xs={4} sm={4} lg={6} xl={6}>
-                    <form
-                      autoComplete="off"
-                      className={classes.limitRangeInputs}>
-                     
-                    </form>
-                  </Grid> */}
               </Grid>
             </Grid>
+            <Grid className={classes.grilla} />
           </Card>
         </Grid>
       </Grid>
