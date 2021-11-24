@@ -43,7 +43,7 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '7px',
       width: '100%',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
@@ -289,7 +289,7 @@ const KqiFormCreate = (props: Props) => {
                     </TextField>
                   </form>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid style={{marginBottom: '-21px'}} item xs={12}>
                   <Text variant="subtitle1">Activation period</Text>
                 </Grid>
               </Grid>
@@ -299,7 +299,7 @@ const KqiFormCreate = (props: Props) => {
                     required
                     fullwidth
                     multiline
-                    rows={4}
+                    rows={2}
                     label="Description"
                     variant="outlined"
                     name="description"
@@ -358,10 +358,10 @@ const KqiFormCreate = (props: Props) => {
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
                   <Grid container alignItems="center">
-                    <Grid style={{marginBottom: '41px'}} item xs={5} lg={3}>
+                    <Grid style={{marginBottom: '7px'}} item xs={5} lg={4}>
                       <Text variant={'caption'}>Repeat every</Text>
                     </Grid>
-                    <Grid item xs>
+                    <Grid item xs lg={8}>
                       <form className={classes.formField} autoComplete="off">
                         <TextField
                           select
@@ -388,7 +388,7 @@ const KqiFormCreate = (props: Props) => {
                     required
                     fullwidth
                     multiline
-                    rows={4}
+                    rows={7}
                     label="Formula"
                     variant="outlined"
                     name="formula"

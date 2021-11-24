@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '7px',
       width: '100%',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
@@ -452,7 +452,7 @@ const KqiFormEditTarget = (props: Props) => {
                       xs={6}
                       alignItems="center"
                       className={classes.gridStyleLeft}>
-                      <Grid style={{marginBottom: '41px'}} item xs={4} lg={3} xl={2}>
+                      <Grid style={{marginBottom: '7px'}} item xs={4} lg={3} xl={2}>
                         <Text variant="caption">From</Text>
                       </Grid>
                       <Grid item xs={8} lg={9} xl={10}>
@@ -477,7 +477,7 @@ const KqiFormEditTarget = (props: Props) => {
                       xs={6}
                       alignItems="center"
                       className={classes.gridStyleRight}>
-                      <Grid style={{marginBottom: '41px'}} item xs={2} xl={1}>
+                      <Grid style={{marginBottom: '7px'}} item xs={2} xl={1}>
                         <Text variant="caption">to</Text>
                       </Grid>
                       <Grid item xs={10} xl={11}>
