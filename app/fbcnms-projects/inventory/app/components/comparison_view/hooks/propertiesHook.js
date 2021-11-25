@@ -12,7 +12,7 @@ import type {EntityType} from '../ComparisonViewTypes';
 import type {PropertyType} from '../../../common/PropertyType';
 
 import RelayEnvironment from '../../../common/RelayEnvironment';
-import {getPossibleProperties} from '../FilterUtils';
+import {getListableProperties, getPossibleProperties} from '../FilterUtils';
 import {graphql} from 'relay-runtime';
 import {useGraphQL} from '@fbcnms/ui/hooks';
 import {useMemo} from 'react';
@@ -23,6 +23,7 @@ const propertiesQuery = graphql`
       name
       type
       stringValue
+      isMandatory
     }
   }
 `;
@@ -37,7 +38,11 @@ const usePropertyFilters = (entityType: EntityType): ?Array<PropertyType> => {
     if (propertiesResponse.response === null) {
       return null;
     }
-    return getPossibleProperties(propertiesResponse.response);
+    if (entityType === 'project') {
+      return getListableProperties(propertiesResponse.response);
+    } else {
+      return getPossibleProperties(propertiesResponse.response);
+    }
   }, [propertiesResponse.response]);
 };
 
