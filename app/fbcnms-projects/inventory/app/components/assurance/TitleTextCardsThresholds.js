@@ -41,7 +41,7 @@ function TitleTextCardsThresholds() {
       justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid container className={classes.status} xs={2} md={3}>
+      <Grid container className={classes.status} item xs={2} md={3}>
         <Text
           useEllipsis={true}
           color="primary"
@@ -59,12 +59,12 @@ function TitleTextCardsThresholds() {
           Threshold name
         </Text>
       </Grid>
-      <Grid xs={2} md={3}>
+      <Grid item xs={2} md={3}>
         <Text color="primary" variant="subtitle2" weight={'medium'}>
           ID
         </Text>
       </Grid>
-      <Grid xs={6} md={5}>
+      <Grid item xs={6} md={5}>
         <Text
           useEllipsis={true}
           color="primary"

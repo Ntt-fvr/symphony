@@ -202,9 +202,9 @@ const EditThresholdItemForm = (props: Props) => {
           className={classes.header}
           container
           direction="row"
-          justifyContent="flex-end"
+          justifycontent="flex-end"
           alignItems="center">
-          <Grid xs>
+          <Grid item xs>
             <ConfigureTitleSubItem
               title={fbt('Threshold Catalog/', 'Threshold Catalog')}
               tag={` ${formValues.name}`}
@@ -242,9 +242,9 @@ const EditThresholdItemForm = (props: Props) => {
               className={classes.headerCardEdit}
               container
               direction="row"
-              justifyContent="space-evenly"
+              justifycontent="space-evenly"
               alignItems="center">
-              <Grid xs>
+              <Grid item xs>
                 <Text
                   weight={'bold'}
                   variant={'h6'}
@@ -263,7 +263,7 @@ const EditThresholdItemForm = (props: Props) => {
               </Grid>
             </Grid>
             <Grid container>
-              <Grid xs={12} sm={12} md={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <Grid item xs={12}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
@@ -293,7 +293,7 @@ const EditThresholdItemForm = (props: Props) => {
                   </form>
                 </Grid>
               </Grid>
-              <Grid xs={12} sm={12} md={6}>
+              <Grid item xs={12} sm={12} md={6}>
                 <Grid item xs={12}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField

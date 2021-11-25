@@ -72,7 +72,7 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   header: {
-    margin: '0 17px 0px 36px',
+    margin: '0 0px 0px 36px',
   },
   headerCardEdit: {
     padding: '17px 10px 17px 0',
@@ -271,7 +271,7 @@ const AddRuleItemForm = (props: Props) => {
   const handleDisable = useDisabledButton(rule.data, namesRules, numberFields);
 
   const validationName = useValidation(rule.data.name, namesRules, 'Rule');
-
+  console.log(rule);
   function handleChange({target}) {
     setRule({
       data: {
@@ -335,9 +335,8 @@ const AddRuleItemForm = (props: Props) => {
           className={classes.header}
           container
           direction="row"
-          justifyContent="flex-end"
           alignItems="center">
-          <Grid xs>
+          <Grid item={true} xs>
             <ConfigureTitleSubItem
               title={fbt('Threshold Catalog/', 'Threshold Catalog')}
               tag={` ${threshold.name}`}
@@ -376,9 +375,9 @@ const AddRuleItemForm = (props: Props) => {
               className={classes.headerCardEdit}
               container
               direction="row"
-              justifyContent="space-evenly"
+              justifycontent="space-evenly"
               alignItems="center">
-              <Grid xs>
+              <Grid item xs>
                 <Text
                   weight={'bold'}
                   variant={'h6'}
@@ -397,9 +396,9 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
             </Grid>
 
-            <Grid container xs={12}>
+            <Grid container item xs={12}>
               <Grid container item xs={12} sm={12} md={8}>
-                <Grid xs={12} sm={12} md={6}>
+                <Grid item xs={12} sm={12} md={6}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
                       {...validationName}
@@ -413,7 +412,7 @@ const AddRuleItemForm = (props: Props) => {
                     />
                   </form>
                 </Grid>
-                <Grid xs={12} sm={12} md={6}>
+                <Grid item xs={12} sm={12} md={6}>
                   <FormField className={classes.formField}>
                     <TextField
                       required
@@ -455,7 +454,7 @@ const AddRuleItemForm = (props: Props) => {
             </Grid>
 
             <Grid container item xs={12} sm={12} md={8} lg={8} xl={8}>
-              <Grid className={classes.checkFecha} xs={12}>
+              <Grid className={classes.checkFecha} item xs={12}>
                 <Checkbox
                   checked={checkedCheckbox}
                   title="Definite time period"
@@ -464,7 +463,7 @@ const AddRuleItemForm = (props: Props) => {
                   }
                 />
               </Grid>
-              <Grid xs={6}>
+              <Grid item xs={6}>
                 <FormField className={classes.formField}>
                   <TextField
                     label="Start"
@@ -478,7 +477,7 @@ const AddRuleItemForm = (props: Props) => {
                   />{' '}
                 </FormField>
               </Grid>
-              <Grid xs={6}>
+              <Grid item xs={6}>
                 <FormField className={classes.formField}>
                   <TextField
                     label="End"
@@ -494,23 +493,22 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
             </Grid>
 
-            <Grid container xs={12} sm={12} md={8}>
-              <Grid className={classes.titleLimit} xs={12}>
+            <Grid container item xs={12} sm={12} md={8}>
+              <Grid className={classes.titleLimit} item xs={12}>
                 <Text weight="bold" variant="h6">
                   Limits Range
                 </Text>
               </Grid>
 
               <Grid container item xs={6} sm={6} lg={6} xl={6}>
-                <Grid className={classes.titleLimit} xs={12}>
+                <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">
                     Upper target
                   </Text>
                 </Grid>
-                <Grid xs>
+                <Grid item xs>
                   <FormField className={classes.formFieldUpper}>
                     <TextField
-                      disableUnderline
                       select
                       name="upperTarget"
                       variant="outlined"
@@ -524,7 +522,7 @@ const AddRuleItemForm = (props: Props) => {
                     </TextField>
                   </FormField>
                 </Grid>
-                <Grid xs>
+                <Grid item xs>
                   <FormField className={classes.formFieldUpper}>
                     <TextField
                       variant="outlined"
@@ -539,18 +537,16 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
 
               <Grid container item xs={6} sm={6} lg={6} xl={6}>
-                <Grid className={classes.titleLimit} xs={12}>
+                <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">
                     Lower limit
                   </Text>
                 </Grid>
-                <Grid xs>
+                <Grid item xs>
                   <FormField className={classes.formFieldLower}>
                     <TextField
-                      required
                       select
                       className={classes.fieldSelectLimitLower}
-                      disableUnderline
                       variant="outlined"
                       name="lowerTarget"
                       onChange={handleChange}>
@@ -562,7 +558,7 @@ const AddRuleItemForm = (props: Props) => {
                     </TextField>
                   </FormField>
                 </Grid>
-                <Grid xs>
+                <Grid item xs>
                   <FormField className={classes.formFieldLower}>
                     <TextField
                       type="number"
@@ -581,23 +577,23 @@ const AddRuleItemForm = (props: Props) => {
               <Grid
                 className={classes.sectionAlarm}
                 container
+                item
                 xs={12}
                 sm={12}
                 md={8}>
-                <Grid className={classes.titleLimit} xs={12}>
+                <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">
                     Alarm severity
                   </Text>
                 </Grid>
-                <Grid xs={6} className={classes.fieldAlarmSeverity}>
+                <Grid item xs={6} className={classes.fieldAlarmSeverity}>
                   <FormField className={classes.selectAlarm}>
                     <TextField
                       required
                       select
                       variant="outlined"
                       name="alarmSeverities"
-                      onChange={handleChange}
-                      inputProps>
+                      onChange={handleChange}>
                       {data.eventSeverities.edges.map((item, index) => (
                         <MenuItem key={index} value={item.node?.id}>
                           {item.node?.name}
@@ -606,7 +602,7 @@ const AddRuleItemForm = (props: Props) => {
                     </TextField>
                   </FormField>
                 </Grid>
-                <Grid xs={6}>
+                <Grid item xs={6}>
                   <FormField className={classes.formField}>
                     <TextField
                       required

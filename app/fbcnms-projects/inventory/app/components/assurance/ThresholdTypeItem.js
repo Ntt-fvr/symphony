@@ -252,7 +252,7 @@ export default function ThresholdTypeItem(props: Props) {
             <Grid item xs={10} className={classes.descriptionKpi}>
               Description: {description}
             </Grid>
-            <Grid xs={10}>
+            <Grid item xs={10}>
               <Text weight="bold" variant="subtitle1">
                 Rules contained
               </Text>
