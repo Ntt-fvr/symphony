@@ -13,10 +13,7 @@ import type {AddRuleMutationResponse} from '../../mutations/__generated__/AddRul
 import type {AddRuleMutationVariables} from '../../mutations/__generated__/AddRuleMutation.graphql';
 
 import type {AddRuleItemFormQuery} from './__generated__/AddRuleItemFormQuery.graphql';
-
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
-
-import classNames from 'classnames';
 
 import AddRuleLimitMutation from '../../mutations/AddRuleLimitMutation';
 import AddRuleMutation from '../../mutations/AddRuleMutation';
@@ -26,12 +23,10 @@ import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import TextPairingContainer from '@symphony/design-system/components/helpers/TextPairingContainer';
 import fbt from 'fbt';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
