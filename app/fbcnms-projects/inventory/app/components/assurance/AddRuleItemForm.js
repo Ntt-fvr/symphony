@@ -271,7 +271,7 @@ const AddRuleItemForm = (props: Props) => {
   const handleDisable = useDisabledButton(rule.data, namesRules, numberFields);
 
   const validationName = useValidation(rule.data.name, namesRules, 'Rule');
-  console.log(rule);
+
   function handleChange({target}) {
     setRule({
       data: {
