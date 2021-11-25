@@ -29,6 +29,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
 import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
+import symphony from '@symphony/design-system/theme/symphony';
 import moment from 'moment';
 
 const StyledTableCell = withStyles(() => ({
@@ -48,9 +49,29 @@ const StyledTableRow = withStyles(() => ({
 const useStyles = makeStyles(() => ({
   root: {
     width: '100%',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
   },
   container: {
     maxHeight: '500px',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: symphony.palette.D300,
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: symphony.palette.D100,
+      borderRadius: '4px',
+    },
   },
   table: {
     minWidth: 750,
@@ -70,7 +91,7 @@ const AlarmFilteringTable = (props: Props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [checked, setChecked] = useState(true);
   const toggleSwitch = useCallback(() => setChecked(!checked));
-  
+
   const elementRef = useRef();
 
   const handleChangePage = (event, newPage) => {
@@ -156,7 +177,7 @@ const AlarmFilteringTable = (props: Props) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 15]}
         component="div"
-        count={dataValues?.length}
+        count={!dataValues ? 0 : dataValues.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}

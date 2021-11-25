@@ -11,7 +11,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import fbt from 'fbt';
 
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import moment from 'moment';
 
 import Button from '@material-ui/core/Button';
@@ -23,6 +22,7 @@ import TextField from '@material-ui/core/TextField';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
 
@@ -43,6 +43,9 @@ import type {Node} from './AlarmFilteringTypes';
 
 import classNames from 'classnames';
 import {DARK} from '@symphony/design-system/theme/symphony';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
+import Event from '@material-ui/icons/Event';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -62,19 +65,43 @@ const useStyles = makeStyles(() => ({
     height: '36px',
     alignSelf: 'flex-end',
   },
-  calendar: {
+  containerEnabled: {
+    display: 'flex !important',
+    justifyContent: 'flex-end !important',
+    alignItems: 'center !important',
+    '& span': {
+      paddingRight: '7px',
+    },
+  },
+  formField: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      width: '100%',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
     '& .MuiOutlinedInput-input': {
-      height: '12px',
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
     },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: 'rgba(157, 169, 190, 0.49)',
-      },
-      '&:hover fieldset': {
-        borderColor: 'rgba(157, 169, 190, 0.49)',
-      },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
     },
-  }
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -102,16 +129,16 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
   const networkResource = useFormInput(formValues.item.networkResource);
-  const beginTime = useFormInput(
-    moment(formValues.item.beginTime).format('YYYY-MM-DDThh:mm'),
-  );
-  const endTime = useFormInput(
-    moment(formValues.item.endTime).format('YYYY-MM-DDThh:mm'),
-  );
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
   const [checked, setChecked] = useState(formValues.item.enable);
   const [valueStatus, setValueStatus] = useState();
+  const [slotStartDate, setSlotStartDate] = useState(
+    moment(formValues.item.beginTime),
+  );
+  const [slotEndDate, setSlotEndDate] = useState(
+    moment(formValues.item.endTime),
+  );
   const elementRef = useRef();
 
   useEffect(() => {
@@ -126,8 +153,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     name.value.trim(),
     networkResource.value.trim(),
     reason.value.trim(),
-    beginTime.value,
-    endTime.value,
+    slotStartDate,
+    slotEndDate,
   ];
   const inputFilter = () => {
     return (
@@ -155,8 +182,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         name: name.value,
         networkResource: networkResource.value,
         enable: checked,
-        beginTime: moment(beginTime.value).format(),
-        endTime: moment(endTime.value).format(),
+        beginTime: slotStartDate,
+        endTime: slotEndDate,
         reason: reason.value,
       },
     };
@@ -166,26 +193,22 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   return (
     <Grid className={classes.root}>
       <Grid container>
-        <Grid
-          className={classes.header}
-          container
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center">
-          <Grid xs>
+        <Grid className={classes.header} container alignItems="center">
+          <Grid item xs>
             <Text variant="h6" weight="bold">
-              {fbt('Edit Alarm Filter', ' ')}
+              {fbt('Edit Alarm Filtering', ' ')}
             </Text>
           </Grid>
           <Grid>
-            <IconButton style={{marginRight: '1rem'}}>
+            <IconButton
+              style={{marginRight: '1rem'}}
+              onClick={() => {
+                handleRemove(formValues.item.id);
+                closeEditForm();
+              }}>
               <DeleteOutlinedIcon
                 style={{color: DARK.D300}}
                 icon={DeleteOutlinedIcon}
-                onClick={() => {
-                  handleRemove(formValues.item.id);
-                  closeEditForm();
-                }}
               />
             </IconButton>
           </Grid>
@@ -217,18 +240,22 @@ const EditAlarmFilteringItemForm = (props: Props) => {
             </FormField>
           </Grid>
         </Grid>
-        <Grid xs>
+        <Grid item xs>
           <Card>
             <Grid container spacing={3}>
-              <Grid item xs={1}>
-                <FormField label="Enabled">
-                  <Switch title={''} checked={checked} onChange={setChecked} />
-                </FormField>
+              <Grid className={classes.containerEnabled} item xs={12}>
+                <Text color={'primary'} variant={'caption'}>
+                  Enabled
+                </Text>
+                <Switch title={''} checked={checked} onChange={setChecked} />
               </Grid>
-              <Grid item xs={11}>
-                <FormField {...validationName} label="Name">
-                  <TextInput
+              <Grid item xs={12}>
+                <FormField {...validationName} className={classes.formField}>
+                  <TextField
                     {...name}
+                    required
+                    label="Name"
+                    variant="outlined"
                     autoComplete="off"
                     disabled
                     name="name"
@@ -238,55 +265,76 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={12}>
-                  <FormField label="Network Resource">
-                    <TextInput
+                  <FormField className={classes.formField}>
+                    <TextField
                       {...networkResource}
+                      label="Network Resource"
+                      variant="outlined"
                       autoComplete="off"
                       name="networkResource"
                     />
                   </FormField>
                 </Grid>
-                <Grid item xs={12}>
-                  <Text variant="subtitle1">Exception period</Text>
-                </Grid>
               </Grid>
               <Grid item xs={6}>
-                <FormField label="Reason">
-                  <TextInput
+                <FormField className={classes.formField}>
+                  <TextField
                     {...reason}
+                    multiline
+                    rows={3}
+                    label="Reason"
+                    variant="outlined"
                     autoComplete="off"
-                    type="multiline"
-                    rows={4}
                     name="reason"
                   />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Start">
-                    <TextField
-                      {...beginTime}
-                      disabled={DisableButton}
-                      className={classes.calendar}
-                      autoComplete="off"
-                      variant="outlined"
-                      id="datetime-local"
-                      type="datetime-local"
-                      name="beginTime"
-                    />
+                  <FormField className={classes.formField}>
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <DateTimePicker
+                        disabled={DisableButton}
+                        label="Start"
+                        variant="inline"
+                        inputVariant="outlined"
+                        value={slotStartDate}
+                        onChange={setSlotStartDate}
+                        format="yyyy/MM/DD HH:mm a"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton>
+                                <Event style={{color: '#8895AD'}} />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="End">
-                    <TextField
-                      {...endTime}
-                      className={classes.calendar}
-                      autoComplete="off"
-                      variant="outlined"
-                      id="datetime-local"
-                      type="datetime-local"
-                      name="endTime"
-                    />
+                  <FormField className={classes.formField}>
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <DateTimePicker
+                        label="End"
+                        variant="inline"
+                        inputVariant="outlined"
+                        value={slotEndDate}
+                        onChange={setSlotEndDate}
+                        format="yyyy/MM/DD HH:mm a"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton>
+                                <Event style={{color: '#8895AD'}} />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
               </Grid>
@@ -296,12 +344,11 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   xs={4}
                   lg={3}
                   xl={2}
-                  className={classes.gridStyleLeft}
-                  style={{marginTop: '25px'}}>
+                  className={classes.gridStyleLeft}>
                   <AlarmFilteringStatus
                     creationDate={creationTime.value}
-                    beginDate={beginTime.value}
-                    endDate={endTime.value}
+                    beginDate={String(slotStartDate)}
+                    endDate={String(slotEndDate)}
                     forwardedRef={elementRef}
                   />
                 </Grid>
@@ -311,8 +358,16 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   lg={9}
                   xl={10}
                   className={classes.gridStyleRight}>
-                  <FormField label="ID">
-                    <TextInput name="id" {...id} disabled />
+                  <FormField className={classes.formField}>
+                    <TextField
+                      disabled
+                      label="ID"
+                      variant="outlined"
+                      name="id"
+                      autoComplete="off"
+                      {...id}
+                      disabled
+                    />
                   </FormField>
                 </Grid>
               </Grid>

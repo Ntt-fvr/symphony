@@ -18,7 +18,7 @@ import moment from 'moment';
 const useStyles = makeStyles(() => ({
   button: {
     width: '100%',
-    height: '36px',
+    height: '38px',
   },
   buttonActive: {
     border: '1px solid #00AF5B',
