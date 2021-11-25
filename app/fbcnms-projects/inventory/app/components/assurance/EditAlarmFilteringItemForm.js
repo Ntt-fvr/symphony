@@ -55,10 +55,10 @@ const useStyles = makeStyles(() => ({
     marginBottom: '1rem',
   },
   gridStyleLeft: {
-    paddingRight: '0.5rem',
+    paddingRight: '12px',
   },
   gridStyleRight: {
-    paddingLeft: '0.5rem',
+    paddingLeft: '12px',
   },
   option: {
     width: '111px',
@@ -245,11 +245,11 @@ const EditAlarmFilteringItemForm = (props: Props) => {
             <Grid container spacing={3}>
               <Grid className={classes.containerEnabled} item xs={12}>
                 <Text color={'primary'} variant={'caption'}>
-                  Enabled
+                  Enable
                 </Text>
                 <Switch title={''} checked={checked} onChange={setChecked} />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={4}>
                 <FormField {...validationName} className={classes.formField}>
                   <TextField
                     {...name}
@@ -263,25 +263,34 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={12}>
-                  <FormField className={classes.formField}>
-                    <TextField
-                      {...networkResource}
-                      label="Network Resource"
-                      variant="outlined"
-                      autoComplete="off"
-                      name="networkResource"
-                    />
-                  </FormField>
-                </Grid>
+              <Grid item xs={4}>
+                <FormField className={classes.formField}>
+                  <TextField
+                    {...networkResource}
+                    label="Network Resource"
+                    variant="outlined"
+                    autoComplete="off"
+                    name="networkResource"
+                  />
+                </FormField>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
+                <FormField className={classes.formField}>
+                  <TextField
+                    disabled
+                    label="ID"
+                    variant="outlined"
+                    name="id"
+                    autoComplete="off"
+                    {...id}
+                    disabled
+                  />
+                </FormField>
+              </Grid>
+              <Grid item xs={12}>
                 <FormField className={classes.formField}>
                   <TextField
                     {...reason}
-                    multiline
-                    rows={3}
                     label="Reason"
                     variant="outlined"
                     autoComplete="off"
@@ -289,7 +298,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={6}>
+              <Grid container item xs={8}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
                   <FormField className={classes.formField}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -338,37 +347,19 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid
-                  item
-                  xs={4}
-                  lg={3}
-                  xl={2}
-                  className={classes.gridStyleLeft}>
+              <Grid container item xs={12} alignItems="center">
+                <Grid item className={classes.gridStyleLeft}>
+                  <Text variant="subtitle2" weight="bold">
+                    Status
+                  </Text>
+                </Grid>
+                <Grid item xs={1}>
                   <AlarmFilteringStatus
                     creationDate={creationTime.value}
                     beginDate={String(slotStartDate)}
                     endDate={String(slotEndDate)}
                     forwardedRef={elementRef}
                   />
-                </Grid>
-                <Grid
-                  item
-                  xs={8}
-                  lg={9}
-                  xl={10}
-                  className={classes.gridStyleRight}>
-                  <FormField className={classes.formField}>
-                    <TextField
-                      disabled
-                      label="ID"
-                      variant="outlined"
-                      name="id"
-                      autoComplete="off"
-                      {...id}
-                      disabled
-                    />
-                  </FormField>
                 </Grid>
               </Grid>
             </Grid>

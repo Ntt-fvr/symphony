@@ -88,12 +88,11 @@ const useStyles = makeStyles(() => ({
       lineHeight: '8px',
     },
   },
-
   gridStyleLeft: {
-    paddingRight: '0.5rem',
+    paddingRight: '12px',
   },
   gridStyleRight: {
-    paddingLeft: '0.5rem',
+    paddingLeft: '12px',
   },
 }));
 
@@ -192,7 +191,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </Text>
                 <Switch title={''} checked={checked} onChange={setChecked} />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={4}>
                 <FormField className={classes.formField}>
                   <TextField
                     required
@@ -205,26 +204,35 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={12}>
-                  <FormField className={classes.formField}>
-                    <TextField
-                      required
-                      label="Network Resource"
-                      variant="outlined"
-                      name="networkResource"
-                      autoComplete="off"
-                      onChange={handleChange}
-                    />
-                  </FormField>
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
                 <FormField className={classes.formField}>
                   <TextField
                     required
-                    multiline
-                    rows={3}
+                    label="Network Resource"
+                    variant="outlined"
+                    name="networkResource"
+                    autoComplete="off"
+                    onChange={handleChange}
+                  />
+                </FormField>
+              </Grid>
+              <Grid item xs={4}>
+                <FormField className={classes.formField}>
+                  <TextField
+                    disabled
+                    label="ID"
+                    variant="outlined"
+                    name="id"
+                    autoComplete="off"
+                    InputLabelProps={{shrink: true}}
+                    onChange={handleChange}
+                  />
+                </FormField>
+              </Grid>
+              <Grid item xs={12}>
+                <FormField className={classes.formField}>
+                  <TextField
+                    required
                     label="Reason"
                     variant="outlined"
                     name="reason"
@@ -234,7 +242,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={6}>
+              <Grid container item xs={8}>
                 <Grid item xs={6} className={classes.gridStyleLeft}>
                   <FormField className={classes.formField}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -282,13 +290,13 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid
-                  item
-                  xs={4}
-                  lg={3}
-                  xl={2}
-                  className={classes.gridStyleLeft}>
+              <Grid container item xs={12} alignItems="center">
+                <Grid item className={classes.gridStyleLeft}>
+                  <Text variant="subtitle2" weight="bold">
+                    Status
+                  </Text>
+                </Grid>
+                <Grid item xs={1}>
                   <AlarmFilteringStatus
                     creationDate={moment(
                       AlarmFilter.data.creationTime,
@@ -297,24 +305,6 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     endDate={String(slotEndDate)}
                     forwardedRef={elementRef}
                   />
-                </Grid>
-                <Grid
-                  item
-                  xs={8}
-                  lg={9}
-                  xl={10}
-                  className={classes.gridStyleRight}>
-                  <FormField className={classes.formField}>
-                    <TextField
-                      disabled
-                      label="ID"
-                      variant="outlined"
-                      name="id"
-                      autoComplete="off"
-                      InputLabelProps={{shrink: true}}
-                      onChange={handleChange}
-                    />
-                  </FormField>
                 </Grid>
               </Grid>
             </Grid>
