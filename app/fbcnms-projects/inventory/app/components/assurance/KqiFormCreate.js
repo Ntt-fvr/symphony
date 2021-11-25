@@ -193,14 +193,14 @@ const KqiFormCreate = (props: Props) => {
           className={classes.header}
           container
           direction="row"
-          justifyContent="flex-end"
+          justify="flex-end"
           alignItems="center">
           <Grid>
             <Text variant="h6" weight={'bold'}>
               {fbt('Create KQI', ' ')}
             </Text>
           </Grid>
-          <Grid xs>
+          <Grid item xs>
             <FormField>
               <Button
                 style={{marginRight: '1rem'}}
@@ -225,14 +225,14 @@ const KqiFormCreate = (props: Props) => {
             </FormField>
           </Grid>
         </Grid>
-        <Grid xs>
+        <Grid item xs>
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     label="Name"
                     variant="outlined"
                     name="name"
@@ -261,6 +261,7 @@ const KqiFormCreate = (props: Props) => {
                       label="Category"
                       fullWidth
                       name="kqiCategory"
+                      defaultValue=""
                       onChange={handleChange}
                       variant="outlined">
                       {dataCategories?.map((item, index) => (
@@ -279,6 +280,7 @@ const KqiFormCreate = (props: Props) => {
                       label="Perspective"
                       fullWidth
                       name="kqiPerspective"
+                      defaultValue=""
                       onChange={handleChange}
                       variant="outlined">
                       {dataPerspectives?.map((item, index) => (
@@ -297,7 +299,7 @@ const KqiFormCreate = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     multiline
                     rows={2}
                     label="Description"
@@ -346,6 +348,7 @@ const KqiFormCreate = (props: Props) => {
                       label="Source"
                       fullWidth
                       name="kqiSource"
+                      defaultValue=""
                       onChange={handleChange}
                       variant="outlined">
                       {dataSources?.map((item, index) => (
@@ -369,6 +372,7 @@ const KqiFormCreate = (props: Props) => {
                           label="Temporal frequency"
                           fullWidth
                           name="kqiTemporalFrequency"
+                          defaultValue=""
                           onChange={handleChange}
                           variant="outlined">
                           {dataTemporalFrequencies.map((item, index) => (
@@ -386,7 +390,7 @@ const KqiFormCreate = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     multiline
                     rows={7}
                     label="Formula"

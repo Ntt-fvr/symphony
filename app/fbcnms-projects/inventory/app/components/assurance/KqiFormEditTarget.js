@@ -262,23 +262,22 @@ const KqiFormEditTarget = (props: Props) => {
           className={classes.header}
           container
           direction="row"
-          justifyContent="flex-end"
+          justify="flex-end"
           alignItems="center">
-          <Grid xs>
+          <Grid item xs>
             <ConfigureTitleSubItem
               title={fbt('KQI Catalog/', '') + ` ${nameKqi}/`}
               tag={` ${formValues.item.name}`}
             />
           </Grid>
           <Grid style={{marginRight: '1rem'}}>
-            <IconButton>
-              <DeleteOutlinedIcon
-                onClick={() => {
-                  handleRemove(formValues.item.id);
-                  returnFormEdit();
-                }}
-                style={{color: DARK.D300}}
-              />
+            <IconButton
+              onClick={() => {
+                handleRemove(formValues.item.id);
+                returnFormEdit();
+              }}
+            >
+              <DeleteOutlinedIcon style={{color: DARK.D300}}/>
             </IconButton>
           </Grid>
           <Grid style={{marginRight: '1rem'}}>
@@ -305,7 +304,7 @@ const KqiFormEditTarget = (props: Props) => {
             </FormField>
           </Grid>
         </Grid>
-        <Grid xs>
+        <Grid item xs>
           <Card>
             <Grid container spacing={3}>
               <Grid style={{marginTop: '-10px'}} item xs={1}>
@@ -316,7 +315,7 @@ const KqiFormEditTarget = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     label="Target name"
                     variant="outlined"
                     name="name"
@@ -398,7 +397,7 @@ const KqiFormEditTarget = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     multiline
                     rows={2}
                     label="Impact"
@@ -416,7 +415,7 @@ const KqiFormEditTarget = (props: Props) => {
                     <form className={classes.formField} autoComplete="off">
                       <TextField
                         required
-                        fullwidth
+                        fullWidth
                         type="number"
                         label="Periods"
                         placeholder="Number"
@@ -430,7 +429,7 @@ const KqiFormEditTarget = (props: Props) => {
                     <form className={classes.formField} autoComplete="off">
                       <TextField
                         required
-                        fullwidth
+                        fullWidth
                         type="number"
                         label="Allowed Variation"
                         placeholder="Number"
@@ -459,7 +458,7 @@ const KqiFormEditTarget = (props: Props) => {
                         <form className={classes.formField} autoComplete="off">
                           <TextField
                             required
-                            fullwidth
+                            fullWidth
                             variant="outlined"
                             name="initTime"
                             type="number"
@@ -484,7 +483,7 @@ const KqiFormEditTarget = (props: Props) => {
                         <form className={classes.formField} autoComplete="off">
                           <TextField
                             required
-                            fullwidth
+                            fullWidth
                             variant="outlined"
                             name="endTime"
                             type="number"

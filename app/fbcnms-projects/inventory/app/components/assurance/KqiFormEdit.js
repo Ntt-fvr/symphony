@@ -356,20 +356,17 @@ const KqiFormEdit = (props: Props) => {
           className={classes.header}
           container
           direction="row"
-          justifyContent="flex-end"
+          justify="flex-end"
           alignItems="center">
-          <Grid xs>
+          <Grid item xs>
             <ConfigureTitleSubItem
               title={fbt('KQI catalog/', 'KQI catalog')}
               tag={` ${formValues.item.name}`}
             />
           </Grid>
           <Grid style={{marginRight: '1rem'}}>
-            <IconButton>
-              <DeleteOutlinedIcon
-                onClick={() => setDialogOpen(true)}
-                style={{color: DARK.D300}}
-              />
+            <IconButton onClick={() => setDialogOpen(true)}>
+              <DeleteOutlinedIcon style={{color: DARK.D300}}/>
             </IconButton>
           </Grid>
           <Grid>
@@ -397,14 +394,14 @@ const KqiFormEdit = (props: Props) => {
             </FormField>
           </Grid>
         </Grid>
-        <Grid xs>
+        <Grid item xs>
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     label="Name"
                     variant="outlined"
                     name="name"
@@ -471,7 +468,7 @@ const KqiFormEdit = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     multiline
                     rows={2}
                     label="Description"
@@ -564,7 +561,7 @@ const KqiFormEdit = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     multiline
                     rows={7}
                     label="Formula"

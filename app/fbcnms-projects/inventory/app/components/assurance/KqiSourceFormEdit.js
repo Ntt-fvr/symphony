@@ -149,11 +149,11 @@ const KqiSourceFormEdit = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid container xs={12} className={classes.titleButtons}>
-          <Grid xs={6}>
+        <Grid container item xs={12} className={classes.titleButtons}>
+          <Grid item xs={6}>
             <ConfigureTitle title={fbt('Edit KQI Source', ' ')} subtitle={''} />
           </Grid>
-          <Grid container justify="flex-end" alignItems="center" xs={6}>
+          <Grid container justify="flex-end" alignItems="center" item xs={6}>
             <FormField>
               <Button
                 className={classes.option}

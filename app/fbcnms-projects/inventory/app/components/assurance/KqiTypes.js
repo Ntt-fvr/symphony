@@ -197,7 +197,7 @@ const KqiTypes = () => {
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
-  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node);
+  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node) || [];
   const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(
     item => item.node,
   );
@@ -271,9 +271,9 @@ const KqiTypes = () => {
         className={classes.header}
         container
         direction="row"
-        justifyContent="flex-end"
+        justify="flex-end"
         alignItems="center">
-        <Grid xs>
+        <Grid item xs>
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
             subtitle={fbt(
@@ -286,7 +286,7 @@ const KqiTypes = () => {
           <Button onClick={handleClick}>Add KQI</Button>
         </Grid>
       </Grid>
-      <Grid item fullWidth>
+      <Grid item>
         <KqiTable dataValues={dataResponseKqi} viewFormEdit={formEdit} />
       </Grid>
     </Grid>

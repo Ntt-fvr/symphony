@@ -181,9 +181,9 @@ const KqiFormCreateTarget = (props: Props) => {
           className={classes.header}
           container
           direction="row"
-          justifyContent="flex-end"
+          justify="flex-end"
           alignItems="center">
-          <Grid xs>
+          <Grid item xs>
             <Text variant="h6" weight={'bold'}>
               {fbt('Create target', ' ')}
             </Text>
@@ -215,7 +215,7 @@ const KqiFormCreateTarget = (props: Props) => {
             </FormField>
           </Grid>
         </Grid>
-        <Grid xs>
+        <Grid item xs>
           <Card>
             <Grid container spacing={3}>
               <Grid style={{marginTop: '-10px'}} item xs={1}>
@@ -226,7 +226,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     label="Target name"
                     variant="outlined"
                     name="name"
@@ -246,6 +246,7 @@ const KqiFormCreateTarget = (props: Props) => {
                           label="Comparator"
                           fullWidth
                           name="comparatorSelect"
+                          defaultValue=""
                           onChange={handleChange}
                           variant="outlined">
                           {dataComparatorSelect?.map((item, index) => (
@@ -260,7 +261,7 @@ const KqiFormCreateTarget = (props: Props) => {
                       <form className={classes.formField} autoComplete="off">
                         <TextField
                           required
-                          fullwidth
+                          fullWidth
                           variant="outlined"
                           name="comparatorNumber"
                           type="number"
@@ -281,6 +282,7 @@ const KqiFormCreateTarget = (props: Props) => {
                           label="Warning comparator"
                           fullWidth
                           name="warningComparatorSelect"
+                          defaultValue=""
                           onChange={handleChange}
                           variant="outlined">
                           {dataComparatorSelect?.map((item, index) => (
@@ -295,7 +297,7 @@ const KqiFormCreateTarget = (props: Props) => {
                       <form className={classes.formField} autoComplete="off">
                         <TextField
                           required
-                          fullwidth
+                          fullWidth
                           variant="outlined"
                           name="warningComparatorNumber"
                           type="number"
@@ -311,7 +313,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
-                    fullwidth
+                    fullWidth
                     multiline
                     rows={2}
                     label="Impact"
@@ -329,7 +331,7 @@ const KqiFormCreateTarget = (props: Props) => {
                     <form className={classes.formField} autoComplete="off">
                       <TextField
                         required
-                        fullwidth
+                        fullWidth
                         type="number"
                         label="Periods"
                         placeholder="Number"
@@ -343,7 +345,7 @@ const KqiFormCreateTarget = (props: Props) => {
                     <form className={classes.formField} autoComplete="off">
                       <TextField
                         required
-                        fullwidth
+                        fullWidth
                         type="number"
                         label="Allowed Variation"
                         placeholder="Number"
@@ -372,7 +374,7 @@ const KqiFormCreateTarget = (props: Props) => {
                         <form className={classes.formField} autoComplete="off">
                           <TextField
                             required
-                            fullwidth
+                            fullWidth
                             variant="outlined"
                             name="initTime"
                             type="number"
@@ -397,7 +399,7 @@ const KqiFormCreateTarget = (props: Props) => {
                         <form className={classes.formField} autoComplete="off">
                           <TextField
                             required
-                            fullwidth
+                            fullWidth
                             variant="outlined"
                             name="endTime"
                             type="number"

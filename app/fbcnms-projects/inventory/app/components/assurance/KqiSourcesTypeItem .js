@@ -53,20 +53,20 @@ const KqiSourcesTypeItem = (props: Props) => {
   return (
     <div className={classes.root}>
       <Card margins={'none'} className={classes.container}>
-        <Grid container xs={12} className={classes.insideContainer}>
-          <Grid xs={4}>
+        <Grid container item xs={12} className={classes.insideContainer}>
+          <Grid item xs={4}>
             <Button variant="text" onClick={edit}>
               <Text weight="bold" color="primary">
                 {name}
               </Text>
             </Button>
           </Grid>
-          <Grid xs={6}>
+          <Grid item xs={6}>
             <Text useEllipsis={true} weight="bold">
               {id}
             </Text>
           </Grid>
-          <Grid xs={2} container justify="flex-end" alignItems="center">
+          <Grid item xs={2} container justify="flex-end" alignItems="center">
             <Button skin="brightGray" variant="text">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
