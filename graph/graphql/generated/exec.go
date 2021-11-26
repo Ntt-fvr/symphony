@@ -1492,6 +1492,7 @@ type ComplexityRoot struct {
 		IntVal             func(childComplexity int) int
 		IsInstanceProperty func(childComplexity int) int
 		LatitudeVal        func(childComplexity int) int
+		Listable           func(childComplexity int) int
 		LongitudeVal       func(childComplexity int) int
 		Mandatory          func(childComplexity int) int
 		Name               func(childComplexity int) int
@@ -9819,6 +9820,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyType.LatitudeVal(childComplexity), true
 
+	case "PropertyType.isListable":
+		if e.complexity.PropertyType.Listable == nil {
+			break
+		}
+
+		return e.complexity.PropertyType.Listable(childComplexity), true
+
 	case "PropertyType.longitudeValue":
 		if e.complexity.PropertyType.LongitudeVal == nil {
 			break
@@ -15123,6 +15131,7 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  isListable: Boolean
 }
 
 type DocumentCategory implements Node {
@@ -15159,6 +15168,7 @@ input PropertyTypeInput
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  isListable: Boolean
 }
 
 type Property implements Node {
@@ -62062,6 +62072,38 @@ func (ec *executionContext) _PropertyType_isDeleted(ctx context.Context, field g
 	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PropertyType_isListable(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Listable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PythonPackage_version(ctx context.Context, field graphql.CollectedField, obj *models.PythonPackage) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -89412,6 +89454,14 @@ func (ec *executionContext) unmarshalInputPropertyTypeInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
+		case "isListable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isListable"))
+			it.IsListable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -101874,6 +101924,8 @@ func (ec *executionContext) _PropertyType(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._PropertyType_isMandatory(ctx, field, obj)
 		case "isDeleted":
 			out.Values[i] = ec._PropertyType_isDeleted(ctx, field, obj)
+		case "isListable":
+			out.Values[i] = ec._PropertyType_isListable(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
