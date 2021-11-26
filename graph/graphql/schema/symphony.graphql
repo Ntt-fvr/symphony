@@ -1613,6 +1613,15 @@ type PropertyCategory implements Node {
   propertiesByEntity(entityType: PropertyEntity!, entityID: ID): [Property]!
 }
 
+type ParameterCatalog implements Node {
+  id: ID!
+  name: String
+  index: Int
+  isDisabled: Boolean
+  propertyCategories: [PropertyCategory]!
+}
+
+
 input PropertyTypeInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
@@ -1749,6 +1758,13 @@ enum PropertyEntity
   LOCATION
   WORK_ORDER
   PROJECT
+}
+
+enum ParameterCatalogEntity
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ParameterCatalogEntity"
+) {
+  PROPERTY_CATEGORY
 }
 
 enum CommentEntity {
@@ -2252,6 +2268,38 @@ type PropertyCategoryEdge {
   The Property Category at the end of the edge.
   """
   node: PropertyCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of Parameter Catalog
+"""
+type ParameterCatalogConnection {
+  """
+  Total count of Parameter Catalog in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Parameter Catalog edges.
+  """
+  edges: [ParameterCatalogEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Parameter Catalog edge in a connection.
+"""
+type ParameterCatalogEdge {
+  """
+  The Parameter Catalog at the end of the edge.
+  """
+  node: ParameterCatalog
   """
   A cursor for use in pagination.
   """
@@ -7033,6 +7081,27 @@ type Query {
     """
     last: Int @numberValue(min: 0)
   ): PropertyCategoryConnection!
+  parametersCatalog(
+  """
+  Returns the elements in the list that come after the specified cursor.
+  """
+  after: Cursor
+
+  """
+  Returns the first _n_ elements from the list.
+  """
+  first: Int @numberValue(min: 0)
+
+  """
+  Returns the elements in the list that come before the specified cursor.
+  """
+  before: Cursor
+
+  """
+  Returns the last _n_ elements from the list.
+  """
+  last: Int @numberValue(min: 0)
+  ): ParameterCatalogConnection!
 }
 
 type Mutation {
@@ -7345,6 +7414,9 @@ type Mutation {
   editAppointment(input: EditAppointmentInput!): Appointment!
   removeAppointment(id: ID!): ID!
   editPropertyCategories(propertyCategories: [EditPropertyCategoryInput]): [PropertyCategory!]
+  removePropertyCategory(id: ID!): ID!
+  editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
+  removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
 }
 
 """
@@ -8442,4 +8514,12 @@ input EditPropertyCategoryInput {
   id: ID
   name: String!
   index: Int!
+  parameterCatalogId: ID!
+}
+
+input EditParameterCatalogInput {
+  id: ID
+  name: String!
+  index: Int!
+  disabled: Boolean
 }

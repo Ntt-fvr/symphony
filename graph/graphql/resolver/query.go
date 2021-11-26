@@ -40,6 +40,13 @@ import (
 
 type queryResolver struct{ resolver }
 
+func (r queryResolver) ParametersCatalog(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ParameterCatalogConnection, error) {
+	return r.ClientFrom(ctx).
+		ParameterCatalog.
+		Query().
+		Paginate(ctx, after, first, before, last)
+}
+
 func (r queryResolver) PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.PropertyCategoryConnection, error) {
 	return r.ClientFrom(ctx).
 		PropertyCategory.

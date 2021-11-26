@@ -65,6 +65,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
@@ -1578,6 +1579,37 @@ func init() {
 	organizationDescName := organizationFields[0].Descriptor()
 	// organization.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	organization.NameValidator = organizationDescName.Validators[0].(func(string) error)
+	parametercatalogMixin := schema.ParameterCatalog{}.Mixin()
+	parametercatalog.Policy = privacy.NewPolicies(schema.ParameterCatalog{})
+	parametercatalog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := parametercatalog.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	parametercatalogMixinFields0 := parametercatalogMixin[0].Fields()
+	parametercatalogFields := schema.ParameterCatalog{}.Fields()
+	_ = parametercatalogFields
+	// parametercatalogDescCreateTime is the schema descriptor for create_time field.
+	parametercatalogDescCreateTime := parametercatalogMixinFields0[0].Descriptor()
+	// parametercatalog.DefaultCreateTime holds the default value on creation for the create_time field.
+	parametercatalog.DefaultCreateTime = parametercatalogDescCreateTime.Default.(func() time.Time)
+	// parametercatalogDescUpdateTime is the schema descriptor for update_time field.
+	parametercatalogDescUpdateTime := parametercatalogMixinFields0[1].Descriptor()
+	// parametercatalog.DefaultUpdateTime holds the default value on creation for the update_time field.
+	parametercatalog.DefaultUpdateTime = parametercatalogDescUpdateTime.Default.(func() time.Time)
+	// parametercatalog.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	parametercatalog.UpdateDefaultUpdateTime = parametercatalogDescUpdateTime.UpdateDefault.(func() time.Time)
+	// parametercatalogDescIndex is the schema descriptor for index field.
+	parametercatalogDescIndex := parametercatalogFields[1].Descriptor()
+	// parametercatalog.DefaultIndex holds the default value on creation for the index field.
+	parametercatalog.DefaultIndex = parametercatalogDescIndex.Default.(int)
+	// parametercatalogDescDisabled is the schema descriptor for disabled field.
+	parametercatalogDescDisabled := parametercatalogFields[2].Descriptor()
+	// parametercatalog.DefaultDisabled holds the default value on creation for the disabled field.
+	parametercatalog.DefaultDisabled = parametercatalogDescDisabled.Default.(bool)
 	permissionspolicyMixin := schema.PermissionsPolicy{}.Mixin()
 	permissionspolicy.Policy = privacy.NewPolicies(schema.PermissionsPolicy{})
 	permissionspolicy.Hooks[0] = func(next ent.Mutator) ent.Mutator {

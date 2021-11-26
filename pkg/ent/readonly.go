@@ -77,6 +77,7 @@ func (c *Client) ReadOnly() *Client {
 		LocationType:                NewLocationTypeClient(cfg),
 		NetworkType:                 NewNetworkTypeClient(cfg),
 		Organization:                NewOrganizationClient(cfg),
+		ParameterCatalog:            NewParameterCatalogClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Project:                     NewProjectClient(cfg),
 		ProjectTemplate:             NewProjectTemplateClient(cfg),

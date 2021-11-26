@@ -73,6 +73,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
@@ -13466,6 +13467,225 @@ var DefaultOrganizationOrder = &OrganizationOrder{
 		field: organization.FieldID,
 		toCursor: func(o *Organization) Cursor {
 			return Cursor{ID: o.ID}
+		},
+	},
+}
+
+// ParameterCatalogEdge is the edge representation of ParameterCatalog.
+type ParameterCatalogEdge struct {
+	Node   *ParameterCatalog `json:"node"`
+	Cursor Cursor            `json:"cursor"`
+}
+
+// ParameterCatalogConnection is the connection containing edges to ParameterCatalog.
+type ParameterCatalogConnection struct {
+	Edges      []*ParameterCatalogEdge `json:"edges"`
+	PageInfo   PageInfo                `json:"pageInfo"`
+	TotalCount int                     `json:"totalCount"`
+}
+
+// ParameterCatalogPaginateOption enables pagination customization.
+type ParameterCatalogPaginateOption func(*parameterCatalogPager) error
+
+// WithParameterCatalogOrder configures pagination ordering.
+func WithParameterCatalogOrder(order *ParameterCatalogOrder) ParameterCatalogPaginateOption {
+	if order == nil {
+		order = DefaultParameterCatalogOrder
+	}
+	o := *order
+	return func(pager *parameterCatalogPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultParameterCatalogOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithParameterCatalogFilter configures pagination filter.
+func WithParameterCatalogFilter(filter func(*ParameterCatalogQuery) (*ParameterCatalogQuery, error)) ParameterCatalogPaginateOption {
+	return func(pager *parameterCatalogPager) error {
+		if filter == nil {
+			return errors.New("ParameterCatalogQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type parameterCatalogPager struct {
+	order  *ParameterCatalogOrder
+	filter func(*ParameterCatalogQuery) (*ParameterCatalogQuery, error)
+}
+
+func newParameterCatalogPager(opts []ParameterCatalogPaginateOption) (*parameterCatalogPager, error) {
+	pager := &parameterCatalogPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultParameterCatalogOrder
+	}
+	return pager, nil
+}
+
+func (p *parameterCatalogPager) applyFilter(query *ParameterCatalogQuery) (*ParameterCatalogQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *parameterCatalogPager) toCursor(pc *ParameterCatalog) Cursor {
+	return p.order.Field.toCursor(pc)
+}
+
+func (p *parameterCatalogPager) applyCursors(query *ParameterCatalogQuery, after, before *Cursor) *ParameterCatalogQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultParameterCatalogOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *parameterCatalogPager) applyOrder(query *ParameterCatalogQuery, reverse bool) *ParameterCatalogQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultParameterCatalogOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultParameterCatalogOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to ParameterCatalog.
+func (pc *ParameterCatalogQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...ParameterCatalogPaginateOption,
+) (*ParameterCatalogConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newParameterCatalogPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if pc, err = pager.applyFilter(pc); err != nil {
+		return nil, err
+	}
+
+	conn := &ParameterCatalogConnection{Edges: []*ParameterCatalogEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := pc.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := pc.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	pc = pager.applyCursors(pc, after, before)
+	pc = pager.applyOrder(pc, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		pc = pc.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := pc.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *ParameterCatalog
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *ParameterCatalog {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *ParameterCatalog {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*ParameterCatalogEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &ParameterCatalogEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// ParameterCatalogOrderField defines the ordering field of ParameterCatalog.
+type ParameterCatalogOrderField struct {
+	field    string
+	toCursor func(*ParameterCatalog) Cursor
+}
+
+// ParameterCatalogOrder defines the ordering of ParameterCatalog.
+type ParameterCatalogOrder struct {
+	Direction OrderDirection              `json:"direction"`
+	Field     *ParameterCatalogOrderField `json:"field"`
+}
+
+// DefaultParameterCatalogOrder is the default ordering of ParameterCatalog.
+var DefaultParameterCatalogOrder = &ParameterCatalogOrder{
+	Direction: OrderDirectionAsc,
+	Field: &ParameterCatalogOrderField{
+		field: parametercatalog.FieldID,
+		toCursor: func(pc *ParameterCatalog) Cursor {
+			return Cursor{ID: pc.ID}
 		},
 	},
 }

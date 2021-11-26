@@ -1488,6 +1488,30 @@ func (f OrganizationMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrganizationMutation", m)
 }
 
+// The ParameterCatalogQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ParameterCatalogQueryRuleFunc func(context.Context, *ent.ParameterCatalogQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ParameterCatalogQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ParameterCatalogQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ParameterCatalogQuery", q)
+}
+
+// The ParameterCatalogMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ParameterCatalogMutationRuleFunc func(context.Context, *ent.ParameterCatalogMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ParameterCatalogMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ParameterCatalogMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ParameterCatalogMutation", m)
+}
+
 // The PermissionsPolicyQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PermissionsPolicyQueryRuleFunc func(context.Context, *ent.PermissionsPolicyQuery) error

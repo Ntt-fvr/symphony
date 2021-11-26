@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
@@ -65,6 +66,25 @@ func (pcu *PropertyCategoryUpdate) AddProperties(p ...*Property) *PropertyCatego
 	return pcu.AddPropertyIDs(ids...)
 }
 
+// SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
+func (pcu *PropertyCategoryUpdate) SetParameterCatalogID(id int) *PropertyCategoryUpdate {
+	pcu.mutation.SetParameterCatalogID(id)
+	return pcu
+}
+
+// SetNillableParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id if the given value is not nil.
+func (pcu *PropertyCategoryUpdate) SetNillableParameterCatalogID(id *int) *PropertyCategoryUpdate {
+	if id != nil {
+		pcu = pcu.SetParameterCatalogID(*id)
+	}
+	return pcu
+}
+
+// SetParameterCatalog sets the parameter_catalog edge to ParameterCatalog.
+func (pcu *PropertyCategoryUpdate) SetParameterCatalog(p *ParameterCatalog) *PropertyCategoryUpdate {
+	return pcu.SetParameterCatalogID(p.ID)
+}
+
 // Mutation returns the PropertyCategoryMutation object of the builder.
 func (pcu *PropertyCategoryUpdate) Mutation() *PropertyCategoryMutation {
 	return pcu.mutation
@@ -89,6 +109,12 @@ func (pcu *PropertyCategoryUpdate) RemoveProperties(p ...*Property) *PropertyCat
 		ids[i] = p[i].ID
 	}
 	return pcu.RemovePropertyIDs(ids...)
+}
+
+// ClearParameterCatalog clears the "parameter_catalog" edge to type ParameterCatalog.
+func (pcu *PropertyCategoryUpdate) ClearParameterCatalog() *PropertyCategoryUpdate {
+	pcu.mutation.ClearParameterCatalog()
+	return pcu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -267,6 +293,41 @@ func (pcu *PropertyCategoryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if pcu.mutation.ParameterCatalogCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertycategory.ParameterCatalogTable,
+			Columns: []string{propertycategory.ParameterCatalogColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: parametercatalog.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcu.mutation.ParameterCatalogIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertycategory.ParameterCatalogTable,
+			Columns: []string{propertycategory.ParameterCatalogColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: parametercatalog.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pcu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertycategory.Label}
@@ -319,6 +380,25 @@ func (pcuo *PropertyCategoryUpdateOne) AddProperties(p ...*Property) *PropertyCa
 	return pcuo.AddPropertyIDs(ids...)
 }
 
+// SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
+func (pcuo *PropertyCategoryUpdateOne) SetParameterCatalogID(id int) *PropertyCategoryUpdateOne {
+	pcuo.mutation.SetParameterCatalogID(id)
+	return pcuo
+}
+
+// SetNillableParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id if the given value is not nil.
+func (pcuo *PropertyCategoryUpdateOne) SetNillableParameterCatalogID(id *int) *PropertyCategoryUpdateOne {
+	if id != nil {
+		pcuo = pcuo.SetParameterCatalogID(*id)
+	}
+	return pcuo
+}
+
+// SetParameterCatalog sets the parameter_catalog edge to ParameterCatalog.
+func (pcuo *PropertyCategoryUpdateOne) SetParameterCatalog(p *ParameterCatalog) *PropertyCategoryUpdateOne {
+	return pcuo.SetParameterCatalogID(p.ID)
+}
+
 // Mutation returns the PropertyCategoryMutation object of the builder.
 func (pcuo *PropertyCategoryUpdateOne) Mutation() *PropertyCategoryMutation {
 	return pcuo.mutation
@@ -343,6 +423,12 @@ func (pcuo *PropertyCategoryUpdateOne) RemoveProperties(p ...*Property) *Propert
 		ids[i] = p[i].ID
 	}
 	return pcuo.RemovePropertyIDs(ids...)
+}
+
+// ClearParameterCatalog clears the "parameter_catalog" edge to type ParameterCatalog.
+func (pcuo *PropertyCategoryUpdateOne) ClearParameterCatalog() *PropertyCategoryUpdateOne {
+	pcuo.mutation.ClearParameterCatalog()
+	return pcuo
 }
 
 // Save executes the query and returns the updated entity.
@@ -511,6 +597,41 @@ func (pcuo *PropertyCategoryUpdateOne) sqlSave(ctx context.Context) (_node *Prop
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: property.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pcuo.mutation.ParameterCatalogCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertycategory.ParameterCatalogTable,
+			Columns: []string{propertycategory.ParameterCatalogColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: parametercatalog.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcuo.mutation.ParameterCatalogIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertycategory.ParameterCatalogTable,
+			Columns: []string{propertycategory.ParameterCatalogColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: parametercatalog.FieldID,
 				},
 			},
 		}

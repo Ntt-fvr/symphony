@@ -728,6 +728,19 @@ func (f OrganizationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The ParameterCatalogFunc type is an adapter to allow the use of ordinary
+// function as ParameterCatalog mutator.
+type ParameterCatalogFunc func(context.Context, *ent.ParameterCatalogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ParameterCatalogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ParameterCatalogMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ParameterCatalogMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The PermissionsPolicyFunc type is an adapter to allow the use of ordinary
 // function as PermissionsPolicy mutator.
 type PermissionsPolicyFunc func(context.Context, *ent.PermissionsPolicyMutation) (ent.Value, error)

@@ -1288,6 +1288,14 @@ func (o *Organization) Policies(ctx context.Context) ([]*PermissionsPolicy, erro
 	return result, err
 }
 
+func (pc *ParameterCatalog) PropertyCategories(ctx context.Context) ([]*PropertyCategory, error) {
+	result, err := pc.Edges.PropertyCategoriesOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryPropertyCategories().All(ctx)
+	}
+	return result, err
+}
+
 func (pp *PermissionsPolicy) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := pp.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
@@ -1534,6 +1542,14 @@ func (pc *PropertyCategory) Properties(ctx context.Context) ([]*Property, error)
 		result, err = pc.QueryProperties().All(ctx)
 	}
 	return result, err
+}
+
+func (pc *PropertyCategory) ParameterCatalog(ctx context.Context) (*ParameterCatalog, error) {
+	result, err := pc.Edges.ParameterCatalogOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryParameterCatalog().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (pt *PropertyType) Properties(ctx context.Context) ([]*Property, error) {

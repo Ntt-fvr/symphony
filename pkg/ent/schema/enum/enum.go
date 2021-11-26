@@ -370,6 +370,18 @@ func (f FilterOperator) String() string {
 	return string(f)
 }
 
+// ParameterCatalogEntity is the type of parameter catalog
+type ParameterCatalogEntity string
+
+const (
+	ParameterCatalogEntityPropertyCategory ParameterCatalogEntity = "PROPERTY_CATEGORY"
+)
+
+// String implements Getter interface.
+func (p ParameterCatalogEntity) String() string {
+	return string(p)
+}
+
 // PropertyEntity is the entity for the property.
 type PropertyEntity string
 

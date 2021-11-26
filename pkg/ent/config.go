@@ -83,6 +83,7 @@ type hooks struct {
 	LocationType                []ent.Hook
 	NetworkType                 []ent.Hook
 	Organization                []ent.Hook
+	ParameterCatalog            []ent.Hook
 	PermissionsPolicy           []ent.Hook
 	Project                     []ent.Hook
 	ProjectTemplate             []ent.Hook

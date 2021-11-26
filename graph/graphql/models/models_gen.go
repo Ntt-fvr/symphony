@@ -857,6 +857,13 @@ type EditOrganizationInput struct {
 	Description string `json:"description"`
 }
 
+type EditParameterCatalogInput struct {
+	ID       *int   `json:"id"`
+	Name     string `json:"name"`
+	Index    int    `json:"index"`
+	Disabled *bool  `json:"disabled"`
+}
+
 type EditPermissionsPolicyInput struct {
 	ID              int                            `json:"id"`
 	Name            *string                        `json:"name"`
@@ -889,9 +896,10 @@ type EditProjectTypeInput struct {
 }
 
 type EditPropertyCategoryInput struct {
-	ID    *int   `json:"id"`
-	Name  string `json:"name"`
-	Index int    `json:"index"`
+	ID                 *int   `json:"id"`
+	Name               string `json:"name"`
+	Index              int    `json:"index"`
+	ParameterCatalogID int    `json:"parameterCatalogId"`
 }
 
 type EditRecommendationsCategoryInput struct {

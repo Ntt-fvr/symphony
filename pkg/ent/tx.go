@@ -126,6 +126,8 @@ type Tx struct {
 	NetworkType *NetworkTypeClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// ParameterCatalog is the client for interacting with the ParameterCatalog builders.
+	ParameterCatalog *ParameterCatalogClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
 	// Project is the client for interacting with the Project builders.
@@ -384,6 +386,7 @@ func (tx *Tx) init() {
 	tx.LocationType = NewLocationTypeClient(tx.config)
 	tx.NetworkType = NewNetworkTypeClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
+	tx.ParameterCatalog = NewParameterCatalogClient(tx.config)
 	tx.PermissionsPolicy = NewPermissionsPolicyClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectTemplate = NewProjectTemplateClient(tx.config)

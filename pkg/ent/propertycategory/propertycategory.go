@@ -28,6 +28,8 @@ const (
 
 	// EdgeProperties holds the string denoting the properties edge name in mutations.
 	EdgeProperties = "properties"
+	// EdgeParameterCatalog holds the string denoting the parameter_catalog edge name in mutations.
+	EdgeParameterCatalog = "parameter_catalog"
 
 	// Table holds the table name of the propertycategory in the database.
 	Table = "property_categories"
@@ -38,6 +40,13 @@ const (
 	PropertiesInverseTable = "properties"
 	// PropertiesColumn is the table column denoting the properties relation/edge.
 	PropertiesColumn = "property_category_properties"
+	// ParameterCatalogTable is the table the holds the parameter_catalog relation/edge.
+	ParameterCatalogTable = "property_categories"
+	// ParameterCatalogInverseTable is the table name for the ParameterCatalog entity.
+	// It exists in this package in order to avoid circular dependency with the "parametercatalog" package.
+	ParameterCatalogInverseTable = "parameter_catalogs"
+	// ParameterCatalogColumn is the table column denoting the parameter_catalog relation/edge.
+	ParameterCatalogColumn = "parameter_catalog_property_categories"
 )
 
 // Columns holds all SQL columns for propertycategory fields.
@@ -49,10 +58,20 @@ var Columns = []string{
 	FieldIndex,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the PropertyCategory type.
+var ForeignKeys = []string{
+	"parameter_catalog_property_categories",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

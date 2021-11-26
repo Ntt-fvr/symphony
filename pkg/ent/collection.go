@@ -1089,6 +1089,26 @@ func (o *OrganizationQuery) collectField(ctx *graphql.OperationContext, field gr
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pc *ParameterCatalogQuery) CollectFields(ctx context.Context, satisfies ...string) *ParameterCatalogQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pc
+}
+
+func (pc *ParameterCatalogQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ParameterCatalogQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "propertyCategories":
+			pc = pc.WithPropertyCategories(func(query *PropertyCategoryQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return pc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (pp *PermissionsPolicyQuery) CollectFields(ctx context.Context, satisfies ...string) *PermissionsPolicyQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		pp = pp.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

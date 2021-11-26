@@ -68,6 +68,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
@@ -223,6 +224,8 @@ type Client struct {
 	NetworkType *NetworkTypeClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// ParameterCatalog is the client for interacting with the ParameterCatalog builders.
+	ParameterCatalog *ParameterCatalogClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
 	// Project is the client for interacting with the Project builders.
@@ -361,6 +364,7 @@ func (c *Client) init() {
 	c.LocationType = NewLocationTypeClient(c.config)
 	c.NetworkType = NewNetworkTypeClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
+	c.ParameterCatalog = NewParameterCatalogClient(c.config)
 	c.PermissionsPolicy = NewPermissionsPolicyClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.ProjectTemplate = NewProjectTemplateClient(c.config)
@@ -482,6 +486,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		LocationType:                NewLocationTypeClient(cfg),
 		NetworkType:                 NewNetworkTypeClient(cfg),
 		Organization:                NewOrganizationClient(cfg),
+		ParameterCatalog:            NewParameterCatalogClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Project:                     NewProjectClient(cfg),
 		ProjectTemplate:             NewProjectTemplateClient(cfg),
@@ -586,6 +591,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		LocationType:                NewLocationTypeClient(cfg),
 		NetworkType:                 NewNetworkTypeClient(cfg),
 		Organization:                NewOrganizationClient(cfg),
+		ParameterCatalog:            NewParameterCatalogClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Project:                     NewProjectClient(cfg),
 		ProjectTemplate:             NewProjectTemplateClient(cfg),
@@ -703,6 +709,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.LocationType.Use(hooks...)
 	c.NetworkType.Use(hooks...)
 	c.Organization.Use(hooks...)
+	c.ParameterCatalog.Use(hooks...)
 	c.PermissionsPolicy.Use(hooks...)
 	c.Project.Use(hooks...)
 	c.ProjectTemplate.Use(hooks...)
@@ -8194,6 +8201,111 @@ func (c *OrganizationClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], organization.Hooks[:]...)
 }
 
+// ParameterCatalogClient is a client for the ParameterCatalog schema.
+type ParameterCatalogClient struct {
+	config
+}
+
+// NewParameterCatalogClient returns a client for the ParameterCatalog from the given config.
+func NewParameterCatalogClient(c config) *ParameterCatalogClient {
+	return &ParameterCatalogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `parametercatalog.Hooks(f(g(h())))`.
+func (c *ParameterCatalogClient) Use(hooks ...Hook) {
+	c.hooks.ParameterCatalog = append(c.hooks.ParameterCatalog, hooks...)
+}
+
+// Create returns a create builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Create() *ParameterCatalogCreate {
+	mutation := newParameterCatalogMutation(c.config, OpCreate)
+	return &ParameterCatalogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ParameterCatalog entities.
+func (c *ParameterCatalogClient) CreateBulk(builders ...*ParameterCatalogCreate) *ParameterCatalogCreateBulk {
+	return &ParameterCatalogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Update() *ParameterCatalogUpdate {
+	mutation := newParameterCatalogMutation(c.config, OpUpdate)
+	return &ParameterCatalogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ParameterCatalogClient) UpdateOne(pc *ParameterCatalog) *ParameterCatalogUpdateOne {
+	mutation := newParameterCatalogMutation(c.config, OpUpdateOne, withParameterCatalog(pc))
+	return &ParameterCatalogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ParameterCatalogClient) UpdateOneID(id int) *ParameterCatalogUpdateOne {
+	mutation := newParameterCatalogMutation(c.config, OpUpdateOne, withParameterCatalogID(id))
+	return &ParameterCatalogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Delete() *ParameterCatalogDelete {
+	mutation := newParameterCatalogMutation(c.config, OpDelete)
+	return &ParameterCatalogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ParameterCatalogClient) DeleteOne(pc *ParameterCatalog) *ParameterCatalogDeleteOne {
+	return c.DeleteOneID(pc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ParameterCatalogClient) DeleteOneID(id int) *ParameterCatalogDeleteOne {
+	builder := c.Delete().Where(parametercatalog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ParameterCatalogDeleteOne{builder}
+}
+
+// Query returns a query builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Query() *ParameterCatalogQuery {
+	return &ParameterCatalogQuery{config: c.config}
+}
+
+// Get returns a ParameterCatalog entity by its id.
+func (c *ParameterCatalogClient) Get(ctx context.Context, id int) (*ParameterCatalog, error) {
+	return c.Query().Where(parametercatalog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ParameterCatalogClient) GetX(ctx context.Context, id int) *ParameterCatalog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPropertyCategories queries the property_categories edge of a ParameterCatalog.
+func (c *ParameterCatalogClient) QueryPropertyCategories(pc *ParameterCatalog) *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(parametercatalog.Table, parametercatalog.FieldID, id),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, parametercatalog.PropertyCategoriesTable, parametercatalog.PropertyCategoriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ParameterCatalogClient) Hooks() []Hook {
+	hooks := c.hooks.ParameterCatalog
+	return append(hooks[:len(hooks):len(hooks)], parametercatalog.Hooks[:]...)
+}
+
 // PermissionsPolicyClient is a client for the PermissionsPolicy schema.
 type PermissionsPolicyClient struct {
 	config
@@ -9211,6 +9323,22 @@ func (c *PropertyCategoryClient) QueryProperties(pc *PropertyCategory) *Property
 			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, id),
 			sqlgraph.To(property.Table, property.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTable, propertycategory.PropertiesColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryParameterCatalog queries the parameter_catalog edge of a PropertyCategory.
+func (c *PropertyCategoryClient) QueryParameterCatalog(pc *PropertyCategory) *ParameterCatalogQuery {
+	query := &ParameterCatalogQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, id),
+			sqlgraph.To(parametercatalog.Table, parametercatalog.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertycategory.ParameterCatalogTable, propertycategory.ParameterCatalogColumn),
 		)
 		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
 		return fromV, nil

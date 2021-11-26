@@ -175,6 +175,9 @@ type NetworkType func(*sql.Selector)
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
 
+// ParameterCatalog is the predicate function for parametercatalog builders.
+type ParameterCatalog func(*sql.Selector)
+
 // PermissionsPolicy is the predicate function for permissionspolicy builders.
 type PermissionsPolicy func(*sql.Selector)
 

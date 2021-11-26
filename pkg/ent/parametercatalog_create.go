@@ -15,25 +15,24 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
-	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 )
 
-// PropertyCategoryCreate is the builder for creating a PropertyCategory entity.
-type PropertyCategoryCreate struct {
+// ParameterCatalogCreate is the builder for creating a ParameterCatalog entity.
+type ParameterCatalogCreate struct {
 	config
-	mutation *PropertyCategoryMutation
+	mutation *ParameterCatalogMutation
 	hooks    []Hook
 }
 
 // SetCreateTime sets the create_time field.
-func (pcc *PropertyCategoryCreate) SetCreateTime(t time.Time) *PropertyCategoryCreate {
+func (pcc *ParameterCatalogCreate) SetCreateTime(t time.Time) *ParameterCatalogCreate {
 	pcc.mutation.SetCreateTime(t)
 	return pcc
 }
 
 // SetNillableCreateTime sets the create_time field if the given value is not nil.
-func (pcc *PropertyCategoryCreate) SetNillableCreateTime(t *time.Time) *PropertyCategoryCreate {
+func (pcc *ParameterCatalogCreate) SetNillableCreateTime(t *time.Time) *ParameterCatalogCreate {
 	if t != nil {
 		pcc.SetCreateTime(*t)
 	}
@@ -41,13 +40,13 @@ func (pcc *PropertyCategoryCreate) SetNillableCreateTime(t *time.Time) *Property
 }
 
 // SetUpdateTime sets the update_time field.
-func (pcc *PropertyCategoryCreate) SetUpdateTime(t time.Time) *PropertyCategoryCreate {
+func (pcc *ParameterCatalogCreate) SetUpdateTime(t time.Time) *ParameterCatalogCreate {
 	pcc.mutation.SetUpdateTime(t)
 	return pcc
 }
 
 // SetNillableUpdateTime sets the update_time field if the given value is not nil.
-func (pcc *PropertyCategoryCreate) SetNillableUpdateTime(t *time.Time) *PropertyCategoryCreate {
+func (pcc *ParameterCatalogCreate) SetNillableUpdateTime(t *time.Time) *ParameterCatalogCreate {
 	if t != nil {
 		pcc.SetUpdateTime(*t)
 	}
@@ -55,61 +54,64 @@ func (pcc *PropertyCategoryCreate) SetNillableUpdateTime(t *time.Time) *Property
 }
 
 // SetName sets the name field.
-func (pcc *PropertyCategoryCreate) SetName(s string) *PropertyCategoryCreate {
+func (pcc *ParameterCatalogCreate) SetName(s string) *ParameterCatalogCreate {
 	pcc.mutation.SetName(s)
 	return pcc
 }
 
 // SetIndex sets the index field.
-func (pcc *PropertyCategoryCreate) SetIndex(i int) *PropertyCategoryCreate {
+func (pcc *ParameterCatalogCreate) SetIndex(i int) *ParameterCatalogCreate {
 	pcc.mutation.SetIndex(i)
 	return pcc
 }
 
-// AddPropertyIDs adds the properties edge to Property by ids.
-func (pcc *PropertyCategoryCreate) AddPropertyIDs(ids ...int) *PropertyCategoryCreate {
-	pcc.mutation.AddPropertyIDs(ids...)
+// SetNillableIndex sets the index field if the given value is not nil.
+func (pcc *ParameterCatalogCreate) SetNillableIndex(i *int) *ParameterCatalogCreate {
+	if i != nil {
+		pcc.SetIndex(*i)
+	}
 	return pcc
 }
 
-// AddProperties adds the properties edges to Property.
-func (pcc *PropertyCategoryCreate) AddProperties(p ...*Property) *PropertyCategoryCreate {
+// SetDisabled sets the disabled field.
+func (pcc *ParameterCatalogCreate) SetDisabled(b bool) *ParameterCatalogCreate {
+	pcc.mutation.SetDisabled(b)
+	return pcc
+}
+
+// SetNillableDisabled sets the disabled field if the given value is not nil.
+func (pcc *ParameterCatalogCreate) SetNillableDisabled(b *bool) *ParameterCatalogCreate {
+	if b != nil {
+		pcc.SetDisabled(*b)
+	}
+	return pcc
+}
+
+// AddPropertyCategoryIDs adds the property_categories edge to PropertyCategory by ids.
+func (pcc *ParameterCatalogCreate) AddPropertyCategoryIDs(ids ...int) *ParameterCatalogCreate {
+	pcc.mutation.AddPropertyCategoryIDs(ids...)
+	return pcc
+}
+
+// AddPropertyCategories adds the property_categories edges to PropertyCategory.
+func (pcc *ParameterCatalogCreate) AddPropertyCategories(p ...*PropertyCategory) *ParameterCatalogCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return pcc.AddPropertyIDs(ids...)
+	return pcc.AddPropertyCategoryIDs(ids...)
 }
 
-// SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
-func (pcc *PropertyCategoryCreate) SetParameterCatalogID(id int) *PropertyCategoryCreate {
-	pcc.mutation.SetParameterCatalogID(id)
-	return pcc
-}
-
-// SetNillableParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id if the given value is not nil.
-func (pcc *PropertyCategoryCreate) SetNillableParameterCatalogID(id *int) *PropertyCategoryCreate {
-	if id != nil {
-		pcc = pcc.SetParameterCatalogID(*id)
-	}
-	return pcc
-}
-
-// SetParameterCatalog sets the parameter_catalog edge to ParameterCatalog.
-func (pcc *PropertyCategoryCreate) SetParameterCatalog(p *ParameterCatalog) *PropertyCategoryCreate {
-	return pcc.SetParameterCatalogID(p.ID)
-}
-
-// Mutation returns the PropertyCategoryMutation object of the builder.
-func (pcc *PropertyCategoryCreate) Mutation() *PropertyCategoryMutation {
+// Mutation returns the ParameterCatalogMutation object of the builder.
+func (pcc *ParameterCatalogCreate) Mutation() *ParameterCatalogMutation {
 	return pcc.mutation
 }
 
-// Save creates the PropertyCategory in the database.
-func (pcc *PropertyCategoryCreate) Save(ctx context.Context) (*PropertyCategory, error) {
+// Save creates the ParameterCatalog in the database.
+func (pcc *ParameterCatalogCreate) Save(ctx context.Context) (*ParameterCatalog, error) {
 	var (
 		err  error
-		node *PropertyCategory
+		node *ParameterCatalog
 	)
 	pcc.defaults()
 	if len(pcc.hooks) == 0 {
@@ -119,7 +121,7 @@ func (pcc *PropertyCategoryCreate) Save(ctx context.Context) (*PropertyCategory,
 		node, err = pcc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*PropertyCategoryMutation)
+			mutation, ok := m.(*ParameterCatalogMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -142,7 +144,7 @@ func (pcc *PropertyCategoryCreate) Save(ctx context.Context) (*PropertyCategory,
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (pcc *PropertyCategoryCreate) SaveX(ctx context.Context) *PropertyCategory {
+func (pcc *ParameterCatalogCreate) SaveX(ctx context.Context) *ParameterCatalog {
 	v, err := pcc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -151,19 +153,27 @@ func (pcc *PropertyCategoryCreate) SaveX(ctx context.Context) *PropertyCategory 
 }
 
 // defaults sets the default values of the builder before save.
-func (pcc *PropertyCategoryCreate) defaults() {
+func (pcc *ParameterCatalogCreate) defaults() {
 	if _, ok := pcc.mutation.CreateTime(); !ok {
-		v := propertycategory.DefaultCreateTime()
+		v := parametercatalog.DefaultCreateTime()
 		pcc.mutation.SetCreateTime(v)
 	}
 	if _, ok := pcc.mutation.UpdateTime(); !ok {
-		v := propertycategory.DefaultUpdateTime()
+		v := parametercatalog.DefaultUpdateTime()
 		pcc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := pcc.mutation.Index(); !ok {
+		v := parametercatalog.DefaultIndex
+		pcc.mutation.SetIndex(v)
+	}
+	if _, ok := pcc.mutation.Disabled(); !ok {
+		v := parametercatalog.DefaultDisabled
+		pcc.mutation.SetDisabled(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (pcc *PropertyCategoryCreate) check() error {
+func (pcc *ParameterCatalogCreate) check() error {
 	if _, ok := pcc.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
 	}
@@ -173,18 +183,16 @@ func (pcc *PropertyCategoryCreate) check() error {
 	if _, ok := pcc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
-	if v, ok := pcc.mutation.Name(); ok {
-		if err := propertycategory.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if _, ok := pcc.mutation.Index(); !ok {
 		return &ValidationError{Name: "index", err: errors.New("ent: missing required field \"index\"")}
+	}
+	if _, ok := pcc.mutation.Disabled(); !ok {
+		return &ValidationError{Name: "disabled", err: errors.New("ent: missing required field \"disabled\"")}
 	}
 	return nil
 }
 
-func (pcc *PropertyCategoryCreate) sqlSave(ctx context.Context) (*PropertyCategory, error) {
+func (pcc *ParameterCatalogCreate) sqlSave(ctx context.Context) (*ParameterCatalog, error) {
 	_node, _spec := pcc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, pcc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
@@ -197,14 +205,14 @@ func (pcc *PropertyCategoryCreate) sqlSave(ctx context.Context) (*PropertyCatego
 	return _node, nil
 }
 
-func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.CreateSpec) {
+func (pcc *ParameterCatalogCreate) createSpec() (*ParameterCatalog, *sqlgraph.CreateSpec) {
 	var (
-		_node = &PropertyCategory{config: pcc.config}
+		_node = &ParameterCatalog{config: pcc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: propertycategory.Table,
+			Table: parametercatalog.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: propertycategory.FieldID,
+				Column: parametercatalog.FieldID,
 			},
 		}
 	)
@@ -212,7 +220,7 @@ func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.Cr
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: propertycategory.FieldCreateTime,
+			Column: parametercatalog.FieldCreateTime,
 		})
 		_node.CreateTime = value
 	}
@@ -220,7 +228,7 @@ func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.Cr
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: propertycategory.FieldUpdateTime,
+			Column: parametercatalog.FieldUpdateTime,
 		})
 		_node.UpdateTime = value
 	}
@@ -228,7 +236,7 @@ func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.Cr
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: propertycategory.FieldName,
+			Column: parametercatalog.FieldName,
 		})
 		_node.Name = value
 	}
@@ -236,40 +244,29 @@ func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.Cr
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: propertycategory.FieldIndex,
+			Column: parametercatalog.FieldIndex,
 		})
 		_node.Index = value
 	}
-	if nodes := pcc.mutation.PropertiesIDs(); len(nodes) > 0 {
+	if value, ok := pcc.mutation.Disabled(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: parametercatalog.FieldDisabled,
+		})
+		_node.Disabled = value
+	}
+	if nodes := pcc.mutation.PropertyCategoriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   parametercatalog.PropertyCategoriesTable,
+			Columns: []string{parametercatalog.PropertyCategoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := pcc.mutation.ParameterCatalogIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   propertycategory.ParameterCatalogTable,
-			Columns: []string{propertycategory.ParameterCatalogColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: parametercatalog.FieldID,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}
@@ -281,23 +278,23 @@ func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.Cr
 	return _node, _spec
 }
 
-// PropertyCategoryCreateBulk is the builder for creating a bulk of PropertyCategory entities.
-type PropertyCategoryCreateBulk struct {
+// ParameterCatalogCreateBulk is the builder for creating a bulk of ParameterCatalog entities.
+type ParameterCatalogCreateBulk struct {
 	config
-	builders []*PropertyCategoryCreate
+	builders []*ParameterCatalogCreate
 }
 
-// Save creates the PropertyCategory entities in the database.
-func (pccb *PropertyCategoryCreateBulk) Save(ctx context.Context) ([]*PropertyCategory, error) {
+// Save creates the ParameterCatalog entities in the database.
+func (pccb *ParameterCatalogCreateBulk) Save(ctx context.Context) ([]*ParameterCatalog, error) {
 	specs := make([]*sqlgraph.CreateSpec, len(pccb.builders))
-	nodes := make([]*PropertyCategory, len(pccb.builders))
+	nodes := make([]*ParameterCatalog, len(pccb.builders))
 	mutators := make([]Mutator, len(pccb.builders))
 	for i := range pccb.builders {
 		func(i int, root context.Context) {
 			builder := pccb.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*PropertyCategoryMutation)
+				mutation, ok := m.(*ParameterCatalogMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -340,7 +337,7 @@ func (pccb *PropertyCategoryCreateBulk) Save(ctx context.Context) ([]*PropertyCa
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (pccb *PropertyCategoryCreateBulk) SaveX(ctx context.Context) []*PropertyCategory {
+func (pccb *ParameterCatalogCreateBulk) SaveX(ctx context.Context) []*ParameterCatalog {
 	v, err := pccb.Save(ctx)
 	if err != nil {
 		panic(err)

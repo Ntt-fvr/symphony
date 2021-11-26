@@ -1623,6 +1623,22 @@ var (
 		PrimaryKey:  []*schema.Column{OrganizationsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ParameterCatalogsColumns holds the columns for the "parameter_catalogs" table.
+	ParameterCatalogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "index", Type: field.TypeInt},
+		{Name: "disabled", Type: field.TypeBool},
+	}
+	// ParameterCatalogsTable holds the schema information for the "parameter_catalogs" table.
+	ParameterCatalogsTable = &schema.Table{
+		Name:        "parameter_catalogs",
+		Columns:     ParameterCatalogsColumns,
+		PrimaryKey:  []*schema.Column{ParameterCatalogsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// PermissionsPoliciesColumns holds the columns for the "permissions_policies" table.
 	PermissionsPoliciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1946,13 +1962,22 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "index", Type: field.TypeInt},
+		{Name: "parameter_catalog_property_categories", Type: field.TypeInt, Nullable: true},
 	}
 	// PropertyCategoriesTable holds the schema information for the "property_categories" table.
 	PropertyCategoriesTable = &schema.Table{
-		Name:        "property_categories",
-		Columns:     PropertyCategoriesColumns,
-		PrimaryKey:  []*schema.Column{PropertyCategoriesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "property_categories",
+		Columns:    PropertyCategoriesColumns,
+		PrimaryKey: []*schema.Column{PropertyCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "property_categories_parameter_catalogs_property_categories",
+				Columns: []*schema.Column{PropertyCategoriesColumns[5]},
+
+				RefColumns: []*schema.Column{ParameterCatalogsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "propertycategory_name",
@@ -3349,6 +3374,7 @@ var (
 		LocationTypesTable,
 		NetworkTypesTable,
 		OrganizationsTable,
+		ParameterCatalogsTable,
 		PermissionsPoliciesTable,
 		ProjectsTable,
 		ProjectTemplatesTable,
@@ -3494,6 +3520,7 @@ func init() {
 	PropertiesTable.ForeignKeys[12].RefTable = PropertyCategoriesTable
 	PropertiesTable.ForeignKeys[13].RefTable = ServicesTable
 	PropertiesTable.ForeignKeys[14].RefTable = WorkOrdersTable
+	PropertyCategoriesTable.ForeignKeys[0].RefTable = ParameterCatalogsTable
 	PropertyTypesTable.ForeignKeys[0].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[1].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[2].RefTable = EquipmentTypesTable

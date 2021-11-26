@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 )
 
@@ -30,16 +31,19 @@ type PropertyCategory struct {
 	Index int `json:"index,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PropertyCategoryQuery when eager-loading is set.
-	Edges PropertyCategoryEdges `json:"edges"`
+	Edges                                 PropertyCategoryEdges `json:"edges"`
+	parameter_catalog_property_categories *int
 }
 
 // PropertyCategoryEdges holds the relations/edges for other nodes in the graph.
 type PropertyCategoryEdges struct {
 	// Properties holds the value of the properties edge.
 	Properties []*Property
+	// ParameterCatalog holds the value of the parameter_catalog edge.
+	ParameterCatalog *ParameterCatalog
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // PropertiesOrErr returns the Properties value or an error if the edge
@@ -51,6 +55,20 @@ func (e PropertyCategoryEdges) PropertiesOrErr() ([]*Property, error) {
 	return nil, &NotLoadedError{edge: "properties"}
 }
 
+// ParameterCatalogOrErr returns the ParameterCatalog value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PropertyCategoryEdges) ParameterCatalogOrErr() (*ParameterCatalog, error) {
+	if e.loadedTypes[1] {
+		if e.ParameterCatalog == nil {
+			// The edge parameter_catalog was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: parametercatalog.Label}
+		}
+		return e.ParameterCatalog, nil
+	}
+	return nil, &NotLoadedError{edge: "parameter_catalog"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*PropertyCategory) scanValues() []interface{} {
 	return []interface{}{
@@ -59,6 +77,13 @@ func (*PropertyCategory) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullInt64{},  // index
+	}
+}
+
+// fkValues returns the types for scanning foreign-keys values from sql.Rows.
+func (*PropertyCategory) fkValues() []interface{} {
+	return []interface{}{
+		&sql.NullInt64{}, // parameter_catalog_property_categories
 	}
 }
 
@@ -94,12 +119,26 @@ func (pc *PropertyCategory) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		pc.Index = int(value.Int64)
 	}
+	values = values[4:]
+	if len(values) == len(propertycategory.ForeignKeys) {
+		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field parameter_catalog_property_categories", value)
+		} else if value.Valid {
+			pc.parameter_catalog_property_categories = new(int)
+			*pc.parameter_catalog_property_categories = int(value.Int64)
+		}
+	}
 	return nil
 }
 
 // QueryProperties queries the properties edge of the PropertyCategory.
 func (pc *PropertyCategory) QueryProperties() *PropertyQuery {
 	return (&PropertyCategoryClient{config: pc.config}).QueryProperties(pc)
+}
+
+// QueryParameterCatalog queries the parameter_catalog edge of the PropertyCategory.
+func (pc *PropertyCategory) QueryParameterCatalog() *ParameterCatalogQuery {
+	return (&PropertyCategoryClient{config: pc.config}).QueryParameterCatalog(pc)
 }
 
 // Update returns a builder for updating this PropertyCategory.
