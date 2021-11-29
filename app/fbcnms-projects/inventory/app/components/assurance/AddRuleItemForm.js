@@ -512,6 +512,7 @@ const AddRuleItemForm = (props: Props) => {
                       select
                       name="upperTarget"
                       variant="outlined"
+                      value=""
                       className={classes.fieldSelectLimitUpper}
                       onChange={handleChange}>
                       {data.comparators.edges.map((item, index) => (
@@ -549,6 +550,7 @@ const AddRuleItemForm = (props: Props) => {
                       className={classes.fieldSelectLimitLower}
                       variant="outlined"
                       name="lowerTarget"
+                      value=""
                       onChange={handleChange}>
                       {data.comparators.edges.map((item, index) => (
                         <MenuItem key={index} value={item.node?.id}>
@@ -589,6 +591,7 @@ const AddRuleItemForm = (props: Props) => {
                 <Grid item xs={6} className={classes.fieldAlarmSeverity}>
                   <FormField className={classes.selectAlarm}>
                     <TextField
+                      value=""
                       required
                       select
                       variant="outlined"
