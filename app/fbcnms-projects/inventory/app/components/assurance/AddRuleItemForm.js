@@ -21,8 +21,10 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
+import Event from '@material-ui/icons/Event';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
 import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
@@ -30,12 +32,16 @@ import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useValidation} from './common/useValidation';
+
+import InputAdornment from '@material-ui/core/InputAdornment';
+import MomentUtils from '@date-io/moment';
 
 const AddRuleQuery = graphql`
   query AddRuleItemFormQuery {
@@ -465,7 +471,7 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField}>
-                  <TextField
+                  {/* <TextField
                     label="Start"
                     variant="outlined"
                     id="datetime-local"
@@ -474,12 +480,31 @@ const AddRuleItemForm = (props: Props) => {
                     InputLabelProps={{shrink: true}}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
-                  />{' '}
+                  /> */}
+                  <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <DateTimePicker
+                      disabled={!checkedCheckbox}
+                      label="Start"
+                      variant="inline"
+                      inputVariant="outlined"
+                      onChange={handleChange}
+                      format="yyyy/MM/DD HH:mm a"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton>
+                              <Event style={{color: '#8895AD'}} />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </MuiPickersUtilsProvider>
                 </FormField>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField}>
-                  <TextField
+                  {/* <TextField
                     label="End"
                     variant="outlined"
                     id="datetime-local"
@@ -488,7 +513,26 @@ const AddRuleItemForm = (props: Props) => {
                     InputLabelProps={{shrink: true}}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
-                  />
+                  /> */}
+                  <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <DateTimePicker
+                      disabled={!checkedCheckbox}
+                      label="End"
+                      variant="inline"
+                      inputVariant="outlined"
+                      onChange={handleChange}
+                      format="yyyy/MM/DD HH:mm a"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton>
+                              <Event style={{color: '#8895AD'}} />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </MuiPickersUtilsProvider>
                 </FormField>
               </Grid>
             </Grid>
