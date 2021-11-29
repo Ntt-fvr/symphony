@@ -17,10 +17,12 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import EditRuleLimitMutation from '../../mutations/EditRuleLimitMutation';
 import EditRuleMutation from '../../mutations/EditRuleMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
 import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
@@ -346,6 +348,14 @@ const EditRuleItemForm = (props: Props) => {
               title={fbt('Threshold Catalog/', 'Threshold Catalog')}
               tag={` ${threshold.name}`}
             />
+          </Grid>
+          <Grid style={{marginRight: '1rem'}}>
+            <IconButton>
+              <DeleteOutlinedIcon
+                onClick={''}
+                style={{color: symphony.palette.D300}}
+              />
+            </IconButton>
           </Grid>
           <Grid>
             <FormField>
