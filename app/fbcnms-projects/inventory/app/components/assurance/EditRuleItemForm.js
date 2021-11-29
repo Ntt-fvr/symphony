@@ -73,7 +73,12 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   header: {
-    margin: '0 17px 0px 36px',
+    margin: '0 0px 1rem 1.4rem',
+  },
+  containerGlobal: {
+    '& .cardContainer': {
+      padding: '14px',
+    },
   },
   headerCardEdit: {
     padding: '17px 10px 17px 0',
@@ -184,8 +189,8 @@ const useStyles = makeStyles(() => ({
     minHeight: '36px',
   },
   actionAddRule: {
-    margin: '20px',
-    width: '111px',
+    marginRight: '1.5rem',
+    width: '98px',
     alignSelf: 'flex-end',
   },
   selectAlarm: {
@@ -370,7 +375,7 @@ const EditRuleItemForm = (props: Props) => {
         </Grid>
 
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card>
+          <Card margins={'none'} className={classes.containerGlobal}>
             <Grid
               className={classes.headerCardEdit}
               container

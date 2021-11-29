@@ -78,7 +78,12 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   header: {
-    margin: '0 0px 0px 36px',
+    margin: '0 0px 1rem 1.4rem',
+  },
+  containerGlobal: {
+    '& .cardContainer': {
+      padding: '14px',
+    },
   },
   headerCardEdit: {
     padding: '17px 10px 17px 0',
@@ -189,8 +194,8 @@ const useStyles = makeStyles(() => ({
     minHeight: '36px',
   },
   actionAddRule: {
-    margin: '20px',
-    width: '111px',
+    marginRight: '1.5rem',
+    width: '98px',
     alignSelf: 'flex-end',
   },
   selectAlarm: {
@@ -342,7 +347,7 @@ const AddRuleItemForm = (props: Props) => {
           container
           direction="row"
           alignItems="center">
-          <Grid item={true} xs>
+          <Grid item xs>
             <ConfigureTitleSubItem
               title={fbt('Threshold Catalog/', 'Threshold Catalog')}
               tag={` ${threshold.name}`}
@@ -376,7 +381,7 @@ const AddRuleItemForm = (props: Props) => {
         </Grid>
 
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card>
+          <Card margins={'none'} className={classes.containerGlobal}>
             <Grid
               className={classes.headerCardEdit}
               container
@@ -471,16 +476,6 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField}>
-                  {/* <TextField
-                    label="Start"
-                    variant="outlined"
-                    id="datetime-local"
-                    type="datetime-local"
-                    name="startTime"
-                    InputLabelProps={{shrink: true}}
-                    disabled={!checkedCheckbox}
-                    onChange={handleChange}
-                  /> */}
                   <MuiPickersUtilsProvider utils={MomentUtils}>
                     <DateTimePicker
                       disabled={!checkedCheckbox}
@@ -493,7 +488,7 @@ const AddRuleItemForm = (props: Props) => {
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton>
-                              <Event style={{color: '#8895AD'}} />
+                              <Event style={{color: symphony.palette.D400}} />
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -504,16 +499,6 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField}>
-                  {/* <TextField
-                    label="End"
-                    variant="outlined"
-                    id="datetime-local"
-                    type="datetime-local"
-                    name="endTime"
-                    InputLabelProps={{shrink: true}}
-                    disabled={!checkedCheckbox}
-                    onChange={handleChange}
-                  /> */}
                   <MuiPickersUtilsProvider utils={MomentUtils}>
                     <DateTimePicker
                       disabled={!checkedCheckbox}
@@ -526,7 +511,7 @@ const AddRuleItemForm = (props: Props) => {
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton>
-                              <Event style={{color: '#8895AD'}} />
+                              <Event style={{color: symphony.palette.D400}} />
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -556,7 +541,6 @@ const AddRuleItemForm = (props: Props) => {
                       select
                       name="upperTarget"
                       variant="outlined"
-                      value=""
                       className={classes.fieldSelectLimitUpper}
                       onChange={handleChange}>
                       {data.comparators.edges.map((item, index) => (
@@ -594,7 +578,6 @@ const AddRuleItemForm = (props: Props) => {
                       className={classes.fieldSelectLimitLower}
                       variant="outlined"
                       name="lowerTarget"
-                      value=""
                       onChange={handleChange}>
                       {data.comparators.edges.map((item, index) => (
                         <MenuItem key={index} value={item.node?.id}>
@@ -635,7 +618,6 @@ const AddRuleItemForm = (props: Props) => {
                 <Grid item xs={6} className={classes.fieldAlarmSeverity}>
                   <FormField className={classes.selectAlarm}>
                     <TextField
-                      value=""
                       required
                       select
                       variant="outlined"

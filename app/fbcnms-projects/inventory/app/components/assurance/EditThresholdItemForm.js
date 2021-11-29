@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => ({
     margin: '0 0 1rem 1.4rem',
   },
   headerCardEdit: {
-    padding: '17px 10px 17px 0',
+    padding: '17px 22px 17px 0',
   },
   formField: {
     margin: '0 22px 0px 22px',
@@ -83,11 +83,12 @@ const useStyles = makeStyles(() => ({
     padding: '0 0 0 22px',
   },
   cardHeader: {
-    margin: '32px 43px 22px 22px',
+    margin: '0px 0px 0px 22px',
   },
-  containerEnabled: {
-    display: 'flex',
-    alignItems: 'center',
+  titleSwitch: {
+    '& .followingText': {
+      color: '#3984FF',
+    },
   },
   EnabledName: {
     paddingRight: '7px',
@@ -252,14 +253,13 @@ const EditThresholdItemForm = (props: Props) => {
                   Edit container detail
                 </Text>
               </Grid>
-              <Grid className={classes.containerEnabled}>
-                <Text
-                  className={classes.EnabledName}
-                  color={'primary'}
-                  variant={'caption'}>
-                  Enabled
-                </Text>
-                <Switch title={''} checked={checked} onChange={setChecked} />
+              <Grid>
+                <Switch
+                  className={classes.titleSwitch}
+                  title={'Enabled'}
+                  checked={checked}
+                  onChange={setChecked}
+                />
               </Grid>
             </Grid>
             <Grid container>
