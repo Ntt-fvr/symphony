@@ -343,7 +343,11 @@ const EditThresholdItemForm = (props: Props) => {
               Rules contained
             </Text>
           </Grid>
-          <TableThreshold rule={formValues.rule} editRule={editRule} />
+          <TableThreshold
+            isCompleted={isCompleted}
+            rule={formValues.rule}
+            editRule={editRule}
+          />
         </Grid>
       </Grid>
     </div>

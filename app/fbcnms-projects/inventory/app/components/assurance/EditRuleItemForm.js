@@ -12,6 +12,9 @@ import type {EditRuleItemFormQuery} from './__generated__/EditRuleItemFormQuery.
 
 import type {EditRuleLimitMutationVariables} from '../../mutations/__generated__/EditRuleLimitMutation.graphql';
 import type {EditRuleMutationVariables} from '../../mutations/__generated__/EditRuleMutation.graphql';
+import type {RemoveRuleMutationVariables} from '../../mutations/__generated__/RemoveRuleMutation.graphql';
+
+import RemoveRuleMutation from '../../mutations/RemoveRuleMutation';
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -294,6 +297,13 @@ const EditRuleItemForm = (props: Props) => {
     });
   }
 
+  const handleRemove = id => {
+    const variables: RemoveRuleMutationVariables = {
+      id: id,
+    };
+    RemoveRuleMutation(variables, {onCompleted: () => isCompleted()});
+  };
+
   const handleClick = () => {
     const variables: EditRuleMutationVariables = {
       input: {
@@ -352,7 +362,10 @@ const EditRuleItemForm = (props: Props) => {
           <Grid style={{marginRight: '1rem'}}>
             <IconButton>
               <DeleteOutlinedIcon
-                onClick={''}
+                onClick={() => {
+                  handleRemove(rule.id);
+                  hideAddRuleForm();
+                }}
                 style={{color: symphony.palette.D300}}
               />
             </IconButton>
