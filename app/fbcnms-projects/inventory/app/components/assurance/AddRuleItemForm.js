@@ -539,6 +539,7 @@ const AddRuleItemForm = (props: Props) => {
                   <FormField className={classes.formFieldUpper}>
                     <TextField
                       select
+                      defaultValue=""
                       name="upperTarget"
                       variant="outlined"
                       className={classes.fieldSelectLimitUpper}
@@ -575,6 +576,7 @@ const AddRuleItemForm = (props: Props) => {
                   <FormField className={classes.formFieldLower}>
                     <TextField
                       select
+                      defaultValue=""
                       className={classes.fieldSelectLimitLower}
                       variant="outlined"
                       name="lowerTarget"
@@ -620,6 +622,7 @@ const AddRuleItemForm = (props: Props) => {
                     <TextField
                       required
                       select
+                      defaultValue=""
                       variant="outlined"
                       name="alarmSeverities"
                       onChange={handleChange}>
