@@ -52,25 +52,23 @@ const useStyles = makeStyles(() => ({
     padding: '40px',
   },
   header: {
-    marginBottom: '1rem',
+    marginBottom: '36px',
   },
-  gridStyleLeft: {
-    paddingRight: '12px',
-  },
-  gridStyleRight: {
-    paddingLeft: '12px',
+  containerStyle: {
+    padding: '0 7px 22px 7px',
   },
   option: {
     width: '111px',
-    height: '36px',
+    height: '38px',
     alignSelf: 'flex-end',
   },
   containerEnabled: {
     display: 'flex !important',
-    justifyContent: 'flex-end !important',
+    flexDirection: 'row-reverse !important',
     alignItems: 'center !important',
+    marginBottom: '35px',
     '& span': {
-      paddingRight: '7px',
+      paddingRight: '8px',
     },
   },
   formField: {
@@ -84,7 +82,7 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '20px',
       width: '100%',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
@@ -101,6 +99,12 @@ const useStyles = makeStyles(() => ({
       fontSize: '14px',
       lineHeight: '8px',
     },
+  },
+  gridStyleLeft: {
+    paddingLeft: '22px',
+  },
+  gridStyleRight: {
+    paddingRight: '22px',
   },
 }));
 
@@ -242,7 +246,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         </Grid>
         <Grid item xs>
           <Card>
-            <Grid container spacing={3}>
+            <Grid container className={classes.containerStyle}>
               <Grid className={classes.containerEnabled} item xs={12}>
                 <Text color={'primary'} variant={'caption'}>
                   Enable
@@ -250,7 +254,12 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 <Switch title={''} checked={checked} onChange={setChecked} />
               </Grid>
               <Grid item xs={4}>
-                <FormField {...validationName} className={classes.formField}>
+                <FormField
+                  {...validationName}
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleRight,
+                  )}>
                   <TextField
                     {...name}
                     required
@@ -264,7 +273,12 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={4}>
-                <FormField className={classes.formField}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleLeft,
+                    classes.gridStyleRight,
+                  )}>
                   <TextField
                     {...networkResource}
                     label="Network Resource"
@@ -275,7 +289,11 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={4}>
-                <FormField className={classes.formField}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleLeft,
+                  )}>
                   <TextField
                     disabled
                     label="ID"
@@ -295,12 +313,17 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     variant="outlined"
                     autoComplete="off"
                     name="reason"
+                    inputProps={{maxLength: 120}}
                   />
                 </FormField>
               </Grid>
               <Grid container item xs={8}>
-                <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField className={classes.formField}>
+                <Grid item xs={6}>
+                  <FormField
+                    className={classNames(
+                      classes.formField,
+                      classes.gridStyleRight,
+                    )}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <DateTimePicker
                         disabled={DisableButton}
@@ -323,8 +346,13 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
-                <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField className={classes.formField}>
+                <Grid item xs={6}>
+                  <FormField
+                    className={classNames(
+                      classes.formField,
+                      classes.gridStyleLeft,
+                      classes.gridStyleRight,
+                    )}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <DateTimePicker
                         label="End"
@@ -348,7 +376,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 </Grid>
               </Grid>
               <Grid container item xs={12} alignItems="center">
-                <Grid item className={classes.gridStyleLeft}>
+                <Grid item style={{marginRight: '17px'}}>
                   <Text variant="subtitle2" weight="bold">
                     Status
                   </Text>

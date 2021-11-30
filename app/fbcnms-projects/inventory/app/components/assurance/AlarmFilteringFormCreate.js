@@ -38,6 +38,7 @@ import MomentUtils from '@date-io/moment';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Event from '@material-ui/icons/Event';
+import classNames from 'classnames';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -46,17 +47,21 @@ const useStyles = makeStyles(() => ({
   header: {
     marginBottom: '1rem',
   },
+  containerStyle: {
+    padding: '0 7px 30px 7px',
+  },
   option: {
     width: '111px',
-    height: '36px',
+    height: '38px',
     alignSelf: 'flex-end',
   },
   containerEnabled: {
     display: 'flex !important',
-    justifyContent: 'flex-end !important',
+    flexDirection: 'row-reverse !important',
     alignItems: 'center !important',
+    marginBottom: '35px',
     '& span': {
-      paddingRight: '7px',
+      paddingRight: '8px',
     },
   },
   formField: {
@@ -70,7 +75,7 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '20px',
       width: '100%',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
@@ -89,10 +94,15 @@ const useStyles = makeStyles(() => ({
     },
   },
   gridStyleLeft: {
-    paddingRight: '12px',
+    paddingLeft: '22px',
   },
   gridStyleRight: {
-    paddingLeft: '12px',
+    paddingRight: '22px',
+  },
+  StatusStyles: {
+    position: 'fixed',
+    width: '100%',
+    marginLeft: '3.7rem !important',
   },
 }));
 
@@ -184,7 +194,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
         </Grid>
         <Grid item xs>
           <Card>
-            <Grid container spacing={3}>
+            <Grid container className={classes.containerStyle}>
               <Grid className={classes.containerEnabled} item xs={12}>
                 <Text color={'primary'} variant={'caption'}>
                   Enabled
@@ -192,7 +202,11 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 <Switch title={''} checked={checked} onChange={setChecked} />
               </Grid>
               <Grid item xs={4}>
-                <FormField className={classes.formField}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleRight,
+                  )}>
                   <TextField
                     required
                     label="Name"
@@ -205,7 +219,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={4}>
-                <FormField className={classes.formField}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleLeft,
+                    classes.gridStyleRight,
+                  )}>
                   <TextField
                     required
                     label="Network Resource"
@@ -217,7 +236,11 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={4}>
-                <FormField className={classes.formField}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleLeft,
+                  )}>
                   <TextField
                     disabled
                     label="ID"
@@ -243,8 +266,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid container item xs={8}>
-                <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField className={classes.formField}>
+                <Grid item xs={6}>
+                  <FormField
+                    className={classNames(
+                      classes.formField,
+                      classes.gridStyleRight,
+                    )}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <DateTimePicker
                         label="Start"
@@ -266,7 +293,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
-                <Grid item xs={6} className={classes.gridStyleRight}>
+                <Grid item xs={6}>
                   <FormField className={classes.formField}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <DateTimePicker
@@ -290,13 +317,18 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container item xs={12} alignItems="center">
-                <Grid item className={classes.gridStyleLeft}>
+              <Grid
+                container
+                item
+                xs={12}
+                alignItems="center"
+                style={{marginTop: '7px'}}>
+                <Grid item>
                   <Text variant="subtitle2" weight="bold">
                     Status
                   </Text>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={1} className={classes.StatusStyles}>
                   <AlarmFilteringStatus
                     creationDate={moment(
                       AlarmFilter.data.creationTime,
