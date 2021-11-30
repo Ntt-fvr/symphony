@@ -33,12 +33,12 @@ import {useValidation} from './common/useValidation';
 import type {Node} from './AlarmFilteringTypes';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
-import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
+import Event from '@material-ui/icons/Event';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Event from '@material-ui/icons/Event';
+import MomentUtils from '@date-io/moment';
 import classNames from 'classnames';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -201,7 +201,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </Text>
                 <Switch title={''} checked={checked} onChange={setChecked} />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <FormField
                   className={classNames(
                     classes.formField,
@@ -218,7 +218,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <FormField
                   className={classNames(
                     classes.formField,
@@ -235,7 +235,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <FormField
                   className={classNames(
                     classes.formField,
@@ -265,8 +265,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={8}>
-                <Grid item xs={6}>
+              <Grid container item xs={12} md={8}>
+                <Grid item xs={12} md={6}>
                   <FormField
                     className={classNames(
                       classes.formField,
@@ -293,7 +293,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6}>
                   <FormField className={classes.formField}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <DateTimePicker

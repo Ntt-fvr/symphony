@@ -19,7 +19,8 @@ const useStyles = makeStyles(() => ({
   button: {
     width: '100%',
     height: '38px',
-    cursor: 'none',
+    cursor: 'default',
+    pointerEvents: 'auto',
     '&:hover': {
       backgroundColor: 'transparent',
     },
