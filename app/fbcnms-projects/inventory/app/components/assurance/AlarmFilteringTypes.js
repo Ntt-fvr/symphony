@@ -124,15 +124,10 @@ const AlarmFilteringTypes = () => {
   }
   return (
     <Grid className={classes.root}>
-      <Grid
-        className={classes.header}
-        container
-        direction="row"
-        justifyContent="flex-end"
-        alignItems="center">
-        <Grid xs>
+      <Grid className={classes.header} container>
+        <Grid item xs>
           <ConfigureTitle
-            title={fbt('Alarm Filter', 'Alarm Filter Title')}
+            title={fbt('Alarm Admission', 'Alarm Admission Title')}
             subtitle={fbt(
               'Alarm filtering rules for Fault Management processes',
               'Alarm description ',
@@ -140,10 +135,10 @@ const AlarmFilteringTypes = () => {
           />
         </Grid>
         <Grid>
-          <Button onClick={handleClickAdd}>Add Alarm Filter</Button>
+          <Button onClick={handleClickAdd}>Add Alarm Admission</Button>
         </Grid>
       </Grid>
-      <Grid item fullWidth>
+      <Grid item>
         <AlarmFilteringTable
           dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
           edit={handleClickEdit}
