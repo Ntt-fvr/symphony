@@ -539,9 +539,9 @@ const AddRuleItemForm = (props: Props) => {
                   <FormField className={classes.formFieldUpper}>
                     <TextField
                       select
-                      defaultValue=""
                       name="upperTarget"
                       variant="outlined"
+                      defaultValue=""
                       className={classes.fieldSelectLimitUpper}
                       onChange={handleChange}>
                       {data.comparators.edges.map((item, index) => (
@@ -576,11 +576,11 @@ const AddRuleItemForm = (props: Props) => {
                   <FormField className={classes.formFieldLower}>
                     <TextField
                       select
-                      defaultValue=""
                       className={classes.fieldSelectLimitLower}
-                      variant="outlined"
                       name="lowerTarget"
-                      onChange={handleChange}>
+                      onChange={handleChange}
+                      defaultValue=""
+                      variant="outlined">
                       {data.comparators.edges.map((item, index) => (
                         <MenuItem key={index} value={item.node?.id}>
                           {item.node?.name}

@@ -171,7 +171,7 @@ const EditThresholdItemForm = (props: Props) => {
   const filterRuleTableById = dataRulesTable?.filter(
     thresholdData => thresholdData?.id === formValues.id,
   );
-  console.log(filterRuleTableById);
+
   const capacitorRules = filterRuleTableById[0].rule?.map(rule => rule);
 
   const inputFilter = () => {
