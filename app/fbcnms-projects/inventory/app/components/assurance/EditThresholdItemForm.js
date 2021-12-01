@@ -150,6 +150,7 @@ type Props = $ReadOnly<{|
   hideEditThresholdForm: void => void,
   editRule: void => void,
   isCompleted: void => void,
+  dataRulesTable: Array<any>,
 |}>;
 
 const EditThresholdItemForm = (props: Props) => {
@@ -159,13 +160,19 @@ const EditThresholdItemForm = (props: Props) => {
     hideEditThresholdForm,
     editRule,
     isCompleted,
+    dataRulesTable,
   } = props;
   const classes = useStyles();
   const name = useFormInput(formValues.name);
   const description = useFormInput(formValues.description);
   const [checked, setChecked] = useState(formValues.status);
-
   const dataInputsObject = [name.value.trim(), description.value.trim()];
+
+  const filterRuleTableById = dataRulesTable?.filter(
+    thresholdData => thresholdData?.id === formValues.id,
+  );
+  console.log(filterRuleTableById);
+  const capacitorRules = filterRuleTableById[0].rule?.map(rule => rule);
 
   const inputFilter = () => {
     return (
@@ -287,7 +294,7 @@ const EditThresholdItemForm = (props: Props) => {
                       label="ID"
                       variant="outlined"
                       name="id"
-                      value={formValues?.id}
+                      value={formValues.id}
                       disabled
                     />
                   </form>
@@ -345,7 +352,7 @@ const EditThresholdItemForm = (props: Props) => {
           </Grid>
           <TableThreshold
             isCompleted={isCompleted}
-            rule={formValues.rule}
+            rule={capacitorRules}
             editRule={editRule}
           />
         </Grid>

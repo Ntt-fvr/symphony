@@ -228,6 +228,9 @@ const ThresholdTypes = () => {
         <EditThresholdItemForm
           thresholdNames={thresholdNames}
           formValues={dataEdit?.item.node}
+          dataRulesTable={dataThreshold.thresholds?.edges.map(
+            item => item.node,
+          )}
           hideEditThresholdForm={hideEditThresholdForm}
           editRule={() => {
             showEditRuleItemForm(dataEdit);
