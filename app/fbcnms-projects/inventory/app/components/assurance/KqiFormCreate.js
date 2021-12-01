@@ -319,16 +319,6 @@ const KqiFormCreate = (props: Props) => {
           </Grid>
           <Grid container className={classes.formField} spacing={3}>
             <Grid item xs={12} lg={3}>
-              {/* <TextField
-                name="startDateTime"
-                variant="outlined"
-                label="Start"
-                InputLabelProps={{shrink: true}}
-                id="datetime-local"
-                type="datetime-local"
-                className={classes.calendar}
-                onChange={handleChange}
-              /> */}
               <MuiPickersUtilsProvider utils={MomentUtils}>
                 <DateTimePicker
                   label="Start"
@@ -367,16 +357,6 @@ const KqiFormCreate = (props: Props) => {
             </Grid>
             <Grid item xs={12} sm={12} lg={3}>
               <form className={classes.formField}>
-                {/* <TextField
-                  name="endDateTime"
-                  variant="outlined"
-                  label="End"
-                  InputLabelProps={{shrink: true}}
-                  id="datetime-local"
-                  type="datetime-local"
-                  className={classes.calendar}
-                  onChange={handleChange}
-                /> */}
                 <MuiPickersUtilsProvider utils={MomentUtils}>
                   <DateTimePicker
                     label="End"

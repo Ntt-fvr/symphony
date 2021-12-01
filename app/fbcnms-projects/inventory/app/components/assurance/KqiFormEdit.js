@@ -245,12 +245,6 @@ const KqiFormEdit = (props: Props) => {
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
   const formula = useFormInput(formValues.item.formula);
-  // const startDateTime = useFormInput(
-  //   moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'),
-  // );
-  // const endDateTime = useFormInput(
-  //   moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
-  // );
   const [slotStartDate, setSlotStartDate] = useState(
     moment(formValues.item.startDateTime),
   );
@@ -276,7 +270,6 @@ const KqiFormEdit = (props: Props) => {
     formula.value.trim(),
     kqiCategory.value,
     kqiPerspective.value,
-    // endDateTime.value,
     slotStartDate,
     slotEndDate,
     kqiSource.value,
@@ -310,8 +303,6 @@ const KqiFormEdit = (props: Props) => {
         name: name.value.trim(),
         description: description.value.trim(),
         formula: formula.value.trim(),
-        // startDateTime: moment(slotStartDate.value).format(),
-        // endDateTime: moment(slotEndDate.value).format(),
         startDateTime: slotStartDate,
         endDateTime: slotEndDate,
         kqiCategory: kqiCategory.value,
@@ -481,17 +472,6 @@ const KqiFormEdit = (props: Props) => {
           </Grid>
           <Grid container className={classes.formField} spacing={3}>
             <Grid item xs={12} lg={3}>
-              {/* <TextField
-                required
-                name="startDateTime"
-                variant="outlined"
-                id="datetime-local"
-                type="datetime-local"
-                label="Start"
-                className={classes.calendar}
-                InputLabelProps={{shrink: true}}
-                {...startDateTime}
-              /> */}
               <MuiPickersUtilsProvider utils={MomentUtils}>
                 <DateTimePicker
                   label="Start"
@@ -528,17 +508,6 @@ const KqiFormEdit = (props: Props) => {
               </TextField>
             </Grid>
             <Grid item xs={12} sm={12} lg={3}>
-              {/* <TextField
-                required
-                name="endDateTime"
-                variant="outlined"
-                id="datetime-local"
-                type="datetime-local"
-                label="End"
-                InputLabelProps={{shrink: true}}
-                className={classes.calendar}
-                {...endDateTime}
-              /> */}
               <MuiPickersUtilsProvider utils={MomentUtils}>
                 <DateTimePicker
                   label="End"
@@ -596,71 +565,8 @@ const KqiFormEdit = (props: Props) => {
                 {...formula}
               />
             </Grid>
-            {/* <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      select
-                      required
-                      label="Source"
-                      fullWidth
-                      name="kqiSource"
-                      variant="outlined"
-                      {...kqiSource}
-                    >
-                      {dataSources?.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </form>
-                </Grid> */}
-            {/* <Grid item xs={6} className={classes.gridStyleRight}>
-                  <Grid container alignItems="center">
-                    <Grid style={{marginBottom: '7px'}} item xs={5} lg={4}>
-                      <Text variant={'caption'}>Repeat every</Text>
-                    </Grid>
-                    <Grid item xs lg={8}>
-                      <form className={classes.formField} autoComplete="off">
-                        <TextField
-                          required
-                          select
-                          label="Temporal frequency"
-                          fullWidth
-                          name="kqiTemporalFrequency"
-                          variant="outlined"
-                          {...kqiTemporalFrequency}
-                        >
-                          {dataTemporalFrequencies.map((item, index) => (
-                            <MenuItem key={index} value={item.id}>
-                              {item.name}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </form>
-                    </Grid>
-                  </Grid>
-                </Grid> */}
-            {/* </Grid> */}
-            {/* <Grid item xs={6}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    fullWidth
-                    multiline
-                    rows={7}
-                    label="Formula"
-                    variant="outlined"
-                    name="formula"
-                    className={classes.textarea}
-                    inputProps={{maxLength: 1000}}
-                    {...formula}
-                  />
-                </form>
-              </Grid> */}
           </Grid>
         </Card>
-        {/* </Grid> */}
       </Grid>
       <Grid item xs={12}>
         <KqiTableAssociatedTarget
