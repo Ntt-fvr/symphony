@@ -15,8 +15,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
-	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 )
 
 // PropertyCategoryCreate is the builder for creating a PropertyCategory entity.
@@ -66,19 +66,19 @@ func (pcc *PropertyCategoryCreate) SetIndex(i int) *PropertyCategoryCreate {
 	return pcc
 }
 
-// AddPropertyIDs adds the properties edge to Property by ids.
-func (pcc *PropertyCategoryCreate) AddPropertyIDs(ids ...int) *PropertyCategoryCreate {
-	pcc.mutation.AddPropertyIDs(ids...)
+// AddPropertiesTypeIDs adds the properties_type edge to PropertyType by ids.
+func (pcc *PropertyCategoryCreate) AddPropertiesTypeIDs(ids ...int) *PropertyCategoryCreate {
+	pcc.mutation.AddPropertiesTypeIDs(ids...)
 	return pcc
 }
 
-// AddProperties adds the properties edges to Property.
-func (pcc *PropertyCategoryCreate) AddProperties(p ...*Property) *PropertyCategoryCreate {
+// AddPropertiesType adds the properties_type edges to PropertyType.
+func (pcc *PropertyCategoryCreate) AddPropertiesType(p ...*PropertyType) *PropertyCategoryCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return pcc.AddPropertyIDs(ids...)
+	return pcc.AddPropertiesTypeIDs(ids...)
 }
 
 // SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
@@ -240,17 +240,17 @@ func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.Cr
 		})
 		_node.Index = value
 	}
-	if nodes := pcc.mutation.PropertiesIDs(); len(nodes) > 0 {
+	if nodes := pcc.mutation.PropertiesTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   propertycategory.PropertiesTypeTable,
+			Columns: []string{propertycategory.PropertiesTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
+					Column: propertytype.FieldID,
 				},
 			},
 		}

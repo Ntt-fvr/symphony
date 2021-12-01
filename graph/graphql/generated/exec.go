@@ -1490,19 +1490,18 @@ type ComplexityRoot struct {
 	}
 
 	Property struct {
-		BoolVal          func(childComplexity int) int
-		FloatVal         func(childComplexity int) int
-		ID               func(childComplexity int) int
-		IntVal           func(childComplexity int) int
-		LatitudeVal      func(childComplexity int) int
-		LongitudeVal     func(childComplexity int) int
-		NodeValue        func(childComplexity int) int
-		PropertyCategory func(childComplexity int) int
-		RangeFromVal     func(childComplexity int) int
-		RangeToVal       func(childComplexity int) int
-		RawValue         func(childComplexity int) int
-		StringVal        func(childComplexity int) int
-		Type             func(childComplexity int) int
+		BoolVal      func(childComplexity int) int
+		FloatVal     func(childComplexity int) int
+		ID           func(childComplexity int) int
+		IntVal       func(childComplexity int) int
+		LatitudeVal  func(childComplexity int) int
+		LongitudeVal func(childComplexity int) int
+		NodeValue    func(childComplexity int) int
+		RangeFromVal func(childComplexity int) int
+		RangeToVal   func(childComplexity int) int
+		RawValue     func(childComplexity int) int
+		StringVal    func(childComplexity int) int
+		Type         func(childComplexity int) int
 	}
 
 	PropertyCategory struct {
@@ -1539,6 +1538,7 @@ type ComplexityRoot struct {
 		Mandatory          func(childComplexity int) int
 		Name               func(childComplexity int) int
 		NodeType           func(childComplexity int) int
+		PropertyCategory   func(childComplexity int) int
 		RangeFromVal       func(childComplexity int) int
 		RangeToVal         func(childComplexity int) int
 		RawValue           func(childComplexity int) int
@@ -9879,13 +9879,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Property.NodeValue(childComplexity), true
 
-	case "Property.propertyCategory":
-		if e.complexity.Property.PropertyCategory == nil {
-			break
-		}
-
-		return e.complexity.Property.PropertyCategory(childComplexity), true
-
 	case "Property.rangeFromValue":
 		if e.complexity.Property.RangeFromVal == nil {
 			break
@@ -10093,6 +10086,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PropertyType.NodeType(childComplexity), true
+
+	case "PropertyType.propertyCategory":
+		if e.complexity.PropertyType.PropertyCategory == nil {
+			break
+		}
+
+		return e.complexity.PropertyType.PropertyCategory(childComplexity), true
 
 	case "PropertyType.rangeFromValue":
 		if e.complexity.PropertyType.RangeFromVal == nil {
@@ -15394,6 +15394,7 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  propertyCategory: PropertyCategory
 }
 
 type DocumentCategory implements Node {
@@ -15446,6 +15447,7 @@ input PropertyTypeInput
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  propertyCategoryID: ID
 }
 
 type Property implements Node {
@@ -15461,7 +15463,6 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
-  propertyCategory: PropertyCategory
 }
 
 input PropertyInput {
@@ -62585,38 +62586,6 @@ func (ec *executionContext) _Property_rawValue(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Property_propertyCategory(ctx context.Context, field graphql.CollectedField, obj *ent.Property) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Property",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PropertyCategory(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.PropertyCategory)
-	fc.Result = res
-	return ec.marshalOPropertyCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategory(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _PropertyCategory_id(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -63577,6 +63546,38 @@ func (ec *executionContext) _PropertyType_isDeleted(ctx context.Context, field g
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyType_propertyCategory(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyCategory(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyCategory)
+	fc.Result = res
+	return ec.marshalOPropertyCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PythonPackage_version(ctx context.Context, field graphql.CollectedField, obj *models.PythonPackage) (ret graphql.Marshaler) {
@@ -91101,6 +91102,14 @@ func (ec *executionContext) unmarshalInputPropertyTypeInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
+		case "propertyCategoryID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyCategoryID"))
+			it.PropertyCategoryID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -103620,17 +103629,6 @@ func (ec *executionContext) _Property(ctx context.Context, sel ast.SelectionSet,
 				res = ec._Property_rawValue(ctx, field, obj)
 				return res
 			})
-		case "propertyCategory":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Property_propertyCategory(ctx, field, obj)
-				return res
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -103822,6 +103820,17 @@ func (ec *executionContext) _PropertyType(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._PropertyType_isMandatory(ctx, field, obj)
 		case "isDeleted":
 			out.Values[i] = ec._PropertyType_isDeleted(ctx, field, obj)
+		case "propertyCategory":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertyType_propertyCategory(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

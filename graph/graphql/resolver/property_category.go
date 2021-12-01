@@ -19,7 +19,7 @@ type propertyCategoryResolver struct {}
 func (p propertyCategoryResolver) PropertiesByEntity(ctx context.Context, obj *ent.PropertyCategory, entityType enum.PropertyEntity, entityID *int) ([]*ent.Property, error) {
 	switch entityType {
 	case enum.PropertyEntityLocation:
-		return obj.QueryProperties().Where(property.HasLocationWith(location.ID(*entityID))).All(ctx)
+		return obj.QueryPropertiesType().QueryProperties().Where(property.HasLocationWith(location.ID(*entityID))).All(ctx)
 	default:
 		return nil, fmt.Errorf("not support entity type: %s", entityType)
 	}

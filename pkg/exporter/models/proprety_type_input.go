@@ -28,4 +28,5 @@ type PropertyTypeInput struct {
 	IsInstanceProperty *bool             `json:"isInstanceProperty"`
 	IsMandatory        *bool             `json:"isMandatory"`
 	IsDeleted          *bool             `json:"isDeleted"`
+	PropertyCategoryID *int				 `json:"propertyCategoryID"`
 }

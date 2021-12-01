@@ -1235,10 +1235,6 @@ func (pr *PropertyQuery) collectField(ctx *graphql.OperationContext, field graph
 			pr = pr.WithLocation(func(query *LocationQuery) {
 				query.collectField(ctx, field)
 			})
-		case "propertyCategory":
-			pr = pr.WithPropertyCategory(func(query *PropertyCategoryQuery) {
-				query.collectField(ctx, field)
-			})
 		case "serviceValue":
 			pr = pr.WithService(func(query *ServiceQuery) {
 				query.collectField(ctx, field)
@@ -1273,6 +1269,14 @@ func (pt *PropertyTypeQuery) CollectFields(ctx context.Context, satisfies ...str
 }
 
 func (pt *PropertyTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "propertyCategory":
+			pt = pt.WithPropertyCategory(func(query *PropertyCategoryQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return pt
 }
 

@@ -250,7 +250,8 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableRangeToVal(input.RangeToValue).
 			SetNillableEditable(input.IsEditable).
 			SetNillableMandatory(input.IsMandatory).
-			SetNillableDeleted(input.IsDeleted)
+			SetNillableDeleted(input.IsDeleted).
+			SetNillablePropertyCategoryID(input.PropertyCategoryID)
 		parentSetter(builders[i])
 	}
 	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
@@ -3449,12 +3450,12 @@ func (r mutationResolver) UpdatePropertyCategories(ctx context.Context, property
 
 func (r mutationResolver) RemovePropertyCategory(ctx context.Context, id int) (int, error) {
 	client := r.ClientFrom(ctx)
-	count, err := client.PropertyCategory.Query().QueryProperties().Where(property.HasPropertyCategoryWith(propertycategory.ID(id))).Count(ctx)
+	count, err := client.PropertyCategory.Query().QueryPropertiesType().Where(propertytype.HasPropertyCategoryWith(propertycategory.ID(id))).Count(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("error querying of properties for ID %d, %w", id, err)
 	}
 	if count > 0 {
-		return count, fmt.Errorf("category property has %d properties associated", count)
+		return count, fmt.Errorf("category property has %d property types associated", count)
 	}
 	if err := client.PropertyCategory.DeleteOneID(id).Exec(ctx); err != nil {
 		return id, fmt.Errorf("removing property category ID %d, %w", id, err)

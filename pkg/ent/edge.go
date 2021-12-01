@@ -1528,18 +1528,10 @@ func (pr *Property) ProjectValue(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
-func (pr *Property) PropertyCategory(ctx context.Context) (*PropertyCategory, error) {
-	result, err := pr.Edges.PropertyCategoryOrErr()
+func (pc *PropertyCategory) PropertiesType(ctx context.Context) ([]*PropertyType, error) {
+	result, err := pc.Edges.PropertiesTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = pr.QueryPropertyCategory().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (pc *PropertyCategory) Properties(ctx context.Context) ([]*Property, error) {
-	result, err := pc.Edges.PropertiesOrErr()
-	if IsNotLoaded(err) {
-		result, err = pc.QueryProperties().All(ctx)
+		result, err = pc.QueryPropertiesType().All(ctx)
 	}
 	return result, err
 }
@@ -1636,6 +1628,14 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	result, err := pt.Edges.WorkerTypeOrErr()
 	if IsNotLoaded(err) {
 		result, err = pt.QueryWorkerType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (pt *PropertyType) PropertyCategory(ctx context.Context) (*PropertyCategory, error) {
+	result, err := pt.Edges.PropertyCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = pt.QueryPropertyCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }

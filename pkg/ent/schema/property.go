@@ -126,6 +126,10 @@ func (PropertyType) Edges() []ent.Edge {
 		edge.From("worker_type", WorkerType.Type).
 			Ref("property_types").
 			Unique(),
+		edge.From("property_category", PropertyCategory.Type).
+			Ref("properties_type").
+			Unique().
+			Annotations(entgql.MapsTo("propertyCategory")),
 	}
 }
 
@@ -150,6 +154,8 @@ func (PropertyType) Indexes() []ent.Index {
 		index.Fields("name").
 			Edges("worker_type").
 			Unique(),
+		index.Fields("name").
+			Edges("property_category"),
 	}
 }
 
@@ -249,10 +255,6 @@ func (Property) Edges() []ent.Edge {
 			Unique(),
 		edge.To("project_value", Project.Type).
 			Unique(),
-		edge.From("property_category", PropertyCategory.Type).
-			Ref("properties").
-			Unique().
-			Annotations(entgql.MapsTo("propertyCategory")),
 	}
 }
 
@@ -272,8 +274,6 @@ func (Property) Indexes() []ent.Index {
 		index.Edges("type", "work_order").
 			Unique(),
 		index.Edges("type", "project").
-			Unique(),
-		index.Edges("type", "property_category").
 			Unique(),
 	}
 }

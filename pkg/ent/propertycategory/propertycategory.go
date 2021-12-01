@@ -26,20 +26,20 @@ const (
 	// FieldIndex holds the string denoting the index field in the database.
 	FieldIndex = "index"
 
-	// EdgeProperties holds the string denoting the properties edge name in mutations.
-	EdgeProperties = "properties"
+	// EdgePropertiesType holds the string denoting the properties_type edge name in mutations.
+	EdgePropertiesType = "properties_type"
 	// EdgeParameterCatalog holds the string denoting the parameter_catalog edge name in mutations.
 	EdgeParameterCatalog = "parameter_catalog"
 
 	// Table holds the table name of the propertycategory in the database.
 	Table = "property_categories"
-	// PropertiesTable is the table the holds the properties relation/edge.
-	PropertiesTable = "properties"
-	// PropertiesInverseTable is the table name for the Property entity.
-	// It exists in this package in order to avoid circular dependency with the "property" package.
-	PropertiesInverseTable = "properties"
-	// PropertiesColumn is the table column denoting the properties relation/edge.
-	PropertiesColumn = "property_category_properties"
+	// PropertiesTypeTable is the table the holds the properties_type relation/edge.
+	PropertiesTypeTable = "property_types"
+	// PropertiesTypeInverseTable is the table name for the PropertyType entity.
+	// It exists in this package in order to avoid circular dependency with the "propertytype" package.
+	PropertiesTypeInverseTable = "property_types"
+	// PropertiesTypeColumn is the table column denoting the properties_type relation/edge.
+	PropertiesTypeColumn = "property_category_properties_type"
 	// ParameterCatalogTable is the table the holds the parameter_catalog relation/edge.
 	ParameterCatalogTable = "property_categories"
 	// ParameterCatalogInverseTable is the table name for the ParameterCatalog entity.

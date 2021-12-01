@@ -9209,22 +9209,6 @@ func (c *PropertyClient) QueryProjectValue(pr *Property) *ProjectQuery {
 	return query
 }
 
-// QueryPropertyCategory queries the property_category edge of a Property.
-func (c *PropertyClient) QueryPropertyCategory(pr *Property) *PropertyCategoryQuery {
-	query := &PropertyCategoryQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := pr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, id),
-			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, property.PropertyCategoryTable, property.PropertyCategoryColumn),
-		)
-		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *PropertyClient) Hooks() []Hook {
 	hooks := c.hooks.Property
@@ -9314,15 +9298,15 @@ func (c *PropertyCategoryClient) GetX(ctx context.Context, id int) *PropertyCate
 	return obj
 }
 
-// QueryProperties queries the properties edge of a PropertyCategory.
-func (c *PropertyCategoryClient) QueryProperties(pc *PropertyCategory) *PropertyQuery {
-	query := &PropertyQuery{config: c.config}
+// QueryPropertiesType queries the properties_type edge of a PropertyCategory.
+func (c *PropertyCategoryClient) QueryPropertiesType(pc *PropertyCategory) *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := pc.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, id),
-			sqlgraph.To(property.Table, property.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTable, propertycategory.PropertiesColumn),
+			sqlgraph.To(propertytype.Table, propertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTypeTable, propertycategory.PropertiesTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
 		return fromV, nil
@@ -9604,6 +9588,22 @@ func (c *PropertyTypeClient) QueryWorkerType(pt *PropertyType) *WorkerTypeQuery 
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
 			sqlgraph.To(workertype.Table, workertype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.WorkerTypeTable, propertytype.WorkerTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPropertyCategory queries the property_category edge of a PropertyType.
+func (c *PropertyTypeClient) QueryPropertyCategory(pt *PropertyType) *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.PropertyCategoryTable, propertytype.PropertyCategoryColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil

@@ -25,7 +25,7 @@ func (PropertyCategory) Fields() []ent.Field {
 // Edges returns property type edges.
 func (PropertyCategory) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("properties", Property.Type),
+		edge.To("properties_type", PropertyType.Type),
 		edge.From("parameter_catalog", ParameterCatalog.Type).
 			Ref("property_categories").
 			Unique(),

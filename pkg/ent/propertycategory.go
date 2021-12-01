@@ -37,8 +37,8 @@ type PropertyCategory struct {
 
 // PropertyCategoryEdges holds the relations/edges for other nodes in the graph.
 type PropertyCategoryEdges struct {
-	// Properties holds the value of the properties edge.
-	Properties []*Property
+	// PropertiesType holds the value of the properties_type edge.
+	PropertiesType []*PropertyType
 	// ParameterCatalog holds the value of the parameter_catalog edge.
 	ParameterCatalog *ParameterCatalog
 	// loadedTypes holds the information for reporting if a
@@ -46,13 +46,13 @@ type PropertyCategoryEdges struct {
 	loadedTypes [2]bool
 }
 
-// PropertiesOrErr returns the Properties value or an error if the edge
+// PropertiesTypeOrErr returns the PropertiesType value or an error if the edge
 // was not loaded in eager-loading.
-func (e PropertyCategoryEdges) PropertiesOrErr() ([]*Property, error) {
+func (e PropertyCategoryEdges) PropertiesTypeOrErr() ([]*PropertyType, error) {
 	if e.loadedTypes[0] {
-		return e.Properties, nil
+		return e.PropertiesType, nil
 	}
-	return nil, &NotLoadedError{edge: "properties"}
+	return nil, &NotLoadedError{edge: "properties_type"}
 }
 
 // ParameterCatalogOrErr returns the ParameterCatalog value or an error if the edge
@@ -131,9 +131,9 @@ func (pc *PropertyCategory) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryProperties queries the properties edge of the PropertyCategory.
-func (pc *PropertyCategory) QueryProperties() *PropertyQuery {
-	return (&PropertyCategoryClient{config: pc.config}).QueryProperties(pc)
+// QueryPropertiesType queries the properties_type edge of the PropertyCategory.
+func (pc *PropertyCategory) QueryPropertiesType() *PropertyTypeQuery {
+	return (&PropertyCategoryClient{config: pc.config}).QueryPropertiesType(pc)
 }
 
 // QueryParameterCatalog queries the parameter_catalog edge of the PropertyCategory.

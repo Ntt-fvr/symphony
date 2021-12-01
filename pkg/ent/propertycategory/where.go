@@ -464,25 +464,25 @@ func IndexLTE(v int) predicate.PropertyCategory {
 	})
 }
 
-// HasProperties applies the HasEdge predicate on the "properties" edge.
-func HasProperties() predicate.PropertyCategory {
+// HasPropertiesType applies the HasEdge predicate on the "properties_type" edge.
+func HasPropertiesType() predicate.PropertyCategory {
 	return predicate.PropertyCategory(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropertiesTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropertiesTable, PropertiesColumn),
+			sqlgraph.To(PropertiesTypeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertiesTypeTable, PropertiesTypeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasPropertiesWith applies the HasEdge predicate on the "properties" edge with a given conditions (other predicates).
-func HasPropertiesWith(preds ...predicate.Property) predicate.PropertyCategory {
+// HasPropertiesTypeWith applies the HasEdge predicate on the "properties_type" edge with a given conditions (other predicates).
+func HasPropertiesTypeWith(preds ...predicate.PropertyType) predicate.PropertyCategory {
 	return predicate.PropertyCategory(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropertiesInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropertiesTable, PropertiesColumn),
+			sqlgraph.To(PropertiesTypeInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertiesTypeTable, PropertiesTypeColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

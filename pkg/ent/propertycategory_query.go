@@ -18,8 +18,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 )
 
 // PropertyCategoryQuery is the builder for querying PropertyCategory entities.
@@ -31,7 +31,7 @@ type PropertyCategoryQuery struct {
 	unique     []string
 	predicates []predicate.PropertyCategory
 	// eager-loading edges.
-	withProperties       *PropertyQuery
+	withPropertiesType   *PropertyTypeQuery
 	withParameterCatalog *ParameterCatalogQuery
 	withFKs              bool
 	// intermediate query (i.e. traversal path).
@@ -63,9 +63,9 @@ func (pcq *PropertyCategoryQuery) Order(o ...OrderFunc) *PropertyCategoryQuery {
 	return pcq
 }
 
-// QueryProperties chains the current query on the properties edge.
-func (pcq *PropertyCategoryQuery) QueryProperties() *PropertyQuery {
-	query := &PropertyQuery{config: pcq.config}
+// QueryPropertiesType chains the current query on the properties_type edge.
+func (pcq *PropertyCategoryQuery) QueryPropertiesType() *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: pcq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := pcq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -76,8 +76,8 @@ func (pcq *PropertyCategoryQuery) QueryProperties() *PropertyQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, selector),
-			sqlgraph.To(property.Table, property.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTable, propertycategory.PropertiesColumn),
+			sqlgraph.To(propertytype.Table, propertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTypeTable, propertycategory.PropertiesTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pcq.driver.Dialect(), step)
 		return fromU, nil
@@ -283,7 +283,7 @@ func (pcq *PropertyCategoryQuery) Clone() *PropertyCategoryQuery {
 		order:                append([]OrderFunc{}, pcq.order...),
 		unique:               append([]string{}, pcq.unique...),
 		predicates:           append([]predicate.PropertyCategory{}, pcq.predicates...),
-		withProperties:       pcq.withProperties.Clone(),
+		withPropertiesType:   pcq.withPropertiesType.Clone(),
 		withParameterCatalog: pcq.withParameterCatalog.Clone(),
 		// clone intermediate query.
 		sql:  pcq.sql.Clone(),
@@ -291,14 +291,14 @@ func (pcq *PropertyCategoryQuery) Clone() *PropertyCategoryQuery {
 	}
 }
 
-//  WithProperties tells the query-builder to eager-loads the nodes that are connected to
-// the "properties" edge. The optional arguments used to configure the query builder of the edge.
-func (pcq *PropertyCategoryQuery) WithProperties(opts ...func(*PropertyQuery)) *PropertyCategoryQuery {
-	query := &PropertyQuery{config: pcq.config}
+//  WithPropertiesType tells the query-builder to eager-loads the nodes that are connected to
+// the "properties_type" edge. The optional arguments used to configure the query builder of the edge.
+func (pcq *PropertyCategoryQuery) WithPropertiesType(opts ...func(*PropertyTypeQuery)) *PropertyCategoryQuery {
+	query := &PropertyTypeQuery{config: pcq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	pcq.withProperties = query
+	pcq.withPropertiesType = query
 	return pcq
 }
 
@@ -384,7 +384,7 @@ func (pcq *PropertyCategoryQuery) sqlAll(ctx context.Context) ([]*PropertyCatego
 		withFKs     = pcq.withFKs
 		_spec       = pcq.querySpec()
 		loadedTypes = [2]bool{
-			pcq.withProperties != nil,
+			pcq.withPropertiesType != nil,
 			pcq.withParameterCatalog != nil,
 		}
 	)
@@ -418,32 +418,32 @@ func (pcq *PropertyCategoryQuery) sqlAll(ctx context.Context) ([]*PropertyCatego
 		return nodes, nil
 	}
 
-	if query := pcq.withProperties; query != nil {
+	if query := pcq.withPropertiesType; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*PropertyCategory)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Properties = []*Property{}
+			nodes[i].Edges.PropertiesType = []*PropertyType{}
 		}
 		query.withFKs = true
-		query.Where(predicate.Property(func(s *sql.Selector) {
-			s.Where(sql.InValues(propertycategory.PropertiesColumn, fks...))
+		query.Where(predicate.PropertyType(func(s *sql.Selector) {
+			s.Where(sql.InValues(propertycategory.PropertiesTypeColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.property_category_properties
+			fk := n.property_category_properties_type
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "property_category_properties" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "property_category_properties_type" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "property_category_properties" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "property_category_properties_type" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Properties = append(node.Edges.Properties, n)
+			node.Edges.PropertiesType = append(node.Edges.PropertiesType, n)
 		}
 	}
 

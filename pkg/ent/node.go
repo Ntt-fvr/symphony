@@ -5035,7 +5035,7 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pr.ID,
 		Type:   "Property",
 		Fields: make([]*Field, 10),
-		Edges:  make([]*Edge, 15),
+		Edges:  make([]*Edge, 14),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pr.CreateTime); err != nil {
@@ -5258,16 +5258,6 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[14] = &Edge{
-		Type: "PropertyCategory",
-		Name: "property_category",
-	}
-	node.Edges[14].IDs, err = pr.QueryPropertyCategory().
-		Select(propertycategory.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	return node, nil
 }
 
@@ -5312,11 +5302,11 @@ func (pc *PropertyCategory) Node(ctx context.Context) (node *Node, err error) {
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
-		Type: "Property",
-		Name: "properties",
+		Type: "PropertyType",
+		Name: "properties_type",
 	}
-	node.Edges[0].IDs, err = pc.QueryProperties().
-		Select(property.FieldID).
+	node.Edges[0].IDs, err = pc.QueryPropertiesType().
+		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -5339,7 +5329,7 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pt.ID,
 		Type:   "PropertyType",
 		Fields: make([]*Field, 20),
-		Edges:  make([]*Edge, 11),
+		Edges:  make([]*Edge, 12),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pt.CreateTime); err != nil {
@@ -5608,6 +5598,16 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[10].IDs, err = pt.QueryWorkerType().
 		Select(workertype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[11] = &Edge{
+		Type: "PropertyCategory",
+		Name: "property_category",
+	}
+	node.Edges[11].IDs, err = pt.QueryPropertyCategory().
+		Select(propertycategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

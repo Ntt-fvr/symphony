@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
@@ -501,6 +502,25 @@ func (ptc *PropertyTypeCreate) SetNillableWorkerTypeID(id *int) *PropertyTypeCre
 // SetWorkerType sets the worker_type edge to WorkerType.
 func (ptc *PropertyTypeCreate) SetWorkerType(w *WorkerType) *PropertyTypeCreate {
 	return ptc.SetWorkerTypeID(w.ID)
+}
+
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptc *PropertyTypeCreate) SetPropertyCategoryID(id int) *PropertyTypeCreate {
+	ptc.mutation.SetPropertyCategoryID(id)
+	return ptc
+}
+
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillablePropertyCategoryID(id *int) *PropertyTypeCreate {
+	if id != nil {
+		ptc = ptc.SetPropertyCategoryID(*id)
+	}
+	return ptc
+}
+
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptc *PropertyTypeCreate) SetPropertyCategory(p *PropertyCategory) *PropertyTypeCreate {
+	return ptc.SetPropertyCategoryID(p.ID)
 }
 
 // Mutation returns the PropertyTypeMutation object of the builder.
@@ -1000,6 +1020,25 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workertype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ptc.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}

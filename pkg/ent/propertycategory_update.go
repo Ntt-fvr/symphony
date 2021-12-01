@@ -15,8 +15,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 )
 
 // PropertyCategoryUpdate is the builder for updating PropertyCategory entities.
@@ -51,19 +51,19 @@ func (pcu *PropertyCategoryUpdate) AddIndex(i int) *PropertyCategoryUpdate {
 	return pcu
 }
 
-// AddPropertyIDs adds the properties edge to Property by ids.
-func (pcu *PropertyCategoryUpdate) AddPropertyIDs(ids ...int) *PropertyCategoryUpdate {
-	pcu.mutation.AddPropertyIDs(ids...)
+// AddPropertiesTypeIDs adds the properties_type edge to PropertyType by ids.
+func (pcu *PropertyCategoryUpdate) AddPropertiesTypeIDs(ids ...int) *PropertyCategoryUpdate {
+	pcu.mutation.AddPropertiesTypeIDs(ids...)
 	return pcu
 }
 
-// AddProperties adds the properties edges to Property.
-func (pcu *PropertyCategoryUpdate) AddProperties(p ...*Property) *PropertyCategoryUpdate {
+// AddPropertiesType adds the properties_type edges to PropertyType.
+func (pcu *PropertyCategoryUpdate) AddPropertiesType(p ...*PropertyType) *PropertyCategoryUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return pcu.AddPropertyIDs(ids...)
+	return pcu.AddPropertiesTypeIDs(ids...)
 }
 
 // SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
@@ -90,25 +90,25 @@ func (pcu *PropertyCategoryUpdate) Mutation() *PropertyCategoryMutation {
 	return pcu.mutation
 }
 
-// ClearProperties clears all "properties" edges to type Property.
-func (pcu *PropertyCategoryUpdate) ClearProperties() *PropertyCategoryUpdate {
-	pcu.mutation.ClearProperties()
+// ClearPropertiesType clears all "properties_type" edges to type PropertyType.
+func (pcu *PropertyCategoryUpdate) ClearPropertiesType() *PropertyCategoryUpdate {
+	pcu.mutation.ClearPropertiesType()
 	return pcu
 }
 
-// RemovePropertyIDs removes the properties edge to Property by ids.
-func (pcu *PropertyCategoryUpdate) RemovePropertyIDs(ids ...int) *PropertyCategoryUpdate {
-	pcu.mutation.RemovePropertyIDs(ids...)
+// RemovePropertiesTypeIDs removes the properties_type edge to PropertyType by ids.
+func (pcu *PropertyCategoryUpdate) RemovePropertiesTypeIDs(ids ...int) *PropertyCategoryUpdate {
+	pcu.mutation.RemovePropertiesTypeIDs(ids...)
 	return pcu
 }
 
-// RemoveProperties removes properties edges to Property.
-func (pcu *PropertyCategoryUpdate) RemoveProperties(p ...*Property) *PropertyCategoryUpdate {
+// RemovePropertiesType removes properties_type edges to PropertyType.
+func (pcu *PropertyCategoryUpdate) RemovePropertiesType(p ...*PropertyType) *PropertyCategoryUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return pcu.RemovePropertyIDs(ids...)
+	return pcu.RemovePropertiesTypeIDs(ids...)
 }
 
 // ClearParameterCatalog clears the "parameter_catalog" edge to type ParameterCatalog.
@@ -239,33 +239,33 @@ func (pcu *PropertyCategoryUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Column: propertycategory.FieldIndex,
 		})
 	}
-	if pcu.mutation.PropertiesCleared() {
+	if pcu.mutation.PropertiesTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   propertycategory.PropertiesTypeTable,
+			Columns: []string{propertycategory.PropertiesTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
+					Column: propertytype.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pcu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !pcu.mutation.PropertiesCleared() {
+	if nodes := pcu.mutation.RemovedPropertiesTypeIDs(); len(nodes) > 0 && !pcu.mutation.PropertiesTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   propertycategory.PropertiesTypeTable,
+			Columns: []string{propertycategory.PropertiesTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
+					Column: propertytype.FieldID,
 				},
 			},
 		}
@@ -274,17 +274,17 @@ func (pcu *PropertyCategoryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pcu.mutation.PropertiesIDs(); len(nodes) > 0 {
+	if nodes := pcu.mutation.PropertiesTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   propertycategory.PropertiesTypeTable,
+			Columns: []string{propertycategory.PropertiesTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
+					Column: propertytype.FieldID,
 				},
 			},
 		}
@@ -365,19 +365,19 @@ func (pcuo *PropertyCategoryUpdateOne) AddIndex(i int) *PropertyCategoryUpdateOn
 	return pcuo
 }
 
-// AddPropertyIDs adds the properties edge to Property by ids.
-func (pcuo *PropertyCategoryUpdateOne) AddPropertyIDs(ids ...int) *PropertyCategoryUpdateOne {
-	pcuo.mutation.AddPropertyIDs(ids...)
+// AddPropertiesTypeIDs adds the properties_type edge to PropertyType by ids.
+func (pcuo *PropertyCategoryUpdateOne) AddPropertiesTypeIDs(ids ...int) *PropertyCategoryUpdateOne {
+	pcuo.mutation.AddPropertiesTypeIDs(ids...)
 	return pcuo
 }
 
-// AddProperties adds the properties edges to Property.
-func (pcuo *PropertyCategoryUpdateOne) AddProperties(p ...*Property) *PropertyCategoryUpdateOne {
+// AddPropertiesType adds the properties_type edges to PropertyType.
+func (pcuo *PropertyCategoryUpdateOne) AddPropertiesType(p ...*PropertyType) *PropertyCategoryUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return pcuo.AddPropertyIDs(ids...)
+	return pcuo.AddPropertiesTypeIDs(ids...)
 }
 
 // SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
@@ -404,25 +404,25 @@ func (pcuo *PropertyCategoryUpdateOne) Mutation() *PropertyCategoryMutation {
 	return pcuo.mutation
 }
 
-// ClearProperties clears all "properties" edges to type Property.
-func (pcuo *PropertyCategoryUpdateOne) ClearProperties() *PropertyCategoryUpdateOne {
-	pcuo.mutation.ClearProperties()
+// ClearPropertiesType clears all "properties_type" edges to type PropertyType.
+func (pcuo *PropertyCategoryUpdateOne) ClearPropertiesType() *PropertyCategoryUpdateOne {
+	pcuo.mutation.ClearPropertiesType()
 	return pcuo
 }
 
-// RemovePropertyIDs removes the properties edge to Property by ids.
-func (pcuo *PropertyCategoryUpdateOne) RemovePropertyIDs(ids ...int) *PropertyCategoryUpdateOne {
-	pcuo.mutation.RemovePropertyIDs(ids...)
+// RemovePropertiesTypeIDs removes the properties_type edge to PropertyType by ids.
+func (pcuo *PropertyCategoryUpdateOne) RemovePropertiesTypeIDs(ids ...int) *PropertyCategoryUpdateOne {
+	pcuo.mutation.RemovePropertiesTypeIDs(ids...)
 	return pcuo
 }
 
-// RemoveProperties removes properties edges to Property.
-func (pcuo *PropertyCategoryUpdateOne) RemoveProperties(p ...*Property) *PropertyCategoryUpdateOne {
+// RemovePropertiesType removes properties_type edges to PropertyType.
+func (pcuo *PropertyCategoryUpdateOne) RemovePropertiesType(p ...*PropertyType) *PropertyCategoryUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return pcuo.RemovePropertyIDs(ids...)
+	return pcuo.RemovePropertiesTypeIDs(ids...)
 }
 
 // ClearParameterCatalog clears the "parameter_catalog" edge to type ParameterCatalog.
@@ -551,33 +551,33 @@ func (pcuo *PropertyCategoryUpdateOne) sqlSave(ctx context.Context) (_node *Prop
 			Column: propertycategory.FieldIndex,
 		})
 	}
-	if pcuo.mutation.PropertiesCleared() {
+	if pcuo.mutation.PropertiesTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   propertycategory.PropertiesTypeTable,
+			Columns: []string{propertycategory.PropertiesTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
+					Column: propertytype.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pcuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !pcuo.mutation.PropertiesCleared() {
+	if nodes := pcuo.mutation.RemovedPropertiesTypeIDs(); len(nodes) > 0 && !pcuo.mutation.PropertiesTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   propertycategory.PropertiesTypeTable,
+			Columns: []string{propertycategory.PropertiesTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
+					Column: propertytype.FieldID,
 				},
 			},
 		}
@@ -586,17 +586,17 @@ func (pcuo *PropertyCategoryUpdateOne) sqlSave(ctx context.Context) (_node *Prop
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pcuo.mutation.PropertiesIDs(); len(nodes) > 0 {
+	if nodes := pcuo.mutation.PropertiesTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertycategory.PropertiesTable,
-			Columns: []string{propertycategory.PropertiesColumn},
+			Table:   propertycategory.PropertiesTypeTable,
+			Columns: []string{propertycategory.PropertiesTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: property.FieldID,
+					Column: propertytype.FieldID,
 				},
 			},
 		}

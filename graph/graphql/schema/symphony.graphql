@@ -1593,6 +1593,7 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  propertyCategory: PropertyCategory
 }
 
 type DocumentCategory implements Node {
@@ -1645,6 +1646,7 @@ input PropertyTypeInput
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  propertyCategoryID: ID
 }
 
 type Property implements Node {
@@ -1660,7 +1662,6 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
-  propertyCategory: PropertyCategory
 }
 
 input PropertyInput {
