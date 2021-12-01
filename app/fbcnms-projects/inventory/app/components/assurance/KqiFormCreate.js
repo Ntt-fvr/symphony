@@ -2,13 +2,18 @@
 import AddKqiMutation from '../../mutations/AddKqiMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import Event from '@material-ui/icons/Event';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import moment from 'moment';
+import MomentUtils from '@date-io/moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
@@ -157,6 +162,9 @@ const KqiFormCreate = (props: Props) => {
   } = props;
   const classes = useStyles();
   const [Kqis, setKqis] = useState<Kqis>({data: {}});
+  const [slotStartDate, setSlotStartDate] = useState(moment);
+  const [slotEndDate, setSlotEndDate] = useState(moment);
+
   function handleChange({target}) {
     setKqis({
       data: {
@@ -311,7 +319,7 @@ const KqiFormCreate = (props: Props) => {
           </Grid>
           <Grid container className={classes.formField} spacing={3}>
             <Grid item xs={12} lg={3}>
-              <TextField
+              {/* <TextField
                 name="startDateTime"
                 variant="outlined"
                 label="Start"
@@ -320,7 +328,27 @@ const KqiFormCreate = (props: Props) => {
                 type="datetime-local"
                 className={classes.calendar}
                 onChange={handleChange}
-              />
+              /> */}
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
+                  label="Start"
+                  variant="inline"
+                  inputVariant="outlined"
+                  value={slotStartDate}
+                  className={classes.calendar}
+                  onChange={setSlotStartDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </MuiPickersUtilsProvider>
               <TextField
                 select
                 required
@@ -339,7 +367,7 @@ const KqiFormCreate = (props: Props) => {
             </Grid>
             <Grid item xs={12} sm={12} lg={3}>
               <form className={classes.formField}>
-                <TextField
+                {/* <TextField
                   name="endDateTime"
                   variant="outlined"
                   label="End"
@@ -348,7 +376,27 @@ const KqiFormCreate = (props: Props) => {
                   type="datetime-local"
                   className={classes.calendar}
                   onChange={handleChange}
-                />
+                /> */}
+                <MuiPickersUtilsProvider utils={MomentUtils}>
+                  <DateTimePicker
+                    label="End"
+                    variant="inline"
+                    inputVariant="outlined"
+                    value={slotEndDate}
+                    className={classes.calendar}
+                    onChange={setSlotEndDate}
+                    format="yyyy/MM/DD HH:mm a"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton>
+                            <Event style={{color: '#8895AD'}} />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </MuiPickersUtilsProvider>
               </form>
               <Grid container alignItems="center">
                 <Grid className={classes.gridStyleTitle} item xs={12} lg={4}>

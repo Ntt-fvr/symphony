@@ -13,7 +13,6 @@ import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -31,10 +30,10 @@ import KqiTableAssociatedTarget from './KqiTableAssociatedTarget';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import {DARK} from '@symphony/design-system/theme/symphony';
 
 import type {EditKqiMutationVariables} from '../../mutations/__generated__/EditKqiMutation.graphql';
-import type {Kqis} from './KqiTypes';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -47,6 +46,9 @@ import moment from 'moment';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useValidationEdit} from './common/useValidation';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
+import Event from '@material-ui/icons/Event';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -243,11 +245,17 @@ const KqiFormEdit = (props: Props) => {
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
   const formula = useFormInput(formValues.item.formula);
-  const startDateTime = useFormInput(
-    moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'),
+  // const startDateTime = useFormInput(
+  //   moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'),
+  // );
+  // const endDateTime = useFormInput(
+  //   moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
+  // );
+  const [slotStartDate, setSlotStartDate] = useState(
+    moment(formValues.item.startDateTime),
   );
-  const endDateTime = useFormInput(
-    moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
+  const [slotEndDate, setSlotEndDate] = useState(
+    moment(formValues.item.endDateTime),
   );
 
   const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
@@ -268,7 +276,9 @@ const KqiFormEdit = (props: Props) => {
     formula.value.trim(),
     kqiCategory.value,
     kqiPerspective.value,
-    endDateTime.value,
+    // endDateTime.value,
+    slotStartDate,
+    slotEndDate,
     kqiSource.value,
     kqiTemporalFrequency.value,
   ];
@@ -282,7 +292,7 @@ const KqiFormEdit = (props: Props) => {
     );
   };
 
-  const handleDisable = useDisabledButtonEdit(dataInputsObject, 8, inputFilter);
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 9, inputFilter);
 
   const validationName = useValidationEdit(inputFilter, 'Kqi');
 
@@ -300,8 +310,10 @@ const KqiFormEdit = (props: Props) => {
         name: name.value.trim(),
         description: description.value.trim(),
         formula: formula.value.trim(),
-        startDateTime: moment(startDateTime.value).format(),
-        endDateTime: moment(endDateTime.value).format(),
+        // startDateTime: moment(slotStartDate.value).format(),
+        // endDateTime: moment(slotEndDate.value).format(),
+        startDateTime: slotStartDate,
+        endDateTime: slotEndDate,
         kqiCategory: kqiCategory.value,
         kqiPerspective: kqiPerspective.value,
         kqiSource: kqiSource.value,
@@ -469,7 +481,7 @@ const KqiFormEdit = (props: Props) => {
           </Grid>
           <Grid container className={classes.formField} spacing={3}>
             <Grid item xs={12} lg={3}>
-              <TextField
+              {/* <TextField
                 required
                 name="startDateTime"
                 variant="outlined"
@@ -479,7 +491,27 @@ const KqiFormEdit = (props: Props) => {
                 className={classes.calendar}
                 InputLabelProps={{shrink: true}}
                 {...startDateTime}
-              />
+              /> */}
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
+                  label="Start"
+                  variant="inline"
+                  inputVariant="outlined"
+                  value={slotStartDate}
+                  className={classes.calendar}
+                  onChange={setSlotStartDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </MuiPickersUtilsProvider>
               <TextField
                 select
                 required
@@ -496,7 +528,7 @@ const KqiFormEdit = (props: Props) => {
               </TextField>
             </Grid>
             <Grid item xs={12} sm={12} lg={3}>
-              <TextField
+              {/* <TextField
                 required
                 name="endDateTime"
                 variant="outlined"
@@ -506,7 +538,27 @@ const KqiFormEdit = (props: Props) => {
                 InputLabelProps={{shrink: true}}
                 className={classes.calendar}
                 {...endDateTime}
-              />
+              /> */}
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
+                  label="End"
+                  variant="inline"
+                  inputVariant="outlined"
+                  value={slotEndDate}
+                  className={classes.calendar}
+                  onChange={setSlotEndDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </MuiPickersUtilsProvider>
               <Grid container alignItems="center">
                 <Grid className={classes.gridStyleTitle} item xs={12} lg={4}>
                   <Text variant={'caption'}>Repeat every</Text>
