@@ -2996,7 +2996,8 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 		SetNillableIsInstanceProperty(input.IsInstanceProperty).
 		SetNillableEditable(input.IsEditable).
 		SetNillableMandatory(input.IsMandatory).
-		SetNillableDeleted(input.IsDeleted)
+		SetNillableDeleted(input.IsDeleted).
+		SetNillablePropertyCategoryID(input.PropertyCategoryID)
 	switch input.Type {
 	case propertytype.TypeDate,
 		propertytype.TypeEmail,
@@ -3527,7 +3528,6 @@ func (r mutationResolver) RemoveParameterCatalog(ctx context.Context, parameterC
 	default:
 		return id, fmt.Errorf("entity type: %s not supported", parameterCatalogEntity)
 	}
-	fmt.Println("==========count=======", count)
 	if count > 0 {
 		return count, fmt.Errorf("parameter catalog ID: %d for entity type %s has %d entities associated", id, parameterCatalogEntity, count)
 	}
