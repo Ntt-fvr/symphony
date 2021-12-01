@@ -24,7 +24,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    marginBottom: '7px',
+    marginBottom: '10px',
   },
   container: {
     display: 'flex',

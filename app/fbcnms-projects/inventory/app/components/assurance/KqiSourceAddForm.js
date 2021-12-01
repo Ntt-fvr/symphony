@@ -143,7 +143,7 @@ export const KqiSourceAddForm = (props: Props) => {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>
-        <Text useEllipsis={true} variant="h6" weight="bold">
+        <Text useEllipsis={true} variant="h6">
           Add KQI Source
         </Text>
       </CardHeader>
