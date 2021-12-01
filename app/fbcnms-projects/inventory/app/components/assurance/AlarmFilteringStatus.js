@@ -18,7 +18,12 @@ import moment from 'moment';
 const useStyles = makeStyles(() => ({
   button: {
     width: '100%',
-    height: '36px',
+    height: '38px',
+    cursor: 'default',
+    pointerEvents: 'auto',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
   },
   buttonActive: {
     border: '1px solid #00AF5B',
@@ -58,6 +63,7 @@ export const AlarmFilteringStatus = (props: Props) => {
             weight="bold"
             name="alarmStatus"
             value="Active"
+            disableRipple
             className={classNames(classes.button, classes.buttonActive)}>
             {'Active'}
           </Button>
@@ -69,6 +75,7 @@ export const AlarmFilteringStatus = (props: Props) => {
           weight="bold"
           name="alarmStatus"
           value="Closed"
+          disableRipple
           className={classNames(classes.button, classes.buttonClosed)}>
           {'Closed'}
         </Button>
@@ -81,6 +88,7 @@ export const AlarmFilteringStatus = (props: Props) => {
             weight="bold"
             name="alarmStatus"
             value="Pending"
+            disableRipple
             className={classNames(classes.button, classes.buttonPending)}>
             {'Pending'}
           </Button>

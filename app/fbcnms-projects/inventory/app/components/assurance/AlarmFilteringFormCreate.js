@@ -33,6 +33,12 @@ import {useValidation} from './common/useValidation';
 import type {Node} from './AlarmFilteringTypes';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
+import Event from '@material-ui/icons/Event';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import MomentUtils from '@date-io/moment';
+import classNames from 'classnames';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -40,6 +46,23 @@ const useStyles = makeStyles(() => ({
   },
   header: {
     marginBottom: '1rem',
+  },
+  containerStyle: {
+    padding: '0 7px 30px 7px',
+  },
+  option: {
+    width: '111px',
+    height: '38px',
+    alignSelf: 'flex-end',
+  },
+  containerEnabled: {
+    display: 'flex !important',
+    flexDirection: 'row-reverse !important',
+    alignItems: 'center !important',
+    marginBottom: '35px',
+    '& span': {
+      paddingRight: '8px',
+    },
   },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
@@ -52,7 +75,7 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '20px',
       width: '100%',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
@@ -70,49 +93,38 @@ const useStyles = makeStyles(() => ({
       lineHeight: '8px',
     },
   },
-  reason: {
-    minHeight: '60px',
-    '& textarea': {
-      height: '100%',
-      overflow: 'auto',
-      lineHeight: '1.5',
-    },
-  },
   gridStyleLeft: {
-    paddingRight: '0.5rem',
+    paddingLeft: '22px',
   },
   gridStyleRight: {
-    paddingLeft: '0.5rem',
+    paddingRight: '22px',
   },
-  option: {
-    width: '111px',
-    height: '36px',
-    alignSelf: 'flex-end',
+  StatusStyles: {
+    position: 'fixed',
+    width: '100%',
+    marginLeft: '3.7rem !important',
   },
-  calendar: {
-    '& .MuiOutlinedInput-input': {
-      height: '24px',
-    },
-  }
 }));
 
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
   isCompleted: void => void,
-  alarms?: Array<Node>,
+  alarms: Array<Node>,
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
   const {returnTableAlarm, isCompleted, alarms} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
+  const [slotStartDate, setSlotStartDate] = useState(moment);
+  const [slotEndDate, setSlotEndDate] = useState(moment);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
   const elementRef = useRef();
 
   const namesAlarms = alarms?.map(item => item.node.name);
 
-  const handleDisable = useDisabledButton(AlarmFilter.data, namesAlarms, 5);
+  const handleDisable = useDisabledButton(AlarmFilter.data, namesAlarms, 3);
 
   const validationName = useValidation(
     AlarmFilter.data.name,
@@ -135,8 +147,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
         name: AlarmFilter.data.name,
         networkResource: AlarmFilter.data.networkResource,
         enable: checked,
-        beginTime: moment(AlarmFilter.data.beginTime).format(),
-        endTime: moment(AlarmFilter.data.endTime).format(),
+        beginTime: slotStartDate,
+        endTime: slotEndDate,
         reason: AlarmFilter.data.reason,
         user: 'user',
         creationTime: moment(AlarmFilter.data.creationTime).format(),
@@ -149,18 +161,13 @@ const AlarmFilteringFormCreate = (props: Props) => {
   return (
     <Grid className={classes.root}>
       <Grid container>
-        <Grid
-          className={classes.header}
-          container
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center">
+        <Grid className={classes.header} container alignItems="center">
           <Grid>
             <Text variant="h6" weight="bold">
-              {fbt('Create Alarm Filter', ' ')}
+              {fbt('Create Alarm Filtering', ' ')}
             </Text>
           </Grid>
-          <Grid xs>
+          <Grid item xs>
             <FormField>
               <Button
                 style={{marginRight: '1rem'}}
@@ -185,123 +192,151 @@ const AlarmFilteringFormCreate = (props: Props) => {
             </FormField>
           </Grid>
         </Grid>
-        <Grid xs>
+        <Grid item xs>
           <Card>
-            <Grid container spacing={3}>
-              <Grid item xs={1}>
-                <FormField label="Enabled">
-                  <Switch title={''} checked={checked} onChange={setChecked} />
-                </FormField>
+            <Grid container className={classes.containerStyle}>
+              <Grid className={classes.containerEnabled} item xs={12}>
+                <Text color={'primary'} variant={'caption'}>
+                  Enabled
+                </Text>
+                <Switch title={''} checked={checked} onChange={setChecked} />
               </Grid>
-              <Grid item xs={11}>
-                <form className={classes.formField} autoComplete="off">
+              <Grid item xs={12} md={4}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleRight,
+                  )}>
                   <TextField
                     required
-                    fullwidth
                     label="Name"
                     variant="outlined"
                     name="name"
+                    autoComplete="off"
                     onChange={handleChange}
                     {...validationName}
                   />
-                </form>
+                </FormField>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={12}>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      required
-                      fullwidth
-                      label="Network Resource"
-                      variant="outlined"
-                      name="networkResource"
-                      onChange={handleChange}
-                    />
-                  </form>
-                </Grid>
-                <Grid item xs={12}>
-                  <Text variant="subtitle1">Exception period</Text>
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <form className={classes.formField} autoComplete="off">
+              <Grid item xs={12} md={4}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleLeft,
+                    classes.gridStyleRight,
+                  )}>
                   <TextField
                     required
-                    fullwidth
-                    multiline
-                    rows={3}
+                    label="Network Resource"
+                    variant="outlined"
+                    name="networkResource"
+                    autoComplete="off"
+                    onChange={handleChange}
+                  />
+                </FormField>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <FormField
+                  className={classNames(
+                    classes.formField,
+                    classes.gridStyleLeft,
+                  )}>
+                  <TextField
+                    disabled
+                    label="ID"
+                    variant="outlined"
+                    name="id"
+                    autoComplete="off"
+                    InputLabelProps={{shrink: true}}
+                    onChange={handleChange}
+                  />
+                </FormField>
+              </Grid>
+              <Grid item xs={12}>
+                <FormField className={classes.formField}>
+                  <TextField
+                    required
                     label="Reason"
                     variant="outlined"
                     name="reason"
-                    className={classes.reason}
+                    autoComplete="off"
                     inputProps={{maxLength: 120}}
                     onChange={handleChange}
                   />
-                </form>
+                </FormField>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField className={classes.formField}>
-                    <TextField
-                      className={classes.calendar}
-                      variant="outlined"
-                      label="Start"
-                      InputLabelProps={{shrink: true}}
-                      id="datetime-local"
-                      type="datetime-local"
-                      name="beginTime"
-                      onChange={handleChange}
-                    />
+              <Grid container item xs={12} md={8}>
+                <Grid item xs={12} md={6}>
+                  <FormField
+                    className={classNames(
+                      classes.formField,
+                      classes.gridStyleRight,
+                    )}>
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <DateTimePicker
+                        label="Start"
+                        variant="inline"
+                        inputVariant="outlined"
+                        value={slotStartDate}
+                        onChange={setSlotStartDate}
+                        format="yyyy/MM/DD HH:mm a"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton>
+                                <Event style={{color: '#8895AD'}} />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
-                <Grid item xs={6} className={classes.gridStyleRight}>
+                <Grid item xs={12} md={6}>
                   <FormField className={classes.formField}>
-                    <TextField
-                      className={classes.calendar}
-                      variant="outlined"
-                      label="End"
-                      InputLabelProps={{shrink: true}}
-                      id="datetime-local"
-                      type="datetime-local"
-                      name="endTime"
-                      onChange={handleChange}
-                    />
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <DateTimePicker
+                        label="End"
+                        variant="inline"
+                        inputVariant="outlined"
+                        value={slotEndDate}
+                        onChange={setSlotEndDate}
+                        format="yyyy/MM/DD HH:mm a"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton>
+                                <Event style={{color: '#8895AD'}} />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid
-                  item
-                  xs={4}
-                  lg={3}
-                  xl={2}
-                  className={classes.gridStyleLeft}
-                  style={{marginTop: '25px'}}>
+              <Grid
+                container
+                item
+                xs={12}
+                alignItems="center"
+                style={{marginTop: '7px'}}>
+                <Grid item>
+                  <Text variant="subtitle2" weight="bold">
+                    Status
+                  </Text>
+                </Grid>
+                <Grid item xs={1} className={classes.StatusStyles}>
                   <AlarmFilteringStatus
                     creationDate={moment(
                       AlarmFilter.data.creationTime,
                     ).format()}
-                    beginDate={moment(AlarmFilter.data.beginTime).format()}
-                    endDate={moment(AlarmFilter.data.endTime).format()}
+                    beginDate={String(slotStartDate)}
+                    endDate={String(slotEndDate)}
                     forwardedRef={elementRef}
                   />
-                </Grid>
-                <Grid
-                  item
-                  xs={8}
-                  lg={9}
-                  xl={10}
-                  className={classes.gridStyleRight}>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      disabled
-                      className={classes.textInput}
-                      label="ID"
-                      variant="outlined"
-                      name="id"
-                      onChange={handleChange}
-                    />
-                  </form>
                 </Grid>
               </Grid>
             </Grid>
@@ -313,7 +348,9 @@ const AlarmFilteringFormCreate = (props: Props) => {
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
           onAlarmSelected={handleClick}
-          onAlarmSelectedData={AlarmFilter.data}
+          alarmName={AlarmFilter.data.name}
+          initDate={String(slotStartDate)}
+          endDate={String(slotEndDate)}
         />
       )}
     </Grid>
