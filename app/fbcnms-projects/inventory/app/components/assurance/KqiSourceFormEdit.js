@@ -32,6 +32,7 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
+    marginTop: '15px',
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#B8C2D3',
     },
@@ -39,9 +40,10 @@ const useStyles = makeStyles(() => ({
       borderColor: '#3984FF',
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
+      transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
+      marginBottom: '15px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
       },
@@ -148,8 +150,8 @@ const KqiSourceFormEdit = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid container item xs={12} className={classes.titleButtons}>
+      {/* <Grid container> */}
+        <Grid container item xs={12} className={classes.titleButtons} spacing={3}>
           <Grid item xs={6}>
             <ConfigureTitle title={fbt('Edit KQI Source', ' ')} subtitle={''} />
           </Grid>
@@ -180,9 +182,9 @@ const KqiSourceFormEdit = (props: Props) => {
         </Grid>
         <Grid item xs={12}>
           <Card>
-            <Grid style={{padding: '21px'}} container spacing={2}>
-              <Grid item xs={6}>
-                <form className={classes.formField} autoComplete="off">
+            <Grid container className={classes.formField} spacing={2}>
+              <Grid item xs={12} lg={6}>
+                {/* <form className={classes.formField} autoComplete="off"> */}
                   <TextField
                     required
                     className={classes.textInput}
@@ -193,10 +195,10 @@ const KqiSourceFormEdit = (props: Props) => {
                     {...name}
                     {...validationName}
                   />
-                </form>
+                {/* </form> */}
               </Grid>
-              <Grid item xs={6}>
-                <form className={classes.formField} autoComplete="off">
+              <Grid item xs={12} lg={6}>
+                {/* <form className={classes.formField} autoComplete="off"> */}
                   <TextField
                     required
                     disabled
@@ -207,12 +209,12 @@ const KqiSourceFormEdit = (props: Props) => {
                     fullWidth
                     {...id}
                   />
-                </form>
+                {/* </form> */}
               </Grid>
             </Grid>
           </Card>
         </Grid>
-      </Grid>
+      {/* </Grid> */}
     </div>
   );
 };

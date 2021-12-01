@@ -49,6 +49,13 @@ const useStyles = makeStyles(() => ({
   header: {
     marginBottom: '1rem',
   },
+  container: {
+    '& .MuiGrid-spacing-xs-3': {
+      '@media (max-width: 768px)': {
+        margin: '0 -12px',
+      },
+    },
+  },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#B8C2D3',
@@ -60,7 +67,10 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '7px',
+      marginBottom: '31px',
+      '@media (max-width: 768px)': {
+        marginBottom: '7px',
+      },
       width: '100%',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
@@ -86,11 +96,27 @@ const useStyles = makeStyles(() => ({
       lineHeight: '1.5',
     },
   },
-  gridStyleLeft: {
-    paddingRight: '0.5rem',
+  gridStyleTitle: {
+    paddingRight: '31px',
   },
-  gridStyleRight: {
-    paddingLeft: '0.5rem',
+  title: {
+    marginTop: '-26px',
+    marginBottom: '6px',
+    '@media (max-width: 425px)': {
+      marginTop: '0',
+    },
+  },
+  subtitle: {
+    marginBottom: '31px',
+    '@media (max-width: 768px)': {
+      marginBottom: '7px !important',
+    },
+  },
+  onlyOnDesk: {
+    display: 'block',
+    '@media (max-width: 768px)': {
+      display: 'none',
+    },
   },
   option: {
     width: '111px',
@@ -257,250 +283,220 @@ const KqiFormEditTarget = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container>
-        <Grid
-          className={classes.header}
-          container
-          direction="row"
-          justify="flex-end"
-          alignItems="center">
-          <Grid item xs>
-            <ConfigureTitleSubItem
-              title={fbt('KQI Catalog/', '') + ` ${nameKqi}/`}
-              tag={` ${formValues.item.name}`}
-            />
-          </Grid>
-          <Grid style={{marginRight: '1rem'}}>
-            <IconButton
-              onClick={() => {
-                handleRemove(formValues.item.id);
-                returnFormEdit();
-              }}
-            >
-              <DeleteOutlinedIcon style={{color: DARK.D300}}/>
-            </IconButton>
-          </Grid>
-          <Grid style={{marginRight: '1rem'}}>
-            <FormField>
-              <Button
-                className={classes.option}
-                variant="outlined"
-                color="primary"
-                onClick={() => returnFormEdit()}>
-                Cancel
-              </Button>
-            </FormField>
-          </Grid>
-          <Grid>
-            <FormField>
-              <Button
-                onClick={handleClick}
-                className={classes.option}
-                variant="contained"
-                color="primary"
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
-          </Grid>
-        </Grid>
+      <Grid
+        className={classes.header}
+        container
+        direction="row"
+        justify="flex-end"
+        alignItems="center">
         <Grid item xs>
-          <Card>
-            <Grid container spacing={3}>
-              <Grid style={{marginTop: '-10px'}} item xs={1}>
-                <Text style={{fontSize: '12px'}}>Enable</Text><br />
-                <Switch checked={checked} title={''} onChange={setChecked} />
+          <ConfigureTitleSubItem
+            title={fbt('KQI Catalog/', '') + ` ${nameKqi}/`}
+            tag={` ${formValues.item.name}`}
+          />
+        </Grid>
+        <Grid style={{marginRight: '1rem'}}>
+          <IconButton
+            onClick={() => {
+              handleRemove(formValues.item.id);
+              returnFormEdit();
+            }}>
+            <DeleteOutlinedIcon style={{color: DARK.D300}} />
+          </IconButton>
+        </Grid>
+        <Grid style={{marginRight: '1rem'}}>
+          <FormField>
+            <Button
+              className={classes.option}
+              variant="outlined"
+              color="primary"
+              onClick={() => returnFormEdit()}>
+              Cancel
+            </Button>
+          </FormField>
+        </Grid>
+        <Grid>
+          <FormField>
+            <Button
+              onClick={handleClick}
+              className={classes.option}
+              variant="contained"
+              color="primary"
+              disabled={handleDisable}>
+              Save
+            </Button>
+          </FormField>
+        </Grid>
+      </Grid>
+      <Grid className={classes.container} item xs>
+        <Card>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid style={{marginTop: '-10px'}} item xs={12} sm={1}>
+              <Text style={{fontSize: '12px'}}>Enable</Text>
+              <br />
+              <Switch checked={checked} title={''} onChange={setChecked} />
+            </Grid>
+            <Grid item xs={12} sm={11}>
+              <TextField
+                required
+                fullWidth
+                label="Target name"
+                variant="outlined"
+                name="name"
+                {...name}
+                {...validationName}
+              />
+            </Grid>
+          </Grid>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                select
+                required
+                label="Comparator"
+                fullWidth
+                name="comparatorSelect"
+                {...comparatorSelect}
+                variant="outlined">
+                {dataComparatorSelect?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                variant="outlined"
+                name="comparatorNumber"
+                type="number"
+                placeholder="Number"
+                {...comparatorNumber}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                select
+                required
+                label="Warning comparator"
+                fullWidth
+                name="warningComparatorSelect"
+                variant="outlined"
+                {...warningComparatorSelect}>
+                {dataComparatorSelect?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                variant="outlined"
+                name="warningComparatorNumber"
+                type="number"
+                placeholder="Number"
+                {...warningComparatorNumber}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} lg={5}>
+              <TextField
+                required
+                fullWidth
+                multiline
+                rows={2}
+                label="Impact"
+                variant="outlined"
+                name="impact"
+                className={classes.textarea}
+                inputProps={{maxLength: 200}}
+                {...impact}
+              />
+            </Grid>
+          </Grid>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                type="number"
+                label="Periods"
+                placeholder="Number"
+                variant="outlined"
+                name="period"
+                {...period}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                type="number"
+                label="Allowed Variation"
+                placeholder="Number"
+                variant="outlined"
+                name="allowedVariation"
+                {...allowedVariation}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <Grid item xs={12} className={classes.title}>
+                <Text style={{fontSize: '14px'}}>Active Hours</Text>
               </Grid>
-              <Grid item xs={11}>
-                <form className={classes.formField} autoComplete="off">
+              <Grid
+                container
+                item
+                xs={12}
+                alignItems="center">
+                <Grid className={classes.subtitle} item xs={3} lg={3} xl={2}>
+                  <Text variant="caption">From</Text>
+                </Grid>
+                <Grid item xs={9} lg={9} xl={10}>
                   <TextField
                     required
                     fullWidth
-                    label="Target name"
                     variant="outlined"
-                    name="name"
-                    {...name}
-                    {...validationName}
+                    name="initTime"
+                    type="number"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">hrs</InputAdornment>
+                      ),
+                    }}
+                    {...initTime}
                   />
-                </form>
-              </Grid>
-              <Grid container item xs={8} lg={7}>
-                <Grid item xs={6} style={{paddingRight: '1.3rem'}}>
-                  <Grid container>
-                    <Grid item xs={6} className={classes.gridStyleLeft}>
-                      <form className={classes.formField} autoComplete="off">
-                        <TextField
-                          select
-                          required
-                          label="Comparator"
-                          fullWidth
-                          name="comparatorSelect"
-                          {...comparatorSelect}
-                          variant="outlined">
-                          {dataComparatorSelect?.map((item, index) => (
-                            <MenuItem key={index} value={item.id}>
-                              {item.name}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </form>
-                    </Grid>
-                    <Grid item xs={6} className={classes.gridStyleRight}>
-                      <FormField>
-                        <TextInput
-                          {...comparatorNumber}
-                          autoComplete="off"
-                          name="comparatorNumber"
-                          placeholder="Number"
-                          type="number"
-                        />
-                      </FormField>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
-                  <Grid container>
-                    <Grid item xs={6} className={classes.gridStyleLeft}>
-                      <form className={classes.formField} autoComplete="off">
-                        <TextField
-                          select
-                          required
-                          label="Warning comparator"
-                          fullWidth
-                          name="warningComparatorSelect"
-                          variant="outlined"
-                          {...warningComparatorSelect}
-                        >
-                          {dataComparatorSelect?.map((item, index) => (
-                            <MenuItem key={index} value={item.id}>
-                              {item.name}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </form>
-                    </Grid>
-                    <Grid item xs={6} className={classes.gridStyleRight}>
-                      <FormField>
-                        <TextInput
-                          {...warningComparatorNumber}
-                          autoComplete="off"
-                          name="warningComparatorNumber"
-                          placeholder="Number"
-                          type="number"
-                        />
-                      </FormField>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={4} lg={5}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    fullWidth
-                    multiline
-                    rows={2}
-                    label="Impact"
-                    variant="outlined"
-                    name="impact"
-                    className={classes.textarea}
-                    inputProps={{maxLength: 200}}
-                    {...impact}
-                  />
-                </form>
-              </Grid>
-              <Grid container item xs={8} lg={7}>
-                <Grid container item xs={6} style={{paddingRight: '1.3rem'}}>
-                  <Grid item xs={6} className={classes.gridStyleLeft}>
-                    <form className={classes.formField} autoComplete="off">
-                      <TextField
-                        required
-                        fullWidth
-                        type="number"
-                        label="Periods"
-                        placeholder="Number"
-                        variant="outlined"
-                        name="period"
-                        {...period}
-                      />
-                    </form>
-                  </Grid>
-                  <Grid item xs={6} className={classes.gridStyleRight}>
-                    <form className={classes.formField} autoComplete="off">
-                      <TextField
-                        required
-                        fullWidth
-                        type="number"
-                        label="Allowed Variation"
-                        placeholder="Number"
-                        variant="outlined"
-                        name="allowedVariation"
-                        {...allowedVariation}
-                      />
-                    </form>
-                  </Grid>
-                </Grid>
-                <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
-                  <Grid style={{marginBottom: '6px', marginTop: '-26px'}}>
-                    <Text style={{fontSize: '14px'}}>Active Hours</Text>
-                  </Grid>
-                  <Grid container>
-                    <Grid
-                      container
-                      item
-                      xs={6}
-                      alignItems="center"
-                      className={classes.gridStyleLeft}>
-                      <Grid style={{marginBottom: '7px'}} item xs={4} lg={3} xl={2}>
-                        <Text variant="caption">From</Text>
-                      </Grid>
-                      <Grid item xs={8} lg={9} xl={10}>
-                        <form className={classes.formField} autoComplete="off">
-                          <TextField
-                            required
-                            fullWidth
-                            variant="outlined"
-                            name="initTime"
-                            type="number"
-                            InputProps={{
-                              endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
-                            }}
-                            {...initTime}
-                          />
-                        </form>
-                      </Grid>
-                    </Grid>
-                    <Grid
-                      container
-                      item
-                      xs={6}
-                      alignItems="center"
-                      className={classes.gridStyleRight}>
-                      <Grid style={{marginBottom: '7px'}} item xs={2} xl={1}>
-                        <Text variant="caption">to</Text>
-                      </Grid>
-                      <Grid item xs={10} xl={11}>
-                        <form className={classes.formField} autoComplete="off">
-                          <TextField
-                            required
-                            fullWidth
-                            variant="outlined"
-                            name="endTime"
-                            type="number"
-                            InputProps={{
-                              endAdornment: <InputAdornment position="end">hrs</InputAdornment>,
-                            }}
-                            {...endTime}
-                          />
-                        </form>
-                      </Grid>
-                    </Grid>
-                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Card>
-        </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <Grid container item xs={12} alignItems="center">
+                <Grid className={classes.subtitle} item xs={3} xl={1}>
+                  <Text variant="caption">to</Text>
+                </Grid>
+                <Grid item xs={9} xl={11}>
+                  <TextField
+                    required
+                    fullWidth
+                    variant="outlined"
+                    name="endTime"
+                    type="number"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">hrs</InputAdornment>
+                      ),
+                    }}
+                    {...endTime}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid className={classes.onlyOnDesk} item lg={5} />
+          </Grid>
+        </Card>
       </Grid>
     </div>
   );
