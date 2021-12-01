@@ -1,4 +1,15 @@
-/** * Copyright 2004-present Facebook. All Rights Reserved. * * This source code is licensed under the BSD-style license found in the * LICENSE file in the root directory of this source tree. * * @flow strict-local * @format */ import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow strict-local
+ * @format
+ */
+
+import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
+
 import AddKqiMutation from '../../mutations/AddKqiMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
