@@ -20,7 +20,6 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
@@ -70,7 +69,7 @@ const useStyles = makeStyles(() => ({
   },
   addCounter: {
     margin: '0',
-    width: '111px',
+    width: '120px',
     alignSelf: 'flex-end',
   },
   input: {

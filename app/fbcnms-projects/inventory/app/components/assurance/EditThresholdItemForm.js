@@ -88,6 +88,7 @@ const useStyles = makeStyles(() => ({
   titleSwitch: {
     '& .followingText': {
       color: '#3984FF',
+      fontSize: '12px',
     },
   },
   EnabledName: {

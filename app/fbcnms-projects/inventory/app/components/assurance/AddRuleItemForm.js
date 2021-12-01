@@ -9,8 +9,10 @@
  */
 
 import type {AddRuleLimitMutationVariables} from '../../mutations/__generated__/AddRuleLimitMutation.graphql';
-import type {AddRuleMutationResponse} from '../../mutations/__generated__/AddRuleMutation.graphql';
-import type {AddRuleMutationVariables} from '../../mutations/__generated__/AddRuleMutation.graphql';
+import type {
+  AddRuleMutationResponse,
+  AddRuleMutationVariables,
+} from '../../mutations/__generated__/AddRuleMutation.graphql';
 
 import type {AddRuleItemFormQuery} from './__generated__/AddRuleItemFormQuery.graphql';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
@@ -88,7 +90,7 @@ const useStyles = makeStyles(() => ({
   headerCardEdit: {
     padding: '17px 10px 17px 0',
   },
-  checkFecha: {
+  checkDate: {
     padding: '0 0 7px 7px',
   },
   fieldSelectLimitUpper: {
@@ -187,6 +189,7 @@ const useStyles = makeStyles(() => ({
   titleSwitch: {
     '& .followingText': {
       color: '#3984FF',
+      fontSize: '12px',
     },
   },
   textInput: {
@@ -263,6 +266,8 @@ const AddRuleItemForm = (props: Props) => {
 
   const [rule, setRule] = useState<Rule>({data: {}});
   const [checked, setChecked] = useState(true);
+  const [slotStartDate, setSlotStartDate] = useState(moment);
+  const [slotEndDate, setSlotEndDate] = useState(moment);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
   const ruleTypeId = data.ruleTypes?.edges[0].node?.id;
@@ -270,16 +275,8 @@ const AddRuleItemForm = (props: Props) => {
   const namesRules = threshold?.rule.map(item => item.name);
 
   const FIELD_MIN = 10;
-  const FIELD_MAX = 12;
 
-  const validationField = () => {
-    const comparison = checkedCheckbox === false ? FIELD_MIN : FIELD_MAX;
-    return comparison;
-  };
-
-  const numberFields = validationField();
-
-  const handleDisable = useDisabledButton(rule.data, namesRules, numberFields);
+  const handleDisable = useDisabledButton(rule.data, namesRules, FIELD_MIN);
 
   const validationName = useValidation(rule.data.name, namesRules, 'Rule');
 
@@ -298,8 +295,8 @@ const AddRuleItemForm = (props: Props) => {
         name: rule.data.name,
         status: checked,
         gracePeriod: rule.data.gracePeriod,
-        startDateTime: moment(rule.data.startTime).format(),
-        endDateTime: moment(rule.data.endTime).format(),
+        startDateTime: slotStartDate,
+        endDateTime: slotEndDate,
         ruleType: ruleTypeId,
         eventTypeName: rule.data.alarmType,
         specificProblem: rule.data.specificProblem,
@@ -380,7 +377,7 @@ const AddRuleItemForm = (props: Props) => {
           </Grid>
         </Grid>
 
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
+        <Grid item xs={12}>
           <Card margins={'none'} className={classes.containerGlobal}>
             <Grid
               className={classes.headerCardEdit}
@@ -402,14 +399,13 @@ const AddRuleItemForm = (props: Props) => {
                   title={'Enabled'}
                   checked={checked}
                   onChange={setChecked}
-                  onClick={handleClick}
                 />
               </Grid>
             </Grid>
 
             <Grid container item xs={12}>
-              <Grid container item xs={12} sm={12} md={8}>
-                <Grid item xs={12} sm={12} md={6}>
+              <Grid container item xs={12} md={8}>
+                <Grid item xs={12} md={6}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
                       {...validationName}
@@ -423,7 +419,7 @@ const AddRuleItemForm = (props: Props) => {
                     />
                   </form>
                 </Grid>
-                <Grid item xs={12} sm={12} md={6}>
+                <Grid item xs={12} md={6}>
                   <FormField className={classes.formField}>
                     <TextField
                       required
@@ -436,7 +432,7 @@ const AddRuleItemForm = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+              <Grid item xs={12} md={2}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -449,7 +445,7 @@ const AddRuleItemForm = (props: Props) => {
                   />
                 </form>
               </Grid>
-              <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+              <Grid item xs={12} md={2}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -464,8 +460,8 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
             </Grid>
 
-            <Grid container item xs={12} sm={12} md={8} lg={8} xl={8}>
-              <Grid className={classes.checkFecha} item xs={12}>
+            <Grid container item xs={12} md={8}>
+              <Grid className={classes.checkDate} item xs={12}>
                 <Checkbox
                   checked={checkedCheckbox}
                   title="Definite time period"
@@ -482,7 +478,8 @@ const AddRuleItemForm = (props: Props) => {
                       label="Start"
                       variant="inline"
                       inputVariant="outlined"
-                      onChange={handleChange}
+                      value={slotStartDate}
+                      onChange={setSlotStartDate}
                       format="yyyy/MM/DD HH:mm a"
                       InputProps={{
                         endAdornment: (
@@ -505,7 +502,8 @@ const AddRuleItemForm = (props: Props) => {
                       label="End"
                       variant="inline"
                       inputVariant="outlined"
-                      onChange={handleChange}
+                      value={slotEndDate}
+                      onChange={setSlotEndDate}
                       format="yyyy/MM/DD HH:mm a"
                       InputProps={{
                         endAdornment: (
@@ -566,7 +564,7 @@ const AddRuleItemForm = (props: Props) => {
                 </Grid>
               </Grid>
 
-              <Grid container item xs={6} sm={6} lg={6} xl={6}>
+              <Grid container item xs={6}>
                 <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">
                     Lower limit
@@ -610,7 +608,6 @@ const AddRuleItemForm = (props: Props) => {
                 container
                 item
                 xs={12}
-                sm={12}
                 md={8}>
                 <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">

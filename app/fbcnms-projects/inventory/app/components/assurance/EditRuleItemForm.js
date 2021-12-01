@@ -23,17 +23,20 @@ import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import EditRuleLimitMutation from '../../mutations/EditRuleLimitMutation';
 import EditRuleMutation from '../../mutations/EditRuleMutation';
+import Event from '@material-ui/icons/Event';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import MomentUtils from '@date-io/moment';
 import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import symphony from '@symphony/design-system/theme/symphony';
-
 import fbt from 'fbt';
 import moment from 'moment';
+import symphony from '@symphony/design-system/theme/symphony';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -88,7 +91,7 @@ const useStyles = makeStyles(() => ({
   headerCardEdit: {
     padding: '17px 10px 17px 0',
   },
-  checkFecha: {
+  checkDate: {
     padding: '0 0 7px 7px',
   },
   fieldSelectLimitUpper: {
@@ -187,6 +190,7 @@ const useStyles = makeStyles(() => ({
   titleSwitch: {
     '& .followingText': {
       color: '#3984FF',
+      fontSize: '12px',
     },
   },
   textInput: {
@@ -243,7 +247,6 @@ const EditRuleItemForm = (props: Props) => {
   const {rule} = useStore();
   const {hideAddRuleForm, isCompleted, threshold} = props;
 
-  const [ruleData, setRuleData] = useState({data: {}});
   const [checked, setChecked] = useState(rule.status);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<EditRuleItemFormQuery>(EditRuleQuery, {});
@@ -258,6 +261,11 @@ const EditRuleItemForm = (props: Props) => {
   const comparatorLower = useFormInput(rule.ruleLimit[1]?.comparator.id);
   const upper = useFormInput(rule.ruleLimit[0]?.number);
   const lower = useFormInput(rule.ruleLimit[1]?.number);
+
+  const [slotStartDate, setSlotStartDate] = useState(
+    moment(rule.startDateTime),
+  );
+  const [slotEndDate, setSlotEndDate] = useState(moment(rule.endDateTime));
 
   const namesRules = threshold.rule.map(item => item.name);
 
@@ -288,15 +296,6 @@ const EditRuleItemForm = (props: Props) => {
 
   const validationName = useValidationEdit(inputFilter, 'Rule');
 
-  function handleChange({target}) {
-    setRuleData({
-      data: {
-        ...ruleData.data,
-        [target.name]: target.value.trim(),
-      },
-    });
-  }
-
   const handleRemove = id => {
     const variables: RemoveRuleMutationVariables = {
       id: id,
@@ -310,8 +309,8 @@ const EditRuleItemForm = (props: Props) => {
         id: rule.id,
         name: nameRule.value,
         gracePeriod: Number(gracePeriodRule.value),
-        startDateTime: moment(ruleData.data.startTime).format(),
-        endDateTime: moment(ruleData.data.endTime).format(),
+        startDateTime: slotStartDate,
+        endDateTime: slotEndDate,
         ruleType: data.ruleTypes.edges[0].node.id,
         eventTypeName: eventTypeRule.value,
         specificProblem: specificProblemRule.value,
@@ -397,7 +396,7 @@ const EditRuleItemForm = (props: Props) => {
           </Grid>
         </Grid>
 
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
+        <Grid item xs={12}>
           <Card margins={'none'} className={classes.containerGlobal}>
             <Grid
               className={classes.headerCardEdit}
@@ -410,7 +409,7 @@ const EditRuleItemForm = (props: Props) => {
                   weight={'bold'}
                   variant={'h6'}
                   className={classes.cardHeader}>
-                  Build Rule
+                  Edit Rule
                 </Text>
               </Grid>
               <Grid>
@@ -424,8 +423,8 @@ const EditRuleItemForm = (props: Props) => {
             </Grid>
 
             <Grid container item xs={12}>
-              <Grid container item xs={12} sm={12} md={8}>
-                <Grid item xs={12} sm={12} md={6}>
+              <Grid container item xs={12} md={8}>
+                <Grid item xs={12} md={6}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
                       {...validationName}
@@ -453,7 +452,7 @@ const EditRuleItemForm = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+              <Grid item xs={12} md={2}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -466,7 +465,7 @@ const EditRuleItemForm = (props: Props) => {
                   />
                 </form>
               </Grid>
-              <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+              <Grid item xs={12} md={2}>
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -481,8 +480,8 @@ const EditRuleItemForm = (props: Props) => {
               </Grid>
             </Grid>
 
-            <Grid container item xs={12} sm={12} md={8} lg={8} xl={8}>
-              <Grid className={classes.checkFecha} item xs={12}>
+            <Grid container item xs={12} md={8}>
+              <Grid className={classes.checkDate} item xs={12}>
                 <Checkbox
                   checked={checkedCheckbox}
                   title="Definite time period"
@@ -493,48 +492,62 @@ const EditRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField}>
-                  <TextField
-                    label="Start"
-                    variant="outlined"
-                    id="datetime-local"
-                    type="datetime-local"
-                    name="startTime"
-                    InputLabelProps={{shrink: true}}
-                    defaultValue={moment(rule.startDateTime).format(
-                      'YYYY-MM-DDThh:mm',
-                    )}
-                    disabled={!checkedCheckbox}
-                    onChange={handleChange}
-                  />{' '}
+                  <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <DateTimePicker
+                      disabled={!checkedCheckbox}
+                      label="Start"
+                      variant="inline"
+                      inputVariant="outlined"
+                      value={slotStartDate}
+                      onChange={setSlotStartDate}
+                      format="yyyy/MM/DD HH:mm a"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton>
+                              <Event style={{color: symphony.palette.D400}} />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </MuiPickersUtilsProvider>
                 </FormField>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField}>
-                  <TextField
-                    label="End"
-                    variant="outlined"
-                    id="datetime-local"
-                    type="datetime-local"
-                    name="endTime"
-                    InputLabelProps={{shrink: true}}
-                    defaultValue={moment(rule.endDateTime).format(
-                      'YYYY-MM-DDThh:mm',
-                    )}
-                    disabled={!checkedCheckbox}
-                    onChange={handleChange}
-                  />
+                  <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <DateTimePicker
+                      disabled={!checkedCheckbox}
+                      label="End"
+                      variant="inline"
+                      inputVariant="outlined"
+                      value={slotEndDate}
+                      onChange={setSlotEndDate}
+                      format="yyyy/MM/DD HH:mm a"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton>
+                              <Event style={{color: symphony.palette.D400}} />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </MuiPickersUtilsProvider>
                 </FormField>
               </Grid>
             </Grid>
 
-            <Grid container item xs={12} sm={12} md={8}>
+            <Grid container item xs={12} md={8}>
               <Grid className={classes.titleLimit} item xs={12}>
                 <Text weight="bold" variant="h6">
                   Limits Range
                 </Text>
               </Grid>
 
-              <Grid container item xs={6} sm={6} lg={6} xl={6}>
+              <Grid container item xs={6}>
                 <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">
                     Upper target
@@ -570,7 +583,7 @@ const EditRuleItemForm = (props: Props) => {
                 </Grid>
               </Grid>
 
-              <Grid container item xs={6} sm={6} lg={6} xl={6}>
+              <Grid container item xs={6}>
                 <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">
                     Lower limit
@@ -614,7 +627,6 @@ const EditRuleItemForm = (props: Props) => {
                 container
                 item
                 xs={12}
-                sm={12}
                 md={8}>
                 <Grid className={classes.titleLimit} item xs={12}>
                   <Text weight="medium" variant="subtitle2">
