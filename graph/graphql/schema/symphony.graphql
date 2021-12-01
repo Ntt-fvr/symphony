@@ -1593,6 +1593,7 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  isListable: Boolean
 }
 
 type DocumentCategory implements Node {
@@ -1629,6 +1630,7 @@ input PropertyTypeInput
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  isListable: Boolean
 }
 
 type Property implements Node {

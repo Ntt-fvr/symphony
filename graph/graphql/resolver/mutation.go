@@ -248,7 +248,8 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableRangeToVal(input.RangeToValue).
 			SetNillableEditable(input.IsEditable).
 			SetNillableMandatory(input.IsMandatory).
-			SetNillableDeleted(input.IsDeleted)
+			SetNillableDeleted(input.IsDeleted).
+			SetNillableListable(input.IsListable)
 		parentSetter(builders[i])
 	}
 	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
@@ -2993,7 +2994,8 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 		SetNillableIsInstanceProperty(input.IsInstanceProperty).
 		SetNillableEditable(input.IsEditable).
 		SetNillableMandatory(input.IsMandatory).
-		SetNillableDeleted(input.IsDeleted)
+		SetNillableDeleted(input.IsDeleted).
+		SetNillableListable(input.IsListable)
 	switch input.Type {
 	case propertytype.TypeDate,
 		propertytype.TypeEmail,
