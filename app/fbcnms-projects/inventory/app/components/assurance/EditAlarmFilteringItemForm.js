@@ -41,11 +41,11 @@ import {useValidationEdit} from './common/useValidation';
 
 import type {Node} from './AlarmFilteringTypes';
 
+import Event from '@material-ui/icons/Event';
+import MomentUtils from '@date-io/moment';
 import classNames from 'classnames';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
-import Event from '@material-ui/icons/Event';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -62,14 +62,17 @@ const useStyles = makeStyles(() => ({
     height: '38px',
     alignSelf: 'flex-end',
   },
+  titleSwitch: {
+    '& .followingText': {
+      color: '#3984FF',
+      fontSize: '12px',
+    },
+  },
   containerEnabled: {
     display: 'flex !important',
     flexDirection: 'row-reverse !important',
     alignItems: 'center !important',
     marginBottom: '35px',
-    '& span': {
-      paddingRight: '8px',
-    },
   },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
@@ -248,10 +251,12 @@ const EditAlarmFilteringItemForm = (props: Props) => {
           <Card>
             <Grid container className={classes.containerStyle}>
               <Grid className={classes.containerEnabled} item xs={12}>
-                <Text color={'primary'} variant={'caption'}>
-                  Enable
-                </Text>
-                <Switch title={''} checked={checked} onChange={setChecked} />
+                <Switch
+                  className={classes.titleSwitch}
+                  title={'Enabled'}
+                  checked={checked}
+                  onChange={setChecked}
+                />
               </Grid>
               <Grid item xs={4}>
                 <FormField
@@ -301,7 +306,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     name="id"
                     autoComplete="off"
                     {...id}
-                    disabled
                   />
                 </FormField>
               </Grid>
