@@ -11,6 +11,7 @@ import (
 	models1 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -653,11 +654,12 @@ type EditAlarmStatusInput struct {
 }
 
 type EditAppointmentInput struct {
-	ID          int       `json:"id"`
-	AssigneeID  int       `json:"assigneeID"`
-	WorkorderID int       `json:"workorderID"`
-	Date        time.Time `json:"date"`
-	Duration    float64   `json:"duration"`
+	ID          int                 `json:"id"`
+	AssigneeID  int                 `json:"assigneeID"`
+	WorkorderID int                 `json:"workorderID"`
+	Date        time.Time           `json:"date"`
+	Status      *appointment.Status `json:"status"`
+	Duration    float64             `json:"duration"`
 }
 
 type EditBlockInput struct {
