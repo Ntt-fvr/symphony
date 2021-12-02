@@ -13,19 +13,19 @@ import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqi
 import AddKqiMutation from '../../mutations/AddKqiMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
-import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import Event from '@material-ui/icons/Event';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import MomentUtils from '@date-io/moment';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import moment from 'moment';
-import MomentUtils from '@date-io/moment';
-import {MenuItem, Select} from '@material-ui/core';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import {MenuItem} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useValidation} from './common/useValidation';
@@ -205,7 +205,7 @@ const KqiFormCreate = (props: Props) => {
 
   const dataNameKqi = dataKqi.map(item => item.name);
 
-  const handleDisable = useDisabledButton(Kqis.data, dataNameKqi, 9);
+  const handleDisable = useDisabledButton(Kqis.data, dataNameKqi, 7);
 
   const validationName = useValidation(Kqis.data.name, dataNameKqi, 'Kqi');
 
