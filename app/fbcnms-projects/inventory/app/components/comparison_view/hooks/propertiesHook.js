@@ -23,7 +23,7 @@ const propertiesQuery = graphql`
       name
       type
       stringValue
-      isMandatory
+      isListable
     }
   }
 `;

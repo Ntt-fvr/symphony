@@ -186,7 +186,7 @@ export function getPossibleProperties(
         name: prop.name,
         index: index,
         stringValue: prop.stringValue,
-        isMandatory: prop.isMandatory,
+        isListable: prop.isListable,
       })),
     prop => prop.name + prop.type,
   );
@@ -201,7 +201,7 @@ export function getPossibleProperties(
 export function getListableProperties(
   data: ?propertiesHookPossiblePropertiesQueryResponse,
 ): Array<PropertyType> {
-  return getPossibleProperties(data).filter(property => property.isMandatory);
+  return getPossibleProperties(data).filter(property => property.isListable);
 }
 
 export const configToFilterQuery = (
