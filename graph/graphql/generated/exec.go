@@ -1146,6 +1146,7 @@ type ComplexityRoot struct {
 		AddCounter                               func(childComplexity int, input models.AddCounterInput) int
 		AddCounterFamily                         func(childComplexity int, input models.AddCounterFamilyInput) int
 		AddCounterFormula                        func(childComplexity int, input models.AddCounterFormulaInput) int
+		AddCounterFormulaList                    func(childComplexity int, input models.AddCounterFormulaListInput) int
 		AddCustomer                              func(childComplexity int, input models.AddCustomerInput) int
 		AddDecisionBlock                         func(childComplexity int, flowDraftID int, input models.DecisionBlockInput) int
 		AddDomain                                func(childComplexity int, input models.AddDomainInput) int
@@ -2484,6 +2485,7 @@ type MutationResolver interface {
 	EditNetworkType(ctx context.Context, input models.EditNetworkTypeInput) (*ent.NetworkType, error)
 	RemoveNetworkType(ctx context.Context, id int) (int, error)
 	AddCounterFormula(ctx context.Context, input models.AddCounterFormulaInput) (*ent.CounterFormula, error)
+	AddCounterFormulaList(ctx context.Context, input models.AddCounterFormulaListInput) ([]*ent.CounterFormula, error)
 	EditCounterFormula(ctx context.Context, input models.EditCounterFormulaInput) (*ent.CounterFormula, error)
 	RemoveCounterFormula(ctx context.Context, id int) (int, error)
 	AddThreshold(ctx context.Context, input models.AddThresholdInput) (*ent.Threshold, error)
@@ -6974,6 +6976,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddCounterFormula(childComplexity, args["input"].(models.AddCounterFormulaInput)), true
+
+	case "Mutation.addCounterFormulaList":
+		if e.complexity.Mutation.AddCounterFormulaList == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addCounterFormulaList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddCounterFormulaList(childComplexity, args["input"].(models.AddCounterFormulaListInput)), true
 
 	case "Mutation.addCustomer":
 		if e.complexity.Mutation.AddCustomer == nil {
@@ -20761,6 +20775,7 @@ type Mutation {
   editNetworkType(input: EditNetworkTypeInput!): NetworkType!
   removeNetworkType(id: ID!): ID!
   addCounterFormula(input: AddCounterFormulaInput!):CounterFormula!
+  addCounterFormulaList(input: AddCounterFormulaListInput!):[CounterFormula!]!
   editCounterFormula(input: EditCounterFormulaInput!):CounterFormula!
   removeCounterFormula(id: ID!): ID!
   addThreshold(input: AddThresholdInput!):Threshold!
@@ -21113,6 +21128,17 @@ type CounterFormula implements Node {
   counterFk: Counter!
   formulaFk: Formula!
 }
+
+input CounterListInput {
+  counterFk: ID!
+  mandatory: Boolean!
+}
+
+input AddCounterFormulaListInput {
+  formulaFk: ID!
+  counterList: [CounterListInput]!
+}
+
 
 input AddCounterFormulaInput {
   mandatory: Boolean!
@@ -22503,6 +22529,21 @@ func (ec *executionContext) field_Mutation_addCounterFamily_args(ctx context.Con
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddCounterFamilyInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterFamilyInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addCounterFormulaList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddCounterFormulaListInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddCounterFormulaListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterFormulaListInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -55769,6 +55810,48 @@ func (ec *executionContext) _Mutation_addCounterFormula(ctx context.Context, fie
 	return ec.marshalNCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addCounterFormulaList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addCounterFormulaList_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddCounterFormulaList(rctx, args["input"].(models.AddCounterFormulaListInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.CounterFormula)
+	fc.Result = res
+	return ec.marshalNCounterFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormulaᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_editCounterFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -80057,6 +80140,34 @@ func (ec *executionContext) unmarshalInputAddCounterFormulaInput(ctx context.Con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddCounterFormulaListInput(ctx context.Context, obj interface{}) (models.AddCounterFormulaListInput, error) {
+	var it models.AddCounterFormulaListInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "formulaFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formulaFk"))
+			it.FormulaFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterList":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterList"))
+			it.CounterList, err = ec.unmarshalNCounterListInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterListInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddCounterInput(ctx context.Context, obj interface{}) (models.AddCounterInput, error) {
 	var it models.AddCounterInput
 	var asMap = obj.(map[string]interface{})
@@ -83662,6 +83773,34 @@ func (ec *executionContext) unmarshalInputCounterFilterInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValue"))
 			it.PropertyValue, err = ec.unmarshalOCounterFamilyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCounterListInput(ctx context.Context, obj interface{}) (models.CounterListInput, error) {
+	var it models.CounterListInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "counterFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterFk"))
+			it.CounterFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "mandatory":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mandatory"))
+			it.Mandatory, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -100532,6 +100671,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addCounterFormulaList":
+			out.Values[i] = ec._Mutation_addCounterFormulaList(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "editCounterFormula":
 			out.Values[i] = ec._Mutation_editCounterFormula(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -107412,6 +107556,11 @@ func (ec *executionContext) unmarshalNAddCounterFormulaInput2githubᚗcomᚋface
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddCounterFormulaListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterFormulaListInput(ctx context.Context, v interface{}) (models.AddCounterFormulaListInput, error) {
+	res, err := ec.unmarshalInputAddCounterFormulaListInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddCounterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInput(ctx context.Context, v interface{}) (models.AddCounterInput, error) {
 	res, err := ec.unmarshalInputAddCounterInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -108833,6 +108982,43 @@ func (ec *executionContext) marshalNCounterFormula2ᚕᚖgithubᚗcomᚋfacebook
 	return ret
 }
 
+func (ec *executionContext) marshalNCounterFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormulaᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.CounterFormula) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalNCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx context.Context, sel ast.SelectionSet, v *ent.CounterFormula) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -108841,6 +109027,27 @@ func (ec *executionContext) marshalNCounterFormula2ᚖgithubᚗcomᚋfacebookinc
 		return graphql.Null
 	}
 	return ec._CounterFormula(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNCounterListInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterListInput(ctx context.Context, v interface{}) ([]*models.CounterListInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.CounterListInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOCounterListInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterListInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
@@ -116907,6 +117114,14 @@ func (ec *executionContext) marshalOCounterFormula2ᚖgithubᚗcomᚋfacebookinc
 		return graphql.Null
 	}
 	return ec._CounterFormula(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOCounterListInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterListInput(ctx context.Context, v interface{}) (*models.CounterListInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCounterListInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOCounterOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterOrder(ctx context.Context, v interface{}) (*ent.CounterOrder, error) {
