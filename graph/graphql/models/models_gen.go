@@ -115,6 +115,11 @@ type AddCounterFormulaInput struct {
 	FormulaFk int  `json:"formulaFk"`
 }
 
+type AddCounterFormulaListInput struct {
+	FormulaFk   int                 `json:"formulaFk"`
+	CounterList []*CounterListInput `json:"counterList"`
+}
+
 type AddCounterInput struct {
 	Name                 string `json:"name"`
 	ExternalID           string `json:"externalID"`
@@ -598,6 +603,11 @@ type CounterFilterInput struct {
 	MaxDepth      *int                `json:"maxDepth"`
 	StringSet     []string            `json:"stringSet"`
 	PropertyValue *CounterFamilyInput `json:"propertyValue"`
+}
+
+type CounterListInput struct {
+	CounterFk int  `json:"counterFk"`
+	Mandatory bool `json:"mandatory"`
 }
 
 type DecisionBlock struct {
