@@ -1611,7 +1611,6 @@ type PropertyCategory implements Node {
   id: ID!
   name: String
   index: Int
-  propertiesByEntity(entityType: PropertyEntity!, entityID: ID): [Property]!
 }
 
 type ParameterCatalog implements Node {

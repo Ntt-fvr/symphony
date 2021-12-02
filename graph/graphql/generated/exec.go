@@ -96,7 +96,6 @@ type ResolverRoot interface {
 	Project() ProjectResolver
 	ProjectType() ProjectTypeResolver
 	Property() PropertyResolver
-	PropertyCategory() PropertyCategoryResolver
 	PropertyType() PropertyTypeResolver
 	Query() QueryResolver
 	Recommendations() RecommendationsResolver
@@ -1505,10 +1504,9 @@ type ComplexityRoot struct {
 	}
 
 	PropertyCategory struct {
-		ID                 func(childComplexity int) int
-		Index              func(childComplexity int) int
-		Name               func(childComplexity int) int
-		PropertiesByEntity func(childComplexity int, entityType enum.PropertyEntity, entityID *int) int
+		ID    func(childComplexity int) int
+		Index func(childComplexity int) int
+		Name  func(childComplexity int) int
 	}
 
 	PropertyCategoryConnection struct {
@@ -2607,9 +2605,6 @@ type ProjectTypeResolver interface {
 type PropertyResolver interface {
 	NodeValue(ctx context.Context, obj *ent.Property) (models.NamedNode, error)
 	RawValue(ctx context.Context, obj *ent.Property) (*string, error)
-}
-type PropertyCategoryResolver interface {
-	PropertiesByEntity(ctx context.Context, obj *ent.PropertyCategory, entityType enum.PropertyEntity, entityID *int) ([]*ent.Property, error)
 }
 type PropertyTypeResolver interface {
 	RawValue(ctx context.Context, obj *ent.PropertyType) (*string, error)
@@ -9935,18 +9930,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyCategory.Name(childComplexity), true
 
-	case "PropertyCategory.propertiesByEntity":
-		if e.complexity.PropertyCategory.PropertiesByEntity == nil {
-			break
-		}
-
-		args, err := ec.field_PropertyCategory_propertiesByEntity_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.PropertyCategory.PropertiesByEntity(childComplexity, args["entityType"].(enum.PropertyEntity), args["entityID"].(*int)), true
-
 	case "PropertyCategoryConnection.edges":
 		if e.complexity.PropertyCategoryConnection.Edges == nil {
 			break
@@ -15412,7 +15395,6 @@ type PropertyCategory implements Node {
   id: ID!
   name: String
   index: Int
-  propertiesByEntity(entityType: PropertyEntity!, entityID: ID): [Property]!
 }
 
 type ParameterCatalog implements Node {
@@ -25920,30 +25902,6 @@ func (ec *executionContext) field_Mutation_updateUserGroups_args(ctx context.Con
 		}
 	}
 	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_PropertyCategory_propertiesByEntity_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 enum.PropertyEntity
-	if tmp, ok := rawArgs["entityType"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entityType"))
-		arg0, err = ec.unmarshalNPropertyEntity2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐPropertyEntity(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["entityType"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["entityID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entityID"))
-		arg1, err = ec.unmarshalOID2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["entityID"] = arg1
 	return args, nil
 }
 
@@ -62683,48 +62641,6 @@ func (ec *executionContext) _PropertyCategory_index(ctx context.Context, field g
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalOInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PropertyCategory_propertiesByEntity(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyCategory) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PropertyCategory",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_PropertyCategory_propertiesByEntity_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.PropertyCategory().PropertiesByEntity(rctx, obj, args["entityType"].(enum.PropertyEntity), args["entityID"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.Property)
-	fc.Result = res
-	return ec.marshalNProperty2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProperty(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PropertyCategoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyCategoryConnection) (ret graphql.Marshaler) {
@@ -103654,26 +103570,12 @@ func (ec *executionContext) _PropertyCategory(ctx context.Context, sel ast.Selec
 		case "id":
 			out.Values[i] = ec._PropertyCategory_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "name":
 			out.Values[i] = ec._PropertyCategory_name(ctx, field, obj)
 		case "index":
 			out.Values[i] = ec._PropertyCategory_index(ctx, field, obj)
-		case "propertiesByEntity":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._PropertyCategory_propertiesByEntity(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
