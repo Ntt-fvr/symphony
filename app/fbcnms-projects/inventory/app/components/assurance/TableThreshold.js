@@ -11,7 +11,10 @@
 import React, {useState} from 'react';
 
 // DESIGN SYSTEM //
+import type {EditRuleMutationVariables} from '../../mutations/__generated__/EditRuleMutation.graphql';
 import type {RemoveRuleMutationVariables} from '../../mutations/__generated__/RemoveRuleMutation.graphql';
+
+import EditRuleMutation from '../../mutations/EditRuleMutation';
 
 import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
@@ -118,6 +121,28 @@ export default function DenseTable(props: Props) {
     RemoveRuleMutation(variables, {onCompleted: () => isCompleted()});
   };
 
+  const handleClickSwitch = row => {
+    const variables: EditRuleMutationVariables = {
+      input: {
+        id: row.id,
+        name: row.name,
+        gracePeriod: Number(row.gracePeriod),
+        startDateTime: row.startDateTime,
+        endDateTime: row.endDateTime,
+        ruleType: row.ruleType.id,
+        eventTypeName: row.eventTypeName,
+        specificProblem: row.specificProblem,
+        additionalInfo: row.additionalInfo,
+        status: checked,
+        eventSeverity: row.eventSeverity.id,
+        threshold: row.threshold.id,
+      },
+    };
+    EditRuleMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
+  };
+
   const handleClick = row => {
     dispatch({
       type: types.sendEditRule,
@@ -162,6 +187,7 @@ export default function DenseTable(props: Props) {
                     title={''}
                     checked={row.status}
                     onChange={setChecked}
+                    onClick={() => handleClickSwitch(row)}
                   />
                 </TableCell>
                 <TableCell component="th" scope="row">
