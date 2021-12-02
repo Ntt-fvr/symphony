@@ -3400,37 +3400,35 @@ func (r mutationResolver) RemoveDocumentCategory(ctx context.Context, id int) (i
 
 func (r mutationResolver) EditPropertyCategories(ctx context.Context, propertyCategories []*models.EditPropertyCategoryInput) ([]*ent.PropertyCategory, error) {
 	var (
-		builders         = make([]*ent.PropertyCategory, len(propertyCategories))
-		propertyCategory *ent.PropertyCategory
-		err              error
+		addBuilders  []*ent.PropertyCategoryCreate
 	)
-	for i, pc := range propertyCategories {
+	for _, pc := range propertyCategories {
 		if pc.ID != nil {
-			propertyCategory, err = r.UpdatePropertyCategories(ctx, pc)
+			_, err := r.UpdatePropertyCategories(ctx, pc)
+			if err != nil {
+				return nil, err
+			}
 		} else {
-			propertyCategory, err = r.AddPropertyCategories(ctx, pc)
+			builder := r.AddPropertyCategories(ctx, pc)
+			addBuilders =append(addBuilders, builder)
 		}
-		if err != nil{
-			return nil, err
-		}
-		builders[i] = propertyCategory
 	}
-	return builders, nil
-}
-
-func (r mutationResolver) AddPropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) (*ent.PropertyCategory, error) {
-	propertyCategory, err := r.ClientFrom(ctx).PropertyCategory.Create().
-		SetName(propertyCategoryInput.Name).
-		SetIndex(propertyCategoryInput.Index).
-		SetParameterCatalogID(propertyCategoryInput.ParameterCatalogID).
-		Save(ctx)
-	if err != nil{
+	_, err := r.ClientFrom(ctx).PropertyCategory.CreateBulk(addBuilders...).Save(ctx)
+	if err != nil {
 		if ent.IsConstraintError(err) {
 			return nil, gqlerror.Errorf("There's already a saved category with that name. Please choose a different name.")
 		}
 		return nil, err
 	}
-	return propertyCategory, err
+	return r.ClientFrom(ctx).PropertyCategory.Query().All(ctx)
+}
+
+func (r mutationResolver) AddPropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) *ent.PropertyCategoryCreate {
+	propertyCategory := r.ClientFrom(ctx).PropertyCategory.Create().
+		SetName(propertyCategoryInput.Name).
+		SetIndex(propertyCategoryInput.Index).
+		SetParameterCatalogID(propertyCategoryInput.ParameterCatalogID)
+	return propertyCategory
 }
 
 func (r mutationResolver) UpdatePropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) (*ent.PropertyCategory, error) {
