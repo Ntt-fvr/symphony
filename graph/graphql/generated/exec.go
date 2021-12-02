@@ -19,6 +19,7 @@ import (
 	models2 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
@@ -21897,6 +21898,7 @@ input EditAppointmentInput {
   assigneeID: ID!
   workorderID: ID!
   date: Time!
+  status: AppointmentStatus
   duration: Float!
 }
 type UserAvailability {
@@ -21914,6 +21916,17 @@ input RegularHoursInput {
   workdayEndHour: Int!
   workdayEndMinute: Int!
   timezone: String
+}
+
+"""
+Appointment Status
+"""
+enum AppointmentStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/appointment.Status"
+  ) {
+  ACTIVE
+  CANCELED
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -84128,6 +84141,14 @@ func (ec *executionContext) unmarshalInputEditAppointmentInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalOAppointmentStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋappointmentᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "duration":
 			var err error
 
@@ -116359,6 +116380,22 @@ func (ec *executionContext) unmarshalOAppointmentOrderField2ᚖgithubᚗcomᚋfa
 }
 
 func (ec *executionContext) marshalOAppointmentOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.AppointmentOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOAppointmentStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋappointmentᚐStatus(ctx context.Context, v interface{}) (*appointment.Status, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(appointment.Status)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOAppointmentStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋappointmentᚐStatus(ctx context.Context, sel ast.SelectionSet, v *appointment.Status) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

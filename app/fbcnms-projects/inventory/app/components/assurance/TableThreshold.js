@@ -25,7 +25,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {types} from './ThresholdReducer';
@@ -34,30 +34,33 @@ import {withStyles} from '@material-ui/core/styles';
 
 const StyledTableCell = withStyles(() => ({
   head: {
-    color: '#3984FF',
+    color: symphony.palette.D600,
   },
 }))(TableCell);
 
 const StyledTableRow = withStyles(() => ({
   root: {
     '&:nth-of-type(odd)': {
-      backgroundColor: '#EDF0F9',
+      backgroundColor: symphony.palette.D50,
     },
   },
 }))(TableRow);
 
 const useStyles = makeStyles(() => ({
-  root: {
-    margin: '10px 0 10px 0',
-  },
   table: {
     minWidth: '100%',
   },
+  headerTitle: {
+    height: '50px',
+    '& .MuiTableCell-stickyHeader': {
+      backgroundColor: '#fff',
+    },
+  },
   title: {
-    color: DARK.D300,
+    color: symphony.palette.D300,
   },
   delete: {
-    color: DARK.D300,
+    color: symphony.palette.D300,
   },
 }));
 
@@ -139,10 +142,10 @@ export default function DenseTable(props: Props) {
 
   return (
     <Paper variant="outlined">
-      <TableContainer className={classes.root}>
+      <TableContainer>
         <Table stickyHeader className={classes.table} size="small">
           <TableHead>
-            <TableRow>
+            <TableRow className={classes.headerTitle}>
               <StyledTableCell>Enable</StyledTableCell>
               <StyledTableCell>Rule Name</StyledTableCell>
               <StyledTableCell>ID</StyledTableCell>
@@ -169,7 +172,7 @@ export default function DenseTable(props: Props) {
                 <TableCell>
                   <Button>
                     <DeleteOutlinedIcon
-                      style={{color: DARK.D300}}
+                      style={{color: symphony.palette.D300}}
                       onClick={() => {
                         handleRemove(row?.id);
                       }}

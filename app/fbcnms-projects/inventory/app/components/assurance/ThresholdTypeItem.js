@@ -53,20 +53,14 @@ const useStyles = makeStyles(() => ({
     flexWrap: 'nowrap',
   },
   nameThreshold: {
-    paddingLeft: '0.25rem',
+    paddingLeft: '1rem',
   },
   deleteIcon: {
     marginRight: '1rem',
     color: DARK.D300,
   },
-  rulesContained: {
-    margin: '10px 0',
-  },
   descriptionKpi: {
     marginBottom: '20px',
-  },
-  tableRules: {
-    marginBottom: '30px',
   },
 }));
 
@@ -194,7 +188,9 @@ export default function ThresholdTypeItem(props: Props) {
               alignItems="center"
               justify="flex-start">
               <Button variant="text">
-                <Text useEllipsis={true}>{id}</Text>
+                <Text useEllipsis={true} weight="regular">
+                  {id}
+                </Text>
               </Button>
             </Grid>
 
@@ -206,7 +202,7 @@ export default function ThresholdTypeItem(props: Props) {
               alignItems="center"
               justify="flex-start">
               <Button variant="text">
-                <Text useEllipsis={true} weight="bold" color="primary">
+                <Text useEllipsis={true} weight="regular" color="primary">
                   {kpi?.name}
                 </Text>
               </Button>
@@ -248,7 +244,7 @@ export default function ThresholdTypeItem(props: Props) {
         <AccordionDetails>
           <Grid
             container
-            spacing={3}
+            spacing={0}
             item
             xs={12}
             justify="center"
@@ -256,12 +252,9 @@ export default function ThresholdTypeItem(props: Props) {
             <Grid item xs={10} className={classes.descriptionKpi}>
               Description: {description}
             </Grid>
-            <Grid className={classes.tableRules} item xs={10}>
-              <Text
-                className={classes.rulesContained}
-                weight="bold"
-                variant="subtitle1">
-                {'Rules contained'}
+            <Grid item xs={10}>
+              <Text weight="bold" variant="subtitle1">
+                Rules contained
               </Text>
               <TableThreshold
                 rule={rule}

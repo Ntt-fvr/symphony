@@ -17,14 +17,14 @@ const useStyles = makeStyles(() => ({
     flexGrow: '1',
     padding: '0 4rem 0.5rem 1rem',
   },
-  status: {
-    flexWrap: 'nowrap',
-  },
   nameThreshold: {
-    paddingLeft: '0.7rem',
+    paddingLeft: '1.3rem',
   },
   editButton: {
     paddingLeft: '1rem',
+  },
+  status: {
+    flexWrap: 'nowrap',
   },
   actions: {
     flexWrap: 'nowrap',
@@ -41,8 +41,12 @@ function TitleTextCardsThresholds() {
       justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid container item className={classes.status} xs={2} md={3}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid container className={classes.status} item xs={2} md={3}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Enable
         </Text>
 
@@ -50,17 +54,22 @@ function TitleTextCardsThresholds() {
           className={classes.nameThreshold}
           useEllipsis={true}
           color="primary"
-          variant="subtitle2">
+          variant="subtitle2"
+          weight={'medium'}>
           Threshold name
         </Text>
       </Grid>
       <Grid item xs={2} md={3}>
-        <Text color="primary" variant="subtitle2">
+        <Text color="primary" variant="subtitle2" weight={'medium'}>
           ID
         </Text>
       </Grid>
       <Grid item xs={6} md={5}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Associated KPI
         </Text>
       </Grid>
@@ -72,14 +81,14 @@ function TitleTextCardsThresholds() {
         className={classes.actions}
         xs={2}
         md={1}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text color="primary" variant="subtitle2" weight={'medium'}>
           Delete
         </Text>
         <Text
-          useEllipsis={true}
           className={classes.editButton}
           color="primary"
-          variant="subtitle2">
+          variant="subtitle2"
+          weight={'medium'}>
           Edit
         </Text>
       </Grid>

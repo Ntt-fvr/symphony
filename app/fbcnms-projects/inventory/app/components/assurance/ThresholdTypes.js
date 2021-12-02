@@ -12,13 +12,14 @@ import type {RemoveThresholdMutationVariables} from '../../mutations/__generated
 
 import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+import EditThresholdItemForm from './EditThresholdItemForm';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ThresholdProvider from './ThresholdProvider';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
-import {EditThresholdItemForm} from './EditThresholdItemForm';
+import symphony from '@symphony/design-system/theme/symphony';
 import {Grid, List} from '@material-ui/core';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
@@ -35,7 +36,7 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   titleThreshold: {
-    margin: '0 0 1rem 0',
+    margin: '0 0 40px 0',
   },
   listContainer: {
     overflow: 'auto',
@@ -45,22 +46,18 @@ const useStyles = makeStyles(() => ({
       width: '9px',
     },
     '&::-webkit-scrollbar-thumb': {
-      background: '#9DA9BE',
+      background: symphony.palette.D300,
       borderRadius: '4px',
     },
     '&::-webkit-scrollbar-thumb:active': {
-      background: '#999999',
+      background: symphony.palette.D200,
     },
     '&::-webkit-scrollbar-thumb:hover': {
-      background: '#313C48',
-      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+      background: symphony.palette.D400,
     },
     '&::-webkit-scrollbar-track': {
-      background: '#e5e5e5',
+      background: symphony.palette.D100,
       borderRadius: '4px',
-    },
-    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
-      background: '#d4d4d4',
     },
   },
 }));
@@ -231,6 +228,9 @@ const ThresholdTypes = () => {
         <EditThresholdItemForm
           thresholdNames={thresholdNames}
           formValues={dataEdit?.item.node}
+          dataRulesTable={dataThreshold.thresholds?.edges.map(
+            item => item.node,
+          )}
           hideEditThresholdForm={hideEditThresholdForm}
           editRule={() => {
             showEditRuleItemForm(dataEdit);
@@ -244,13 +244,7 @@ const ThresholdTypes = () => {
   return (
     <ThresholdProvider>
       <Grid className={classes.root} container spacing={0}>
-        <Grid
-          className={classes.titleThreshold}
-          item
-          xs={12}
-          sm={12}
-          lg={9}
-          xl={9}>
+        <Grid className={classes.titleThreshold} item xs={12}>
           <ConfigureTitle
             title={fbt('Thresholds', 'Threshold Title')}
             subtitle={fbt(

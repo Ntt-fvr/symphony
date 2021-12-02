@@ -85,6 +85,7 @@ type Props = $ReadOnly<{|
     | 'subtitle1'
     | 'subtitle2'
     | 'subtitle3'
+    | 'subtitle4'
     | 'body1'
     | 'body2'
     | 'caption'

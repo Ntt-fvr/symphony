@@ -81,7 +81,7 @@ const Card = (props: Props) => {
     <div className={classNames(classes.root, className)}>
       <div
         className={classNames(
-          classes.cardContainer,
+          `${classes.cardContainer} cardContainer`,
           classes[`${margins}Margins`],
           classes[`${variant}Variant`],
           contentClassName,

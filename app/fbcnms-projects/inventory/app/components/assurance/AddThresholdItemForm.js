@@ -20,8 +20,8 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
 
 import type {AddThresholdItemFormQuery} from './__generated__/AddThresholdItemFormQuery.graphql';
@@ -32,27 +32,24 @@ import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useValidation} from './common/useValidation';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(0),
-  },
+const useStyles = makeStyles(() => ({
   header: {
     margin: '4px 0 24px 0',
   },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
+      borderColor: symphony.palette.D200,
     },
     '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
+      borderColor: symphony.palette.B600,
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '36px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
+        borderColor: symphony.palette.B600,
       },
     },
     '& .MuiOutlinedInput-input': {
@@ -71,7 +68,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
   },
   addCounter: {
-    margin: '15px 0',
+    margin: '0',
     width: '120px',
     alignSelf: 'flex-end',
   },
@@ -188,13 +185,8 @@ export default function AddThresholdItemForm(props: Props) {
   }
 
   return (
-    <Card className={classes.root}>
-      <CardHeader className={classes.header}>
-        <Text useEllipsis={true} variant="h6" weight="bold">
-          Add Threshold
-        </Text>
-      </CardHeader>
-
+    <Card>
+      <CardHeader className={classes.header}>Add Threshold</CardHeader>
       <form className={classes.formField} autoComplete="off">
         <TextField
           required

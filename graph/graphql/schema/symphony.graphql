@@ -8359,6 +8359,7 @@ input EditAppointmentInput {
   assigneeID: ID!
   workorderID: ID!
   date: Time!
+  status: AppointmentStatus
   duration: Float!
 }
 type UserAvailability {
@@ -8376,4 +8377,15 @@ input RegularHoursInput {
   workdayEndHour: Int!
   workdayEndMinute: Int!
   timezone: String
+}
+
+"""
+Appointment Status
+"""
+enum AppointmentStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/appointment.Status"
+  ) {
+  ACTIVE
+  CANCELED
 }
