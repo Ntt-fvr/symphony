@@ -246,6 +246,11 @@ export const arrayConfigs = [
     title: 'Projects Column Selector',
     enabledByDefault: false,
   },
+  {
+    id: 'scheduling_filter_dates',
+    title: 'Scheduling',
+    enabledByDefault: false,
+  },
 ];
 
 export const featureConfigs: {[FeatureID]: FeatureConfig} = {};
