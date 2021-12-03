@@ -26,12 +26,14 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@symphony/design-system/components/IconButton';
 import PropertyTypeSelect from './PropertyTypeSelect';
 import PropertyValueInput from './PropertyValueInput';
+import PropertyCategoryTypeSelect from './PropertyCategoryTypeSelect';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
+
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {removeItem, setItem, updateItem} from '@fbcnms/util/arrays';
 import {reorder} from '../draggable/DraggableUtils';
@@ -98,6 +100,9 @@ class PropertyTypeTable extends React.Component<Props> {
                 Property Type
               </TableCell>
               <TableCell component="div" className={classes.cell}>
+                Category
+              </TableCell>
+              <TableCell component="div" className={classes.cell}>
                 Default Value
               </TableCell>
               <TableCell
@@ -145,6 +150,14 @@ class PropertyTypeTable extends React.Component<Props> {
                         propertyType={property}
                         onPropertyTypeChange={this._handleTypeChange(i)}
                       />
+                    </FormField>
+                  </TableCell>
+                  <TableCell
+                    className={classes.cell}
+                    component="div"
+                    scope="row">
+                    <FormField>
+                      <PropertyCategoryTypeSelect />
                     </FormField>
                   </TableCell>
                   <TableCell
