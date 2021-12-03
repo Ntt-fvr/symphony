@@ -28,12 +28,12 @@ export const TitleTextCardsKqiSource = () => {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={4}>
+      <Grid item xs={4}>
         <Text color="primary" useEllipsis={true} variant="subtitle2">
           KQI Source Name
         </Text>
       </Grid>
-      <Grid xs={6}>
+      <Grid item xs={6}>
         <Text color="primary" variant="subtitle2">
           ID
         </Text>
@@ -43,6 +43,7 @@ export const TitleTextCardsKqiSource = () => {
         alignItems="center"
         justify="flex-end"
         className={classes.action}
+        item
         xs={2}>
         <Text
           className={classes.accionDelete}

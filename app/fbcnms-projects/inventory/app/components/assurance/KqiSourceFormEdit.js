@@ -24,6 +24,7 @@ import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useValidationEdit} from './common/useValidation';
 
+import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -32,7 +33,7 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 43px 22px 30px',
+    marginTop: '15px',
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#B8C2D3',
     },
@@ -40,10 +41,10 @@ const useStyles = makeStyles(() => ({
       borderColor: '#3984FF',
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
+      transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
+      marginBottom: '15px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
       },
@@ -66,8 +67,10 @@ const useStyles = makeStyles(() => ({
   textInput: {
     minHeight: '36px',
   },
+  header: {
+    marginBottom: '1rem',
+  },
   option: {
-    marginRight: '1rem',
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
@@ -150,70 +153,74 @@ const KqiSourceFormEdit = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid container xs={12} className={classes.titleButtons}>
-          <Grid xs={6}>
-            <ConfigureTitle title={fbt('Edit KQI Source', ' ')} subtitle={''} />
-          </Grid>
-          <Grid container justify="flex-end" alignItems="center" xs={6}>
-            <FormField>
-              <Button
-                className={classes.option}
+      <Grid
+        className={classes.header}
+        container
+        direction="row"
+        justify="flex-end"
+        alignItems="center">
+        <Grid>
+          <Text variant="h6" weight={'bold'}>
+            {fbt('Edit KQI Source', ' ')}
+          </Text>
+        </Grid>
+        <Grid item xs>
+          <FormField>
+            <Button
+              style={{marginRight: '1rem'}}
+              className={classes.option}
+              variant="outlined"
+              color="primary"
+              onClick={() => hideKqiSourceFormEdit()}>
+              Cancel
+            </Button>
+          </FormField>
+        </Grid>
+        <Grid>
+          <FormField>
+            <Button
+              className={classes.option}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                hideKqiSourceFormEdit();
+                handleClick();
+              }}
+              disabled={handleDisable}>
+              Save
+            </Button>
+          </FormField>
+        </Grid>
+      </Grid>
+      <Grid className={classes.container} item xs>
+        <Card>
+          <Grid container className={classes.formField} spacing={2}>
+            <Grid item xs={12} lg={6}>
+              <TextField
+                required
+                className={classes.textInput}
+                label="Name"
                 variant="outlined"
-                color="primary"
-                onClick={() => hideKqiSourceFormEdit()}>
-                Cancel
-              </Button>
-            </FormField>
-            <FormField>
-              <Button
-                className={classes.option}
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  hideKqiSourceFormEdit();
-                  handleClick();
-                }}
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <Grid container>
-              <Grid item xs={6}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    className={classes.textInput}
-                    label="Name"
-                    variant="outlined"
-                    name="name"
-                    fullWidth
-                    {...name}
-                    {...validationName}
-                  />
-                </form>
-              </Grid>
-              <Grid item xs={6}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    disabled
-                    className={classes.textInput}
-                    label="ID"
-                    variant="outlined"
-                    name="iD"
-                    fullWidth
-                    {...id}
-                  />
-                </form>
-              </Grid>
+                name="name"
+                fullWidth
+                {...name}
+                {...validationName}
+              />
             </Grid>
-          </Card>
-        </Grid>
+            <Grid item xs={12} lg={6}>
+              <TextField
+                required
+                disabled
+                className={classes.textInput}
+                label="ID"
+                variant="outlined"
+                name="iD"
+                fullWidth
+                {...id}
+              />
+            </Grid>
+          </Grid>
+        </Card>
       </Grid>
     </div>
   );

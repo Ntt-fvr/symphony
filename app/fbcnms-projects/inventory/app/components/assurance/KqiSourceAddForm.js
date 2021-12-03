@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     margin: '4px 0 24px 0',
   },
   addCounter: {
-    margin: '15px 0',
+    marginBottom: '17px',
     width: '135px',
     alignSelf: 'flex-end',
   },
@@ -143,7 +143,7 @@ export const KqiSourceAddForm = (props: Props) => {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>
-        <Text useEllipsis={true} variant="h6" weight="bold">
+        <Text useEllipsis={true} variant="h6">
           Add KQI Source
         </Text>
       </CardHeader>

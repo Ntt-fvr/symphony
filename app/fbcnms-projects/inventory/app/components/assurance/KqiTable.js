@@ -20,8 +20,8 @@ import {withStyles} from '@material-ui/core/styles';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {makeStyles} from '@material-ui/styles';
 
+import Card from '@symphony/design-system/components/Card/Card';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
-import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -40,7 +40,7 @@ const StyledTableCell = withStyles(() => ({
 const StyledTableRow = withStyles(() => ({
   root: {
     '&:nth-of-type(odd)': {
-      backgroundColor: '#EDF0F9',
+      backgroundColor: '#F5F7FC',
     },
   },
 }))(TableRow);
@@ -79,7 +79,7 @@ const KqiTable = (props: Props) => {
   };
 
   return (
-    <Paper className={classes.root}>
+    <Card margins="0px" className={classes.root}>
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -142,7 +142,7 @@ const KqiTable = (props: Props) => {
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </Paper>
+    </Card>
   );
 };
 export default KqiTable;
