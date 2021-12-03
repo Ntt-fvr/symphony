@@ -47,6 +47,7 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
+  isListable?: ?boolean,
 |};
 export type WorkOrderTypeaheadQueryVariables = {|
   filters: $ReadOnlyArray<WorkOrderFilterInput>,
