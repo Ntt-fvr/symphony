@@ -44,4 +44,5 @@ export type FeatureID =
   | 'execute_automation_flows'
   | 'projects_bulk_upload'
   | 'enable_backplane_connections'
-  | 'projects_column_selector';
+  | 'projects_column_selector'
+  | 'scheduling_filter_dates';

@@ -18,6 +18,7 @@ import Select from '@symphony/design-system/components/Select/Select';
 import UserByAppointmentTypeahead from '../typeahead/UserByAppointmentTypeahead';
 import UserTypeahead from '../typeahead/UserTypeahead';
 import symphony from '@symphony/design-system/theme/symphony';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {WorkOrder} from '../../common/WorkOrder';
 import {makeStyles} from '@material-ui/styles';
@@ -103,6 +104,8 @@ const SelectAvailabilityAssignee = (props: Props) => {
   const [useFilters, setUseFilters] = useState(false);
   const [invalidForm, setInvalidForm] = useState(false);
 
+  const featureFlagFilters = useFeatureFlag('scheduling_filter_dates');
+
   useEffect(() => {
     setAppointment(false);
   }, []);
@@ -149,77 +152,81 @@ const SelectAvailabilityAssignee = (props: Props) => {
 
   return (
     <ExpandingPanel title={title} className={classes.card}>
-      <Button
-        variant="text"
-        leftIcon={CalendarTodayIcon}
-        className={classes.calendarButton}>
-        View Calendar
-      </Button>
-      <div className={classes.filterSection}>
-        <p className={classes.secondaryText}>
-          Filter time and duration (optional)
-        </p>
-        <FormField label="Time slot start">
-          <MuiPickersUtilsProvider utils={MomentUtils}>
-            <DateTimePicker
-              variant="inline"
-              inputVariant="outlined"
-              value={slotStartDate}
-              onChange={setSlotStartDate}
-              onClose={orderDatesValidation}
-              className={classes.inputFilter}
-              disabled={useFilters}
-            />
-          </MuiPickersUtilsProvider>
-        </FormField>
-        <FormField label="Time slot end">
-          <MuiPickersUtilsProvider utils={MomentUtils}>
-            <DateTimePicker
-              variant="inline"
-              minDate={slotStartDate}
-              inputVariant="outlined"
-              value={slotEndDate}
-              onChange={setSlotEndDate}
-              onClose={orderDatesValidation}
-              className={classes.inputFilter}
-              disabled={useFilters}
-            />
-          </MuiPickersUtilsProvider>
-        </FormField>
-        <FormField label="Duration">
-          <Select
-            options={[
-              {key: '0 hr', label: '0 hr', value: '0'},
-              {key: '0.5 hr', label: '0.5 hr', value: '0.5'},
-              {key: '1 hr', label: '1 hr', value: '1'},
-              {key: '1.5 hr', label: '1.5 hr', value: '1.5'},
-              {key: '2 hr', label: '2 hr', value: '2'},
-              {key: '2.5 hr', label: '2.5 hr', value: '2.5'},
-              {key: '24 hr', label: '24 hr', value: '24'},
-            ]}
-            disabled={useFilters}
-            selectedValue={duration}
-            className={classes.inputFilter}
-            onChange={duration => durationValidation(duration)}
-            onClose={durationValidation}
-          />
-        </FormField>
-        <div className={classes.actionButtons}>
+      {featureFlagFilters && (
+        <div className={classes.card}>
           <Button
-            className={classes.cancelButton}
-            skin="regular"
-            onClick={onResetClicked}
-            disabled={!useFilters}>
-            Clear Filter
+            variant="text"
+            leftIcon={CalendarTodayIcon}
+            className={classes.calendarButton}>
+            View Calendar
           </Button>
-          <Button
-            className={classes.filterButton}
-            onClick={applyFilters}
-            disabled={invalidForm || useFilters}>
-            Filter
-          </Button>
+          <div className={classes.filterSection}>
+            <p className={classes.secondaryText}>
+              Filter time and duration (optional)
+            </p>
+            <FormField label="Time slot start">
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
+                  variant="inline"
+                  inputVariant="outlined"
+                  value={slotStartDate}
+                  onChange={setSlotStartDate}
+                  onClose={orderDatesValidation}
+                  className={classes.inputFilter}
+                  disabled={useFilters}
+                />
+              </MuiPickersUtilsProvider>
+            </FormField>
+            <FormField label="Time slot end">
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
+                  variant="inline"
+                  minDate={slotStartDate}
+                  inputVariant="outlined"
+                  value={slotEndDate}
+                  onChange={setSlotEndDate}
+                  onClose={orderDatesValidation}
+                  className={classes.inputFilter}
+                  disabled={useFilters}
+                />
+              </MuiPickersUtilsProvider>
+            </FormField>
+            <FormField label="Duration">
+              <Select
+                options={[
+                  {key: '0 hr', label: '0 hr', value: '0'},
+                  {key: '0.5 hr', label: '0.5 hr', value: '0.5'},
+                  {key: '1 hr', label: '1 hr', value: '1'},
+                  {key: '1.5 hr', label: '1.5 hr', value: '1.5'},
+                  {key: '2 hr', label: '2 hr', value: '2'},
+                  {key: '2.5 hr', label: '2.5 hr', value: '2.5'},
+                  {key: '24 hr', label: '24 hr', value: '24'},
+                ]}
+                disabled={useFilters}
+                selectedValue={duration}
+                className={classes.inputFilter}
+                onChange={duration => durationValidation(duration)}
+                onClose={durationValidation}
+              />
+            </FormField>
+            <div className={classes.actionButtons}>
+              <Button
+                className={classes.cancelButton}
+                skin="regular"
+                onClick={onResetClicked}
+                disabled={!useFilters}>
+                Clear Filter
+              </Button>
+              <Button
+                className={classes.filterButton}
+                onClick={applyFilters}
+                disabled={invalidForm || useFilters}>
+                Filter
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
       <FormField className={classes.input} label="Organization">
         <OrganizationTypeahead
           selectedOrganization={workOrder.organizationFk}
