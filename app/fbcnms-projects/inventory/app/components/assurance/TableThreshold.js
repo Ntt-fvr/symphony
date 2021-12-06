@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 
 // DESIGN SYSTEM //
 import type {EditRuleMutationVariables} from '../../mutations/__generated__/EditRuleMutation.graphql';
@@ -110,7 +110,6 @@ type Props = $ReadOnly<{|
 export default function DenseTable(props: Props) {
   const {rule, editRule, isCompleted} = props;
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
 
   const dispatch = useDispatch();
 
@@ -133,7 +132,7 @@ export default function DenseTable(props: Props) {
         eventTypeName: row.eventTypeName,
         specificProblem: row.specificProblem,
         additionalInfo: row.additionalInfo,
-        status: checked,
+        status: !row.status,
         eventSeverity: row.eventSeverity.id,
         threshold: row.threshold.id,
       },
@@ -186,7 +185,6 @@ export default function DenseTable(props: Props) {
                   <Switch
                     title={''}
                     checked={row.status}
-                    onChange={setChecked}
                     onClick={() => handleClickSwitch(row)}
                   />
                 </TableCell>
