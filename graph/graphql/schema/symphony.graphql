@@ -1633,6 +1633,11 @@ input PropertyTypeInput
   isListable: Boolean
 }
 
+input EditIsListableInput {
+  id: ID!
+  isListable: Boolean!
+}
+
 type Property implements Node {
   id: ID!
   propertyType: PropertyType! @goField(name: "Type")
@@ -7286,6 +7291,7 @@ type Mutation {
   addAppointment(input: AddAppointmentInput!): Appointment!
   editAppointment(input: EditAppointmentInput!): Appointment!
   removeAppointment(id: ID!): ID!
+  editIsListable(input: EditIsListableInput!): PropertyType!
 }
 
 """

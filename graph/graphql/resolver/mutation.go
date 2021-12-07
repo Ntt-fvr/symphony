@@ -2991,6 +2991,33 @@ func (r mutationResolver) updatePropValues(ctx context.Context, input *models.Pr
 	return pu.Exec(ctx)
 }
 
+func (r mutationResolver) EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error) {
+	client := r.ClientFrom(ctx)
+	et, err := client.PropertyType.Get(ctx, input.ID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		}
+		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
+	}
+
+	var isListable = et.Listable
+	if et.Listable != input.IsListable {
+		isListable = input.IsListable
+	}
+
+	if et, err = client.PropertyType.
+		UpdateOneID(et.ID).
+		SetNillableListable(&isListable).
+		Save(ctx); err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+		}
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+	}
+	return et, nil
+}
+
 func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.PropertyTypeInput) error {
 	query := r.ClientFrom(ctx).PropertyType.
 		UpdateOneID(*input.ID).
