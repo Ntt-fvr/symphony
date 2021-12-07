@@ -8,10 +8,13 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 
 // DESIGN SYSTEM //
+import type {EditRuleMutationVariables} from '../../mutations/__generated__/EditRuleMutation.graphql';
 import type {RemoveRuleMutationVariables} from '../../mutations/__generated__/RemoveRuleMutation.graphql';
+
+import EditRuleMutation from '../../mutations/EditRuleMutation';
 
 import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
@@ -107,7 +110,6 @@ type Props = $ReadOnly<{|
 export default function DenseTable(props: Props) {
   const {rule, editRule, isCompleted} = props;
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
 
   const dispatch = useDispatch();
 
@@ -116,6 +118,28 @@ export default function DenseTable(props: Props) {
       id: id,
     };
     RemoveRuleMutation(variables, {onCompleted: () => isCompleted()});
+  };
+
+  const handleClickSwitch = row => {
+    const variables: EditRuleMutationVariables = {
+      input: {
+        id: row.id,
+        name: row.name,
+        gracePeriod: Number(row.gracePeriod),
+        startDateTime: row.startDateTime,
+        endDateTime: row.endDateTime,
+        ruleType: row.ruleType.id,
+        eventTypeName: row.eventTypeName,
+        specificProblem: row.specificProblem,
+        additionalInfo: row.additionalInfo,
+        status: !row.status,
+        eventSeverity: row.eventSeverity.id,
+        threshold: row.threshold.id,
+      },
+    };
+    EditRuleMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
   };
 
   const handleClick = row => {
@@ -161,7 +185,7 @@ export default function DenseTable(props: Props) {
                   <Switch
                     title={''}
                     checked={row.status}
-                    onChange={setChecked}
+                    onClick={() => handleClickSwitch(row)}
                   />
                 </TableCell>
                 <TableCell component="th" scope="row">

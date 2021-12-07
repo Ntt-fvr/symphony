@@ -270,6 +270,7 @@ const AddRuleItemForm = (props: Props) => {
   const [slotEndDate, setSlotEndDate] = useState(moment);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
+
   const ruleTypeId = data.ruleTypes?.edges[0].node?.id;
 
   const namesRules = threshold?.rule.map(item => item.name);

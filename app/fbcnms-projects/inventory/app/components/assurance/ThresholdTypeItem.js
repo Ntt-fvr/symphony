@@ -143,7 +143,7 @@ export default function ThresholdTypeItem(props: Props) {
         description: description,
       },
     };
-    EditTresholdMutation(variables);
+    EditTresholdMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const handleDelete = event => {
