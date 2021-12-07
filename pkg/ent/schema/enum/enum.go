@@ -329,6 +329,20 @@ func (w WorkOrderFilterType) String() string {
 	return string(w)
 }
 
+// PropertyCategoryFilterType specifies what filters should we apply on property category
+type PropertiesByCategoryFilterType string
+
+const (
+	PropertiesByCategoryFilterTypePropCategoryID    PropertiesByCategoryFilterType = "PROPERTY_CATEGORY_ID"
+	PropertiesByCategoryFilterTypeLocationID        PropertiesByCategoryFilterType = "LOCATION_ID"
+	PropertiesByCategoryFilterTypePropCategoryIsNil PropertiesByCategoryFilterType = "PROPERTY_CATEGORY_IS_NIL"
+)
+
+// String implements Getter interface.
+func (w PropertiesByCategoryFilterType) String() string {
+	return string(w)
+}
+
 // ProjectFilterType specifies what filters should we apply on Projects
 type ProjectFilterType string
 

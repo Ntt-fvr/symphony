@@ -4668,6 +4668,18 @@ enum WorkOrderFilterType
   WORK_ORDER_ORGANIZATION
 }
 
+"""
+what type of properties category we filter about
+"""
+enum PropertiesByCategoryFilterType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertiesByCategoryFilterType"
+) {
+  PROPERTY_CATEGORY_ID
+  LOCATION_ID
+  PROPERTY_CATEGORY_IS_NIL
+}
+
 input WorkOrderFilterInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
@@ -4680,6 +4692,18 @@ input WorkOrderFilterInput
   propertyValue: PropertyTypeInput
   timeValue: Time
   maxDepth: Int = 5
+}
+
+input PropertiesByCategoryFilterInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertiesByCategoryFilterInput"
+  ) {
+  filterType: PropertiesByCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  intValue: Int
+  idSet: [ID!]
+  stringSet: [String!]
 }
 
 enum ProjectFilterType {
@@ -4808,6 +4832,17 @@ type ServiceEndpoint implements Node {
   equipment: Equipment!
   service: Service!
   definition: ServiceEndpointDefinition!
+}
+
+"""
+Model for properties group by property categories
+"""
+type PropertiesByCategories
+{
+  id: ID
+  name: String
+  properties: [Property]
+  propertyType: [PropertyType]
 }
 
 """
@@ -7102,6 +7137,7 @@ type Query {
   """
   last: Int @numberValue(min: 0)
   ): ParameterCatalogConnection!
+  propertiesByCategories(filterBy: [PropertiesByCategoryFilterInput!]): [PropertiesByCategories]!
 }
 
 type Mutation {

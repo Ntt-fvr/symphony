@@ -1315,6 +1315,14 @@ type ProjectFilterInput struct {
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
 }
 
+// Model for properties group by property categories
+type PropertiesByCategories struct {
+	ID           *int                `json:"id"`
+	Name         *string             `json:"name"`
+	Properties   []*ent.Property     `json:"properties"`
+	PropertyType []*ent.PropertyType `json:"propertyType"`
+}
+
 type PropertyInput struct {
 	ID                 *int     `json:"id"`
 	PropertyTypeID     int      `json:"propertyTypeID"`
