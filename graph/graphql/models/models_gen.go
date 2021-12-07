@@ -766,6 +766,11 @@ type EditFormulaInput struct {
 	KpiFk         int    `json:"kpiFk"`
 }
 
+type EditIsListableInput struct {
+	ID         int  `json:"id"`
+	IsListable bool `json:"isListable"`
+}
+
 type EditKpiCategoryInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`

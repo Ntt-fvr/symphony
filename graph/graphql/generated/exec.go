@@ -1232,6 +1232,7 @@ type ComplexityRoot struct {
 		EditEventSeverity                        func(childComplexity int, input models.EditEventSeverityInput) int
 		EditFlowInstance                         func(childComplexity int, input *models.EditFlowInstanceInput) int
 		EditFormula                              func(childComplexity int, input models.EditFormulaInput) int
+		EditIsListable                           func(childComplexity int, input models.EditIsListableInput) int
 		EditKpi                                  func(childComplexity int, input models.EditKpiInput) int
 		EditKpiCategory                          func(childComplexity int, input models.EditKpiCategoryInput) int
 		EditKqi                                  func(childComplexity int, input models.EditKqiInput) int
@@ -2549,6 +2550,7 @@ type MutationResolver interface {
 	AddAppointment(ctx context.Context, input models.AddAppointmentInput) (*ent.Appointment, error)
 	EditAppointment(ctx context.Context, input models.EditAppointmentInput) (*ent.Appointment, error)
 	RemoveAppointment(ctx context.Context, id int) (int, error)
+	EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -8008,6 +8010,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditFormula(childComplexity, args["input"].(models.EditFormulaInput)), true
+
+	case "Mutation.editIsListable":
+		if e.complexity.Mutation.EditIsListable == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editIsListable_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditIsListable(childComplexity, args["input"].(models.EditIsListableInput)), true
 
 	case "Mutation.editKpi":
 		if e.complexity.Mutation.EditKpi == nil {
@@ -15186,6 +15200,11 @@ input PropertyTypeInput
   isListable: Boolean
 }
 
+input EditIsListableInput {
+  id: ID!
+  isListable: Boolean!
+}
+
 type Property implements Node {
   id: ID!
   propertyType: PropertyType! @goField(name: "Type")
@@ -20839,6 +20858,7 @@ type Mutation {
   addAppointment(input: AddAppointmentInput!): Appointment!
   editAppointment(input: EditAppointmentInput!): Appointment!
   removeAppointment(id: ID!): ID!
+  editIsListable(input: EditIsListableInput!): PropertyType!
 }
 
 """
@@ -23966,6 +23986,21 @@ func (ec *executionContext) field_Mutation_editFormula_args(ctx context.Context,
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNEditFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditFormulaInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editIsListable_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditIsListableInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditIsListableInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditIsListableInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -58498,6 +58533,48 @@ func (ec *executionContext) _Mutation_removeAppointment(ctx context.Context, fie
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_editIsListable(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editIsListable_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditIsListable(rctx, args["input"].(models.EditIsListableInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalNPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -84964,6 +85041,34 @@ func (ec *executionContext) unmarshalInputEditFormulaInput(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditIsListableInput(ctx context.Context, obj interface{}) (models.EditIsListableInput, error) {
+	var it models.EditIsListableInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isListable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isListable"))
+			it.IsListable, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditKpiCategoryInput(ctx context.Context, obj interface{}) (models.EditKpiCategoryInput, error) {
 	var it models.EditKpiCategoryInput
 	var asMap = obj.(map[string]interface{})
@@ -100991,6 +101096,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "editIsListable":
+			out.Values[i] = ec._Mutation_editIsListable(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -109509,6 +109619,11 @@ func (ec *executionContext) unmarshalNEditFormulaInput2githubᚗcomᚋfacebookin
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNEditIsListableInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditIsListableInput(ctx context.Context, v interface{}) (models.EditIsListableInput, error) {
+	res, err := ec.unmarshalInputEditIsListableInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNEditKpiCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditKpiCategoryInput(ctx context.Context, v interface{}) (models.EditKpiCategoryInput, error) {
 	res, err := ec.unmarshalInputEditKpiCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -113279,6 +113394,10 @@ func (ec *executionContext) unmarshalNPropertyKind2githubᚗcomᚋfacebookincuba
 
 func (ec *executionContext) marshalNPropertyKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋpropertytypeᚐType(ctx context.Context, sel ast.SelectionSet, v propertytype.Type) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNPropertyType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx context.Context, sel ast.SelectionSet, v ent.PropertyType) graphql.Marshaler {
+	return ec._PropertyType(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx context.Context, sel ast.SelectionSet, v []*ent.PropertyType) graphql.Marshaler {
