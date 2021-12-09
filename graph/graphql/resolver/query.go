@@ -1265,84 +1265,65 @@ func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*p
 	client := r.ClientFrom(ctx)
 	var (
 		propsByGroups  []*models.PropertiesByCategories
-		propCategoryId []int
-		locationId     *int
-		nonCategory    string
+		propCategoryID []int
+		locationID     *int
+		nonCategory    *string
 	)
-	for _, filter := range filterBy {
-		switch {
-		case filter.FilterType == enum.PropertiesByCategoryFilterTypePropCategoryID:
-			if filter.Operator == enum.FilterOperatorIsOneOf && len(filter.IDSet) > 0 {
-				propCategoryId = filter.IDSet
-			} else {
-				return nil, pgkerrors.Errorf("operation is not supported: %s or IDSet is missing", filter.Operator)
-			}
-		case filter.FilterType == enum.PropertiesByCategoryFilterTypeLocationID:
-			if filter.Operator == enum.FilterOperatorIs && filter.IntValue != nil {
-				locationId = filter.IntValue
-			} else {
-				return nil, pgkerrors.Errorf("operation is not supported: %s or IntValue is missing", filter.Operator)
-			}
-		case filter.FilterType == enum.PropertiesByCategoryFilterTypePropCategoryIsNil:
-			if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
-				nonCategory = *filter.StringValue
-			} else {
-				return nil, pgkerrors.Errorf("operation is not supported: %s or StringValue is missing", filter.Operator)
-			}
-		default:
-			return nil, pgkerrors.Errorf("filter not supported %s", filter.FilterType)
-		}
+	propCategoryID, locationID, nonCategory, err := resolverutil.HandlePropertyByCategoriesFilter(filterBy)
+	if err != nil {
+		return nil, err
 	}
-	propCategories, err := client.PropertyCategory.Query().Where(propertycategory.IDIn(propCategoryId...)).All(ctx)
+	propCategories, err := client.PropertyCategory.Query().Where(propertycategory.IDIn(propCategoryID...)).All(ctx)
 	if err != nil {
 		return nil, pgkerrors.Errorf("error query PropertyCategory, %s", err)
 	}
 	for _, propCategory := range propCategories {
-		group := models.PropertiesByCategories{
-			ID:   &propCategory.ID,
-			Name: &propCategory.Name,
-		}
+		group := resolverutil.NewPropertiesByCategories()
+		group.ID = &propCategory.ID
+		group.Name = &propCategory.Name
 		prop, err := client.Property.Query().Where(
-			property.HasLocationWith(location.ID(*locationId)),
+			property.HasLocationWith(location.ID(*locationID)),
 			property.HasTypeWith(propertytype.HasPropertyCategoryWith(propertycategory.ID(propCategory.ID))),
-		).All(ctx)
+		).WithType().All(ctx)
 		if err != nil {
 			return nil, pgkerrors.Errorf("error query Property, %s", err)
 		}
-		group.Properties = prop
+		idsPropTypes := resolverutil.GetPropTypesIds(prop)
 		propTypes, err := client.PropertyType.Query().Where(
-			propertytype.HasLocationTypeWith(locationtype.HasLocationsWith(location.ID(*locationId))),
+			propertytype.Not(propertytype.IDIn(idsPropTypes...)),
+			propertytype.HasLocationTypeWith(locationtype.HasLocationsWith(location.ID(*locationID))),
 			propertytype.HasPropertyCategoryWith(propertycategory.ID(propCategory.ID)),
 		).All(ctx)
 		if err != nil {
 			return nil, pgkerrors.Errorf("error query PropertyType, %s", err)
 		}
 		group.PropertyType = propTypes
+		group.Properties = prop
 		propsByGroups = append(propsByGroups, &group)
 	}
-	if nonCategory == "" {
+	if nonCategory == nil {
 		return propsByGroups, nil
 	}
-	group := models.PropertiesByCategories{
-		ID:   nil,
-		Name: &nonCategory,
-	}
+	group := resolverutil.NewPropertiesByCategories()
+	group.Name = nonCategory
 	prop, err := client.Property.Query().Where(
-		property.HasLocationWith(location.ID(*locationId)),
+		property.HasLocationWith(location.ID(*locationID)),
 		property.HasTypeWith(propertytype.Not(propertytype.HasPropertyCategory())),
-	).All(ctx)
+	).WithType().All(ctx)
 	if err != nil {
 		return nil, pgkerrors.Errorf("error query Property,  %s", err)
 	}
-	group.Properties = prop
+	idsPropTypes := resolverutil.GetPropTypesIds(prop)
 	propTypes, err := client.PropertyType.Query().Where(
-		propertytype.HasLocationTypeWith(locationtype.HasLocationsWith(location.ID(*locationId))),
+		propertytype.Not(propertytype.IDIn(idsPropTypes...)),
+		propertytype.HasLocationTypeWith(locationtype.HasLocationsWith(location.ID(*locationID))),
 		propertytype.Not(propertytype.HasPropertyCategory()),
 	).All(ctx)
 	if err != nil {
 		return nil, pgkerrors.Errorf("error query PropertyType, %s", err)
 	}
 	group.PropertyType = propTypes
+	group.Properties = prop
 	propsByGroups = append(propsByGroups, &group)
 	return propsByGroups, nil
 }
