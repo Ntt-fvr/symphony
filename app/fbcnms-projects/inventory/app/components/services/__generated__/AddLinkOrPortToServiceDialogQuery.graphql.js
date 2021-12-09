@@ -49,6 +49,7 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
+  propertyCategoryID?: ?string,
 |};
 export type PortFilterInput = {|
   filterType: PortFilterType,

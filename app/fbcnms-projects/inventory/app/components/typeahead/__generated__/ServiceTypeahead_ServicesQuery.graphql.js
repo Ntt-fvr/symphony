@@ -46,6 +46,7 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
+  propertyCategoryID?: ?string,
 |};
 export type ServiceTypeahead_ServicesQueryVariables = {|
   filters: $ReadOnlyArray<ServiceFilterInput>,
