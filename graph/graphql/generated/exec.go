@@ -96,6 +96,7 @@ type ResolverRoot interface {
 	Project() ProjectResolver
 	ProjectType() ProjectTypeResolver
 	Property() PropertyResolver
+	PropertyCategory() PropertyCategoryResolver
 	PropertyType() PropertyTypeResolver
 	Query() QueryResolver
 	Recommendations() RecommendationsResolver
@@ -1511,9 +1512,10 @@ type ComplexityRoot struct {
 	}
 
 	PropertyCategory struct {
-		ID    func(childComplexity int) int
-		Index func(childComplexity int) int
-		Name  func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		Index              func(childComplexity int) int
+		Name               func(childComplexity int) int
+		NumberOfProperties func(childComplexity int) int
 	}
 
 	PropertyCategoryConnection struct {
@@ -2613,6 +2615,9 @@ type ProjectTypeResolver interface {
 type PropertyResolver interface {
 	NodeValue(ctx context.Context, obj *ent.Property) (models.NamedNode, error)
 	RawValue(ctx context.Context, obj *ent.Property) (*string, error)
+}
+type PropertyCategoryResolver interface {
+	NumberOfProperties(ctx context.Context, obj *ent.PropertyCategory) (*int, error)
 }
 type PropertyTypeResolver interface {
 	RawValue(ctx context.Context, obj *ent.PropertyType) (*string, error)
@@ -9967,6 +9972,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyCategory.Name(childComplexity), true
 
+	case "PropertyCategory.numberOfProperties":
+		if e.complexity.PropertyCategory.NumberOfProperties == nil {
+			break
+		}
+
+		return e.complexity.PropertyCategory.NumberOfProperties(childComplexity), true
+
 	case "PropertyCategoryConnection.edges":
 		if e.complexity.PropertyCategoryConnection.Edges == nil {
 			break
@@ -15444,6 +15456,7 @@ type PropertyCategory implements Node {
   id: ID!
   name: String
   index: Int
+  numberOfProperties: Int
 }
 
 type ParameterCatalog implements Node {
@@ -62871,6 +62884,38 @@ func (ec *executionContext) _PropertyCategory_index(ctx context.Context, field g
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PropertyCategory_numberOfProperties(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.PropertyCategory().NumberOfProperties(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PropertyCategoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyCategoryConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -103930,12 +103975,23 @@ func (ec *executionContext) _PropertyCategory(ctx context.Context, sel ast.Selec
 		case "id":
 			out.Values[i] = ec._PropertyCategory_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._PropertyCategory_name(ctx, field, obj)
 		case "index":
 			out.Values[i] = ec._PropertyCategory_index(ctx, field, obj)
+		case "numberOfProperties":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertyCategory_numberOfProperties(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

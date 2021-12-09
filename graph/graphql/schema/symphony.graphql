@@ -1611,6 +1611,7 @@ type PropertyCategory implements Node {
   id: ID!
   name: String
   index: Int
+  numberOfProperties: Int
 }
 
 type ParameterCatalog implements Node {
