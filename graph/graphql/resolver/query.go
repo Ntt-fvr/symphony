@@ -1301,7 +1301,7 @@ func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*p
 		group.Properties = prop
 		propsByGroups = append(propsByGroups, &group)
 	}
-	if nonCategory == nil {
+	if *nonCategory == "" {
 		return propsByGroups, nil
 	}
 	group := resolverutil.NewPropertiesByCategories()
