@@ -36,5 +36,3 @@ func (ParameterCatalog) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("propertyCategories")),
 	}
 }
-
-

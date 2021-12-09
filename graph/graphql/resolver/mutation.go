@@ -8,8 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
-	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"strings"
 	"time"
 
@@ -31,9 +29,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -3400,7 +3400,7 @@ func (r mutationResolver) RemoveDocumentCategory(ctx context.Context, id int) (i
 
 func (r mutationResolver) EditPropertyCategories(ctx context.Context, propertyCategories []*models.EditPropertyCategoryInput) ([]*ent.PropertyCategory, error) {
 	var (
-		addBuilders  []*ent.PropertyCategoryCreate
+		addBuilders []*ent.PropertyCategoryCreate
 	)
 	for _, pc := range propertyCategories {
 		if pc.ID != nil {
@@ -3410,7 +3410,7 @@ func (r mutationResolver) EditPropertyCategories(ctx context.Context, propertyCa
 			}
 		} else {
 			builder := r.AddPropertyCategories(ctx, pc)
-			addBuilders =append(addBuilders, builder)
+			addBuilders = append(addBuilders, builder)
 		}
 	}
 	_, err := r.ClientFrom(ctx).PropertyCategory.CreateBulk(addBuilders...).Save(ctx)
@@ -3432,7 +3432,7 @@ func (r mutationResolver) AddPropertyCategories(ctx context.Context, propertyCat
 }
 
 func (r mutationResolver) UpdatePropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) (*ent.PropertyCategory, error) {
-	pc , err:= r.ClientFrom(ctx).PropertyCategory.
+	pc, err := r.ClientFrom(ctx).PropertyCategory.
 		UpdateOneID(*propertyCategoryInput.ID).
 		SetName(propertyCategoryInput.Name).
 		SetIndex(propertyCategoryInput.Index).
@@ -3474,7 +3474,7 @@ func (r mutationResolver) EditParametersCatalog(ctx context.Context, parameterCa
 		} else {
 			parameterCatalog, err = r.AddParametersCatalog(ctx, pc)
 		}
-		if err != nil{
+		if err != nil {
 			return nil, err
 		}
 		builders[i] = parameterCatalog
@@ -3488,7 +3488,7 @@ func (r mutationResolver) AddParametersCatalog(ctx context.Context, catalogInput
 		SetIndex(catalogInput.Index).
 		SetNillableDisabled(catalogInput.Disabled).
 		Save(ctx)
-	if err != nil{
+	if err != nil {
 		if ent.IsConstraintError(err) {
 			return nil, gqlerror.Errorf("There's already a saved parameter catalog with that name. Please choose a different name.")
 		}
@@ -3498,7 +3498,7 @@ func (r mutationResolver) AddParametersCatalog(ctx context.Context, catalogInput
 }
 
 func (r mutationResolver) UpdateParameterCatalog(ctx context.Context, catalogInput *models.EditParameterCatalogInput) (*ent.ParameterCatalog, error) {
-	builder, err:= r.ClientFrom(ctx).ParameterCatalog.
+	builder, err := r.ClientFrom(ctx).ParameterCatalog.
 		UpdateOneID(*catalogInput.ID).
 		SetName(catalogInput.Name).
 		SetIndex(catalogInput.Index).
@@ -3514,7 +3514,7 @@ func (r mutationResolver) UpdateParameterCatalog(ctx context.Context, catalogInp
 }
 
 func (r mutationResolver) RemoveParameterCatalog(ctx context.Context, parameterCatalogEntity enum.ParameterCatalogEntity, id int) (int, error) {
-	client :=  r.ClientFrom(ctx)
+	client := r.ClientFrom(ctx)
 	var (
 		count int
 	)

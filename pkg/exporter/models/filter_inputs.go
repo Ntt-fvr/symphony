@@ -87,8 +87,8 @@ type ProjectFilterInput struct {
 type PropertiesByCategoryFilterInput struct {
 	FilterType  enum.PropertiesByCategoryFilterType `json:"filterType"`
 	Operator    enum.FilterOperator                 `json:"operator"`
-	StringValue *string                         	`json:"stringValue"`
-	IntValue	*int								`json:"intValue"`
-	IDSet       []int                           	`json:"idSet"`
-	StringSet   []string                        	`json:"stringSet"`
+	StringValue *string                             `json:"stringValue"`
+	IntValue    *int                                `json:"intValue"`
+	IDSet       []int                               `json:"idSet"`
+	StringSet   []string                            `json:"stringSet"`
 }

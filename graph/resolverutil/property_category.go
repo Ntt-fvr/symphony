@@ -1,3 +1,7 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package resolverutil
 
 import (
@@ -20,21 +24,21 @@ func GetPropTypesIds(prop []*ent.Property) []int {
 
 func HandlePropertyByCategoriesFilter(filterBy []*pkgmodels.PropertiesByCategoryFilterInput) ([]int, *int, *string, error) {
 	var (
-		propCategoryId []int
-		locationId     *int
+		propCategoryID []int
+		locationID     *int
 		nonCategory    string
 	)
 	for _, filter := range filterBy {
 		switch {
 		case filter.FilterType == enum.PropertiesByCategoryFilterTypePropCategoryID:
 			if filter.Operator == enum.FilterOperatorIsOneOf && len(filter.IDSet) > 0 {
-				propCategoryId = filter.IDSet
+				propCategoryID = filter.IDSet
 			} else {
 				return nil, nil, nil, pgkerrors.Errorf("operation is not supported: %s or IDSet is missing", filter.Operator)
 			}
 		case filter.FilterType == enum.PropertiesByCategoryFilterTypeLocationID:
 			if filter.Operator == enum.FilterOperatorIs && filter.IntValue != nil {
-				locationId = filter.IntValue
+				locationID = filter.IntValue
 			} else {
 				return nil, nil, nil, pgkerrors.Errorf("operation is not supported: %s or IntValue is missing", filter.Operator)
 			}
@@ -48,7 +52,7 @@ func HandlePropertyByCategoriesFilter(filterBy []*pkgmodels.PropertiesByCategory
 			return nil, nil, nil, pgkerrors.Errorf("filter not supported %s", filter.FilterType)
 		}
 	}
-	return propCategoryId, locationId, &nonCategory, nil
+	return propCategoryID, locationID, &nonCategory, nil
 }
 
 func NewPropertiesByCategories() models.PropertiesByCategories {
