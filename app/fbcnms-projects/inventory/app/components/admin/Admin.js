@@ -18,8 +18,11 @@ import AuditLog from './AuditLog';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
 import Paper from '@material-ui/core/Paper';
 import PeopleIcon from '@material-ui/icons/People';
+import ViewListIcon from '@material-ui/icons/ViewList';
+
 import SecuritySettings from '../SecuritySettings';
 import UserManaementView from './userManagement/UserManaementView';
+import ParametersCatalog from './parametersCatalog/ParametersCatalog';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 import {useContext} from 'react';
@@ -44,6 +47,11 @@ function NavItems() {
         path={relativeUrl('/user_management')}
         icon={<PeopleIcon />}
       />
+      <NavListItem
+        label="Parameters Catalog"
+        path={relativeUrl('/parameters_catalog')}
+        icon={<ViewListIcon />}
+      />
       {auditLogEnabled && (
         <NavListItem
           label="Audit Log"
@@ -63,6 +71,10 @@ function NavRoutes() {
       <Route
         path={relativeUrl('/user_management')}
         component={UserManaementView}
+      />
+      <Route
+        path={relativeUrl('/parameters_catalog')}
+        component={ParametersCatalog}
       />
       <Route path={relativeUrl('/audit_log')} component={AuditLog} />
       <Route
