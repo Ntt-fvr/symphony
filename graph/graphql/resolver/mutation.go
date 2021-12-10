@@ -2996,8 +2996,13 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 		SetNillableIsInstanceProperty(input.IsInstanceProperty).
 		SetNillableEditable(input.IsEditable).
 		SetNillableMandatory(input.IsMandatory).
-		SetNillableDeleted(input.IsDeleted).
-		SetNillablePropertyCategoryID(input.PropertyCategoryID)
+		SetNillableDeleted(input.IsDeleted)
+
+	if input.PropertyCategoryID != nil {
+		query.SetPropertyCategoryID(*input.PropertyCategoryID)
+	} else {
+		query.ClearPropertyCategory()
+	}
 	switch input.Type {
 	case propertytype.TypeDate,
 		propertytype.TypeEmail,
