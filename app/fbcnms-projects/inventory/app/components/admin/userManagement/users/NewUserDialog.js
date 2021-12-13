@@ -30,6 +30,7 @@ import UserAccountDetailsPane, {
 import UserRoleAndStatusPane from './UserRoleAndStatusPane';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {Organization, useOrganizations} from '../data/Organizations';
 import {USER_ROLES, USER_STATUSES} from '../utils/UserManagementUtils';
 import {addUser} from '../data/Users';
@@ -76,11 +77,8 @@ const NewUserDialog = ({onClose}: Props) => {
   const [creatingUser, setCreatingUser] = useState(false);
   const [user, setUser] = useState<User>({...initialUserData});
   const [password, setPassword] = useState('');
-  const [
-    selectedOrganization,
-    setSelectedOrganization,
-  ] = useState<Organization>(null);
   const organizations = useOrganizations();
+  const multicontractorFlag = useFeatureFlag('multicontractor');
 
   const enqueueSnackbar = useEnqueueSnackbar();
   const handleError = error => {
@@ -118,7 +116,7 @@ const NewUserDialog = ({onClose}: Props) => {
               fieldDisplayName: 'Lock while saving',
               value: creatingUser,
               checkCallback: isOnSavingProcess =>
-                isOnSavingProcess == true ? 'Saving new user' : '',
+                isOnSavingProcess === true ? 'Saving new user' : '',
             });
             return (
               <>
@@ -179,35 +177,43 @@ const NewUserDialog = ({onClose}: Props) => {
                       setPassword(updatedPassword);
                     }}
                   />
-                  <div className={classes.section}>
-                    <div className={classes.sectionHeader}>
-                      <Text variant="subtitle1">
-                        <fbt desc="">User organization options</fbt>
-                      </Text>
-                    </div>
-                    <Grid container spacing={2}>
-                      <Grid key="first_name" item xs={12} sm={6} lg={4} xl={4}>
-                        <FormField
-                          label="Organization"
-                          required={true}
-                          validation={{
-                            id: 'organization',
-                            value: user.organizationFk,
-                          }}>
-                          <Select
-                            options={organizationOptions}
-                            selectedValue={user.organizationFk}
-                            onChange={organizationFk =>
-                              setUser(currentUser => ({
-                                ...currentUser,
-                                organizationFk,
-                              }))
-                            }
-                          />
-                        </FormField>
+                  {multicontractorFlag && (
+                    <div className={classes.section}>
+                      <div className={classes.sectionHeader}>
+                        <Text variant="subtitle1">
+                          <fbt desc="">User organization options</fbt>
+                        </Text>
+                      </div>
+                      <Grid container spacing={2}>
+                        <Grid
+                          key="first_name"
+                          item
+                          xs={12}
+                          sm={6}
+                          lg={4}
+                          xl={4}>
+                          <FormField
+                            label="Organization"
+                            required={true}
+                            validation={{
+                              id: 'organization',
+                              value: user.organizationFk,
+                            }}>
+                            <Select
+                              options={organizationOptions}
+                              selectedValue={user.organizationFk}
+                              onChange={organizationFk =>
+                                setUser(currentUser => ({
+                                  ...currentUser,
+                                  organizationFk,
+                                }))
+                              }
+                            />
+                          </FormField>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </div>
+                    </div>
+                  )}
                 </DialogContent>
                 <DialogActions>
                   <FormAction disabled={creatingUser}>
