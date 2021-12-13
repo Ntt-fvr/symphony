@@ -14,6 +14,11 @@ import Button from '@symphony/design-system/components/Button';
 import InventorySuspense from '../../../common/InventorySuspense';
 import NavigatableViews from '@symphony/design-system/components/View/NavigatableViews';
 import NewUserDialog from './users/NewUserDialog';
+import OrganizationsCard from './organizations/OrganizationsCard';
+import OrganizationsView, {
+  ORGANIZATION_HEADER,
+  ORGANIZATION_SUBHEADER,
+} from './organizations/OrganizationsView';
 import PermissionsGroupCard from './groups/PermissionsGroupCard';
 import PermissionsGroupsView, {
   PERMISSION_GROUPS_VIEW_NAME,
@@ -26,9 +31,8 @@ import PermissionsPolicyCard from './policies/PermissionsPolicyCard';
 import PopoverMenu from '@symphony/design-system/components/Select/PopoverMenu';
 import Strings from '@fbcnms/strings/Strings';
 import UsersView from './users/UsersView';
-import OrganizationsView, { ORGANIZATION_HEADER, ORGANIZATION_SUBHEADER} from './organizations/OrganizationsView';
-import OrganizationsCard from './organizations/OrganizationsCard';
 import fbt from 'fbt';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {ALL_USERS_PATH_PARAM, USER_PATH_PARAM} from './users/UsersTable';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {FormContextProvider} from '../../../common/FormContext';
@@ -52,7 +56,10 @@ const UserManaementForm = () => {
   const basePath = match.path;
   const [addingNewUser, setAddingNewUser] = useState(false);
 
-  const gotoOrganizationsPage = useCallback(()=> history.push(`${basePath}/organizations`), [history, basePath]);
+  const gotoOrganizationsPage = useCallback(
+    () => history.push(`${basePath}/organizations`),
+    [history, basePath],
+  );
   const gotoGroupsPage = useCallback(() => history.push(`${basePath}/groups`), [
     history,
     basePath,
@@ -61,6 +68,8 @@ const UserManaementForm = () => {
     () => history.push(`${basePath}/policies`),
     [history, basePath],
   );
+
+  const multicontractorFlag = useFeatureFlag('multicontractor');
 
   const VIEWS: Array<NavigatableView> = useMemo(
     () => [
@@ -161,38 +170,44 @@ const UserManaementForm = () => {
         },
         relatedMenuItemIndex: 3,
       },
-      {
-        routingPath: 'organizations',
-        menuItem: {
-          label: ORGANIZATION_HEADER,
-          tooltip: `${ORGANIZATION_HEADER}`,
-        },
-        component: {
-          header: {
-            title: `${ORGANIZATION_HEADER}`,
-            subtitle: `${ORGANIZATION_SUBHEADER}`,
-            actionButtons: [
-              <Button onClick={() => history.push(`organization/${NEW_DIALOG_PARAM}`)}>
-                <fbt desc="">Create organization</fbt>
-              </Button>,
-            ],
-          },
-          children: <OrganizationsView />,
-        },
-
-      },
-      {
-        routingPath: 'organization/:id',
-        component: {
-          children: (
-            <OrganizationsCard
-              redirectToOrganizationsView={gotoOrganizationsPage}
-              onClose={gotoOrganizationsPage}
-            />
-          ),
-        },
-        relatedMenuItemIndex: 5,
-      },
+      ...(multicontractorFlag
+        ? [
+            {
+              routingPath: 'organizations',
+              menuItem: {
+                label: ORGANIZATION_HEADER,
+                tooltip: `${ORGANIZATION_HEADER}`,
+              },
+              component: {
+                header: {
+                  title: `${ORGANIZATION_HEADER}`,
+                  subtitle: `${ORGANIZATION_SUBHEADER}`,
+                  actionButtons: [
+                    <Button
+                      onClick={() =>
+                        history.push(`organization/${NEW_DIALOG_PARAM}`)
+                      }>
+                      <fbt desc="">Create organization</fbt>
+                    </Button>,
+                  ],
+                },
+                children: <OrganizationsView />,
+              },
+            },
+            {
+              routingPath: 'organization/:id',
+              component: {
+                children: (
+                  <OrganizationsCard
+                    redirectToOrganizationsView={gotoOrganizationsPage}
+                    onClose={gotoOrganizationsPage}
+                  />
+                ),
+              },
+              relatedMenuItemIndex: 5,
+            },
+          ]
+        : []),
     ],
     [gotoGroupsPage, gotoPoliciesPage, gotoOrganizationsPage, history],
   );

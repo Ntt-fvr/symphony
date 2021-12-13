@@ -105,6 +105,7 @@ const SelectAvailabilityAssignee = (props: Props) => {
   const [invalidForm, setInvalidForm] = useState(false);
 
   const featureFlagFilters = useFeatureFlag('scheduling_filter_dates');
+  const multicontractorFlag = useFeatureFlag('multicontractor');
 
   useEffect(() => {
     setAppointment(false);
@@ -227,15 +228,17 @@ const SelectAvailabilityAssignee = (props: Props) => {
           </div>
         </div>
       )}
-      <FormField className={classes.input} label="Organization">
-        <OrganizationTypeahead
-          selectedOrganization={workOrder.organizationFk}
-          onOrganizationSelected={organization =>
-            _setWorkOrderDetail('organizationFk', organization)
-          }
-          margin="dense"
-        />
-      </FormField>
+      {multicontractorFlag && (
+        <FormField className={classes.input} label="Organization">
+          <OrganizationTypeahead
+            selectedOrganization={workOrder.organizationFk}
+            onOrganizationSelected={organization =>
+              _setWorkOrderDetail('organizationFk', organization)
+            }
+            margin="dense"
+          />
+        </FormField>
+      )}
       <FormFieldWithPermissions
         className={classes.input}
         label="Owner"
