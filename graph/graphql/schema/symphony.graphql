@@ -120,6 +120,14 @@ type DocumentCategoryPermissionRule
   documentCategoryIds: [ID!]
 }
 
+type PropertyCategoryPermissionRule
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryPermissionRule"
+) {
+  isAllowed: PermissionValue!
+  propertyCategoryIds: [ID!]
+}
+
 type WorkforcePermissionRule
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.WorkforcePermissionRule"
@@ -151,6 +159,14 @@ input DocumentCategoryPermissionRuleInput
 ) {
   isAllowed: PermissionValue!
   documentCategoryIds: [ID!]
+}
+
+input PropertyCategoryPermissionRuleInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryPermissionRuleInput"
+) {
+  isAllowed: PermissionValue!
+  propertyCategoryIds: [ID!]
 }
 
 input WorkforcePermissionRuleInput
@@ -192,6 +208,16 @@ type DocumentCategoryCUD
   delete: DocumentCategoryPermissionRule
 }
 
+type PropertyCategoryCUD
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryCud"
+) {
+  read  : PropertyCategoryPermissionRule
+  create: PropertyCategoryPermissionRule
+  update: PropertyCategoryPermissionRule
+  delete: PropertyCategoryPermissionRule
+}
+
 input BasicCUDInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.BasicCUDInput"
@@ -219,6 +245,16 @@ input DocumentCategoryCUDInput
   create: DocumentCategoryPermissionRuleInput
   update: DocumentCategoryPermissionRuleInput
   delete: DocumentCategoryPermissionRuleInput
+}
+
+input PropertyCategoryCUDInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryCUDInput"
+) {
+  read  : PropertyCategoryPermissionRuleInput
+  create: PropertyCategoryPermissionRuleInput
+  update: PropertyCategoryPermissionRuleInput
+  delete: PropertyCategoryPermissionRuleInput
 }
 
 type AdministrativePolicy
@@ -267,6 +303,7 @@ type InventoryPolicy
   read: BasicPermissionRule!
   location: LocationCUD!
   documentCategory: DocumentCategoryCUD!
+  propertyCategory: PropertyCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
@@ -281,6 +318,7 @@ input InventoryPolicyInput
   read: BasicPermissionRuleInput
   location: LocationCUDInput
   documentCategory: DocumentCategoryCUDInput
+  propertyCategory: PropertyCategoryCUDInput
   equipment: BasicCUDInput
   equipmentType: BasicCUDInput
   locationType: BasicCUDInput
