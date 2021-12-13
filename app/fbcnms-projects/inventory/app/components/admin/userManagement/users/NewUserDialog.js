@@ -31,13 +31,13 @@ import UserRoleAndStatusPane from './UserRoleAndStatusPane';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
-import {Organization, useOrganizations} from '../data/Organizations';
 import {USER_ROLES, USER_STATUSES} from '../utils/UserManagementUtils';
 import {addUser} from '../data/Users';
 import {generateTempId} from '../../../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useMemo, useState} from 'react';
+import {useOrganizations} from '../data/Organizations';
 
 const initialUserData: User = {
   id: generateTempId(),
@@ -47,7 +47,7 @@ const initialUserData: User = {
   lastName: '',
   role: USER_ROLES.USER.key,
   status: USER_STATUSES.ACTIVE.key,
-  organizationFk: '',
+  organizationFk: null,
   groups: [],
 };
 

@@ -176,7 +176,7 @@ export default function UserProfilePane(props: Props) {
     if (user == null) {
       return;
     }
-    onChange({...user, organizationFk: user.organizationFk?.id || ''});
+    onChange({...user, organizationFk: user.organizationFk?.id || null});
   }, [onChange, user]);
 
   const revertChanges = useCallback(() => {
