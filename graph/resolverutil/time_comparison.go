@@ -38,3 +38,13 @@ func IsWorkTime(date time.Time, startHour int, startMinute int, endHour int, end
 		(h > startHour && h < endHour) ||
 		(h == endHour && m <= endMinute)
 }
+
+func NextWorkDay(date time.Time, startHour int, startMinute int, endHour int, endMinute int) time.Time {
+	nextWorkDay := date.AddDate(0, 0, 1)
+	for {
+		if IsWorkday(nextWorkDay) {
+			return nextWorkDay
+		}
+		nextWorkDay = nextWorkDay.AddDate(0, 0, 1)
+	}
+}

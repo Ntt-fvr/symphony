@@ -17,6 +17,7 @@ import {makeStyles} from '@material-ui/styles';
 import type {Organization} from '../data/Organizations';
 
 import symphony from '@symphony/design-system/theme/symphony';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {Checkbox, ListItemText, MenuItem} from '@material-ui/core';
 import {useOrganizations} from '../data/Organizations';
 
@@ -76,6 +77,7 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
   }));
 
   const [selectedOrganizations, setSelectedOrganizations] = useState([]);
+  const multicontractorFlag = useFeatureFlag('multicontractor');
   const classes = useStyles();
 
   useEffect(() => {
@@ -152,19 +154,24 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
   }, [organizationOptions, disabled, selectedOrganizations]);
 
   return (
-    <div className={classes.container}>
-      <div className={classes.methodSelectionBox}>
-        <Text>
-          {
-            <fbt desc="">
-              Select different organizations from whick you can view work orders
-            </fbt>
-          }
-        </Text>
-        <FormField>
-          <FormControl variant="outlined">{options}</FormControl>
-        </FormField>
-      </div>
+    <div>
+      {multicontractorFlag && (
+        <div className={classes.container}>
+          <div className={classes.methodSelectionBox}>
+            <Text>
+              {
+                <fbt desc="">
+                  Select different organizations from which you can view work
+                  orders
+                </fbt>
+              }
+            </Text>
+            <FormField>
+              <FormControl variant="outlined">{options}</FormControl>
+            </FormField>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

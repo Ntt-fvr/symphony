@@ -68,7 +68,7 @@ const TextPairingContainer = (props: Props) => {
       {children}
       {title == null ? null : (
         <Text
-          className={classNames(classes.followingText, {
+          className={classNames(`${classes.followingText} followingText`, {
             [classes.wide]: margin === 'wide',
           })}
           variant={variant || 'body2'}

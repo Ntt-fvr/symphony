@@ -73,7 +73,8 @@ func (r mutationResolver) EditAppointment(
 		SetWorkorderID(input.WorkorderID).
 		SetStart(input.Date).
 		SetEnd(input.Date.Add(sd)).
-		SetDuration(input.Duration)
+		SetDuration(input.Duration).
+		SetNillableStatus(input.Status)
 
 	return mutation.Save(ctx)
 }

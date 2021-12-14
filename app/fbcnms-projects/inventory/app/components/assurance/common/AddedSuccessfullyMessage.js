@@ -21,12 +21,13 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0px',
+    padding: '0 0 14px 0',
   },
   header: {
-    margin: '20px 0 24px 20px',
+    margin: '4px',
   },
   containerIcon: {
+    marginTop: '3rem',
     paddingBottom: '1rem',
   },
   icon: {
@@ -34,7 +35,8 @@ const useStyles = makeStyles(() => ({
     color: GREEN.G600,
   },
   addButton: {
-    padding: '1rem 0 2rem 0',
+    marginTop: '3rem',
+    padding: '2rem 0',
   },
 }));
 
@@ -42,7 +44,7 @@ type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
-  setReturn: void => void,
+  setReturn: () => void,
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
@@ -50,7 +52,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
   const classes = useStyles();
 
   return (
-    <Card>
+    <Card className={classes.root}>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
       <Grid container direction="column" justify="center" alignItems="center">
         <Grid className={classes.containerIcon}>
