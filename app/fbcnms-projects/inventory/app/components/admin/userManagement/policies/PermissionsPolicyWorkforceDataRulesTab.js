@@ -28,6 +28,7 @@ import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {
   bool2PermissionRuleValue,
   permissionRuleValue2Bool,
@@ -229,6 +230,7 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
   const {policy, onChange, className} = props;
   const classes = useStyles();
   const [enableOrganization, setEnableOrganization] = useState(false);
+  const multicontractorFlag = useFeatureFlag('multicontractor');
   const {me} = useMainContext();
 
   useEffect(() => {
@@ -301,15 +303,15 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
           })
         }
       />
-
-      <Switch
-        className={classNames(classes.readRule, classes.rule)}
-        title={fbt('View work orders form multiple organizations', '')}
-        checked={enableOrganization}
-        disabled={isDisabled || !readAllowed}
-        onChange={handleOnOrganizationSwitchChange}
-      />
-
+      {multicontractorFlag && (
+        <Switch
+          className={classNames(classes.readRule, classes.rule)}
+          title={fbt('View work orders form multiple organizations', '')}
+          checked={enableOrganization}
+          disabled={isDisabled || !readAllowed}
+          onChange={handleOnOrganizationSwitchChange}
+        />
+      )}
       <PermissionsPolicyWorkforceOrganizationSpecification
         disabled={!enableOrganization}
         userOrganization={me.user.organizationFk}

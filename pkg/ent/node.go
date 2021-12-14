@@ -5202,7 +5202,7 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
 		Type:   "PropertyType",
-		Fields: make([]*Field, 20),
+		Fields: make([]*Field, 21),
 		Edges:  make([]*Edge, 11),
 	}
 	var buf []byte
@@ -5358,10 +5358,18 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "deleted",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(pt.NodeType); err != nil {
+	if buf, err = json.Marshal(pt.Listable); err != nil {
 		return nil, err
 	}
 	node.Fields[19] = &Field{
+		Type:  "bool",
+		Name:  "listable",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pt.NodeType); err != nil {
+		return nil, err
+	}
+	node.Fields[20] = &Field{
 		Type:  "string",
 		Name:  "nodeType",
 		Value: string(buf),

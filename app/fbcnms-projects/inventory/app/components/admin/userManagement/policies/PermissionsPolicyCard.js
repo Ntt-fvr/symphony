@@ -181,7 +181,7 @@ const getInitialNewPolicy: (policyType: ?string) => PermissionsPolicy = (
   policyType: ?string,
 ) => {
   let type = POLICY_TYPES.InventoryPolicy.key;
-  if (policyType == POLICY_TYPES.WorkforcePolicy.key) {
+  if (policyType === POLICY_TYPES.WorkforcePolicy.key) {
     type = POLICY_TYPES.WorkforcePolicy.key;
   }
 
@@ -243,7 +243,7 @@ function PermissionsPolicyCard(props: Props) {
       }
       redirectToPoliciesView();
     }
-    if (fetchedPolicy?.id == policy?.id) {
+    if (fetchedPolicy?.id === policy?.id) {
       return;
     }
     setPolicy(fetchedPolicy);
