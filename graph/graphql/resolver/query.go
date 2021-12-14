@@ -1189,7 +1189,6 @@ func (r queryResolver) UsersAvailability(
 				i++
 				y, m, d := a.Start.Date()
 				dswt := time.Date(y, m, d, SH, SM, 0, 0, TZ)
-				//ndswt := time.Date(y, m, d+1, SH, SM, 0, 0, TZ)
 				ndswt := resolverutil.NextWorkDay(dswt, SH, SM, 0, 0)
 				if dswt.After(slotStart) {
 					slotStart = dswt
