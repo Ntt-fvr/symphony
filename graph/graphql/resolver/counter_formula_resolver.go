@@ -44,9 +44,9 @@ func (r mutationResolver) AddCounterFormulaList(ctx context.Context, input model
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+			return nil, fmt.Errorf("has occurred error on process: %w", err)
 		}
 		countersFormula = append(countersFormula, typ)
 	}

@@ -1676,11 +1676,15 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 		return id, errors.Wrapf(err, "deleting work order template id=%q", wot.ID)
 	}
 
-	appointment, err := wo.QueryAppointment().Only(ctx)
+	appointments, err := wo.QueryAppointment().All(ctx)
 	if err != nil {
 		return id, errors.Wrapf(err, "query work order appointment: id=%q", id)
-	} else if _, err := r.RemoveAppointment(ctx, appointment.ID); err != nil {
-		return id, errors.Wrapf(err, "deleting work order appointment id=%q", appointment.ID)
+	}
+
+	for _, a := range appointments {
+		if _, err := r.RemoveAppointment(ctx, a.ID); err != nil {
+			return id, errors.Wrapf(err, "deleting work order appointment id=%q", a.ID)
+		}
 	}
 
 	if err := client.WorkOrder.DeleteOne(wo).Exec(ctx); err != nil {
@@ -3011,9 +3015,9 @@ func (r mutationResolver) EditIsListable(ctx context.Context, input models.EditI
 		SetNillableListable(&isListable).
 		Save(ctx); err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return et, nil
 }

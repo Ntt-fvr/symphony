@@ -25,14 +25,16 @@ func TestAddRemoveCounterFormula(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	AddCounterFormulaListTest(t, ctx, mr)
-	id1, id2, con, frm := AddCounterFormulaTest(t, ctx, mr)
-	EditCounterFormulaTest(t, ctx, mr, id1, id2, con, frm)
-	RemoveCounterFormulaTest(t, ctx, mr, id1, id2)
-
+	_, err := AddCounterFormulaListTest(ctx, t, mr)
+	if err != nil {
+		return
+	}
+	id1, id2, con, frm := AddCounterFormulaTest(ctx, t, mr)
+	EditCounterFormulaTest(ctx, t, mr, id1, id2, con, frm)
+	RemoveCounterFormulaTest(ctx, t, mr, id1, id2)
 }
 
-func AddCounterFormulaListTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) ([]*ent.CounterFormula, error) {
+func AddCounterFormulaListTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) ([]*ent.CounterFormula, error) {
 	networkType1, err := mr.AddNetworkType(ctx, models.AddNetworkTypeInput{
 		Name: "network_type_test_2",
 	})
@@ -117,7 +119,7 @@ func AddCounterFormulaListTest(t *testing.T, ctx context.Context, mr generated.M
 	return countersF, nil
 }
 
-func AddCounterFormulaTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int, int, int) {
+func AddCounterFormulaTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int, int) {
 	networkType1, err := mr.AddNetworkType(ctx, models.AddNetworkTypeInput{
 		Name: "network_type_test_1",
 	})
@@ -194,7 +196,7 @@ func AddCounterFormulaTest(t *testing.T, ctx context.Context, mr generated.Mutat
 	return id1, id2, formula1.ID, counter1.ID
 }
 
-func EditCounterFormulaTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int, con int, frm int) {
+func EditCounterFormulaTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int, con int, frm int) {
 	_, err := mr.EditCounterFormula(ctx, models.EditCounterFormulaInput{
 		ID:        id1,
 		CounterFk: con,
@@ -204,7 +206,7 @@ func EditCounterFormulaTest(t *testing.T, ctx context.Context, mr generated.Muta
 	require.Error(t, err)
 }
 
-func RemoveCounterFormulaTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveCounterFormulaTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveCounterFormula(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveCounterFormula(ctx, id2)
