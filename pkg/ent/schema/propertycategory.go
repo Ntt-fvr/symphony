@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebook/ent/schema/index"
+	"github.com/facebookincubator/symphony/pkg/authz"
 )
 
 // PropertyCategory defines the property type schema.
@@ -41,4 +42,16 @@ func (PropertyCategory) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("name"),
 	}
+}
+
+// Policy returns location policy.
+func (PropertyCategory) Policy() ent.Policy {
+	return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.PropertyCategoryReadPolicyRule(),
+		),
+		authz.WithMutationRules(
+			authz.PropertyCategoryWritePolicyRule(),
+		),
+	)
 }

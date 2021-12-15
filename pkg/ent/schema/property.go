@@ -162,6 +162,9 @@ func (PropertyType) Indexes() []ent.Index {
 // Policy returns property type policy.
 func (PropertyType) Policy() ent.Policy {
 	return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.PropertyTypeReadPolicyRule(),
+		),
 		authz.WithMutationRules(
 			authz.PropertyTypeWritePolicyRule(),
 			authz.PropertyTypeCreatePolicyRule(),
