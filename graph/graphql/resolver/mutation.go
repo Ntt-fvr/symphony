@@ -251,8 +251,8 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableEditable(input.IsEditable).
 			SetNillableMandatory(input.IsMandatory).
 			SetNillableDeleted(input.IsDeleted).
-			SetNillablePropertyCategoryID(input.PropertyCategoryID)
-		SetNillableListable(input.IsListable)
+			SetNillablePropertyCategoryID(input.PropertyCategoryID).
+			SetNillableListable(input.IsListable)
 		parentSetter(builders[i])
 	}
 	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {

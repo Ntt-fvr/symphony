@@ -2058,7 +2058,7 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "property_types_service_types_property_types",
+				Symbol:  "property_types_property_categories_properties_type",
 				Columns: []*schema.Column{PropertyTypesColumns[28]},
 
 				RefColumns: []*schema.Column{PropertyCategoriesColumns[0]},
@@ -2066,28 +2066,28 @@ var (
 			},
 			{
 				Symbol:  "property_types_service_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[28]},
+				Columns: []*schema.Column{PropertyTypesColumns[29]},
 
 				RefColumns: []*schema.Column{ServiceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_templates_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[29]},
+				Columns: []*schema.Column{PropertyTypesColumns[30]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[30]},
+				Columns: []*schema.Column{PropertyTypesColumns[31]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_worker_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[31]},
+				Columns: []*schema.Column{PropertyTypesColumns[32]},
 
 				RefColumns: []*schema.Column{WorkerTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2117,12 +2117,17 @@ var (
 			{
 				Name:    "propertytype_name_work_order_type_property_types",
 				Unique:  true,
-				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[30]},
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[31]},
 			},
 			{
 				Name:    "propertytype_name_worker_type_property_types",
 				Unique:  true,
-				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[31]},
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[32]},
+			},
+			{
+				Name:    "propertytype_name_property_category_properties_type",
+				Unique:  false,
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[28]},
 			},
 		},
 	}

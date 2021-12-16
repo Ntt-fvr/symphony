@@ -8618,6 +8618,8 @@ input EditParameterCatalogInput {
   name: String!
   index: Int!
   disabled: Boolean
+}
+
 """
 Appointment Status
 """
