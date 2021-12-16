@@ -14,10 +14,11 @@ import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 
+import symphony from '@symphony/design-system/theme/symphony';
+
 // COMPONENTS //
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-// import DialogConfirmDelete from './DialogConfirmDelete';
 import KpiTypeItem from './KpiTypeItem';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {EditKpiItemForm} from './EditKpiItemForm';
@@ -36,11 +37,34 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    margin: '30px',
+    flexGrow: 0,
+    padding: '30px',
+    margin: '0',
   },
-  listCarKpi: {
-    listStyle: 'none',
+  titleKpi: {
+    margin: '0 0 40px 0',
+  },
+  listContainer: {
+    overflow: 'auto',
+    paddingRight: '9px',
+    maxHeight: 'calc(95vh - 156px)',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: symphony.palette.D300,
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: symphony.palette.D100,
+      borderRadius: '4px',
+    },
   },
 }));
 
@@ -99,22 +123,62 @@ const KpiQuery = graphql`
         }
       }
     }
+    counters {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    formulas {
+      edges {
+        node {
+          id
+          networkTypeFk {
+            id
+            name
+          }
+          textFormula
+          status
+          techFk {
+            id
+            name
+          }
+          kpiFk {
+            id
+            name
+          }
+        }
+      }
+    }
   }
 `;
 
-type Formula = {
+export type Counter = {
+  id: string,
+  name: string,
+};
+
+export type Formula = {
   id: string,
   textFormula: string,
-  status: true,
+  status: boolean,
   techFk: {
+    id: string,
+    name: string,
+  },
+  kpiFk: {
+    id: string,
     name: string,
   },
   networkTypeFk: {
+    id: string,
     name: string,
   },
 };
 
-type FormulaForm = {
+export type FormulaForm = {
   data: {
     kpi: string,
     vendors: string,
@@ -133,6 +197,10 @@ type Kpis = {
         id: string,
         name: string,
       },
+      kpiCategoryFK: {
+        id: string,
+        name: string,
+      },
       description: string,
       formulaFk: Array<Formula>,
     },
@@ -143,6 +211,7 @@ const KpiTypes = () => {
   const classes = useStyles();
 
   const [dataKpis, setDataKpis] = useState({});
+  const [showChecking, setShowChecking] = useState(false);
   const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState<Kpis>({});
   const [openDialog, setOpenDialog] = useState(false);
@@ -195,38 +264,41 @@ const KpiTypes = () => {
   if (showEditCard) {
     return (
       <EditKpiItemForm
+        isCompleted={isCompleted}
         kpi={dataKpis.kpis?.edges.map(item => item.node)}
+        dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+        dataFormula={formulaEditForm}
+        dataFormulaTable={dataKpis.formulas?.edges.map(item => item.node)}
         formValues={dataEdit.item.node}
         threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
-        isCompleted={isCompleted}
+        handleEditFormulaClick={handleEditFormulaClick}
+        parentEditCallback={handleEditCallback}
       />
     );
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <ConfigureTitle
-            title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
-            subtitle={fbt(
-              'Indicators and formulas to be defined by users and calculated by performance management processes.',
-              'Kpi description',
-            )}
-          />
-        </Grid>
+    <Grid className={classes.root} container spacing={0}>
+      <Grid className={classes.titleKpi} item xs={12}>
+        <ConfigureTitle
+          title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
+          subtitle={fbt(
+            'Indicators and formulas to be defined by users and calculated by performance management processes.',
+            'Kpi description',
+          )}
+        />
+      </Grid>
+      <Grid spacing={1} container>
         <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
-          <List disablePadding>
+          <List disablePadding className={classes.listContainer}>
             {dataKpis.kpis?.edges.map((item, index) => (
               <KpiTypeItem
                 key={index}
                 threshold={dataKpis.thresholds?.edges}
                 deleteItem={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
-                handleFormulaClick={handleFormulaClick}
-                parentCallback={handleCallback}
                 handleEditFormulaClick={handleEditFormulaClick}
                 parentEditCallback={handleEditCallback}
                 isCompleted={isCompleted}
@@ -243,30 +315,36 @@ const KpiTypes = () => {
           <AddFormulaItemForm
             parentCallback={handleCallback}
             handleClick={handleFormulaClick}
+            checking={showChecking}
+            changeChecking={() => setShowChecking(false)}
+            isCompleted={isCompleted}
           />
+          {openDialog && (
+            <AddFormulaDialog
+              open={openDialog}
+              dataFormula={formulaForm}
+              dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+              onClose={() => {
+                setOpenDialog(false);
+              }}
+              isCompleted={isCompleted}
+              changeChecking={() => setShowChecking(true)}
+            />
+          )}
+          {openEditDialog && (
+            <EditFormulaDialog
+              open={openEditDialog}
+              dataFormula={formulaEditForm}
+              dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+              onClose={() => {
+                setOpenEditDialog(false);
+              }}
+              isCompleted={isCompleted}
+            />
+          )}
         </Grid>
       </Grid>
-      {openDialog && (
-        <AddFormulaDialog
-          open={openDialog}
-          dataFormula={formulaForm}
-          onClose={() => {
-            setOpenDialog(false);
-            isCompleted();
-          }}
-        />
-      )}
-      {openEditDialog && (
-        <EditFormulaDialog
-          open={openEditDialog}
-          dataFormula={formulaEditForm}
-          onClose={() => {
-            setOpenEditDialog(false);
-            isCompleted();
-          }}
-        />
-      )}
-    </div>
+    </Grid>
   );
 };
 

@@ -378,6 +378,20 @@ func (ptu *PropertyTypeUpdate) SetNillableDeleted(b *bool) *PropertyTypeUpdate {
 	return ptu
 }
 
+// SetListable sets the listable field.
+func (ptu *PropertyTypeUpdate) SetListable(b bool) *PropertyTypeUpdate {
+	ptu.mutation.SetListable(b)
+	return ptu
+}
+
+// SetNillableListable sets the listable field if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillableListable(b *bool) *PropertyTypeUpdate {
+	if b != nil {
+		ptu.SetListable(*b)
+	}
+	return ptu
+}
+
 // SetNodeType sets the nodeType field.
 func (ptu *PropertyTypeUpdate) SetNodeType(s string) *PropertyTypeUpdate {
 	ptu.mutation.SetNodeType(s)
@@ -1047,6 +1061,13 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeBool,
 			Value:  value,
 			Column: propertytype.FieldDeleted,
+		})
+	}
+	if value, ok := ptu.mutation.Listable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytype.FieldListable,
 		})
 	}
 	if value, ok := ptu.mutation.NodeType(); ok {
@@ -1856,6 +1877,20 @@ func (ptuo *PropertyTypeUpdateOne) SetNillableDeleted(b *bool) *PropertyTypeUpda
 	return ptuo
 }
 
+// SetListable sets the listable field.
+func (ptuo *PropertyTypeUpdateOne) SetListable(b bool) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetListable(b)
+	return ptuo
+}
+
+// SetNillableListable sets the listable field if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillableListable(b *bool) *PropertyTypeUpdateOne {
+	if b != nil {
+		ptuo.SetListable(*b)
+	}
+	return ptuo
+}
+
 // SetNodeType sets the nodeType field.
 func (ptuo *PropertyTypeUpdateOne) SetNodeType(s string) *PropertyTypeUpdateOne {
 	ptuo.mutation.SetNodeType(s)
@@ -2523,6 +2558,13 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 			Type:   field.TypeBool,
 			Value:  value,
 			Column: propertytype.FieldDeleted,
+		})
+	}
+	if value, ok := ptuo.mutation.Listable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytype.FieldListable,
 		})
 	}
 	if value, ok := ptuo.mutation.NodeType(); ok {

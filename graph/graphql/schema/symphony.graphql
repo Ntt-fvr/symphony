@@ -1632,6 +1632,7 @@ type PropertyType implements Node {
   isMandatory: Boolean
   isDeleted: Boolean
   propertyCategory: PropertyCategory
+  isListable: Boolean
 }
 
 type DocumentCategory implements Node {
@@ -1685,6 +1686,12 @@ input PropertyTypeInput
   isMandatory: Boolean
   isDeleted: Boolean
   propertyCategoryID: ID
+  isListable: Boolean
+}
+
+input EditIsListableInput {
+  id: ID!
+  isListable: Boolean!
 }
 
 type Property implements Node {
@@ -7425,6 +7432,7 @@ type Mutation {
   editNetworkType(input: EditNetworkTypeInput!): NetworkType!
   removeNetworkType(id: ID!): ID!
   addCounterFormula(input: AddCounterFormulaInput!):CounterFormula!
+  addCounterFormulaList(input: AddCounterFormulaListInput!):[CounterFormula!]!
   editCounterFormula(input: EditCounterFormulaInput!):CounterFormula!
   removeCounterFormula(id: ID!): ID!
   addThreshold(input: AddThresholdInput!):Threshold!
@@ -7492,6 +7500,7 @@ type Mutation {
   removePropertyCategory(id: ID!): ID!
   editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
   removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
+  editIsListable(input: EditIsListableInput!): PropertyType!
 }
 
 """
@@ -7781,6 +7790,17 @@ type CounterFormula implements Node {
   counterFk: Counter!
   formulaFk: Formula!
 }
+
+input CounterListInput {
+  counterFk: ID!
+  mandatory: Boolean!
+}
+
+input AddCounterFormulaListInput {
+  formulaFk: ID!
+  counterList: [CounterListInput]!
+}
+
 
 input AddCounterFormulaInput {
   mandatory: Boolean!
@@ -8566,6 +8586,7 @@ input EditAppointmentInput {
   assigneeID: ID!
   workorderID: ID!
   date: Time!
+  status: AppointmentStatus
   duration: Float!
 }
 type UserAvailability {
@@ -8597,4 +8618,13 @@ input EditParameterCatalogInput {
   name: String!
   index: Int!
   disabled: Boolean
+"""
+Appointment Status
+"""
+enum AppointmentStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/appointment.Status"
+  ) {
+  ACTIVE
+  CANCELED
 }

@@ -90,7 +90,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
     <Paper>
       <TableContainer>
         <Grid container alignItems="center" className={classes.head}>
-          <Grid xs>
+          <Grid item xs>
             <Text variant="h6" weight="bold">
               Associated targets
             </Text>
@@ -182,11 +182,8 @@ const KqiTableAssociatedTarget = (props: Props) => {
                   {moment(item.endTime).format('HH')}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  <IconButton>
-                    <DeleteOutlinedIcon
-                      onClick={() => handleRemove(item.id)}
-                      style={{color: DARK.D300}}
-                    />
+                  <IconButton onClick={() => handleRemove(item.id)}>
+                    <DeleteOutlinedIcon style={{color: DARK.D300}}/>
                   </IconButton>
                 </TableCell>
               </StyledTableRow>

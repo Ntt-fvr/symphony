@@ -49669,6 +49669,7 @@ type PropertyTypeMutation struct {
 	editable                        *bool
 	mandatory                       *bool
 	deleted                         *bool
+	listable                        *bool
 	nodeType                        *string
 	clearedFields                   map[string]struct{}
 	properties                      map[int]struct{}
@@ -50773,6 +50774,43 @@ func (m *PropertyTypeMutation) ResetDeleted() {
 	m.deleted = nil
 }
 
+// SetListable sets the listable field.
+func (m *PropertyTypeMutation) SetListable(b bool) {
+	m.listable = &b
+}
+
+// Listable returns the listable value in the mutation.
+func (m *PropertyTypeMutation) Listable() (r bool, exists bool) {
+	v := m.listable
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldListable returns the old listable value of the PropertyType.
+// If the PropertyType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyTypeMutation) OldListable(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldListable is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldListable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldListable: %w", err)
+	}
+	return oldValue.Listable, nil
+}
+
+// ResetListable reset all changes of the "listable" field.
+func (m *PropertyTypeMutation) ResetListable() {
+	m.listable = nil
+}
+
 // SetNodeType sets the nodeType field.
 func (m *PropertyTypeMutation) SetNodeType(s string) {
 	m.nodeType = &s
@@ -51319,7 +51357,7 @@ func (m *PropertyTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *PropertyTypeMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.create_time != nil {
 		fields = append(fields, propertytype.FieldCreateTime)
 	}
@@ -51377,6 +51415,9 @@ func (m *PropertyTypeMutation) Fields() []string {
 	if m.deleted != nil {
 		fields = append(fields, propertytype.FieldDeleted)
 	}
+	if m.listable != nil {
+		fields = append(fields, propertytype.FieldListable)
+	}
 	if m.nodeType != nil {
 		fields = append(fields, propertytype.FieldNodeType)
 	}
@@ -51426,6 +51467,8 @@ func (m *PropertyTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.Mandatory()
 	case propertytype.FieldDeleted:
 		return m.Deleted()
+	case propertytype.FieldListable:
+		return m.Listable()
 	case propertytype.FieldNodeType:
 		return m.NodeType()
 	}
@@ -51475,6 +51518,8 @@ func (m *PropertyTypeMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldMandatory(ctx)
 	case propertytype.FieldDeleted:
 		return m.OldDeleted(ctx)
+	case propertytype.FieldListable:
+		return m.OldListable(ctx)
 	case propertytype.FieldNodeType:
 		return m.OldNodeType(ctx)
 	}
@@ -51618,6 +51663,13 @@ func (m *PropertyTypeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeleted(v)
+		return nil
+	case propertytype.FieldListable:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetListable(v)
 		return nil
 	case propertytype.FieldNodeType:
 		v, ok := value.(string)
@@ -51894,6 +51946,9 @@ func (m *PropertyTypeMutation) ResetField(name string) error {
 		return nil
 	case propertytype.FieldDeleted:
 		m.ResetDeleted()
+		return nil
+	case propertytype.FieldListable:
+		m.ResetListable()
 		return nil
 	case propertytype.FieldNodeType:
 		m.ResetNodeType()

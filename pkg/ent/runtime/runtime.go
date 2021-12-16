@@ -1817,6 +1817,10 @@ func init() {
 	propertytypeDescDeleted := propertytypeFields[16].Descriptor()
 	// propertytype.DefaultDeleted holds the default value on creation for the deleted field.
 	propertytype.DefaultDeleted = propertytypeDescDeleted.Default.(bool)
+	// propertytypeDescListable is the schema descriptor for listable field.
+	propertytypeDescListable := propertytypeFields[17].Descriptor()
+	// propertytype.DefaultListable holds the default value on creation for the listable field.
+	propertytype.DefaultListable = propertytypeDescListable.Default.(bool)
 	recommendationsMixin := schema.Recommendations{}.Mixin()
 	recommendations.Policy = privacy.NewPolicies(schema.Recommendations{})
 	recommendations.Hooks[0] = func(next ent.Mutator) ent.Mutator {

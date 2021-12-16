@@ -9,7 +9,7 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -23,7 +23,7 @@ import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     padding: '40px',
   },
@@ -197,7 +197,7 @@ const KqiTypes = () => {
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
-  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node);
+  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node) || [];
   const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(
     item => item.node,
   );
@@ -271,9 +271,9 @@ const KqiTypes = () => {
         className={classes.header}
         container
         direction="row"
-        justifyContent="flex-end"
+        justify="flex-end"
         alignItems="center">
-        <Grid xs>
+        <Grid item xs>
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
             subtitle={fbt(
@@ -286,7 +286,7 @@ const KqiTypes = () => {
           <Button onClick={handleClick}>Add KQI</Button>
         </Grid>
       </Grid>
-      <Grid item fullWidth>
+      <Grid item>
         <KqiTable dataValues={dataResponseKqi} viewFormEdit={formEdit} />
       </Grid>
     </Grid>

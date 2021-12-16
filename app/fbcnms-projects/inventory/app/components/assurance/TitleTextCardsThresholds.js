@@ -15,16 +15,16 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
-    padding: '0 3rem 0.5rem 1rem',
-  },
-  status: {
-    flexWrap: 'nowrap',
+    padding: '0 4rem 0.5rem 1rem',
   },
   nameThreshold: {
-    paddingLeft: '0.7rem',
+    paddingLeft: '1.3rem',
   },
   editButton: {
     paddingLeft: '1rem',
+  },
+  status: {
+    flexWrap: 'nowrap',
   },
   actions: {
     flexWrap: 'nowrap',
@@ -37,11 +37,16 @@ function TitleTextCardsThresholds() {
     <Grid
       container
       xs={12}
-      justifyContent="center"
+      item
+      justify="center"
       alignItems="center"
       className={classes.root}>
-      <Grid container className={classes.status} xs={2} md={3}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid container className={classes.status} item xs={2} md={3}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Enable
         </Text>
 
@@ -49,35 +54,41 @@ function TitleTextCardsThresholds() {
           className={classes.nameThreshold}
           useEllipsis={true}
           color="primary"
-          variant="subtitle2">
+          variant="subtitle2"
+          weight={'medium'}>
           Threshold name
         </Text>
       </Grid>
-      <Grid xs={2} md={3}>
-        <Text color="primary" variant="subtitle2">
+      <Grid item xs={2} md={3}>
+        <Text color="primary" variant="subtitle2" weight={'medium'}>
           ID
         </Text>
       </Grid>
-      <Grid xs={6} md={5}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid item xs={6} md={5}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Associated KPI
         </Text>
       </Grid>
       <Grid
         container
+        item
         alignItems="center"
         justify="flex-end"
         className={classes.actions}
         xs={2}
         md={1}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text color="primary" variant="subtitle2" weight={'medium'}>
           Delete
         </Text>
         <Text
-          useEllipsis={true}
           className={classes.editButton}
           color="primary"
-          variant="subtitle2">
+          variant="subtitle2"
+          weight={'medium'}>
           Edit
         </Text>
       </Grid>

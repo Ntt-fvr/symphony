@@ -87,6 +87,9 @@ func (PropertyType) Fields() []ent.Field {
 		field.Bool("deleted").
 			StructTag(`gqlgen:"isDeleted"`).
 			Default(false),
+		field.Bool("listable").
+			StructTag(`gqlgen:"isListable"`).
+			Default(false),
 		field.String("nodeType").Optional(),
 	}
 }

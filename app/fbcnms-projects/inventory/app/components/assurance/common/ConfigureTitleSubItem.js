@@ -12,6 +12,7 @@ import type {WithStyles} from '@material-ui/core';
 
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import symphony from '@symphony/design-system/theme/symphony';
 import {withStyles} from '@material-ui/core/styles';
 type Props = {|
   title: string,
@@ -21,7 +22,7 @@ type Props = {|
 
 const styles = _theme => ({
   title: {
-    color: '#73839e',
+    color: symphony.palette.D500,
   },
 });
 const ConfigureTitleSubItem = (props: Props) => {

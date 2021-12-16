@@ -285,6 +285,20 @@ func (ptc *PropertyTypeCreate) SetNillableDeleted(b *bool) *PropertyTypeCreate {
 	return ptc
 }
 
+// SetListable sets the listable field.
+func (ptc *PropertyTypeCreate) SetListable(b bool) *PropertyTypeCreate {
+	ptc.mutation.SetListable(b)
+	return ptc
+}
+
+// SetNillableListable sets the listable field if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillableListable(b *bool) *PropertyTypeCreate {
+	if b != nil {
+		ptc.SetListable(*b)
+	}
+	return ptc
+}
+
 // SetNodeType sets the nodeType field.
 func (ptc *PropertyTypeCreate) SetNodeType(s string) *PropertyTypeCreate {
 	ptc.mutation.SetNodeType(s)
@@ -599,6 +613,10 @@ func (ptc *PropertyTypeCreate) defaults() {
 		v := propertytype.DefaultDeleted
 		ptc.mutation.SetDeleted(v)
 	}
+	if _, ok := ptc.mutation.Listable(); !ok {
+		v := propertytype.DefaultListable
+		ptc.mutation.SetListable(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -631,6 +649,9 @@ func (ptc *PropertyTypeCreate) check() error {
 	}
 	if _, ok := ptc.mutation.Deleted(); !ok {
 		return &ValidationError{Name: "deleted", err: errors.New("ent: missing required field \"deleted\"")}
+	}
+	if _, ok := ptc.mutation.Listable(); !ok {
+		return &ValidationError{Name: "listable", err: errors.New("ent: missing required field \"listable\"")}
 	}
 	return nil
 }
@@ -810,6 +831,14 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Column: propertytype.FieldDeleted,
 		})
 		_node.Deleted = value
+	}
+	if value, ok := ptc.mutation.Listable(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytype.FieldListable,
+		})
+		_node.Listable = value
 	}
 	if value, ok := ptc.mutation.NodeType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

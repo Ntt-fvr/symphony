@@ -252,6 +252,7 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableMandatory(input.IsMandatory).
 			SetNillableDeleted(input.IsDeleted).
 			SetNillablePropertyCategoryID(input.PropertyCategoryID)
+		SetNillableListable(input.IsListable)
 		parentSetter(builders[i])
 	}
 	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
@@ -1677,6 +1678,18 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 	} else if _, err := r.deleteTemplate(ctx, wot.ID, enum.PropertyEntityWorkOrder); err != nil {
 		return id, errors.Wrapf(err, "deleting work order template id=%q", wot.ID)
 	}
+
+	appointments, err := wo.QueryAppointment().All(ctx)
+	if err != nil {
+		return id, errors.Wrapf(err, "query work order appointment: id=%q", id)
+	}
+
+	for _, a := range appointments {
+		if _, err := r.RemoveAppointment(ctx, a.ID); err != nil {
+			return id, errors.Wrapf(err, "deleting work order appointment id=%q", a.ID)
+		}
+	}
+
 	if err := client.WorkOrder.DeleteOne(wo).Exec(ctx); err != nil {
 		return id, errors.Wrapf(err, "deleting work order wo=%q", id)
 	}
@@ -2985,6 +2998,33 @@ func (r mutationResolver) updatePropValues(ctx context.Context, input *models.Pr
 	return pu.Exec(ctx)
 }
 
+func (r mutationResolver) EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error) {
+	client := r.ClientFrom(ctx)
+	et, err := client.PropertyType.Get(ctx, input.ID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		}
+		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
+	}
+
+	var isListable = et.Listable
+	if et.Listable != input.IsListable {
+		isListable = input.IsListable
+	}
+
+	if et, err = client.PropertyType.
+		UpdateOneID(et.ID).
+		SetNillableListable(&isListable).
+		Save(ctx); err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		}
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return et, nil
+}
+
 func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.PropertyTypeInput) error {
 	query := r.ClientFrom(ctx).PropertyType.
 		UpdateOneID(*input.ID).
@@ -2996,7 +3036,8 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 		SetNillableIsInstanceProperty(input.IsInstanceProperty).
 		SetNillableEditable(input.IsEditable).
 		SetNillableMandatory(input.IsMandatory).
-		SetNillableDeleted(input.IsDeleted)
+		SetNillableDeleted(input.IsDeleted).
+		SetNillableListable(input.IsListable)
 
 	if input.PropertyCategoryID != nil {
 		query.SetPropertyCategoryID(*input.PropertyCategoryID)
