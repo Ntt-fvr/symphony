@@ -3639,7 +3639,7 @@ type OrganizationEdge {
 
 ################################ conection recommendations ###############################################
 """
-Properties by which Recommendations connections can be ordered.
+Properties by which RecPropertyCategoryNodeommendations connections can be ordered.
 """
 enum RecommendationsOrderField {
   """

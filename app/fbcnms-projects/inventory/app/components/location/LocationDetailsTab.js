@@ -14,10 +14,12 @@ import type {Location} from '../../common/Location.js';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
+import DynamicPropertyCategoriesTable from '../DynamicPropertyCategoriesTable';
 import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
+import {usePropertyCategoryNodes} from '../../common/PropertyCategory';
 
 type Props = $ReadOnly<{|
   location: Location,
@@ -50,12 +52,17 @@ const LocationDetailsTab = (props: Props) => {
       <LocationDetailsCard className={classes.card} location={location} />
       <Card className={classes.card}>
         <CardHeader>Properties</CardHeader>
+        <DynamicPropertyCategoriesTable
+        />
+      </Card>
+      { <Card className={classes.card}>
+        <CardHeader>Properties</CardHeader>
         <DynamicPropertiesGrid
           hideTitle={true}
           properties={location.properties}
           propertyTypes={propTypes}
         />
-      </Card>
+      </Card>}
       <LocationEquipmentCard
         className={classes.card}
         equipments={location.equipments}
