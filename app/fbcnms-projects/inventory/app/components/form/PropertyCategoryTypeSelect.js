@@ -10,6 +10,7 @@
 import * as React from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import {useState} from 'react';
+import {useLocationTypePropertyCategoryQuery} from '../../common/LocationType';
 
 const data = [
   {
@@ -31,13 +32,23 @@ const data = [
 export const PropertyCategoryTypeSelect = () => {
   const [category, setCategory] = useState(1);
 
+  const propertyCategories = useLocationTypePropertyCategoryQuery();
+
+  const toSelectProperties = propertyCategories?.map(item => {
+    return {
+      value: item.id,
+      key: item.name || '',
+      label: item?.name || '',
+    };
+  });
+
   const handleCategorySelect = data => {
     setCategory(data);
   };
 
   return (
     <Select
-      options={data}
+      options={toSelectProperties}
       onChange={handleCategorySelect}
       selectedValue={category}
     />

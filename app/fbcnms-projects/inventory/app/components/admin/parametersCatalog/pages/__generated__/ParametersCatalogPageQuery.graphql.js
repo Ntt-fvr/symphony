@@ -14,23 +14,18 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+type AddEditParametersCatalogType_editingParametersCatalogType$ref = any;
 export type ParametersCatalogPageQueryVariables = {||};
 export type ParametersCatalogPageQueryResponse = {|
   +parametersCatalog: {|
-    +totalCount: number,
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: ?string,
         +index: ?number,
-        +isDisabled: ?boolean,
-        +propertyCategories: $ReadOnlyArray<?{|
-          +id: string,
-          +name: ?string,
-          +index: ?number,
-        |}>,
+        +$fragmentRefs: AddEditParametersCatalogType_editingParametersCatalogType$ref,
       |}
-    |}>,
+    |}>
   |}
 |};
 export type ParametersCatalogPageQuery = {|
@@ -43,20 +38,27 @@ export type ParametersCatalogPageQuery = {|
 /*
 query ParametersCatalogPageQuery {
   parametersCatalog {
-    totalCount
     edges {
       node {
+        ...AddEditParametersCatalogType_editingParametersCatalogType
         id
         name
         index
-        isDisabled
-        propertyCategories {
-          id
-          name
-          index
-        }
       }
     }
+  }
+}
+
+fragment AddEditParametersCatalogType_editingParametersCatalogType on ParameterCatalog {
+  id
+  name
+  index
+  isDisabled
+  propertyCategories {
+    id
+    name
+    index
+    numberOfProperties
   }
 }
 */
@@ -82,60 +84,46 @@ v2 = {
   "kind": "ScalarField",
   "name": "index",
   "storageKey": null
-},
-v3 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ParameterCatalogConnection",
-    "kind": "LinkedField",
-    "name": "parametersCatalog",
-    "plural": false,
+};
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "ParametersCatalogPageQuery",
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "totalCount",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ParameterCatalogEdge",
+        "concreteType": "ParameterCatalogConnection",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "parametersCatalog",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ParameterCatalog",
+            "concreteType": "ParameterCatalogEdge",
             "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
-              (v0/*: any*/),
-              (v1/*: any*/),
-              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "isDisabled",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "PropertyCategory",
+                "concreteType": "ParameterCatalog",
                 "kind": "LinkedField",
-                "name": "propertyCategories",
-                "plural": true,
+                "name": "node",
+                "plural": false,
                 "selections": [
                   (v0/*: any*/),
                   (v1/*: any*/),
-                  (v2/*: any*/)
+                  (v2/*: any*/),
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "AddEditParametersCatalogType_editingParametersCatalogType"
+                  }
                 ],
                 "storageKey": null
               }
@@ -146,16 +134,6 @@ v3 = [
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "ParametersCatalogPageQuery",
-    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -164,19 +142,84 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ParametersCatalogPageQuery",
-    "selections": (v3/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ParameterCatalogConnection",
+        "kind": "LinkedField",
+        "name": "parametersCatalog",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ParameterCatalogEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ParameterCatalog",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "isDisabled",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "PropertyCategory",
+                    "kind": "LinkedField",
+                    "name": "propertyCategories",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      (v2/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "numberOfProperties",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "6e667867dfee80dbe8da4c93020abde3",
+    "cacheID": "695292fef10225ed8c4f486c5240d160",
     "id": null,
     "metadata": {},
     "name": "ParametersCatalogPageQuery",
     "operationKind": "query",
-    "text": "query ParametersCatalogPageQuery {\n  parametersCatalog {\n    totalCount\n    edges {\n      node {\n        id\n        name\n        index\n        isDisabled\n        propertyCategories {\n          id\n          name\n          index\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ParametersCatalogPageQuery {\n  parametersCatalog {\n    edges {\n      node {\n        ...AddEditParametersCatalogType_editingParametersCatalogType\n        id\n        name\n        index\n      }\n    }\n  }\n}\n\nfragment AddEditParametersCatalogType_editingParametersCatalogType on ParameterCatalog {\n  id\n  name\n  index\n  isDisabled\n  propertyCategories {\n    id\n    name\n    index\n    numberOfProperties\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '83767164c9b403efb587743760123a68';
+(node/*: any*/).hash = '8348ffe3fdbf94ec2344d61b441579db';
 
 module.exports = node;
