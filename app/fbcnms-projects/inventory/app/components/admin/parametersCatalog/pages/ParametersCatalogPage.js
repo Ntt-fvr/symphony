@@ -12,24 +12,21 @@ import type {
   ParametersCatalogPageQuery,
   ParametersCatalogPageQueryResponse,
 } from './__generated__/ParametersCatalogPageQuery.graphql';
+import type {PropertyCategoryType, ParametersCatalogType} from '../types';
+
+import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
 
 import React, {useState} from 'react';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
 
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
-import DroppableTableBody from '../components/DroppableTableBody';
-import DraggableTableRow from '../../../draggable/DraggableTableRow';
 import LocationTypeItem from '../../../configure/LocationTypeItem';
 
-import PropertyTypeTableAdmin from '../../../form/PropertyTypeTableAdmin';
+import AddEditParametersCatalogType from '../components/AddEditParametersCatalogType';
+import DroppableTableBody from '../components/DroppableTableBody';
 
 const useStyles = makeStyles(theme => ({
   typesList: {
@@ -88,9 +85,7 @@ type ResponseParametersCatalogType = $NonMaybeType<
   $ElementType<
     $ElementType<
       $ElementType<
-        $NonMaybeType<
-          $ElementType<ParametersCatalogPageQueryResponse, 'parametersCatalog'>,
-        >,
+        $ElementType<ParametersCatalogPageQueryResponse, 'parametersCatalog'>,
         'edges',
       >,
       number,
@@ -101,25 +96,19 @@ type ResponseParametersCatalogType = $NonMaybeType<
 
 type State = {
   error: string,
-  editingLocationType: () => void,
+  editingLocationType: ParametersCatalogType,
   isSaving: boolean,
 };
 
 const parametersCatalogPageQuery = graphql`
   query ParametersCatalogPageQuery {
     parametersCatalog {
-      totalCount
       edges {
         node {
+          ...AddEditParametersCatalogType_editingParametersCatalogType
           id
           name
           index
-          isDisabled
-          propertyCategories {
-            id
-            name
-            index
-          }
         }
       }
     }
@@ -133,6 +122,7 @@ const sortByIndex = (
 
 export const ParametersCatalogPage = () => {
   const classes = useStyles();
+
   const {
     parametersCatalog,
   }: ParametersCatalogPageQueryResponse = useLazyLoadQuery<ParametersCatalogPageQuery>(
@@ -143,7 +133,6 @@ export const ParametersCatalogPage = () => {
   const parametersCatalogData: Array<ResponseParametersCatalogType> =
     parametersCatalog?.edges.map(edge => edge.node).filter(Boolean) ?? [];
 
-  // TODO: Use when edit parameters  catalog
   const [
     editingParametersCatalog,
     setEditingParametersCatalog,
@@ -152,13 +141,24 @@ export const ParametersCatalogPage = () => {
   // TODO: Use flag loadder when saving parameters
   const [isSaving, setIsSaving] = useState(false);
 
-  console.log(parametersCatalogData);
+  // TODO: Notificaciones
+  // const enqueueSnackbar = useEnqueueSnackbar();
 
-  const [parameters, setParamaters] = useState<State>({
-    error: '',
-    editingLocationType: () => console.log('error'),
-    isSaving: false,
-  });
+  // TODO: Equivalent to location, in this case is just edit collapse or maybe not
+  const [showAddEditCard, setShowAddEditCard] = useState(false);
+  const showAddEditParametersTypeToggle = (
+    locType: ?ResponseParametersCatalogType,
+  ) => {
+    setShowAddEditCard(true);
+  };
+
+  const saveParameter = () => {
+    console.log('save test');
+  };
+
+  if (showAddEditCard) {
+    return <h1>Editando</h1>;
+  }
 
   const onDragEnd = ({source, destination}) => {
     if (destination == null) {
@@ -171,7 +171,6 @@ export const ParametersCatalogPage = () => {
     console.log(parameters);
   };
   return (
-    // TODO: Check add context provider
     <div className={classes.typesList}>
       <div className={classes.firstRow}>
         <ConfigueTitle
@@ -185,31 +184,12 @@ export const ParametersCatalogPage = () => {
       </div>
       <div className={classes.root}>
         <DroppableTableBody className={classes.table} onDragEnd={onDragEnd}>
-          {parametersCatalogData.sort(sortByIndex).map((params, i) => {
+          {parametersCatalogData?.sort(sortByIndex).map((parameters, i) => {
             return (
-              <div className={classes.listItem}>
-                <DraggableTableRow
-                  className={classes.draggableRow}
-                  draggableCellClassName={classes.cell}
-                  id={params.id}
-                  index={params.index || 0}
-                  key={params.id}>
-                  <Accordion className={classes.panel}>
-                    <AccordionSummary
-                      className={classes.row}
-                      expandIcon={<ExpandMoreIcon />}>
-                      {params.name}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <div className={classes.properties}>
-                        <PropertyTypeTableAdmin
-                          propertyTypes={params.propertyCategories}
-                          onPropertiesChanged={parameterCatalogChangeHandler}
-                        />
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                </DraggableTableRow>
+              <div key={i} className={classes.listItem}>
+                <AddEditParametersCatalogType
+                  editingPropertyCatergoryType={parameters}
+                />
               </div>
             );
           })}
@@ -218,22 +198,5 @@ export const ParametersCatalogPage = () => {
     </div>
   );
 };
-
-const itemsDev = [1, 2, 3, 4, 5].map(item => ({
-  id: '55834574859',
-  name: 'UBIGEO',
-  index: 0,
-  type: 'string',
-  nodeType: '',
-  booleanValue: false,
-  stringValue: '00',
-  intValue: 0,
-  floatValue: 0,
-  latitudeValue: 0,
-  longitudeValue: 0,
-  isEditable: true,
-  isMandatory: false,
-  isInstanceProperty: true,
-}));
 
 export default ParametersCatalogPage;

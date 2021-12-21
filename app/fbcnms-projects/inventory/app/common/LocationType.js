@@ -10,6 +10,7 @@
 
 import type {LocationTypeNodesQuery} from './__generated__/LocationTypeNodesQuery.graphql';
 import type {LocationType2DocumentCategoryNodesQuery} from './__generated__/LocationType2DocumentCategoryNodesQuery.graphql';
+import type {LocationTypePropertyCategoryNodesQuery} from './__generated__/LocationTypePropertyCategoryNodesQuery.graphql';
 import type {NamedNode, OptionalNamedNode} from './EntUtils';
 import type {PropertyType} from './PropertyType';
 import type {DocumentCategoryType} from './DocumentCategoryType';
@@ -89,6 +90,20 @@ const locationType2DocumentCategoryNodesQuery = graphql`
     }
   }
 `;
+
+const locationTypePropertyCategoryQuery = graphql`
+  query LocationTypePropertyCategoryNodesQuery {
+    propertyCategories {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export type LocationTypeNode = $Exact<NamedNode>;
 export type DocumentCategoryNode = $Exact<OptionalNamedNode>;
 
@@ -109,6 +124,17 @@ export function useLocationTypeNodesOnDocuments(): $ReadOnlyArray<LocationTypeNo
     {},
   );
   const locationTypesData = response.locationTypes?.edges || [];
+  const locationTypes = locationTypesData.map(p => p.node).filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+  return locationTypes;
+}
+// TODO : location con id parameters
+export function useLocationTypePropertyCategoryQuery(): $ReadOnlyArray<DocumentCategoryNode> {
+  const response = useLazyLoadQuery<LocationTypePropertyCategoryNodesQuery>(
+    locationTypePropertyCategoryQuery,
+    {},
+  );
+  const locationTypesData = response.propertyCategories?.edges || [];
   const locationTypes = locationTypesData.map(p => p.node).filter(Boolean);
   // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return locationTypes;
