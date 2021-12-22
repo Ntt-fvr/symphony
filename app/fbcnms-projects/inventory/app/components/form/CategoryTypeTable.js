@@ -90,12 +90,11 @@ class CategoryTypeTable extends React.Component<Props> {
         <Table component="div" className={classes.root}>
           <TableHead component="div">
             <TableRow component="div">
-              <TableCell size="small" padding="none" component="div" >
-              asdasdasdasdasd
-              </TableCell>
+              <TableCell size="small" padding="none" component="div" />
               <TableCell component="div" className={classes.cell}>
-                Nameasddddddddddddd
+                Name
               </TableCell>
+              <TableCell component="div" />
               <TableCell component="div" />
             </TableRow>
           </TableHead>

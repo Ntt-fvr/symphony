@@ -19,5 +19,6 @@ export type PropertyCategoryType = {|
   name: string,
   index?: ?number,
   numberOfProperties: number,
+  parameterCatalogId?: number
   // isDeleted?: ?boolean,
 |};

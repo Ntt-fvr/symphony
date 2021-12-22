@@ -96,6 +96,7 @@ class PropertyCategories extends React.Component<Props> {
                 <TableCell className={classes.cell} component="div" scope="row">
                   <FormField>
                     <TextInput
+                      key={i +property.id}
                       autoFocus={true}
                       placeholder="Name"
                       className={classes.input}
@@ -139,9 +140,6 @@ class PropertyCategories extends React.Component<Props> {
   }
 
   _handleNameChange = index => event => {
-    // console.log('Change Name\n', index);
-    // console.log('Change event\n', event.target.value);
-
     this.props.onPropertiesChanged(
       updateItem<PropertyCategoryType, 'name'>(
         this.props.propertyTypes,
@@ -154,17 +152,11 @@ class PropertyCategories extends React.Component<Props> {
   };
 
   _handleNameBlur = index => event => {
-    console.log('Change Name\n', index);
-    console.log('Change event\n', event.target.value);
     const name = this.props.propertyTypes[index]?.name;
     const trimmedName = name && name.trim();
-    console.log(name);
-    console.log('Blur Name\n', index);
-
     if (name === trimmedName) {
       return;
     }
-
     this.props.onPropertiesChanged(
       updateItem<PropertyCategoryType, 'name'>(
         this.props.propertyTypes,
@@ -228,27 +220,5 @@ class PropertyCategories extends React.Component<Props> {
   }
 }
 
-// export const PropertyCategoriesTable = (props: Props) => {
-//     const {classes, onPropertiesChanged, propertyTypes} = props;
-//     const appContext = useContext(AppContext);
-
-//     const handleNameChange = index => event => {
-//     onPropertiesChanged(
-//       updateItem<PropertyCategoryType, 'name'>(
-//         propertyTypes,
-//         index,
-//         'name',
-//         // $FlowFixMe: need to figure out how to cast string to PropertyKind
-//         event.target.value,
-//       ),
-//     );
-//   };
-
-//     return (
-//         <div>
-//             algo
-//         </div>
-//     )
-// }
 
 export default withStyles(styles)(PropertyCategories);

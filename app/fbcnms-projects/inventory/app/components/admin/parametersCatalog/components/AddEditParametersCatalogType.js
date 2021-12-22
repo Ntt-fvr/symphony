@@ -62,6 +62,9 @@ const styles = theme => ({
     marginBottom: '24px',
     width: '100%',
   },
+  savebtn: {
+    marginRight: '20px',
+  }
 });
 
 type Props = WithSnackbarProps &
@@ -114,14 +117,15 @@ class AddEditParametersCatalogType extends React.Component<Props, State> {
           <AccordionDetails>
             <div className={classes.properties}>
               <PropertyCategories
+                state={this.setState}
                 propertyTypes={propertyCategoriesTypes}
                 onPropertiesChanged={this._documentCategoryChangedHandler}
               />
             </div>
+            <div className={classes.savebtn}>
+              <Button onClick={this.onSave}>Save</Button>
+            </div>
           </AccordionDetails>
-          <PageFooter>
-            <Button onClick={this.onSave}>Save</Button>
-          </PageFooter>
         </Accordion>
       </DraggableTableRow>
     );
@@ -172,26 +176,31 @@ class AddEditParametersCatalogType extends React.Component<Props, State> {
         if (!handleErrors(errors)) {
           const exito = response.editPropertyCategories;
         }
+        this.props.enqueueSnackbar('saved', {
+        children: key => (
+          <SnackbarItem id={key} message={'saved'} variant="success" />
+        ),
+      });
       },
     });
   };
 
   buildEditLocationTypeMutationVariables = () => {
     const {id, propertyCategories} = this.state.editingPropertyCategoryType;
+    const parameterCatalogId = this.props.editingPropertyCatergoryType?.id;
 
     return {
       propertyCategories: propertyCategories
         .filter(propType => !!propType.name)
         .map(cat => {
-          const category = cat.id.includes('@tmp')
-            ? {
-                ['numberOfProperties']: cat.numberOfProperties,
-                ...this.deleteTempId(cat),
-                parameterCatalogId: id,
-              }
-            : this.withoutProperty(cat, 'numberOfProperties');
-
-          return category;
+          console.log('cattttttttt', cat, this.props);
+          const categoryID = cat.id.includes('@tmp') ? null : cat.id
+          return {
+            id: categoryID,
+            name: cat.name,
+            index: categoryID == null ? (cat.index + 1) : cat.index || 0,
+            parameterCatalogId: String(parameterCatalogId),
+          };
         }),
     };
   };
