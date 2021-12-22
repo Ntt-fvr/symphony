@@ -19,7 +19,6 @@ import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
-import {usePropertyCategoryNodes} from '../../common/PropertyCategory';
 
 type Props = $ReadOnly<{|
   location: Location,

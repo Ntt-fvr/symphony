@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebook/ent/schema/index"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 )
 
@@ -22,8 +23,10 @@ func (PropertyCategory) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			NotEmpty().
-			Unique(),
-		field.Int("index"),
+			Unique().
+			Annotations(entgql.OrderField("NAME")),
+		field.Int("index").
+			Annotations(entgql.OrderField("INDEX")),
 	}
 }
 

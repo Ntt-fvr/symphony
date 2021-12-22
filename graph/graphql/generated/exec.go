@@ -1622,7 +1622,7 @@ type ComplexityRoot struct {
 		ProjectTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Projects                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) int
 		PropertiesByCategories    func(childComplexity int, filterBy []*models1.PropertiesByCategoryFilterInput) int
-		PropertyCategories        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		PropertyCategories        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyCategoryOrder) int
 		PythonPackages            func(childComplexity int) int
 		Recommendations           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) int
 		RecommendationsCategories func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) int
@@ -2706,7 +2706,7 @@ type QueryResolver interface {
 	NetworkTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.NetworkTypeOrder, filterBy []*models.NetworkTypeFilterInput) (*ent.NetworkTypeConnection, error)
 	Appointments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, slotFilterBy *models.SlotFilterInput) (*ent.AppointmentConnection, error)
 	UsersAvailability(ctx context.Context, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput, duration float64, regularHours models.RegularHoursInput) ([]*models.UserAvailability, error)
-	PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.PropertyCategoryConnection, error)
+	PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyCategoryOrder) (*ent.PropertyCategoryConnection, error)
 	ParametersCatalog(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ParameterCatalogConnection, error)
 	PropertiesByCategories(ctx context.Context, filterBy []*models1.PropertiesByCategoryFilterInput) ([]*models.PropertiesByCategories, error)
 }
@@ -10816,7 +10816,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.PropertyCategories(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.PropertyCategories(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.PropertyCategoryOrder)), true
 
 	case "Query.pythonPackages":
 		if e.complexity.Query.PythonPackages == nil {
@@ -15396,6 +15396,20 @@ enum LocationOrderField {
 }
 
 """
+Properties by which property categories connections can be ordered.
+"""
+enum PropertyCategoryOrderField {
+  """
+  Order Property Category by name.
+  """
+  NAME
+  """
+  Order Property Category by index.
+  """
+  INDEX
+}
+
+"""
 Ordering options for location connections.
 """
 input LocationOrder {
@@ -15408,6 +15422,20 @@ input LocationOrder {
   The field to order locations by.
   """
   field: LocationOrderField
+}
+
+"""
+Ordering options for property category connections.
+"""
+input PropertyCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+  """
+  The field to order property category by.
+  """
+  field: PropertyCategoryOrderField
 }
 
 """
@@ -17583,7 +17611,7 @@ type OrganizationEdge {
 
 ################################ conection recommendations ###############################################
 """
-Properties by which Recommendations connections can be ordered.
+Properties by which RecPropertyCategoryNodeommendations connections can be ordered.
 """
 enum RecommendationsOrderField {
   """
@@ -21105,6 +21133,8 @@ type Query {
     Returns the last _n_ elements from the list.
     """
     last: Int @numberValue(min: 0)
+
+    orderBy: PropertyCategoryOrder
   ): PropertyCategoryConnection!
   parametersCatalog(
   """
@@ -30157,6 +30187,15 @@ func (ec *executionContext) field_Query_propertyCategories_args(ctx context.Cont
 		}
 	}
 	args["last"] = arg3
+	var arg4 *ent.PropertyCategoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOPropertyCategoryOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
 	return args, nil
 }
 
@@ -67085,7 +67124,7 @@ func (ec *executionContext) _Query_propertyCategories(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PropertyCategories(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().PropertyCategories(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.PropertyCategoryOrder))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -91799,6 +91838,34 @@ func (ec *executionContext) unmarshalInputPropertyCategoryCUDInput(ctx context.C
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("delete"))
 			it.Delete, err = ec.unmarshalOPropertyCategoryPermissionRuleInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐPropertyCategoryPermissionRuleInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPropertyCategoryOrder(ctx context.Context, obj interface{}) (ent.PropertyCategoryOrder, error) {
+	var it ent.PropertyCategoryOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOPropertyCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategoryOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -122851,6 +122918,30 @@ func (ec *executionContext) unmarshalOPropertyCategoryCUDInput2ᚖgithubᚗcom�
 	}
 	res, err := ec.unmarshalInputPropertyCategoryCUDInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOPropertyCategoryOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategoryOrder(ctx context.Context, v interface{}) (*ent.PropertyCategoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPropertyCategoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOPropertyCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategoryOrderField(ctx context.Context, v interface{}) (*ent.PropertyCategoryOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.PropertyCategoryOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPropertyCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategoryOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.PropertyCategoryOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOPropertyCategoryPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐPropertyCategoryPermissionRule(ctx context.Context, sel ast.SelectionSet, v *models2.PropertyCategoryPermissionRule) graphql.Marshaler {

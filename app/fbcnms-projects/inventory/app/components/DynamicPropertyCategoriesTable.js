@@ -30,8 +30,7 @@ import Text from '@symphony/design-system/components/Text';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {getInitialPropertyFromType} from '../common/PropertyType';
 import {
-  getNonInstancePropertyTypes,
-  sortPropertiesByIndex,
+  getNonInstancePropertyTypes
 } from '../common/Property';
 import {withStyles} from '@material-ui/core/styles';
 import MultiSelect from '@symphony/design-system/components/Select/MultiSelect';
@@ -87,7 +86,12 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
   const form = useFormContext();
 
   const [propCategories, setPropCategories] = useState(
-    usePropertyCategoryNodes(),
+    usePropertyCategoryNodes({
+      orderBy: {
+        field: 'INDEX',
+        direction: 'ASC',
+      },
+    }),
   );
   const [selectedValues, setSelectedValues] = useState([]);
   let isVisible = false;

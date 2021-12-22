@@ -15066,6 +15066,63 @@ func (pc *PropertyCategoryQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// PropertyCategoryOrderFieldName orders PropertyCategory by name.
+	PropertyCategoryOrderFieldName = &PropertyCategoryOrderField{
+		field: propertycategory.FieldName,
+		toCursor: func(pc *PropertyCategory) Cursor {
+			return Cursor{
+				ID:    pc.ID,
+				Value: pc.Name,
+			}
+		},
+	}
+	// PropertyCategoryOrderFieldIndex orders PropertyCategory by index.
+	PropertyCategoryOrderFieldIndex = &PropertyCategoryOrderField{
+		field: propertycategory.FieldIndex,
+		toCursor: func(pc *PropertyCategory) Cursor {
+			return Cursor{
+				ID:    pc.ID,
+				Value: pc.Index,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f PropertyCategoryOrderField) String() string {
+	var str string
+	switch f.field {
+	case propertycategory.FieldName:
+		str = "NAME"
+	case propertycategory.FieldIndex:
+		str = "INDEX"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f PropertyCategoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *PropertyCategoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("PropertyCategoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *PropertyCategoryOrderFieldName
+	case "INDEX":
+		*f = *PropertyCategoryOrderFieldIndex
+	default:
+		return fmt.Errorf("%s is not a valid PropertyCategoryOrderField", str)
+	}
+	return nil
+}
+
 // PropertyCategoryOrderField defines the ordering field of PropertyCategory.
 type PropertyCategoryOrderField struct {
 	field    string

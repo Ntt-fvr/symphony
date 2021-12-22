@@ -1452,6 +1452,20 @@ enum LocationOrderField {
 }
 
 """
+Properties by which property categories connections can be ordered.
+"""
+enum PropertyCategoryOrderField {
+  """
+  Order Property Category by name.
+  """
+  NAME
+  """
+  Order Property Category by index.
+  """
+  INDEX
+}
+
+"""
 Ordering options for location connections.
 """
 input LocationOrder {
@@ -1464,6 +1478,20 @@ input LocationOrder {
   The field to order locations by.
   """
   field: LocationOrderField
+}
+
+"""
+Ordering options for property category connections.
+"""
+input PropertyCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+  """
+  The field to order property category by.
+  """
+  field: PropertyCategoryOrderField
 }
 
 """
@@ -7161,6 +7189,8 @@ type Query {
     Returns the last _n_ elements from the list.
     """
     last: Int @numberValue(min: 0)
+
+    orderBy: PropertyCategoryOrder
   ): PropertyCategoryConnection!
   parametersCatalog(
   """

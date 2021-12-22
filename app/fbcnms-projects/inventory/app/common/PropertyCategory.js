@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {PropertyCategoryNodesQuery} from './__generated__/PropertyCategoryNodesQuery.graphql';
+import type {PropertyCategoryNodesQuery, PropertyCategoryNodesQueryVariables} from './__generated__/PropertyCategoryNodesQuery.graphql';
 import type {NamedNode, OptionalNamedNode} from './EntUtils';
 import {graphql, fetchQuery} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -23,8 +23,8 @@ export type PropertyCategory = {|
 export const GENERAL_CATEGORY_LABEL = 'GENERAL';
 
 const propertyCategoryNodesQuery = graphql`
-  query PropertyCategoryNodesQuery {
-    propertyCategories {
+  query PropertyCategoryNodesQuery ($orderBy: PropertyCategoryOrder) {
+    propertyCategories (orderBy: $orderBy) {
       edges {
         node {
           id
@@ -37,11 +37,10 @@ const propertyCategoryNodesQuery = graphql`
 
 export type PropertyCategoryNode = $Exact<OptionalNamedNode>;
 
-export function usePropertyCategoryNodes(): $ReadOnlyArray<PropertyCategoryNode> {
+export function usePropertyCategoryNodes(input: PropertyCategoryNodesQueryVariables): $ReadOnlyArray<PropertyCategoryNode> {
   const response = useLazyLoadQuery<PropertyCategoryNodesQuery>(
     propertyCategoryNodesQuery,
-    {},
-    // {fetchPolicy: 'network-only'}
+    input,
   );
   const propCategoryData = response.propertyCategories?.edges || [];
   const propCategory = propCategoryData.map(p => p.node).filter(Boolean);

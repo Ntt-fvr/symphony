@@ -51,11 +51,15 @@ func (r queryResolver) ParametersCatalog(ctx context.Context, after *ent.Cursor,
 		Paginate(ctx, after, first, before, last)
 }
 
-func (r queryResolver) PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.PropertyCategoryConnection, error) {
+func (r queryResolver) PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int,
+	orderBy *ent.PropertyCategoryOrder,
+	) (*ent.PropertyCategoryConnection, error) {
 	return r.ClientFrom(ctx).
 		PropertyCategory.
 		Query().
-		Paginate(ctx, after, first, before, last)
+		Paginate(ctx, after, first, before, last,
+			ent.WithPropertyCategoryOrder(orderBy),
+		)
 }
 
 func (r queryResolver) DocumentCategories(ctx context.Context, locationTypeID *int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.DocumentCategoryConnection, error) {
@@ -1291,8 +1295,7 @@ func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*p
 		group.Properties = prop
 		propsByGroups = append(propsByGroups, &group)
 	}
-
-	propCategories, err := client.PropertyCategory.Query().Where(propertycategory.IDIn(propCategoryID...)).All(ctx)
+	propCategories, err := client.PropertyCategory.Query().Where(propertycategory.IDIn(propCategoryID...)).Order(ent.Asc(propertycategory.FieldIndex)).All(ctx)
 	if err != nil {
 		return nil, pgkerrors.Errorf("error query PropertyCategory, %s", err)
 	}
