@@ -259,6 +259,11 @@ export const arrayConfigs = [
     title: 'Organizations',
     enabledByDefault: false,
   },
+  {
+    id: 'ipt_import_project',
+    title: 'IPT import projects',
+    enabledByDefault: false,
+  },
 ];
 
 export const featureConfigs: {[FeatureID]: FeatureConfig} = {};

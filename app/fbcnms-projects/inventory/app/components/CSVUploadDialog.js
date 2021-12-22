@@ -27,6 +27,7 @@ import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {UploadAPIUrls} from '../common/UploadAPI';
 import {useContext, useState} from 'react';
 import {withStyles} from '@material-ui/core/styles';
+import {useMainContext} from './MainContext';
 
 type Props = {|mode?: string|} & WithStyles<typeof styles>;
 
@@ -117,6 +118,8 @@ type MessageType = {|
 
 const CSVUploadDialog = (props: Props) => {
   const {classes} = props;
+  const mainContext = useMainContext();
+  const loggedInUserID = mainContext.me?.user?.id || '';
 
   const {mode} = props;
 
@@ -126,7 +129,6 @@ const CSVUploadDialog = (props: Props) => {
   const [entity, setEntity] = useState(null);
   const [files, setFiles] = useState([]);
   const [verifyBeforeCommit, setVerifyBeforeCommit] = useState(false);
-
 
   const [messageToDisplay, setMessageToDisplay] = useState<?MessageType>({
     text: null,
@@ -145,6 +147,15 @@ const CSVUploadDialog = (props: Props) => {
       <a href={'/docs/docs/' + path}>Go to documentation page</a>
     </Text>
   );
+  const fullProjectsUpload = idUser => {
+    const tmpPath = 'http://35.229.19.240/main/report';
+
+    return (
+      <Text className={classes.link}>
+        <a href={`${tmpPath}?idUser=${idUser}`}>Full Projects Upload</a>
+      </Text>
+    );
+  };
 
   const generalEndProcess = () => {
     setIsLoading(false);
@@ -178,7 +189,7 @@ const CSVUploadDialog = (props: Props) => {
     setLinesToSkip(errors);
   };
 
-   const onWarningOnly = (msg: string) => {
+  const onWarningOnly = (msg: string) => {
     setMessageToDisplay({
       text: msg,
       type: 'warning',
@@ -202,8 +213,8 @@ const CSVUploadDialog = (props: Props) => {
 
   const getImportScripts = context => {
     if (mode === 'projects') {
-      return uploadProjects
-    } 
+      return uploadProjects;
+    }
     const deprecatedImportsEnabled =
       context && context.isFeatureEnabled('deprecated_imports');
     return deprecatedImportsEnabled
@@ -261,8 +272,7 @@ const CSVUploadDialog = (props: Props) => {
       const summary = responseData.summary;
       setErrors(responseData.errors ?? []);
 
-      if (summary && summary.successLines === 0 && summary.allLines > 0)
-      {
+      if (summary && summary.successLines === 0 && summary.allLines > 0) {
         onWarningOnly(
           fbt(
             'Uploaded ' +
@@ -277,8 +287,9 @@ const CSVUploadDialog = (props: Props) => {
         );
         return;
       }
-      
-      if ((responseData.errors != null && !verifyBefore) ||
+
+      if (
+        (responseData.errors != null && !verifyBefore) ||
         (responseData.summary.committed && summary.successLines > 0)
       ) {
         onSuccess(
@@ -321,8 +332,7 @@ const CSVUploadDialog = (props: Props) => {
           ),
         );
         return;
-      } 
-      else {
+      } else {
         const message = error.response?.data;
         onFail(message);
       }
@@ -336,16 +346,20 @@ const CSVUploadDialog = (props: Props) => {
     if (!f || f.length === 0) {
       return;
     }
-    console.log(`['projects'].includes(mode)`, ['projects'].includes(mode));
-    const verifyBeforeCommit = mode === 'projects' ? false : deprecatedUploadsParams.find(e => e.entity == entity) == null;
+
+    const verifyBeforeCommit =
+      mode === 'projects'
+        ? false
+        : deprecatedUploadsParams.find(e => e.entity == entity) == null;
     setVerifyBeforeCommit(verifyBeforeCommit);
-    console.log('entity', entity);
-    console.log('verifyBeforeCommit', verifyBeforeCommit);
+
     uploadFile(verifyBeforeCommit, f, entity);
   };
 
   const appContext = useContext(AppContext);
+
   const importScripts = getImportScripts(appContext);
+  const fullProjectsEnabled = appContext.isFeatureEnabled('ipt_import_project');
 
   return isLoading ? (
     <div className={classes.circle}>
@@ -374,17 +388,15 @@ const CSVUploadDialog = (props: Props) => {
         <>
           <DialogError message={messageToDisplay.text} color={'warning'} />
           <UploadErrorsList errors={errors} />
-          { verifyBeforeCommit ?
-            (
-              <UploadAnywayDialog onAbort={onAbort} onUpload={onContinueAnyway} />
-            ) : (
-              <DialogActions>
-                <Button onClick={onAbort} skin="primary">
-                  OK
-                </Button>
-              </DialogActions>
-            )
-          }
+          {verifyBeforeCommit ? (
+            <UploadAnywayDialog onAbort={onAbort} onUpload={onContinueAnyway} />
+          ) : (
+            <DialogActions>
+              <Button onClick={onAbort} skin="primary">
+                OK
+              </Button>
+            </DialogActions>
+          )}
         </>
       )}
       {['success', 'warning'].includes(messageToDisplay?.type) ? null : (
@@ -400,6 +412,7 @@ const CSVUploadDialog = (props: Props) => {
           ))}
         </div>
       )}
+      {fullProjectsEnabled && fullProjectsUpload(loggedInUserID)}
     </>
   );
 };
