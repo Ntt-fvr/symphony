@@ -80,7 +80,6 @@ const LocationPropertyCategoryTable = (props: Props) => {
     ];
     return colsToReturn;
   }, [
-    classes.iconColumn,
   ]);
 
   if (properties.length === 0) {

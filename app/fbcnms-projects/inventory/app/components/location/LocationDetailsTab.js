@@ -54,14 +54,6 @@ const LocationDetailsTab = (props: Props) => {
         <DynamicPropertyCategoriesTable
         />
       </Card>
-      { <Card className={classes.card}>
-        <CardHeader>Properties</CardHeader>
-        <DynamicPropertiesGrid
-          hideTitle={true}
-          properties={location.properties}
-          propertyTypes={propTypes}
-        />
-      </Card>}
       <LocationEquipmentCard
         className={classes.card}
         equipments={location.equipments}
