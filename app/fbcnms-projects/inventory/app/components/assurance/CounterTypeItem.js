@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 
 // DESING SYSTEM //
 import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
-    marginBottom: '7px',
+    marginBottom: '10px',
   },
   container: {
     '& .MuiAccordionSummary-root': {
@@ -42,11 +42,16 @@ const useStyles = makeStyles(() => ({
     },
   },
   familyName: {
-    marginLeft: '-16px',
     paddingBottom: '12px',
   },
+  counterId: {
+    paddingBottom: '12px',
+  },
+  titles: {
+    marginRight: '0.8rem',
+  },
   detailsRoot: {
-    marginLeft: '11px',
+    margin: '0.1rem 2.7rem 0 0.7rem',
   },
   deleteIcon: {
     marginRight: '1rem',
@@ -79,43 +84,42 @@ export default function CounterTypeItem(props: Props) {
     handleRemove,
   } = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
+
+  const handleDelete = event => {
+    event.stopPropagation();
+    handleRemove();
+  };
 
   return (
     <div className={classes.root}>
-      <Accordion className={classes.container} expanded={open}>
+      <Accordion className={classes.container}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid container xs={12}>
-            <Grid xs={3} container justify="flex-start" alignItems="center">
+          <Grid container>
+            <Grid item xs={5}>
               <Text useEllipsis={true} weight="bold">
                 {name}
               </Text>
             </Grid>
 
-            <Grid xs={4} container alignItems="center">
-              <Text useEllipsis={true} color="primary" weight="bold">
+            <Grid item xs={3}>
+              <Text useEllipsis={true} color="primary" weight="regular">
                 {networkManagerSystem}
               </Text>
             </Grid>
 
-            <Grid
-              xs={3}
-              sm={3}
-              container
-              justify="flex-start"
-              alignItems="center">
-              <Text useEllipsis={true} weight="bold">
+            <Grid item xs={2}>
+              <Text useEllipsis={true} weight="regular">
                 {vendorFk.name}
               </Text>
             </Grid>
 
-            <Grid xs={2} container justify="flex-end" alignItems="center">
+            <Grid item xs={2} container justify="flex-end">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={handleRemove}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>
@@ -124,13 +128,21 @@ export default function CounterTypeItem(props: Props) {
 
         <AccordionDetails className={classes.detailsRoot}>
           <Grid container spacing={3}>
-            <Grid xs={4}>
-              <strong>Counter ID: </strong>
-              {externalID}
+            <Grid item xs={5} className={classes.counterId}>
+              <Text className={classes.titles} variant={'body2'} weight="bold">
+                Counter ID:
+              </Text>
+              <Text variant={'body2'} weight="regular">
+                {externalID}
+              </Text>
             </Grid>
-            <Grid xs={8} className={classes.familyName}>
-              <strong>Family Name: </strong>
-              {counterFamily.name}
+            <Grid item xs={7} className={classes.familyName}>
+              <Text className={classes.titles} variant={'body2'} weight="bold">
+                Family Name:
+              </Text>
+              <Text variant={'body2'} weight="regular">
+                {counterFamily.name}
+              </Text>
             </Grid>
           </Grid>
         </AccordionDetails>

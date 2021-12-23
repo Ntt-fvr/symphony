@@ -13,6 +13,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
+
 	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 
 	"github.com/AlekSi/pointer"
@@ -36,9 +39,28 @@ import (
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	pgkerrors "github.com/pkg/errors"
 )
 
 type queryResolver struct{ resolver }
+
+func (r queryResolver) ParametersCatalog(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ParameterCatalogConnection, error) {
+	return r.ClientFrom(ctx).
+		ParameterCatalog.
+		Query().
+		Paginate(ctx, after, first, before, last)
+}
+
+func (r queryResolver) PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int,
+	orderBy *ent.PropertyCategoryOrder,
+	) (*ent.PropertyCategoryConnection, error) {
+	return r.ClientFrom(ctx).
+		PropertyCategory.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithPropertyCategoryOrder(orderBy),
+		)
+}
 
 func (r queryResolver) DocumentCategories(ctx context.Context, locationTypeID *int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.DocumentCategoryConnection, error) {
 	filter := func(query *ent.DocumentCategoryQuery) (*ent.DocumentCategoryQuery, error) {
@@ -1145,10 +1167,18 @@ func (r queryResolver) UsersAvailability(
 
 	y, m, d := slotFilterBy.SlotStartDate.Date()
 	dswt := time.Date(y, m, d, SH, SM, 0, 0, TZ)
-	// fmt.Println("dswt ", dswt)
 
-	sd, _ := time.ParseDuration(strconv.FormatFloat(duration, 'f', -1, 64) + "h")
-	nsd, _ := time.ParseDuration("-" + strconv.FormatFloat(duration, 'f', -1, 64) + "h")
+	slotStart := slotFilterBy.SlotStartDate
+
+	if dswt.After(slotStart) {
+		slotStart = dswt
+	}
+
+	slotDuration, err := time.ParseDuration(strconv.FormatFloat(duration, 'f', -1, 64) + "h")
+
+	if err != nil {
+		return nil, fmt.Errorf("error parsing slot duration %w", err)
+	}
 
 	u := query.AllX(ctx)
 
@@ -1170,51 +1200,38 @@ func (r queryResolver) UsersAvailability(
 		}
 
 		if naps == 0 {
-			if resolverutil.IsWorkTime(slotFilterBy.SlotStartDate, SH, SM, EH, EM) && resolverutil.IsWorkTime(slotFilterBy.SlotStartDate.Add(sd), SH, SM, EH, EM) {
-				users = append(users, &models.UserAvailability{
-					User:          us,
-					SlotStartDate: slotFilterBy.SlotStartDate,
-					SlotEndDate:   slotFilterBy.SlotStartDate.Add(sd),
-				})
-			} else if resolverutil.LE(dswt.Add(sd), slotFilterBy.SlotEndDate) {
-				users = append(users, &models.UserAvailability{
-					User:          us,
-					SlotStartDate: dswt,
-					SlotEndDate:   dswt.Add(sd),
-				})
-			}
+			users = append(users, &models.UserAvailability{
+				User:          us,
+				SlotStartDate: slotStart,
+				SlotEndDate:   slotStart.Add(slotDuration),
+			})
 		} else {
 			i := 0
 			for _, a := range aps {
 				i++
-				uast := a.Start.Add(nsd)
 				y, m, d := a.Start.Date()
 				dswt := time.Date(y, m, d, SH, SM, 0, 0, TZ)
-				ndswt := time.Date(y, m, d+1, SH, SM, 0, 0, TZ)
+				ndswt := resolverutil.NextWorkDay(dswt, SH, SM, 0, 0)
+				if dswt.After(slotStart) {
+					slotStart = dswt
+				}
+
 				if i == 1 {
-					if resolverutil.LE(slotFilterBy.SlotStartDate.Add(sd), a.Start) && resolverutil.IsWorkTime(slotFilterBy.SlotStartDate, SH, SM, EH, EM) {
+					if resolverutil.LE(slotStart.Add(slotDuration), a.Start) && resolverutil.IsWorkTime(slotStart, SH, SM, EH, EM) {
 						users = append(users, &models.UserAvailability{
 							User:          us,
-							SlotStartDate: slotFilterBy.SlotStartDate,
-							SlotEndDate:   slotFilterBy.SlotStartDate.Add(sd),
-						})
-						break
-					}
-					if resolverutil.LE(dswt.Add(sd), a.Start) {
-						users = append(users, &models.UserAvailability{
-							User:          us,
-							SlotStartDate: dswt,
-							SlotEndDate:   dswt.Add(sd),
+							SlotStartDate: slotStart,
+							SlotEndDate:   slotStart.Add(slotDuration),
 						})
 						break
 					}
 					prev = a
 				} else {
-					if resolverutil.GE(uast, prev.End) && resolverutil.IsWorkTime(prev.End.Add(sd), SH, SM, EH, EM) {
+					if resolverutil.GE(a.Start.Add(-slotDuration), prev.End) && resolverutil.IsWorkTime(prev.End.Add(slotDuration), SH, SM, EH, EM) {
 						users = append(users, &models.UserAvailability{
 							User:          us,
 							SlotStartDate: prev.End,
-							SlotEndDate:   prev.End.Add(sd),
+							SlotEndDate:   prev.End.Add(slotDuration),
 						})
 						break
 					}
@@ -1222,18 +1239,18 @@ func (r queryResolver) UsersAvailability(
 				}
 
 				if i == naps {
-					if resolverutil.IsWorkTime(a.End.Add(sd), SH, SM, EH, EM) {
+					if resolverutil.IsWorkTime(a.End.Add(slotDuration), SH, SM, EH, EM) {
 						users = append(users, &models.UserAvailability{
 							User:          us,
 							SlotStartDate: a.End,
-							SlotEndDate:   a.End.Add(sd),
+							SlotEndDate:   a.End.Add(slotDuration),
 						})
 						break
-					} else if resolverutil.LE(ndswt.Add(sd), slotFilterBy.SlotEndDate) {
+					} else if resolverutil.LE(ndswt.Add(slotDuration), slotFilterBy.SlotEndDate) {
 						users = append(users, &models.UserAvailability{
 							User:          us,
 							SlotStartDate: ndswt,
-							SlotEndDate:   ndswt.Add(sd),
+							SlotEndDate:   ndswt.Add(slotDuration),
 						})
 					}
 				}
@@ -1241,4 +1258,70 @@ func (r queryResolver) UsersAvailability(
 		}
 	}
 	return users, nil
+}
+
+func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*pkgmodels.PropertiesByCategoryFilterInput) ([]*models.PropertiesByCategories, error) {
+	client := r.ClientFrom(ctx)
+	var (
+		propsByGroups  []*models.PropertiesByCategories
+		propCategoryID []int
+		locationID     *int
+		nonCategory    *string
+	)
+	propCategoryID, locationID, nonCategory, err := resolverutil.HandlePropertyByCategoriesFilter(filterBy)
+	if err != nil {
+		return nil, err
+	}
+	if *nonCategory != "" {
+		group := resolverutil.NewPropertiesByCategories()
+		group.Name = nonCategory
+		prop, err := client.Property.Query().Where(
+			property.HasLocationWith(location.ID(*locationID)),
+			property.HasTypeWith(propertytype.Not(propertytype.HasPropertyCategory())),
+		).WithType().All(ctx)
+		if err != nil {
+			return nil, pgkerrors.Errorf("error query Property,  %s", err)
+		}
+		idsPropTypes := resolverutil.GetPropTypesIds(prop)
+		propTypes, err := client.PropertyType.Query().Where(
+			propertytype.Not(propertytype.IDIn(idsPropTypes...)),
+			propertytype.HasLocationTypeWith(locationtype.HasLocationsWith(location.ID(*locationID))),
+			propertytype.Not(propertytype.HasPropertyCategory()),
+		).All(ctx)
+		if err != nil {
+			return nil, pgkerrors.Errorf("error query PropertyType, %s", err)
+		}
+		group.PropertyType = propTypes
+		group.Properties = prop
+		propsByGroups = append(propsByGroups, &group)
+	}
+	propCategories, err := client.PropertyCategory.Query().Where(propertycategory.IDIn(propCategoryID...)).Order(ent.Asc(propertycategory.FieldIndex)).All(ctx)
+	if err != nil {
+		return nil, pgkerrors.Errorf("error query PropertyCategory, %s", err)
+	}
+	for _, propCategory := range propCategories {
+		group := resolverutil.NewPropertiesByCategories()
+		group.ID = &propCategory.ID
+		group.Name = &propCategory.Name
+		prop, err := client.Property.Query().Where(
+			property.HasLocationWith(location.ID(*locationID)),
+			property.HasTypeWith(propertytype.HasPropertyCategoryWith(propertycategory.ID(propCategory.ID))),
+		).WithType().All(ctx)
+		if err != nil {
+			return nil, pgkerrors.Errorf("error query Property, %s", err)
+		}
+		idsPropTypes := resolverutil.GetPropTypesIds(prop)
+		propTypes, err := client.PropertyType.Query().Where(
+			propertytype.Not(propertytype.IDIn(idsPropTypes...)),
+			propertytype.HasLocationTypeWith(locationtype.HasLocationsWith(location.ID(*locationID))),
+			propertytype.HasPropertyCategoryWith(propertycategory.ID(propCategory.ID)),
+		).All(ctx)
+		if err != nil {
+			return nil, pgkerrors.Errorf("error query PropertyType, %s", err)
+		}
+		group.PropertyType = propTypes
+		group.Properties = prop
+		propsByGroups = append(propsByGroups, &group)
+	}
+	return propsByGroups, nil
 }

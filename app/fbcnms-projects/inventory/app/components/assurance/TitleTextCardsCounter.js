@@ -14,16 +14,9 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0  3rem 0.5rem 1rem',
+    padding: '0 3.8rem 0.5rem 0.7rem',
   },
-  globalCenter: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  titleGeneral: {
-    justifyContent: 'flex-start',
-  },
-  accionDelete: {
+  actionDelete: {
     marginRight: '1rem',
   },
   action: {
@@ -35,35 +28,53 @@ function TitleTextCardsCounter() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={3}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid item xs={5}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Counter name
         </Text>
       </Grid>
-      <Grid xs={4}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid item xs={3}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Network Manager System
         </Text>
       </Grid>
-      <Grid xs={3}>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+      <Grid item xs={2}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Vendor name
         </Text>
       </Grid>
       <Grid
+        item
+        xs={2}
         container
         alignItems="center"
         justify="flex-end"
-        className={classes.action}
-        xs={2}>
+        className={classes.action}>
         <Text
-          className={classes.accionDelete}
+          className={classes.actionDelete}
           useEllipsis={true}
           color="primary"
-          variant="subtitle2">
+          variant="body2"
+          weight="medium">
           Delete
         </Text>
-        <Text useEllipsis={true} color="primary" variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Edit
         </Text>
       </Grid>

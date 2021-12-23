@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
@@ -284,6 +285,20 @@ func (ptc *PropertyTypeCreate) SetNillableDeleted(b *bool) *PropertyTypeCreate {
 	return ptc
 }
 
+// SetListable sets the listable field.
+func (ptc *PropertyTypeCreate) SetListable(b bool) *PropertyTypeCreate {
+	ptc.mutation.SetListable(b)
+	return ptc
+}
+
+// SetNillableListable sets the listable field if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillableListable(b *bool) *PropertyTypeCreate {
+	if b != nil {
+		ptc.SetListable(*b)
+	}
+	return ptc
+}
+
 // SetNodeType sets the nodeType field.
 func (ptc *PropertyTypeCreate) SetNodeType(s string) *PropertyTypeCreate {
 	ptc.mutation.SetNodeType(s)
@@ -503,6 +518,25 @@ func (ptc *PropertyTypeCreate) SetWorkerType(w *WorkerType) *PropertyTypeCreate 
 	return ptc.SetWorkerTypeID(w.ID)
 }
 
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptc *PropertyTypeCreate) SetPropertyCategoryID(id int) *PropertyTypeCreate {
+	ptc.mutation.SetPropertyCategoryID(id)
+	return ptc
+}
+
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillablePropertyCategoryID(id *int) *PropertyTypeCreate {
+	if id != nil {
+		ptc = ptc.SetPropertyCategoryID(*id)
+	}
+	return ptc
+}
+
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptc *PropertyTypeCreate) SetPropertyCategory(p *PropertyCategory) *PropertyTypeCreate {
+	return ptc.SetPropertyCategoryID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptc *PropertyTypeCreate) Mutation() *PropertyTypeMutation {
 	return ptc.mutation
@@ -579,6 +613,10 @@ func (ptc *PropertyTypeCreate) defaults() {
 		v := propertytype.DefaultDeleted
 		ptc.mutation.SetDeleted(v)
 	}
+	if _, ok := ptc.mutation.Listable(); !ok {
+		v := propertytype.DefaultListable
+		ptc.mutation.SetListable(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -611,6 +649,9 @@ func (ptc *PropertyTypeCreate) check() error {
 	}
 	if _, ok := ptc.mutation.Deleted(); !ok {
 		return &ValidationError{Name: "deleted", err: errors.New("ent: missing required field \"deleted\"")}
+	}
+	if _, ok := ptc.mutation.Listable(); !ok {
+		return &ValidationError{Name: "listable", err: errors.New("ent: missing required field \"listable\"")}
 	}
 	return nil
 }
@@ -790,6 +831,14 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Column: propertytype.FieldDeleted,
 		})
 		_node.Deleted = value
+	}
+	if value, ok := ptc.mutation.Listable(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytype.FieldListable,
+		})
+		_node.Listable = value
 	}
 	if value, ok := ptc.mutation.NodeType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1000,6 +1049,25 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workertype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ptc.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}

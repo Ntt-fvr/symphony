@@ -98,7 +98,7 @@ export default function PerformanceCatalog() {
         spread={true}
         size="large"
         tabs={tabBars.map(tabBar => tabBar.tab)}
-        activeTabIndex={activeTabBar}
+        activeTabIndex={tabIndex === 0 ? 0 : activeTabBar}
         onChange={changeTab}
       />
       <InventoryErrorBoundary>
@@ -120,7 +120,7 @@ export default function PerformanceCatalog() {
               component={ThresholdTypes}
             />
             <Redirect
-              from={relativeUrl('/assurance/performance')}
+              from={relativeUrl('/')}
               to={relativeUrl('/counters_types')}
             />
           </Switch>

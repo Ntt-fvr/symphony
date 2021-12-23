@@ -73,6 +73,7 @@ export type TextVariant =
   | 'subtitle1'
   | 'subtitle2'
   | 'subtitle3'
+  | 'subtitle4'
   | 'body1'
   | 'body2'
   | 'caption'
@@ -183,6 +184,12 @@ export default {
       lineHeight: 1.14,
       letterSpacing: '1.25px',
       textTransform: 'uppercase',
+    },
+    subtitle4: {
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontWeight: 500,
+      fontSize: '10px',
+      lineHeight: '12px',
     },
     caption: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',

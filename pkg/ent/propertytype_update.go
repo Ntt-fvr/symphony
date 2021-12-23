@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
@@ -377,6 +378,20 @@ func (ptu *PropertyTypeUpdate) SetNillableDeleted(b *bool) *PropertyTypeUpdate {
 	return ptu
 }
 
+// SetListable sets the listable field.
+func (ptu *PropertyTypeUpdate) SetListable(b bool) *PropertyTypeUpdate {
+	ptu.mutation.SetListable(b)
+	return ptu
+}
+
+// SetNillableListable sets the listable field if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillableListable(b *bool) *PropertyTypeUpdate {
+	if b != nil {
+		ptu.SetListable(*b)
+	}
+	return ptu
+}
+
 // SetNodeType sets the nodeType field.
 func (ptu *PropertyTypeUpdate) SetNodeType(s string) *PropertyTypeUpdate {
 	ptu.mutation.SetNodeType(s)
@@ -602,6 +617,25 @@ func (ptu *PropertyTypeUpdate) SetWorkerType(w *WorkerType) *PropertyTypeUpdate 
 	return ptu.SetWorkerTypeID(w.ID)
 }
 
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptu *PropertyTypeUpdate) SetPropertyCategoryID(id int) *PropertyTypeUpdate {
+	ptu.mutation.SetPropertyCategoryID(id)
+	return ptu
+}
+
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillablePropertyCategoryID(id *int) *PropertyTypeUpdate {
+	if id != nil {
+		ptu = ptu.SetPropertyCategoryID(*id)
+	}
+	return ptu
+}
+
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptu *PropertyTypeUpdate) SetPropertyCategory(p *PropertyCategory) *PropertyTypeUpdate {
+	return ptu.SetPropertyCategoryID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptu *PropertyTypeUpdate) Mutation() *PropertyTypeMutation {
 	return ptu.mutation
@@ -685,6 +719,12 @@ func (ptu *PropertyTypeUpdate) ClearProjectTemplate() *PropertyTypeUpdate {
 // ClearWorkerType clears the "worker_type" edge to type WorkerType.
 func (ptu *PropertyTypeUpdate) ClearWorkerType() *PropertyTypeUpdate {
 	ptu.mutation.ClearWorkerType()
+	return ptu
+}
+
+// ClearPropertyCategory clears the "property_category" edge to type PropertyCategory.
+func (ptu *PropertyTypeUpdate) ClearPropertyCategory() *PropertyTypeUpdate {
+	ptu.mutation.ClearPropertyCategory()
 	return ptu
 }
 
@@ -1021,6 +1061,13 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeBool,
 			Value:  value,
 			Column: propertytype.FieldDeleted,
+		})
+	}
+	if value, ok := ptu.mutation.Listable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytype.FieldListable,
 		})
 	}
 	if value, ok := ptu.mutation.NodeType(); ok {
@@ -1440,6 +1487,41 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ptu.mutation.PropertyCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertytype.Label}
@@ -1795,6 +1877,20 @@ func (ptuo *PropertyTypeUpdateOne) SetNillableDeleted(b *bool) *PropertyTypeUpda
 	return ptuo
 }
 
+// SetListable sets the listable field.
+func (ptuo *PropertyTypeUpdateOne) SetListable(b bool) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetListable(b)
+	return ptuo
+}
+
+// SetNillableListable sets the listable field if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillableListable(b *bool) *PropertyTypeUpdateOne {
+	if b != nil {
+		ptuo.SetListable(*b)
+	}
+	return ptuo
+}
+
 // SetNodeType sets the nodeType field.
 func (ptuo *PropertyTypeUpdateOne) SetNodeType(s string) *PropertyTypeUpdateOne {
 	ptuo.mutation.SetNodeType(s)
@@ -2020,6 +2116,25 @@ func (ptuo *PropertyTypeUpdateOne) SetWorkerType(w *WorkerType) *PropertyTypeUpd
 	return ptuo.SetWorkerTypeID(w.ID)
 }
 
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyCategoryID(id int) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetPropertyCategoryID(id)
+	return ptuo
+}
+
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillablePropertyCategoryID(id *int) *PropertyTypeUpdateOne {
+	if id != nil {
+		ptuo = ptuo.SetPropertyCategoryID(*id)
+	}
+	return ptuo
+}
+
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyCategory(p *PropertyCategory) *PropertyTypeUpdateOne {
+	return ptuo.SetPropertyCategoryID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptuo *PropertyTypeUpdateOne) Mutation() *PropertyTypeMutation {
 	return ptuo.mutation
@@ -2103,6 +2218,12 @@ func (ptuo *PropertyTypeUpdateOne) ClearProjectTemplate() *PropertyTypeUpdateOne
 // ClearWorkerType clears the "worker_type" edge to type WorkerType.
 func (ptuo *PropertyTypeUpdateOne) ClearWorkerType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearWorkerType()
+	return ptuo
+}
+
+// ClearPropertyCategory clears the "property_category" edge to type PropertyCategory.
+func (ptuo *PropertyTypeUpdateOne) ClearPropertyCategory() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearPropertyCategory()
 	return ptuo
 }
 
@@ -2437,6 +2558,13 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 			Type:   field.TypeBool,
 			Value:  value,
 			Column: propertytype.FieldDeleted,
+		})
+	}
+	if value, ok := ptuo.mutation.Listable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytype.FieldListable,
 		})
 	}
 	if value, ok := ptuo.mutation.NodeType(); ok {
@@ -2848,6 +2976,41 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workertype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.PropertyCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}

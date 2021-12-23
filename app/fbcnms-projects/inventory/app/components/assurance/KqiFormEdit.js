@@ -8,12 +8,11 @@
  * @format
  */
 
-import React, {useState, useMemo} from 'react';
+import React, {useState} from 'react';
 
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -31,10 +30,10 @@ import KqiTableAssociatedTarget from './KqiTableAssociatedTarget';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import {DARK} from '@symphony/design-system/theme/symphony';
 
 import type {EditKqiMutationVariables} from '../../mutations/__generated__/EditKqiMutation.graphql';
-import type {Kqis} from './KqiTypes';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -44,8 +43,12 @@ import EditKqiMutation from '../../mutations/EditKqiMutation';
 
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
-
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
+import {useValidationEdit} from './common/useValidation';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
+import Event from '@material-ui/icons/Event';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -54,25 +57,55 @@ const useStyles = makeStyles(() => ({
   header: {
     marginBottom: '1rem',
   },
-  select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-      width: '100%',
+  container: {
+    '& .MuiGrid-spacing-xs-3': {
+      '@media (max-width: 768px)': {
+        margin: '0 -12px',
+      },
     },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    overflow: 'hidden',
-    position: 'relative',
-    boxSizing: 'border-box',
-    minHeight: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
   },
-  gridStyleLeft: {
-    paddingRight: '0.5rem',
+  formField: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '31px',
+      '@media (max-width: 768px)': {
+        marginBottom: '7px',
+      },
+      width: '100%',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
-  gridStyleRight: {
-    paddingLeft: '0.5rem',
+  textarea: {
+    minHeight: '60px',
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
+  },
+  gridStyleTitle: {
+    paddingBottom: '31px',
   },
   option: {
     width: '111px',
@@ -80,8 +113,11 @@ const useStyles = makeStyles(() => ({
     alignSelf: 'flex-end',
   },
   calendar: {
+    '@media (max-width: 768px)': {
+      marginBottom: '31px !important',
+    },
     '& .MuiOutlinedInput-input': {
-      height: '12px',
+      height: '24px',
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
@@ -209,11 +245,11 @@ const KqiFormEdit = (props: Props) => {
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
   const formula = useFormInput(formValues.item.formula);
-  const startDateTime = useFormInput(
-    moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'),
+  const [slotStartDate, setSlotStartDate] = useState(
+    moment(formValues.item.startDateTime),
   );
-  const endDateTime = useFormInput(
-    moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
+  const [slotEndDate, setSlotEndDate] = useState(
+    moment(formValues.item.endDateTime),
   );
 
   const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
@@ -228,41 +264,30 @@ const KqiFormEdit = (props: Props) => {
   );
   const dataNameKqi = dataKqi.map(item => item.name);
 
-  const inputFilter = () => {
-    return (
-      dataNameKqi?.filter(
-        item => item === name.value && item !== formValues.item.name,
-      ) || []
-    );
-  };
-
   const dataInputsObject = [
-    name.value,
-    description.value,
-    formula.value,
+    name.value.trim(),
+    description.value.trim(),
+    formula.value.trim(),
     kqiCategory.value,
     kqiPerspective.value,
-    startDateTime.value,
-    endDateTime.value,
+    slotStartDate,
+    slotEndDate,
     kqiSource.value,
     kqiTemporalFrequency.value,
   ];
 
-  const handleDisable = useMemo(
-    () =>
-      !(
-        dataInputsObject.length === 9 &&
-        !dataInputsObject.some(item => item === '') &&
-        !inputFilter().length > 0
-      ),
-    [dataInputsObject, dataNameKqi],
-  );
+  const inputFilter = () => {
+    return (
+      dataNameKqi?.filter(
+        item =>
+          item === name.value.trim() && item !== formValues.item.name.trim(),
+      ) || []
+    );
+  };
 
-  const handleHasError = useMemo(() => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi name existing'};
-    }
-  }, [dataNameKqi]);
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 9, inputFilter);
+
+  const validationName = useValidationEdit(inputFilter, 'Kqi');
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
@@ -275,11 +300,11 @@ const KqiFormEdit = (props: Props) => {
     const variables: EditKqiMutationVariables = {
       input: {
         id: formValues.item.id,
-        name: name.value,
-        description: description.value,
-        formula: formula.value,
-        startDateTime: moment(startDateTime.value).format(),
-        endDateTime: moment(endDateTime.value).format(),
+        name: name.value.trim(),
+        description: description.value.trim(),
+        formula: formula.value.trim(),
+        startDateTime: slotStartDate,
+        endDateTime: slotEndDate,
         kqiCategory: kqiCategory.value,
         kqiPerspective: kqiPerspective.value,
         kqiSource: kqiSource.value,
@@ -298,7 +323,7 @@ const KqiFormEdit = (props: Props) => {
     return (
       <KqiFormCreateTarget
         isCompleted={isCompleted}
-        dataTarget={dataKqiTarget}
+        dataTarget={filterKqiTargetsById}
         idKqi={formValues.item.id}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowCreateTarget(false)}
@@ -315,8 +340,8 @@ const KqiFormEdit = (props: Props) => {
       <KqiFormEditTarget
         isCompleted={isCompleted}
         formValues={dataEdit}
-        dataTarget={dataKqiTarget}
-        nameKqi={formValues.item.name}
+        dataTarget={filterKqiTargetsById}
+        nameKqi={formValues.item.name.trim()}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowEditTarget(false)}
       />
@@ -325,197 +350,223 @@ const KqiFormEdit = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container className={classes.header}>
-        <Grid
-          className={classes.header}
-          container
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center">
-          <Grid xs>
-            <ConfigureTitleSubItem
-              title={fbt('KQI catalog/', 'KQI catalog')}
-              tag={` ${formValues.item.name}`}
-            />
-          </Grid>
-          <Grid style={{marginRight: '1rem'}}>
-            <IconButton>
-              <DeleteOutlinedIcon
-                onClick={() => setDialogOpen(true)}
-                style={{color: DARK.D300}}
-              />
-            </IconButton>
-          </Grid>
-          <Grid>
-            <FormField>
-              <Button
-                style={{marginRight: '1rem'}}
-                className={classes.option}
-                variant="outlined"
-                color="primary"
-                onClick={() => returnTableKqi()}>
-                Cancel
-              </Button>
-            </FormField>
-          </Grid>
-          <Grid>
-            <FormField>
-              <Button
-                onClick={handleClick}
-                className={classes.option}
-                variant="contained"
-                color="primary"
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
-          </Grid>
+      <Grid
+        className={classes.header}
+        container
+        direction="row"
+        justify="flex-end"
+        alignItems="center">
+        <Grid item xs>
+          <ConfigureTitleSubItem
+            title={fbt('KQI catalog/', 'KQI catalog')}
+            tag={` ${formValues.item.name}`}
+          />
         </Grid>
-        <Grid xs>
-          <Card>
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <FormField label="Name" required {...handleHasError}>
-                  <TextInput {...name} autoComplete="off" name="name" />
-                </FormField>
-              </Grid>
-              <Grid item xs={6}>
-                <FormField label="ID">
-                  <TextInput
-                    value={formValues.item.id}
-                    autoComplete="off"
-                    name="id"
-                    disabled
-                  />
-                </FormField>
-              </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Category">
-                    <Select
-                      {...kqiCategory}
-                      className={classes.select}
-                      disableUnderline
-                      name="kqiCategory">
-                      {dataCategories?.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormField>
+        <Grid style={{marginRight: '1rem'}}>
+          <IconButton onClick={() => setDialogOpen(true)}>
+            <DeleteOutlinedIcon style={{color: DARK.D300}} />
+          </IconButton>
+        </Grid>
+        <Grid>
+          <FormField>
+            <Button
+              style={{marginRight: '1rem'}}
+              className={classes.option}
+              variant="outlined"
+              color="primary"
+              onClick={() => returnTableKqi()}>
+              Cancel
+            </Button>
+          </FormField>
+        </Grid>
+        <Grid>
+          <FormField>
+            <Button
+              onClick={handleClick}
+              className={classes.option}
+              variant="contained"
+              color="primary"
+              disabled={handleDisable}>
+              Save
+            </Button>
+          </FormField>
+        </Grid>
+      </Grid>
+      <Grid className={classes.container} item xs>
+        <Card>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid item xs={12} sm={12} lg={6}>
+              <TextField
+                required
+                fullWidth
+                label="Name"
+                variant="outlined"
+                name="name"
+                {...name}
+                {...validationName}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} lg={6}>
+              <TextField
+                disabled
+                className={classes.textInput}
+                label="ID"
+                variant="outlined"
+                name="id"
+                value={formValues.item.id}
+              />
+            </Grid>
+          </Grid>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid item xs={12} lg={3}>
+              <TextField
+                select
+                required
+                label="Category"
+                fullWidth
+                name="kqiCategory"
+                variant="outlined"
+                {...kqiCategory}>
+                {dataCategories?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={12} lg={3}>
+              <TextField
+                select
+                required
+                label="Perspective"
+                fullWidth
+                name="kqiPerspective"
+                variant="outlined"
+                {...kqiPerspective}>
+                {dataPerspectives?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={12} lg={6}>
+              <TextField
+                required
+                fullWidth
+                multiline
+                rows={2}
+                label="Description"
+                variant="outlined"
+                name="description"
+                className={classes.textarea}
+                inputProps={{maxLength: 200}}
+                {...description}
+              />
+            </Grid>
+          </Grid>
+          <Grid container className={classes.gridStyleTitle} spacing={3}>
+            <Grid item xs>
+              <Text variant="subtitle1">Activation period</Text>
+            </Grid>
+          </Grid>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid item xs={12} lg={3}>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
+                  label="Start"
+                  variant="inline"
+                  inputVariant="outlined"
+                  value={slotStartDate}
+                  className={classes.calendar}
+                  onChange={setSlotStartDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+              <TextField
+                select
+                required
+                label="Source"
+                fullWidth
+                name="kqiSource"
+                variant="outlined"
+                {...kqiSource}>
+                {dataSources?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={12} lg={3}>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
+                  label="End"
+                  variant="inline"
+                  inputVariant="outlined"
+                  value={slotEndDate}
+                  className={classes.calendar}
+                  onChange={setSlotEndDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+              <Grid container alignItems="center">
+                <Grid className={classes.gridStyleTitle} item xs={12} lg={4}>
+                  <Text variant={'caption'}>Repeat every</Text>
                 </Grid>
-                <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="Perspective">
-                    <Select
-                      {...kqiPerspective}
-                      className={classes.select}
-                      disableUnderline
-                      name="kqiPerspective">
-                      {dataPerspectives?.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormField>
+                <Grid item xs={12} lg={8}>
+                  <TextField
+                    select
+                    required
+                    label="Temporal frequency"
+                    fullWidth
+                    name="kqiTemporalFrequency"
+                    defaultValue=""
+                    variant="outlined"
+                    {...kqiTemporalFrequency}>
+                    {dataTemporalFrequencies.map((item, index) => (
+                      <MenuItem key={index} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-                <Grid item xs={12}>
-                  <Text variant="subtitle1">Activation period</Text>
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <FormField label="Description">
-                  <TextInput
-                    {...description}
-                    autoComplete="off"
-                    name="description"
-                    type="multiline"
-                    rows={4}
-                  />
-                </FormField>
-              </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Start">
-                    <TextField
-                      {...startDateTime}
-                      disabled
-                      name="startDateTime"
-                      variant="outlined"
-                      id="datetime-local"
-                      type="datetime-local"
-                      className={classes.calendar}
-                    />
-                  </FormField>
-                </Grid>
-                <Grid item xs={6} className={classes.gridStyleRight}>
-                  <FormField label="End">
-                    <TextField
-                      {...endDateTime}
-                      name="endDateTime"
-                      variant="outlined"
-                      id="datetime-local"
-                      type="datetime-local"
-                      className={classes.calendar}
-                    />
-                  </FormField>
-                </Grid>
-                <Grid item xs={6} className={classes.gridStyleLeft}>
-                  <FormField label="Source">
-                    <Select
-                      {...kqiSource}
-                      className={classes.select}
-                      disableUnderline
-                      name="kqiSource">
-                      {dataSources?.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormField>
-                </Grid>
-                <Grid item xs={6} className={classes.gridStyleRight}>
-                  <Grid style={{marginBottom: '6px'}}>
-                    <Text style={{fontSize: '14px'}}>Temporal frequency</Text>
-                  </Grid>
-                  <Grid container alignItems="center">
-                    <Grid item xs={5} lg={3}>
-                      <Text variant={'caption'}>Repeat every</Text>
-                    </Grid>
-                    <Grid item xs>
-                      <FormField>
-                        <Select
-                          {...kqiTemporalFrequency}
-                          className={classes.select}
-                          disableUnderline
-                          name="kqiTemporalFrequency">
-                          {dataTemporalFrequencies.map((item, index) => (
-                            <MenuItem key={index} value={item.id}>
-                              {item.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormField>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <FormField label="Formula">
-                  <TextInput
-                    {...formula}
-                    autoComplete="off"
-                    name="formula"
-                    type="multiline"
-                    rows={10}
-                  />
-                </FormField>
               </Grid>
             </Grid>
-          </Card>
-        </Grid>
+            <Grid item xs={12} sm={12} lg={6}>
+              <TextField
+                required
+                fullWidth
+                multiline
+                rows={7}
+                label="Formula"
+                variant="outlined"
+                name="formula"
+                className={classes.textarea}
+                inputProps={{maxLength: 1000}}
+                {...formula}
+              />
+            </Grid>
+          </Grid>
+        </Card>
       </Grid>
       <Grid item xs={12}>
         <KqiTableAssociatedTarget

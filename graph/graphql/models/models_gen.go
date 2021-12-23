@@ -11,6 +11,7 @@ import (
 	models1 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -112,6 +113,11 @@ type AddCounterFormulaInput struct {
 	Mandatory bool `json:"mandatory"`
 	CounterFk int  `json:"counterFk"`
 	FormulaFk int  `json:"formulaFk"`
+}
+
+type AddCounterFormulaListInput struct {
+	FormulaFk   int                 `json:"formulaFk"`
+	CounterList []*CounterListInput `json:"counterList"`
 }
 
 type AddCounterInput struct {
@@ -599,6 +605,11 @@ type CounterFilterInput struct {
 	PropertyValue *CounterFamilyInput `json:"propertyValue"`
 }
 
+type CounterListInput struct {
+	CounterFk int  `json:"counterFk"`
+	Mandatory bool `json:"mandatory"`
+}
+
 type DecisionBlock struct {
 	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
 	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
@@ -653,11 +664,12 @@ type EditAlarmStatusInput struct {
 }
 
 type EditAppointmentInput struct {
-	ID          int       `json:"id"`
-	AssigneeID  int       `json:"assigneeID"`
-	WorkorderID int       `json:"workorderID"`
-	Date        time.Time `json:"date"`
-	Duration    float64   `json:"duration"`
+	ID          int                 `json:"id"`
+	AssigneeID  int                 `json:"assigneeID"`
+	WorkorderID int                 `json:"workorderID"`
+	Date        time.Time           `json:"date"`
+	Status      *appointment.Status `json:"status"`
+	Duration    float64             `json:"duration"`
 }
 
 type EditBlockInput struct {
@@ -752,6 +764,11 @@ type EditFormulaInput struct {
 	TechFk        int    `json:"techFk"`
 	NetworkTypeFk int    `json:"networkTypeFk"`
 	KpiFk         int    `json:"kpiFk"`
+}
+
+type EditIsListableInput struct {
+	ID         int  `json:"id"`
+	IsListable bool `json:"isListable"`
 }
 
 type EditKpiCategoryInput struct {
@@ -857,6 +874,13 @@ type EditOrganizationInput struct {
 	Description string `json:"description"`
 }
 
+type EditParameterCatalogInput struct {
+	ID       *int   `json:"id"`
+	Name     string `json:"name"`
+	Index    int    `json:"index"`
+	Disabled *bool  `json:"disabled"`
+}
+
 type EditPermissionsPolicyInput struct {
 	ID              int                            `json:"id"`
 	Name            *string                        `json:"name"`
@@ -886,6 +910,13 @@ type EditProjectTypeInput struct {
 	Description *string                     `json:"description"`
 	Properties  []*models.PropertyTypeInput `json:"properties"`
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
+}
+
+type EditPropertyCategoryInput struct {
+	ID                 *int   `json:"id"`
+	Name               string `json:"name"`
+	Index              int    `json:"index"`
+	ParameterCatalogID int    `json:"parameterCatalogId"`
 }
 
 type EditRecommendationsCategoryInput struct {
@@ -1299,6 +1330,14 @@ type ProjectFilterInput struct {
 	MaxDepth      *int                      `json:"maxDepth"`
 	StringSet     []string                  `json:"stringSet"`
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
+}
+
+// Model for properties group by property categories
+type PropertiesByCategories struct {
+	ID           *int                `json:"id"`
+	Name         *string             `json:"name"`
+	Properties   []*ent.Property     `json:"properties"`
+	PropertyType []*ent.PropertyType `json:"propertyType"`
 }
 
 type PropertyInput struct {

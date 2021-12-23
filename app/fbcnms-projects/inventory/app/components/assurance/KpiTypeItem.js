@@ -10,7 +10,6 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddButton from './common/AddButton';
 import TableFormulas from './TableFormulas';
 
 // DESIGN SYSTEM //
@@ -27,9 +26,11 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+
+import type {Formula} from './KpiTypes';
 
 import DialogConfirmDelete from './DialogConfirmDelete';
 
@@ -43,22 +44,18 @@ const useStyles = makeStyles(() => ({
   container: {
     align: 'center',
     '& .MuiAccordionSummary-root': {
-      padding: '1px 16px',
+      padding: '5px 16px',
     },
     '&.MuiPaper-elevation1': {
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
   nameKpi: {
-    fontWeight: 'bold',
-    paddingLeft: '0.25rem',
-  },
-  editIcon: {
-    flexGrow: '1',
+    paddingLeft: '1rem',
   },
   deleteIcon: {
     marginRight: '1rem',
-    color: DARK.D300,
+    color: symphony.palette.D300,
   },
   switch: {
     flexWrap: 'nowrap',
@@ -71,20 +68,6 @@ type KpiThreshold = {
     kpi: {
       name: string,
     },
-  },
-};
-
-type Formula = {
-  id: string,
-  textFormula: string,
-  status: true,
-  techFk: {
-    id: string,
-    name: string,
-  },
-  networkTypeFk: {
-    id: string,
-    name: string,
   },
 };
 
@@ -101,13 +84,11 @@ type Props = $ReadOnly<{|
     name: string,
   },
   formulaFk: Array<Formula>,
-  deleteItem: string,
+  deleteItem: () => void,
   description: string,
   threshold: Array<KpiThreshold>,
   edit: void,
   onChange: void,
-  handleFormulaClick: void => void,
-  parentCallback: any,
   handleEditFormulaClick: void => void,
   parentEditCallback: any,
   isCompleted: void => void,
@@ -125,20 +106,18 @@ const KpiTypeItem = (props: Props) => {
     threshold,
     edit,
     deleteItem,
-    handleFormulaClick,
-    parentCallback,
     handleEditFormulaClick,
     parentEditCallback,
     isCompleted,
   } = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(status);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
 
-  const handleClick = () => {
+  const handleClick = event => {
+    event.stopPropagation();
     const variables: EditKpiMutationVariables = {
       input: {
         id: id,
@@ -149,89 +128,75 @@ const KpiTypeItem = (props: Props) => {
         kpiCategoryFK: kpiCategoryFK.id,
       },
     };
-    EditKpiMutation(variables);
+    EditKpiMutation(variables, {onCompleted: () => isCompleted()});
   };
 
-  function handleCallback() {
-    parentCallback({
-      kpi: id,
-      technology: formulaFk[0]?.techFk?.id,
-      networkTypes: formulaFk[0]?.networkTypeFk?.id,
-    });
-  }
+  const handleDelete = event => {
+    event.stopPropagation();
+    setDialogOpen(true);
+  };
 
   return (
     <div className={classes.root}>
-      <Accordion className={classes.container} expanded={open}>
+      <Accordion className={classes.container}>
         <AccordionSummary
-          container
           xs={12}
-          expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid container xs={12}>
+          <Grid container item xs={12}>
             <Grid
               container
               alignItems="center"
               className={classes.switch}
-              xs={2}
-              md={2}>
+              item
+              xs={4}
+              md={3}>
               <Switch
                 title={''}
                 checked={status}
                 onChange={setChecked}
                 onClick={handleClick}
               />
-              <Text useEllipsis={true} className={classes.nameKpi}>
+              <Text
+                useEllipsis={true}
+                className={classes.nameKpi}
+                weight={'bold'}>
                 {name}
               </Text>
             </Grid>
 
             <Grid
-              xs={2}
-              md={3}
+              item
+              xs={3}
+              md={4}
               container
               alignItems="center"
-              justifyContent="flex-start">
+              justify="flex-start">
               <Button variant="text">
-                <Text useEllipsis={true} color="primary" weight="bold">
+                <Text useEllipsis={true} color="primary" weight="regular">
                   {domainFk?.name}
                 </Text>
               </Button>
             </Grid>
 
             <Grid
+              item
               xs={3}
               md={3}
+              lg={3}
+              xl={4}
               container
               alignItems="center"
-              justifyContent="flex-start">
+              justify="flex-start">
               <Button variant="text">
-                <Text useEllipsis={true} color="primary" weight="bold">
+                <Text useEllipsis={true} color="primary" weight="regular">
                   {kpiCategoryFK?.name}
                 </Text>
               </Button>
             </Grid>
-
             <Grid
-              xs={3}
-              md={2}
-              lg={2}
-              xl={3}
-              container
-              justify="center"
-              alignItems="center">
-              <AddButton
-                disabled={false}
-                textButton={'Add formula'}
-                onClick={() => {
-                  handleCallback();
-                  handleFormulaClick();
-                }}
-              />
-            </Grid>
-
-            <Grid
+              item
               xs={2}
               md={2}
               lg={2}
@@ -241,7 +206,7 @@ const KpiTypeItem = (props: Props) => {
               alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={() => setDialogOpen(true)}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>
@@ -253,7 +218,13 @@ const KpiTypeItem = (props: Props) => {
             <Grid item xs={3}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  {`Associated threshold: `}
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                      paddingRight: '0.5rem',
+                    }}>
+                    Associated threshold:
+                  </Text>
                   <Button variant="text">
                     <Text color="primary" weight="bold">
                       {thresholdFromKpi === undefined
@@ -263,12 +234,22 @@ const KpiTypeItem = (props: Props) => {
                   </Button>
                 </Grid>
                 <Grid item xs={12}>
-                  {`ID: ${id}`}
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                    }}>
+                    ID:
+                  </Text>
+                  {`  ${id}`}
                 </Grid>
                 <Grid item xs={12}>
-                  {`Description: ${
-                    description === '' ? 'No description' : description
-                  }`}
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                    }}>
+                    Description:
+                  </Text>
+                  {` ${description === '' ? 'No description' : description}`}
                 </Grid>
               </Grid>
             </Grid>

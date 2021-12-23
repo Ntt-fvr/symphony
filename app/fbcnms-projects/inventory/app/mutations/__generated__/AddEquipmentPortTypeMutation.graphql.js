@@ -41,6 +41,8 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
+  propertyCategoryID?: ?string,
+  isListable?: ?boolean,
 |};
 export type AddEquipmentPortTypeMutationVariables = {|
   input: AddEquipmentPortTypeInput

@@ -36,7 +36,12 @@ export type PropertyType = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
+  isListable?: ?boolean,
   isDeleted?: ?boolean,
+  propertyCategory?: ?{|
+    id: string,
+    name: ?string,
+  |},
 |};
 
 export const getPropertyDefaultValue = (propertyType: PropertyType) => {
@@ -115,6 +120,7 @@ export const toMutablePropertyType = (
   isEditable: immutablePropertyType.isEditable,
   isInstanceProperty: immutablePropertyType.isInstanceProperty,
   isMandatory: immutablePropertyType.isMandatory,
+  isListable: immutablePropertyType.isListable,
   isDeleted: immutablePropertyType.isDeleted,
 });
 

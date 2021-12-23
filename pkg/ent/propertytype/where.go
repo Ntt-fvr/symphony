@@ -223,6 +223,13 @@ func Deleted(v bool) predicate.PropertyType {
 	})
 }
 
+// Listable applies equality check predicate on the "listable" field. It's identical to ListableEQ.
+func Listable(v bool) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldListable), v))
+	})
+}
+
 // NodeType applies equality check predicate on the "nodeType" field. It's identical to NodeTypeEQ.
 func NodeType(v string) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
@@ -1630,6 +1637,20 @@ func DeletedNEQ(v bool) predicate.PropertyType {
 	})
 }
 
+// ListableEQ applies the EQ predicate on the "listable" field.
+func ListableEQ(v bool) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldListable), v))
+	})
+}
+
+// ListableNEQ applies the NEQ predicate on the "listable" field.
+func ListableNEQ(v bool) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldListable), v))
+	})
+}
+
 // NodeTypeEQ applies the EQ predicate on the "nodeType" field.
 func NodeTypeEQ(v string) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
@@ -2054,6 +2075,34 @@ func HasWorkerTypeWith(preds ...predicate.WorkerType) predicate.PropertyType {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(WorkerTypeInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, WorkerTypeTable, WorkerTypeColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPropertyCategory applies the HasEdge predicate on the "property_category" edge.
+func HasPropertyCategory() predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyCategoryTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyCategoryTable, PropertyCategoryColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPropertyCategoryWith applies the HasEdge predicate on the "property_category" edge with a given conditions (other predicates).
+func HasPropertyCategoryWith(preds ...predicate.PropertyCategory) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyCategoryInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyCategoryTable, PropertyCategoryColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

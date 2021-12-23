@@ -24,6 +24,7 @@ import Text from '@symphony/design-system/components/Text';
 import UserRoleAndStatusPane from './UserRoleAndStatusPane';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {DocumentAPIUrls} from '../../../../common/DocumentAPI';
 import {FormContextProvider} from '../../../../common/FormContext';
 import {GROUP_STATUSES, USER_ROLES} from '../utils/UserManagementUtils';
@@ -131,19 +132,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// const EMPLOYMENT_TYPE_OPTIONS: Array<OptionProps<EmploymentType>> = [
-//   {
-//     key: 'FullTime',
-//     value: 'FullTime',
-//     label: fbt('Full Time', ''),
-//   },
-//   {
-//     key: 'Contructor',
-//     value: 'Contructor',
-//     label: fbt('Contructor', ''),
-//   },
-// ];
-
 type Props = $ReadOnly<{|
   user: User,
   onChange: User => Promise<void> | void,
@@ -168,6 +156,7 @@ export default function UserProfilePane(props: Props) {
   const classes = useStyles();
   const {isFeatureEnabled} = useContext(AppContext);
   const userManagementDevMode = isFeatureEnabled('user_management_dev');
+  const multicontractorFlag = useFeatureFlag('multicontractor');
 
   const [
     shouldShowVerificationWhenDeactivating,
@@ -187,7 +176,7 @@ export default function UserProfilePane(props: Props) {
     if (user == null) {
       return;
     }
-    onChange({...user, organizationFk: user.organizationFk?.id || ''});
+    onChange({...user, organizationFk: user.organizationFk?.id || null});
   }, [onChange, user]);
 
   const revertChanges = useCallback(() => {
@@ -256,18 +245,8 @@ export default function UserProfilePane(props: Props) {
                     <FileUploadButton
                       uploadUsingSnackbar={false}
                       multiple={false}
-                      onFileUploaded={
-                        (_file, storeKey) => setProfilePhoto({storeKey})
-                        /*
-                    onChange({
-                      ...user,
-                      profilePhoto: {
-                        id: '',
-                        storeKey,
-                        fileName: file.name,
-                      },
-                    })
-                    */
+                      onFileUploaded={(_file, storeKey) =>
+                        setProfilePhoto({storeKey})
                       }>
                       {openFileUploadDialog =>
                         profilePhoto?.storeKey != null ? (
@@ -325,22 +304,6 @@ export default function UserProfilePane(props: Props) {
                       }
                     />
                   </Grid>
-                  {/* {userManagementDevMode ? (
-                    <Grid item xs={12} sm={6} lg={6} xl={6}>
-                      <FormFieldTextInput
-                        key={`${user.id}_phone`}
-                        className={classes.field}
-                        label={`${fbt('Phone Number', '')}`}
-                        value={user.phoneNumber || ''}
-                        onValueChanged={phoneNumber =>
-                          setUser({
-                            ...user,
-                            phoneNumber,
-                          })
-                        }
-                      />
-                    </Grid>
-                  ) : null} */}
                 </Grid>
               </div>
             </div>
@@ -389,8 +352,8 @@ export default function UserProfilePane(props: Props) {
                 shouldShowVerificationWhenChangingRole
               ) {
                 const useAn =
-                  newUser.role == USER_ROLES.ADMIN.key ||
-                  newUser.role == USER_ROLES.OWNER.key;
+                  newUser.role === USER_ROLES.ADMIN.key ||
+                  newUser.role === USER_ROLES.OWNER.key;
                 messageShowingContext.showMessage({
                   title: (
                     <fbt desc="">
@@ -430,35 +393,37 @@ export default function UserProfilePane(props: Props) {
               }
             }}
           />
-          <div className={classes.sectionHeader}>
-            <Text variant="subtitle1">
-              <fbt desc="">User organization</fbt>
-            </Text>
-            <Grid container spacing={2}>
-              <Grid key="first_name" item xs={12} sm={6} lg={4} xl={4}>
-                <FormField
-                  label="Organization"
-                  required={true}
-                  validation={{
-                    id: 'organization',
-                    value: user.organizationFk?.id || '',
-                  }}>
-                  <Select
-                    options={organizationOptions}
-                    selectedValue={user.organizationFk?.id || ''}
-                    onChange={organizationFk =>
-                      setUser(currentUser => ({
-                        ...currentUser,
-                        organizationFk: organizations.find(
-                          org => org.id === organizationFk,
-                        ),
-                      }))
-                    }
-                  />
-                </FormField>
+          {multicontractorFlag && (
+            <div className={classes.sectionHeader}>
+              <Text variant="subtitle1">
+                <fbt desc="">User organization</fbt>
+              </Text>
+              <Grid container spacing={2}>
+                <Grid key="first_name" item xs={12} sm={6} lg={4} xl={4}>
+                  <FormField
+                    label="Organization"
+                    required={true}
+                    validation={{
+                      id: 'organization',
+                      value: user.organizationFk?.id || '',
+                    }}>
+                    <Select
+                      options={organizationOptions}
+                      selectedValue={user.organizationFk?.id || ''}
+                      onChange={organizationFk =>
+                        setUser(currentUser => ({
+                          ...currentUser,
+                          organizationFk: organizations.find(
+                            org => org.id === organizationFk,
+                          ),
+                        }))
+                      }
+                    />
+                  </FormField>
+                </Grid>
               </Grid>
-            </Grid>
-          </div>
+            </div>
+          )}
         </div>
         <div className={classes.bottomBar}>
           <FormAction {...formButtonsDisablingProps}>

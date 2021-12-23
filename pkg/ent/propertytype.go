@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
@@ -67,6 +68,8 @@ type PropertyType struct {
 	Mandatory bool `json:"mandatory,omitempty" gqlgen:"isMandatory"`
 	// Deleted holds the value of the "deleted" field.
 	Deleted bool `json:"deleted,omitempty" gqlgen:"isDeleted"`
+	// Listable holds the value of the "listable" field.
+	Listable bool `json:"listable,omitempty" gqlgen:"isListable"`
 	// NodeType holds the value of the "nodeType" field.
 	NodeType string `json:"nodeType,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -78,6 +81,7 @@ type PropertyType struct {
 	location_type_property_types            *int
 	project_template_properties             *int
 	project_type_properties                 *int
+	property_category_properties_type       *int
 	service_type_property_types             *int
 	work_order_template_property_types      *int
 	work_order_type_property_types          *int
@@ -108,9 +112,11 @@ type PropertyTypeEdges struct {
 	ProjectTemplate *ProjectTemplate
 	// WorkerType holds the value of the worker_type edge.
 	WorkerType *WorkerType
+	// PropertyCategory holds the value of the property_category edge.
+	PropertyCategory *PropertyCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [11]bool
+	loadedTypes [12]bool
 }
 
 // PropertiesOrErr returns the Properties value or an error if the edge
@@ -262,6 +268,20 @@ func (e PropertyTypeEdges) WorkerTypeOrErr() (*WorkerType, error) {
 	return nil, &NotLoadedError{edge: "worker_type"}
 }
 
+// PropertyCategoryOrErr returns the PropertyCategory value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PropertyTypeEdges) PropertyCategoryOrErr() (*PropertyCategory, error) {
+	if e.loadedTypes[11] {
+		if e.PropertyCategory == nil {
+			// The edge property_category was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: propertycategory.Label}
+		}
+		return e.PropertyCategory, nil
+	}
+	return nil, &NotLoadedError{edge: "property_category"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*PropertyType) scanValues() []interface{} {
 	return []interface{}{
@@ -285,6 +305,7 @@ func (*PropertyType) scanValues() []interface{} {
 		&sql.NullBool{},    // editable
 		&sql.NullBool{},    // mandatory
 		&sql.NullBool{},    // deleted
+		&sql.NullBool{},    // listable
 		&sql.NullString{},  // nodeType
 	}
 }
@@ -298,6 +319,7 @@ func (*PropertyType) fkValues() []interface{} {
 		&sql.NullInt64{}, // location_type_property_types
 		&sql.NullInt64{}, // project_template_properties
 		&sql.NullInt64{}, // project_type_properties
+		&sql.NullInt64{}, // property_category_properties_type
 		&sql.NullInt64{}, // service_type_property_types
 		&sql.NullInt64{}, // work_order_template_property_types
 		&sql.NullInt64{}, // work_order_type_property_types
@@ -420,12 +442,17 @@ func (pt *PropertyType) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		pt.Deleted = value.Bool
 	}
-	if value, ok := values[19].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field nodeType", values[19])
+	if value, ok := values[19].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field listable", values[19])
+	} else if value.Valid {
+		pt.Listable = value.Bool
+	}
+	if value, ok := values[20].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field nodeType", values[20])
 	} else if value.Valid {
 		pt.NodeType = value.String
 	}
-	values = values[20:]
+	values = values[21:]
 	if len(values) == len(propertytype.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field equipment_port_type_property_types", value)
@@ -464,24 +491,30 @@ func (pt *PropertyType) assignValues(values ...interface{}) error {
 			*pt.project_type_properties = int(value.Int64)
 		}
 		if value, ok := values[6].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field property_category_properties_type", value)
+		} else if value.Valid {
+			pt.property_category_properties_type = new(int)
+			*pt.property_category_properties_type = int(value.Int64)
+		}
+		if value, ok := values[7].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field service_type_property_types", value)
 		} else if value.Valid {
 			pt.service_type_property_types = new(int)
 			*pt.service_type_property_types = int(value.Int64)
 		}
-		if value, ok := values[7].(*sql.NullInt64); !ok {
+		if value, ok := values[8].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_template_property_types", value)
 		} else if value.Valid {
 			pt.work_order_template_property_types = new(int)
 			*pt.work_order_template_property_types = int(value.Int64)
 		}
-		if value, ok := values[8].(*sql.NullInt64); !ok {
+		if value, ok := values[9].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_type_property_types", value)
 		} else if value.Valid {
 			pt.work_order_type_property_types = new(int)
 			*pt.work_order_type_property_types = int(value.Int64)
 		}
-		if value, ok := values[9].(*sql.NullInt64); !ok {
+		if value, ok := values[10].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field worker_type_property_types", value)
 		} else if value.Valid {
 			pt.worker_type_property_types = new(int)
@@ -544,6 +577,11 @@ func (pt *PropertyType) QueryProjectTemplate() *ProjectTemplateQuery {
 // QueryWorkerType queries the worker_type edge of the PropertyType.
 func (pt *PropertyType) QueryWorkerType() *WorkerTypeQuery {
 	return (&PropertyTypeClient{config: pt.config}).QueryWorkerType(pt)
+}
+
+// QueryPropertyCategory queries the property_category edge of the PropertyType.
+func (pt *PropertyType) QueryPropertyCategory() *PropertyCategoryQuery {
+	return (&PropertyTypeClient{config: pt.config}).QueryPropertyCategory(pt)
 }
 
 // Update returns a builder for updating this PropertyType.
@@ -623,6 +661,8 @@ func (pt *PropertyType) String() string {
 	builder.WriteString(fmt.Sprintf("%v", pt.Mandatory))
 	builder.WriteString(", deleted=")
 	builder.WriteString(fmt.Sprintf("%v", pt.Deleted))
+	builder.WriteString(", listable=")
+	builder.WriteString(fmt.Sprintf("%v", pt.Listable))
 	builder.WriteString(", nodeType=")
 	builder.WriteString(pt.NodeType)
 	builder.WriteByte(')')

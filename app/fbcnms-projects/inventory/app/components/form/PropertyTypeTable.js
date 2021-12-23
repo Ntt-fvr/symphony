@@ -26,12 +26,14 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@symphony/design-system/components/IconButton';
 import PropertyTypeSelect from './PropertyTypeSelect';
 import PropertyValueInput from './PropertyValueInput';
+import PropertyCategoryTypeSelect from './PropertyCategoryTypeSelect';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
+
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {removeItem, setItem, updateItem} from '@fbcnms/util/arrays';
 import {reorder} from '../draggable/DraggableUtils';
@@ -76,13 +78,14 @@ type Props = {|
   onPropertiesChanged: (newProperties: Array<PropertyType>) => void,
   supportMandatory?: boolean,
   supportDelete?: boolean,
+  supportCategories?: ?boolean,
 |} & WithStyles<typeof styles>;
 
 class PropertyTypeTable extends React.Component<Props> {
   static contextType = AppContext;
   context: AppContextType;
   render() {
-    const {classes} = this.props;
+    const {classes, supportCategories = false} = this.props;
     const propertyTypes = this.props.propertyTypes;
     const {supportMandatory = true} = this.props;
     return (
@@ -97,6 +100,12 @@ class PropertyTypeTable extends React.Component<Props> {
               <TableCell component="div" className={classes.cell}>
                 Property Type
               </TableCell>
+              {supportCategories && (
+                <TableCell component="div" className={classes.cell}>
+                  Category
+                </TableCell>
+              )}
+
               <TableCell component="div" className={classes.cell}>
                 Default Value
               </TableCell>
@@ -147,6 +156,20 @@ class PropertyTypeTable extends React.Component<Props> {
                       />
                     </FormField>
                   </TableCell>
+                  {supportCategories && (
+                    <TableCell
+                      className={classes.cell}
+                      component="div"
+                      scope="row">
+                      <FormField>
+                        <PropertyCategoryTypeSelect
+                          propertyType={property}
+                          onCategoryChange={this._handleCategoryChange(i)}
+                        />
+                      </FormField>
+                    </TableCell>
+                  )}
+
                   <TableCell
                     className={classes.cell}
                     component="div"
@@ -237,6 +260,13 @@ class PropertyTypeTable extends React.Component<Props> {
   };
 
   _handleTypeChange = (index: number) => (value: PropertyType) => {
+    this.props.onPropertiesChanged([
+      ...this.props.propertyTypes.slice(0, index),
+      value,
+      ...this.props.propertyTypes.slice(index + 1),
+    ]);
+  };
+  _handleCategoryChange = (index: number) => (value: PropertyType) => {
     this.props.onPropertiesChanged([
       ...this.props.propertyTypes.slice(0, index),
       value,
