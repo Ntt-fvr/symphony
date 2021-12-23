@@ -53,7 +53,7 @@ func (r queryResolver) ParametersCatalog(ctx context.Context, after *ent.Cursor,
 
 func (r queryResolver) PropertyCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int,
 	orderBy *ent.PropertyCategoryOrder,
-	) (*ent.PropertyCategoryConnection, error) {
+) (*ent.PropertyCategoryConnection, error) {
 	return r.ClientFrom(ctx).
 		PropertyCategory.
 		Query().
