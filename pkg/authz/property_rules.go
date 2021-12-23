@@ -263,8 +263,8 @@ func PropertyReadPolicyRule() privacy.QueryRule {
 		if propCategoryPredicate != nil {
 			predicates = append(predicates,
 				property.Or(
-				property.Not(property.HasTypeWith(propertytype.HasPropertyCategory())),
-				property.HasTypeWith(propertytype.HasPropertyCategoryWith(propCategoryPredicate))),
+					property.Not(property.HasTypeWith(propertytype.HasPropertyCategory())),
+					property.HasTypeWith(propertytype.HasPropertyCategoryWith(propCategoryPredicate))),
 			)
 		}
 		q.Where(predicates...)
