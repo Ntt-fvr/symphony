@@ -42,6 +42,10 @@ export type AddEditLocationTypeCard_editingLocationType = {|
     +isEditable: ?boolean,
     +isMandatory: ?boolean,
     +isInstanceProperty: ?boolean,
+    +propertyCategory: ?{|
+      +id: string,
+      +name: ?string,
+    |},
   |}>,
   +documentCategories: $ReadOnlyArray<?{|
     +id: string,
@@ -224,6 +228,19 @@ return {
           "kind": "ScalarField",
           "name": "isInstanceProperty",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "PropertyCategory",
+          "kind": "LinkedField",
+          "name": "propertyCategory",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/),
+            (v1/*: any*/)
+          ],
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -315,6 +332,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0a0f6dd8cdc1d5d39f24261ff5333c75';
+(node/*: any*/).hash = 'bf5f7b7c2910e46dd59deb7d8029ff85';
 
 module.exports = node;

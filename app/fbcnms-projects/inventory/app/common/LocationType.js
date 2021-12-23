@@ -135,7 +135,10 @@ export function useLocationTypePropertyCategoryQuery(): $ReadOnlyArray<DocumentC
     {},
   );
   const locationTypesData = response.propertyCategories?.edges || [];
-  const locationTypes = locationTypesData.map(p => p.node).filter(Boolean);
+  const locationTypes = [
+    {id: '@tmp', name: 'General'},
+    ...locationTypesData.map(p => p.node).filter(Boolean),
+  ];
   // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return locationTypes;
 }
