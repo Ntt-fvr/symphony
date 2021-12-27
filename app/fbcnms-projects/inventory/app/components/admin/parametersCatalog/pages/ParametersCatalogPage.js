@@ -16,7 +16,7 @@ import type {PropertyCategoryType, ParametersCatalogType} from '../types';
 
 import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
 
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
@@ -26,7 +26,6 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 import LocationTypeItem from '../../../configure/LocationTypeItem';
 
 import AddEditParametersCatalogType from '../components/AddEditParametersCatalogType';
-import DroppableTableBody from '../components/DroppableTableBody';
 
 const useStyles = makeStyles(theme => ({
   typesList: {
@@ -52,68 +51,38 @@ const useStyles = makeStyles(theme => ({
   listItem: {
     marginBottom: theme.spacing(),
   },
-  draggableRow: {
-    display: 'flex',
-    paddingLeft: '10px',
-    alignItems: 'center',
-    boxShadow: theme.shadows[1],
-    borderRadius: 4,
-  },
-  cell: {
-    border: 'none',
-    paddingLeft: '10px',
-  },
-  panel: {
-    width: '100%',
-    boxShadow: 'none',
-  },
-  row: {
-    flexGrow: 1,
-  },
-  removeBefore: {
-    '&:before': {
-      backgroundColor: 'transparent',
-    },
-  },
-  properties: {
-    marginBottom: '24px',
-    width: '100%',
-  },
 }));
-
-type ResponseParametersCatalogType = $NonMaybeType<
-  $ElementType<
-    $ElementType<
-      $ElementType<
-        $ElementType<ParametersCatalogPageQueryResponse, 'parametersCatalog'>,
-        'edges',
-      >,
-      number,
-    >,
-    'node',
-  >,
->;
-
-type State = {
-  error: string,
-  editingLocationType: ParametersCatalogType,
-  isSaving: boolean,
-};
 
 const parametersCatalogPageQuery = graphql`
   query ParametersCatalogPageQuery {
     parametersCatalog {
       edges {
         node {
-          ...AddEditParametersCatalogType_editingParametersCatalogType
           id
           name
           index
+          isDisabled
+          propertyCategories {
+            id
+            name
+            index
+            numberOfProperties
+          }
         }
       }
     }
   }
 `;
+
+const useParameterCatalogNodes = () => {
+  const {
+    parametersCatalog,
+  }: ParametersCatalogPageQueryResponse = useLazyLoadQuery<ParametersCatalogPageQuery>(
+    parametersCatalogPageQuery,
+    {},
+  );
+  return parametersCatalog?.edges.map(edge => edge.node).filter(Boolean) ?? [];
+};
 
 const sortByIndex = (
   a: $ReadOnly<{index?: ?number}>,
@@ -122,54 +91,17 @@ const sortByIndex = (
 
 export const ParametersCatalogPage = () => {
   const classes = useStyles();
+  const parameterCatalogNodes = useParameterCatalogNodes();
 
-  const {
-    parametersCatalog,
-  }: ParametersCatalogPageQueryResponse = useLazyLoadQuery<ParametersCatalogPageQuery>(
-    parametersCatalogPageQuery,
-    {},
+  const parametersCatalogData = useMemo(
+    () =>
+      parameterCatalogNodes.map(e => ({
+        ...e,
+        propertyCategories: [...e.propertyCategories],
+      })),
+    [parameterCatalogNodes],
   );
 
-  const parametersCatalogData: Array<ResponseParametersCatalogType> =
-    parametersCatalog?.edges.map(edge => edge.node).filter(Boolean) ?? [];
-
-  const [
-    editingParametersCatalog,
-    setEditingParametersCatalog,
-  ] = useState<?ResponseParametersCatalogType>(null);
-
-  // TODO: Use flag loadder when saving parameters
-  const [isSaving, setIsSaving] = useState(false);
-
-  // TODO: Notificaciones
-  // const enqueueSnackbar = useEnqueueSnackbar();
-
-  // TODO: Equivalent to location, in this case is just edit collapse or maybe not
-  const [showAddEditCard, setShowAddEditCard] = useState(false);
-  const showAddEditParametersTypeToggle = (
-    locType: ?ResponseParametersCatalogType,
-  ) => {
-    setShowAddEditCard(true);
-  };
-
-  const saveParameter = () => {
-    console.log('save test');
-  };
-
-  if (showAddEditCard) {
-    return <h1>Editando</h1>;
-  }
-
-  const onDragEnd = ({source, destination}) => {
-    if (destination == null) {
-      return;
-    }
-    console.log('On drag end');
-  };
-
-  const parameterCatalogChangeHandler = parameters => {
-    console.log(parameters);
-  };
   return (
     <div className={classes.typesList}>
       <div className={classes.firstRow}>
@@ -183,17 +115,18 @@ export const ParametersCatalogPage = () => {
         />
       </div>
       <div className={classes.root}>
-        <DroppableTableBody className={classes.table} onDragEnd={onDragEnd}>
-          {parametersCatalogData?.sort(sortByIndex).map((parameters, i) => {
+        {!!parametersCatalogData &&
+          parametersCatalogData?.sort(sortByIndex).map((catalog, i) => {
             return (
               <div key={i} className={classes.listItem}>
                 <AddEditParametersCatalogType
-                  editingPropertyCatergoryType={parameters}
+                  categories={catalog.propertyCategories}
+                  catalogId={catalog.id}
+                  catalogName={catalog.name}
                 />
               </div>
             );
           })}
-        </DroppableTableBody>
       </div>
     </div>
   );

@@ -20,31 +20,33 @@ export type EditPropertyCategoryInput = {|
   index: number,
   parameterCatalogId: string,
 |};
-export type EditParametersCatalogTypeMutationVariables = {|
+export type EditPropertyCategoryTypeMutationVariables = {|
   propertyCategories: $ReadOnlyArray<EditPropertyCategoryInput>
 |};
-export type EditParametersCatalogTypeMutationResponse = {|
+export type EditPropertyCategoryTypeMutationResponse = {|
   +editPropertyCategories: ?$ReadOnlyArray<{|
     +id: string,
     +name: ?string,
     +index: ?number,
+    +numberOfProperties: ?number,
   |}>
 |};
-export type EditParametersCatalogTypeMutation = {|
-  variables: EditParametersCatalogTypeMutationVariables,
-  response: EditParametersCatalogTypeMutationResponse,
+export type EditPropertyCategoryTypeMutation = {|
+  variables: EditPropertyCategoryTypeMutationVariables,
+  response: EditPropertyCategoryTypeMutationResponse,
 |};
 */
 
 
 /*
-mutation EditParametersCatalogTypeMutation(
+mutation EditPropertyCategoryTypeMutation(
   $propertyCategories: [EditPropertyCategoryInput!]!
 ) {
   editPropertyCategories(propertyCategories: $propertyCategories) {
     id
     name
     index
+    numberOfProperties
   }
 }
 */
@@ -92,6 +94,13 @@ v1 = [
         "kind": "ScalarField",
         "name": "index",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "numberOfProperties",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -102,7 +111,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "EditParametersCatalogTypeMutation",
+    "name": "EditPropertyCategoryTypeMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -111,20 +120,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "EditParametersCatalogTypeMutation",
+    "name": "EditPropertyCategoryTypeMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "19313a658d8fc889b08b22c982101af8",
+    "cacheID": "bda00e530ccd9912ec45571bebd498e3",
     "id": null,
     "metadata": {},
-    "name": "EditParametersCatalogTypeMutation",
+    "name": "EditPropertyCategoryTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation EditParametersCatalogTypeMutation(\n  $propertyCategories: [EditPropertyCategoryInput!]!\n) {\n  editPropertyCategories(propertyCategories: $propertyCategories) {\n    id\n    name\n    index\n  }\n}\n"
+    "text": "mutation EditPropertyCategoryTypeMutation(\n  $propertyCategories: [EditPropertyCategoryInput!]!\n) {\n  editPropertyCategories(propertyCategories: $propertyCategories) {\n    id\n    name\n    index\n    numberOfProperties\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'e23706e4472fb59e27e02d226891e280';
+(node/*: any*/).hash = 'ac22a42c88fd1c3fb21a7f8eb734967a';
 
 module.exports = node;
