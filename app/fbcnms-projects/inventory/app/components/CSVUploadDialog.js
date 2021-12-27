@@ -148,7 +148,11 @@ const CSVUploadDialog = (props: Props) => {
     </Text>
   );
   const fullProjectsUpload = idUser => {
-    const tmpPath = 'http://35.229.19.240/main/report';
+    let tmpPath = '';
+    if (window.CONFIG.appData.user.tenant === 'ipt') {
+      tmpPath = 'https://portal-web-prod.ipt.pe/main/bulkloadproject';
+    } else if (window.CONFIG.appData.user.tenant === 'everis-lab')
+      tmpPath = 'https://portal-web-dev.ipt.pe/main/bulkloadproject';
 
     return (
       <Text className={classes.link}>
