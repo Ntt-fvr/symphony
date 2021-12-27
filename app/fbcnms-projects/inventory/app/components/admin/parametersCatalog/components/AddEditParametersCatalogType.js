@@ -4,40 +4,56 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow strict-local
+ * @flow
  * @format
  */
 
-import type {AddEditParametersCatalogType_editingParametersCatalogType} from './__generated__/AddEditParametersCatalogType_editingParametersCatalogType.graphql';
+import type {
+  AddEditParametersCatalogType_editingParametersCatalogType$data,
+  AddEditParametersCatalogType_editingParametersCatalogType,
+} from './__generated__/AddEditParametersCatalogType_editingParametersCatalogType.graphql';
 
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
-import type {ParametersCatalogType} from '../types';
-
 import type {PayloadError} from 'relay-runtime';
 
-import React, {useState} from 'react';
+import React, {useState, useEffect, useCallback, useReducer} from 'react';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withSnackbar} from 'notistack';
 import {withStyles} from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
-import update from 'immutability-helper';
 
-import EditLocationTypeMutation from '../mutations/EditParametersCatalogTypeMutation';
+import editPropertyCategoryTypeMutation from '../mutations/EditPropertyCategoryTypeMutation';
 
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
+
 import Button from '@symphony/design-system/components/Button';
 import PageFooter from '@fbcnms/ui/components/PageFooter';
 
 import {getGraphError} from '../../../../common/EntUtils';
 
-import PropertyCategories from '../components/PropertyCategories.js';
+import PropertyCategory from '../components/PropertyCategory.js';
 import DraggableTableRow from '../../../draggable/DraggableTableRow';
+import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
+import type {
+  ParametersCatalogType,
+  PropertyCategoriesType,
+  PropertyCategoryType,
+  PropertyCategoriesTypeStateType,
+} from '../types';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
+import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
+import Table from '@material-ui/core/Table';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import inventoryTheme from '../../../../common/theme';
+import {reducer, getInitialState} from '../utils/PropertyCategoryMutateReducer';
+import type {PropertyCategoryMutateStateActionType} from '../utils/PropertyCategoryMutateAction';
+import PropertyCategoryMutateDispatchContext from '../utils/PropertyCategoryMutateDispatchContext';
+import DroppableTableBody from '../../../draggable/DroppableTableBody';
 
 const styles = theme => ({
   draggableRow: {
@@ -48,7 +64,7 @@ const styles = theme => ({
     borderRadius: 4,
   },
   cell: {
-    border: 'none',
+    ...inventoryTheme.textField,
     paddingLeft: '10px',
   },
   panel: {
@@ -64,214 +80,159 @@ const styles = theme => ({
   },
   savebtn: {
     marginRight: '20px',
-  }
+  },
+  expandingPanel: {
+    width: '100%',
+  },
+  btnsave: {
+    marginRight: '30px',
+  },
+  root: {
+    marginBottom: '12px',
+    maxWidth: '100%',
+  },
+  tablecell: {
+    width: '100%',
+    paddingLeft: '0px',
+    width: 'unset',
+  },
+  container: {
+    maxWidth: '97%',
+    overflowX: 'auto',
+  },
 });
 
 type Props = WithSnackbarProps &
   WithStyles<typeof styles> &
   WithAlert & {|
-    editingPropertyCatergoryType?: AddEditParametersCatalogType_editingParametersCatalogType,
+    categories: PropertyCategoriesType,
+    catalogId: string,
+    catalogName: ?string,
   |};
-
-type State = {
-  error: string,
-  editingPropertyCategoryType: ParametersCatalogType,
-  isSaving: boolean,
-};
 
 const sortByIndex = (
   a: $ReadOnly<{index?: ?number}>,
   b: $ReadOnly<{index?: ?number}>,
 ) => (a.index ?? 0) - (b.index ?? 0);
 
-class AddEditParametersCatalogType extends React.Component<Props, State> {
-  state = {
-    error: '',
-    editingPropertyCategoryType: this.getEditingLocationType(),
-    isSaving: false,
+const AddEditParametersCatalogType = (props: Props) => {
+  const {classes, categories, catalogId, catalogName} = props;
+
+  const [categoriesState, dispatch] = useReducer<
+    PropertyCategoriesTypeStateType,
+    PropertyCategoryMutateStateActionType,
+    Array<PropertyCategoryType>,
+  >(reducer, categories, getInitialState);
+
+  const onAddProperty = () => {
+    dispatch({type: 'ADD_ITEM'});
   };
 
-  render() {
-    const {classes} = this.props;
-    const {
-      editingPropertyCategoryType: editingPropertyCatergoryType,
-    } = this.state;
-
-    const editPropertyCatalog = editingPropertyCatergoryType;
-    const propertyCategoriesTypes = editingPropertyCatergoryType?.propertyCategories
-      .slice()
-      .sort(sortByIndex);
-
-    return (
-      <DraggableTableRow
-        className={classes.draggableRow}
-        draggableCellClassName={classes.cell}
-        id={'id-a-cambiar'}
-        index={0}>
-        <Accordion className={classes.panel}>
-          <AccordionSummary
-            className={classes.row}
-            expandIcon={<ExpandMoreIcon />}>
-            {editPropertyCatalog?.name}
-          </AccordionSummary>
-          <AccordionDetails>
-            <div className={classes.properties}>
-              <PropertyCategories
-                state={this.setState}
-                propertyTypes={propertyCategoriesTypes}
-                onPropertiesChanged={this._documentCategoryChangedHandler}
-              />
-            </div>
-            <div className={classes.savebtn}>
-              <Button onClick={this.onSave}>Save</Button>
-            </div>
-          </AccordionDetails>
-        </Accordion>
-      </DraggableTableRow>
-    );
-  }
-  _documentCategoryChangedHandler = categories => {
-    console.log('Categorias \n', categories);
-    this.setState(prevState => {
-      return {
-        error: '',
-        editingPropertyCategoryType: update(
-          prevState.editingPropertyCategoryType,
-          {
-            propertyCategories: {$set: categories},
-          },
-        ),
-      };
+  const showSnackbarItem = (message, variant) => {
+    props.enqueueSnackbar(message, {
+      children: key => (
+        <SnackbarItem id={key} message={message} variant={variant} />
+      ),
     });
   };
 
-  onSave = () => {
-    if (this.props.editingPropertyCatergoryType) {
-      this.editParametersCatalogType();
-    }
-  };
-
-  editParametersCatalogType = () => {
-    const onError = (error: PayloadError) => {
-      this.setState({isSaving: false});
+  const onSave = () => {
+    const handleErrors = (error: PayloadError) => {
       const errorMessage = getGraphError(error);
-      this.props.enqueueSnackbar(errorMessage, {
-        children: key => (
-          <SnackbarItem id={key} message={errorMessage} variant="error" />
-        ),
-      });
+      showSnackbarItem(errorMessage, 'error');
     };
 
-    const handleErrors = errors => {
-      if (errors && errors[0]) {
-        onError(errors[0]);
-      }
-    };
+    const input = categoriesState.items.map(prop => ({
+      id: prop.id.includes('tmp') ? null : prop.id,
+      name: String(prop.name),
+      index: Number(prop.index),
+      parameterCatalogId: catalogId,
+    }));
 
-    // eslint-disable-next-line max-len
-    const variables = this.buildEditLocationTypeMutationVariables();
-    EditLocationTypeMutation(variables, {
-      onError,
-      onCompleted: (response, errors) => {
-        if (!handleErrors(errors)) {
-          const exito = response.editPropertyCategories;
-        }
-        this.props.enqueueSnackbar('saved', {
-        children: key => (
-          <SnackbarItem id={key} message={'saved'} variant="success" />
-        ),
-      });
+    editPropertyCategoryTypeMutation(
+      {propertyCategories: input},
+      {
+        onError: (error: any) => {
+          handleErrors(error);
+        },
+        onCompleted: (response, errors) => {
+          if (errors) {
+            return;
+          }
+          showSnackbarItem('Saved', 'success');
+          const newItems = (response.editPropertyCategories || []).map(el => ({
+            ...el,
+          }));
+          dispatch({
+            type: 'UPDATE_LIST_AFTER_SAVE',
+            newItems: newItems,
+          });
+        },
       },
+    );
+  };
+
+  const _onDragEnd = result => {
+    if (!result.destination) {
+      return;
+    }
+    dispatch({
+      type: 'CHANGE_ITEM_POSITION',
+      sourceIndex: result.source.index,
+      destinationIndex: result.destination.index,
     });
   };
-
-  buildEditLocationTypeMutationVariables = () => {
-    const {id, propertyCategories} = this.state.editingPropertyCategoryType;
-    const parameterCatalogId = this.props.editingPropertyCatergoryType?.id;
-
-    return {
-      propertyCategories: propertyCategories
-        .filter(propType => !!propType.name)
-        .map(cat => {
-          console.log('cattttttttt', cat, this.props);
-          const categoryID = cat.id.includes('@tmp') ? null : cat.id
-          return {
-            id: categoryID,
-            name: cat.name,
-            index: categoryID == null ? (cat.index + 1) : cat.index || 0,
-            parameterCatalogId: String(parameterCatalogId),
-          };
-        }),
-    };
-  };
-
-  deleteTempId = (definition: any) => {
-    const newDef = {...definition};
-    if (definition.id && definition.id.includes('@tmp')) {
-      newDef['id'] = undefined;
-    }
-    return newDef;
-  };
-
-  withoutProperty = (obj, property) => {
-    const {[property]: unused, ...rest} = obj;
-    return rest;
-  };
-
-  getEditingLocationType(): ParametersCatalogType {
-    const {editingPropertyCatergoryType} = this.props;
-    console.log(editingPropertyCatergoryType);
-
-    const propertyCategories = (
-      editingPropertyCatergoryType?.propertyCategories || []
-    )
-      .filter(Boolean)
-      .map(property => ({
-        id: property.id,
-        name: property.name,
-        index: property.index,
-        parameterCatalogId: editingPropertyCatergoryType.id,
-      }));
-
-    return {
-      id: editingPropertyCatergoryType?.id ?? 'ParametersCatalogType@tmp0',
-      name: editingPropertyCatergoryType?.name ?? '',
-      index: editingPropertyCatergoryType?.length ?? 0,
-      propertyCategories:
-        propertyCategories.length > 0
-          ? propertyCategories
-          : [
-              {
-                id: 'PropertyCategories@tmp',
-                name: '',
-                index:
-                  editingPropertyCatergoryType?.propertyCategories?.length ?? 0,
-                numberOfProperties: 0,
-              },
-            ],
-    };
-  }
-}
+  return (
+    <ExpandingPanel
+      allowExpandCollapse={true}
+      defaultExpanded={false}
+      title={String(catalogName)}
+      className={classes.panel}
+      rightContent={
+        <Button onClick={onSave} className={classes.btnsave}>
+          Save
+        </Button>
+      }>
+      <div className={classes.container}>
+        <PropertyCategoryMutateDispatchContext.Provider value={dispatch}>
+          <Table component="div" className={classes.root}>
+            <TableHead component="div">
+              <TableRow component="div">
+                <TableCell size="small" padding="none" component="div" />
+                <TableCell component="div" className={classes.cell}>
+                  Name
+                </TableCell>
+                <TableCell component="div" />
+                <TableCell component="div" />
+              </TableRow>
+            </TableHead>
+            <DroppableTableBody onDragEnd={_onDragEnd}>
+              {!!categoriesState &&
+                categoriesState.items
+                  .slice()
+                  .sort(sortByIndex)
+                  .map((el: PropertyCategoryType, i) => {
+                    return (
+                      <PropertyCategory
+                        propertyCategory={el}
+                        key={i}
+                        index={i}
+                      />
+                    );
+                  })}
+            </DroppableTableBody>
+          </Table>
+        </PropertyCategoryMutateDispatchContext.Provider>
+      </div>
+      <FormAction>
+        <Button variant="text" onClick={onAddProperty} leftIcon={PlusIcon}>
+          Add Parameter
+        </Button>
+      </FormAction>
+    </ExpandingPanel>
+  );
+};
 
 export default withStyles(styles)(
-  withAlert(
-    withSnackbar(
-      createFragmentContainer(AddEditParametersCatalogType, {
-        editingPropertyCatergoryType: graphql`
-          fragment AddEditParametersCatalogType_editingParametersCatalogType on ParameterCatalog {
-            id
-            name
-            index
-            isDisabled
-            propertyCategories {
-              id
-              name
-              index
-              numberOfProperties
-            }
-          }
-        `,
-      }),
-    ),
-  ),
+  withAlert(withSnackbar(AddEditParametersCatalogType)),
 );

@@ -13,12 +13,15 @@ import React from 'react';
 import {ParametersCatalogPage} from './pages/ParametersCatalogPage';
 import InventorySuspense from '../../../common/InventorySuspense';
 import {FormContextProvider} from '../../../common/FormContext';
+import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 
 export default function ParametersCatalog() {
   return (
     <InventorySuspense isTopLevel={true}>
       <FormContextProvider permissions={{adminRightsRequired: true}}>
-        <ParametersCatalogPage />
+        <DialogShowingContextProvider>
+          <ParametersCatalogPage />
+        </DialogShowingContextProvider>
       </FormContextProvider>
     </InventorySuspense>
   );

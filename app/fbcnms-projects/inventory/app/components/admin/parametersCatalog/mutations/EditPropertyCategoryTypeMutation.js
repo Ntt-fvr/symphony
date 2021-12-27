@@ -9,10 +9,10 @@
  */
 
 import type {
-  EditParametersCatalogTypeMutation,
-  EditParametersCatalogTypeMutationVariables,
-  EditParametersCatalogTypeMutationResponse,
-} from './__generated__/EditParametersCatalogTypeMutation.graphql';
+  EditPropertyCategoryTypeMutation,
+  EditPropertyCategoryTypeMutationVariables,
+  EditPropertyCategoryTypeMutationResponse,
+} from './__generated__/EditPropertyCategoryTypeMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
 import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks.js';
@@ -21,24 +21,25 @@ import RelayEnvironment from '../../../../common/RelayEnvironment';
 import {commitMutation, graphql} from 'react-relay';
 
 export const mutation = graphql`
-  mutation EditParametersCatalogTypeMutation(
+  mutation EditPropertyCategoryTypeMutation(
     $propertyCategories: [EditPropertyCategoryInput!]!
   ) {
     editPropertyCategories(propertyCategories: $propertyCategories) {
       id
       name
       index
+      numberOfProperties
     }
   }
 `;
 
 export default (
-  variables: EditParametersCatalogTypeMutationVariables,
-  callbacks?: MutationCallbacks<EditParametersCatalogTypeMutationResponse>,
+  variables: EditPropertyCategoryTypeMutationVariables,
+  callbacks?: MutationCallbacks<EditPropertyCategoryTypeMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<EditParametersCatalogTypeMutation>(RelayEnvironment, {
+  commitMutation<EditPropertyCategoryTypeMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

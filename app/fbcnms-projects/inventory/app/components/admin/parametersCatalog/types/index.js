@@ -7,18 +7,23 @@
  * @flow
  * @format
  */
-export type ParametersCatalogType = {
-  id: string,
-  name: string,
-  index: number,
-  propertyCategories: Array<PropertyCategoryType>,
-};
+export type ParametersCatalogType = {|
+  +id: string,
+  +index: ?number,
+  +isDisabled: ?boolean,
+  +name: ?string,
+  +propertyCategories: ?PropertyCategoriesType,
+|};
+
+export type PropertyCategoriesType = Array<PropertyCategoryType>;
 
 export type PropertyCategoryType = {|
-  id: string,
-  name: string,
-  index?: ?number,
-  numberOfProperties: number,
-  parameterCatalogId?: number
-  // isDeleted?: ?boolean,
-|};
+  +id: string,
+  +index: ?number,
+  +name: ?string,
+  +numberOfProperties: ?number,
+|}
+
+export type PropertyCategoriesTypeStateType = $ReadOnly<{
+  items: Array<PropertyCategoryType>
+}>;
