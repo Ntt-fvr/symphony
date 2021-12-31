@@ -125,6 +125,25 @@ const initialdocumentCategoryCRUDRule = {
   },
 };
 
+const initialPropertyCategoryCRUDRule = {
+  read: {
+    ...initialBasicRule,
+    propertyCategoryIds: null,
+  },
+  create: {
+    ...initialBasicRule,
+    propertyCategoryIds: null,
+  },
+  update: {
+    ...initialBasicRule,
+    propertyCategoryIds: null,
+  },
+  delete: {
+    ...initialBasicRule,
+    propertyCategoryIds: null,
+  },
+};
+
 const initialInventoryRules = {
   read: {
     isAllowed: PERMISSION_RULE_VALUES.YES,
@@ -134,6 +153,9 @@ const initialInventoryRules = {
   },
   documentCategory: {
     ...initialdocumentCategoryCRUDRule,
+  },
+  propertyCategory: {
+    ...initialPropertyCategoryCRUDRule,
   },
   equipment: {
     ...initialCUDRule,
