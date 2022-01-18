@@ -91,6 +91,9 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Kpis = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KpiOrder, _ []*models.KpiFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.KpiCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KpiCategoryOrder, _ []*models.KpiCategoryFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.Thresholds = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ThresholdOrder, _ []*models.ThresholdFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
@@ -116,6 +119,9 @@ func New() (complexity generated.ComplexityRoot) {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.Techs = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.TechOrder, _ []*models.TechFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.NetworkTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.NetworkTypeOrder, _ []*models.NetworkTypeFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.RecommendationsSources = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RecommendationsSourcesOrder, _ []*models.RecommendationsSourcesFilterInput) int {
@@ -144,6 +150,21 @@ func New() (complexity generated.ComplexityRoot) {
 	}
 	complexity.Query.KqiTargets = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiTargetOrder, _ []*models.KqiTargetFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Appointments = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *models.SlotFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.UsersAvailability = func(childComplexity int, _ []*models.UserFilterInput, _ models.SlotFilterInput, _ float64, _ models.RegularHoursInput) int {
+		return SearchComplexity(childComplexity, nil)
+	}
+	complexity.Query.DocumentCategories = func(childComplexity int, locationTypeID *int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.DocumentCategory.FilesByEntity = func(childComplexity int, _ models.ImageEntity, _ *int) int {
+		return SearchComplexity(childComplexity, nil)
+	}
+	complexity.DocumentCategory.HyperlinksByEntity = func(childComplexity int, _ models.ImageEntity, _ *int) int {
+		return SearchComplexity(childComplexity, nil)
 	}
 
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {

@@ -78,10 +78,10 @@ const Card = (props: Props) => {
   const variant: string & Variants = variantProp || CARD_VARIANTS.standard;
 
   return (
-    <div className={classNames(classes.root, className)}>
+    <div className={classNames(`${classes.root} root`, className)}>
       <div
         className={classNames(
-          classes.cardContainer,
+          `${classes.cardContainer} cardContainer`,
           classes[`${margins}Margins`],
           classes[`${variant}Variant`],
           contentClassName,

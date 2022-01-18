@@ -19,6 +19,9 @@ type AlarmFilter func(*sql.Selector)
 // AlarmStatus is the predicate function for alarmstatus builders.
 type AlarmStatus func(*sql.Selector)
 
+// Appointment is the predicate function for appointment builders.
+type Appointment func(*sql.Selector)
+
 // Block is the predicate function for block builders.
 type Block func(*sql.Selector)
 
@@ -54,6 +57,9 @@ type CounterFormula func(*sql.Selector)
 
 // Customer is the predicate function for customer builders.
 type Customer func(*sql.Selector)
+
+// DocumentCategory is the predicate function for documentcategory builders.
+type DocumentCategory func(*sql.Selector)
 
 // Domain is the predicate function for domain builders.
 type Domain func(*sql.Selector)
@@ -100,9 +106,6 @@ type Feature func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
-// FileCategoryType is the predicate function for filecategorytype builders.
-type FileCategoryType func(*sql.Selector)
-
 // FloorPlan is the predicate function for floorplan builders.
 type FloorPlan func(*sql.Selector)
 
@@ -133,6 +136,9 @@ type Hyperlink func(*sql.Selector)
 // Kpi is the predicate function for kpi builders.
 type Kpi func(*sql.Selector)
 
+// KpiCategory is the predicate function for kpicategory builders.
+type KpiCategory func(*sql.Selector)
+
 // Kqi is the predicate function for kqi builders.
 type Kqi func(*sql.Selector)
 
@@ -162,6 +168,9 @@ type Location func(*sql.Selector)
 
 // LocationType is the predicate function for locationtype builders.
 type LocationType func(*sql.Selector)
+
+// NetworkType is the predicate function for networktype builders.
+type NetworkType func(*sql.Selector)
 
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)

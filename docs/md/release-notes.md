@@ -4,7 +4,44 @@ title: Release Notes
 ---
 
 
+
 ### Release Notes
+
+
+* 04/01/2022
+    * Documentation
+        * **[Python API]** **[Documentation]**		New documentation pertaining to entities is added, in addition to notices on the entities.
+
+
+
+* 23/12/2021
+    * Documentation
+        * **[Python API]** **[Documentation]**		Addition of more entities and functionalities to the Api inventory including Formula, Recommendations, etc.
+
+	* MultiContractor
+		* **[Python API]** 	**[MultiContractor]**	Added all the basic functionalities for organization, Added functions to fetch users by email and ID, and added the attributes first name, middle name and organization in the edit of the entity, in adition The function get_work_order_by_name() was added, and the functionalities were re-structured in such a way that the organization attribute could be added from the same attribute but from the users inventory.
+        example for work order:
+        organization=str(cleint.get_user_by_email(email="test_0-1@fb.com").organization.
+
+	* Assurance
+		* **[Python API]** 	**[Assurance]**	Added and implemented functionality for adding, editing, obtaining and deleting (deleting) certain entities required in assurance.
+
+
+
+
+
+* 18/11/2021
+	* API
+		* **[Python API]** 		New entities were created with their respective functionalities, pertaining to KQI, KPI
+    
+    *Documentation
+	* **[Python API]** **[Documentation]**		Created external documentation to understand how the Api works.
+
+	* Security
+		* **[Python API]** 	**[Authentication]**	Changed the tenant authentication model, allowing to use any domain within symphony be it "test", "wfm", "ipt" and the other existing ones.
+
+
+
 * 7/16/2020
 	* Platform	
 		* **[User Management]** **[Roles & Policies]**		Change in User Roles:	User role "owner" has been removed. Now there are 2 roles ("user" and "admin") whereby admin can do everything in the system (same as "owner" previously).

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -35,10 +36,11 @@ type Hyperlink struct {
 	Category string `json:"category,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HyperlinkQuery when eager-loading is set.
-	Edges                 HyperlinkEdges `json:"edges"`
-	equipment_hyperlinks  *int
-	location_hyperlinks   *int
-	work_order_hyperlinks *int
+	Edges                        HyperlinkEdges `json:"edges"`
+	document_category_hyperlinks *int
+	equipment_hyperlinks         *int
+	location_hyperlinks          *int
+	work_order_hyperlinks        *int
 }
 
 // HyperlinkEdges holds the relations/edges for other nodes in the graph.
@@ -49,9 +51,11 @@ type HyperlinkEdges struct {
 	Location *Location
 	// WorkOrder holds the value of the work_order edge.
 	WorkOrder *WorkOrder
+	// DocumentCategory holds the value of the document_category edge.
+	DocumentCategory *DocumentCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // EquipmentOrErr returns the Equipment value or an error if the edge
@@ -96,6 +100,20 @@ func (e HyperlinkEdges) WorkOrderOrErr() (*WorkOrder, error) {
 	return nil, &NotLoadedError{edge: "work_order"}
 }
 
+// DocumentCategoryOrErr returns the DocumentCategory value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e HyperlinkEdges) DocumentCategoryOrErr() (*DocumentCategory, error) {
+	if e.loadedTypes[3] {
+		if e.DocumentCategory == nil {
+			// The edge document_category was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: documentcategory.Label}
+		}
+		return e.DocumentCategory, nil
+	}
+	return nil, &NotLoadedError{edge: "document_category"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Hyperlink) scanValues() []interface{} {
 	return []interface{}{
@@ -111,6 +129,7 @@ func (*Hyperlink) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Hyperlink) fkValues() []interface{} {
 	return []interface{}{
+		&sql.NullInt64{}, // document_category_hyperlinks
 		&sql.NullInt64{}, // equipment_hyperlinks
 		&sql.NullInt64{}, // location_hyperlinks
 		&sql.NullInt64{}, // work_order_hyperlinks
@@ -157,18 +176,24 @@ func (h *Hyperlink) assignValues(values ...interface{}) error {
 	values = values[5:]
 	if len(values) == len(hyperlink.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field document_category_hyperlinks", value)
+		} else if value.Valid {
+			h.document_category_hyperlinks = new(int)
+			*h.document_category_hyperlinks = int(value.Int64)
+		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field equipment_hyperlinks", value)
 		} else if value.Valid {
 			h.equipment_hyperlinks = new(int)
 			*h.equipment_hyperlinks = int(value.Int64)
 		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
+		if value, ok := values[2].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field location_hyperlinks", value)
 		} else if value.Valid {
 			h.location_hyperlinks = new(int)
 			*h.location_hyperlinks = int(value.Int64)
 		}
-		if value, ok := values[2].(*sql.NullInt64); !ok {
+		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_hyperlinks", value)
 		} else if value.Valid {
 			h.work_order_hyperlinks = new(int)
@@ -191,6 +216,11 @@ func (h *Hyperlink) QueryLocation() *LocationQuery {
 // QueryWorkOrder queries the work_order edge of the Hyperlink.
 func (h *Hyperlink) QueryWorkOrder() *WorkOrderQuery {
 	return (&HyperlinkClient{config: h.config}).QueryWorkOrder(h)
+}
+
+// QueryDocumentCategory queries the document_category edge of the Hyperlink.
+func (h *Hyperlink) QueryDocumentCategory() *DocumentCategoryQuery {
+	return (&HyperlinkClient{config: h.config}).QueryDocumentCategory(h)
 }
 
 // Update returns a builder for updating this Hyperlink.

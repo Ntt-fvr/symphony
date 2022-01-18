@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from datetime import date, datetime
+from datetime import date, datetime, time
 from numbers import Number
 from typing import (
     Any,
@@ -315,6 +315,466 @@ class Customer(NamedTuple):
     name: str
     external_id: Optional[str]
 
+class KqiCategory(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class KqiPerspective(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class KqiTemporalFrecuency(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+    
+class KqiSource(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class Kqi (NamedTuple):
+    """This function cannot be used because the mandatory parameters StarDatetime and EndDatetime are not allowed in the format required in the Api.
+    
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param description: description
+    :type description: str
+    :param formula: formula
+    :type formula: str
+    :param startDatetime: startDatetime
+    :type startDatetime: datetime
+    :param EndDateTime: EndDateTime
+    :type EndDateTime: datetime
+    :param kqiSource: kqiSource Object
+    :type kqiSource: `~psym.common.data_class.kqi_cource`
+    :param kqiCategory: kqiCategory
+    :type kqiCategory: `~psym.common.data_class.kqi_category`
+    :param KqiPerspective: KqiPerspective
+    :type KqiPerspective: `~psym.common.data_class.kqi_perspective`
+    :param KqiTemporalFrecuency: KqiTemporalFrecuency
+    :type KqiTemporalFrecuency: `~psym.common.data_class.kqi_temporal_frecuency`
+    """
+
+    id: str
+    name: str
+    description: str
+    formula: str
+    startDatetime: datetime
+    EndDateTime: datetime
+    kqiSource: str
+    kqiCategory: str
+    KqiPerspective: str
+    KqiTemporalFrecuency: str
+
+class KqiTarget (NamedTuple):
+    """This function cannot be used because the mandatory parameters Starttime and Endtime are not allowed in the format required in the Apiand need the kqi entity.
+    
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param frame: Frame
+    :type frame: int
+    :param allowed variation: Allowed variation
+    :type allowed variation: int
+    :param starttime: starttime
+    :type starttime: time
+    :param EndTime: EndTime
+    :type EndTime: time
+    :param impact: impact
+    :type impact: str
+    :param status: status
+    :type status: str
+    :param period: period
+    :type period: str
+    :param kqi: kqi Object
+    :type kqi: `~psym.common.data_class.kqi`
+
+    """
+
+    id: str
+    name: str
+    frame: int
+    allowedVariation: float
+    starttime: time
+    EndTime: time
+    impact: str
+    status: bool
+    period: int
+    kqi: str
+
+class KqiComparator (NamedTuple):
+    """This function cannot be used because it requires the kqiTarget entity, and this entity cannot be used because of a bug in the time parameters.he
+    
+    :param number: Number
+    :type number: int
+    :param id: ID
+    :type id: str
+    :param type comparator: type comparator
+    :type type comparator: str
+    :param kqiTraget: kqiTraget Object
+    :type kqiTraget: `~psym.common.data_class.kqi_traget`
+    :param comparator: comparator Object
+    :type comparator: `~psym.common.data_class.comparator`
+    """
+    id: str
+    number: int
+    typeComparator:str
+    kqiTraget: str
+    comparator: str
+
+
+class AlarmFiltering (NamedTuple):
+    """This function cannot be used because it requires the kqiTarget entity, and this entity cannot be used because of a bug in the time parameters.he
+    
+    :param number: Number
+    :type number: int
+    :param id: ID
+    :type id: str
+    :param beginTime: beginTime
+    :type beginTime: time
+    :param endTime: endTime
+    :type endTime: time
+    :param reason: reason
+    :type reason: str
+    :param user: user
+    :type user: str
+    :param creationTime: creationTime
+    :type creationTime: datetime
+    :param alarmStatus: alarm status
+    :type alarmStatus: `~psym.common.data_class.alarm_status`
+    """
+    id: str
+    name: int
+    beginTime: time
+    endTime: time
+    reason: str
+    user: str
+    creationTime: datetime
+    alarmStatus: int
+
+
+
+class domain (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class tech (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param domainFk: domain Object
+    :type domainFk: psym.common.data_class.domain
+    """
+
+    id: str
+    name: str
+    domainFK: str
+
+class KpiCategory(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class NetworkType (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class Kpi (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param description: description
+    :type description: str
+    :param status: status
+    :type status: bool
+    :param domainFk: domain Object
+    :type domainFk: psym.common.data_class.domain
+    :param kpiCategoryFK: str
+    :type kpiCategoryFK: psym.common.data_class.kpi_category
+    """
+
+    id: str
+    name: str
+    description: str
+    status: bool
+    domain: str
+    kpiCategory: str
+
+class CounterFamily(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class Vendor (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class formula (NamedTuple):
+    """
+    :param textFormula: textFormula
+    :type textFormula: str
+    :param id: ID
+    :type id: str
+    :param description: description
+    :type description: str
+    :param status: status
+    :type status: bool
+    :param techFk: domain Object
+    :type techFk: psym.common.data_class.tech
+    :param networkTypeFk: str
+    :type networkTypeFk: psym.common.data_class.network_type
+    :param kpiFk: str
+    :type kpiFk: psym.common.data_class.kpi
+    """
+
+    id: str
+    textFormula: str
+    status: bool
+    techFk: str
+    networkTypeFk: str
+    kpiFk: str
+
+class counter (NamedTuple):
+    """
+    :param name: name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param externalID: externalID
+    :type externalID: str
+    :param networkManagerSystem: networkManagerSystem
+    :type networkManagerSystem: str
+    :param counterFamilyFk: domain Object
+    :type counterFamilyFk: psym.common.data_class.counter_family
+    :param vendorFk: str
+    :type vendorFk: psym.common.data_class.vendor
+    """
+
+    id: str
+    name: str
+    externalID: str
+    networkManagerSystem: str
+    counterFamilyFk: str
+    vendorFk: str
+    
+class counterFormula (NamedTuple):
+    """
+    :param mandatory: mandatory
+    :type mandatory: str
+    :param id: ID
+    :type id: str
+    ;param counterFk: str
+    :type counterFk: psym.common.data_class.counter
+    :param formulaFk: str
+    :type formulaFk: psym.common.data_class.formula
+    """
+
+    id: str
+    mandatory: bool
+    counterFk: str
+    formulaFk: str
+
+class eventSeverity (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class ruleType (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class comparator (NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class threshold (NamedTuple):
+    """
+    :param name: name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param description: description
+    :type description: str
+    :param status: status
+    :type status: bool
+    :param kpi: str
+    :type kpi: `~psym.common.data_class.kpi`
+    """
+
+    id: str
+    name: str
+    description: str
+    status: bool
+    kpi: str
+
+class rule (NamedTuple):
+    """
+    :param name: name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param gracePeriod: gracePeriod
+    :type gracePeriod: str
+    :param eventTypeName: eventTypeName
+    :type eventTypeName: str
+    :param specificProblem: specificProblem
+    :type specificProblem: str
+    :param additionalInfo: additionalInfo
+    :type additionalInfo: str
+    :param status: status
+    :type status: bool
+    :param ruleType: str
+    :type ruleType: `~psym.common.data_class.rule_type`
+    :param eventSeverity: str
+    :type eventSeverity: `~psym.common.data_class.event_severity`
+    :param threshold: str
+    :type threshold: `~psym.common.data_class.threshold`
+    """
+
+    id: str
+    name: str
+    gracePeriod: int
+    ruleType: str
+    eventTypeName: str
+    specificProblem: str
+    additionalInfo: str
+    status: bool
+    eventSeverity: str
+    threshold: str
+
+class ruleLimit (NamedTuple):
+    """
+    :param number: number
+    :type number: str
+    :param id: ID
+    :type id: str
+    :param limitType: limitType
+    :type limitType: str
+    :param rule: rule
+    :type rule: `~psym.common.data_class.rule`
+    :param comparator: comparator
+    :type comparator: `~psym.common.data_class.comparator`
+    """
+
+    id: int
+    number: str
+    limitType: str
+    rule: str
+    comparator: str
+    
+
+class alarmStatus(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+
+class organization(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    :param description: Description
+    :type description: str
+    """
+
+    id: str
+    name: str
+    description: str 
 
 class Service(NamedTuple):
     """
@@ -433,13 +893,92 @@ class User(NamedTuple):
     :type status: :class:`~psym.graphql.enum.user_role.UserStatus`
     :param role: role
     :type role: :class:`~psym.graphql.enum.user_status.UserRole`
+    :param organization: organization
+    :type organization: :class:`~psym.graphql.data_class.organization.organization`
     """
 
     id: str
     auth_id: str
     email: str
+    firstName: str
+    lastName: str
     status: UserStatus
     role: UserRole
+    organization: Optional[organization]
+
+class RecommendationSources(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class RecommendationsCategory(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str
+    """
+
+    id: str
+    name: str
+
+class recommendations (NamedTuple):
+    """
+    :param externalID: externalID
+    :type externalID: str
+    :param id: ID
+    :type id: str
+    :param resource: resource
+    :type resource: str
+    :param shortDescription: shortDescription
+    :type shortDescription: str
+    :param LongDescription: LongDescription
+    :type LongDescription: str
+    :param command: command
+    :type command: str
+    :param runbook: runbook
+    :type runbook: str
+    :param priority: priority
+    :type priority: str
+    :param status: status
+    :type status: bool
+    :param used: used
+    :type used: int
+    :param vendor: vendor
+    :type vendor: str
+    :param RecomendationSources: RecomendationSources
+    :type RecomendationSources::`~psym.graphql.enum.RecomendationSources
+    :param RecomendationsCategory: RecomendationsCategory
+    :type RecomendationsCategory: `~psym.graphql.enum.RecomendationsCategory
+    :param userCreated: userCreated
+    :type userCreated:`~psym.graphql.enum.user`
+    :param userApproved: userApproved
+    :type userApproved:`~psym.graphql.enum.user`
+
+    """
+
+    id: int
+    externalID: str
+    resource: str
+    alarmType: str
+    shortDescription: str
+    LongDescription: str
+    command: str
+    runbook: str
+    priority: str
+    status: bool
+    used: int
+    vendor: str
+    RecomendationSources: str
+    RecomendationsCategory: str
+    userCreated: int
+    userApproved: int
 
 
 class SiteSurvey(NamedTuple):
@@ -526,6 +1065,8 @@ class WorkOrder(NamedTuple):
     :type status: :class:`~psym.graphql.enum.work_order_status.WorkOrderStatus`, optional
     :param priority: Work order priority
     :type priority: :class:`~psym.graphql.enum.work_order_priority.WorkOrderPriority`, optional
+    :param organization: organization
+    :type organization: :class:`~psym.graphql.data_class.organization`
     """
 
     id: str
@@ -539,6 +1080,7 @@ class WorkOrder(NamedTuple):
     assignee_id: Optional[str]
     status: Optional[WorkOrderStatus]
     priority: Optional[WorkOrderPriority]
+    organization:Optional[str]
 
 
 class ProjectType(NamedTuple):

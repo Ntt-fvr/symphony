@@ -14,6 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 )
 
@@ -32,13 +33,16 @@ type Formula struct {
 	Status bool `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FormulaQuery when eager-loading is set.
-	Edges            FormulaEdges `json:"edges"`
-	kpi_formulakpi   *int
-	tech_formulatech *int
+	Edges                                FormulaEdges `json:"edges"`
+	kpi_formulakpi                       *int
+	network_type_formula_network_type_fk *int
+	tech_formulatech                     *int
 }
 
 // FormulaEdges holds the relations/edges for other nodes in the graph.
 type FormulaEdges struct {
+	// NetworkType holds the value of the networkType edge.
+	NetworkType *NetworkType
 	// Tech holds the value of the tech edge.
 	Tech *Tech
 	// Kpi holds the value of the kpi edge.
@@ -47,13 +51,27 @@ type FormulaEdges struct {
 	Counterformula []*CounterFormula
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
+}
+
+// NetworkTypeOrErr returns the NetworkType value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FormulaEdges) NetworkTypeOrErr() (*NetworkType, error) {
+	if e.loadedTypes[0] {
+		if e.NetworkType == nil {
+			// The edge networkType was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: networktype.Label}
+		}
+		return e.NetworkType, nil
+	}
+	return nil, &NotLoadedError{edge: "networkType"}
 }
 
 // TechOrErr returns the Tech value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e FormulaEdges) TechOrErr() (*Tech, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.Tech == nil {
 			// The edge tech was loaded in eager-loading,
 			// but was not found.
@@ -67,7 +85,7 @@ func (e FormulaEdges) TechOrErr() (*Tech, error) {
 // KpiOrErr returns the Kpi value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e FormulaEdges) KpiOrErr() (*Kpi, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.Kpi == nil {
 			// The edge kpi was loaded in eager-loading,
 			// but was not found.
@@ -81,7 +99,7 @@ func (e FormulaEdges) KpiOrErr() (*Kpi, error) {
 // CounterformulaOrErr returns the Counterformula value or an error if the edge
 // was not loaded in eager-loading.
 func (e FormulaEdges) CounterformulaOrErr() ([]*CounterFormula, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Counterformula, nil
 	}
 	return nil, &NotLoadedError{edge: "counterformula"}
@@ -102,6 +120,7 @@ func (*Formula) scanValues() []interface{} {
 func (*Formula) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // kpi_formulakpi
+		&sql.NullInt64{}, // network_type_formula_network_type_fk
 		&sql.NullInt64{}, // tech_formulatech
 	}
 }
@@ -147,6 +166,12 @@ func (f *Formula) assignValues(values ...interface{}) error {
 			*f.kpi_formulakpi = int(value.Int64)
 		}
 		if value, ok := values[1].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field network_type_formula_network_type_fk", value)
+		} else if value.Valid {
+			f.network_type_formula_network_type_fk = new(int)
+			*f.network_type_formula_network_type_fk = int(value.Int64)
+		}
+		if value, ok := values[2].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field tech_formulatech", value)
 		} else if value.Valid {
 			f.tech_formulatech = new(int)
@@ -154,6 +179,11 @@ func (f *Formula) assignValues(values ...interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryNetworkType queries the networkType edge of the Formula.
+func (f *Formula) QueryNetworkType() *NetworkTypeQuery {
+	return (&FormulaClient{config: f.config}).QueryNetworkType(f)
 }
 
 // QueryTech queries the tech edge of the Formula.

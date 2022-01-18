@@ -38,17 +38,26 @@ const styles = {
     padding: '0px',
   },
   uploadCategoryButton: {
+    padding: '8px 16px',
     display: 'block',
-    padding: '4px',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     width: '100%',
   },
+  autoWidth: {
+    width: '100%',
+  },
 };
+
+export type CategoryItem = $ReadOnly<{|
+  id: string,
+  name: ?string,
+|}>;
 
 type Props = {|
   entityId: ?string,
   entityType: ImageEntity,
+  categories: Array<CategoryItem>,
 |} & WithSnackbarProps &
   WithStyles<typeof styles>;
 
@@ -70,43 +79,46 @@ class DocumentsAddButton extends React.Component<Props, State> {
   };
 
   render() {
-    const {entityId, classes} = this.props;
+    const {entityId, classes, categories} = this.props;
     const categoriesEnabled = this.context.isFeatureEnabled('file_categories');
-
     if (!entityId) {
       return null;
     }
 
     return (
       <FormAction>
-        {categoriesEnabled && Strings.documents.categories.length ? (
+        {categoriesEnabled ? (
           <PopoverMenu
             skin="primary"
             menuDockRight={true}
-            options={Strings.documents.categories.map(category => ({
-              key: category,
+            disabled={!categories.length}
+            options={categories.map(category => ({
+              key: category.id,
               label: (
                 <FileUploadButton
-                  key={category}
+                  key={category.id}
                   onFileUploaded={this.onDocumentUploaded(category)}>
                   {openFileUploadDialog => (
-                    <Clickable onClick={openFileUploadDialog}>
+                    <Clickable
+                      onClick={openFileUploadDialog}
+                      className={classes.autoWidth}>
                       <Text
                         className={classes.uploadCategoryButton}
                         variant="body2">
-                        {category}
+                        {category.name}
                       </Text>
                     </Clickable>
                   )}
                 </FileUploadButton>
               ),
-              value: category,
+              value: category.name,
               className: classes.uploadCategory,
             }))}>
             {Strings.documents.uploadButton}
           </PopoverMenu>
         ) : (
-          <FileUploadButton onFileUploaded={this.onDocumentUploaded(null)}>
+          <FileUploadButton
+            onFileUploaded={this.onDocumentUploaded({id: '', name: ''})}>
             {openFileUploadDialog => (
               <Button skin="primary" onClick={openFileUploadDialog}>
                 {Strings.documents.uploadButton}
@@ -118,11 +130,12 @@ class DocumentsAddButton extends React.Component<Props, State> {
     );
   }
 
-  onDocumentUploaded = (category: ?string) => (file, key) => {
+  onDocumentUploaded = (category: CategoryItem) => (file, key) => {
     ServerLogger.info(LogEvents.LOCATION_CARD_UPLOAD_FILE_CLICKED);
     if (this.props.entityId == null) {
       return;
     }
+
     const variables: AddImageMutationVariables = {
       input: {
         entityType: this.props.entityType,
@@ -132,7 +145,8 @@ class DocumentsAddButton extends React.Component<Props, State> {
         fileSize: file.size,
         modified: new Date(file.lastModified).toISOString(),
         contentType: file.type,
-        category: category,
+        category: category.name,
+        documentCategoryId: category.id,
       },
     };
 

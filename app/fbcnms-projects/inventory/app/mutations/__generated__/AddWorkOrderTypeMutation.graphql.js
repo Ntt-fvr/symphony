@@ -24,6 +24,7 @@ export type AddWorkOrderTypeInput = {|
   properties?: ?$ReadOnlyArray<?PropertyTypeInput>,
   checkListCategories?: ?$ReadOnlyArray<CheckListCategoryDefinitionInput>,
   assigneeCanCompleteWorkOrder?: ?boolean,
+  duration?: ?number,
 |};
 export type PropertyTypeInput = {|
   id?: ?string,
@@ -45,6 +46,7 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
+  isListable?: ?boolean,
 |};
 export type CheckListCategoryDefinitionInput = {|
   id?: ?string,

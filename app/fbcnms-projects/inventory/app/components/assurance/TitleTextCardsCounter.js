@@ -9,32 +9,18 @@
  */
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0 9px 16px',
+    padding: '0 3.8rem 0.5rem 0.7rem',
   },
-  title: {
-    color: '#3984FF',
+  actionDelete: {
+    marginRight: '1rem',
   },
-  globalCenter: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  network: {
-    paddingRight: '4rem',
-  },
-  vendor: {
-    paddingRight: '3rem',
-  },
-  delete: {
-    justifyContent: 'flex-end',
-  },
-  edit: {
-    paddingLeft: '25px',
+  action: {
+    flexWrap: 'nowrap',
   },
 }));
 
@@ -42,48 +28,53 @@ function TitleTextCardsCounter() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={3}>
-        <Text className={classes.title} variant="subtitle2">
+      <Grid item xs={5}>
+        <Text
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Counter name
         </Text>
       </Grid>
-      <Grid xs={4}>
+      <Grid item xs={3}>
         <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.network,
-          )}
-          variant="subtitle2">
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Network Manager System
         </Text>
       </Grid>
-      <Grid xs={3}>
+      <Grid item xs={2}>
         <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.vendor,
-          )}
-          variant="subtitle2">
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Vendor name
         </Text>
       </Grid>
-      <Grid xs={1}>
+      <Grid
+        item
+        xs={2}
+        container
+        alignItems="center"
+        justify="flex-end"
+        className={classes.action}>
         <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.delete,
-          )}
-          variant="subtitle2">
+          className={classes.actionDelete}
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Delete
         </Text>
-      </Grid>
-      <Grid xs={1}>
         <Text
-          className={classNames(classes.title, classes.edit)}
-          variant="subtitle2">
+          useEllipsis={true}
+          color="primary"
+          variant="body2"
+          weight="medium">
           Edit
         </Text>
       </Grid>

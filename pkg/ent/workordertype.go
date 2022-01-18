@@ -30,6 +30,8 @@ type WorkOrderType struct {
 	Description *string `json:"description,omitempty"`
 	// AssigneeCanCompleteWorkOrder holds the value of the "assignee_can_complete_work_order" field.
 	AssigneeCanCompleteWorkOrder bool `json:"assignee_can_complete_work_order,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration *float64 `json:"duration,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderTypeQuery when eager-loading is set.
 	Edges WorkOrderTypeEdges `json:"edges"`
@@ -89,12 +91,13 @@ func (e WorkOrderTypeEdges) DefinitionsOrErr() ([]*WorkOrderDefinition, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*WorkOrderType) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{},  // id
-		&sql.NullTime{},   // create_time
-		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // name
-		&sql.NullString{}, // description
-		&sql.NullBool{},   // assignee_can_complete_work_order
+		&sql.NullInt64{},   // id
+		&sql.NullTime{},    // create_time
+		&sql.NullTime{},    // update_time
+		&sql.NullString{},  // name
+		&sql.NullString{},  // description
+		&sql.NullBool{},    // assignee_can_complete_work_order
+		&sql.NullFloat64{}, // duration
 	}
 }
 
@@ -135,6 +138,12 @@ func (wot *WorkOrderType) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field assignee_can_complete_work_order", values[4])
 	} else if value.Valid {
 		wot.AssigneeCanCompleteWorkOrder = value.Bool
+	}
+	if value, ok := values[5].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field duration", values[5])
+	} else if value.Valid {
+		wot.Duration = new(float64)
+		*wot.Duration = value.Float64
 	}
 	return nil
 }
@@ -194,6 +203,10 @@ func (wot *WorkOrderType) String() string {
 	}
 	builder.WriteString(", assignee_can_complete_work_order=")
 	builder.WriteString(fmt.Sprintf("%v", wot.AssigneeCanCompleteWorkOrder))
+	if v := wot.Duration; v != nil {
+		builder.WriteString(", duration=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

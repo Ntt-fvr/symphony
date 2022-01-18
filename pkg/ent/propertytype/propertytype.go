@@ -58,6 +58,8 @@ const (
 	FieldMandatory = "mandatory"
 	// FieldDeleted holds the string denoting the deleted field in the database.
 	FieldDeleted = "deleted"
+	// FieldListable holds the string denoting the listable field in the database.
+	FieldListable = "listable"
 	// FieldNodeType holds the string denoting the nodetype field in the database.
 	FieldNodeType = "node_type"
 
@@ -187,6 +189,7 @@ var Columns = []string{
 	FieldEditable,
 	FieldMandatory,
 	FieldDeleted,
+	FieldListable,
 	FieldNodeType,
 }
 
@@ -242,6 +245,8 @@ var (
 	DefaultMandatory bool
 	// DefaultDeleted holds the default value on creation for the deleted field.
 	DefaultDeleted bool
+	// DefaultListable holds the default value on creation for the listable field.
+	DefaultListable bool
 )
 
 // Type defines the type for the type enum field.

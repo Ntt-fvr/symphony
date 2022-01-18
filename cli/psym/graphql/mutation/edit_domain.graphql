@@ -1,0 +1,6 @@
+mutation editDomain($input: EditDomainInput!) {
+  editDomain(input: $input) {
+    id
+    name
+  }
+}

@@ -1,0 +1,6 @@
+mutation addNetworkType($input: AddNetworkTypeInput!) {
+  addNetworkType(input: $input) {
+    id
+    name
+  }
+}

@@ -18,6 +18,7 @@ export type AddFormulaInput = {|
   textFormula: string,
   status: boolean,
   techFk: string,
+  networkTypeFk: string,
   kpiFk: string,
 |};
 export type AddFormulaMutationVariables = {|

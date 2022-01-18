@@ -9,6 +9,7 @@ from typing import Any, AsyncGenerator, Dict, List, Generator, Optional
 
 from dataclasses_json import DataClassJsonMixin, config
 
+from ..input.document_category_input import DocumentCategoryInput
 from ..input.property_type_input import PropertyTypeInput
 
 
@@ -16,6 +17,7 @@ from ..input.property_type_input import PropertyTypeInput
 class EditLocationTypeInput(DataClassJsonMixin):
     id: str
     name: str
+    documentCategories: List[DocumentCategoryInput]
     properties: List[PropertyTypeInput]
     mapType: Optional[str] = None
     mapZoomLevel: Optional[int] = None

@@ -30,6 +30,14 @@ export type EquipmentDocumentsCard_equipment = {|
   +hyperlinks: $ReadOnlyArray<{|
     +$fragmentRefs: EntityDocumentsTable_hyperlinks$ref
   |}>,
+  +parentLocation: ?{|
+    +locationType: {|
+      +documentCategories: $ReadOnlyArray<?{|
+        +id: string,
+        +name: ?string,
+      |}>
+    |}
+  |},
   +$refType: EquipmentDocumentsCard_equipment$ref,
 |};
 export type EquipmentDocumentsCard_equipment$data = EquipmentDocumentsCard_equipment;
@@ -42,7 +50,14 @@ export type EquipmentDocumentsCard_equipment$key = {
 
 
 const node/*: ReaderFragment*/ = (function(){
-var v0 = [
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = [
   {
     "args": null,
     "kind": "FragmentSpread",
@@ -55,13 +70,7 @@ return {
   "metadata": null,
   "name": "EquipmentDocumentsCard_equipment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -69,7 +78,7 @@ return {
       "kind": "LinkedField",
       "name": "images",
       "plural": true,
-      "selections": (v0/*: any*/),
+      "selections": (v1/*: any*/),
       "storageKey": null
     },
     {
@@ -79,7 +88,7 @@ return {
       "kind": "LinkedField",
       "name": "files",
       "plural": true,
-      "selections": (v0/*: any*/),
+      "selections": (v1/*: any*/),
       "storageKey": null
     },
     {
@@ -97,6 +106,47 @@ return {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "parentLocation",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "LocationType",
+          "kind": "LinkedField",
+          "name": "locationType",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "DocumentCategory",
+              "kind": "LinkedField",
+              "name": "documentCategories",
+              "plural": true,
+              "selections": [
+                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "name",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "Equipment",
@@ -104,6 +154,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '47fa4ebbcddc93a1562ca029f897dc4e';
+(node/*: any*/).hash = '9abc148ec98dcd8b498b5ad14c20d525';
 
 module.exports = node;

@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type PowerSearchLocationsResultsTable_locations$ref = any;
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
 export type LocationFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "LOCATION_INST_HAS_EQUIPMENT" | "LOCATION_INST_NAME" | "LOCATION_TYPE" | "PROPERTY" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type LocationFilterInput = {|
@@ -48,6 +48,7 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
+  isListable?: ?boolean,
 |};
 export type LocationViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,

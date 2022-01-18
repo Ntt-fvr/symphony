@@ -40,6 +40,22 @@ func (as *AlarmStatus) AlarmStatusFk(ctx context.Context) ([]*AlarmFilter, error
 	return result, err
 }
 
+func (a *Appointment) Workorder(ctx context.Context) (*WorkOrder, error) {
+	result, err := a.Edges.WorkorderOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryWorkorder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *Appointment) Assignee(ctx context.Context) (*User, error) {
+	result, err := a.Edges.AssigneeOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryAssignee().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (b *Block) Flow(ctx context.Context) (*Flow, error) {
 	result, err := b.Edges.FlowOrErr()
 	if IsNotLoaded(err) {
@@ -308,6 +324,30 @@ func (c *Customer) Services(ctx context.Context) ([]*Service, error) {
 	result, err := c.Edges.ServicesOrErr()
 	if IsNotLoaded(err) {
 		result, err = c.QueryServices().All(ctx)
+	}
+	return result, err
+}
+
+func (dc *DocumentCategory) LocationType(ctx context.Context) (*LocationType, error) {
+	result, err := dc.Edges.LocationTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryLocationType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (dc *DocumentCategory) Files(ctx context.Context) ([]*File, error) {
+	result, err := dc.Edges.FilesOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryFiles().All(ctx)
+	}
+	return result, err
+}
+
+func (dc *DocumentCategory) Hyperlinks(ctx context.Context) ([]*Hyperlink, error) {
+	result, err := dc.Edges.HyperlinksOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryHyperlinks().All(ctx)
 	}
 	return result, err
 }
@@ -736,10 +776,10 @@ func (f *File) SurveyQuestion(ctx context.Context) (*SurveyQuestion, error) {
 	return result, MaskNotFound(err)
 }
 
-func (fct *FileCategoryType) LocationType(ctx context.Context) (*LocationType, error) {
-	result, err := fct.Edges.LocationTypeOrErr()
+func (f *File) DocumentCategory(ctx context.Context) (*DocumentCategory, error) {
+	result, err := f.Edges.DocumentCategoryOrErr()
 	if IsNotLoaded(err) {
-		result, err = fct.QueryLocationType().Only(ctx)
+		result, err = f.QueryDocumentCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -848,6 +888,14 @@ func (fi *FlowInstance) ParentSubflowBlock(ctx context.Context) (*BlockInstance,
 	return result, MaskNotFound(err)
 }
 
+func (f *Formula) NetworkType(ctx context.Context) (*NetworkType, error) {
+	result, err := f.Edges.NetworkTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryNetworkType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (f *Formula) Tech(ctx context.Context) (*Tech, error) {
 	result, err := f.Edges.TechOrErr()
 	if IsNotLoaded(err) {
@@ -896,10 +944,26 @@ func (h *Hyperlink) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 	return result, MaskNotFound(err)
 }
 
+func (h *Hyperlink) DocumentCategory(ctx context.Context) (*DocumentCategory, error) {
+	result, err := h.Edges.DocumentCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = h.QueryDocumentCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (k *Kpi) Domain(ctx context.Context) (*Domain, error) {
 	result, err := k.Edges.DomainOrErr()
 	if IsNotLoaded(err) {
 		result, err = k.QueryDomain().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kpi) KpiCategory(ctx context.Context) (*KpiCategory, error) {
+	result, err := k.Edges.KpiCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKpiCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -918,6 +982,14 @@ func (k *Kpi) Thresholdkpi(ctx context.Context) (*Threshold, error) {
 		result, err = k.QueryThresholdkpi().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (kc *KpiCategory) Kpicategory(ctx context.Context) ([]*Kpi, error) {
+	result, err := kc.Edges.KpicategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = kc.QueryKpicategory().All(ctx)
+	}
+	return result, err
 }
 
 func (k *Kqi) KqiCategoryFk(ctx context.Context) (*KqiCategory, error) {
@@ -1168,18 +1240,26 @@ func (lt *LocationType) PropertyTypes(ctx context.Context) ([]*PropertyType, err
 	return result, err
 }
 
-func (lt *LocationType) FileCategoryType(ctx context.Context) ([]*FileCategoryType, error) {
-	result, err := lt.Edges.FileCategoryTypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = lt.QueryFileCategoryType().All(ctx)
-	}
-	return result, err
-}
-
 func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*SurveyTemplateCategory, error) {
 	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QuerySurveyTemplateCategories().All(ctx)
+	}
+	return result, err
+}
+
+func (lt *LocationType) DocumentCategory(ctx context.Context) ([]*DocumentCategory, error) {
+	result, err := lt.Edges.DocumentCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryDocumentCategory().All(ctx)
+	}
+	return result, err
+}
+
+func (nt *NetworkType) FormulaNetworkTypeFK(ctx context.Context) ([]*Formula, error) {
+	result, err := nt.Edges.FormulaNetworkTypeFKOrErr()
+	if IsNotLoaded(err) {
+		result, err = nt.QueryFormulaNetworkTypeFK().All(ctx)
 	}
 	return result, err
 }
@@ -2024,6 +2104,14 @@ func (u *User) Features(ctx context.Context) ([]*Feature, error) {
 	return result, err
 }
 
+func (u *User) Appointment(ctx context.Context) ([]*Appointment, error) {
+	result, err := u.Edges.AppointmentOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryAppointment().All(ctx)
+	}
+	return result, err
+}
+
 func (ug *UsersGroup) Members(ctx context.Context) ([]*User, error) {
 	result, err := ug.Edges.MembersOrErr()
 	if IsNotLoaded(err) {
@@ -2182,6 +2270,14 @@ func (wo *WorkOrder) Assignee(ctx context.Context) (*User, error) {
 		result, err = wo.QueryAssignee().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
+	result, err := wo.Edges.AppointmentOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryAppointment().All(ctx)
+	}
+	return result, err
 }
 
 func (wod *WorkOrderDefinition) Type(ctx context.Context) (*WorkOrderType, error) {

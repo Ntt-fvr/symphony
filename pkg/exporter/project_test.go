@@ -49,6 +49,7 @@ func prepareProjectData(ctx context.Context, t *testing.T) projectTestType {
 		SaveX(ctx)
 
 	creator1 := viewer.MustGetOrCreateUser(ctx, "tester@example.com", viewertest.DefaultRole)
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 
 	client.PropertyType.Create().
 		SetName(propStr).
@@ -156,6 +157,7 @@ func prepareProjectData(ctx context.Context, t *testing.T) projectTestType {
 		SetPriority(workorder.PriorityMedium).
 		SetOwner(creator2).
 		SetCreationDate(time.Now()).
+		SetOrganization(organization).
 		SaveX(ctx)
 
 	return projectTestType{

@@ -1,0 +1,10 @@
+mutation editCounter($input: EditCounterInput!) {
+  editCounter(input: $input) {
+    id
+    name
+    externalID
+    networkManagerSystem
+    vendorFk{id}
+    counterFamily{id}
+  }
+}

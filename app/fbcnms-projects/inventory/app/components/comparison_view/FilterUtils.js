@@ -186,6 +186,7 @@ export function getPossibleProperties(
         name: prop.name,
         index: index,
         stringValue: prop.stringValue,
+        isListable: prop.isListable,
       })),
     prop => prop.name + prop.type,
   );
@@ -195,6 +196,12 @@ export function getPossibleProperties(
   }
 
   return supportedProperties;
+}
+
+export function getListableProperties(
+  data: ?propertiesHookPossiblePropertiesQueryResponse,
+): Array<PropertyType> {
+  return getPossibleProperties(data).filter(property => property.isListable);
 }
 
 export const configToFilterQuery = (

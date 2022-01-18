@@ -1,0 +1,29 @@
+query thresholds(
+$after: Cursor
+$first: Int
+$before: Cursor
+$last: Int
+$orderBy: ThresholdOrder
+$filterBy: [ThresholdFilterInput!]
+){
+thresholds(after: $after, first: $first, before: $before, last: $last, orderBy: $orderBy, filterBy: $filterBy){
+totalCount
+edges{
+node{
+id
+name
+description
+status
+kpi{id}
+
+}
+      cursor
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}

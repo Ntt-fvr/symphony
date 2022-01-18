@@ -36,10 +36,10 @@ const (
 	EdgeLocations = "locations"
 	// EdgePropertyTypes holds the string denoting the property_types edge name in mutations.
 	EdgePropertyTypes = "property_types"
-	// EdgeFileCategoryType holds the string denoting the file_category_type edge name in mutations.
-	EdgeFileCategoryType = "file_category_type"
 	// EdgeSurveyTemplateCategories holds the string denoting the survey_template_categories edge name in mutations.
 	EdgeSurveyTemplateCategories = "survey_template_categories"
+	// EdgeDocumentCategory holds the string denoting the document_category edge name in mutations.
+	EdgeDocumentCategory = "document_category"
 
 	// Table holds the table name of the locationtype in the database.
 	Table = "location_types"
@@ -57,13 +57,6 @@ const (
 	PropertyTypesInverseTable = "property_types"
 	// PropertyTypesColumn is the table column denoting the property_types relation/edge.
 	PropertyTypesColumn = "location_type_property_types"
-	// FileCategoryTypeTable is the table the holds the file_category_type relation/edge.
-	FileCategoryTypeTable = "file_category_types"
-	// FileCategoryTypeInverseTable is the table name for the FileCategoryType entity.
-	// It exists in this package in order to avoid circular dependency with the "filecategorytype" package.
-	FileCategoryTypeInverseTable = "file_category_types"
-	// FileCategoryTypeColumn is the table column denoting the file_category_type relation/edge.
-	FileCategoryTypeColumn = "location_type_file_category_type"
 	// SurveyTemplateCategoriesTable is the table the holds the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesTable = "survey_template_categories"
 	// SurveyTemplateCategoriesInverseTable is the table name for the SurveyTemplateCategory entity.
@@ -71,6 +64,13 @@ const (
 	SurveyTemplateCategoriesInverseTable = "survey_template_categories"
 	// SurveyTemplateCategoriesColumn is the table column denoting the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesColumn = "location_type_survey_template_categories"
+	// DocumentCategoryTable is the table the holds the document_category relation/edge.
+	DocumentCategoryTable = "document_categories"
+	// DocumentCategoryInverseTable is the table name for the DocumentCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "documentcategory" package.
+	DocumentCategoryInverseTable = "document_categories"
+	// DocumentCategoryColumn is the table column denoting the document_category relation/edge.
+	DocumentCategoryColumn = "location_type_document_category"
 )
 
 // Columns holds all SQL columns for locationtype fields.

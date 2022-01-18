@@ -35,6 +35,12 @@ export type WorkOrderDetails_workOrder = {|
   +id: string,
   +name: string,
   +description: ?string,
+  +scheduledAt: ?any,
+  +organizationFk: ?{|
+    +id: string,
+    +name: string,
+    +description: string,
+  |},
   +workOrderType: {|
     +name: string,
     +id: string,
@@ -48,6 +54,7 @@ export type WorkOrderDetails_workOrder = {|
     +latitude: number,
     +longitude: number,
     +locationType: {|
+      +id: string,
       +mapType: ?string,
       +mapZoomLevel: ?number,
     |},
@@ -369,6 +376,27 @@ return {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "scheduledAt",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "Organization",
+      "kind": "LinkedField",
+      "name": "organizationFk",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        (v1/*: any*/),
+        (v2/*: any*/)
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "WorkOrderType",
       "kind": "LinkedField",
       "name": "workOrderType",
@@ -417,6 +445,7 @@ return {
           "name": "locationType",
           "plural": false,
           "selections": [
+            (v0/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -1015,6 +1044,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0bd60b08ca0a8e1b232c494f4d55df88';
+(node/*: any*/).hash = '05eebced3564947e9c1dbe9b5b9dcd0a';
 
 module.exports = node;

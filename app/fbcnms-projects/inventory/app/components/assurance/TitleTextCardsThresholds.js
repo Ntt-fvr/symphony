@@ -10,92 +10,85 @@
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
-import {DARK} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0 9px 16px',
+    flexGrow: '1',
+    padding: '0 4rem 0.5rem 1rem',
   },
-  title: {
-    color: '#3984FF',
+  nameThreshold: {
+    paddingLeft: '1.3rem',
   },
-  globalCenter: {
-    display: 'flex',
-    justifyContent: 'center',
+  editButton: {
+    paddingLeft: '1rem',
   },
-  Enable: {
-    paddingRight: '1rem',
+  status: {
+    flexWrap: 'nowrap',
   },
-  id: {
-    justifyContent: 'flex-start',
-    paddingLeft: '70px',
-  },
-  associatedKPI: {
-    justifyContent: 'flex-start',
-    paddingLeft: '34px',
-  },
-  delete: {
-    justifyContent: 'flex-end',
-  },
-  edit: {
-    paddingLeft: '25px',
+  actions: {
+    flexWrap: 'nowrap',
   },
 }));
 
 function TitleTextCardsThresholds() {
   const classes = useStyles();
   return (
-    <Grid container className={classes.root}>
-      <Grid xs={2}>
+    <Grid
+      container
+      xs={12}
+      item
+      justify="center"
+      alignItems="center"
+      className={classes.root}>
+      <Grid container className={classes.status} item xs={2} md={3}>
         <Text
-          className={classNames(classes.title, classes.Enable)}
-          variant="subtitle2">
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Enable
         </Text>
 
-        <Text className={classNames(classes.title)} variant="subtitle2">
+        <Text
+          className={classes.nameThreshold}
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Threshold name
         </Text>
       </Grid>
-      <Grid xs={3}>
-        <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.id,
-          )}
-          variant="subtitle2">
+      <Grid item xs={2} md={3}>
+        <Text color="primary" variant="subtitle2" weight={'medium'}>
           ID
         </Text>
       </Grid>
-      <Grid xs={5}>
+      <Grid item xs={6} md={5}>
         <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.associatedKPI,
-          )}
-          variant="subtitle2">
+          useEllipsis={true}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Associated KPI
         </Text>
       </Grid>
-      <Grid xs={1}>
-        <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.delete,
-          )}
-          variant="subtitle2">
+      <Grid
+        container
+        item
+        alignItems="center"
+        justify="flex-end"
+        className={classes.actions}
+        xs={2}
+        md={1}>
+        <Text color="primary" variant="subtitle2" weight={'medium'}>
           Delete
         </Text>
-      </Grid>
-      <Grid xs={1}>
         <Text
-          className={classNames(classes.title, classes.edit)}
-          variant="subtitle2">
+          className={classes.editButton}
+          color="primary"
+          variant="subtitle2"
+          weight={'medium'}>
           Edit
         </Text>
       </Grid>

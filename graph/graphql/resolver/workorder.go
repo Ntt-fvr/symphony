@@ -94,6 +94,18 @@ func (r workOrderResolver) Files(ctx context.Context, obj *ent.WorkOrder) ([]*en
 	return r.fileOfType(ctx, obj, file.TypeFile)
 }
 
+func (workOrderResolver) ScheduledAt(ctx context.Context, workOrder *ent.WorkOrder) (*time.Time, error) {
+	return workOrder.ScheduledAt, nil
+}
+
+func (workOrderResolver) Appointments(ctx context.Context, workOrder *ent.WorkOrder) ([]*ent.Appointment, error) {
+	appointments, err := workOrder.QueryAppointment().All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return appointments, nil
+}
+
 func (r mutationResolver) AddWorkOrder(
 	ctx context.Context,
 	input models.AddWorkOrderInput,
@@ -147,7 +159,10 @@ func (r mutationResolver) internalAddWorkOrder(
 		SetCreationDate(time.Now()).
 		SetNillableIndex(input.Index).
 		SetNillableAssigneeID(input.AssigneeID).
-		SetNillableOrganizationID(input.OrganizationFk)
+		SetNillableOrganizationID(input.OrganizationFk).
+		SetNillableDuration(input.Duration).
+		SetNillableDueDate(input.DueDate).
+		SetNillableScheduledAt(input.ScheduledAt)
 	if input.OwnerID != nil {
 		mutation = mutation.SetOwnerID(*input.OwnerID)
 	} else {
@@ -209,7 +224,10 @@ func (r mutationResolver) EditWorkOrder(
 		SetNillableIndex(input.Index).
 		SetNillableStatus(input.Status).
 		SetNillablePriority(input.Priority).
-		SetNillableOrganizationID(input.OrganizationFk)
+		SetNillableOrganizationID(input.OrganizationFk).
+		SetNillableDuration(input.Duration).
+		SetNillableDueDate(input.DueDate).
+		SetNillableScheduledAt(input.ScheduledAt)
 
 	if input.AssigneeID != nil {
 		mutation.SetAssigneeID(*input.AssigneeID)
@@ -570,6 +588,7 @@ func (r mutationResolver) AddWorkOrderType(
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
 		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder).
+		SetNillableDuration(input.Duration).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -613,7 +632,8 @@ func (r mutationResolver) EditWorkOrderType(
 		UpdateOneID(input.ID).
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
-		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder)
+		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder).
+		SetNillableDuration(input.Duration)
 	currentCategories, err := wot.QueryCheckListCategoryDefinitions().IDs(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "querying checklist category definitions: id=%q", wot.ID)

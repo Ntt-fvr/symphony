@@ -1,0 +1,3 @@
+mutation removeDomain($id: ID!) {
+  removeDomain(id: $id)
+}

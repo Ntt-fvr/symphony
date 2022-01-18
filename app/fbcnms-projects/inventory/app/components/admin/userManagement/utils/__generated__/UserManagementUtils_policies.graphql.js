@@ -31,6 +31,25 @@ export type UserManagementUtils_policies = {|
     +read: {|
       +isAllowed: PermissionValue
     |},
+    +documentCategory: {|
+      +locationTypeID: ?number,
+      +read: ?{|
+        +isAllowed: PermissionValue,
+        +documentCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +create: ?{|
+        +isAllowed: PermissionValue,
+        +documentCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +update: ?{|
+        +isAllowed: PermissionValue,
+        +documentCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +delete: ?{|
+        +isAllowed: PermissionValue,
+        +documentCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+    |},
     +location: {|
       +create: {|
         +isAllowed: PermissionValue
@@ -104,6 +123,7 @@ export type UserManagementUtils_policies = {|
       +isAllowed: PermissionValue,
       +projectTypeIds: ?$ReadOnlyArray<string>,
       +workOrderTypeIds: ?$ReadOnlyArray<string>,
+      +organizationIds: ?$ReadOnlyArray<string>,
     |},
     +templates: {|
       +create: {|
@@ -151,6 +171,11 @@ export type UserManagementUtils_policies = {|
       +email: string,
       +status: UserStatus,
       +role: UserRole,
+      +organizationFk: ?{|
+        +id: string,
+        +name: string,
+        +description: string,
+      |},
     |}>,
     +policies: $ReadOnlyArray<{|
       +id: string,
@@ -161,6 +186,25 @@ export type UserManagementUtils_policies = {|
         +__typename: "InventoryPolicy",
         +read: {|
           +isAllowed: PermissionValue
+        |},
+        +documentCategory: {|
+          +locationTypeID: ?number,
+          +read: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +create: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +update: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +delete: ?{|
+            +isAllowed: PermissionValue,
+            +documentCategoryIds: ?$ReadOnlyArray<string>,
+          |},
         |},
         +location: {|
           +create: {|
@@ -235,6 +279,7 @@ export type UserManagementUtils_policies = {|
           +isAllowed: PermissionValue,
           +projectTypeIds: ?$ReadOnlyArray<string>,
           +workOrderTypeIds: ?$ReadOnlyArray<string>,
+          +organizationIds: ?$ReadOnlyArray<string>,
         |},
         +templates: {|
           +create: {|
@@ -322,6 +367,16 @@ v5 = [
   (v4/*: any*/)
 ],
 v6 = [
+  (v4/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "documentCategoryIds",
+    "storageKey": null
+  }
+],
+v7 = [
   {
     "alias": null,
     "args": null,
@@ -353,7 +408,7 @@ v6 = [
     "storageKey": null
   }
 ],
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": null,
@@ -379,6 +434,64 @@ v7 = {
           "name": "read",
           "plural": false,
           "selections": (v5/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "DocumentCategoryCUD",
+          "kind": "LinkedField",
+          "name": "documentCategory",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "locationTypeID",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "DocumentCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "read",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "DocumentCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "create",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "DocumentCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "update",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "DocumentCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "delete",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         },
         {
@@ -438,7 +551,7 @@ v7 = {
           "kind": "LinkedField",
           "name": "equipment",
           "plural": false,
-          "selections": (v6/*: any*/),
+          "selections": (v7/*: any*/),
           "storageKey": null
         },
         {
@@ -448,7 +561,7 @@ v7 = {
           "kind": "LinkedField",
           "name": "equipmentType",
           "plural": false,
-          "selections": (v6/*: any*/),
+          "selections": (v7/*: any*/),
           "storageKey": null
         },
         {
@@ -458,7 +571,7 @@ v7 = {
           "kind": "LinkedField",
           "name": "locationType",
           "plural": false,
-          "selections": (v6/*: any*/),
+          "selections": (v7/*: any*/),
           "storageKey": null
         },
         {
@@ -468,7 +581,7 @@ v7 = {
           "kind": "LinkedField",
           "name": "portType",
           "plural": false,
-          "selections": (v6/*: any*/),
+          "selections": (v7/*: any*/),
           "storageKey": null
         },
         {
@@ -478,7 +591,7 @@ v7 = {
           "kind": "LinkedField",
           "name": "serviceType",
           "plural": false,
-          "selections": (v6/*: any*/),
+          "selections": (v7/*: any*/),
           "storageKey": null
         }
       ],
@@ -510,6 +623,13 @@ v7 = {
               "kind": "ScalarField",
               "name": "workOrderTypeIds",
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "organizationIds",
+              "storageKey": null
             }
           ],
           "storageKey": null
@@ -521,7 +641,7 @@ v7 = {
           "kind": "LinkedField",
           "name": "templates",
           "plural": false,
-          "selections": (v6/*: any*/),
+          "selections": (v7/*: any*/),
           "storageKey": null
         },
         {
@@ -592,7 +712,7 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -609,7 +729,7 @@ return {
     (v1/*: any*/),
     (v2/*: any*/),
     (v3/*: any*/),
-    (v7/*: any*/),
+    (v8/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -621,7 +741,7 @@ return {
         (v0/*: any*/),
         (v1/*: any*/),
         (v2/*: any*/),
-        (v8/*: any*/),
+        (v9/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -659,12 +779,26 @@ return {
               "name": "email",
               "storageKey": null
             },
-            (v8/*: any*/),
+            (v9/*: any*/),
             {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
               "name": "role",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "Organization",
+              "kind": "LinkedField",
+              "name": "organizationFk",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                (v1/*: any*/),
+                (v2/*: any*/)
+              ],
               "storageKey": null
             }
           ],
@@ -682,7 +816,7 @@ return {
             (v1/*: any*/),
             (v2/*: any*/),
             (v3/*: any*/),
-            (v7/*: any*/)
+            (v8/*: any*/)
           ],
           "storageKey": null
         }

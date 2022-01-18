@@ -1,0 +1,6 @@
+mutation editEventSeverity($input: EditEventSeverityInput!) {
+  editEventSeverity(input: $input) {
+    id
+    name
+  }
+}

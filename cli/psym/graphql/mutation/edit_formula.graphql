@@ -1,0 +1,10 @@
+mutation editFormula($input: EditFormulaInput!) {
+  editFormula(input: $input) {
+    id
+    textFormula
+    techFk{id}
+    kpiFk{id}
+    networkTypeFk{id}
+    status
+  }
+}

@@ -1,0 +1,5 @@
+mutation removeKpiCategory(
+  $id: ID!
+) {
+  removeKpiCategory(id: $id) 
+}

@@ -1,0 +1,3 @@
+mutation removeKqiTemporalFrequency($id: ID!) {
+  removeKqiTemporalFrequency(id: $id)
+}

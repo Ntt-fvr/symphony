@@ -1,0 +1,6 @@
+mutation addKqiCategory($input: AddKqiCategoryInput!) {
+  addKqiCategory(input: $input) {
+    id
+    name
+  }
+}

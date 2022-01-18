@@ -5,6 +5,9 @@
 
 from enum import Enum
 
+from psym.common.data_class import RecommendationSources, recommendations
+
+
 
 class Entity(Enum):
     Location = "Location"
@@ -24,7 +27,34 @@ class Entity(Enum):
     PropertyType = "PropertyType"
     Property = "Property"
     User = "User"
+    recommendations="recommendations"
+    RecomendationSources="RecomendationSources"
+    RecomendationsCategory="RecomendationsCategory"
     WorkOrder = "WorkOrder"
     WorkOrderType = "WorkOrderType"
     ProjectType = "ProjectType"
     Project = "Project"
+    KqiCategory = "KqiCategory"
+    KqiPerspective = "KqiPerspective"
+    KqiTemporalFrecuency = "KqiTemporalFrecuency"
+    KqiSource = "KqiSource"
+    Kqi = "Kqi"
+    KpiCategory = "KpiCategory"
+    domain = "domain"
+    tech = "tech"
+    vendor = "vendor"
+    NetworkType = "NetworkType"
+    CounterFamiliy = "CounterFamiliy"
+    Kpi = "Kpi"
+    formula = "formula"
+    counter = "counter"
+    counterFormula = "counterFormula"
+    ruleType= "ruleType"
+    eventSeverity = "eventSeverity"
+    comparator = "comparator"
+    threshold = "threshold"
+    rule= "rule"
+    alarmStatus="alarmStatus"
+    organization="organization"
+    ruleLimit="ruleLimit"
+

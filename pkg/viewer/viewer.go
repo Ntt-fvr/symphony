@@ -14,6 +14,7 @@ import (
 	"sync/atomic"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -346,9 +347,11 @@ func GetOrCreateUser(ctx context.Context, authID string, role user.Role) (*ent.U
 		Only(ctx); err == nil || !ent.IsNotFound(err) {
 		return u, err
 	}
+	organization := GetOrCreateOrganization(ctx, "MyOrganization")
 	u, err := client.Create().
 		SetAuthID(authID).
 		SetRole(role).
+		SetOrganization(organization).
 		Save(ctx)
 	if ent.IsConstraintError(err) {
 		u, err = client.Query().
@@ -356,6 +359,27 @@ func GetOrCreateUser(ctx context.Context, authID string, role user.Role) (*ent.U
 			Only(ctx)
 	}
 	return u, err
+}
+
+func GetOrCreateOrganization(ctx context.Context, nameOrganization string) *ent.Organization {
+	client := ent.FromContext(ctx).Organization
+	if u, err := client.Query().
+		Where(organization.Name(nameOrganization)).
+		Only(ctx); err == nil || !ent.IsNotFound(err) {
+		return u
+	}
+
+	u, err := client.Create().
+		SetName(nameOrganization).
+		SetDescription(nameOrganization).
+		Save(ctx)
+
+	if ent.IsConstraintError(err) {
+		u, _ = client.Query().
+			Where(organization.Name(nameOrganization)).
+			Only(ctx)
+	}
+	return u
 }
 
 // MustGetOrCreateUser creates or returns existing user ent with given authID and role

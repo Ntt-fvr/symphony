@@ -24,3 +24,4 @@ class AddImageInput(DataClassJsonMixin):
     contentType: str
     category: Optional[str] = None
     annotation: Optional[str] = None
+    documentCategoryId: Optional[str] = None

@@ -18,15 +18,14 @@ import Card from '@symphony/design-system/components/Card/Card';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
+import symphony from '@symphony/design-system/theme/symphony';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-
-import symphony from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -35,34 +34,33 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     alignItems: 'center',
+    '&.root': {
+      padding: '0px',
+    },
   },
   insideContainer: {
-    padding: '9px 15px',
+    padding: '11px 15px',
   },
   view: {
-    marginLeft: '1rem',
-  },
-  editIcon: {
-    marginLeft: '1rem',
+    display: 'flex',
+    alignItems: 'center',
   },
   deleteIcon: {
-    margin: '0px',
+    marginRight: '10px',
     color: DARK.D300,
   },
   inline: {
     display: 'flex',
     alignItems: 'center',
-    flexGrow: 1,
   },
-  serviceId: {
-    paddingLeft: '4rem',
-  },
-  associatedService: {
-    paddingRight: '4rem',
+  viewDetails: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   iconContainer: {
     borderRadius: '50%',
-    marginRight: '1.5rem',
+    marginRight: '10px',
     backgroundColor: symphony.palette.D50,
     color: symphony.palette.D500,
     width: '48px',
@@ -73,80 +71,64 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     ...symphony.typography.h5,
   },
-  gridEnd: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    flexGrow: 1,
-  },
-  gridInner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexGrow: 1,
-  },
 }));
 
 type Props = $ReadOnly<{|
-  serviceType?: string,
-  serviceTypeRes?: string,
-  serviceId?: string,
-  serviceIdRes?: string,
-  description?: string,
-  descriptionRes?: string,
-  associatedServices?: string,
-  associatedServicesRes?: string,
-  open?: MouseEventHandler,
+  open: MouseEventHandler,
+  Type: string,
+  Id: string,
+  Description: string,
+  AssociatedServices: string,
 |}>;
 
 const ServiceTypeCard = (props: Props) => {
-  const {
-    serviceType,
-    serviceId,
-    description,
-    associatedServices,
-    serviceTypeRes,
-    serviceIdRes,
-    associatedServicesRes,
-    descriptionRes,
-    open,
-  } = props;
+  const {open, Type, Id, Description, AssociatedServices} = props;
 
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Card margins={'none'} className={classes.container}>
+      <Card margins="none" className={classes.container}>
         <Grid container className={classes.insideContainer}>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <div className={classes.inline}>
               <div className={classes.iconContainer}>
                 <LinearScaleIcon />
               </div>
-              <DynamicPropertyTypes name={serviceType} txt={serviceTypeRes} />
+              <Text useEllipsis={true}>
+                <DynamicPropertyTypes name="Service type" txt={Type} />
+              </Text>
             </div>
           </Grid>
-
-          <Grid
-            xs={8}
-            className={classNames(classes.inline, classes.gridInner)}>
-            <DynamicPropertyTypes
-              className={classes.serviceId}
-              name={serviceId}
-              txt={serviceIdRes}
-            />
-            <DynamicPropertyTypes name={description} txt={descriptionRes} />
-            <DynamicPropertyTypes
-              className={classes.associatedService}
-              name={associatedServices}
-              txt={associatedServicesRes}
-            />
+          <Grid item xs={2} sm={3} md={2} className={classes.inline}>
+            <Text useEllipsis={true}>
+              <DynamicPropertyTypes name="Service ID" txt={Id} />
+            </Text>
           </Grid>
-          <Grid xs={2} className={classNames(classes.inline, classes.gridEnd)}>
+          <Hidden only={['sm']}>
+            <Grid item xs={3} className={classes.inline}>
+              <Text useEllipsis={true}>
+                <DynamicPropertyTypes name="Description" txt={Description} />
+              </Text>
+            </Grid>
+          </Hidden>
+
+          <Grid item xs={2} className={classes.inline}>
+            <Text useEllipsis={true}>
+              <DynamicPropertyTypes
+                name="Associated services"
+                txt={AssociatedServices}
+              />
+            </Text>
+          </Grid>
+          <Grid item sm={2} md={1} className={classes.viewDetails}>
             <DeleteOutlinedIcon className={classes.deleteIcon} />
-            <IconButton className={classes.editIcon} icon={EditIcon} />
+            <IconButton icon={EditIcon} />
+          </Grid>
+          <Grid item xs={1} sm={2} md={1} className={classes.viewDetails}>
             <Button variant="text" className={classes.view} onClick={open}>
-              <Text weight={'bold'} color={'primary'}>
-                {'View details'}
+              <Text useEllipsis={true} weight="bold" color="primary">
+                View details
               </Text>
             </Button>
           </Grid>

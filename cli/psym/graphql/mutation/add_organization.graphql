@@ -1,0 +1,7 @@
+mutation addOrganization($input: AddOrganizationInput!) {
+  addOrganization(input: $input) {
+    id
+    name
+    description
+  }
+}

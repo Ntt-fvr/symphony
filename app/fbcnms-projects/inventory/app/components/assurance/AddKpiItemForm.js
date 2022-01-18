@@ -10,7 +10,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
@@ -20,15 +20,99 @@ import AddKpiMutation from '../../mutations/AddKpiMutation';
 // DESIGN SYSTEM //
 import type {AddKpiItemFormQuery} from './__generated__/AddKpiItemFormQuery.graphql';
 
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {MenuItem, Select} from '@material-ui/core';
+import Text from '@symphony/design-system/components/Text';
+import TextField from '@material-ui/core/TextField';
+import symphony from '@symphony/design-system/theme/symphony';
+import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidation} from './common/useValidation';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    padding: '6px 0',
+    margin: '0 0 16px 0',
+    borderRadius: '4px',
+    boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
+  },
+  accordionSummary: {
+    marginLeft: '12px',
+    '& .MuiIconButton-edgeEnd': {
+      marginRight: '-3px',
+    },
+  },
+  formField: {
+    width: '100%',
+    padding: '0 12px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: symphony.palette.D200,
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: symphony.palette.B600,
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '36px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: symphony.palette.B600,
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
+  },
+  inputField: {
+    width: '100%',
+  },
+  selectField: {
+    width: '100%',
+  },
+  addCounter: {
+    margin: '0 0 5px 0',
+    width: '111px',
+    alignSelf: 'flex-end',
+  },
+}));
+
+type Node = {
+  node: {
+    name: string,
+  },
+};
+
+type Props = $ReadOnly<{|
+  isCompleted: void => void,
+  kpiNames?: Array<Node>,
+|}>;
+
+type Kpis = {
+  data: {
+    id: string,
+    name: string,
+    status: boolean,
+    domain: string,
+    description: string,
+    category: string,
+  },
+};
 
 const AddDomainsKpiQuery = graphql`
   query AddKpiItemFormQuery {
@@ -40,74 +124,43 @@ const AddDomainsKpiQuery = graphql`
         }
       }
     }
+    kpiCategories {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(0),
-  },
-  header: {
-    margin: '20px 0 24px 20px',
-  },
-  formField: {
-    margin: '0 20px 22px 20px',
-  },
-  textInput: {
-    minHeight: '36px',
-  },
-  addCounter: {
-    margin: '20px',
-    width: '111px',
-    alignSelf: 'flex-end',
-  },
-  select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    overflow: 'hidden',
-    position: 'relative',
-    boxSizing: 'border-box',
-    minHeight: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
-    backgroundColor: '#FFFFFF',
-  },
-}));
-
-type Node = {
-  node: {
-    name: string,
-  },
-};
-
-type Props = $ReadOnly<{|
-  kpiNames?: Array<Node>,
-|}>;
-
-type Kpis = {
-  data: {
-    id: string,
-    name: string,
-    status: boolean,
-    domain: string,
-    description: string,
-  },
-};
-
 export default function AddKpiItemForm(props: Props) {
-  const {kpiNames} = props;
+  const {kpiNames, isCompleted} = props;
   const classes = useStyles();
 
   const [kpis, setKpis] = useState<Kpis>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
-  const names = kpiNames?.map(item => item.node.name);
+  const [open, setOpen] = useState(true);
+  const names = kpiNames?.map(item => item?.node.name);
 
   const data = useLazyLoadQuery<AddKpiItemFormQuery>(AddDomainsKpiQuery, {});
 
+  const handleDisable = useDisabledButton(kpis.data, names, 5);
+
+  const validationName = useValidation(kpis.data.name, names, 'Kpi');
+
+  // this function is for inputs or selects that accept metod trim()
   function handleChange({target}) {
+    setKpis({
+      data: {
+        ...kpis.data,
+        [target.name]: target.value.trim(),
+      },
+    });
+  }
+  //It worked only for the status select for being a boolean
+  function handleChangeStatus({target}) {
     setKpis({
       data: {
         ...kpis.data,
@@ -119,96 +172,132 @@ export default function AddKpiItemForm(props: Props) {
   function handleClick() {
     const variables: AddKpiMutationVariables = {
       input: {
-        name: kpis.data.name,
+        name: kpis.data.name.trim(),
         status: kpis.data.status,
         domainFk: kpis.data.domain,
-        description: kpis.data.description,
+        description: kpis.data.description.trim(),
+        kpiCategoryFK: kpis.data.category,
       },
     };
     setShowChecking(true);
-    AddKpiMutation(variables);
+    AddKpiMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setKpis({data: {}});
+      },
+    });
   }
+
+  function handleOpen(event) {
+    event.stopPropagation();
+    setOpen(!open);
+  }
+
+  const setReturn = () => {
+    setShowChecking(false);
+  };
 
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
-        data_entry="kpi"
-        card_header="Add Kpi"
-        title="Kpi"
-        text_button="Add new Kpi"
-        names={kpiNames}
+        card_header="Add KPI"
+        title="KPI"
+        text_button="Add new KPI"
+        setReturn={setReturn}
       />
     );
   }
 
   return (
-    <Card className={classes.root}>
-      <CardHeader className={classes.header}>Add KPI</CardHeader>
-      <FormField
-        className={classes.formField}
-        label="Kpi name"
-        hasError={names?.some(item => item === kpis.data.name)}
-        errorText={
-          names?.some(item => item === kpis.data.name)
-            ? 'KPI name existing'
-            : ''
-        }
-        required>
-        <TextInput
-          autoComplete="off"
-          className={classes.textInput}
-          name="name"
-          type="string"
-          onChange={handleChange}
-        />
-      </FormField>
-      <FormField label="Status" className={classes.formField}>
-        <Select
-          className={classes.select}
-          disableUnderline
-          name="status"
-          onChange={handleChange}>
-          <MenuItem value={true}>Enabled</MenuItem>
-          <MenuItem value={false}>Disabled</MenuItem>
-        </Select>
-      </FormField>
-      <FormField label="Domain" className={classes.formField}>
-        <Select
-          className={classes.select}
-          disableUnderline
-          name="domain"
-          onChange={handleChange}>
-          {data.domains.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormField>
-      <FormField className={classes.formField} label="Description" required>
-        <TextInput
-          autoComplete="off"
-          className={classes.textInput}
-          name="description"
-          type="multiline"
-          rows={4}
-          onChange={handleChange}
-        />
-      </FormField>
-      <FormField>
-        <Button
-          className={classes.addCounter}
-          onClick={handleClick}
-          disabled={
-            !(
-              Object.values(kpis.data).length === 4 &&
-              !Object.values(kpis.data).some(item => item === '') &&
-              !names?.some(item => item === kpis.data.name)
-            )
-          }>
+    <Accordion className={classes.root} expanded={open} onChange={handleOpen}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        className={classes.accordionSummary}
+        id="panel1a-header">
+        <Text variant="h6">
           Add KPI
-        </Button>
-      </FormField>
-    </Card>
+        </Text>
+      </AccordionSummary>
+      <AccordionDetails>
+        <form className={classes.formField} autoComplete="off">
+          <TextField
+            {...validationName}
+            required
+            className={classes.inputField}
+            id="kpi-name"
+            label="Kpi name"
+            variant="outlined"
+            name="name"
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            id="outlined-select-status"
+            select
+            className={classes.selectField}
+            label="Status"
+            onChange={handleChangeStatus}
+            defaultValue=""
+            name="status"
+            variant="outlined">
+            <MenuItem value={true}>Enabled</MenuItem>
+            <MenuItem value={false}>Disabled</MenuItem>
+          </TextField>
+          <TextField
+            required
+            id="outlined-select-domain"
+            select
+            className={classes.selectField}
+            label="Domain"
+            onChange={handleChange}
+            defaultValue=""
+            name="domain"
+            variant="outlined">
+            {data?.domains.edges.map((item, index) => (
+              <MenuItem key={index} value={item.node?.id}>
+                {item.node?.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            required
+            id="outlined-select-category"
+            select
+            className={classes.selectField}
+            label="Category"
+            onChange={handleChange}
+            defaultValue=""
+            name="category"
+            variant="outlined">
+            {data?.kpiCategories.edges.map((item, index) => (
+              <MenuItem key={index} value={item.node?.id}>
+                {item.node?.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            multiline
+            required
+            className={classes.inputField}
+            id="description"
+            label="Description"
+            variant="outlined"
+            name="description"
+            rows={10}
+            inputProps={{maxLength: 120}}
+            onChange={handleChange}
+          />
+          <FormField>
+            <Button
+              className={classes.addCounter}
+              onClick={handleClick}
+              disabled={handleDisable}>
+              Add KPI
+            </Button>
+          </FormField>
+        </form>
+      </AccordionDetails>
+    </Accordion>
   );
 }

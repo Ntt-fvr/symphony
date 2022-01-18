@@ -30,6 +30,12 @@ export type LocationDocumentsCard_location = {|
   +hyperlinks: $ReadOnlyArray<{|
     +$fragmentRefs: EntityDocumentsTable_hyperlinks$ref
   |}>,
+  +locationType: {|
+    +documentCategories: $ReadOnlyArray<?{|
+      +id: string,
+      +name: ?string,
+    |}>
+  |},
   +$refType: LocationDocumentsCard_location$ref,
 |};
 export type LocationDocumentsCard_location$data = LocationDocumentsCard_location;
@@ -42,7 +48,14 @@ export type LocationDocumentsCard_location$key = {
 
 
 const node/*: ReaderFragment*/ = (function(){
-var v0 = [
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = [
   {
     "args": null,
     "kind": "FragmentSpread",
@@ -55,13 +68,7 @@ return {
   "metadata": null,
   "name": "LocationDocumentsCard_location",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -69,7 +76,7 @@ return {
       "kind": "LinkedField",
       "name": "images",
       "plural": true,
-      "selections": (v0/*: any*/),
+      "selections": (v1/*: any*/),
       "storageKey": null
     },
     {
@@ -79,7 +86,7 @@ return {
       "kind": "LinkedField",
       "name": "files",
       "plural": true,
-      "selections": (v0/*: any*/),
+      "selections": (v1/*: any*/),
       "storageKey": null
     },
     {
@@ -97,6 +104,36 @@ return {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "LocationType",
+      "kind": "LinkedField",
+      "name": "locationType",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "DocumentCategory",
+          "kind": "LinkedField",
+          "name": "documentCategories",
+          "plural": true,
+          "selections": [
+            (v0/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "name",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "Location",
@@ -104,6 +141,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8c1e05fd5d50af01cf1f5b5f42ac1d27';
+(node/*: any*/).hash = '133ac192485dd4df8ddabc306e27ef2c';
 
 module.exports = node;

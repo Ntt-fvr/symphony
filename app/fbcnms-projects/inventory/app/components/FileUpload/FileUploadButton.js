@@ -100,7 +100,6 @@ const FileUploadButton = ({
         onChange={async e => await onFilesChanged(e)}
         ref={inputRef}
         multiple={multiple}
-        fileTypes={fileTypes}
       />
       {children(buttonClick)}
     </FormAction>

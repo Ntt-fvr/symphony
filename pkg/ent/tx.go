@@ -22,6 +22,8 @@ type Tx struct {
 	AlarmFilter *AlarmFilterClient
 	// AlarmStatus is the client for interacting with the AlarmStatus builders.
 	AlarmStatus *AlarmStatusClient
+	// Appointment is the client for interacting with the Appointment builders.
+	Appointment *AppointmentClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -46,6 +48,8 @@ type Tx struct {
 	CounterFormula *CounterFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
+	// DocumentCategory is the client for interacting with the DocumentCategory builders.
+	DocumentCategory *DocumentCategoryClient
 	// Domain is the client for interacting with the Domain builders.
 	Domain *DomainClient
 	// EntryPoint is the client for interacting with the EntryPoint builders.
@@ -76,8 +80,6 @@ type Tx struct {
 	Feature *FeatureClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
-	// FileCategoryType is the client for interacting with the FileCategoryType builders.
-	FileCategoryType *FileCategoryTypeClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
 	FloorPlan *FloorPlanClient
 	// FloorPlanReferencePoint is the client for interacting with the FloorPlanReferencePoint builders.
@@ -98,6 +100,8 @@ type Tx struct {
 	Hyperlink *HyperlinkClient
 	// Kpi is the client for interacting with the Kpi builders.
 	Kpi *KpiClient
+	// KpiCategory is the client for interacting with the KpiCategory builders.
+	KpiCategory *KpiCategoryClient
 	// Kqi is the client for interacting with the Kqi builders.
 	Kqi *KqiClient
 	// KqiCategory is the client for interacting with the KqiCategory builders.
@@ -118,6 +122,8 @@ type Tx struct {
 	Location *LocationClient
 	// LocationType is the client for interacting with the LocationType builders.
 	LocationType *LocationTypeClient
+	// NetworkType is the client for interacting with the NetworkType builders.
+	NetworkType *NetworkTypeClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
@@ -324,6 +330,7 @@ func (tx *Tx) init() {
 	tx.Activity = NewActivityClient(tx.config)
 	tx.AlarmFilter = NewAlarmFilterClient(tx.config)
 	tx.AlarmStatus = NewAlarmStatusClient(tx.config)
+	tx.Appointment = NewAppointmentClient(tx.config)
 	tx.Block = NewBlockClient(tx.config)
 	tx.BlockInstance = NewBlockInstanceClient(tx.config)
 	tx.CheckListCategory = NewCheckListCategoryClient(tx.config)
@@ -336,6 +343,7 @@ func (tx *Tx) init() {
 	tx.CounterFamily = NewCounterFamilyClient(tx.config)
 	tx.CounterFormula = NewCounterFormulaClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
+	tx.DocumentCategory = NewDocumentCategoryClient(tx.config)
 	tx.Domain = NewDomainClient(tx.config)
 	tx.EntryPoint = NewEntryPointClient(tx.config)
 	tx.Equipment = NewEquipmentClient(tx.config)
@@ -351,7 +359,6 @@ func (tx *Tx) init() {
 	tx.ExportTask = NewExportTaskClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)
 	tx.File = NewFileClient(tx.config)
-	tx.FileCategoryType = NewFileCategoryTypeClient(tx.config)
 	tx.FloorPlan = NewFloorPlanClient(tx.config)
 	tx.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(tx.config)
 	tx.FloorPlanScale = NewFloorPlanScaleClient(tx.config)
@@ -362,6 +369,7 @@ func (tx *Tx) init() {
 	tx.Formula = NewFormulaClient(tx.config)
 	tx.Hyperlink = NewHyperlinkClient(tx.config)
 	tx.Kpi = NewKpiClient(tx.config)
+	tx.KpiCategory = NewKpiCategoryClient(tx.config)
 	tx.Kqi = NewKqiClient(tx.config)
 	tx.KqiCategory = NewKqiCategoryClient(tx.config)
 	tx.KqiComparator = NewKqiComparatorClient(tx.config)
@@ -372,6 +380,7 @@ func (tx *Tx) init() {
 	tx.Link = NewLinkClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)
 	tx.LocationType = NewLocationTypeClient(tx.config)
+	tx.NetworkType = NewNetworkTypeClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.PermissionsPolicy = NewPermissionsPolicyClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)

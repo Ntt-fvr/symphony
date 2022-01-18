@@ -1,0 +1,6 @@
+mutation editRecommendationsCategory($input: EditRecommendationsCategoryInput!) {
+  editRecommendationsCategory(input: $input) {
+    id
+    name
+  }
+}

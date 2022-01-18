@@ -34,6 +34,9 @@ func (Kpi) Edges() []ent.Edge {
 		edge.From("domain", Domain.Type).
 			Ref("kpidomain").
 			Unique(),
+		edge.From("KpiCategory", KpiCategory.Type).
+			Ref("kpicategory").
+			Unique(),
 		edge.To("formulakpi", Formula.Type).
 			Annotations(entgql.MapsTo("formula")),
 		edge.To("thresholdkpi", Threshold.Type).

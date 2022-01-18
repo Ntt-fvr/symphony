@@ -402,6 +402,34 @@ func StatusNEQ(v bool) predicate.Formula {
 	})
 }
 
+// HasNetworkType applies the HasEdge predicate on the "networkType" edge.
+func HasNetworkType() predicate.Formula {
+	return predicate.Formula(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NetworkTypeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, NetworkTypeTable, NetworkTypeColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNetworkTypeWith applies the HasEdge predicate on the "networkType" edge with a given conditions (other predicates).
+func HasNetworkTypeWith(preds ...predicate.NetworkType) predicate.Formula {
+	return predicate.Formula(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NetworkTypeInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, NetworkTypeTable, NetworkTypeColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasTech applies the HasEdge predicate on the "tech" edge.
 func HasTech() predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {

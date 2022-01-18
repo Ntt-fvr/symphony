@@ -3,7 +3,7 @@
 # license that can be found in the LICENSE file.
 
 # Base alpine golang image
-FROM golang:1.15-alpine
+FROM golang:1.17.5-alpine
 
 # Install build tools
 RUN apk add --no-cache git gcc musl-dev

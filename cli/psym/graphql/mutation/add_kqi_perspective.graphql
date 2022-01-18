@@ -1,0 +1,6 @@
+mutation addKqiPerspective($input: AddKqiPerspectiveInput!) {
+  addKqiPerspective(input: $input) {
+    id
+    name
+  }
+}

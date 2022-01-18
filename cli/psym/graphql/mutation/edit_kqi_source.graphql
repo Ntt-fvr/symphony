@@ -1,0 +1,6 @@
+mutation editKqiSource($input: EditKqiSourceInput!) {
+  editKqiSource(input: $input) {
+    id
+    name
+  }
+}

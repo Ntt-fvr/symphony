@@ -10,6 +10,8 @@
 
 import type {ExpressRequest, ExpressResponse, NextFunction} from 'express';
 import type {FBCNMSRequest} from '@fbcnms/auth/access';
+
+// eslint-disable-next-line import/no-unresolved
 import type {FeatureID} from '@fbcnms/types/features';
 
 export type RequestInfo = {
@@ -52,6 +54,7 @@ export type FeatureConfig = {
   publicAccess?: boolean,
 };
 
+// eslint-disable-next-line no-undef
 const {FeatureFlag} = require('@fbcnms/sequelize-models');
 
 export const arrayConfigs = [
@@ -245,6 +248,21 @@ export const arrayConfigs = [
     id: 'projects_column_selector',
     title: 'Projects Column Selector',
     enabledByDefault: false,
+  },
+  {
+    id: 'scheduling_filter_dates',
+    title: 'Scheduling',
+    enabledByDefault: false,
+  },
+  {
+    id: 'multicontractor',
+    title: 'Organizations',
+    enabledByDefault: false,
+  },
+  {
+    id: 'equipment_&_ports_module',
+    title: 'Enable Equipment & Ports',
+    enabledByDefault: true,
   },
 ];
 

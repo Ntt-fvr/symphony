@@ -9,10 +9,12 @@ from typing import Any, AsyncGenerator, Dict, List, Generator, Optional
 
 from dataclasses_json import DataClassJsonMixin, config
 
-from ..input.variable_value import VariableValue
+from ..input.variable_value_input import VariableValueInput
 
 
 @dataclass(frozen=True)
 class StartFlowInput(DataClassJsonMixin):
     flowID: str
-    params: List[VariableValue]
+    bssCode: str
+    startDate: datetime = _field(metadata=config(encoder=custom_scalars["Time"].encoder, decoder=custom_scalars["Time"].decoder, mm_field=custom_scalars["Time"].mm_field))
+    params: List[VariableValueInput]

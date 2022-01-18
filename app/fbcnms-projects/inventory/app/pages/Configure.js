@@ -19,6 +19,7 @@ import React, {useContext, useEffect, useMemo, useState} from 'react';
 import ServiceTypes from '../components/configure/ServiceTypes';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
@@ -61,15 +62,20 @@ export default function Configure() {
   const location = useLocation();
   const classes = useStyles();
   const servicesEnabled = useContext(AppContext).isFeatureEnabled('services');
+  const equipmentPortsFlag = useFeatureFlag('equipment_&_ports_module');
   const tabBars: Array<RouteTab> = useMemo(
     () => [
-      {
-        id: 'equipment_types',
-        tab: {
-          label: fbt('EQUIPMENT', ''),
-        },
-        path: 'equipment_types',
-      },
+      ...(equipmentPortsFlag
+        ? [
+            {
+              id: 'equipment_types',
+              tab: {
+                label: fbt('EQUIPMENT', ''),
+              },
+              path: 'equipment_types',
+            },
+          ]
+        : []),
       {
         id: 'location_types',
         tab: {
@@ -77,13 +83,17 @@ export default function Configure() {
         },
         path: 'location_types',
       },
-      {
-        id: 'port_types',
-        tab: {
-          label: fbt('PORTS', ''),
-        },
-        path: 'port_types',
-      },
+      ...(equipmentPortsFlag
+        ? [
+            {
+              id: 'port_types',
+              tab: {
+                label: fbt('PORTS', ''),
+              },
+              path: 'port_types',
+            },
+          ]
+        : []),
       ...(servicesEnabled
         ? [
             {

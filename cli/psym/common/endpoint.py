@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-SYMPHONY_URI = "https://{}.thesymphony.cloud"
+SYMPHONY_URI = "https://{}"
 LOCALHOST_SERVER = "localtest.me"
 LOCALHOST_SYMPHONY = f"https://{{}}.{LOCALHOST_SERVER}"
 SYMPHONY_GRAPHQL = "/graph/query"

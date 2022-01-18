@@ -1,0 +1,20 @@
+mutation editRecommendations($input: EditRecommendationsInput!) {
+  editRecommendations(input: $input) {
+		id
+    externalID
+    resource
+    alarmType
+    shortDescription
+    longDescription
+    command
+    priority
+    status
+    runbook
+    used
+    recommendationsSources{id}
+    recommendationsCategory{id}
+    userApprobed{id}
+    vendor{id}
+    
+  }
+}
