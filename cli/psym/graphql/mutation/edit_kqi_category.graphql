@@ -1,0 +1,6 @@
+mutation EditKqiCategory($input: EditKqiCategoryInput!) {
+  editKqiCategory(input: $input) {
+    id
+    name
+  }
+}

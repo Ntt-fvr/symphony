@@ -2,9 +2,9 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-FROM python:3.7
+FROM python:3.8
 
-RUN pip install unittest-xml-reporting websocket-client
+RUN pip install unittest-xml-reporting websocket-client, requests-toolbelt
 
 COPY cli/ ./
 RUN python setup.py -q install

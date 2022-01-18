@@ -40,6 +40,9 @@ func (Hyperlink) Edges() []ent.Edge {
 		edge.From("work_order", WorkOrder.Type).
 			Ref("hyperlinks").
 			Unique(),
+		edge.From("document_category", DocumentCategory.Type).
+			Ref("hyperlinks").
+			Unique(),
 	}
 }
 

@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 )
@@ -32,6 +33,7 @@ type FormulaQuery struct {
 	unique     []string
 	predicates []predicate.Formula
 	// eager-loading edges.
+	withNetworkType    *NetworkTypeQuery
 	withTech           *TechQuery
 	withKpi            *KpiQuery
 	withCounterformula *CounterFormulaQuery
@@ -63,6 +65,28 @@ func (fq *FormulaQuery) Offset(offset int) *FormulaQuery {
 func (fq *FormulaQuery) Order(o ...OrderFunc) *FormulaQuery {
 	fq.order = append(fq.order, o...)
 	return fq
+}
+
+// QueryNetworkType chains the current query on the networkType edge.
+func (fq *FormulaQuery) QueryNetworkType() *NetworkTypeQuery {
+	query := &NetworkTypeQuery{config: fq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(formula.Table, formula.FieldID, selector),
+			sqlgraph.To(networktype.Table, networktype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, formula.NetworkTypeTable, formula.NetworkTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryTech chains the current query on the tech edge.
@@ -307,6 +331,7 @@ func (fq *FormulaQuery) Clone() *FormulaQuery {
 		order:              append([]OrderFunc{}, fq.order...),
 		unique:             append([]string{}, fq.unique...),
 		predicates:         append([]predicate.Formula{}, fq.predicates...),
+		withNetworkType:    fq.withNetworkType.Clone(),
 		withTech:           fq.withTech.Clone(),
 		withKpi:            fq.withKpi.Clone(),
 		withCounterformula: fq.withCounterformula.Clone(),
@@ -314,6 +339,17 @@ func (fq *FormulaQuery) Clone() *FormulaQuery {
 		sql:  fq.sql.Clone(),
 		path: fq.path,
 	}
+}
+
+//  WithNetworkType tells the query-builder to eager-loads the nodes that are connected to
+// the "networkType" edge. The optional arguments used to configure the query builder of the edge.
+func (fq *FormulaQuery) WithNetworkType(opts ...func(*NetworkTypeQuery)) *FormulaQuery {
+	query := &NetworkTypeQuery{config: fq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withNetworkType = query
+	return fq
 }
 
 //  WithTech tells the query-builder to eager-loads the nodes that are connected to
@@ -419,13 +455,14 @@ func (fq *FormulaQuery) sqlAll(ctx context.Context) ([]*Formula, error) {
 		nodes       = []*Formula{}
 		withFKs     = fq.withFKs
 		_spec       = fq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
+			fq.withNetworkType != nil,
 			fq.withTech != nil,
 			fq.withKpi != nil,
 			fq.withCounterformula != nil,
 		}
 	)
-	if fq.withTech != nil || fq.withKpi != nil {
+	if fq.withNetworkType != nil || fq.withTech != nil || fq.withKpi != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -453,6 +490,31 @@ func (fq *FormulaQuery) sqlAll(ctx context.Context) ([]*Formula, error) {
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+
+	if query := fq.withNetworkType; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Formula)
+		for i := range nodes {
+			if fk := nodes[i].network_type_formula_network_type_fk; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(networktype.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "network_type_formula_network_type_fk" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.NetworkType = n
+			}
+		}
 	}
 
 	if query := fq.withTech; query != nil {

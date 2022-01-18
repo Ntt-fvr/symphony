@@ -42,11 +42,13 @@ class EntityNotFoundError(Exception):
         entity: Entity,
         entity_id: Optional[str] = None,
         entity_name: Optional[str] = None,
+        entity_email: Optional[str] = None,
         msg: Optional[str] = None,
     ) -> None:
         self.entity: Entity = entity
         self.entity_id: str = entity_id if entity_id is not None else ""
         self.entity_name: str = entity_name if entity_name is not None else ""
+        self.entity_email: str = entity_email if entity_email is not None else ""
         self.msg: str = msg if msg is not None else ""
 
     def __str__(self) -> str:

@@ -117,7 +117,3 @@ func PropertyValue(ctx context.Context, typ propertytype.Type, nodeType string, 
 		return "", errors.Errorf("type not supported %s", typ)
 	}
 }
-
-func FileCategoryTypeValue(ctx context.Context, v interface{}) (string, error) {
-	return "", nil
-}

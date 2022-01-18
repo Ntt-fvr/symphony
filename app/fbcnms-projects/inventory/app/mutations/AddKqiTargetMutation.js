@@ -25,8 +25,7 @@ const mutation = graphql`
       id
       name
       impact
-      frame
-      alowedValidation
+      allowedVariation
       initTime
       endTime
       status

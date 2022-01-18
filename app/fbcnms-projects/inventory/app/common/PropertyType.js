@@ -36,6 +36,7 @@ export type PropertyType = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
+  isListable?: ?boolean,
   isDeleted?: ?boolean,
 |};
 
@@ -115,6 +116,7 @@ export const toMutablePropertyType = (
   isEditable: immutablePropertyType.isEditable,
   isInstanceProperty: immutablePropertyType.isInstanceProperty,
   isMandatory: immutablePropertyType.isMandatory,
+  isListable: immutablePropertyType.isListable,
   isDeleted: immutablePropertyType.isDeleted,
 });
 

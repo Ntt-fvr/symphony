@@ -13,6 +13,7 @@ import type {
   AddHyperlinkMutationResponse,
   AddHyperlinkMutationVariables,
 } from './../mutations/__generated__/AddHyperlinkMutation.graphql';
+import type {CategoryItem} from './DocumentsAddButton';
 import type {ButtonProps} from '@symphony/design-system/components/Button';
 import type {ImageEntity} from '../mutations/__generated__/AddImageMutation.graphql';
 import type {MutationCallbacks} from '../mutations/MutationCallbacks.js';
@@ -34,6 +35,7 @@ import {withSnackbar} from 'notistack';
 type addLinkProps = {|
   entityId: string,
   entityType: ImageEntity,
+  categories: Array<CategoryItem>,
   allowCategories?: boolean,
   children?: ?React.Node,
   className?: string,
@@ -80,18 +82,19 @@ const AddHyperlinkButton = (props: Props) => {
     variant,
     disabled,
     children,
+    categories,
   } = props;
 
   const [addHyperlinkDialogOpened, setAddHyperlinkDialogOpened] = useState(
     false,
   );
   const [dialogKey, setDialogKey] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState<?CategoryItem>(null);
   const appContext = useContext(AppContext);
   const categoriesEnabled =
     allowCategories && appContext.isFeatureEnabled('file_categories');
 
-  const openDialog = useCallback((category: ?string) => {
+  const openDialog = useCallback((category: ?CategoryItem) => {
     setSelectedCategory(category);
     setDialogKey(key => key + 1);
     setAddHyperlinkDialogOpened(true);
@@ -112,22 +115,24 @@ const AddHyperlinkButton = (props: Props) => {
         entityType,
         url,
         displayName,
-        category: selectedCategory,
+        category: selectedCategory?.name,
+        documentCategoryId: selectedCategory?.id,
       };
       addNewHyperlink(input, onError);
     },
-    [enqueueSnackbar, entityId, entityType, selectedCategory],
+    [enqueueSnackbar, entityId, entityType, selectedCategory, categories],
   );
-
+  
   return (
     <FormAction>
-      {categoriesEnabled && InventoryStrings.documents.categories.length ? (
+      {categoriesEnabled ? (
         <PopoverMenu
           skin={skin}
           menuDockRight={true}
-          options={InventoryStrings.documents.categories.map(category => ({
-            key: category,
-            label: category,
+          disabled={!categories.length}
+          options={categories.map(category => ({
+            key: category.id,
+            label: category.name || '',
             value: category,
           }))}
           onChange={openDialog}>
@@ -149,7 +154,7 @@ const AddHyperlinkButton = (props: Props) => {
           isOpened={true}
           onAdd={callAddNewHyperlink.bind(this)}
           onClose={() => setAddHyperlinkDialogOpened(false)}
-          targetCategory={selectedCategory}
+          targetCategory={selectedCategory?.name}
         />
       ) : null}
     </FormAction>

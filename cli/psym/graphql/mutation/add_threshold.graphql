@@ -1,0 +1,9 @@
+mutation addThreshold($input: AddThresholdInput!) {
+  addThreshold(input: $input) {
+    id
+    name
+    description
+    status
+    kpi{id}
+  }
+}

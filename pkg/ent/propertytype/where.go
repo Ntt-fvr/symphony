@@ -223,6 +223,13 @@ func Deleted(v bool) predicate.PropertyType {
 	})
 }
 
+// Listable applies equality check predicate on the "listable" field. It's identical to ListableEQ.
+func Listable(v bool) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldListable), v))
+	})
+}
+
 // NodeType applies equality check predicate on the "nodeType" field. It's identical to NodeTypeEQ.
 func NodeType(v string) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
@@ -1627,6 +1634,20 @@ func DeletedEQ(v bool) predicate.PropertyType {
 func DeletedNEQ(v bool) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDeleted), v))
+	})
+}
+
+// ListableEQ applies the EQ predicate on the "listable" field.
+func ListableEQ(v bool) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldListable), v))
+	})
+}
+
+// ListableNEQ applies the NEQ predicate on the "listable" field.
+func ListableNEQ(v bool) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldListable), v))
 	})
 }
 

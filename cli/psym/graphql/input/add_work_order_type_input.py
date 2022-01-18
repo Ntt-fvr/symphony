@@ -20,3 +20,4 @@ class AddWorkOrderTypeInput(DataClassJsonMixin):
     description: Optional[str] = None
     properties: Optional[List[PropertyTypeInput]] = None
     assigneeCanCompleteWorkOrder: Optional[bool] = None
+    duration: Optional[Number] = None

@@ -2,6 +2,10 @@ fragment UserFragment on User {
   id
   authID
   email
+  firstName
+  lastName
   status
   role
+  organizationFk{id}
+  
 }

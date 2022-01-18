@@ -25,6 +25,12 @@ func (c *AlarmStatusClient) Instantiate(as *AlarmStatus) *AlarmStatus {
 }
 
 // Instantiate entity configuration.
+func (c *AppointmentClient) Instantiate(a *Appointment) *Appointment {
+	a.config = c.config
+	return a
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b
@@ -94,6 +100,12 @@ func (c *CounterFormulaClient) Instantiate(cf *CounterFormula) *CounterFormula {
 func (c *CustomerClient) Instantiate(cu *Customer) *Customer {
 	cu.config = c.config
 	return cu
+}
+
+// Instantiate entity configuration.
+func (c *DocumentCategoryClient) Instantiate(dc *DocumentCategory) *DocumentCategory {
+	dc.config = c.config
+	return dc
 }
 
 // Instantiate entity configuration.
@@ -187,12 +199,6 @@ func (c *FileClient) Instantiate(f *File) *File {
 }
 
 // Instantiate entity configuration.
-func (c *FileCategoryTypeClient) Instantiate(fct *FileCategoryType) *FileCategoryType {
-	fct.config = c.config
-	return fct
-}
-
-// Instantiate entity configuration.
 func (c *FloorPlanClient) Instantiate(fp *FloorPlan) *FloorPlan {
 	fp.config = c.config
 	return fp
@@ -253,6 +259,12 @@ func (c *KpiClient) Instantiate(k *Kpi) *Kpi {
 }
 
 // Instantiate entity configuration.
+func (c *KpiCategoryClient) Instantiate(kc *KpiCategory) *KpiCategory {
+	kc.config = c.config
+	return kc
+}
+
+// Instantiate entity configuration.
 func (c *KqiClient) Instantiate(k *Kqi) *Kqi {
 	k.config = c.config
 	return k
@@ -310,6 +322,12 @@ func (c *LocationClient) Instantiate(l *Location) *Location {
 func (c *LocationTypeClient) Instantiate(lt *LocationType) *LocationType {
 	lt.config = c.config
 	return lt
+}
+
+// Instantiate entity configuration.
+func (c *NetworkTypeClient) Instantiate(nt *NetworkType) *NetworkType {
+	nt.config = c.config
+	return nt
 }
 
 // Instantiate entity configuration.

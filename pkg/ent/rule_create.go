@@ -74,9 +74,25 @@ func (rc *RuleCreate) SetStartDateTime(t time.Time) *RuleCreate {
 	return rc
 }
 
+// SetNillableStartDateTime sets the startDateTime field if the given value is not nil.
+func (rc *RuleCreate) SetNillableStartDateTime(t *time.Time) *RuleCreate {
+	if t != nil {
+		rc.SetStartDateTime(*t)
+	}
+	return rc
+}
+
 // SetEndDateTime sets the endDateTime field.
 func (rc *RuleCreate) SetEndDateTime(t time.Time) *RuleCreate {
 	rc.mutation.SetEndDateTime(t)
+	return rc
+}
+
+// SetNillableEndDateTime sets the endDateTime field if the given value is not nil.
+func (rc *RuleCreate) SetNillableEndDateTime(t *time.Time) *RuleCreate {
+	if t != nil {
+		rc.SetEndDateTime(*t)
+	}
 	return rc
 }
 
@@ -281,12 +297,6 @@ func (rc *RuleCreate) check() error {
 	if _, ok := rc.mutation.GracePeriod(); !ok {
 		return &ValidationError{Name: "gracePeriod", err: errors.New("ent: missing required field \"gracePeriod\"")}
 	}
-	if _, ok := rc.mutation.StartDateTime(); !ok {
-		return &ValidationError{Name: "startDateTime", err: errors.New("ent: missing required field \"startDateTime\"")}
-	}
-	if _, ok := rc.mutation.EndDateTime(); !ok {
-		return &ValidationError{Name: "endDateTime", err: errors.New("ent: missing required field \"endDateTime\"")}
-	}
 	if _, ok := rc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
@@ -355,7 +365,7 @@ func (rc *RuleCreate) createSpec() (*Rule, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: rule.FieldStartDateTime,
 		})
-		_node.StartDateTime = value
+		_node.StartDateTime = &value
 	}
 	if value, ok := rc.mutation.EndDateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -363,7 +373,7 @@ func (rc *RuleCreate) createSpec() (*Rule, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: rule.FieldEndDateTime,
 		})
-		_node.EndDateTime = value
+		_node.EndDateTime = &value
 	}
 	if value, ok := rc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

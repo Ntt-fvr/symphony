@@ -19,6 +19,7 @@ export type EditKpiInput = {|
   name: string,
   description: string,
   domainFk: string,
+  kpiCategoryFK: string,
   status: boolean,
 |};
 export type EditKpiMutationVariables = {|

@@ -1,0 +1,7 @@
+mutation AddKpiCategory($input: AddKpiCategoryInput!){
+  addKpiCategory(input: $input){
+   id
+    name
+    
+  }
+}

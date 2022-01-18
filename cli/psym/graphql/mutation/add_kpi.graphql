@@ -1,0 +1,10 @@
+mutation addKpi($input: AddKpiInput!) {
+  addKpi(input: $input) {
+    id
+    name
+    description
+    status
+    domainFk{id}
+    kpiCategoryFK{id}
+  }
+}

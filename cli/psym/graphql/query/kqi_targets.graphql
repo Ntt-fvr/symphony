@@ -1,0 +1,39 @@
+
+query kqiTargets(
+$after: Cursor
+$first: Int
+$before: Cursor
+$last: Int
+$orderBy: KqiTargetOrder
+$filterBy: [KqiTargetFilterInput!]
+){
+  kqiTargets(after: $after, first: $first, before: $before, last: $last, orderBy: $orderBy, filterBy: $filterBy){
+    totalCount
+    edges{
+      node{
+        id
+        name
+        impact
+        
+        initTime
+        endTime
+        status
+        kqi{
+          id
+          name
+          description
+          formula
+          startDateTime
+          endDateTime
+        }
+      }
+      cursor
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}

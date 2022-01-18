@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -158,6 +159,48 @@ func (woc *WorkOrderCreate) SetCloseDate(t time.Time) *WorkOrderCreate {
 func (woc *WorkOrderCreate) SetNillableCloseDate(t *time.Time) *WorkOrderCreate {
 	if t != nil {
 		woc.SetCloseDate(*t)
+	}
+	return woc
+}
+
+// SetDuration sets the duration field.
+func (woc *WorkOrderCreate) SetDuration(f float64) *WorkOrderCreate {
+	woc.mutation.SetDuration(f)
+	return woc
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableDuration(f *float64) *WorkOrderCreate {
+	if f != nil {
+		woc.SetDuration(*f)
+	}
+	return woc
+}
+
+// SetScheduledAt sets the scheduled_at field.
+func (woc *WorkOrderCreate) SetScheduledAt(t time.Time) *WorkOrderCreate {
+	woc.mutation.SetScheduledAt(t)
+	return woc
+}
+
+// SetNillableScheduledAt sets the scheduled_at field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableScheduledAt(t *time.Time) *WorkOrderCreate {
+	if t != nil {
+		woc.SetScheduledAt(*t)
+	}
+	return woc
+}
+
+// SetDueDate sets the due_date field.
+func (woc *WorkOrderCreate) SetDueDate(t time.Time) *WorkOrderCreate {
+	woc.mutation.SetDueDate(t)
+	return woc
+}
+
+// SetNillableDueDate sets the due_date field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableDueDate(t *time.Time) *WorkOrderCreate {
+	if t != nil {
+		woc.SetDueDate(*t)
 	}
 	return woc
 }
@@ -407,6 +450,21 @@ func (woc *WorkOrderCreate) SetAssignee(u *User) *WorkOrderCreate {
 	return woc.SetAssigneeID(u.ID)
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (woc *WorkOrderCreate) AddAppointmentIDs(ids ...int) *WorkOrderCreate {
+	woc.mutation.AddAppointmentIDs(ids...)
+	return woc
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (woc *WorkOrderCreate) AddAppointment(a ...*Appointment) *WorkOrderCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return woc.AddAppointmentIDs(ids...)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (woc *WorkOrderCreate) Mutation() *WorkOrderMutation {
 	return woc.mutation
@@ -621,6 +679,30 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Column: workorder.FieldCloseDate,
 		})
 		_node.CloseDate = &value
+	}
+	if value, ok := woc.mutation.Duration(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+		_node.Duration = &value
+	}
+	if value, ok := woc.mutation.ScheduledAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldScheduledAt,
+		})
+		_node.ScheduledAt = &value
+	}
+	if value, ok := woc.mutation.DueDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldDueDate,
+		})
+		_node.DueDate = &value
 	}
 	if nodes := woc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -899,6 +981,25 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := woc.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
 				},
 			},
 		}

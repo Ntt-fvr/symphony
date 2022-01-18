@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
@@ -70,6 +71,25 @@ func (ku *KpiUpdate) SetDomain(d *Domain) *KpiUpdate {
 	return ku.SetDomainID(d.ID)
 }
 
+// SetKpiCategoryID sets the KpiCategory edge to KpiCategory by id.
+func (ku *KpiUpdate) SetKpiCategoryID(id int) *KpiUpdate {
+	ku.mutation.SetKpiCategoryID(id)
+	return ku
+}
+
+// SetNillableKpiCategoryID sets the KpiCategory edge to KpiCategory by id if the given value is not nil.
+func (ku *KpiUpdate) SetNillableKpiCategoryID(id *int) *KpiUpdate {
+	if id != nil {
+		ku = ku.SetKpiCategoryID(*id)
+	}
+	return ku
+}
+
+// SetKpiCategory sets the KpiCategory edge to KpiCategory.
+func (ku *KpiUpdate) SetKpiCategory(k *KpiCategory) *KpiUpdate {
+	return ku.SetKpiCategoryID(k.ID)
+}
+
 // AddFormulakpiIDs adds the formulakpi edge to Formula by ids.
 func (ku *KpiUpdate) AddFormulakpiIDs(ids ...int) *KpiUpdate {
 	ku.mutation.AddFormulakpiIDs(ids...)
@@ -112,6 +132,12 @@ func (ku *KpiUpdate) Mutation() *KpiMutation {
 // ClearDomain clears the "domain" edge to type Domain.
 func (ku *KpiUpdate) ClearDomain() *KpiUpdate {
 	ku.mutation.ClearDomain()
+	return ku
+}
+
+// ClearKpiCategory clears the "KpiCategory" edge to type KpiCategory.
+func (ku *KpiUpdate) ClearKpiCategory() *KpiUpdate {
+	ku.mutation.ClearKpiCategory()
 	return ku
 }
 
@@ -304,6 +330,41 @@ func (ku *KpiUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ku.mutation.KpiCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   kpi.KpiCategoryTable,
+			Columns: []string{kpi.KpiCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kpicategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ku.mutation.KpiCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   kpi.KpiCategoryTable,
+			Columns: []string{kpi.KpiCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kpicategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ku.mutation.FormulakpiCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -448,6 +509,25 @@ func (kuo *KpiUpdateOne) SetDomain(d *Domain) *KpiUpdateOne {
 	return kuo.SetDomainID(d.ID)
 }
 
+// SetKpiCategoryID sets the KpiCategory edge to KpiCategory by id.
+func (kuo *KpiUpdateOne) SetKpiCategoryID(id int) *KpiUpdateOne {
+	kuo.mutation.SetKpiCategoryID(id)
+	return kuo
+}
+
+// SetNillableKpiCategoryID sets the KpiCategory edge to KpiCategory by id if the given value is not nil.
+func (kuo *KpiUpdateOne) SetNillableKpiCategoryID(id *int) *KpiUpdateOne {
+	if id != nil {
+		kuo = kuo.SetKpiCategoryID(*id)
+	}
+	return kuo
+}
+
+// SetKpiCategory sets the KpiCategory edge to KpiCategory.
+func (kuo *KpiUpdateOne) SetKpiCategory(k *KpiCategory) *KpiUpdateOne {
+	return kuo.SetKpiCategoryID(k.ID)
+}
+
 // AddFormulakpiIDs adds the formulakpi edge to Formula by ids.
 func (kuo *KpiUpdateOne) AddFormulakpiIDs(ids ...int) *KpiUpdateOne {
 	kuo.mutation.AddFormulakpiIDs(ids...)
@@ -490,6 +570,12 @@ func (kuo *KpiUpdateOne) Mutation() *KpiMutation {
 // ClearDomain clears the "domain" edge to type Domain.
 func (kuo *KpiUpdateOne) ClearDomain() *KpiUpdateOne {
 	kuo.mutation.ClearDomain()
+	return kuo
+}
+
+// ClearKpiCategory clears the "KpiCategory" edge to type KpiCategory.
+func (kuo *KpiUpdateOne) ClearKpiCategory() *KpiUpdateOne {
+	kuo.mutation.ClearKpiCategory()
 	return kuo
 }
 
@@ -672,6 +758,41 @@ func (kuo *KpiUpdateOne) sqlSave(ctx context.Context) (_node *Kpi, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: domain.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if kuo.mutation.KpiCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   kpi.KpiCategoryTable,
+			Columns: []string{kpi.KpiCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kpicategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := kuo.mutation.KpiCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   kpi.KpiCategoryTable,
+			Columns: []string{kpi.KpiCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kpicategory.FieldID,
 				},
 			},
 		}

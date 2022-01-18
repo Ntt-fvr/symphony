@@ -6,6 +6,7 @@ from enum import Enum
 
 class FilterOperator(Enum):
     IS = "IS"
+    IS_NIL = "IS_NIL"
     CONTAINS = "CONTAINS"
     IS_ONE_OF = "IS_ONE_OF"
     IS_NOT_ONE_OF = "IS_NOT_ONE_OF"

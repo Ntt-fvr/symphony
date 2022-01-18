@@ -11,6 +11,7 @@ import (
 	models1 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -78,6 +79,14 @@ type AddAlarmStatusInput struct {
 	Name string `json:"name"`
 }
 
+type AddAppointmentInput struct {
+	CreatorID   *int      `json:"creatorId"`
+	AssigneeID  int       `json:"assigneeID"`
+	WorkorderID int       `json:"workorderID"`
+	Date        time.Time `json:"date"`
+	Duration    float64   `json:"duration"`
+}
+
 type AddBlockInstanceInput struct {
 	Status    *blockinstance.Status       `json:"status"`
 	Inputs    []*flowschema.VariableValue `json:"inputs"`
@@ -104,6 +113,11 @@ type AddCounterFormulaInput struct {
 	Mandatory bool `json:"mandatory"`
 	CounterFk int  `json:"counterFk"`
 	FormulaFk int  `json:"formulaFk"`
+}
+
+type AddCounterFormulaListInput struct {
+	FormulaFk   int                 `json:"formulaFk"`
+	CounterList []*CounterListInput `json:"counterList"`
 }
 
 type AddCounterInput struct {
@@ -175,37 +189,45 @@ type AddFlowDraftInput struct {
 }
 
 type AddFormulaInput struct {
-	TextFormula string `json:"textFormula"`
-	Status      bool   `json:"status"`
-	TechFk      int    `json:"techFk"`
-	KpiFk       int    `json:"kpiFk"`
+	TextFormula   string `json:"textFormula"`
+	Status        bool   `json:"status"`
+	TechFk        int    `json:"techFk"`
+	NetworkTypeFk int    `json:"networkTypeFk"`
+	KpiFk         int    `json:"kpiFk"`
 }
 
 type AddHyperlinkInput struct {
-	EntityType  ImageEntity `json:"entityType"`
-	EntityID    int         `json:"entityId"`
-	URL         string      `json:"url"`
-	DisplayName *string     `json:"displayName"`
-	Category    *string     `json:"category"`
+	EntityType         ImageEntity `json:"entityType"`
+	EntityID           int         `json:"entityId"`
+	URL                string      `json:"url"`
+	DisplayName        *string     `json:"displayName"`
+	Category           *string     `json:"category"`
+	DocumentCategoryID *int        `json:"documentCategoryId"`
 }
 
 type AddImageInput struct {
-	EntityType  ImageEntity `json:"entityType"`
-	EntityID    int         `json:"entityId"`
-	ImgKey      string      `json:"imgKey"`
-	FileName    string      `json:"fileName"`
-	FileSize    int         `json:"fileSize"`
-	Modified    time.Time   `json:"modified"`
-	ContentType string      `json:"contentType"`
-	Category    *string     `json:"category"`
-	Annotation  *string     `json:"annotation"`
+	EntityType         ImageEntity `json:"entityType"`
+	EntityID           int         `json:"entityId"`
+	ImgKey             string      `json:"imgKey"`
+	FileName           string      `json:"fileName"`
+	FileSize           int         `json:"fileSize"`
+	Modified           time.Time   `json:"modified"`
+	ContentType        string      `json:"contentType"`
+	Category           *string     `json:"category"`
+	Annotation         *string     `json:"annotation"`
+	DocumentCategoryID *int        `json:"documentCategoryId"`
+}
+
+type AddKpiCategoryInput struct {
+	Name string `json:"name"`
 }
 
 type AddKpiInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	DomainFk    int    `json:"domainFk"`
-	Status      bool   `json:"status"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	DomainFk      int    `json:"domainFk"`
+	KpiCategoryFk int    `json:"kpiCategoryFK"`
+	Status        bool   `json:"status"`
 }
 
 type AddKqiCategoryInput struct {
@@ -242,8 +264,8 @@ type AddKqiSourceInput struct {
 type AddKqiTargetInput struct {
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
-	Frame            float64   `json:"frame"`
-	AlowedValidation float64   `json:"alowedValidation"`
+	Period           float64   `json:"period"`
+	AllowedVariation float64   `json:"allowedVariation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
 	Status           bool      `json:"status"`
@@ -276,9 +298,13 @@ type AddLocationTypeInput struct {
 	MapType                  *string                         `json:"mapType"`
 	MapZoomLevel             *int                            `json:"mapZoomLevel"`
 	IsSite                   *bool                           `json:"isSite"`
-	FileCategoriesType       []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
+	DocumentCategories       []*models.DocumentCategoryInput `json:"documentCategories"`
 	Properties               []*models.PropertyTypeInput     `json:"properties"`
 	SurveyTemplateCategories []*SurveyTemplateCategoryInput  `json:"surveyTemplateCategories"`
+}
+
+type AddNetworkTypeInput struct {
+	Name string `json:"name"`
 }
 
 type AddOrganizationInput struct {
@@ -345,17 +371,17 @@ type AddRecommendationsSourcesInput struct {
 }
 
 type AddRuleInput struct {
-	Name            string    `json:"name"`
-	GracePeriod     int       `json:"gracePeriod"`
-	StartDateTime   time.Time `json:"startDateTime"`
-	EndDateTime     time.Time `json:"endDateTime"`
-	RuleType        int       `json:"ruleType"`
-	EventTypeName   *string   `json:"eventTypeName"`
-	SpecificProblem *string   `json:"specificProblem"`
-	AdditionalInfo  *string   `json:"additionalInfo"`
-	Status          bool      `json:"status"`
-	EventSeverity   int       `json:"eventSeverity"`
-	Threshold       int       `json:"threshold"`
+	Name            string     `json:"name"`
+	GracePeriod     int        `json:"gracePeriod"`
+	StartDateTime   *time.Time `json:"startDateTime"`
+	EndDateTime     *time.Time `json:"endDateTime"`
+	RuleType        int        `json:"ruleType"`
+	EventTypeName   *string    `json:"eventTypeName"`
+	SpecificProblem *string    `json:"specificProblem"`
+	AdditionalInfo  *string    `json:"additionalInfo"`
+	Status          bool       `json:"status"`
+	EventSeverity   int        `json:"eventSeverity"`
+	Threshold       int        `json:"threshold"`
 }
 
 type AddRuleLimitInput struct {
@@ -414,6 +440,9 @@ type AddWorkOrderInput struct {
 	OrganizationFk      *int                      `json:"organizationFk"`
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
+	Duration            *float64                  `json:"duration"`
+	DueDate             *time.Time                `json:"dueDate"`
+	ScheduledAt         *time.Time                `json:"scheduledAt"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -422,6 +451,7 @@ type AddWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+	Duration                     *float64                            `json:"duration"`
 }
 
 type AddWorkerTypeInput struct {
@@ -576,6 +606,11 @@ type CounterFilterInput struct {
 	PropertyValue *CounterFamilyInput `json:"propertyValue"`
 }
 
+type CounterListInput struct {
+	CounterFk int  `json:"counterFk"`
+	Mandatory bool `json:"mandatory"`
+}
+
 type DecisionBlock struct {
 	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
 	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
@@ -627,6 +662,15 @@ type EditAlarmFilterInput struct {
 type EditAlarmStatusInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type EditAppointmentInput struct {
+	ID          int                 `json:"id"`
+	AssigneeID  *int                `json:"assigneeID"`
+	WorkorderID *int                `json:"workorderID"`
+	Date        *time.Time          `json:"date"`
+	Status      *appointment.Status `json:"status"`
+	Duration    *float64            `json:"duration"`
 }
 
 type EditBlockInput struct {
@@ -715,19 +759,31 @@ type EditFlowInstanceInput struct {
 }
 
 type EditFormulaInput struct {
-	ID          int    `json:"id"`
-	TextFormula string `json:"textFormula"`
-	Status      bool   `json:"status"`
-	TechFk      int    `json:"techFk"`
-	KpiFk       int    `json:"kpiFk"`
+	ID            int    `json:"id"`
+	TextFormula   string `json:"textFormula"`
+	Status        bool   `json:"status"`
+	TechFk        int    `json:"techFk"`
+	NetworkTypeFk int    `json:"networkTypeFk"`
+	KpiFk         int    `json:"kpiFk"`
+}
+
+type EditIsListableInput struct {
+	ID         int  `json:"id"`
+	IsListable bool `json:"isListable"`
+}
+
+type EditKpiCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditKpiInput struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	DomainFk    int    `json:"domainFk"`
-	Status      bool   `json:"status"`
+	ID            int    `json:"id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	DomainFk      int    `json:"domainFk"`
+	KpiCategoryFk int    `json:"kpiCategoryFK"`
+	Status        bool   `json:"status"`
 }
 
 type EditKqiCategoryInput struct {
@@ -770,8 +826,8 @@ type EditKqiTargetInput struct {
 	ID               int       `json:"id"`
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
-	Frame            float64   `json:"frame"`
-	AlowedValidation float64   `json:"alowedValidation"`
+	Period           float64   `json:"period"`
+	AllowedVariation float64   `json:"allowedVariation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
 	Status           bool      `json:"status"`
@@ -804,8 +860,13 @@ type EditLocationTypeInput struct {
 	MapType            *string                         `json:"mapType"`
 	MapZoomLevel       *int                            `json:"mapZoomLevel"`
 	IsSite             *bool                           `json:"isSite"`
-	FileCategoriesType []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
+	DocumentCategories []*models.DocumentCategoryInput `json:"documentCategories"`
 	Properties         []*models.PropertyTypeInput     `json:"properties"`
+}
+
+type EditNetworkTypeInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditOrganizationInput struct {
@@ -959,6 +1020,9 @@ type EditWorkOrderInput struct {
 	CheckList           []*CheckListItemInput     `json:"checkList"`
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 	LocationID          *int                      `json:"locationId"`
+	Duration            *float64                  `json:"duration"`
+	DueDate             *time.Time                `json:"dueDate"`
+	ScheduledAt         *time.Time                `json:"scheduledAt"`
 }
 
 type EditWorkOrderTypeInput struct {
@@ -968,6 +1032,7 @@ type EditWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+	Duration                     *float64                            `json:"duration"`
 }
 
 type EditWorkerTypeInput struct {
@@ -1123,6 +1188,15 @@ type ImportFlowDraftInput struct {
 	Connectors          []*ConnectorInput                `json:"connectors"`
 }
 
+type KpiCategoryFilterInput struct {
+	FilterType  KpiCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
+}
+
 type KpiFilterInput struct {
 	FilterType  KpiFilterType       `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
@@ -1204,6 +1278,15 @@ type LocationTypeIndex struct {
 type NetworkTopology struct {
 	Nodes []ent.Noder     `json:"nodes"`
 	Links []*TopologyLink `json:"links"`
+}
+
+type NetworkTypeFilterInput struct {
+	FilterType  NetworkTypeFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
 }
 
 type OrganizationFilterInput struct {
@@ -1292,6 +1375,14 @@ type RecommendationsSourcesFilterInput struct {
 	IDSet       []int                            `json:"idSet"`
 	MaxDepth    *int                             `json:"maxDepth"`
 	StringSet   []string                         `json:"stringSet"`
+}
+
+type RegularHoursInput struct {
+	WorkdayStartHour   int     `json:"workdayStartHour"`
+	WorkdayStartMinute int     `json:"workdayStartMinute"`
+	WorkdayEndHour     int     `json:"workdayEndHour"`
+	WorkdayEndMinute   int     `json:"workdayEndMinute"`
+	Timezone           *string `json:"timezone"`
 }
 
 type ReportFilterInput struct {
@@ -1396,6 +1487,11 @@ type ServiceTypeEditData struct {
 	HasCustomer bool                              `json:"hasCustomer"`
 	Properties  []*models.PropertyTypeInput       `json:"properties"`
 	Endpoints   []*ServiceEndpointDefinitionInput `json:"endpoints"`
+}
+
+type SlotFilterInput struct {
+	SlotStartDate time.Time `json:"slotStartDate"`
+	SlotEndDate   time.Time `json:"slotEndDate"`
 }
 
 type StartBlock struct {
@@ -1620,6 +1716,12 @@ type UpdateUserGroupsInput struct {
 	ID             int   `json:"id"`
 	AddGroupIds    []int `json:"addGroupIds"`
 	RemoveGroupIds []int `json:"removeGroupIds"`
+}
+
+type UserAvailability struct {
+	User          *ent.User `json:"user"`
+	SlotStartDate time.Time `json:"slotStartDate"`
+	SlotEndDate   time.Time `json:"slotEndDate"`
 }
 
 type UserFilterInput struct {
@@ -2189,6 +2291,45 @@ func (e ImageEntity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type KpiCategoryFilterType string
+
+const (
+	KpiCategoryFilterTypeName KpiCategoryFilterType = "NAME"
+)
+
+var AllKpiCategoryFilterType = []KpiCategoryFilterType{
+	KpiCategoryFilterTypeName,
+}
+
+func (e KpiCategoryFilterType) IsValid() bool {
+	switch e {
+	case KpiCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KpiCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *KpiCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KpiCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KpiCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e KpiCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type KpiFilterType string
 
 const (
@@ -2459,6 +2600,45 @@ func (e *KqiTemporalFrequencyFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type NetworkTypeFilterType string
+
+const (
+	NetworkTypeFilterTypeName NetworkTypeFilterType = "NAME"
+)
+
+var AllNetworkTypeFilterType = []NetworkTypeFilterType{
+	NetworkTypeFilterTypeName,
+}
+
+func (e NetworkTypeFilterType) IsValid() bool {
+	switch e {
+	case NetworkTypeFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e NetworkTypeFilterType) String() string {
+	return string(e)
+}
+
+func (e *NetworkTypeFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = NetworkTypeFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid NetworkTypeFilterType", str)
+	}
+	return nil
+}
+
+func (e NetworkTypeFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

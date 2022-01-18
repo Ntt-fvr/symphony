@@ -153,6 +153,7 @@ func prepareWOData(ctx context.Context, r *TestResolver, name string) woSearchDa
 	assignee1 := viewer.MustGetOrCreateUser(ctx, assigneeName1, user.RoleOwner)
 	assignee2 := viewer.MustGetOrCreateUser(ctx, assigneeName2, user.RoleOwner)
 	desc := "random description"
+	organization := viewer.GetOrCreateOrganization(ctx, "MyOrganization")
 
 	wo1, _ := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
 		Name:            name + "wo_1",
@@ -160,12 +161,14 @@ func prepareWOData(ctx context.Context, r *TestResolver, name string) woSearchDa
 		WorkOrderTypeID: woType1.ID,
 		LocationID:      &loc1.ID,
 		AssigneeID:      &assignee1.ID,
+		OrganizationFk:  &organization.ID,
 	})
 	_, _ = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
 		Name:            name + "wo_2",
 		Description:     &desc,
 		WorkOrderTypeID: woType1.ID,
 		AssigneeID:      &assignee1.ID,
+		OrganizationFk:  &organization.ID,
 	})
 	_, _ = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
 		Name:            name + "wo_3",
@@ -173,12 +176,14 @@ func prepareWOData(ctx context.Context, r *TestResolver, name string) woSearchDa
 		WorkOrderTypeID: woType2.ID,
 		LocationID:      &loc1.ID,
 		AssigneeID:      &assignee2.ID,
+		OrganizationFk:  &organization.ID,
 	})
 	_, _ = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
 		Name:            name + "wo_4",
 		Description:     &desc,
 		WorkOrderTypeID: woType2.ID,
 		LocationID:      &loc2.ID,
+		OrganizationFk:  &organization.ID,
 	})
 
 	ownerName := "owner"

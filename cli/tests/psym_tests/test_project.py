@@ -4,6 +4,7 @@
 # license that can be found in the LICENSE file.
 import random
 import string
+from psym.api.organization import add_organization
 
 from psym.api.project import (
     add_project,
@@ -25,8 +26,21 @@ from ..utils.base_test import BaseTest
 class TestProject(BaseTest):
     def setUp(self) -> None:
         super().setUp()
+
+        self.test_organization_created = add_organization(
+            client=self.client,
+            name="organization_1",
+            description="organization"
+        )
+
         user_name = f"{self.random_string()}@fb.com"
-        self.user = add_user(client=self.client, email=user_name, password=user_name)
+        self.user = add_user(client=self.client, 
+        email=user_name, 
+        password=user_name,
+        firstName="leon" ,
+        lastName= "alvares",
+        organization=self.test_organization_created.id,
+        )
         self.work_order_type = add_work_order_type(
             self.client,
             name="Work order type",
@@ -40,6 +54,8 @@ class TestProject(BaseTest):
                 )
             ],
         )
+
+        
         self.project_type = add_project_type(
             self.client,
             name="Project type name",
@@ -101,10 +117,16 @@ class TestProject(BaseTest):
         self.assertEqual(len(fetched_properties), 1)
         self.assertEqual(fetched_properties[0].stringValue, "new test string value")
 
+
         user_name = f"{self.random_string()}@fb.com"
-        user = add_user(client=self.client, email=user_name, password=user_name)
+        user = add_user(client=self.client, 
+        email=user_name, 
+        password=user_name,
+        firstName="juan" ,
+        lastName= "swored",
+        organization=self.test_organization_created,)
         edited_project = edit_project(
-            client=self.client, project_id=self.project.id, new_creator_id=user.id
+        client=self.client, project_id=self.project.id, new_creator_id=user.id
         )
         fetched_project = get_project_by_id(client=self.client, id=edited_project.id)
         self.assertEqual(self.project.id, fetched_project.id)

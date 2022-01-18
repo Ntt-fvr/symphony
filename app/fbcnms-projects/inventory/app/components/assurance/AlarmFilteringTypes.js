@@ -11,13 +11,11 @@ import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
-import FormField from '@symphony/design-system/components/FormField/FormField';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 import ConfigureTitle from './common/ConfigureTitle';
-import PowerSearchBar from '../power_search/PowerSearchBar';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
@@ -25,15 +23,10 @@ import {graphql} from 'react-relay';
 
 const useStyles = makeStyles(() => ({
   root: {
-    margin: '40px',
+    padding: '40px',
   },
-  addButton: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    padding: '0 3.5rem',
+  header: {
+    marginBottom: '1rem',
   },
 }));
 
@@ -60,20 +53,24 @@ const AlarmFilteringQuery = graphql`
     }
   }
 `;
-type Alarms = {
+
+export type Node = {
+  node: {
+    name: string,
+  },
+};
+
+export type Alarms = {
   item: {
-    node: {
-      id: string,
-      name: string,
-      networkResource: string,
-      enable: boolean,
-      beginTime: string,
-      endTime: string,
-      reason: string,
-      user: string,
-      creationTime: string,
-      alarmStatus: string,
-    },
+    id: string,
+    name: string,
+    networkResource: string,
+    enable: boolean,
+    beginTime: string,
+    endTime: string,
+    reason: string,
+    user: string,
+    creationTime: string,
   },
 };
 
@@ -81,14 +78,20 @@ const AlarmFilteringTypes = () => {
   const classes = useStyles();
   const [DataAlarms, setDataAlarms] = useState({});
   const [showEditForm, setShowEditForm] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
+  const [dataEdit, setDataEdit] = useState<Alarms>({});
   const [showForm, setShowForm] = useState(false);
 
+  const alarms = DataAlarms.alarmFilters?.edges.map(node => node);
+
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, AlarmFilteringQuery, {}).then(data => {
       setDataAlarms(data);
     });
-  }, [DataAlarms]);
+  }, [setDataAlarms]);
 
   const handleClickEdit = (alarm: Alarms) => {
     setShowEditForm(true);
@@ -102,7 +105,9 @@ const AlarmFilteringTypes = () => {
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
+        alarms={alarms}
         returnTableAlarm={() => setShowForm(false)}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -110,41 +115,37 @@ const AlarmFilteringTypes = () => {
   if (showEditForm) {
     return (
       <EditAlarmFilteringItemForm
+        alarms={alarms}
         closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
+        isCompleted={isCompleted}
       />
     );
   }
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+    <Grid className={classes.root}>
+      <Grid className={classes.header} container>
+        <Grid item xs>
           <ConfigureTitle
-            title={fbt('Alarm Filter', 'Alarm Filter Title')}
+            title={fbt('Alarm Admission', 'Alarm Admission Title')}
             subtitle={fbt(
               'Alarm filtering rules for Fault Management processes',
               'Alarm description ',
             )}
           />
         </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={10} />
-        <Grid className={classes.addButton} item xs={2}>
-          <FormField>
-            <Button onClick={handleClickAdd} className={classes.button}>
-              Add Alarm Filter
-            </Button>
-          </FormField>
-        </Grid>
-        <Grid item xs={12}>
-          <AlarmFilteringTable
-            dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
-            edit={handleClickEdit}
-          />
+        <Grid>
+          <Button onClick={handleClickAdd}>Add Alarm Admission</Button>
         </Grid>
       </Grid>
-    </div>
+      <Grid item>
+        <AlarmFilteringTable
+          dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
+          edit={handleClickEdit}
+          isCompleted={isCompleted}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

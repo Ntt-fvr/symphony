@@ -26,6 +26,15 @@ func (r kpiResolver) DomainFk(ctx context.Context, kpi *ent.Kpi) (*ent.Domain, e
 	return variable, nil
 }
 
+func (r kpiResolver) KpiCategoryFk(ctx context.Context, kpi *ent.Kpi) (*ent.KpiCategory, error) {
+	variable, err := kpi.KpiCategory(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return variable, nil
+}
+
 func (kpiResolver) FormulaFk(ctx context.Context, kpi *ent.Kpi) ([]*ent.Formula, error) {
 	variable, err := kpi.Formulakpi(ctx)
 	if err != nil {
@@ -50,6 +59,7 @@ func (r mutationResolver) AddKpi(ctx context.Context, input models.AddKpiInput) 
 		SetStatus(input.Status).
 		SetDescription(input.Description).
 		SetDomainID(input.DomainFk).
+		SetKpiCategoryID(input.KpiCategoryFk).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -70,7 +80,52 @@ func (r mutationResolver) RemoveKpi(ctx context.Context, id int) (int, error) {
 	if err != nil {
 		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	// TODO: borrar o editar los edges relacionados
+
+	var formulas, err1 = t.Formulakpi(ctx)
+	if err1 != nil {
+		return 0, errors.Wrap(err1, "has occurred error on process: %v")
+	}
+
+	if len(formulas) > 0 {
+		for _, formula := range formulas {
+			countersFormulas, _ := formula.Counterformula(ctx)
+
+			for _, counterFormula := range countersFormulas {
+				if err := client.CounterFormula.DeleteOne(counterFormula).Exec(ctx); err != nil {
+					return id, errors.Wrap(err, "has ocurred error on process: %v")
+				}
+			}
+
+			if err := client.Formula.DeleteOne(formula).Exec(ctx); err != nil {
+				return id, errors.Wrap(err, "has occurred error on process: %v")
+			}
+		}
+	}
+
+	var thresholds, err2 = t.Thresholdkpi(ctx)
+	if err2 != nil {
+		return 0, errors.Wrap(err1, "has occurred error on process: %v")
+	}
+	if thresholds != nil {
+		rules, _ := thresholds.Rulethreshold(ctx)
+		for _, rule := range rules {
+			rulesLimits, _ := rule.Rulelimitrule(ctx)
+
+			for _, ruleLimit := range rulesLimits {
+				if err := client.RuleLimit.DeleteOne(ruleLimit).Exec(ctx); err != nil {
+					return id, errors.Wrap(err, "has occurred error on process: %v")
+				}
+			}
+
+			if err := client.Rule.DeleteOne(rule).Exec(ctx); err != nil {
+				return id, errors.Wrap(err, "has ocurred error on process: %v")
+			}
+		}
+
+		if err := client.Threshold.DeleteOne(thresholds).Exec(ctx); err != nil {
+			return id, errors.Wrap(err, "has ocurred error on process: %v")
+		}
+	}
 
 	if err := client.Kpi.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has occurred error on process: %v")
@@ -95,13 +150,22 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 		domainID = domain.ID
 	}
 
-	if input.Name != et.Name || input.DomainFk != domainID || input.Status != et.Status || input.Description != et.Description {
+	var kpiCategoryID int
+	var kpicategory, err2 = et.KpiCategory(ctx)
+	if err2 != nil {
+		return nil, errors.Wrap(err2, "has occurred error on process: %v")
+	} else if kpicategory != nil {
+		kpiCategoryID = kpicategory.ID
+	}
+
+	if input.Name != et.Name || input.DomainFk != domainID || input.Status != et.Status || input.Description != et.Description || input.KpiCategoryFk != kpiCategoryID {
 		if et, err = client.Kpi.
 			UpdateOne(et).
 			SetName(input.Name).
 			SetStatus(input.Status).
 			SetDescription(input.Description).
 			SetDomainID(input.DomainFk).
+			SetKpiCategoryID(input.KpiCategoryFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has occurred error on process: %v", err)

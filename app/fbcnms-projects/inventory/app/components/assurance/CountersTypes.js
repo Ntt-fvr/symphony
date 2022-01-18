@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery, graphql} from 'relay-runtime';
@@ -23,25 +23,41 @@ import CounterTypeItem from './CounterTypeItem';
 import EditCounterItemForm from './EditCounterItemForm';
 import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
+import symphony from '@symphony/design-system/theme/symphony';
 
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: '1',
-    margin: '40px',
+    flexGrow: '0',
+    padding: '30px',
+    margin: '0',
   },
-  paper: {
-    padding: theme.spacing(2),
+  titleCounter: {
+    margin: '0 0 40px 0',
   },
-  listCarCounter: {
-    listStyle: 'none',
-  },
-  powerSearchContainer: {
-    margin: '10px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  listContainer: {
+    overflow: 'auto',
+    paddingRight: '9px',
+    maxHeight: 'calc(95vh - 156px)',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: symphony.palette.D300,
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: symphony.palette.D100,
+      borderRadius: '4px',
+    },
   },
 }));
 
@@ -89,21 +105,25 @@ type Counters = {
 const CountersTypes = () => {
   const classes = useStyles();
 
-  const [items, setItems] = useState({});
+  const [counterTypes, setCounterTypes] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState<Counters>({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, CountersQuery, {}).then(data => {
-      setItems(data);
+      setCounterTypes(data);
     });
-  }, [items]);
+  }, [setCounterTypes]);
 
   const handleRemove = id => {
     const variables: RemoveCountersTypesMutationVariables = {
       id: id,
     };
-    RemoveCountersTypesMutation(variables);
+    RemoveCountersTypesMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const showEditCounterItemForm = (counters: Counters) => {
@@ -115,7 +135,7 @@ const CountersTypes = () => {
     setShowEditCard(false);
   };
 
-  const counterNames = items.counters?.edges.map(item => item.node.name);
+  const counterNames = counterTypes.counters?.edges.map(item => item.node.name);
 
   if (showEditCard) {
     return (
@@ -123,26 +143,28 @@ const CountersTypes = () => {
         counterNames={counterNames}
         formValues={dataEdit.item.node}
         hideEditCounterForm={hideEditCounterForm}
+        isCompleted={isCompleted}
       />
     );
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={9} xl={9}>
-          <ConfigureTitle
-            title={fbt('Counters Catalog', 'Counters Title')}
-            subtitle={fbt(
-              'Counters to be defined by users and used by performance management processes.',
-              'Counters description',
-            )}
-          />
-        </Grid>
-        <Grid className={classes.paper} item xs={12} lg={9}>
+    <Grid className={classes.root} container spacing={0}>
+      <Grid className={classes.titleCounter} item xs={12}>
+        <ConfigureTitle
+          title={fbt('Counters Catalog', 'Counters Title')}
+          subtitle={fbt(
+            'Counters to be defined by users and used by performance management processes.',
+            'Counters description',
+          )}
+        />
+      </Grid>
+      <Grid spacing={1} container>
+        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
           <TitleTextCardsCounter />
-          <List disablePadding>
-            {items.counters?.edges.map(item => (
+
+          <List disablePadding className={classes.listContainer}>
+            {counterTypes.counters?.edges.map(item => (
               <CounterTypeItem
                 key={item.node?.id}
                 handleRemove={() => handleRemove(item.node?.id)}
@@ -152,11 +174,14 @@ const CountersTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm counterNames={items.counters?.edges} />
+        <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+          <AddCounterItemForm
+            isCompleted={isCompleted}
+            counterNames={counterTypes.counters?.edges}
+          />
         </Grid>
       </Grid>
-    </div>
+    </Grid>
   );
 };
 

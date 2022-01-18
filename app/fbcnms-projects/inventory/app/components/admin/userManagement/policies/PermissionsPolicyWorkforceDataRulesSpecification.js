@@ -68,6 +68,7 @@ type Props = $ReadOnly<{|
   disabled?: ?boolean,
   onChange: WorkforcePolicy => void,
   className?: ?string,
+  userOrganization?: Organization,
 |}>;
 
 const METHOD_ALL_TYPES_VALUE = 0;

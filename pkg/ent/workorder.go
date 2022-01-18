@@ -46,6 +46,12 @@ type WorkOrder struct {
 	Index int `json:"index,omitempty"`
 	// CloseDate holds the value of the "close_date" field.
 	CloseDate *time.Time `json:"close_date,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration *float64 `json:"duration,omitempty"`
+	// ScheduledAt holds the value of the "scheduled_at" field.
+	ScheduledAt *time.Time `json:"scheduled_at,omitempty"`
+	// DueDate holds the value of the "due_date" field.
+	DueDate *time.Time `json:"due_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderQuery when eager-loading is set.
 	Edges                      WorkOrderEdges `json:"edges"`
@@ -90,9 +96,11 @@ type WorkOrderEdges struct {
 	Owner *User
 	// Assignee holds the value of the assignee edge.
 	Assignee *User
+	// Appointment holds the value of the appointment edge.
+	Appointment []*Appointment
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [15]bool
+	loadedTypes [16]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -265,20 +273,32 @@ func (e WorkOrderEdges) AssigneeOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "assignee"}
 }
 
+// AppointmentOrErr returns the Appointment value or an error if the edge
+// was not loaded in eager-loading.
+func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
+	if e.loadedTypes[15] {
+		return e.Appointment, nil
+	}
+	return nil, &NotLoadedError{edge: "appointment"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*WorkOrder) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{},  // id
-		&sql.NullTime{},   // create_time
-		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // name
-		&sql.NullString{}, // status
-		&sql.NullString{}, // priority
-		&sql.NullString{}, // description
-		&sql.NullTime{},   // install_date
-		&sql.NullTime{},   // creation_date
-		&sql.NullInt64{},  // index
-		&sql.NullTime{},   // close_date
+		&sql.NullInt64{},   // id
+		&sql.NullTime{},    // create_time
+		&sql.NullTime{},    // update_time
+		&sql.NullString{},  // name
+		&sql.NullString{},  // status
+		&sql.NullString{},  // priority
+		&sql.NullString{},  // description
+		&sql.NullTime{},    // install_date
+		&sql.NullTime{},    // creation_date
+		&sql.NullInt64{},   // index
+		&sql.NullTime{},    // close_date
+		&sql.NullFloat64{}, // duration
+		&sql.NullTime{},    // scheduled_at
+		&sql.NullTime{},    // due_date
 	}
 }
 
@@ -360,7 +380,25 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 		wo.CloseDate = new(time.Time)
 		*wo.CloseDate = value.Time
 	}
-	values = values[10:]
+	if value, ok := values[10].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field duration", values[10])
+	} else if value.Valid {
+		wo.Duration = new(float64)
+		*wo.Duration = value.Float64
+	}
+	if value, ok := values[11].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field scheduled_at", values[11])
+	} else if value.Valid {
+		wo.ScheduledAt = new(time.Time)
+		*wo.ScheduledAt = value.Time
+	}
+	if value, ok := values[12].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field due_date", values[12])
+	} else if value.Valid {
+		wo.DueDate = new(time.Time)
+		*wo.DueDate = value.Time
+	}
+	values = values[13:]
 	if len(values) == len(workorder.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field organization_work_order_fk", value)
@@ -483,6 +521,11 @@ func (wo *WorkOrder) QueryAssignee() *UserQuery {
 	return (&WorkOrderClient{config: wo.config}).QueryAssignee(wo)
 }
 
+// QueryAppointment queries the appointment edge of the WorkOrder.
+func (wo *WorkOrder) QueryAppointment() *AppointmentQuery {
+	return (&WorkOrderClient{config: wo.config}).QueryAppointment(wo)
+}
+
 // Update returns a builder for updating this WorkOrder.
 // Note that, you need to call WorkOrder.Unwrap() before calling this method, if this WorkOrder
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -530,6 +573,18 @@ func (wo *WorkOrder) String() string {
 	builder.WriteString(fmt.Sprintf("%v", wo.Index))
 	if v := wo.CloseDate; v != nil {
 		builder.WriteString(", close_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	if v := wo.Duration; v != nil {
+		builder.WriteString(", duration=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := wo.ScheduledAt; v != nil {
+		builder.WriteString(", scheduled_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	if v := wo.DueDate; v != nil {
+		builder.WriteString(", due_date=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteByte(')')

@@ -4,8 +4,11 @@
 # license that can be found in the LICENSE file.
 import random
 import string
+import time
+from build.lib.psym.common.data_class import organization
+from psym.api.organization import add_organization
 
-from psym.api.user import add_user
+from psym.api.user import add_user, get_user_by_email
 from psym.api.work_order import (
     add_work_order,
     delete_work_order,
@@ -24,6 +27,7 @@ from ..utils.base_test import BaseTest
 class TestWorkOrder(BaseTest):
     def setUp(self) -> None:
         super().setUp()
+
         self.work_order_type = add_work_order_type(
             self.client,
             name="Work order type",
@@ -37,11 +41,34 @@ class TestWorkOrder(BaseTest):
                 )
             ],
         )
+        self.test_organization_created = add_organization(
+            client=self.client,
+            name="organization_1",
+            description="organization"
+        )
+        user_name = f"{self.random_string()}@fb.com"
+        self.user = add_user(
+            client=self.client, 
+            email=user_name, 
+            password=user_name, 
+            firstName="leon" ,
+            lastName= "alvares",
+            organization=self.test_organization_created.id,
+
+        )
+        self.user_by_email = get_user_by_email(
+            self.client, 
+            email=self.user.email
+            
+        )
         self.work_order = add_work_order(
             self.client,
             name="Work order",
             description="Work order description",
+            priority="HIGH",
             work_order_type=self.work_order_type,
+            organization=self.user_by_email.organization
+            
         )
 
     @staticmethod
@@ -62,7 +89,7 @@ class TestWorkOrder(BaseTest):
 
     def test_edit_work_order(self) -> None:
         user_name = f"{self.random_string()}@fb.com"
-        user = add_user(client=self.client, email=user_name, password=user_name)
+        user = add_user(client=self.client, email=user_name, password=user_name, firstName="leon" ,lastName= "alvares", organization=str(self.test_organization_created.id))
 
         edited_work_order = edit_work_order(
             client=self.client, work_order_id=self.work_order.id, new_name="New name"
@@ -138,6 +165,21 @@ class TestWorkOrder(BaseTest):
         self.assertEqual(self.work_order.id, fetched_work_order.id)
         self.assertEqual(fetched_work_order.name, "New name again")
         self.assertEqual(fetched_work_order.description, "New description again")
+        
+        edited_work_order = edit_work_order(
+            client=self.client,
+            work_order_id=self.work_order.id,
+            new_name="New name again_again",
+            new_description="New description again_again",
+            new_organization=self.user_by_email.organization
+        )
+        fetched_work_order = get_work_order_by_id(
+            client=self.client, id=edited_work_order.id
+        )
+        self.assertEqual(self.work_order.id, fetched_work_order.id)
+        self.assertEqual(fetched_work_order.name, "New name again_again")
+        self.assertEqual(fetched_work_order.description, "New description again_again")
+        self.assertEqual(fetched_work_order.organization, self.user_by_email.organization)
 
     def test_delete_work_order(self) -> None:
         delete_work_order(client=self.client, id=self.work_order.id)

@@ -23,3 +23,4 @@ class EditUserInput(DataClassJsonMixin):
     status: Optional[UserStatus] = None
     role: Optional[UserRole] = None
     distanceUnit: Optional[DistanceUnit] = None
+    organizationFk: Optional[str] = None

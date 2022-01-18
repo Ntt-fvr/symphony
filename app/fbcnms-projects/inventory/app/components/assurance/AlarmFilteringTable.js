@@ -9,7 +9,7 @@
  */
 import Button from '@material-ui/core/Button';
 
-import React, {useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
 
@@ -17,8 +17,10 @@ import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 
 import {makeStyles} from '@material-ui/styles';
 
+import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
+
+import Card from '@symphony/design-system/components/Card/Card';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
-import Paper from '@material-ui/core/Paper';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -27,6 +29,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+
+import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
+import moment from 'moment';
+import symphony from '@symphony/design-system/theme/symphony';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -37,7 +43,7 @@ const StyledTableCell = withStyles(() => ({
 const StyledTableRow = withStyles(() => ({
   root: {
     '&:nth-of-type(odd)': {
-      backgroundColor: '#EDF0F9',
+      backgroundColor: '#F5F7FC',
     },
   },
 }))(TableRow);
@@ -45,9 +51,30 @@ const StyledTableRow = withStyles(() => ({
 const useStyles = makeStyles(() => ({
   root: {
     width: '100%',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
   },
   container: {
-    maxHeight: '500px',
+    overflow: 'auto',
+    maxHeight: 'calc(85vh - 156px)',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: symphony.palette.D300,
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: symphony.palette.D100,
+      borderRadius: '4px',
+    },
   },
   table: {
     minWidth: 750,
@@ -55,29 +82,32 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  edit: () => void,
-  onChange: () => void,
+  edit: ({}) => void,
   dataValues: any,
+  isCompleted: void => void,
 |}>;
 
 const AlarmFilteringTable = (props: Props) => {
-  const {dataValues, edit} = props;
+  const {dataValues, edit, isCompleted} = props;
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [checked, setChecked] = useState();
+  const [checked, setChecked] = useState(true);
+  const toggleSwitch = useCallback(() => setChecked(!checked));
+
+  const elementRef = useRef();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = event => {
-    setRowsPerPage(event.target.value);
+    setRowsPerPage(Number(event.target.value));
     setPage(0);
   };
 
   return (
-    <Paper className={classes.root}>
+    <Card margins="0px" className={classes.root}>
       <TableContainer className={classes.container}>
         <Table stickyHeader className={classes.table}>
           <TableHead>
@@ -101,7 +131,23 @@ const AlarmFilteringTable = (props: Props) => {
                     <Switch
                       title={''}
                       checked={item.enable}
-                      onChange={setChecked}
+                      onChange={toggleSwitch}
+                      onClick={() => {
+                        const variables: EditAlarmFilterMutationVariables = {
+                          input: {
+                            id: item.id,
+                            name: item.name,
+                            networkResource: item.networkResource,
+                            enable: checked,
+                            beginTime: moment(item.beginTime).format(),
+                            endTime: moment(item.endTime).format(),
+                            reason: item.reason,
+                          },
+                        };
+                        EditAlarmFilterMutation(variables, {
+                          onCompleted: () => isCompleted(),
+                        });
+                      }}
                     />
                   </TableCell>
                   <TableCell>
@@ -118,6 +164,7 @@ const AlarmFilteringTable = (props: Props) => {
                       creationDate={item.creationTime}
                       beginDate={item.beginTime}
                       endDate={item.endTime}
+                      forwardedRef={elementRef}
                     />
                   </TableCell>
                   <TableCell>
@@ -133,13 +180,13 @@ const AlarmFilteringTable = (props: Props) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 15]}
         component="div"
-        count={dataValues?.length}
+        count={!dataValues ? 0 : dataValues.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </Paper>
+    </Card>
   );
 };
 export default AlarmFilteringTable;

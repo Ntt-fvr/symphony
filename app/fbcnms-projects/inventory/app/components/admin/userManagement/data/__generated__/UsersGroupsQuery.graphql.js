@@ -35,6 +35,11 @@ export type UsersGroupsQueryResponse = {|
           +email: string,
           +status: UserStatus,
           +role: UserRole,
+          +organizationFk: ?{|
+            +id: string,
+            +name: string,
+            +description: string,
+          |},
         |}>,
         +policies: $ReadOnlyArray<{|
           +id: string,
@@ -45,6 +50,25 @@ export type UsersGroupsQueryResponse = {|
             +__typename: "InventoryPolicy",
             +read: {|
               +isAllowed: PermissionValue
+            |},
+            +documentCategory: {|
+              +locationTypeID: ?number,
+              +read: ?{|
+                +isAllowed: PermissionValue,
+                +documentCategoryIds: ?$ReadOnlyArray<string>,
+              |},
+              +create: ?{|
+                +isAllowed: PermissionValue,
+                +documentCategoryIds: ?$ReadOnlyArray<string>,
+              |},
+              +update: ?{|
+                +isAllowed: PermissionValue,
+                +documentCategoryIds: ?$ReadOnlyArray<string>,
+              |},
+              +delete: ?{|
+                +isAllowed: PermissionValue,
+                +documentCategoryIds: ?$ReadOnlyArray<string>,
+              |},
             |},
             +location: {|
               +create: {|
@@ -119,6 +143,7 @@ export type UsersGroupsQueryResponse = {|
               +isAllowed: PermissionValue,
               +projectTypeIds: ?$ReadOnlyArray<string>,
               +workOrderTypeIds: ?$ReadOnlyArray<string>,
+              +organizationIds: ?$ReadOnlyArray<string>,
             |},
             +templates: {|
               +create: {|
@@ -182,6 +207,11 @@ query UsersGroupsQuery {
           email
           status
           role
+          organizationFk {
+            id
+            name
+            description
+          }
         }
         policies {
           id
@@ -193,6 +223,25 @@ query UsersGroupsQuery {
             ... on InventoryPolicy {
               read {
                 isAllowed
+              }
+              documentCategory {
+                locationTypeID
+                read {
+                  isAllowed
+                  documentCategoryIds
+                }
+                create {
+                  isAllowed
+                  documentCategoryIds
+                }
+                update {
+                  isAllowed
+                  documentCategoryIds
+                }
+                delete {
+                  isAllowed
+                  documentCategoryIds
+                }
               }
               location {
                 create {
@@ -267,6 +316,7 @@ query UsersGroupsQuery {
                 isAllowed
                 projectTypeIds
                 workOrderTypeIds
+                organizationIds
               }
               templates {
                 create {
@@ -358,6 +408,16 @@ v6 = [
   (v5/*: any*/)
 ],
 v7 = [
+  (v5/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "documentCategoryIds",
+    "storageKey": null
+  }
+],
+v8 = [
   {
     "alias": null,
     "args": null,
@@ -389,7 +449,7 @@ v7 = [
     "storageKey": null
   }
 ],
-v8 = [
+v9 = [
   {
     "alias": null,
     "args": null,
@@ -454,6 +514,20 @@ v8 = [
                 "kind": "ScalarField",
                 "name": "role",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Organization",
+                "kind": "LinkedField",
+                "name": "organizationFk",
+                "plural": false,
+                "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -496,6 +570,64 @@ v8 = [
                         "name": "read",
                         "plural": false,
                         "selections": (v6/*: any*/),
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "DocumentCategoryCUD",
+                        "kind": "LinkedField",
+                        "name": "documentCategory",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "locationTypeID",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "DocumentCategoryPermissionRule",
+                            "kind": "LinkedField",
+                            "name": "read",
+                            "plural": false,
+                            "selections": (v7/*: any*/),
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "DocumentCategoryPermissionRule",
+                            "kind": "LinkedField",
+                            "name": "create",
+                            "plural": false,
+                            "selections": (v7/*: any*/),
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "DocumentCategoryPermissionRule",
+                            "kind": "LinkedField",
+                            "name": "update",
+                            "plural": false,
+                            "selections": (v7/*: any*/),
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "DocumentCategoryPermissionRule",
+                            "kind": "LinkedField",
+                            "name": "delete",
+                            "plural": false,
+                            "selections": (v7/*: any*/),
+                            "storageKey": null
+                          }
+                        ],
                         "storageKey": null
                       },
                       {
@@ -555,7 +687,7 @@ v8 = [
                         "kind": "LinkedField",
                         "name": "equipment",
                         "plural": false,
-                        "selections": (v7/*: any*/),
+                        "selections": (v8/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -565,7 +697,7 @@ v8 = [
                         "kind": "LinkedField",
                         "name": "equipmentType",
                         "plural": false,
-                        "selections": (v7/*: any*/),
+                        "selections": (v8/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -575,7 +707,7 @@ v8 = [
                         "kind": "LinkedField",
                         "name": "locationType",
                         "plural": false,
-                        "selections": (v7/*: any*/),
+                        "selections": (v8/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -585,7 +717,7 @@ v8 = [
                         "kind": "LinkedField",
                         "name": "portType",
                         "plural": false,
-                        "selections": (v7/*: any*/),
+                        "selections": (v8/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -595,7 +727,7 @@ v8 = [
                         "kind": "LinkedField",
                         "name": "serviceType",
                         "plural": false,
-                        "selections": (v7/*: any*/),
+                        "selections": (v8/*: any*/),
                         "storageKey": null
                       }
                     ],
@@ -627,6 +759,13 @@ v8 = [
                             "kind": "ScalarField",
                             "name": "workOrderTypeIds",
                             "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "organizationIds",
+                            "storageKey": null
                           }
                         ],
                         "storageKey": null
@@ -638,7 +777,7 @@ v8 = [
                         "kind": "LinkedField",
                         "name": "templates",
                         "plural": false,
-                        "selections": (v7/*: any*/),
+                        "selections": (v8/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -752,7 +891,7 @@ v8 = [
     "storageKey": null
   }
 ],
-v9 = [
+v10 = [
   {
     "kind": "Literal",
     "name": "first",
@@ -773,7 +912,7 @@ return {
         "kind": "LinkedField",
         "name": "__UsersGroups_usersGroups_connection",
         "plural": false,
-        "selections": (v8/*: any*/),
+        "selections": (v9/*: any*/),
         "storageKey": null
       }
     ],
@@ -788,17 +927,17 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v9/*: any*/),
+        "args": (v10/*: any*/),
         "concreteType": "UsersGroupConnection",
         "kind": "LinkedField",
         "name": "usersGroups",
         "plural": false,
-        "selections": (v8/*: any*/),
+        "selections": (v9/*: any*/),
         "storageKey": "usersGroups(first:500)"
       },
       {
         "alias": null,
-        "args": (v9/*: any*/),
+        "args": (v10/*: any*/),
         "filters": null,
         "handle": "connection",
         "key": "UsersGroups_usersGroups",
@@ -808,7 +947,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "96e5c2eacab70110fde8993314dde273",
+    "cacheID": "9a93a3e20b6c8f64431387ce5aab90a2",
     "id": null,
     "metadata": {
       "connection": [
@@ -824,7 +963,7 @@ return {
     },
     "name": "UsersGroupsQuery",
     "operationKind": "query",
-    "text": "query UsersGroupsQuery {\n  usersGroups(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        members {\n          id\n          authID\n          firstName\n          lastName\n          email\n          status\n          role\n        }\n        policies {\n          id\n          name\n          description\n          isGlobal\n          policy {\n            __typename\n            ... on InventoryPolicy {\n              read {\n                isAllowed\n              }\n              location {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                  locationTypeIds\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              equipment {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              equipmentType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              locationType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              portType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              serviceType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n            }\n            ... on WorkforcePolicy {\n              read {\n                isAllowed\n                projectTypeIds\n                workOrderTypeIds\n              }\n              templates {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              data {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n                assign {\n                  isAllowed\n                }\n                transferOwnership {\n                  isAllowed\n                }\n              }\n            }\n          }\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query UsersGroupsQuery {\n  usersGroups(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        members {\n          id\n          authID\n          firstName\n          lastName\n          email\n          status\n          role\n          organizationFk {\n            id\n            name\n            description\n          }\n        }\n        policies {\n          id\n          name\n          description\n          isGlobal\n          policy {\n            __typename\n            ... on InventoryPolicy {\n              read {\n                isAllowed\n              }\n              documentCategory {\n                locationTypeID\n                read {\n                  isAllowed\n                  documentCategoryIds\n                }\n                create {\n                  isAllowed\n                  documentCategoryIds\n                }\n                update {\n                  isAllowed\n                  documentCategoryIds\n                }\n                delete {\n                  isAllowed\n                  documentCategoryIds\n                }\n              }\n              location {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                  locationTypeIds\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              equipment {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              equipmentType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              locationType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              portType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              serviceType {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n            }\n            ... on WorkforcePolicy {\n              read {\n                isAllowed\n                projectTypeIds\n                workOrderTypeIds\n                organizationIds\n              }\n              templates {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n              }\n              data {\n                create {\n                  isAllowed\n                }\n                update {\n                  isAllowed\n                }\n                delete {\n                  isAllowed\n                }\n                assign {\n                  isAllowed\n                }\n                transferOwnership {\n                  isAllowed\n                }\n              }\n            }\n          }\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

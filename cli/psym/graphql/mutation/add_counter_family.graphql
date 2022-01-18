@@ -1,0 +1,6 @@
+mutation addCounterFamily($input: AddCounterFamilyInput!) {
+  addCounterFamily(input: $input) {
+    id
+    name
+  }
+}

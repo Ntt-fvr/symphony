@@ -9,6 +9,7 @@ from typing import Any, AsyncGenerator, Dict, List, Generator, Optional
 
 from dataclasses_json import DataClassJsonMixin, config
 
+from ..input.document_category_input import DocumentCategoryInput
 from ..input.property_type_input import PropertyTypeInput
 from ..input.survey_template_category_input import SurveyTemplateCategoryInput
 
@@ -16,6 +17,7 @@ from ..input.survey_template_category_input import SurveyTemplateCategoryInput
 @dataclass(frozen=True)
 class AddLocationTypeInput(DataClassJsonMixin):
     name: str
+    documentCategories: List[DocumentCategoryInput]
     properties: List[PropertyTypeInput]
     surveyTemplateCategories: List[SurveyTemplateCategoryInput]
     mapType: Optional[str] = None

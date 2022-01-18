@@ -1,0 +1,26 @@
+query ruleTypes(
+$after: Cursor
+$first: Int
+$before: Cursor
+$last: Int
+$orderBy: RuleTypeOrder
+$filterBy: [RuleTypeFilterInput!]
+){
+ruleTypes(after: $after, first: $first, before: $before, last: $last, orderBy: $orderBy, filterBy: $filterBy){
+totalCount
+edges{
+node{
+id
+name
+
+}
+      cursor
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}

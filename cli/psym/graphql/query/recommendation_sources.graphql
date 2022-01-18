@@ -1,0 +1,27 @@
+query RecommendationsSources(
+$after: Cursor
+$first: Int
+$before: Cursor
+$last: Int
+$orderBy: RecommendationsSourcesOrder
+$filterBy: [RecommendationsSourcesFilterInput!]
+){
+RecommendationsSources(after: $after, first: $first, before: $before, last: $last, orderBy: $orderBy, filterBy: $filterBy){
+totalCount
+edges{
+node{
+id
+name
+
+}
+      cursor
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
+

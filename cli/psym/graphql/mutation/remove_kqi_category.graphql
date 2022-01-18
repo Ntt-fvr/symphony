@@ -1,0 +1,3 @@
+mutation removeKqiCategory($id: ID!) {
+  removeKqiCategory(id: $id)
+}

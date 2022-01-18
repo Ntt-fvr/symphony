@@ -1,0 +1,3 @@
+mutation removeNetworkType($id: ID!) {
+  removeNetworkType(id: $id)
+}

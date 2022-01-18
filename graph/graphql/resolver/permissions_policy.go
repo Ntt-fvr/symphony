@@ -144,20 +144,6 @@ func (mutationResolver) EditPermissionsPolicy(
 	}
 
 	switch {
-	/*case input.InventoryInput != nil && input.WorkforceInput != nil && input.AutomationInput != nil:
-		return nil, fmt.Errorf("policy cannot be of inventory, workforce and automation types at the same time")
-	case input.InventoryInput != nil && input.WorkforceInput != nil && input.AutomationInput == nil:
-		return nil, fmt.Errorf("policy cannot be of both inventory and workforce types")
-	case input.InventoryInput != nil && input.WorkforceInput == nil && input.AutomationInput != nil:
-		return nil, fmt.Errorf("policy cannot be of both inventory and automation types")
-	case input.InventoryInput == nil && input.WorkforceInput != nil && input.AutomationInput != nil:
-		return nil, fmt.Errorf("policy cannot be of both workforce and automation types")
-	case (input.InventoryInput != nil || input.AutomationInput != nil) && p.WorkforcePolicy != nil:
-		return nil, fmt.Errorf("only workforce policy is legal to edit")
-	case (input.WorkforceInput != nil || input.AutomationInput != nil) && p.InventoryPolicy != nil:
-		return nil, fmt.Errorf("only inventory policy is legal to edit")
-	case (input.InventoryInput != nil || input.WorkforceInput != nil) && p.AutomationPolicy != nil:
-		return nil, fmt.Errorf("only automation policy is legal to edit")*/
 	case input.InventoryInput != nil && p.InventoryPolicy != nil:
 		upd.SetInventoryPolicy(input.InventoryInput)
 	case input.WorkforceInput != nil && p.WorkforcePolicy != nil:

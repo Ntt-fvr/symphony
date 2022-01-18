@@ -8,7 +8,7 @@ from typing import Dict, Iterator, Optional
 from psym._utils import get_graphql_property_inputs
 from psym.client import SymphonyClient
 from psym.common.cache import WORK_ORDER_TYPES
-from psym.common.data_class import PropertyValue, WorkOrder, WorkOrderType
+from psym.common.data_class import PropertyValue, WorkOrder, WorkOrderType, organization
 from psym.common.data_enum import Entity
 from psym.common.data_format import format_to_work_order
 from psym.exceptions import EntityNotFoundError
@@ -27,6 +27,7 @@ def add_work_order(
     client: SymphonyClient,
     name: str,
     work_order_type: WorkOrderType,
+    organization: str,
     description: Optional[str] = None,
     location_id: Optional[str] = None,
     project_id: Optional[str] = None,
@@ -35,6 +36,8 @@ def add_work_order(
     assignee_id: Optional[str] = None,
     status: Optional[WorkOrderStatus] = None,
     priority: Optional[WorkOrderPriority] = None,
+
+    
 ) -> WorkOrder:
     """This function creates work order of with the given name and type
 
@@ -119,6 +122,8 @@ def add_work_order(
             priority=WorkOrderPriority(priority) if priority else None,
             checkList=[],
             checkListCategories=[],
+            organizationFk=organization
+
         ),
     )
     return format_to_work_order(work_order_fragment=result)
@@ -178,6 +183,31 @@ def get_work_order_by_id(client: SymphonyClient, id: str) -> WorkOrder:
 
     return format_to_work_order(work_order_fragment=result)
 
+def get_work_order_by_name(client: SymphonyClient, name: str) -> WorkOrder:
+    """This function gets existing WorkOrder by its name.
+
+    :param name: Work order name
+    :type name: str
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
+
+    :return: Work order type
+    :rtype: :class:`~psym.common.data_class.WorkOrder`
+
+    **Example**
+
+    .. code-block:: python
+
+        client.get_work_order_type_by_name(name="WorkOrder Name")
+    """
+
+    work_orders = get_work_orders(client=client)
+    for work_order in work_orders:
+        if work_order.name == name:
+            return work_order
+    raise EntityNotFoundError(entity=Entity.WorkOrderType, entity_name=name)
 
 def edit_work_order(
     client: SymphonyClient,
@@ -191,6 +221,7 @@ def edit_work_order(
     new_assignee_id: Optional[str] = None,
     new_status: Optional[WorkOrderStatus] = None,
     new_priority: Optional[WorkOrderPriority] = None,
+    new_organization: Optional[str] = None,
 ) -> WorkOrder:
     """This function edits existing work order.
 
@@ -253,6 +284,9 @@ def edit_work_order(
     new_description = (
         work_order.description if new_description is None else new_description
     )
+    new_organization = (
+        work_order.organization if new_organization is None else new_organization
+    )
     new_properties = []
     if new_properties_dict:
         property_types = WORK_ORDER_TYPES[
@@ -274,6 +308,7 @@ def edit_work_order(
         priority=new_priority,
         checkList=[],
         checkListCategories=[],
+        organizationFk=new_organization,
     )
     result = EditWorkOrderMutation.execute(client, edit_work_order_input)
     return format_to_work_order(work_order_fragment=result)

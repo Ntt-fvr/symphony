@@ -1,0 +1,3 @@
+mutation removeCounter($id: ID!) {
+  removeCounter(id: $id)
+}

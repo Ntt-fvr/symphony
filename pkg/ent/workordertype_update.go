@@ -80,6 +80,33 @@ func (wotu *WorkOrderTypeUpdate) ClearAssigneeCanCompleteWorkOrder() *WorkOrderT
 	return wotu
 }
 
+// SetDuration sets the duration field.
+func (wotu *WorkOrderTypeUpdate) SetDuration(f float64) *WorkOrderTypeUpdate {
+	wotu.mutation.ResetDuration()
+	wotu.mutation.SetDuration(f)
+	return wotu
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wotu *WorkOrderTypeUpdate) SetNillableDuration(f *float64) *WorkOrderTypeUpdate {
+	if f != nil {
+		wotu.SetDuration(*f)
+	}
+	return wotu
+}
+
+// AddDuration adds f to duration.
+func (wotu *WorkOrderTypeUpdate) AddDuration(f float64) *WorkOrderTypeUpdate {
+	wotu.mutation.AddDuration(f)
+	return wotu
+}
+
+// ClearDuration clears the value of duration.
+func (wotu *WorkOrderTypeUpdate) ClearDuration() *WorkOrderTypeUpdate {
+	wotu.mutation.ClearDuration()
+	return wotu
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (wotu *WorkOrderTypeUpdate) AddPropertyTypeIDs(ids ...int) *WorkOrderTypeUpdate {
 	wotu.mutation.AddPropertyTypeIDs(ids...)
@@ -345,6 +372,26 @@ func (wotu *WorkOrderTypeUpdate) sqlSave(ctx context.Context) (n int, err error)
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: workordertype.FieldAssigneeCanCompleteWorkOrder,
+		})
+	}
+	if value, ok := wotu.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertype.FieldDuration,
+		})
+	}
+	if value, ok := wotu.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertype.FieldDuration,
+		})
+	}
+	if wotu.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workordertype.FieldDuration,
 		})
 	}
 	if wotu.mutation.PropertyTypesCleared() {
@@ -627,6 +674,33 @@ func (wotuo *WorkOrderTypeUpdateOne) ClearAssigneeCanCompleteWorkOrder() *WorkOr
 	return wotuo
 }
 
+// SetDuration sets the duration field.
+func (wotuo *WorkOrderTypeUpdateOne) SetDuration(f float64) *WorkOrderTypeUpdateOne {
+	wotuo.mutation.ResetDuration()
+	wotuo.mutation.SetDuration(f)
+	return wotuo
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wotuo *WorkOrderTypeUpdateOne) SetNillableDuration(f *float64) *WorkOrderTypeUpdateOne {
+	if f != nil {
+		wotuo.SetDuration(*f)
+	}
+	return wotuo
+}
+
+// AddDuration adds f to duration.
+func (wotuo *WorkOrderTypeUpdateOne) AddDuration(f float64) *WorkOrderTypeUpdateOne {
+	wotuo.mutation.AddDuration(f)
+	return wotuo
+}
+
+// ClearDuration clears the value of duration.
+func (wotuo *WorkOrderTypeUpdateOne) ClearDuration() *WorkOrderTypeUpdateOne {
+	wotuo.mutation.ClearDuration()
+	return wotuo
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (wotuo *WorkOrderTypeUpdateOne) AddPropertyTypeIDs(ids ...int) *WorkOrderTypeUpdateOne {
 	wotuo.mutation.AddPropertyTypeIDs(ids...)
@@ -890,6 +964,26 @@ func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (_node *WorkOr
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: workordertype.FieldAssigneeCanCompleteWorkOrder,
+		})
+	}
+	if value, ok := wotuo.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertype.FieldDuration,
+		})
+	}
+	if value, ok := wotuo.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertype.FieldDuration,
+		})
+	}
+	if wotuo.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workordertype.FieldDuration,
 		})
 	}
 	if wotuo.mutation.PropertyTypesCleared() {

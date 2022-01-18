@@ -30,7 +30,11 @@ class EditWorkOrderInput(DataClassJsonMixin):
     installDate: Optional[datetime] = None
     assigneeId: Optional[str] = None
     index: Optional[int] = None
+    organizationFk: Optional[str] = None
     status: Optional[WorkOrderStatus] = None
     priority: Optional[WorkOrderPriority] = None
     projectId: Optional[str] = None
     locationId: Optional[str] = None
+    duration: Optional[Number] = None
+    dueDate: Optional[datetime] = None
+    scheduledAt: Optional[datetime] = None

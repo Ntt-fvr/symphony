@@ -1,0 +1,10 @@
+mutation editRuleLimit($input: EditRuleLimitInput!) {
+  editRuleLimit(input: $input) {
+    id
+    number
+    limitType
+    comparator{id}
+    rule{id}
+  }
+}
+

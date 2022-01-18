@@ -31,6 +31,9 @@ func (Formula) Fields() []ent.Field {
 // Edges returns formula type edges.
 func (Formula) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.From("networkType", NetworkType.Type).
+			Ref("formulaNetworkType_FK").
+			Unique(),
 		edge.From("tech", Tech.Type).
 			Ref("formulatech").
 			Unique(),

@@ -21,6 +21,14 @@ psym.client module
    :undoc-members:
    :show-inheritance:
 
+psym.config module
+------------------
+
+.. automodule:: psym.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 psym.exceptions module
 ----------------------
 
@@ -28,7 +36,6 @@ psym.exceptions module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

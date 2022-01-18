@@ -1,0 +1,30 @@
+query formulas(
+$after: Cursor
+$first: Int
+$before: Cursor
+$last: Int
+$orderBy: FormulaOrder
+$filterBy: [FormulaFilterInput!]
+){
+formulas(after: $after, first: $first, before: $before, last: $last, orderBy: $orderBy, filterBy: $filterBy){
+totalCount
+edges{
+node{
+id
+textFormula
+status
+networkTypeFk{id}
+kpiFk{id}
+techFk{id}
+
+}
+      cursor
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
