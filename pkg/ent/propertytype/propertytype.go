@@ -85,6 +85,8 @@ const (
 	EdgeProjectTemplate = "project_template"
 	// EdgeWorkerType holds the string denoting the worker_type edge name in mutations.
 	EdgeWorkerType = "worker_type"
+	// EdgeResourcespecification holds the string denoting the resourcespecification edge name in mutations.
+	EdgeResourcespecification = "resourcespecification"
 
 	// Table holds the table name of the propertytype in the database.
 	Table = "property_types"
@@ -165,6 +167,13 @@ const (
 	WorkerTypeInverseTable = "worker_types"
 	// WorkerTypeColumn is the table column denoting the worker_type relation/edge.
 	WorkerTypeColumn = "worker_type_property_types"
+	// ResourcespecificationTable is the table the holds the resourcespecification relation/edge.
+	ResourcespecificationTable = "property_types"
+	// ResourcespecificationInverseTable is the table name for the ResourceSpecification entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcespecification" package.
+	ResourcespecificationInverseTable = "resource_specifications"
+	// ResourcespecificationColumn is the table column denoting the resourcespecification relation/edge.
+	ResourcespecificationColumn = "resource_specification_property_type_fk"
 )
 
 // Columns holds all SQL columns for propertytype fields.
@@ -201,6 +210,7 @@ var ForeignKeys = []string{
 	"location_type_property_types",
 	"project_template_properties",
 	"project_type_properties",
+	"resource_specification_property_type_fk",
 	"service_type_property_types",
 	"work_order_template_property_types",
 	"work_order_type_property_types",

@@ -397,6 +397,60 @@ func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 }
 
 // Instantiate entity configuration.
+func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *ResourceRelationship {
+	rr.config = c.config
+	return rr
+}
+
+// Instantiate entity configuration.
+func (c *ResourceRelationshipMultiplicityClient) Instantiate(rrm *ResourceRelationshipMultiplicity) *ResourceRelationshipMultiplicity {
+	rrm.config = c.config
+	return rrm
+}
+
+// Instantiate entity configuration.
+func (c *ResourceRelationshipTypeClient) Instantiate(rrt *ResourceRelationshipType) *ResourceRelationshipType {
+	rrt.config = c.config
+	return rrt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSRItemsClient) Instantiate(rsi *ResourceSRItems) *ResourceSRItems {
+	rsi.config = c.config
+	return rsi
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationClient) Instantiate(rs *ResourceSpecification) *ResourceSpecification {
+	rs.config = c.config
+	return rs
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationRelationshipClient) Instantiate(rsr *ResourceSpecificationRelationship) *ResourceSpecificationRelationship {
+	rsr.config = c.config
+	return rsr
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeClient) Instantiate(rt *ResourceType) *ResourceType {
+	rt.config = c.config
+	return rt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeBaseTypeClient) Instantiate(rtbt *ResourceTypeBaseType) *ResourceTypeBaseType {
+	rtbt.config = c.config
+	return rtbt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeClassClient) Instantiate(rtc *ResourceTypeClass) *ResourceTypeClass {
+	rtc.config = c.config
+	return rtc
+}
+
+// Instantiate entity configuration.
 func (c *RuleClient) Instantiate(r *Rule) *Rule {
 	r.config = c.config
 	return r

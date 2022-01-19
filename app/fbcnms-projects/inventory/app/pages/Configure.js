@@ -9,13 +9,13 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
-import AppContext from '@fbcnms/ui/context/AppContext';
 import EquipmentPortTypes from '../components/configure/EquipmentPortTypes';
 import EquipmentTypes from '../components/configure/EquipmentTypes';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventorySuspense from '../common/InventorySuspense';
 import LocationTypes from '../components/configure/LocationTypes';
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
+import ResourceTypes from '../components/configure/ResourceTypes';
 import ServiceTypes from '../components/configure/ServiceTypes';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
@@ -61,6 +61,7 @@ export default function Configure() {
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
+  const resourcesEnabled = useFeatureFlag('enable_resource_catalog');
   const servicesEnabled = useContext(AppContext).isFeatureEnabled('services');
   const equipmentPortsFlag = useFeatureFlag('equipment_&_ports_module');
   const tabBars: Array<RouteTab> = useMemo(
@@ -82,6 +83,24 @@ export default function Configure() {
           label: fbt('LOCATIONS', ''),
         },
         path: 'location_types',
+      },
+      ...(resourcesEnabled
+        ? [
+            {
+              id: 'resource_types',
+              tab: {
+                label: fbt('RESOURCES', ''),
+              },
+              path: 'resource_types',
+            },
+          ]
+        : []),
+      {
+        id: 'port_types',
+        tab: {
+          label: fbt('PORTS', ''),
+        },
+        path: 'port_types',
       },
       ...(equipmentPortsFlag
         ? [
@@ -141,6 +160,10 @@ export default function Configure() {
             <Route
               path={relativeUrl('/location_types')}
               component={LocationTypes}
+            />
+            <Route
+              path={relativeUrl('/resource_types')}
+              component={ResourceTypes}
             />
             <Route
               path={relativeUrl('/port_types')}

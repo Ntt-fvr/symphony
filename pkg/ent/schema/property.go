@@ -129,6 +129,8 @@ func (PropertyType) Edges() []ent.Edge {
 		edge.From("worker_type", WorkerType.Type).
 			Ref("property_types").
 			Unique(),
+		edge.From("resourcespecification", ResourceSpecification.Type).
+			Ref("property_type_fk").Unique().Annotations(entgql.OrderField("RESOURCESPECIFICATION")),
 	}
 }
 

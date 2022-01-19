@@ -288,3 +288,22 @@ func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
+func (r resolver) ResourceRelationship() generated.ResourceRelationshipResolver {
+	return resourceRelationshipResolver{}
+}
+
+func (r resolver) ResourceType() generated.ResourceTypeResolver {
+	return resourceTypeResolver{}
+}
+
+func (r resolver) ResourceSpecification() generated.ResourceSpecificationResolver {
+	return resourceSpecificationResolver{}
+}
+
+func (r resolver) ResourceSpecificationRelationship() generated.ResourceSpecificationRelationshipResolver {
+	return resourceSpecificationRelationshipResolver{}
+}
+
+func (r resolver) ResourceSRItems() generated.ResourceSRItemsResolver {
+	return resourceSpecificationRelationshipItemsResolver{}
+}

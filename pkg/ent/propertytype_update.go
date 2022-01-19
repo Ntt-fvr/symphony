@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -616,6 +617,25 @@ func (ptu *PropertyTypeUpdate) SetWorkerType(w *WorkerType) *PropertyTypeUpdate 
 	return ptu.SetWorkerTypeID(w.ID)
 }
 
+// SetResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id.
+func (ptu *PropertyTypeUpdate) SetResourcespecificationID(id int) *PropertyTypeUpdate {
+	ptu.mutation.SetResourcespecificationID(id)
+	return ptu
+}
+
+// SetNillableResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillableResourcespecificationID(id *int) *PropertyTypeUpdate {
+	if id != nil {
+		ptu = ptu.SetResourcespecificationID(*id)
+	}
+	return ptu
+}
+
+// SetResourcespecification sets the resourcespecification edge to ResourceSpecification.
+func (ptu *PropertyTypeUpdate) SetResourcespecification(r *ResourceSpecification) *PropertyTypeUpdate {
+	return ptu.SetResourcespecificationID(r.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptu *PropertyTypeUpdate) Mutation() *PropertyTypeMutation {
 	return ptu.mutation
@@ -699,6 +719,12 @@ func (ptu *PropertyTypeUpdate) ClearProjectTemplate() *PropertyTypeUpdate {
 // ClearWorkerType clears the "worker_type" edge to type WorkerType.
 func (ptu *PropertyTypeUpdate) ClearWorkerType() *PropertyTypeUpdate {
 	ptu.mutation.ClearWorkerType()
+	return ptu
+}
+
+// ClearResourcespecification clears the "resourcespecification" edge to type ResourceSpecification.
+func (ptu *PropertyTypeUpdate) ClearResourcespecification() *PropertyTypeUpdate {
+	ptu.mutation.ClearResourcespecification()
 	return ptu
 }
 
@@ -1461,6 +1487,41 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ptu.mutation.ResourcespecificationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ResourcespecificationTable,
+			Columns: []string{propertytype.ResourcespecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcespecification.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.ResourcespecificationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ResourcespecificationTable,
+			Columns: []string{propertytype.ResourcespecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcespecification.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertytype.Label}
@@ -2055,6 +2116,25 @@ func (ptuo *PropertyTypeUpdateOne) SetWorkerType(w *WorkerType) *PropertyTypeUpd
 	return ptuo.SetWorkerTypeID(w.ID)
 }
 
+// SetResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id.
+func (ptuo *PropertyTypeUpdateOne) SetResourcespecificationID(id int) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetResourcespecificationID(id)
+	return ptuo
+}
+
+// SetNillableResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillableResourcespecificationID(id *int) *PropertyTypeUpdateOne {
+	if id != nil {
+		ptuo = ptuo.SetResourcespecificationID(*id)
+	}
+	return ptuo
+}
+
+// SetResourcespecification sets the resourcespecification edge to ResourceSpecification.
+func (ptuo *PropertyTypeUpdateOne) SetResourcespecification(r *ResourceSpecification) *PropertyTypeUpdateOne {
+	return ptuo.SetResourcespecificationID(r.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptuo *PropertyTypeUpdateOne) Mutation() *PropertyTypeMutation {
 	return ptuo.mutation
@@ -2138,6 +2218,12 @@ func (ptuo *PropertyTypeUpdateOne) ClearProjectTemplate() *PropertyTypeUpdateOne
 // ClearWorkerType clears the "worker_type" edge to type WorkerType.
 func (ptuo *PropertyTypeUpdateOne) ClearWorkerType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearWorkerType()
+	return ptuo
+}
+
+// ClearResourcespecification clears the "resourcespecification" edge to type ResourceSpecification.
+func (ptuo *PropertyTypeUpdateOne) ClearResourcespecification() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearResourcespecification()
 	return ptuo
 }
 
@@ -2890,6 +2976,41 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workertype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.ResourcespecificationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ResourcespecificationTable,
+			Columns: []string{propertytype.ResourcespecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcespecification.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.ResourcespecificationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ResourcespecificationTable,
+			Columns: []string{propertytype.ResourcespecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcespecification.FieldID,
 				},
 			},
 		}

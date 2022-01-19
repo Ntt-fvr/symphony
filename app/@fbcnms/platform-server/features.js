@@ -250,6 +250,11 @@ export const arrayConfigs = [
     enabledByDefault: false,
   },
   {
+    id: 'enable_resource_catalog',
+    title: 'Resource Catalog',
+    enabledByDefault: true,
+  },
+  {
     id: 'scheduling_filter_dates',
     title: 'Scheduling',
     enabledByDefault: false,
