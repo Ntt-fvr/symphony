@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -616,6 +617,55 @@ func (ptu *PropertyTypeUpdate) SetWorkerType(w *WorkerType) *PropertyTypeUpdate 
 	return ptu.SetWorkerTypeID(w.ID)
 }
 
+// AddPropTypeIDs adds the prop_type edge to PropertyTypeValue by ids.
+func (ptu *PropertyTypeUpdate) AddPropTypeIDs(ids ...int) *PropertyTypeUpdate {
+	ptu.mutation.AddPropTypeIDs(ids...)
+	return ptu
+}
+
+// AddPropType adds the prop_type edges to PropertyTypeValue.
+func (ptu *PropertyTypeUpdate) AddPropType(p ...*PropertyTypeValue) *PropertyTypeUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.AddPropTypeIDs(ids...)
+}
+
+// SetPropertyTyID sets the property_ty edge to PropertyType by id.
+func (ptu *PropertyTypeUpdate) SetPropertyTyID(id int) *PropertyTypeUpdate {
+	ptu.mutation.SetPropertyTyID(id)
+	return ptu
+}
+
+// SetNillablePropertyTyID sets the property_ty edge to PropertyType by id if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillablePropertyTyID(id *int) *PropertyTypeUpdate {
+	if id != nil {
+		ptu = ptu.SetPropertyTyID(*id)
+	}
+	return ptu
+}
+
+// SetPropertyTy sets the property_ty edge to PropertyType.
+func (ptu *PropertyTypeUpdate) SetPropertyTy(p *PropertyType) *PropertyTypeUpdate {
+	return ptu.SetPropertyTyID(p.ID)
+}
+
+// AddProperTypeIDs adds the proper_type edge to PropertyType by ids.
+func (ptu *PropertyTypeUpdate) AddProperTypeIDs(ids ...int) *PropertyTypeUpdate {
+	ptu.mutation.AddProperTypeIDs(ids...)
+	return ptu
+}
+
+// AddProperType adds the proper_type edges to PropertyType.
+func (ptu *PropertyTypeUpdate) AddProperType(p ...*PropertyType) *PropertyTypeUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.AddProperTypeIDs(ids...)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptu *PropertyTypeUpdate) Mutation() *PropertyTypeMutation {
 	return ptu.mutation
@@ -700,6 +750,54 @@ func (ptu *PropertyTypeUpdate) ClearProjectTemplate() *PropertyTypeUpdate {
 func (ptu *PropertyTypeUpdate) ClearWorkerType() *PropertyTypeUpdate {
 	ptu.mutation.ClearWorkerType()
 	return ptu
+}
+
+// ClearPropType clears all "prop_type" edges to type PropertyTypeValue.
+func (ptu *PropertyTypeUpdate) ClearPropType() *PropertyTypeUpdate {
+	ptu.mutation.ClearPropType()
+	return ptu
+}
+
+// RemovePropTypeIDs removes the prop_type edge to PropertyTypeValue by ids.
+func (ptu *PropertyTypeUpdate) RemovePropTypeIDs(ids ...int) *PropertyTypeUpdate {
+	ptu.mutation.RemovePropTypeIDs(ids...)
+	return ptu
+}
+
+// RemovePropType removes prop_type edges to PropertyTypeValue.
+func (ptu *PropertyTypeUpdate) RemovePropType(p ...*PropertyTypeValue) *PropertyTypeUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.RemovePropTypeIDs(ids...)
+}
+
+// ClearPropertyTy clears the "property_ty" edge to type PropertyType.
+func (ptu *PropertyTypeUpdate) ClearPropertyTy() *PropertyTypeUpdate {
+	ptu.mutation.ClearPropertyTy()
+	return ptu
+}
+
+// ClearProperType clears all "proper_type" edges to type PropertyType.
+func (ptu *PropertyTypeUpdate) ClearProperType() *PropertyTypeUpdate {
+	ptu.mutation.ClearProperType()
+	return ptu
+}
+
+// RemoveProperTypeIDs removes the proper_type edge to PropertyType by ids.
+func (ptu *PropertyTypeUpdate) RemoveProperTypeIDs(ids ...int) *PropertyTypeUpdate {
+	ptu.mutation.RemoveProperTypeIDs(ids...)
+	return ptu
+}
+
+// RemoveProperType removes proper_type edges to PropertyType.
+func (ptu *PropertyTypeUpdate) RemoveProperType(p ...*PropertyType) *PropertyTypeUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.RemoveProperTypeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1461,6 +1559,149 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ptu.mutation.PropTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.PropTypeTable,
+			Columns: []string{propertytype.PropTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedPropTypeIDs(); len(nodes) > 0 && !ptu.mutation.PropTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.PropTypeTable,
+			Columns: []string{propertytype.PropTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.PropTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.PropTypeTable,
+			Columns: []string{propertytype.PropTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptu.mutation.PropertyTyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyTyTable,
+			Columns: []string{propertytype.PropertyTyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.PropertyTyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyTyTable,
+			Columns: []string{propertytype.PropertyTyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptu.mutation.ProperTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.ProperTypeTable,
+			Columns: []string{propertytype.ProperTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedProperTypeIDs(); len(nodes) > 0 && !ptu.mutation.ProperTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.ProperTypeTable,
+			Columns: []string{propertytype.ProperTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.ProperTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.ProperTypeTable,
+			Columns: []string{propertytype.ProperTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertytype.Label}
@@ -2055,6 +2296,55 @@ func (ptuo *PropertyTypeUpdateOne) SetWorkerType(w *WorkerType) *PropertyTypeUpd
 	return ptuo.SetWorkerTypeID(w.ID)
 }
 
+// AddPropTypeIDs adds the prop_type edge to PropertyTypeValue by ids.
+func (ptuo *PropertyTypeUpdateOne) AddPropTypeIDs(ids ...int) *PropertyTypeUpdateOne {
+	ptuo.mutation.AddPropTypeIDs(ids...)
+	return ptuo
+}
+
+// AddPropType adds the prop_type edges to PropertyTypeValue.
+func (ptuo *PropertyTypeUpdateOne) AddPropType(p ...*PropertyTypeValue) *PropertyTypeUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.AddPropTypeIDs(ids...)
+}
+
+// SetPropertyTyID sets the property_ty edge to PropertyType by id.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyTyID(id int) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetPropertyTyID(id)
+	return ptuo
+}
+
+// SetNillablePropertyTyID sets the property_ty edge to PropertyType by id if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillablePropertyTyID(id *int) *PropertyTypeUpdateOne {
+	if id != nil {
+		ptuo = ptuo.SetPropertyTyID(*id)
+	}
+	return ptuo
+}
+
+// SetPropertyTy sets the property_ty edge to PropertyType.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyTy(p *PropertyType) *PropertyTypeUpdateOne {
+	return ptuo.SetPropertyTyID(p.ID)
+}
+
+// AddProperTypeIDs adds the proper_type edge to PropertyType by ids.
+func (ptuo *PropertyTypeUpdateOne) AddProperTypeIDs(ids ...int) *PropertyTypeUpdateOne {
+	ptuo.mutation.AddProperTypeIDs(ids...)
+	return ptuo
+}
+
+// AddProperType adds the proper_type edges to PropertyType.
+func (ptuo *PropertyTypeUpdateOne) AddProperType(p ...*PropertyType) *PropertyTypeUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.AddProperTypeIDs(ids...)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptuo *PropertyTypeUpdateOne) Mutation() *PropertyTypeMutation {
 	return ptuo.mutation
@@ -2139,6 +2429,54 @@ func (ptuo *PropertyTypeUpdateOne) ClearProjectTemplate() *PropertyTypeUpdateOne
 func (ptuo *PropertyTypeUpdateOne) ClearWorkerType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearWorkerType()
 	return ptuo
+}
+
+// ClearPropType clears all "prop_type" edges to type PropertyTypeValue.
+func (ptuo *PropertyTypeUpdateOne) ClearPropType() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearPropType()
+	return ptuo
+}
+
+// RemovePropTypeIDs removes the prop_type edge to PropertyTypeValue by ids.
+func (ptuo *PropertyTypeUpdateOne) RemovePropTypeIDs(ids ...int) *PropertyTypeUpdateOne {
+	ptuo.mutation.RemovePropTypeIDs(ids...)
+	return ptuo
+}
+
+// RemovePropType removes prop_type edges to PropertyTypeValue.
+func (ptuo *PropertyTypeUpdateOne) RemovePropType(p ...*PropertyTypeValue) *PropertyTypeUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.RemovePropTypeIDs(ids...)
+}
+
+// ClearPropertyTy clears the "property_ty" edge to type PropertyType.
+func (ptuo *PropertyTypeUpdateOne) ClearPropertyTy() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearPropertyTy()
+	return ptuo
+}
+
+// ClearProperType clears all "proper_type" edges to type PropertyType.
+func (ptuo *PropertyTypeUpdateOne) ClearProperType() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearProperType()
+	return ptuo
+}
+
+// RemoveProperTypeIDs removes the proper_type edge to PropertyType by ids.
+func (ptuo *PropertyTypeUpdateOne) RemoveProperTypeIDs(ids ...int) *PropertyTypeUpdateOne {
+	ptuo.mutation.RemoveProperTypeIDs(ids...)
+	return ptuo
+}
+
+// RemoveProperType removes proper_type edges to PropertyType.
+func (ptuo *PropertyTypeUpdateOne) RemoveProperType(p ...*PropertyType) *PropertyTypeUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.RemoveProperTypeIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -2890,6 +3228,149 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workertype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.PropTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.PropTypeTable,
+			Columns: []string{propertytype.PropTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedPropTypeIDs(); len(nodes) > 0 && !ptuo.mutation.PropTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.PropTypeTable,
+			Columns: []string{propertytype.PropTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.PropTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.PropTypeTable,
+			Columns: []string{propertytype.PropTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.PropertyTyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyTyTable,
+			Columns: []string{propertytype.PropertyTyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.PropertyTyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyTyTable,
+			Columns: []string{propertytype.PropertyTyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.ProperTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.ProperTypeTable,
+			Columns: []string{propertytype.ProperTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedProperTypeIDs(); len(nodes) > 0 && !ptuo.mutation.ProperTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.ProperTypeTable,
+			Columns: []string{propertytype.ProperTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.ProperTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytype.ProperTypeTable,
+			Columns: []string{propertytype.ProperTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
 				},
 			},
 		}

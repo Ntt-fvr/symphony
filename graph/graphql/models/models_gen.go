@@ -906,6 +906,13 @@ type EditProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
+type EditPropertyTypeValueInput struct {
+	ID                 *int                          `json:"id"`
+	Name               string                        `json:"name"`
+	PropertyTypeValue  *int                          `json:"propertyTypeValue"`
+	PropertyTypeValues []*EditPropertyTypeValueInput `json:"propertyTypeValues"`
+}
+
 type EditRecommendationsCategoryInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -1334,6 +1341,15 @@ type PropertyInput struct {
 	NodeIDValue        *int     `json:"nodeIDValue"`
 	IsEditable         *bool    `json:"isEditable"`
 	IsInstanceProperty *bool    `json:"isInstanceProperty"`
+}
+
+type PropertyTypeValueFilterInput struct {
+	FilterType  PropertyTypeValueFilterType `json:"filterType"`
+	Operator    enum.FilterOperator         `json:"operator"`
+	StringValue *string                     `json:"stringValue"`
+	IDSet       []int                       `json:"idSet"`
+	MaxDepth    *int                        `json:"maxDepth"`
+	StringSet   []string                    `json:"stringSet"`
 }
 
 type PublishFlowInput struct {
@@ -2771,6 +2787,45 @@ func (e *ProjectFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ProjectFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type PropertyTypeValueFilterType string
+
+const (
+	PropertyTypeValueFilterTypeName PropertyTypeValueFilterType = "NAME"
+)
+
+var AllPropertyTypeValueFilterType = []PropertyTypeValueFilterType{
+	PropertyTypeValueFilterTypeName,
+}
+
+func (e PropertyTypeValueFilterType) IsValid() bool {
+	switch e {
+	case PropertyTypeValueFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e PropertyTypeValueFilterType) String() string {
+	return string(e)
+}
+
+func (e *PropertyTypeValueFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PropertyTypeValueFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PropertyTypeValueFilterType", str)
+	}
+	return nil
+}
+
+func (e PropertyTypeValueFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

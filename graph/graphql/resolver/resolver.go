@@ -288,3 +288,7 @@ func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
+
+func (r resolver) PropertyTypeValue() generated.PropertyTypeValueResolver {
+	return propertyTypeValueResolver{}
+}

@@ -598,7 +598,7 @@ func (r mutationResolver) AddWorkOrderType(
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetWorkOrderTypeID(typ.ID)
-	}, input.Properties...); err != nil {
+	}, input.Properties); err != nil {
 		return nil, err
 	}
 	err = r.addWorkOrderTypeCategoryDefinitions(ctx, input, typ.ID)
@@ -621,7 +621,9 @@ func (r mutationResolver) EditWorkOrderType(
 	}
 	for _, p := range input.Properties {
 		if p.ID == nil {
-			if err := r.AddPropertyTypes(ctx, func(b *ent.PropertyTypeCreate) { b.SetWorkOrderTypeID(input.ID) }, p); err != nil {
+			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
+				ptc.SetWorkOrderTypeID(wot.ID)
+			}, input.Properties); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, p); err != nil {

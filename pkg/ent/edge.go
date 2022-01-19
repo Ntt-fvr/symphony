@@ -1608,6 +1608,54 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	return result, MaskNotFound(err)
 }
 
+func (pt *PropertyType) PropType(ctx context.Context) ([]*PropertyTypeValue, error) {
+	result, err := pt.Edges.PropTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = pt.QueryPropType().All(ctx)
+	}
+	return result, err
+}
+
+func (pt *PropertyType) PropertyTy(ctx context.Context) (*PropertyType, error) {
+	result, err := pt.Edges.PropertyTyOrErr()
+	if IsNotLoaded(err) {
+		result, err = pt.QueryPropertyTy().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (pt *PropertyType) ProperType(ctx context.Context) ([]*PropertyType, error) {
+	result, err := pt.Edges.ProperTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = pt.QueryProperType().All(ctx)
+	}
+	return result, err
+}
+
+func (ptv *PropertyTypeValue) PropertyType(ctx context.Context) (*PropertyType, error) {
+	result, err := ptv.Edges.PropertyTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = ptv.QueryPropertyType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (ptv *PropertyTypeValue) ProTypVal(ctx context.Context) (*PropertyTypeValue, error) {
+	result, err := ptv.Edges.ProTypValOrErr()
+	if IsNotLoaded(err) {
+		result, err = ptv.QueryProTypVal().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (ptv *PropertyTypeValue) PropTypeValue(ctx context.Context) ([]*PropertyTypeValue, error) {
+	result, err := ptv.Edges.PropTypeValueOrErr()
+	if IsNotLoaded(err) {
+		result, err = ptv.QueryPropTypeValue().All(ctx)
+	}
+	return result, err
+}
+
 func (r *Recommendations) RecomendationSources(ctx context.Context) (*RecommendationsSources, error) {
 	result, err := r.Edges.RecomendationSourcesOrErr()
 	if IsNotLoaded(err) {
