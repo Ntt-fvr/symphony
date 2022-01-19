@@ -342,6 +342,7 @@ type PermissionsPolicy implements Node {
   name: String!
   description: String
   isGlobal: Boolean!
+  isMulticontractor: Boolean!
   policy: SystemPolicy!
   groups: [UsersGroup!]!
 }
@@ -350,6 +351,7 @@ input AddPermissionsPolicyInput {
   name: String!
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -362,6 +364,7 @@ input EditPermissionsPolicyInput {
   name: String
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput

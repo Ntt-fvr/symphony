@@ -74,7 +74,10 @@ class PsymClient(SymphonyClient):
         get_counter_families,
         remove_counter_family,
     )
-    from.api.counter_formula import (add_counter_formula,)
+    from.api.counter_formula import (
+        add_counter_formula,
+        edit_counter_formula,
+        delete_counter_formula,)
 
     from.api.counter import (
         add_counter,

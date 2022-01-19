@@ -15,7 +15,8 @@ from psym.api.formula import (add_formula,)
 from psym.api.counter_family import (add_counter_family,)
 from psym.api.vendor import (add_vendor,)
 from psym.api.counter import (add_counter,)
-from psym.api.counter_formula import (add_counter_formula,)
+from psym.api.counter_formula import (add_counter_formula, edit_counter_formula,)
+from psym.common.data_class import counterFormula
 
 from ..utils.base_test import BaseTest
 import unittest
@@ -39,14 +40,14 @@ class TestCounterFormula(BaseTest):
             name="Kpi_1",
             description="new kpi_1",
             status=True,
-            domainId=self.test_domain_created_1.id,
-            kpiCategoryId=self.test_kpi_category_created_1.id
+            domain=self.test_domain_created_1.id,
+            kpiCategory=self.test_kpi_category_created_1.id
         )
 
         self.test_tech_created_1 = add_tech(
             client=self.client,
             name="tech_1",
-            domainId=self.test_domain_created_1.id
+            domain=self.test_domain_created_1.id
 
         )
 
@@ -57,11 +58,11 @@ class TestCounterFormula(BaseTest):
 
         self.test_formula_created = add_formula(
             client=self.client,
-            textformula="formula_1",
+            textFormula="formula_1",
             status=True,
-            kpiFk=self.test_Kpi_created_1.id,
-            techFk=self.test_tech_created_1.id,
-            networkTypeFk=self.test_network_type_created_1.id
+            kpi=self.test_Kpi_created_1.id,
+            tech=self.test_tech_created_1.id,
+            networkType=self.test_network_type_created_1.id
             
         )
 
@@ -80,8 +81,8 @@ class TestCounterFormula(BaseTest):
             name="counter_1",
             externalID="new counter_1",
             networkManagerSystem="counter",
-            counterFamilyFk=self.test_counter_family_created.id,
-            vendorFk= self.test_vendor_created.id
+            counterFamily=self.test_counter_family_created.id,
+            vendor= self.test_vendor_created.id
         )
     
         self.test_counter_formula_created = add_counter_formula(
@@ -102,3 +103,15 @@ class TestCounterFormula(BaseTest):
         )
         self.assertNotEqual(self.test_counter_formula_created, fetched_counter_formula_created)
 
+
+    def test_edit_counter_formula(self) -> None:
+        new_mandatory = True
+        u =  self.test_counter_formula_created
+        edit_counter_formula(
+            client=self.client,
+            CounterFormula=u,
+            new_mandatory=new_mandatory,
+            counter=self.test_counter_created.id,
+            formula=self.test_formula_created.id
+        )
+        self.assertNotEqual(u.mandatory, False)

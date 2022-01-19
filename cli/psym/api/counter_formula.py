@@ -27,21 +27,17 @@ def add_counter_formula(
     :type mandatory: str
     :param id: ID
     :type id: str
-    ;param counterFk: str
-    :type counterFk: psym.common.data_class.counter
-    :param formulaFk: str
-    :type formulaFk: psym.common.data_class.formula
+    :param counter: counter
+    :type counter: `~psym.common.data_class.counter`
+    :param formula: formula
+    :type formula: `~psym.common.data_class.formula`
     
 
     :return: CounterFormula object
     :rtype: :class:`~psym.common.data_class.counterFormula`
 
+   
     **Example 1**
-
-    .. code-block:: python
-
-        new_counter_formula = client.add_counter_formula(name="new_counter_formula", mandatory=True, counter=counter.id, formula=formula.id)
-    **Example 2**
 
     .. code-block:: python
 
@@ -62,27 +58,61 @@ def add_counter_formula(
     counter=result.counterFk, 
     formula=result.formulaFk)
 
-def edit_ounter_formula(
+def edit_counter_formula(
     client: SymphonyClient,
-    counterFormula: counterFormula,
-    new_name: Optional[bool] = None,
-    formula: formula = None,
-    counter: counter = None
+    CounterFormula: counterFormula,
+    new_mandatory: Optional[bool] = None,
+    formula:formula= None,
+    counter: counter = None,
 ) -> None:
+    """This function edits counterFormula.
+
+    :param mandatory: mandatory
+    :type mandatory: str
+    :param id: ID
+    :type id: str
+    :param counter: counter
+    :type counter: psym.common.data_class.counter
+    :param formula: formula
+    :type formula: psym.common.data_class.formula
+
+    :return: none object
+    :rtype: :class:`~psym.common.data_class.counterFormula`
+
+    **Example 1**
+
+    .. code-block:: python
+
+        counter_formula_edited = client.edit_Kpi(
+            CounterFormula=CounterFormula,
+            new_mandatory=new_mandatory,
+            counter=counter.id,
+            formula=formula.id
+            )
+    """
     params: Dict[str, Any] = {}
-    if new_name is not None:
-        params.update({True: new_name})
-    if new_name is not None:
+    if new_mandatory is not None:
+        params.update({"mandatory": new_mandatory})
+    if new_mandatory is not None:
         editCounterFormula.execute(client, input=EditCounterFormulaInput(
-        id=counterFormula.id, 
-        mandatory=new_name,
-        counterFk=counter,
-        formulaFK=formula,
-        ))
+            id=CounterFormula.id, 
+            mandatory=new_mandatory,
+            counterFk=counter,
+            formulaFk=formula))
 
+def delete_counter_formula(client: SymphonyClient, id: str) -> None:
+    """This function deletes CounterFormula.
 
+    :param id: CounterFormula ID
+    :type id: str
 
+    :raises:
+        FailedOperationException: Internal symphony error
 
+    **Example**
 
+    .. code-block:: python
 
-
+        client.delete_counter_formula(id="12345678")
+    """
+    removeCounterFormula.execute(client, id=id)

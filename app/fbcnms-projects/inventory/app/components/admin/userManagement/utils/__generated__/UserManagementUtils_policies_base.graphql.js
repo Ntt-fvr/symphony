@@ -23,6 +23,7 @@ export type UserManagementUtils_policies_base = {|
   +name: string,
   +description: ?string,
   +isGlobal: boolean,
+  +isMulticontractor: boolean,
   +policy: {|
     +__typename: "InventoryPolicy",
     +read: {|
@@ -251,6 +252,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "isGlobal",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isMulticontractor",
       "storageKey": null
     },
     {
@@ -563,6 +571,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7a02ff1e3fdafba9f4043d5321fb0ff4';
+(node/*: any*/).hash = 'cb4732f39e75ce82221c97f02f01f412';
 
 module.exports = node;

@@ -1385,12 +1385,13 @@ type ComplexityRoot struct {
 	}
 
 	PermissionsPolicy struct {
-		Description func(childComplexity int) int
-		Groups      func(childComplexity int) int
-		ID          func(childComplexity int) int
-		IsGlobal    func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Policy      func(childComplexity int) int
+		Description       func(childComplexity int) int
+		Groups            func(childComplexity int) int
+		ID                func(childComplexity int) int
+		IsGlobal          func(childComplexity int) int
+		IsMulticontractor func(childComplexity int) int
+		Name              func(childComplexity int) int
+		Policy            func(childComplexity int) int
 	}
 
 	PermissionsPolicyConnection struct {
@@ -9385,6 +9386,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PermissionsPolicy.IsGlobal(childComplexity), true
 
+	case "PermissionsPolicy.isMulticontractor":
+		if e.complexity.PermissionsPolicy.IsMulticontractor == nil {
+			break
+		}
+
+		return e.complexity.PermissionsPolicy.IsMulticontractor(childComplexity), true
+
 	case "PermissionsPolicy.name":
 		if e.complexity.PermissionsPolicy.Name == nil {
 			break
@@ -13935,6 +13943,7 @@ type PermissionsPolicy implements Node {
   name: String!
   description: String
   isGlobal: Boolean!
+  isMulticontractor: Boolean!
   policy: SystemPolicy!
   groups: [UsersGroup!]!
 }
@@ -13943,6 +13952,7 @@ input AddPermissionsPolicyInput {
   name: String!
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -13955,6 +13965,7 @@ input EditPermissionsPolicyInput {
   name: String
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -59676,6 +59687,41 @@ func (ec *executionContext) _PermissionsPolicy_isGlobal(ctx context.Context, fie
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PermissionsPolicy_isMulticontractor(ctx context.Context, field graphql.CollectedField, obj *ent.PermissionsPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PermissionsPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsMulticontractor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PermissionsPolicy_policy(ctx context.Context, field graphql.CollectedField, obj *ent.PermissionsPolicy) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -81777,6 +81823,14 @@ func (ec *executionContext) unmarshalInputAddPermissionsPolicyInput(ctx context.
 			if err != nil {
 				return it, err
 			}
+		case "isMulticontractor":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isMulticontractor"))
+			it.IsMulticontractor, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "inventoryInput":
 			var err error
 
@@ -85924,6 +85978,14 @@ func (ec *executionContext) unmarshalInputEditPermissionsPolicyInput(ctx context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isGlobal"))
 			it.IsGlobal, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isMulticontractor":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isMulticontractor"))
+			it.IsMulticontractor, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -101604,6 +101666,11 @@ func (ec *executionContext) _PermissionsPolicy(ctx context.Context, sel ast.Sele
 			out.Values[i] = ec._PermissionsPolicy_description(ctx, field, obj)
 		case "isGlobal":
 			out.Values[i] = ec._PermissionsPolicy_isGlobal(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "isMulticontractor":
+			out.Values[i] = ec._PermissionsPolicy_isMulticontractor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}

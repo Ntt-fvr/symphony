@@ -191,6 +191,7 @@ const getInitialNewPolicy: (policyType: ?string) => PermissionsPolicy = (
     description: '',
     type,
     isGlobal: false,
+    isMulticontractor: false,
     groups: [],
     policy: EMPTY_POLICY,
     inventoryRules:
@@ -288,7 +289,13 @@ function PermissionsPolicyCard(props: Props) {
                   if (policy == null) {
                     return;
                   }
-
+                  if (
+                    policy.isMulticontractor &&
+                    policy.workforceRules.read.organizationIds !== null &&
+                    policy.workforceRules.read.organizationIds.length === 0
+                  ) {
+                    return;
+                  }
                   const saveAction = isOnNewPolicy
                     ? addPermissionsPolicy
                     : editPermissionsPolicy;

@@ -1631,6 +1631,7 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "is_global", Type: field.TypeBool, Nullable: true},
+		{Name: "is_multicontractor", Type: field.TypeBool, Nullable: true},
 		{Name: "inventory_policy", Type: field.TypeJSON, Nullable: true},
 		{Name: "workforce_policy", Type: field.TypeJSON, Nullable: true},
 		{Name: "automation_policy", Type: field.TypeJSON, Nullable: true},

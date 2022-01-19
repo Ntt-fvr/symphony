@@ -37,6 +37,63 @@ def add_recommendations(
     userCreated: int,
     userApproved: int,
 ) -> recommendations:
+    """This function adds recommendations.
+
+    :param externalID: externalID
+    :type externalID: str
+    :param resource: resource
+    :type resource: str
+    :param shortDescription: shortDescription
+    :type shortDescription: str
+    :param LongDescription: LongDescription
+    :type LongDescription: str
+    :param command: command
+    :type command: str
+    :param runbook: runbook
+    :type runbook: str
+    :param priority: priority
+    :type priority: str
+    :param status: status
+    :type status: bool
+    :param used: used
+    :type used: int
+    :param vendor: vendor
+    :type vendor: str
+    :param RecomendationSources: RecomendationSources
+    :type RecomendationSources::`~psym.graphql.enum.RecomendationSources
+    :param RecomendationsCategory: RecomendationsCategory
+    :type RecomendationsCategory: `~psym.graphql.enum.RecomendationsCategory
+    :param userCreated: userCreated
+    :type userCreated:`~psym.graphql.enum.user`
+    :param userApproved: userApproved
+    :type userApproved:`~psym.graphql.enum.user`
+
+    :return: recommendations object
+    :rtype: :class:`~psym.common.data_class.recommendations`
+
+
+    **Example 1**
+
+    .. code-block:: python
+
+        new_recommendations = client.add_recommendations(
+            externalID="new_externalID",
+            resource="resoruce",
+            alarmType="alarmType",
+            LongDescription="LongDescription",
+            shortDescription="shortDescription",
+            command="command",
+            runbook="runbook",
+            priority=2,
+            status=False,
+            used=2,
+            vendor=vendor.id,
+            RecomendationSources=recommendation_sources.id,
+            RecomendationsCategory=recommendation_category.id,
+            userCreated=user.id,
+            userApproved=user.id
+        )
+    """
     recommendations_input = AddRecommendationsInput(
     externalID=externalID,
     resource=resource,
@@ -92,6 +149,22 @@ def edit_recommendations(
     RecomendationsCategory:str=None,
     userApproved:str=None
 ) ->None:
+    """This function edits recommendations.
+
+    :param recommendations: recommendations entity
+    :type name: str
+    :param new_name: recommendations name
+    :type name: str
+
+    :return: none object
+    :rtype: :class:`~psym.common.data_class.recommendations`
+
+    **Example 1**
+
+    .. code-block:: python
+
+        recommendations_edited = client.edit_recommendations(recommendations=recommendations ,new_name="new_recommendations")
+    """
     params: Dict[str, Any] = {}
     if new_externalID is not None:
         params.update({"_name_": new_externalID})
@@ -121,9 +194,9 @@ def get_recommendations(client: SymphonyClient) -> Iterator[recommendations]:
     :rtype: Iterator[ :class:`~psym.common.data_class.recommendations` ]
     **Example**
     .. code-block:: python
-        users = client.get_recommendations()
-        for user in users:
-            print(user.name)
+        recommendations_ = recommendations.get_recommendations()
+        for recommendation in recommendations:
+            print(recommendations.name)
     """
     result = Recommendations.execute(client)
     if result is None:
@@ -152,4 +225,16 @@ def get_recommendations(client: SymphonyClient) -> Iterator[recommendations]:
             )
 
 def remove_recommendations(client: SymphonyClient, id: str) -> None:
+    """This function delete recommendations.
+
+    :param name: recommendations name
+    :type name: :class:`~psym.common.data_class.recommendations`
+    :rtype: None
+
+    **Example**
+
+    .. code-block:: python
+
+        client.delete_recommendations(recommendations)
+    """	
     removeRecommendations.execute(client, id=id)

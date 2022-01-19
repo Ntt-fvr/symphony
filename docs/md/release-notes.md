@@ -7,6 +7,10 @@ title: Release Notes
 
 ### Release Notes
 
+* 06/01/2022
+	* Assurance
+		* **[Python API]** 	**[Assurance]**	Finished implementing the assurance functionalities, especially counterFormula, to which we added edit and remove(delete) functionalities.
+
 
 * 04/01/2022
     * Documentation

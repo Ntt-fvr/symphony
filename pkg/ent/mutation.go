@@ -42865,6 +42865,7 @@ type PermissionsPolicyMutation struct {
 	name                *string
 	description         *string
 	is_global           *bool
+	is_multicontractor  *bool
 	inventory_policy    **models.InventoryPolicyInput
 	workforce_policy    **models.WorkforcePolicyInput
 	automation_policy   **models.AutomationPolicyInput
@@ -43169,6 +43170,56 @@ func (m *PermissionsPolicyMutation) IsGlobalCleared() bool {
 func (m *PermissionsPolicyMutation) ResetIsGlobal() {
 	m.is_global = nil
 	delete(m.clearedFields, permissionspolicy.FieldIsGlobal)
+}
+
+// SetIsMulticontractor sets the is_multicontractor field.
+func (m *PermissionsPolicyMutation) SetIsMulticontractor(b bool) {
+	m.is_multicontractor = &b
+}
+
+// IsMulticontractor returns the is_multicontractor value in the mutation.
+func (m *PermissionsPolicyMutation) IsMulticontractor() (r bool, exists bool) {
+	v := m.is_multicontractor
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsMulticontractor returns the old is_multicontractor value of the PermissionsPolicy.
+// If the PermissionsPolicy object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PermissionsPolicyMutation) OldIsMulticontractor(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIsMulticontractor is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIsMulticontractor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsMulticontractor: %w", err)
+	}
+	return oldValue.IsMulticontractor, nil
+}
+
+// ClearIsMulticontractor clears the value of is_multicontractor.
+func (m *PermissionsPolicyMutation) ClearIsMulticontractor() {
+	m.is_multicontractor = nil
+	m.clearedFields[permissionspolicy.FieldIsMulticontractor] = struct{}{}
+}
+
+// IsMulticontractorCleared returns if the field is_multicontractor was cleared in this mutation.
+func (m *PermissionsPolicyMutation) IsMulticontractorCleared() bool {
+	_, ok := m.clearedFields[permissionspolicy.FieldIsMulticontractor]
+	return ok
+}
+
+// ResetIsMulticontractor reset all changes of the "is_multicontractor" field.
+func (m *PermissionsPolicyMutation) ResetIsMulticontractor() {
+	m.is_multicontractor = nil
+	delete(m.clearedFields, permissionspolicy.FieldIsMulticontractor)
 }
 
 // SetInventoryPolicy sets the inventory_policy field.
@@ -43491,7 +43542,7 @@ func (m *PermissionsPolicyMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *PermissionsPolicyMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.create_time != nil {
 		fields = append(fields, permissionspolicy.FieldCreateTime)
 	}
@@ -43506,6 +43557,9 @@ func (m *PermissionsPolicyMutation) Fields() []string {
 	}
 	if m.is_global != nil {
 		fields = append(fields, permissionspolicy.FieldIsGlobal)
+	}
+	if m.is_multicontractor != nil {
+		fields = append(fields, permissionspolicy.FieldIsMulticontractor)
 	}
 	if m.inventory_policy != nil {
 		fields = append(fields, permissionspolicy.FieldInventoryPolicy)
@@ -43537,6 +43591,8 @@ func (m *PermissionsPolicyMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case permissionspolicy.FieldIsGlobal:
 		return m.IsGlobal()
+	case permissionspolicy.FieldIsMulticontractor:
+		return m.IsMulticontractor()
 	case permissionspolicy.FieldInventoryPolicy:
 		return m.InventoryPolicy()
 	case permissionspolicy.FieldWorkforcePolicy:
@@ -43564,6 +43620,8 @@ func (m *PermissionsPolicyMutation) OldField(ctx context.Context, name string) (
 		return m.OldDescription(ctx)
 	case permissionspolicy.FieldIsGlobal:
 		return m.OldIsGlobal(ctx)
+	case permissionspolicy.FieldIsMulticontractor:
+		return m.OldIsMulticontractor(ctx)
 	case permissionspolicy.FieldInventoryPolicy:
 		return m.OldInventoryPolicy(ctx)
 	case permissionspolicy.FieldWorkforcePolicy:
@@ -43615,6 +43673,13 @@ func (m *PermissionsPolicyMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsGlobal(v)
+		return nil
+	case permissionspolicy.FieldIsMulticontractor:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsMulticontractor(v)
 		return nil
 	case permissionspolicy.FieldInventoryPolicy:
 		v, ok := value.(*models.InventoryPolicyInput)
@@ -43680,6 +43745,9 @@ func (m *PermissionsPolicyMutation) ClearedFields() []string {
 	if m.FieldCleared(permissionspolicy.FieldIsGlobal) {
 		fields = append(fields, permissionspolicy.FieldIsGlobal)
 	}
+	if m.FieldCleared(permissionspolicy.FieldIsMulticontractor) {
+		fields = append(fields, permissionspolicy.FieldIsMulticontractor)
+	}
 	if m.FieldCleared(permissionspolicy.FieldInventoryPolicy) {
 		fields = append(fields, permissionspolicy.FieldInventoryPolicy)
 	}
@@ -43711,6 +43779,9 @@ func (m *PermissionsPolicyMutation) ClearField(name string) error {
 		return nil
 	case permissionspolicy.FieldIsGlobal:
 		m.ClearIsGlobal()
+		return nil
+	case permissionspolicy.FieldIsMulticontractor:
+		m.ClearIsMulticontractor()
 		return nil
 	case permissionspolicy.FieldInventoryPolicy:
 		m.ClearInventoryPolicy()
@@ -43747,6 +43818,9 @@ func (m *PermissionsPolicyMutation) ResetField(name string) error {
 		return nil
 	case permissionspolicy.FieldIsGlobal:
 		m.ResetIsGlobal()
+		return nil
+	case permissionspolicy.FieldIsMulticontractor:
+		m.ResetIsMulticontractor()
 		return nil
 	case permissionspolicy.FieldInventoryPolicy:
 		m.ResetInventoryPolicy()

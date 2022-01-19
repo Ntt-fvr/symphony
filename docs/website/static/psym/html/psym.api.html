@@ -78,7 +78,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.recommendation_sources">psym.api.recommendation_sources module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.recommendations">psym.api.recommendations module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.rule">psym.api.rule module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#psym-api-rule-limit-module">psym.api.rule_limit module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-psym.api.rule_limit">psym.api.rule_limit module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.rule_type">psym.api.rule_type module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.service">psym.api.service module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.service_type">psym.api.service_type module</a></li>
@@ -100,7 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym.client">psym.client module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym.config">psym.config module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym.exceptions">psym.exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="psym.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">psym.api package</a><ul>
@@ -139,7 +139,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.recommendation_sources">psym.api.recommendation_sources module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.recommendations">psym.api.recommendations module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.rule">psym.api.rule module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#psym-api-rule-limit-module">psym.api.rule_limit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-psym.api.rule_limit">psym.api.rule_limit module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.rule_type">psym.api.rule_type module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.service">psym.api.service module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.service_type">psym.api.service_type module</a></li>
@@ -647,26 +647,18 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mandatory</strong> (<em>str</em>) – mandatory</p></li>
 <li><p><strong>id</strong> (<em>str</em>) – ID</p></li>
+<li><p><strong>counter</strong> (<cite>~psym.common.data_class.counter</cite>) – counter</p></li>
+<li><p><strong>formula</strong> (<cite>~psym.common.data_class.formula</cite>) – formula</p></li>
 </ul>
 </dd>
-</dl>
-<p>;param counterFk: str
-:type counterFk: psym.common.data_class.counter
-:param formulaFk: str
-:type formulaFk: psym.common.data_class.formula</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>CounterFormula object</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CounterFormula object</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.counterFormula" title="psym.common.data_class.counterFormula"><code class="xref py py-class docutils literal notranslate"><span class="pre">counterFormula</span></code></a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.counterFormula" title="psym.common.data_class.counterFormula"><code class="xref py py-class docutils literal notranslate"><span class="pre">counterFormula</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_counter_formula</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter_formula</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_counter_formula&quot;</span><span class="p">,</span> <span class="n">mandatory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_counter_formula</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter_formula</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;counter_formula&quot;</span><span class="p">,</span>
     <span class="n">mandatory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -678,9 +670,53 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="psym.api.counter_formula.edit_ounter_formula">
-<span class="sig-prename descclassname"><span class="pre">psym.api.counter_formula.</span></span><span class="sig-name descname"><span class="pre">edit_ounter_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">counterFormula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.counterFormula" title="psym.common.data_class.counterFormula"><span class="pre">psym.common.data_class.counterFormula</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.formula" title="psym.common.data_class.formula"><span class="pre">psym.common.data_class.formula</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.counter" title="psym.common.data_class.counter"><span class="pre">psym.common.data_class.counter</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.counter_formula.edit_ounter_formula" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="psym.api.counter_formula.delete_counter_formula">
+<span class="sig-prename descclassname"><span class="pre">psym.api.counter_formula.</span></span><span class="sig-name descname"><span class="pre">delete_counter_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.counter_formula.delete_counter_formula" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function deletes CounterFormula.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – CounterFormula ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_counter_formula</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="psym.api.counter_formula.edit_counter_formula">
+<span class="sig-prename descclassname"><span class="pre">psym.api.counter_formula.</span></span><span class="sig-name descname"><span class="pre">edit_counter_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">CounterFormula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.counterFormula" title="psym.common.data_class.counterFormula"><span class="pre">psym.common.data_class.counterFormula</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_mandatory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.formula" title="psym.common.data_class.formula"><span class="pre">psym.common.data_class.formula</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.counter" title="psym.common.data_class.counter"><span class="pre">psym.common.data_class.counter</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.counter_formula.edit_counter_formula" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function edits counterFormula.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mandatory</strong> (<em>str</em>) – mandatory</p></li>
+<li><p><strong>id</strong> (<em>str</em>) – ID</p></li>
+<li><p><strong>counter</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.counter" title="psym.common.data_class.counter"><em>psym.common.data_class.counter</em></a>) – counter</p></li>
+<li><p><strong>formula</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.formula" title="psym.common.data_class.formula"><em>psym.common.data_class.formula</em></a>) – formula</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>none object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.counterFormula" title="psym.common.data_class.counterFormula"><code class="xref py py-class docutils literal notranslate"><span class="pre">counterFormula</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counter_formula_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_Kpi</span><span class="p">(</span>
+    <span class="n">CounterFormula</span><span class="o">=</span><span class="n">CounterFormula</span><span class="p">,</span>
+    <span class="n">new_mandatory</span><span class="o">=</span><span class="n">new_mandatory</span><span class="p">,</span>
+    <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="o">.</span><span class="n">id</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </section>
 <section id="module-psym.api.customer">
@@ -5019,12 +5055,84 @@ It gets the requested equipment port type ID</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.recommendations.add_recommendations">
 <span class="sig-prename descclassname"><span class="pre">psym.api.recommendations.</span></span><span class="sig-name descname"><span class="pre">add_recommendations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">externalID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarmType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shortDescription</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LongDescription</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runbook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">used</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RecomendationSources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RecomendationsCategory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userCreated</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userApproved</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.recommendations" title="psym.common.data_class.recommendations"><span class="pre">psym.common.data_class.recommendations</span></a></span></span><a class="headerlink" href="#psym.api.recommendations.add_recommendations" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This function adds recommendations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>externalID</strong> (<em>str</em>) – externalID</p></li>
+<li><p><strong>resource</strong> (<em>str</em>) – resource</p></li>
+<li><p><strong>shortDescription</strong> (<em>str</em>) – shortDescription</p></li>
+<li><p><strong>LongDescription</strong> (<em>str</em>) – LongDescription</p></li>
+<li><p><strong>command</strong> (<em>str</em>) – command</p></li>
+<li><p><strong>runbook</strong> (<em>str</em>) – runbook</p></li>
+<li><p><strong>priority</strong> (<em>str</em>) – priority</p></li>
+<li><p><strong>status</strong> (<em>bool</em>) – status</p></li>
+<li><p><strong>used</strong> (<em>int</em>) – used</p></li>
+<li><p><strong>vendor</strong> (<em>str</em>) – vendor</p></li>
+<li><p><strong>RecomendationSources</strong> – RecomendationSources</p></li>
+</ul>
+</dd>
+</dl>
+<p>:type RecomendationSources::<cite>~psym.graphql.enum.RecomendationSources
+:param RecomendationsCategory: RecomendationsCategory
+:type RecomendationsCategory: `~psym.graphql.enum.RecomendationsCategory
+:param userCreated: userCreated
+:type userCreated:`~psym.graphql.enum.user</cite>
+:param userApproved: userApproved
+:type userApproved:<cite>~psym.graphql.enum.user</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>recommendations object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.recommendations" title="psym.common.data_class.recommendations"><code class="xref py py-class docutils literal notranslate"><span class="pre">recommendations</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations</span><span class="p">(</span>
+    <span class="n">externalID</span><span class="o">=</span><span class="s2">&quot;new_externalID&quot;</span><span class="p">,</span>
+    <span class="n">resource</span><span class="o">=</span><span class="s2">&quot;resoruce&quot;</span><span class="p">,</span>
+    <span class="n">alarmType</span><span class="o">=</span><span class="s2">&quot;alarmType&quot;</span><span class="p">,</span>
+    <span class="n">LongDescription</span><span class="o">=</span><span class="s2">&quot;LongDescription&quot;</span><span class="p">,</span>
+    <span class="n">shortDescription</span><span class="o">=</span><span class="s2">&quot;shortDescription&quot;</span><span class="p">,</span>
+    <span class="n">command</span><span class="o">=</span><span class="s2">&quot;command&quot;</span><span class="p">,</span>
+    <span class="n">runbook</span><span class="o">=</span><span class="s2">&quot;runbook&quot;</span><span class="p">,</span>
+    <span class="n">priority</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">used</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">vendor</span><span class="o">=</span><span class="n">vendor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">RecomendationSources</span><span class="o">=</span><span class="n">recommendation_sources</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">RecomendationsCategory</span><span class="o">=</span><span class="n">recommendation_category</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">userCreated</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">userApproved</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.recommendations.edit_recommendations">
 <span class="sig-prename descclassname"><span class="pre">psym.api.recommendations.</span></span><span class="sig-name descname"><span class="pre">edit_recommendations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recommendations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.recommendations" title="psym.common.data_class.recommendations"><span class="pre">psym.common.data_class.recommendations</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_externalID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alarmType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shortDescription</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LongDescription</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runbook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">used</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vendor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RecomendationSources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RecomendationsCategory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userApproved</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.recommendations.edit_recommendations" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This function edits recommendations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recommendations</strong> – recommendations entity</p></li>
+<li><p><strong>new_name</strong> – recommendations name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>none object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.recommendations" title="psym.common.data_class.recommendations"><code class="xref py py-class docutils literal notranslate"><span class="pre">recommendations</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations</span><span class="p">(</span><span class="n">recommendations</span><span class="o">=</span><span class="n">recommendations</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_recommendations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.recommendations.get_recommendations">
@@ -5045,10 +5153,10 @@ It gets the requested equipment port type ID</p>
 <p><strong>Example</strong>
 .. code-block:: python</p>
 <blockquote>
-<div><p>users = client.get_recommendations()
-for user in users:</p>
+<div><p><a href="#id13"><span class="problematic" id="id14">recommendations_</span></a> = recommendations.get_recommendations()
+for recommendation in recommendations:</p>
 <blockquote>
-<div><p>print(user.name)</p>
+<div><p>print(recommendations.name)</p>
 </div></blockquote>
 </div></blockquote>
 </dd></dl>
@@ -5056,7 +5164,20 @@ for user in users:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.recommendations.remove_recommendations">
 <span class="sig-prename descclassname"><span class="pre">psym.api.recommendations.</span></span><span class="sig-name descname"><span class="pre">remove_recommendations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.recommendations.remove_recommendations" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This function delete recommendations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.recommendations" title="psym.common.data_class.recommendations"><code class="xref py py-class docutils literal notranslate"><span class="pre">recommendations</span></code></a>) – recommendations name</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_recommendations</span><span class="p">(</span><span class="n">recommendations</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </section>
 <section id="module-psym.api.rule">
@@ -5103,8 +5224,75 @@ for user in users:</p>
 </dd></dl>
 
 </section>
-<section id="psym-api-rule-limit-module">
-<h2>psym.api.rule_limit module<a class="headerlink" href="#psym-api-rule-limit-module" title="Permalink to this headline">¶</a></h2>
+<section id="module-psym.api.rule_limit">
+<span id="psym-api-rule-limit-module"></span><h2>psym.api.rule_limit module<a class="headerlink" href="#module-psym.api.rule_limit" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="psym.api.rule_limit.add_rule_limit">
+<span class="sig-prename descclassname"><span class="pre">psym.api.rule_limit.</span></span><span class="sig-name descname"><span class="pre">add_rule_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limitType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comparator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.ruleLimit" title="psym.common.data_class.ruleLimit"><span class="pre">psym.common.data_class.ruleLimit</span></a></span></span><a class="headerlink" href="#psym.api.rule_limit.add_rule_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds Rule Limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number</strong> (<em>str</em>) – number</p></li>
+<li><p><strong>id</strong> (<em>str</em>) – ID</p></li>
+<li><p><strong>limitType</strong> (<em>str</em>) – limitType</p></li>
+<li><p><strong>rule</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.rule" title="psym.common.data_class.rule"><em>psym.common.data_class.rule</em></a>) – rule</p></li>
+<li><p><strong>comparator</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.comparator" title="psym.common.data_class.comparator"><em>psym.common.data_class.comparator</em></a>) – comparator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ruleLimit object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.ruleLimit" title="psym.common.data_class.ruleLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">ruleLimit</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_limit</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule_limit</span><span class="p">(</span>
+    <span class="n">number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">limitType</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">comparator</span><span class="o">=</span><span class="n">comparator</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">rule</span><span class="o">=</span><span class="n">rule</span><span class="o">.</span><span class="n">id</span>
+
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="psym.api.rule_limit.edit_rule_limit">
+<span class="sig-prename descclassname"><span class="pre">psym.api.rule_limit.</span></span><span class="sig-name descname"><span class="pre">edit_rule_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.ruleLimit" title="psym.common.data_class.ruleLimit"><span class="pre">psym.common.data_class.ruleLimit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limitType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comparator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.rule_limit.edit_rule_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function edits Rule Limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rule_limit</strong> – Rule Limit entity</p></li>
+<li><p><strong>new_number</strong> – Rule Limit number</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>none object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.ruleLimit" title="psym.common.data_class.ruleLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">ruleLimit</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_limit</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_rule_limit</span><span class="p">(</span>
+    <span class="n">rule_limit</span><span class="o">=</span><span class="n">ruleLimit</span><span class="p">,</span>
+    <span class="n">new_number</span><span class="o">=</span><span class="n">new_number</span><span class="p">,</span>
+
+
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="psym.api.rule_limit.remove_rule_limit">
+<span class="sig-prename descclassname"><span class="pre">psym.api.rule_limit.</span></span><span class="sig-name descname"><span class="pre">remove_rule_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.rule_limit.remove_rule_limit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-psym.api.rule_type">
 <span id="psym-api-rule-type-module"></span><h2>psym.api.rule_type module<a class="headerlink" href="#module-psym.api.rule_type" title="Permalink to this headline">¶</a></h2>

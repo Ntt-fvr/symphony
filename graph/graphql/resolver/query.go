@@ -210,7 +210,7 @@ func (r queryResolver) WorkOrders(
 	orderBy *ent.WorkOrderOrder,
 	filterBy []*pkgmodels.WorkOrderFilterInput,
 ) (*ent.WorkOrderConnection, error) {
-	return r.ClientFrom(ctx).
+	return r.ClientFrom(ctx).Debug().
 		WorkOrder.
 		Query().
 		Paginate(ctx, after, first, before, last,

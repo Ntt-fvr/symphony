@@ -109,20 +109,5 @@ def edit_rule_limit(
         rule=rule))
 
 
-
-def remove_rule_limit(client: SymphonyClient, id: str) -> None
-    """This function delete Rule Limit.
-
-    :param name: Rule Limit name
-    :type name: :class:`~psym.common.data_class.ruleLimit`
-    :rtype: None
-
-    **Example**
-
-    .. code-block:: python
-
-        client.delete_rule_limit(ruleLimit)
-    """
+def remove_rule_limit(client: SymphonyClient, id: str) -> None:
     removeRuleLimit.execute(client, id=id)
-
-

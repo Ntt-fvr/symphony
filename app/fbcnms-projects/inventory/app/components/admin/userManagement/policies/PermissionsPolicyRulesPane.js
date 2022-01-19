@@ -60,9 +60,10 @@ export default function PermissionsPolicyRulesPane(props: Props) {
     [onChange, policy],
   );
   const callOnWorkforceChange = useCallback(
-    workforceRules =>
+    (workforceRules, isMulticontractor) =>
       onChange({
         ...policy,
+        isMulticontractor: isMulticontractor,
         workforceRules,
       }),
     [onChange, policy],
@@ -115,6 +116,7 @@ export default function PermissionsPolicyRulesPane(props: Props) {
             view: (
               <PermissionsPolicyWorkforceDataRulesTab
                 policy={policy.workforceRules}
+                isMulticontractor={policy.isMulticontractor}
                 onChange={callOnWorkforceChange}
               />
             ),

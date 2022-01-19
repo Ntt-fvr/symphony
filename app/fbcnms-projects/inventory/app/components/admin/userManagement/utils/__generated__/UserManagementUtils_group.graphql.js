@@ -45,6 +45,7 @@ export type UserManagementUtils_group = {|
     +name: string,
     +description: ?string,
     +isGlobal: boolean,
+    +isMulticontractor: boolean,
     +policy: {|
       +__typename: "InventoryPolicy",
       +read: {|
@@ -358,6 +359,13 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "isGlobal",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "isMulticontractor",
           "storageKey": null
         },
         {
