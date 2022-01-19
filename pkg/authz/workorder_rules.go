@@ -150,17 +150,13 @@ func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
 			multicontractor = true
 		}
 	}
-	fmt.Println("el valor de multicontractor es: ", multicontractor)
 
 	if multicontractor {
-		fmt.Println("ingreso al multicontractor encendido")
 		switch rule.IsAllowed {
 		case models.PermissionValueYes:
 			if rule.OrganizationIds != nil {
-				fmt.Println("camino no nulo")
 				predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
 			} else {
-				fmt.Println("camino nulo")
 				userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
 				if !ok {
 					return nil
@@ -171,7 +167,6 @@ func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
 					return nil
 				}
 				predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(uOrg)))
-				//predicatesReturns = append(predicatesReturns, workorder.Not(workorder.HasOrganization()))
 			}
 		case models.PermissionValueByCondition:
 			predicatesWo = append(predicatesWo, workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
@@ -190,7 +185,6 @@ func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
 		}
 		return workorder.Or(predicatesReturns...)
 	} else {
-		fmt.Println("ingreso al multicontractor apagado")
 		switch rule.IsAllowed {
 		case models.PermissionValueYes:
 			return nil
