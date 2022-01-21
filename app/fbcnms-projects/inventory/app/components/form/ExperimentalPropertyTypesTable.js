@@ -80,7 +80,7 @@ const ExperimentalPropertyTypesTable = ({
   supportDelete,
 }: Props) => {
   const classes = useStyles();
-  const dispatch = useContext(PropertyTypesTableDispatcher);
+  const {dispatch} = useContext(PropertyTypesTableDispatcher);
 
   return (
     <div className={classes.container}>
@@ -173,6 +173,7 @@ const ExperimentalPropertyTypesTable = ({
                         value,
                       })
                     }
+                    showPropertyCombo={true}
                   />
                 </TableCell>
                 <TableCell padding="checkbox" component="div">

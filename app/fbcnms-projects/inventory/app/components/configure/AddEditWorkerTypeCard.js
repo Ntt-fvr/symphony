@@ -239,7 +239,7 @@ const AddEditWorkerTypeCard = ({
           </ExpandingPanel>
           <ExpandingPanel title="Properties">
             <PropertyTypesTableDispatcher.Provider
-              value={propertyTypesDispatcher}>
+              value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
               <ExperimentalPropertyTypesTable
                 supportDelete={true}
                 propertyTypes={propertyTypes}

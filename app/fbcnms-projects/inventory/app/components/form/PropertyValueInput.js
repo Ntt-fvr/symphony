@@ -43,6 +43,7 @@ type Props<T: Property | PropertyType> = {|
   onKeyDown?: (e: SyntheticKeyboardEvent<>) => void,
   headlineVariant?: 'headline' | 'form',
   fullWidth?: boolean,
+  showPropertyCombo?: boolean,
 |} & WithStyles<typeof styles>;
 
 const styles = {
@@ -92,7 +93,9 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
       inputType,
       headlineVariant,
       onKeyDown,
+      showPropertyCombo = false,
     } = this.props;
+
     const disabled = this.props.disabled || showDisabled;
     const property = this.props.property;
     const propertyType = !!property.propertyType
@@ -114,6 +117,7 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
             property={property}
             onChange={onChange}
             disabled={disabled}
+            showPropertyCombo={showPropertyCombo}
           />
         );
       }
