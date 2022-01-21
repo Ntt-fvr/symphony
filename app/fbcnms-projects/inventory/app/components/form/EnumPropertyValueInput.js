@@ -14,6 +14,23 @@ import React, {useState} from 'react';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import update from 'immutability-helper';
 import {isJSON} from '@symphony/design-system/utils/displayUtils';
+import {makeStyles} from '@material-ui/styles';
+import symphony from '@symphony/design-system/theme/symphony';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    width: '100%',
+    minHeight: '36px',
+    padding: '0 10px',
+    border: '1px solid #D2DAE7',
+    alignItems: 'baseline',
+    '& div': {
+      alignItems: 'baseline',
+      margin: '7px 5px 7px 0'
+    }
+  },
+}));
+
 
 type Props<T: Property | PropertyType> = $ReadOnly<{|
   property: T,
@@ -27,6 +44,7 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
   const jsonStr = property.stringValue || '';
   const options = isJSON(jsonStr) ? JSON.parse(jsonStr) : [];
   const optionsArr = Array.isArray(options) ? options : [];
+  const classes = useStyles();
   const [tokens, setTokens] = useState(
     optionsArr.map(option => ({
       id: option,
@@ -35,6 +53,7 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
   );
   return (
     <Tokenizer
+      className={classes.root}
       searchSource="UserInput"
       tokens={tokens}
       disabled={disabled}

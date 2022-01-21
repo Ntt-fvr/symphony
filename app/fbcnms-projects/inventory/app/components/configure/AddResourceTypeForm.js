@@ -57,7 +57,11 @@ const AddResourcesQuery = graphql`
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0),
+    padding: 0,
+    marginLeft: '14px',
+    [theme.breakpoints.down('md')]: {
+      margin: '1rem 0 0 0',
+    },
   },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {

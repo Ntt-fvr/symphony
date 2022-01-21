@@ -25,32 +25,14 @@ const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
   },
-  icon: {
-    fontsize: '10px',
-  },
   dialogTitle: {
-    padding: '49px',
-    paddingBottom: '16px',
-  },
-  dialogContent: {
-    padding: '2rem',
-    height: '250px',
+    padding: '60px 49px 0px 49px',
   },
   dialogActions: {
-    padding: '24px',
-    marginBottom: '30px',
-    bottom: 0,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    zIndex: 2,
+    padding: '56px 49px 67px 49px',
   },
   content: {
     padding: '16px',
-  },
-  time: {
-    marginTop: '2rem',
   },
   option: {
     width: '111px',
@@ -70,10 +52,19 @@ type Props = $ReadOnly<{|
   open: boolean,
   typeAlert: string,
   onClose: () => void,
+  customTitle: string,
+  customMessage: string,
 |}>;
 
 const SaveDialogConfirm = (props: Props) => {
-  const {onClose, saveItem, resource, typeAlert = 'warning'} = props;
+  const {
+    onClose,
+    saveItem,
+    resource,
+    typeAlert,
+    customTitle,
+    customMessage,
+  } = props;
 
   const classes = useStyles();
   return (
@@ -85,14 +76,21 @@ const SaveDialogConfirm = (props: Props) => {
       className={classes.root}>
       <DialogActions>
         <Button onClick={onClose} skin="regular">
-          <CloseIcon fontSize="large" color="action" />
+          <CloseIcon fontSize="medium" color="action" />
         </Button>
       </DialogActions>
       <DialogTitle className={classes.dialogTitle}>
         {typeAlert.toLocaleUpperCase() === 'WARNING' && (
-          <Alert className={classes.root} variant="outlined" severity="warning">
+          <Alert
+            className={(classes.root, classes.warning)}
+            variant="outlined"
+            severity="warning">
             <Typography>Warning</Typography>
-            <Typography>Are you sure you don´t want to keep changes</Typography>
+            <Typography>
+              {customTitle
+                ? customTitle
+                : 'Are you sure you don´t want to keep changes'}
+            </Typography>
           </Alert>
         )}
         {typeAlert.toLocaleUpperCase() === 'INFORMATION' && (
@@ -101,29 +99,39 @@ const SaveDialogConfirm = (props: Props) => {
             variant="outlined"
             severity="info">
             <Typography>Information</Typography>
-            <Typography>Are you sure to save your changes?</Typography>
+            <Typography>
+              {customTitle ? customTitle : 'Are you sure to save your changes?'}
+            </Typography>
           </Alert>
         )}
         <Grid container className={classes.content} spacing={2}>
           <Grid item xs={12}>
             {typeAlert.toLocaleUpperCase() === 'WARNING' && (
-              <Typography>the resource will not present changes</Typography>
+              <Typography>
+                {customMessage
+                  ? customMessage
+                  : 'The information won´t be saved'}
+              </Typography>
             )}
             {typeAlert.toLocaleUpperCase() === 'INFORMATION' && (
-              <Typography>the resource will be saved with changes</Typography>
+              <Typography>
+                {customMessage
+                  ? customMessage
+                  : 'The information will be saved as:'}
+              </Typography>
             )}
           </Grid>
           <Grid item xs={12}>
             <Text weight={'bold'}>{resource}</Text>
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Typography>Creation Date</Typography>
             <Text weight={'bold'}>8/11/2021</Text>
           </Grid>
           <Grid item xs={6}>
             <Typography>Modification Date</Typography>
             <Text weight={'bold'}>9/12/2021</Text>
-          </Grid>
+          </Grid> */}
         </Grid>
       </DialogTitle>
       <DialogActions className={classes.dialogActions}>
