@@ -140,6 +140,7 @@ const ExperimentalPropertyTypesTable = ({
                     <TextInput
                       autoFocus={true}
                       placeholder="Name"
+                      autoComplete='off'
                       className={classes.input}
                       value={property.name}
                       onChange={({target}) =>
