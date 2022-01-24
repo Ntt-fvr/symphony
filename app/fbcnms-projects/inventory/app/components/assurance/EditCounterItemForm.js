@@ -14,11 +14,10 @@ import EditCounterMutation from '../../mutations/EditCounterMutation';
 
 import type {EditCounterItemFormQuery} from './__generated__/EditCounterItemFormQuery.graphql';
 
-import Button from '@symphony/design-system/components/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -86,11 +85,6 @@ const useStyles = makeStyles(() => ({
   cardHeader: {
     margin: '26px 43px 22px 23px',
   },
-  addCounter: {
-    marginRight: '1.5rem',
-    width: '98px',
-    alignSelf: 'flex-end',
-  },
 }));
 
 type Props = $ReadOnly<{|
@@ -146,6 +140,7 @@ const EditCounterItemForm = (props: Props) => {
   const validationName = useValidationEdit(inputFilter, 'Counter');
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
+  console.log(handleDisable);
 
   const handleClick = () => {
     const variables: EditCounterMutationVariables = {
@@ -172,37 +167,31 @@ const EditCounterItemForm = (props: Props) => {
           className={classes.header}
           container
           direction="row"
-          justifyContent="flex-end"
+          justifycontent="flex-end"
           alignItems="center">
-          <Grid xs>
+          <Grid item xs>
             <ConfigureTitleSubItem
               title={fbt('Counters Catalog/', 'Counters Catalog')}
               tag={` ${formValues.name}`}
             />
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                className={classes.addCounter}
-                onClick={() => {
-                  handleClick();
-                }}
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              variant={'outlined'}
+              onClick={() => {
+                hideEditCounterForm();
+              }}>
+              {'Cancel'}
+            </ButtonSaveDelete>
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                className={classes.addCounter}
-                skin="brightGray"
-                onClick={() => {
-                  hideEditCounterForm();
-                }}>
-                Cancel
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              onClick={() => {
+                handleClick();
+              }}
+              disabled={handleDisable}>
+              {'Save'}
+            </ButtonSaveDelete>
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
