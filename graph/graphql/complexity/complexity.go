@@ -172,6 +172,27 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.ResourceSRItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSRItemsOrder, _ []*models.ResourceSRItemsFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.ResourceRelationshipMultiplicities = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceRelationshipMultiplicityOrder, _ []*models.ResourceRelationshipMultiplicityFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceRelationshipTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceRelationshipTypeOrder, _ []*models.ResourceRelationshipTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceRelationshipOrder, _ []*models.ResourceRelationshipFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceSpecifications = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationOrder, _ []*models.ResourceSpecificationFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceTypeBaseTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeBaseTypeOrder, _ []*models.ResourceTypeBaseTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceTypeClasses = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeClassOrder, _ []*models.ResourceTypeClassFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeOrder, _ []*models.ResourceTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {
 		var limit *int
