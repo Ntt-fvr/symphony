@@ -140,7 +140,6 @@ const EditCounterItemForm = (props: Props) => {
   const validationName = useValidationEdit(inputFilter, 'Counter');
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
-  console.log(handleDisable);
 
   const handleClick = () => {
     const variables: EditCounterMutationVariables = {
