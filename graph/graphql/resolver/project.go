@@ -52,7 +52,7 @@ func (r mutationResolver) CreateProjectType(ctx context.Context, input models.Ad
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetProjectTypeID(typ.ID)
-	}, input.Properties...); err != nil {
+	}, input.Properties); err != nil {
 		return nil, fmt.Errorf("creating properties: %w", err)
 	}
 	builders := make([]*ent.WorkOrderDefinitionCreate, len(input.WorkOrders))
@@ -91,7 +91,9 @@ func (r mutationResolver) EditProjectType(
 			if err := r.validateAddedNewPropertyType(p); err != nil {
 				return nil, err
 			}
-			if err := r.AddPropertyTypes(ctx, func(b *ent.PropertyTypeCreate) { b.SetProjectTypeID(pt.ID) }, p); err != nil {
+			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
+				ptc.SetProjectTypeID(pt.ID)
+			}, input.Properties); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, p); err != nil {

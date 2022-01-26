@@ -85,6 +85,12 @@ const (
 	EdgeProjectTemplate = "project_template"
 	// EdgeWorkerType holds the string denoting the worker_type edge name in mutations.
 	EdgeWorkerType = "worker_type"
+	// EdgePropType holds the string denoting the prop_type edge name in mutations.
+	EdgePropType = "prop_type"
+	// EdgePropertyTy holds the string denoting the property_ty edge name in mutations.
+	EdgePropertyTy = "property_ty"
+	// EdgeProperType holds the string denoting the proper_type edge name in mutations.
+	EdgeProperType = "proper_type"
 
 	// Table holds the table name of the propertytype in the database.
 	Table = "property_types"
@@ -165,6 +171,21 @@ const (
 	WorkerTypeInverseTable = "worker_types"
 	// WorkerTypeColumn is the table column denoting the worker_type relation/edge.
 	WorkerTypeColumn = "worker_type_property_types"
+	// PropTypeTable is the table the holds the prop_type relation/edge.
+	PropTypeTable = "property_type_values"
+	// PropTypeInverseTable is the table name for the PropertyTypeValue entity.
+	// It exists in this package in order to avoid circular dependency with the "propertytypevalue" package.
+	PropTypeInverseTable = "property_type_values"
+	// PropTypeColumn is the table column denoting the prop_type relation/edge.
+	PropTypeColumn = "property_type_prop_type"
+	// PropertyTyTable is the table the holds the property_ty relation/edge.
+	PropertyTyTable = "property_types"
+	// PropertyTyColumn is the table column denoting the property_ty relation/edge.
+	PropertyTyColumn = "property_type_proper_type"
+	// ProperTypeTable is the table the holds the proper_type relation/edge.
+	ProperTypeTable = "property_types"
+	// ProperTypeColumn is the table column denoting the proper_type relation/edge.
+	ProperTypeColumn = "property_type_proper_type"
 )
 
 // Columns holds all SQL columns for propertytype fields.
@@ -201,6 +222,7 @@ var ForeignKeys = []string{
 	"location_type_property_types",
 	"project_template_properties",
 	"project_type_properties",
+	"property_type_proper_type",
 	"service_type_property_types",
 	"work_order_template_property_types",
 	"work_order_type_property_types",

@@ -1240,3 +1240,23 @@ func (r queryResolver) UsersAvailability(
 	}
 	return users, nil
 }
+
+func (r queryResolver) PropertyTypeValues(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.PropertyTypeValueOrder,
+	filterBy []*models.PropertyTypeValueFilterInput,
+) (*ent.PropertyTypeValueConnection, error) {
+	return r.ClientFrom(ctx).
+		PropertyTypeValue.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithPropertyTypeValueOrder(orderBy),
+			ent.WithPropertyTypeValueFilter(
+				func(query *ent.PropertyTypeValueQuery) (*ent.PropertyTypeValueQuery, error) {
+					return resolverutil.PropertyTypeValueFilter(query, filterBy)
+				},
+			),
+		)
+}

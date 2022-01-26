@@ -31,7 +31,7 @@ func (r mutationResolver) AddWorkerType(ctx context.Context, input models.AddWor
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetWorkerTypeID(typ.ID)
-	}, input.PropertyTypes...); err != nil {
+	}, input.PropertyTypes); err != nil {
 		return nil, err
 	}
 	return typ, nil
@@ -64,10 +64,9 @@ func (r mutationResolver) EditWorkerType(ctx context.Context, input models.EditW
 			if err := r.validateAddedNewPropertyType(input); err != nil {
 				return nil, err
 			}
-			if err := r.AddPropertyTypes(ctx,
-				func(b *ent.PropertyTypeCreate) {
-					b.SetWorkerTypeID(et.ID)
-				}, input); err != nil {
+			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
+				ptc.SetWorkerTypeID(et.ID)
+			}, input.PropertyTypes); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, input); err != nil {
