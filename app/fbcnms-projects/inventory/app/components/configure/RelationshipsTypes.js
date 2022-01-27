@@ -7,11 +7,11 @@
  * @flow
  * @format
  */
-// import AddRelationshipTypeForm from './AddRelationshipTypeForm';
-import ConfigureTitle from './../assurance/common/ConfigureTitle';
+import AddRelationshipsTypeForm from './AddRelationshipsTypeForm';
+import ConfigureTitle from '../assurance/common/ConfigureTitle';
 import React, {useCallback, useEffect, useState} from 'react';
+import RelationshipsTypeItem from './RelationshipsTypeItem';
 import RelayEnvironment from '../../common/RelayEnvironment';
-// import RelationshipTypeItemList from './RelationshipTypeItemList';
 import TitleTextCardsResource from './TitleTextCardsResource';
 import fbt from 'fbt';
 import {EditResourceTypeItem} from './EditResourceTypeItem';
@@ -105,7 +105,7 @@ type Resources = {
   },
 };
 
-const RelationshipTypes = () => {
+const RelationshipsTypes = () => {
   const classes = useStyles();
 
   // const [resourceTypes, setResourceTypes] = useState({});
@@ -166,27 +166,27 @@ const RelationshipTypes = () => {
       <Grid item xs={12} lg={9}>
         <TitleTextCardsResource />
         <List disablePadding>
-          {/* {resourceTypes.resourceTypes?.edges.map((item, index) => (
-            <RelationshipTypeItemList
-              key={index}
-              handleRemove={() => handleRemove(item.node?.id)}
-              edit={() => showEditResourceItemForm({item})}
-              isEditing={showEditForm}
-              resourceDataLenght={resourceTypes.resourceSpecifications?.edges}
-              formValues={item.node}
-              {...item.node}
-            />
-          ))} */}
+          {/* {resourceTypes.resourceTypes?.edges.map((item, index) => ( */}
+          <RelationshipsTypeItem
+          // key={index}
+          // handleRemove={() => handleRemove(item.node?.id)}
+          // edit={() => showEditResourceItemForm({item})}
+          // isEditing={showEditForm}
+          // resourceDataLenght={resourceTypes.resourceSpecifications?.edges}
+          // formValues={item.node}
+          // {...item.node}
+          />
+          {/* ))}*/}
         </List>
       </Grid>
       <Grid item xs={12} lg={3}>
-        {/* <AddRelationshipTypeForm
-          isCompleted={isCompleted}
-          resourceNames={resourceTypes.resourceTypes?.edges}
-        /> */}
+        <AddRelationshipsTypeForm
+        // isCompleted={isCompleted}
+        // resourceNames={resourceTypes.resourceTypes?.edges}
+        />
       </Grid>
     </Grid>
   );
 };
 
-export default RelationshipTypes;
+export {RelationshipsTypes};

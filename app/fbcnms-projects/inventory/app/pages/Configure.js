@@ -15,7 +15,6 @@ import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventorySuspense from '../common/InventorySuspense';
 import LocationTypes from '../components/configure/LocationTypes';
 import React, {useEffect, useMemo, useState} from 'react';
-import RelationshipTypes from '../components/configure/RelationshipTypes';
 import ResourceTypes from '../components/configure/ResourceTypes';
 import ServiceTypes from '../components/configure/ServiceTypes';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
@@ -23,6 +22,7 @@ import fbt from 'fbt';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
+import {RelationshipsTypes} from '../components/configure/RelationshipsTypes';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
@@ -174,7 +174,7 @@ export default function Configure() {
             />
             <Route
               path={relativeUrl('/relationships_types')}
-              component={RelationshipTypes}
+              component={RelationshipsTypes}
             />
             <Route
               path={relativeUrl('/port_types')}
