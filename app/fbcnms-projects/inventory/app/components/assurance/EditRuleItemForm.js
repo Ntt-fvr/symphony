@@ -16,7 +16,7 @@ import type {RemoveRuleMutationVariables} from '../../mutations/__generated__/Re
 
 import RemoveRuleMutation from '../../mutations/RemoveRuleMutation';
 
-import Button from '@symphony/design-system/components/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -197,11 +197,6 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     minHeight: '36px',
   },
-  actionAddRule: {
-    marginRight: '1.5rem',
-    width: '98px',
-    alignSelf: 'flex-end',
-  },
   selectAlarm: {
     '& .MuiOutlinedInput-root ': {
       color: '#FFFFFF',
@@ -361,40 +356,32 @@ const EditRuleItemForm = (props: Props) => {
             />
           </Grid>
           <Grid style={{marginRight: '1rem'}}>
-            <IconButton>
-              <DeleteOutlinedIcon
-                onClick={() => {
-                  handleRemove(rule.id);
-                  hideAddRuleForm();
-                }}
-                style={{color: symphony.palette.D300}}
-              />
+            <IconButton
+              onClick={() => {
+                handleRemove(rule.id);
+                hideAddRuleForm();
+              }}>
+              <DeleteOutlinedIcon style={{color: symphony.palette.D300}} />
             </IconButton>
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                className={classes.actionAddRule}
-                onClick={() => {
-                  handleClick();
-                  hideAddRuleForm();
-                }}
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              variant={'outlined'}
+              onClick={() => {
+                hideAddRuleForm();
+              }}>
+              Cancel
+            </ButtonSaveDelete>
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                className={classes.actionAddRule}
-                onClick={() => {
-                  hideAddRuleForm();
-                }}
-                skin="brightGray">
-                Cancel
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              onClick={() => {
+                handleClick();
+                hideAddRuleForm();
+              }}
+              disabled={handleDisable}>
+              Save
+            </ButtonSaveDelete>
           </Grid>
         </Grid>
 
