@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
@@ -620,10 +621,12 @@ func (r mutationResolver) EditWorkOrderType(
 		return nil, errors.Wrapf(err, "updating work order template: id=%q", input.ID)
 	}
 	for _, p := range input.Properties {
+		var edited []*pkgmodels.PropertyTypeInput
 		if p.ID == nil {
+			edited = append(edited, p)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 				ptc.SetWorkOrderTypeID(wot.ID)
-			}, input.Properties); err != nil {
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, p); err != nil {

@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -60,13 +61,15 @@ func (r mutationResolver) EditWorkerType(ctx context.Context, input models.EditW
 	}
 
 	for _, input := range input.PropertyTypes {
+		var edited []*pkgmodels.PropertyTypeInput
 		if input.ID == nil {
 			if err := r.validateAddedNewPropertyType(input); err != nil {
 				return nil, err
 			}
+			edited = append(edited, input)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 				ptc.SetWorkerTypeID(et.ID)
-			}, input.PropertyTypes); err != nil {
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, input); err != nil {

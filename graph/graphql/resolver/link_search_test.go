@@ -62,19 +62,21 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 		ExternalID: pointer.ToString("111"),
 	})
 
+	propStr := pkgmodels.PropertyTypeInput{
+		Name:        "propStr",
+		Type:        "string",
+		StringValue: pointer.ToString("t1"),
+	}
+
+	connected := pkgmodels.PropertyTypeInput{
+		Name: "connected_date",
+		Type: propertytype.TypeDate,
+	}
+	linkProperties := []*pkgmodels.PropertyTypeInput{&propStr, &connected}
+
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
-		Name: "portType1",
-		LinkProperties: []*pkgmodels.PropertyTypeInput{
-			{
-				Name:        "propStr",
-				Type:        "string",
-				StringValue: pointer.ToString("t1"),
-			},
-			{
-				Name: "connected_date",
-				Type: propertytype.TypeDate,
-			},
-		},
+		Name:           "portType1",
+		LinkProperties: linkProperties,
 	})
 
 	equType, _ := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
@@ -119,13 +121,8 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 		Properties: props,
 	})
 
-	strProp := ptyp.QueryLinkPropertyTypes().Where(propertytype.Name("propStr"))
-	idStr, err := strProp.FirstID(ctx)
-	require.NoError(nil, err)
-
-	dateProp := ptyp.QueryLinkPropertyTypes().Where(propertytype.Name("connected_date"))
-	idDate, err := dateProp.FirstID(ctx)
-	require.NoError(nil, err)
+	strProp := ptyp.QueryLinkPropertyTypes().Where(propertytype.Name("propStr")).OnlyX(ctx)
+	dateProp := ptyp.QueryLinkPropertyTypes().Where(propertytype.Name("connected_date")).OnlyX(ctx)
 
 	l1, _ := mr.AddLink(ctx, models.AddLinkInput{
 		Sides: []*models.LinkSide{
@@ -134,11 +131,11 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 		},
 		Properties: []*models.PropertyInput{
 			{
-				PropertyTypeID: idStr,
+				PropertyTypeID: strProp.ID,
 				StringValue:    pointer.ToString("newVal"),
 			},
 			{
-				PropertyTypeID: idDate,
+				PropertyTypeID: dateProp.ID,
 				StringValue:    pointer.ToString("1988-03-29"),
 			},
 		},

@@ -44,38 +44,53 @@ func (propertyTypeValueResolver) PropertyType(ctx context.Context, propertyTypeV
 
 func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmodels.AddPropertyTypeValueInput) (*ent.PropertyTypeValue, error) {
 	client := r.ClientFrom(ctx)
-	typ, err := client.PropertyTypeValue.Create().
-		SetName(input.Name).
-		SetPropertyTypeID(input.PropertyType).
-		Save(ctx)
+	if input.PropertyType != 0 {
+		typ, err := client.PropertyTypeValue.Create().
+			SetName(input.Name).
+			SetPropertyTypeID(input.PropertyType).
+			Save(ctx)
 
-	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		if err != nil {
+			if ent.IsConstraintError(err) {
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+			}
+			return nil, fmt.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, fmt.Errorf("has occurred error on process: %w", err)
-	}
 
-	if len(input.PropertyTypeValues) > 0 {
-		for _, propertyTypeV := range input.PropertyTypeValues {
-			_, err1 := client.PropertyTypeValue.Create().
-				SetName(propertyTypeV.Name).
-				SetNillableProTypValID(&typ.ID).
-				Save(ctx)
-			if err1 != nil {
-				if ent.IsConstraintError(err) {
-					return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		if len(input.PropertyTypeValues) > 0 {
+			for _, propertyTypeV := range input.PropertyTypeValues {
+				_, err1 := client.PropertyTypeValue.Create().
+					SetName(propertyTypeV.Name).
+					SetNillableProTypValID(&typ.ID).
+					Save(ctx)
+				if err1 != nil {
+					if ent.IsConstraintError(err) {
+						return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+					}
+					return nil, fmt.Errorf("has occurred error on process: %w", err)
 				}
-				return nil, fmt.Errorf("has occurred error on process: %w", err)
 			}
 		}
+		return typ, nil
+	} else {
+		typ, err := client.PropertyTypeValue.Create().
+			SetName(input.Name).
+			SetNillableProTypValID(input.PropertyTypeValue).
+			Save(ctx)
+
+		if err != nil {
+			if ent.IsConstraintError(err) {
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+			}
+			return nil, fmt.Errorf("has occurred error on process: %w", err)
+		}
+		return typ, nil
 	}
-	return typ, nil
+
 }
 
 func (r mutationResolver) AddPropertyTypeValueWithID(ctx context.Context, input pkgmodels.AddPropertyTypeValueInput, propertyType int) (*ent.PropertyTypeValue, error) {
 	client := r.ClientFrom(ctx)
-	fmt.Println("Ingreso AddPropertyTypeValueWithID", propertyType)
 	typ, err := client.PropertyTypeValue.Create().
 		SetName(input.Name).
 		SetPropertyTypeID(propertyType).
@@ -86,10 +101,8 @@ func (r mutationResolver) AddPropertyTypeValueWithID(ctx context.Context, input 
 		}
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	fmt.Println("Final AddPropertyTypeValueWithIDFinal", typ.ID)
 
 	if len(input.PropertyTypeValues) > 0 {
-		fmt.Println("Ingreso AddPropertyTypeValueWithIDValues")
 		for _, propertyTypeV := range input.PropertyTypeValues {
 			fmt.Println("Ingreso AddPropertyTypeV", propertyTypeV.Name)
 			_, err1 := client.PropertyTypeValue.Create().
@@ -103,7 +116,6 @@ func (r mutationResolver) AddPropertyTypeValueWithID(ctx context.Context, input 
 				return nil, fmt.Errorf("has occurred error on process: %w", err)
 			}
 		}
-		fmt.Println("Final AddPropertyTypeValueWithIDValuesFinal")
 	}
 	return typ, nil
 }
@@ -147,9 +159,7 @@ func (r mutationResolver) EditPropertyTypeValue(ctx context.Context, input model
 	}
 	if len(input.PropertyTypeValues) > 0 {
 		for _, propertyTypeValue := range input.PropertyTypeValues {
-			fmt.Println("propertyValueID resolver", propertyTypeValue.ID)
 			if propertyTypeValue.ID != nil {
-				fmt.Println("Ingreso al ID not null propertyValue")
 				_, err1 := r.EditPropertyTypeValue(ctx, *propertyTypeValue)
 				if err1 != nil {
 					if ent.IsConstraintError(err1) {
@@ -159,7 +169,6 @@ func (r mutationResolver) EditPropertyTypeValue(ctx context.Context, input model
 				}
 
 			} else {
-				fmt.Println("Ingreso al ID null propertyValue")
 				ptv := pkgmodels.AddPropertyTypeValueInput{
 					Name:              propertyTypeValue.Name,
 					PropertyTypeValue: input.ID,
