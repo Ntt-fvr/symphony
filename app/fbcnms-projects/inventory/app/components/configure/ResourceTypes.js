@@ -20,18 +20,15 @@ import {fetchQuery, graphql} from 'relay-runtime';
 // MUTATIONS //
 import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
 import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
+import type {PropertyType} from '../../common/PropertyType';
 
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: '1',
-    padding: '40px',
+    padding: '24px 25px 34px 34px',
     margin: '0',
-    maxHeight: 'calc(100vh - 57px)',
-  },
-  table: {
-    height: 'calc(100% - 46.25px)',
   },
 }));
 
@@ -53,6 +50,37 @@ const ResourceTypesQuery = graphql`
         }
       }
     }
+    resourceSpecifications {
+      edges {
+        node {
+          id
+          name
+          resourceTypeFk {
+            id
+          }
+          propertyTypes {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isMandatory
+            isInstanceProperty
+            isDeleted
+            category
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -61,6 +89,9 @@ type Resources = {
     node: {
       id: string,
       name: string,
+      resourceTypeFk: {
+        id: string,
+      },
       resourceTypeBaseTypeFk: {
         id: string,
         name: string,
@@ -69,6 +100,7 @@ type Resources = {
         id: string,
         name: string,
       },
+      propertyTypes: Array<PropertyType>,
     },
   },
 };
@@ -112,14 +144,17 @@ const ResourceTypes = () => {
         isCompleted={isCompleted}
         formValues={dataEdit.item.node}
         resources={resourceTypes.resourceTypes?.edges.map(item => item.node)}
+        resourceSpecifications={resourceTypes.resourceSpecifications?.edges.map(
+          item => item.node,
+        )}
         hideEditResourceTypeForm={hideEditResourceItemForm}
       />
     );
   }
 
   return (
-    <Grid className={classes.root} container spacing={2}>
-      <Grid item xs={12}>
+    <Grid className={classes.root} container>
+      <Grid item xs={12} style={{marginBottom: '1rem'}}>
         <ConfigureTitle
           title={fbt('Resources', 'Resources Title')}
           subtitle={fbt(
@@ -128,14 +163,7 @@ const ResourceTypes = () => {
           )}
         />
       </Grid>
-      <Grid
-        className={classes.table}
-        item
-        xs={12}
-        sm={12}
-        md={12}
-        lg={9}
-        xl={9}>
+      <Grid item xs={12} lg={9}>
         <TitleTextCardsResource />
         <List disablePadding>
           {resourceTypes.resourceTypes?.edges.map((item, index) => (
@@ -144,14 +172,14 @@ const ResourceTypes = () => {
               handleRemove={() => handleRemove(item.node?.id)}
               edit={() => showEditResourceItemForm({item})}
               isEditing={showEditForm}
-              resourceNames={resourceTypes.resourceTypes?.edges}
+              resourceDataLenght={resourceTypes.resourceSpecifications?.edges}
               formValues={item.node}
               {...item.node}
             />
           ))}
         </List>
       </Grid>
-      <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+      <Grid item xs={12} lg={3}>
         <AddResourceTypeForm
           isCompleted={isCompleted}
           resourceNames={resourceTypes.resourceTypes?.edges}

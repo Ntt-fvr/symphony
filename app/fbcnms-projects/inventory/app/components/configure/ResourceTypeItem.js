@@ -24,7 +24,7 @@ import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-import {useFormInput} from './../assurance/common/useFormInput';
+
 const useStyles = makeStyles(() => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
@@ -41,22 +41,12 @@ const useStyles = makeStyles(() => ({
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  familyName: {
-    marginLeft: '-16px',
-    paddingBottom: '12px',
-  },
   detailHeader: {
     color: DARK.D500,
-  },
-  detailsRoot: {
-    marginLeft: '11px',
   },
   deleteIcon: {
     marginRight: '1rem',
     color: DARK.D300,
-  },
-  saveResource: {
-    margin: '15px 0',
   },
   settingsIcon: {
     marginRight: '1rem',
@@ -65,6 +55,14 @@ const useStyles = makeStyles(() => ({
     padding: '5.5px',
   },
 }));
+
+type Node = {
+  node: {
+    resourceTypeFk: {
+      id: string,
+    },
+  },
+};
 
 type Props = $ReadOnly<{|
   name: string,
@@ -80,20 +78,17 @@ type Props = $ReadOnly<{|
   },
   edit: () => void,
   handleRemove: void => void,
-  resourceNames: Array<string>,
+  resourceDataLenght: Array<Node>,
 |}>;
 
 export default function ResourceTypeItem(props: Props) {
-  const {edit, handleRemove, formValues} = props;
+  const {edit, handleRemove, formValues, resourceDataLenght} = props;
   const classes = useStyles();
-  const name = useFormInput(formValues.name.trim());
-  const resourceTypeBaseTypeFk = useFormInput(
-    formValues.resourceTypeBaseTypeFk.name.trim(),
-  );
-  const resourceTypeClassFk = useFormInput(
-    formValues.resourceTypeClassFk.name.trim(),
-  );
   const [open, setOpen] = useState(false);
+
+  const filterDataById = resourceDataLenght
+    .map(item => item.node)
+    .filter(rsData => rsData?.resourceTypeFk?.id === formValues.id);
 
   function handleOpen(event) {
     event.stopPropagation();
@@ -111,12 +106,7 @@ export default function ResourceTypeItem(props: Props) {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <Grid container item xs={12}>
-            <Grid
-              item
-              xs={10}
-              container
-              justify="flex-start"
-              alignItems="center">
+            <Grid item xs container justify="flex-start" alignItems="center">
               <IconButton
                 icon={SettingsIcon}
                 variant="contained"
@@ -128,6 +118,15 @@ export default function ResourceTypeItem(props: Props) {
                 {formValues.name}
               </Text>
             </Grid>
+            <Grid
+              item
+              xs
+              container
+              alignItems="center"
+              className={classes.detailHeader}>
+              {filterDataById.length} Resource specification instances of the
+              type
+            </Grid>
             <Grid item xs={2} container justify="flex-end" alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
@@ -138,24 +137,22 @@ export default function ResourceTypeItem(props: Props) {
           </Grid>
         </AccordionSummary>
 
-        <AccordionDetails className={classes.detailsRoot}>
-          <Grid container spacing={3}>
+        <AccordionDetails>
+          <Grid container style={{textAlign: 'center'}}>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Resource name: </span>
               <br />
-              <strong>{name.value}</strong>
+              <strong>{formValues.name}</strong>
             </Grid>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Class: </span>
               <br />
-              <strong>{resourceTypeBaseTypeFk.value}</strong>
+              <strong>{formValues.resourceTypeBaseTypeFk.name}</strong>
             </Grid>
             <Grid item xs={4}>
-              <span className={classes.detailHeader}>
-                Resource type class:{' '}
-              </span>
+              <span className={classes.detailHeader}>Resource type class:</span>
               <br />
-              <strong>{resourceTypeClassFk.value}</strong>
+              <strong>{formValues.resourceTypeClassFk.name}</strong>
             </Grid>
           </Grid>
         </AccordionDetails>

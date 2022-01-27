@@ -11,18 +11,13 @@
 import React, {useState} from 'react';
 import fbt from 'fbt';
 
-// COMPONENTS //
 import {useFormInput} from '../assurance/common/useFormInput';
 
-// MUTATIONS //
-
+import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
 import type {EditResourceTypeItemQuery} from './__generated__/EditResourceTypeItemQuery.graphql';
 import type {EditResourceTypeMutationVariables} from '../../mutations/__generated__/EditResourceTypeMutation.graphql';
-
-import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
-
-// DESIGN SYSTEM //
 import AddIcon from '@material-ui/icons/Add';
+import symphony from '@symphony/design-system/theme/symphony';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -31,19 +26,19 @@ import Divider from '@material-ui/core/Divider';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import symphony from '@symphony/design-system/theme/symphony';
-import {AddResourceSpecification} from './AddResourceSpecification';
 import {Grid, MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useValidationEdit} from '../assurance/common/useValidation';
+import {AddEditResourceSpecification} from './AddEditResourceSpecification';
+import type {PropertyType} from '../../common/PropertyType';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    margin: '40px',
+    padding: '24px 25px 34px 34px',
+    margin: '0',
   },
   formField: {
     margin: '0 22px',
@@ -86,8 +81,13 @@ const useStyles = makeStyles(() => ({
   },
   buttonAdd: {
     '&.MuiButtonBase-root:hover': {
+      backgroundColor: symphony.palette.B50,
+    },
+  },
+  buttonEdit: {
+    '&.MuiButtonBase-root:hover': {
       backgroundColor: 'transparent',
-      color: symphony.palette.B700,
+      color: symphony.palette.B600,
     },
   },
 }));
@@ -110,37 +110,6 @@ const EditResourceTypeQuery = graphql`
         }
       }
     }
-    resourceSpecifications {
-      edges {
-        node {
-          id
-          name
-          resourceTypeFk {
-            id
-          }
-          propertyTypes {
-            id
-            name
-            type
-            nodeType
-            index
-            stringValue
-            intValue
-            booleanValue
-            floatValue
-            latitudeValue
-            longitudeValue
-            rangeFromValue
-            rangeToValue
-            isEditable
-            isMandatory
-            isInstanceProperty
-            isDeleted
-            category
-          }
-        }
-      }
-    }
   }
 `;
 
@@ -148,10 +117,22 @@ type Resource = {
   name: string,
 };
 
+export type ResourceSpecifications = {
+  id: string,
+  name: string,
+  resourceTypeFk: {
+    id: string,
+  },
+  propertyTypes: Array<PropertyType>,
+};
+
 type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
+    resourceTypeFk: {
+      id: string,
+    },
     resourceTypeBaseTypeFk: {
       id: string,
       name: string,
@@ -160,16 +141,26 @@ type Props = $ReadOnly<{|
       id: string,
       name: string,
     },
+    propertyTypes: Array<PropertyType>,
   },
   hideEditResourceTypeForm: void => void,
   isCompleted: void => void,
   resources: Array<Resource>,
+  resourceSpecifications: ResourceSpecifications,
 |}>;
 
 export const EditResourceTypeItem = (props: Props) => {
-  const {formValues, hideEditResourceTypeForm, resources, isCompleted} = props;
+  const {
+    formValues,
+    hideEditResourceTypeForm,
+    resources,
+    isCompleted,
+    resourceSpecifications,
+  } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [openRS, setOpenRS] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [openFormEdit, setOpenFormEdit] = useState(false);
+  const [dataEdit, setDataEdit] = useState<ResourceSpecifications>({});
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -199,9 +190,13 @@ export const EditResourceTypeItem = (props: Props) => {
     );
   };
 
-  const filterRSById = data.resourceSpecifications?.edges
-    .map(item => item.node)
-    .filter(rsData => rsData?.resourceTypeFk?.id === formValues.id);
+  const filterDataById = resourceSpecifications.filter(
+    rsData => rsData?.resourceTypeFk?.id === formValues.id,
+  );
+  const showEditFormData = (dataForm: ResourceSpecifications) => {
+    setOpenFormEdit(true);
+    setDataEdit(dataForm);
+  };
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 3, inputFilter);
 
@@ -224,12 +219,28 @@ export const EditResourceTypeItem = (props: Props) => {
     });
   };
 
-  if (openRS) {
+  if (openForm) {
     return (
-      <AddResourceSpecification
-        dataRS={data.resourceSpecifications?.edges.map(item => item.node)}
+      <AddEditResourceSpecification
+        isCompleted={isCompleted}
+        dataForm={resourceSpecifications}
         formValues={formValues}
-        closeForm={() => setOpenRS(false)}
+        filterData={filterDataById}
+        editMode={false}
+        closeForm={() => setOpenForm(false)}
+      />
+    );
+  }
+
+  if (openFormEdit) {
+    return (
+      <AddEditResourceSpecification
+        isCompleted={isCompleted}
+        dataForm={dataEdit.item}
+        formValues={dataEdit.item}
+        filterData={filterDataById}
+        editMode={true}
+        closeForm={() => setOpenFormEdit(false)}
       />
     );
   }
@@ -337,11 +348,17 @@ export const EditResourceTypeItem = (props: Props) => {
               Name
             </Text>
             <Divider />
-            {filterRSById.map((item, index) => (
-              <>
-                <Text style={{padding: '11px'}}>{item?.name}</Text>
+            {filterDataById.map((item, index) => (
+              <Grid item key={index}>
+                <Button
+                  className={classes.buttonEdit}
+                  disableRipple
+                  style={{padding: '11px'}}
+                  onClick={() => showEditFormData({item})}>
+                  {item?.name}
+                </Button>
                 <Divider />
-              </>
+              </Grid>
             ))}
             <Grid item style={{marginTop: '10px', marginBottom: '40px'}}>
               <Button
@@ -349,7 +366,7 @@ export const EditResourceTypeItem = (props: Props) => {
                 disableRipple
                 startIcon={<AddIcon />}
                 className={classes.buttonAdd}
-                onClick={() => setOpenRS(!openRS)}>
+                onClick={() => setOpenForm(!openForm)}>
                 Add Resource Specification
               </Button>
             </Grid>
@@ -363,6 +380,8 @@ export const EditResourceTypeItem = (props: Props) => {
           saveItem={() => handleEdit()}
           resource={name.value}
           typeAlert={'information'}
+          customMessage=""
+          customTitle=""
         />
       )}
     </div>

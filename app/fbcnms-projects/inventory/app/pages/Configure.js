@@ -62,7 +62,7 @@ export default function Configure() {
   const location = useLocation();
   const classes = useStyles();
   const resourcesEnabled = useFeatureFlag('enable_resource_catalog');
-  const servicesEnabled = useContext(AppContext).isFeatureEnabled('services');
+  const servicesEnabled = useFeatureFlag('services');
   const equipmentPortsFlag = useFeatureFlag('equipment_&_ports_module');
   const tabBars: Array<RouteTab> = useMemo(
     () => [
@@ -95,13 +95,6 @@ export default function Configure() {
             },
           ]
         : []),
-      {
-        id: 'port_types',
-        tab: {
-          label: fbt('PORTS', ''),
-        },
-        path: 'port_types',
-      },
       ...(equipmentPortsFlag
         ? [
             {
