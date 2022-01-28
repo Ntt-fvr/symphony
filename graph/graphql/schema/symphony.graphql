@@ -4616,140 +4616,6 @@ type ResourceTypeEdge {
 }
 
 """
-Properties by which ResourceRelationshipType connections can be ordered.
-"""
-enum ResourceRelationshipTypeOrderField {
-  """
-  Order ResourceRelationshipType by name.
-  """
-  NAME
-
-  """
-  Order ResourceRelationshipType by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceRelationshipType by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceRelationshipType connections.
-"""
-input ResourceRelationshipTypeOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceRelationshipType by.
-  """
-  field: ResourceRelationshipTypeOrderField
-}
-
-"""
-A connection to a list of ResourceRelationshipType.
-"""
-type ResourceRelationshipTypeConnection {
-  """
-  Total ResourceRelationshipType of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceRelationshipType edges.
-  """
-  edges: [ResourceRelationshipTypeEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceRelationshipType edge in a connection.
-"""
-type ResourceRelationshipTypeEdge {
-  """
-  The ResourceRelationshipType at the end of the edge.
-  """
-  node: ResourceRelationshipType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceRelationshipMultiplicity connections can be ordered.
-"""
-enum ResourceRelationshipMultiplicityOrderField {
-  """
-  Order ResourceRelationshipMultiplicity by name.
-  """
-  NAME
-
-  """
-  Order ResourceRelationshipMultiplicity by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceRelationshipMultiplicity by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceRelationshipMultiplicity connections.
-"""
-input ResourceRelationshipMultiplicityOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceRelationshipMultiplicity by.
-  """
-  field: ResourceRelationshipMultiplicityOrderField
-}
-
-"""
-A connection to a list of ResourceRelationshipMultiplicity.
-"""
-type ResourceRelationshipMultiplicityConnection {
-  """
-  Total ResourceRelationshipMultiplicity of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceRelationshipMultiplicity edges.
-  """
-  edges: [ResourceRelationshipMultiplicityEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceRelationshipMultiplicity edge in a connection.
-"""
-type ResourceRelationshipMultiplicityEdge {
-  """
-  The ResourceRelationshipMultiplicity at the end of the edge.
-  """
-  node: ResourceRelationshipMultiplicity
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
 Properties by which ResourceRelationship connections can be ordered.
 """
 enum ResourceRelationshipOrderField {
@@ -7773,77 +7639,6 @@ type Query {
     filterBy: [ResourceTypeFilterInput!]
   ): ResourceTypeConnection!
   
-  
-  
-  """
-  A list of resourceRelationshipTypes.
-  """
-  resourceRelationshipTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceRelationshipTypes.
-    """
-    orderBy: ResourceRelationshipTypeOrder
-
-    
-    #Filtering options for the returned resourceRelationshipTypes.
-    
-    filterBy: [ResourceRelationshipTypeFilterInput!]
-  ): ResourceRelationshipTypeConnection!
-  """
-  A list of resourceRelationshipMultiplicities.
-  """
-  resourceRelationshipMultiplicities(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceRelationshipMultiplicities.
-    """
-    orderBy: ResourceRelationshipMultiplicityOrder
-
-    
-    #Filtering options for the returned resourceRelationshipMultiplicities.
-    
-    filterBy: [ResourceRelationshipMultiplicityFilterInput!]
-  ): ResourceRelationshipMultiplicityConnection!
-
   """
   A list of resourceRelationships.
   """
@@ -8217,12 +8012,6 @@ type Mutation {
   addResourceRelationship(input: AddResourceRelationshipInput!):ResourceRelationship!
   editResourceRelationship(input: EditResourceRelationshipInput!): ResourceRelationship!
   removeResourceRelationship(id: ID!): ID!
-  addResourceRelationshipType(input: AddResourceRelationshipTypeInput!):ResourceRelationshipType!
-  editResourceRelationshipType(input: EditResourceRelationshipTypeInput!): ResourceRelationshipType!
-  removeResourceRelationshipType(id: ID!): ID!
-  addResourceRelationshipMultiplicity(input: AddResourceRelationshipMultiplicityInput!):ResourceRelationshipMultiplicity!
-  editResourceRelationshipMultiplicity(input: EditResourceRelationshipMultiplicityInput!): ResourceRelationshipMultiplicity!
-  removeResourceRelationshipMultiplicity(id: ID!): ID!
   addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
@@ -9331,89 +9120,54 @@ input ResourceTypeFilterInput {
   stringSet: [String!]
 }
 
-type ResourceRelationshipType implements Node {
-  id: ID!
-  name: String!
+enum ResourceRelationshipTypeKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcerelationship.ResourceRelationshipType"
+  ) {
+  BELONGS_TO
+  LOCATED_IN
+  PHYSICAL_LINK
+  LOGICAL_LINK
+  CROSS_CONNECTION
 }
 
-input AddResourceRelationshipTypeInput {  
-  name: String!   
-}
-
-input EditResourceRelationshipTypeInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceRelationshipTypeFilterType {
-  ID
-  NAME
-}
-
-input ResourceRelationshipTypeFilterInput {
-  filterType: ResourceRelationshipTypeFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-type ResourceRelationshipMultiplicity implements Node {
-  id: ID!
-  name: String!
-}
-
-input AddResourceRelationshipMultiplicityInput {  
-  name: String!   
-}
-
-input EditResourceRelationshipMultiplicityInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceRelationshipMultiplicityFilterType {
-  ID
-  NAME
-}
-
-input ResourceRelationshipMultiplicityFilterInput {
-  filterType: ResourceRelationshipMultiplicityFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
+enum ResourceRelationshipMultiplicityKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcerelationship.ResourceRelationshipMultiplicity"
+  ) {
+  ONE_TO_ONE
+  ONE_TO_MANY
+  MANY_TO_ONE
+  MANY_TO_MANY
 }
 
 type ResourceRelationship implements Node {
   id: ID!
   name: String!
-  resourceRelationshipMultiplicityFk: ResourceRelationshipMultiplicity!
-  resourceRelationshipTypeFk: ResourceRelationshipType!
-  locationTypeFk: LocationType
-  resourceTypeFkA: ResourceType!
-  resourceTypeFkB: ResourceType
+  resourceRelationshipType: ResourceRelationshipTypeKind!
+  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
+  locationType: LocationType
+  resourceTypeA: ResourceType!
+  resourceTypeB: ResourceType
 }
 
 input AddResourceRelationshipInput {
-  name: String!  
-  resourceRelationshipTypeFk: ID!
-  resourceRelationshipMultiplicityFk:ID!
-  locationTypeFk: ID
-  resourceTypeFkA: ID!
-  resourceTypeFkB: ID 
+  name: String!
+  resourceRelationshipType: ResourceRelationshipTypeKind!
+  resourceRelationshipMultiplicity:ResourceRelationshipMultiplicityKind!
+  locationType: ID
+  resourceTypeA: ID!
+  resourceTypeB: ID
 }
 
 input EditResourceRelationshipInput {
   id: ID!
   name: String!
-  resourceRelationshipMultiplicityFk: ID!
-  resourceRelationshipTypeFk: ID!
-  locationTypeFk: ID
-  resourceTypeFkA: ID!
-  resourceTypeFkB: ID
+  resourceRelationshipType: ResourceRelationshipTypeKind!
+  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
+  locationType: ID
+  resourceTypeA: ID!
+  resourceTypeB: ID
 }
 
 enum ResourceRelationshipFilterType {

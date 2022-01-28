@@ -1248,10 +1248,10 @@ func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*Survey
 	return result, err
 }
 
-func (lt *LocationType) ResourceRelationshipFk(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := lt.Edges.ResourceRelationshipFkOrErr()
+func (lt *LocationType) ResourceRelationshipLocation(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := lt.Edges.ResourceRelationshipLocationOrErr()
 	if IsNotLoaded(err) {
-		result, err = lt.QueryResourceRelationshipFk().All(ctx)
+		result, err = lt.QueryResourceRelationshipLocation().All(ctx)
 	}
 	return result, err
 }
@@ -1696,60 +1696,12 @@ func (rr *ResourceRelationship) Resourcetypeb(ctx context.Context) (*ResourceTyp
 	return result, MaskNotFound(err)
 }
 
-func (rr *ResourceRelationship) Resourcerelationshiptypefk(ctx context.Context) (*ResourceRelationshipType, error) {
-	result, err := rr.Edges.ResourcerelationshiptypefkOrErr()
+func (rr *ResourceRelationship) LocationType(ctx context.Context) (*LocationType, error) {
+	result, err := rr.Edges.LocationTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = rr.QueryResourcerelationshiptypefk().Only(ctx)
+		result, err = rr.QueryLocationType().Only(ctx)
 	}
 	return result, MaskNotFound(err)
-}
-
-func (rr *ResourceRelationship) Locationtypefk(ctx context.Context) (*LocationType, error) {
-	result, err := rr.Edges.LocationtypefkOrErr()
-	if IsNotLoaded(err) {
-		result, err = rr.QueryLocationtypefk().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (rr *ResourceRelationship) ResourceRelationshipMultiplicityFk(ctx context.Context) (*ResourceRelationshipMultiplicity, error) {
-	result, err := rr.Edges.ResourceRelationshipMultiplicityFkOrErr()
-	if IsNotLoaded(err) {
-		result, err = rr.QueryResourceRelationshipMultiplicityFk().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (rrm *ResourceRelationshipMultiplicity) ResourceRelationshipFk(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := rrm.Edges.ResourceRelationshipFkOrErr()
-	if IsNotLoaded(err) {
-		result, err = rrm.QueryResourceRelationshipFk().All(ctx)
-	}
-	return result, err
-}
-
-func (rrm *ResourceRelationshipMultiplicity) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
-	result, err := rrm.Edges.PoliciesOrErr()
-	if IsNotLoaded(err) {
-		result, err = rrm.QueryPolicies().All(ctx)
-	}
-	return result, err
-}
-
-func (rrt *ResourceRelationshipType) ResourceRelationshipFk(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := rrt.Edges.ResourceRelationshipFkOrErr()
-	if IsNotLoaded(err) {
-		result, err = rrt.QueryResourceRelationshipFk().All(ctx)
-	}
-	return result, err
-}
-
-func (rrt *ResourceRelationshipType) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
-	result, err := rrt.Edges.PoliciesOrErr()
-	if IsNotLoaded(err) {
-		result, err = rrt.QueryPolicies().All(ctx)
-	}
-	return result, err
 }
 
 func (rsi *ResourceSRItems) Resourcesr(ctx context.Context) (*ResourceSpecificationRelationship, error) {
@@ -1824,18 +1776,18 @@ func (rt *ResourceType) Resourcetypebasetype(ctx context.Context) (*ResourceType
 	return result, MaskNotFound(err)
 }
 
-func (rt *ResourceType) ResourceRelationshipFkA(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := rt.Edges.ResourceRelationshipFkAOrErr()
+func (rt *ResourceType) ResourceRelationshipA(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := rt.Edges.ResourceRelationshipAOrErr()
 	if IsNotLoaded(err) {
-		result, err = rt.QueryResourceRelationshipFkA().All(ctx)
+		result, err = rt.QueryResourceRelationshipA().All(ctx)
 	}
 	return result, err
 }
 
-func (rt *ResourceType) ResourceRelationshipFkB(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := rt.Edges.ResourceRelationshipFkBOrErr()
+func (rt *ResourceType) ResourceRelationshipB(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := rt.Edges.ResourceRelationshipBOrErr()
 	if IsNotLoaded(err) {
-		result, err = rt.QueryResourceRelationshipFkB().All(ctx)
+		result, err = rt.QueryResourceRelationshipB().All(ctx)
 	}
 	return result, err
 }

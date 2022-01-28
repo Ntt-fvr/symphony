@@ -11,32 +11,15 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 type resourceRelationshipResolver struct{}
 
-var condicionEspecial1 = []string{"LOCATION IN"}
+var condicionEspecial1 = []string{"LOCATED_IN"}
 
-func (resourceRelationshipResolver) ResourceRelationshipTypeFk(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceRelationshipType, error) {
-	variable, err := resourceRelationship.Resourcerelationshiptypefk(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-func (resourceRelationshipResolver) ResourceRelationshipMultiplicityFk(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceRelationshipMultiplicity, error) {
-	variable, err := resourceRelationship.ResourceRelationshipMultiplicityFk(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-func (resourceRelationshipResolver) ResourceTypeFkA(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceType, error) {
+func (resourceRelationshipResolver) ResourceTypeA(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceType, error) {
 	variable, err := resourceRelationship.Resourcetypea(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
@@ -44,8 +27,18 @@ func (resourceRelationshipResolver) ResourceTypeFkA(ctx context.Context, resourc
 		return variable, nil
 	}
 }
-func (resourceRelationshipResolver) ResourceTypeFkB(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceType, error) {
+
+func (resourceRelationshipResolver) ResourceTypeB(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceType, error) {
 	variable, err := resourceRelationship.Resourcetypeb(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
+func (resourceRelationshipResolver) LocationType(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.LocationType, error) {
+	variable, err := resourceRelationship.LocationType(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
@@ -56,26 +49,21 @@ func (resourceRelationshipResolver) ResourceTypeFkB(ctx context.Context, resourc
 func (r mutationResolver) AddResourceRelationship(ctx context.Context, input models.AddResourceRelationshipInput) (*ent.ResourceRelationship, error) {
 	client := r.ClientFrom(ctx)
 
-	//evaluar query multiplicity
-
-	multiplicity, errMulti := client.ResourceRelationshipMultiplicity.Query().Where(resourcerelationshipmultiplicity.IDEQ(input.ResourceRelationshipMultiplicityFk)).First(ctx)
-
-	if errMulti != nil || multiplicity == nil {
-		return nil, gqlerror.Errorf("field ResourceRelationshipMultiplicityFk does not exist in the database: %v", errMulti)
-	}
-	valor, err := validateCondition(multiplicity.Name, input.LocationTypeFk, input.ResourceTypeFkB, condicionEspecial1)
+	valor, err := validateCondition(string(input.ResourceRelationshipType), input.LocationType, input.ResourceTypeA, condicionEspecial1)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("el Valor es: ", valor)
 	if valor {
+		fmt.Println("Ingreso a valor")
 		typ, err := client.
 			ResourceRelationship.Create().
 			SetName(input.Name).
-			SetNillableLocationtypefkID(input.LocationTypeFk).
-			SetResourceRelationshipMultiplicityFkID(input.ResourceRelationshipMultiplicityFk).
-			SetResourcerelationshiptypefkID(input.ResourceRelationshipTypeFk).
-			SetResourcetypeaID(input.ResourceTypeFkA).
+			SetNillableLocationTypeID(input.LocationType).
+			SetResourceRelationshipMultiplicity(input.ResourceRelationshipMultiplicity).
+			SetResourceRelationshipType(input.ResourceRelationshipType).
+			SetResourcetypeaID(input.ResourceTypeA).
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {
@@ -86,13 +74,14 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 		return typ, nil
 
 	}
+	fmt.Println("Paso a validacion normal")
 	typ, err := client.
 		ResourceRelationship.Create().
 		SetName(input.Name).
-		SetResourceRelationshipMultiplicityFkID(input.ResourceRelationshipMultiplicityFk).
-		SetResourcerelationshiptypefkID(input.ResourceRelationshipTypeFk).
-		SetNillableResourcetypebID(input.ResourceTypeFkB).
-		SetResourcetypeaID(input.ResourceTypeFkA).
+		SetResourceRelationshipMultiplicity(input.ResourceRelationshipMultiplicity).
+		SetResourceRelationshipType(input.ResourceRelationshipType).
+		SetNillableResourcetypebID(input.ResourceTypeB).
+		SetResourcetypeaID(input.ResourceTypeA).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -121,10 +110,11 @@ func (r mutationResolver) RemoveResourceRelationship(ctx context.Context, id int
 	}
 	return id, nil
 }
-func validateCondition(multiplicity string, locationID *int, resourcetypeb *int, condition []string) (bool, error) {
+func validateCondition(multiplicity string, locationID *int, resourcetypea int, condition []string) (bool, error) {
 	for _, condicion := range condition {
+		fmt.Println("el condicion es: ", condicion)
+		fmt.Println("el multiplicity es: ", multiplicity)
 		if condicion == multiplicity {
-
 			if locationID != nil {
 				return true, nil
 
@@ -133,10 +123,6 @@ func validateCondition(multiplicity string, locationID *int, resourcetypeb *int,
 			}
 
 		}
-
-	}
-	if resourcetypeb == nil {
-		return false, gqlerror.Errorf("fiel ResourceTypeFkB is required.")
 	}
 	return false, nil
 
@@ -151,76 +137,52 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
 	}
-	var relationtypeid, relationmulplicityid, resourcetypeAid int
-	var resourcetypeBid, locationtypeid *int
+	var resourcetypeAid int
+	var resourcetypeBid *int
+	var locationtypeid *int
+	var resourceType, resourceMultiplicity = et.ResourceRelationshipType, et.ResourceRelationshipMultiplicity
 
-	var relationtype, err1 = et.Resourcerelationshiptypefk(ctx)
 	var change = false
-	if err1 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %v")
-	} else if relationtype != nil {
-		relationtypeid = relationtype.ID
-
+	if input.ResourceRelationshipType != et.ResourceRelationshipType {
+		resourceType = input.ResourceRelationshipType
+		change = true
 	}
 
-	var relationmulplicity, err2 = et.ResourceRelationshipMultiplicityFk(ctx)
-	if err2 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %v")
-	} else if relationmulplicity != nil {
-		relationmulplicityid = relationmulplicity.ID
+	if input.ResourceRelationshipMultiplicity != et.ResourceRelationshipMultiplicity {
+		resourceMultiplicity = input.ResourceRelationshipMultiplicity
+		change = true
 	}
 
 	var resourcetypeA, err4 = et.Resourcetypea(ctx)
 	if err4 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %v")
+		return nil, errors.Wrap(err4, "has ocurred error on proces: %v")
 	} else if resourcetypeA != nil {
 		resourcetypeAid = resourcetypeA.ID
+		change = true
 
 	}
+
 	var resourcetypeB, err5 = et.Resourcetypeb(ctx)
 	if err5 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %v")
+		return nil, errors.Wrap(err5, "has ocurred error on proces: %v")
 	} else if resourcetypeB != nil {
 		resourcetypeBid = &resourcetypeB.ID
+		change = true
 
 	}
-	var locationtype, err3 = et.Locationtypefk(ctx)
+
+	var locationtype, err3 = et.LocationType(ctx)
 	if err3 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %v")
+		return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
 	} else if locationtype != nil {
 		locationtypeid = &locationtype.ID
+		change = true
 
-	}
-
-	if (relationtype != nil && relationtype.ID != input.ResourceRelationshipTypeFk) || relationtype == nil {
-		relationtypeid = input.ResourceRelationshipTypeFk
-		change = true
-	}
-	if (relationmulplicity != nil && relationmulplicity.ID != input.ResourceRelationshipMultiplicityFk) || relationmulplicity == nil {
-		relationmulplicityid = input.ResourceRelationshipMultiplicityFk
-		change = true
-	}
-	if (resourcetypeA != nil && resourcetypeA.ID != input.ResourceTypeFkA) || resourcetypeA == nil {
-		resourcetypeAid = input.ResourceTypeFkA
-		change = true
-	}
-	if input.ResourceTypeFkB != nil && (resourcetypeB == nil || (*resourcetypeBid != *input.ResourceTypeFkB)) {
-		resourcetypeBid = input.ResourceTypeFkB
-		change = true
-	}
-	if input.LocationTypeFk != nil && (locationtype == nil || (*locationtypeid != *input.LocationTypeFk)) {
-		locationtypeid = input.LocationTypeFk
-		change = true
 	}
 
 	if change {
 
-		multiplicity, errMulti := client.ResourceRelationshipMultiplicity.Query().Where(resourcerelationshipmultiplicity.IDEQ(input.ResourceRelationshipMultiplicityFk)).First(ctx)
-
-		if errMulti != nil || multiplicity == nil {
-			return nil, gqlerror.Errorf("field ResourceRelationshipMultiplicityFk does not exist in the database: %v", errMulti)
-		}
-		valor, err := validateCondition(multiplicity.Name, input.LocationTypeFk, input.ResourceTypeFkB, condicionEspecial1)
+		valor, err := validateCondition(input.ResourceRelationshipMultiplicity.String(), input.LocationType, input.ResourceTypeA, condicionEspecial1)
 		if err != nil {
 			return nil, err
 		}
@@ -229,9 +191,9 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 			typ, err := client.
 				ResourceRelationship.UpdateOne(et).
 				SetName(input.Name).
-				SetNillableLocationtypefkID(locationtypeid).
-				SetResourceRelationshipMultiplicityFkID(relationmulplicityid).
-				SetResourcerelationshiptypefkID(relationtypeid).
+				SetNillableLocationTypeID(locationtypeid).
+				SetResourceRelationshipMultiplicity(resourceMultiplicity).
+				SetResourceRelationshipType(resourceType).
 				SetResourcetypeaID(resourcetypeAid).
 				ClearResourcetypeb().
 				Save(ctx)
@@ -247,11 +209,11 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 		typ, err := client.
 			ResourceRelationship.UpdateOne(et).
 			SetName(input.Name).
-			SetNillableResourcetypebID(resourcetypeBid).
-			SetResourceRelationshipMultiplicityFkID(relationmulplicityid).
-			SetResourcerelationshiptypefkID(relationtypeid).
+			SetResourceRelationshipMultiplicity(resourceMultiplicity).
+			SetResourceRelationshipType(resourceType).
 			SetResourcetypeaID(resourcetypeAid).
-			ClearLocationtypefk().
+			SetNillableResourcetypebID(resourcetypeBid).
+			ClearLocationType().
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {

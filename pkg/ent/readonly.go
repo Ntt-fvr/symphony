@@ -88,8 +88,6 @@ func (c *Client) ReadOnly() *Client {
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		ResourceRelationship:              NewResourceRelationshipClient(cfg),
-		ResourceRelationshipMultiplicity:  NewResourceRelationshipMultiplicityClient(cfg),
-		ResourceRelationshipType:          NewResourceRelationshipTypeClient(cfg),
 		ResourceSRItems:                   NewResourceSRItemsClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
 		ResourceSpecificationRelationship: NewResourceSpecificationRelationshipClient(cfg),

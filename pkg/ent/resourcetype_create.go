@@ -101,34 +101,34 @@ func (rtc *ResourceTypeCreate) SetResourcetypebasetype(r *ResourceTypeBaseType) 
 	return rtc.SetResourcetypebasetypeID(r.ID)
 }
 
-// AddResourceRelationshipFkAIDs adds the resource_relationship_fk_a edge to ResourceRelationship by ids.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipFkAIDs(ids ...int) *ResourceTypeCreate {
-	rtc.mutation.AddResourceRelationshipFkAIDs(ids...)
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipAIDs(ids ...int) *ResourceTypeCreate {
+	rtc.mutation.AddResourceRelationshipAIDs(ids...)
 	return rtc
 }
 
-// AddResourceRelationshipFkA adds the resource_relationship_fk_a edges to ResourceRelationship.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipFkA(r ...*ResourceRelationship) *ResourceTypeCreate {
+// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceRelationship.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtc.AddResourceRelationshipFkAIDs(ids...)
+	return rtc.AddResourceRelationshipAIDs(ids...)
 }
 
-// AddResourceRelationshipFkBIDs adds the resource_relationship_fk_b edge to ResourceRelationship by ids.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipFkBIDs(ids ...int) *ResourceTypeCreate {
-	rtc.mutation.AddResourceRelationshipFkBIDs(ids...)
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipBIDs(ids ...int) *ResourceTypeCreate {
+	rtc.mutation.AddResourceRelationshipBIDs(ids...)
 	return rtc
 }
 
-// AddResourceRelationshipFkB adds the resource_relationship_fk_b edges to ResourceRelationship.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipFkB(r ...*ResourceRelationship) *ResourceTypeCreate {
+// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceRelationship.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtc.AddResourceRelationshipFkBIDs(ids...)
+	return rtc.AddResourceRelationshipBIDs(ids...)
 }
 
 // AddResourceSpecificationFkIDs adds the resource_specification_fk edge to ResourceSpecification by ids.
@@ -328,12 +328,12 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rtc.mutation.ResourceRelationshipFkAIDs(); len(nodes) > 0 {
+	if nodes := rtc.mutation.ResourceRelationshipAIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkATable,
-			Columns: []string{resourcetype.ResourceRelationshipFkAColumn},
+			Table:   resourcetype.ResourceRelationshipATable,
+			Columns: []string{resourcetype.ResourceRelationshipAColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -347,12 +347,12 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rtc.mutation.ResourceRelationshipFkBIDs(); len(nodes) > 0 {
+	if nodes := rtc.mutation.ResourceRelationshipBIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkBTable,
-			Columns: []string{resourcetype.ResourceRelationshipFkBColumn},
+			Table:   resourcetype.ResourceRelationshipBTable,
+			Columns: []string{resourcetype.ResourceRelationshipBColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
