@@ -34,27 +34,6 @@ import AddResourceTypeMutation from '../../mutations/AddResourceTypeMutation';
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
-// const AddResourcesQuery = graphql`
-//   query AddResourceTypeFormQuery {
-//     resourceTypeClasses {
-//       edges {
-//         node {
-//           id
-//           name
-//         }
-//       }
-//     }
-//     resourceTypeBaseTypes {
-//       edges {
-//         node {
-//           id
-//           name
-//         }
-//       }
-//     }
-//   }
-// `;
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: 0,
@@ -106,6 +85,35 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const addRelationshipsTypeForm = graphql`
+  query AddRelationshipsTypeFormQuery {
+    resourceRelationshipMultiplicities {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    resourceRelationshipTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    resourceTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 type Node = {
   node: {
     name: string,
@@ -125,16 +133,18 @@ type Resources = {
   },
 };
 
-export default function AddRelationshipTypeForm(props: Props) {
+const AddRelationshipsTypeForm = (props: Props) => {
   const {isCompleted, resourceNames} = props;
   const classes = useStyles();
   const [resources, setResources] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
 
-  // const data = useLazyLoadQuery<AddResourceTypeFormQuery>(
-  //   AddResourcesQuery,
-  //   {},
-  // );
+  const data = useLazyLoadQuery<AddRelationshipTypeFormQuery>(
+    addRelationshipsTypeForm,
+    {},
+  );
+
+  console.log('FORM -> ', data);
 
   // const names = resourceNames?.map(item => item.node.name);
 
@@ -214,11 +224,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypeClasses.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+          {data.resourceTypes.edges.map(item => (
+            <MenuItem key={item.id} value={item.node.id}>
+              {item.node.name}
             </MenuItem>
-          ))} */}
+          ))}
         </TextField>
         <TextField
           required
@@ -229,11 +239,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypeClasses.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+          {data.resourceRelationshipTypes.edges.map(item => (
+            <MenuItem key={item.id} value={item.node.id}>
+              {item.node.name}
             </MenuItem>
-          ))} */}
+          ))}
         </TextField>
         <TextField
           required
@@ -244,11 +254,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypeBaseTypes.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+          {data.resourceRelationshipMultiplicities.edges.map(item => (
+            <MenuItem key={item.id} value={item.node.id}>
+              {item.node.name}
             </MenuItem>
-          ))} */}
+          ))}
         </TextField>
         <TextField
           required
@@ -274,11 +284,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypeClasses.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+          {data.resourceTypes.edges.map(item => (
+            <MenuItem key={item.id} value={item.node.id}>
+              {item.node.name}
             </MenuItem>
-          ))} */}
+          ))}
         </TextField>
       </form>
       <FormField>
@@ -292,4 +302,5 @@ export default function AddRelationshipTypeForm(props: Props) {
       </FormField>
     </Card>
   );
-}
+};
+export default AddRelationshipsTypeForm;
