@@ -59,6 +59,9 @@ const useStyles = makeStyles(() => ({
     borderRadius: '100%',
     padding: '5.5px',
   },
+  inside: {
+    // border: '1px solid red',
+  },
   inline: {
     display: 'flex',
     alignItems: 'center',
@@ -87,24 +90,30 @@ type Node = {
 };
 
 type Props = $ReadOnly<{|
-  name: string,
-  formValues: {
+  // name: string,
+  // formValues: {
+  //   id: string,
+  //   name: string,
+  //   resourceTypeClassFk: {
+  //     name: string,
+  //   },
+  //   resourceTypeBaseTypeFk: {
+  //     name: string,
+  //   },
+  // },
+  // edit: () => void,
+  // handleRemove: void => void,
+  // resourceDataLenght: Array<Node>,
+  item: {
     id: string,
     name: string,
-    resourceTypeClassFk: {
-      name: string,
-    },
-    resourceTypeBaseTypeFk: {
-      name: string,
-    },
   },
-  edit: () => void,
-  handleRemove: void => void,
-  resourceDataLenght: Array<Node>,
 |}>;
 
 export default function RelationshipTypeItemList(props: Props) {
   // const {edit, handleRemove, formValues, resourceDataLenght} = props;
+  const {...item} = props;
+  console.log('item -> ', item);
   const classes = useStyles();
   // const [open, setOpen] = useState(false);
 
@@ -121,25 +130,29 @@ export default function RelationshipTypeItemList(props: Props) {
     <div className={classes.root}>
       <Card>
         <Grid container>
-          <Grid sm={2} className={classes.inside}>
+          <Grid sm={3} className={classes.inside}>
             <div className={classes.inline}>
               <div className={classes.iconContainer}>
                 <SettingsIcon />
               </div>
-              <Text useEllipsis={true}>Resource type A</Text>
+              <Text useEllipsis={true} weight={'bold'}>
+                {item.resourceTypeFkA.name}
+              </Text>
             </div>
             {/* <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} /> */}
           </Grid>
-          <Grid sm={3} className={classes.inside}>
-            Belongs to
+          <Grid sm={2} className={classes.inside}>
+            <Text useEllipsis={true}>Belongs to</Text>
           </Grid>
-          <Grid sm={3} md={2} lg={2} className={classes.inside}>
-            Many to many
+          <Grid sm={3} md={3} lg={3} className={classes.inside}>
+            <Text useEllipsis={true}>Many to many</Text>
           </Grid>
-          <Grid sm={3} md={2} lg={2} className={classes.inside}>
-            Resource type B
+          <Grid sm={3} md={3} lg={3} className={classes.inside}>
+            <Text useEllipsis={true} weight={'bold'}>
+              {item.resourceTypeFkB.name}
+            </Text>
           </Grid>
-          <Grid sm={1} md={1}>
+          <Grid sm={1} className={classes.inside}>
             <DeleteOutlinedIcon className={classes.deleteIcon} />
           </Grid>
         </Grid>

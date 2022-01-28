@@ -16,6 +16,7 @@ import TitleTextCardsResource from './TitleTextCardsResource';
 import fbt from 'fbt';
 import {EditResourceTypeItem} from './EditResourceTypeItem';
 import {fetchQuery, graphql} from 'relay-runtime';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 // MUTATIONS //
 import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
@@ -32,57 +33,30 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// const ResourceTypesQuery = graphql`
-//   query RelationshipTypesQuery {
-//     resourceTypes {
-//       edges {
-//         node {
-//           id
-//           name
-//           resourceTypeBaseTypeFk {
-//             id
-//             name
-//           }
-//           resourceTypeClassFk {
-//             id
-//             name
-//           }
-//         }
-//       }
-//     }
-//     resourceSpecifications {
-//       edges {
-//         node {
-//           id
-//           name
-//           resourceTypeFk {
-//             id
-//           }
-//           propertyTypes {
-//             id
-//             name
-//             type
-//             nodeType
-//             index
-//             stringValue
-//             intValue
-//             booleanValue
-//             floatValue
-//             latitudeValue
-//             longitudeValue
-//             rangeFromValue
-//             rangeToValue
-//             isEditable
-//             isMandatory
-//             isInstanceProperty
-//             isDeleted
-//             category
-//           }
-//         }
-//       }
-//     }
-//   }
-// `;
+const relationshipsTypes = graphql`
+  query RelationshipsTypesQuery {
+    resourceRelationships {
+      edges {
+        node {
+          id
+          name
+          resourceRelationshipMultiplicityFk {
+            name
+          }
+          resourceRelationshipTypeFk {
+            name
+          }
+          resourceTypeFkA {
+            name
+          }
+          resourceTypeFkB {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
 
 type Resources = {
   item: {
@@ -108,10 +82,19 @@ type Resources = {
 const RelationshipsTypes = () => {
   const classes = useStyles();
 
-  // const [resourceTypes, setResourceTypes] = useState({});
+  const dataServices = useLazyLoadQuery<RelationshipsTypesQuery>(
+    relationshipsTypes,
+    {},
+  );
+  const [relationships, setRelationshipz] = useState(dataServices);
   // const [showEditForm, setShowEditForm] = useState(false);
   // const [dataEdit, setDataEdit] = useState<Resources>({});
+  console.log('Query -> ', dataServices);
 
+  const datos = relationships.resourceRelationships.edges.map(
+    item => item.node,
+  );
+  console.log('State -> ', datos);
   // useEffect(() => {
   //   isCompleted();
   // }, []);
@@ -166,17 +149,13 @@ const RelationshipsTypes = () => {
       <Grid item xs={12} lg={9}>
         <TitleTextCardsResource />
         <List disablePadding>
-          {/* {resourceTypes.resourceTypes?.edges.map((item, index) => ( */}
-          <RelationshipsTypeItem
-          // key={index}
-          // handleRemove={() => handleRemove(item.node?.id)}
-          // edit={() => showEditResourceItemForm({item})}
-          // isEditing={showEditForm}
-          // resourceDataLenght={resourceTypes.resourceSpecifications?.edges}
-          // formValues={item.node}
-          // {...item.node}
-          />
-          {/* ))}*/}
+          {datos.map(item => (
+            <RelationshipsTypeItem
+              key={item.id}
+              // handleRemove={() => handleRemove(item.node?.id)}
+              {...item}
+            />
+          ))}
         </List>
       </Grid>
       <Grid item xs={12} lg={3}>

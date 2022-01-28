@@ -34,26 +34,26 @@ import AddResourceTypeMutation from '../../mutations/AddResourceTypeMutation';
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
-const AddResourcesQuery = graphql`
-  query AddResourceTypeFormQuery {
-    resourceTypeClasses {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-    resourceTypeBaseTypes {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
+// const AddResourcesQuery = graphql`
+//   query AddResourceTypeFormQuery {
+//     resourceTypeClasses {
+//       edges {
+//         node {
+//           id
+//           name
+//         }
+//       }
+//     }
+//     resourceTypeBaseTypes {
+//       edges {
+//         node {
+//           id
+//           name
+//         }
+//       }
+//     }
+//   }
+// `;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -131,19 +131,19 @@ export default function AddRelationshipTypeForm(props: Props) {
   const [resources, setResources] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
 
-  const data = useLazyLoadQuery<AddResourceTypeFormQuery>(
-    AddResourcesQuery,
-    {},
-  );
+  // const data = useLazyLoadQuery<AddResourceTypeFormQuery>(
+  //   AddResourcesQuery,
+  //   {},
+  // );
 
-  const names = resourceNames?.map(item => item.node.name);
+  // const names = resourceNames?.map(item => item.node.name);
 
-  const handleDisable = useDisabledButton(resources.data, names, 3);
+  // const handleDisable = useDisabledButton(resources.data, names, 3);
 
-  const handleHasError = useMemo(
-    () => names?.some(item => item === resources.data.name),
-    [names, resources.data.name],
-  );
+  // const handleHasError = useMemo(
+  //   () => names?.some(item => item === resources.data.name),
+  //   [names, resources.data.name],
+  // );
 
   function handleChange({target}) {
     setResources({
@@ -199,11 +199,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeClasses.edges.map((item, index) => (
+          {/* {data.resourceTypeClasses.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -214,11 +214,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeClasses.edges.map((item, index) => (
+          {/* {data.resourceTypeClasses.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -229,11 +229,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeClasses.edges.map((item, index) => (
+          {/* {data.resourceTypeClasses.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -244,11 +244,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeBaseTypes.edges.map((item, index) => (
+          {/* {data.resourceTypeBaseTypes.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -259,11 +259,11 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeClasses.edges.map((item, index) => (
+          {/* {data.resourceTypeClasses.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -274,18 +274,19 @@ export default function AddRelationshipTypeForm(props: Props) {
           name=""
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeClasses.edges.map((item, index) => (
+          {/* {data.resourceTypeClasses.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
       </form>
       <FormField>
         <Button
           className={classes.addResource}
           onClick={handleClick}
-          disabled={handleDisable}>
+          // disabled={handleDisable}
+        >
           Add Relationship
         </Button>
       </FormField>
