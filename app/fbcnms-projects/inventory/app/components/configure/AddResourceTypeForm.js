@@ -135,7 +135,7 @@ export default function AddResourceTypeForm(props: Props) {
     AddResourcesQuery,
     {},
   );
-
+  console.log(resources);
   const names = resourceNames?.map(item => item.node.name);
 
   const handleDisable = useDisabledButton(resources.data, names, 3);

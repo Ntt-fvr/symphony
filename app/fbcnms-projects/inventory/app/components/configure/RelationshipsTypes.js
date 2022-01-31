@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const relationshipsTypes = graphql`
+const RelationshipsTypesQuery = graphql`
   query RelationshipsTypesQuery {
     resourceRelationships {
       edges {
@@ -82,28 +82,24 @@ type Resources = {
 const RelationshipsTypes = () => {
   const classes = useStyles();
 
-  const dataServices = useLazyLoadQuery<RelationshipsTypesQuery>(
-    relationshipsTypes,
-    {},
-  );
-  const [relationships, setRelationshipz] = useState(dataServices);
+  // const dataServices = useLazyLoadQuery<RelationshipsTypesQuery>(
+  //   relationshipsTypes,
+  //   {},
+  // );
+  const [relationships, setRelationships] = useState({});
   // const [showEditForm, setShowEditForm] = useState(false);
   // const [dataEdit, setDataEdit] = useState<Resources>({});
-  console.log('Query -> ', dataServices);
+  // console.log('Query -> ', dataServices);
+  useEffect(() => {
+    isCompleted();
+  }, []);
 
-  const datos = relationships.resourceRelationships.edges.map(
-    item => item.node,
-  );
-  console.log('State -> ', datos);
-  // useEffect(() => {
-  //   isCompleted();
-  // }, []);
-
-  // const isCompleted = useCallback(() => {
-  //   fetchQuery(RelayEnvironment, ResourceTypesQuery, {}).then(data => {
-  //     setResourceTypes(data);
-  //   });
-  // }, [setResourceTypes]);
+  const isCompleted = useCallback(() => {
+    fetchQuery(RelayEnvironment, RelationshipsTypesQuery, {}).then(data => {
+      setRelationships(data);
+    });
+  }, [setRelationships]);
+  console.log(relationships);
 
   // const showEditResourceItemForm = (resources: Resources) => {
   //   setShowEditForm(true);
@@ -149,19 +145,19 @@ const RelationshipsTypes = () => {
       <Grid item xs={12} lg={9}>
         <TitleTextCardsResource />
         <List disablePadding>
-          {datos.map(item => (
+          {relationships.resourceRelationships?.edges.map(item => (
             <RelationshipsTypeItem
               key={item.id}
               // handleRemove={() => handleRemove(item.node?.id)}
-              {...item}
+              {...item.node}
             />
           ))}
         </List>
       </Grid>
       <Grid item xs={12} lg={3}>
         <AddRelationshipsTypeForm
-        // isCompleted={isCompleted}
-        // resourceNames={resourceTypes.resourceTypes?.edges}
+          isCompleted={isCompleted}
+          // resourceNames={resourceTypes.resourceTypes?.edges}
         />
       </Grid>
     </Grid>

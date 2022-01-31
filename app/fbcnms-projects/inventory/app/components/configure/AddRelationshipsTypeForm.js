@@ -14,9 +14,9 @@ import React, {useMemo, useState} from 'react';
 import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
-import type {AddResourceTypeFormQuery} from './__generated__/AddResourceTypeFormQuery.graphql';
+// import type {AddResourceTypeFormQuery} from './__generated__/AddResourceTypeFormQuery.graphql';
 
-import type {AddResourceTypeMutationVariables} from '../../mutations/__generated__/AddResourceTypeMutation.graphql';
+import type {AddResourceRelationshipsMutationVariables} from '../../mutations/__generated__/AddResourceRelationshipsMutation.graphql';
 
 // DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
@@ -29,7 +29,7 @@ import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
-import AddResourceTypeMutation from '../../mutations/AddResourceTypeMutation';
+import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
 
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -134,17 +134,15 @@ type Resources = {
 };
 
 const AddRelationshipsTypeForm = (props: Props) => {
-  const {isCompleted, resourceNames} = props;
+  const {isCompleted} = props;
   const classes = useStyles();
-  const [resources, setResources] = useState<Resources>({data: {}});
+  const [relationships, setRelationships] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
 
   const data = useLazyLoadQuery<AddRelationshipTypeFormQuery>(
     addRelationshipsTypeForm,
     {},
   );
-
-  console.log('FORM -> ', data);
 
   // const names = resourceNames?.map(item => item.node.name);
 
@@ -156,27 +154,31 @@ const AddRelationshipsTypeForm = (props: Props) => {
   // );
 
   function handleChange({target}) {
-    setResources({
+    setRelationships({
       data: {
-        ...resources.data,
+        ...relationships.data,
         [target.name]: target.value.trim(),
       },
     });
   }
 
   function handleClick() {
-    const variables: AddResourceTypeMutationVariables = {
+    const variables: AddResourceRelationshipsMutationVariables = {
       input: {
-        name: resources.data.name,
-        resourceTypeClassFk: resources.data.class,
-        resourceTypeBaseTypeFk: resources.data.resourceTypeClass,
+        name: relationships.data.name,
+        resourceRelationshipTypeFk:
+          relationships.data.resourceRelationshipTypes,
+        resourceRelationshipMultiplicityFk:
+          relationships.data.resourceRelationshipMultiplicityFk,
+        resourceTypeFkA: relationships.data.resourceTypesA,
+        resourceTypeFkB: relationships.data.resourceTypesB,
       },
     };
     setShowChecking(true);
-    AddResourceTypeMutation(variables, {
+    AddResourceRelationshipsMutation(variables, {
       onCompleted: () => {
         isCompleted();
-        setResources({data: {}});
+        setRelationships({data: {}});
       },
     });
   }
@@ -200,7 +202,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Resource Type</CardHeader>
       <form className={classes.formField} autoComplete="off">
-        <TextField
+        {/* <TextField
           required
           select
           className={classes.select}
@@ -209,54 +211,66 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name=""
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypeClasses.edges.map((item, index) => (
+          {data.resourceTypeClasses.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))} */}
-        </TextField>
+          ))} 
+        </TextField> */}
         <TextField
           required
+          className={classes.input}
+          id="resource-name"
+          label="Resource name"
+          variant="outlined"
+          name="name"
+          onChange={handleChange}
+        />
+        <TextField
+          required
+          id="resourceTypesA"
           select
           className={classes.select}
           label="Select resource type A"
           onChange={handleChange}
-          name=""
+          name="resourceTypesA"
           variant="outlined"
           defaultValue="">
           {data.resourceTypes.edges.map(item => (
-            <MenuItem key={item.id} value={item.node.id}>
-              {item.node.name}
+            <MenuItem key={item.id} value={item.node?.id}>
+              {item.node?.name}
             </MenuItem>
           ))}
         </TextField>
         <TextField
           required
+          id="resourceRelationshipTypes"
           select
           className={classes.select}
           label="Select relationship type"
           onChange={handleChange}
-          name=""
+          name="resourceRelationshipTypes"
           variant="outlined"
           defaultValue="">
           {data.resourceRelationshipTypes.edges.map(item => (
-            <MenuItem key={item.id} value={item.node.id}>
-              {item.node.name}
+            <MenuItem key={item.id} value={item.node?.id}>
+              {item.node?.name}
             </MenuItem>
           ))}
         </TextField>
         <TextField
           required
+          id="resourceRelationshipMultiplicityFk"
           select
           className={classes.select}
           label="Select relationship multiplicity"
           onChange={handleChange}
-          name=""
+          name="resourceRelationshipMultiplicityFk"
           variant="outlined"
           defaultValue="">
           {data.resourceRelationshipMultiplicities.edges.map(item => (
-            <MenuItem key={item.id} value={item.node.id}>
-              {item.node.name}
+            <MenuItem key={item.id} value={item.node?.id}>
+              {item.node?.name}
             </MenuItem>
           ))}
         </TextField>
@@ -277,16 +291,17 @@ const AddRelationshipsTypeForm = (props: Props) => {
         </TextField>
         <TextField
           required
+          id="resourceTypesB"
           select
           className={classes.select}
           label="Select resource type B"
           onChange={handleChange}
-          name=""
+          name="resourceTypesB"
           variant="outlined"
           defaultValue="">
           {data.resourceTypes.edges.map(item => (
-            <MenuItem key={item.id} value={item.node.id}>
-              {item.node.name}
+            <MenuItem key={item.id} value={item.node?.id}>
+              {item.node?.name}
             </MenuItem>
           ))}
         </TextField>
