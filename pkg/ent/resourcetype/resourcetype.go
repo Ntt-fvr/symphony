@@ -28,10 +28,10 @@ const (
 	EdgeResourcetypeclass = "resourcetypeclass"
 	// EdgeResourcetypebasetype holds the string denoting the resourcetypebasetype edge name in mutations.
 	EdgeResourcetypebasetype = "resourcetypebasetype"
-	// EdgeResourceRelationshipFkA holds the string denoting the resource_relationship_fk_a edge name in mutations.
-	EdgeResourceRelationshipFkA = "resource_relationship_fk_a"
-	// EdgeResourceRelationshipFkB holds the string denoting the resource_relationship_fk_b edge name in mutations.
-	EdgeResourceRelationshipFkB = "resource_relationship_fk_b"
+	// EdgeResourceRelationshipA holds the string denoting the resource_relationship_a edge name in mutations.
+	EdgeResourceRelationshipA = "resource_relationship_a"
+	// EdgeResourceRelationshipB holds the string denoting the resource_relationship_b edge name in mutations.
+	EdgeResourceRelationshipB = "resource_relationship_b"
 	// EdgeResourceSpecificationFk holds the string denoting the resource_specification_fk edge name in mutations.
 	EdgeResourceSpecificationFk = "resource_specification_fk"
 	// EdgeResourcetypeItems holds the string denoting the resourcetype_items edge name in mutations.
@@ -53,20 +53,20 @@ const (
 	ResourcetypebasetypeInverseTable = "resource_type_base_types"
 	// ResourcetypebasetypeColumn is the table column denoting the resourcetypebasetype relation/edge.
 	ResourcetypebasetypeColumn = "resource_type_base_type_resource_type_fk"
-	// ResourceRelationshipFkATable is the table the holds the resource_relationship_fk_a relation/edge.
-	ResourceRelationshipFkATable = "resource_relationships"
-	// ResourceRelationshipFkAInverseTable is the table name for the ResourceRelationship entity.
+	// ResourceRelationshipATable is the table the holds the resource_relationship_a relation/edge.
+	ResourceRelationshipATable = "resource_relationships"
+	// ResourceRelationshipAInverseTable is the table name for the ResourceRelationship entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcerelationship" package.
-	ResourceRelationshipFkAInverseTable = "resource_relationships"
-	// ResourceRelationshipFkAColumn is the table column denoting the resource_relationship_fk_a relation/edge.
-	ResourceRelationshipFkAColumn = "resource_type_resource_relationship_fk_a"
-	// ResourceRelationshipFkBTable is the table the holds the resource_relationship_fk_b relation/edge.
-	ResourceRelationshipFkBTable = "resource_relationships"
-	// ResourceRelationshipFkBInverseTable is the table name for the ResourceRelationship entity.
+	ResourceRelationshipAInverseTable = "resource_relationships"
+	// ResourceRelationshipAColumn is the table column denoting the resource_relationship_a relation/edge.
+	ResourceRelationshipAColumn = "resource_type_resource_relationship_a"
+	// ResourceRelationshipBTable is the table the holds the resource_relationship_b relation/edge.
+	ResourceRelationshipBTable = "resource_relationships"
+	// ResourceRelationshipBInverseTable is the table name for the ResourceRelationship entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcerelationship" package.
-	ResourceRelationshipFkBInverseTable = "resource_relationships"
-	// ResourceRelationshipFkBColumn is the table column denoting the resource_relationship_fk_b relation/edge.
-	ResourceRelationshipFkBColumn = "resource_type_resource_relationship_fk_b"
+	ResourceRelationshipBInverseTable = "resource_relationships"
+	// ResourceRelationshipBColumn is the table column denoting the resource_relationship_b relation/edge.
+	ResourceRelationshipBColumn = "resource_type_resource_relationship_b"
 	// ResourceSpecificationFkTable is the table the holds the resource_specification_fk relation/edge.
 	ResourceSpecificationFkTable = "resource_specifications"
 	// ResourceSpecificationFkInverseTable is the table name for the ResourceSpecification entity.

@@ -38,8 +38,8 @@ const (
 	EdgePropertyTypes = "property_types"
 	// EdgeSurveyTemplateCategories holds the string denoting the survey_template_categories edge name in mutations.
 	EdgeSurveyTemplateCategories = "survey_template_categories"
-	// EdgeResourceRelationshipFk holds the string denoting the resource_relationship_fk edge name in mutations.
-	EdgeResourceRelationshipFk = "resource_relationship_fk"
+	// EdgeResourceRelationshipLocation holds the string denoting the resource_relationship_location edge name in mutations.
+	EdgeResourceRelationshipLocation = "resource_relationship_location"
 	// EdgeDocumentCategory holds the string denoting the document_category edge name in mutations.
 	EdgeDocumentCategory = "document_category"
 
@@ -66,13 +66,13 @@ const (
 	SurveyTemplateCategoriesInverseTable = "survey_template_categories"
 	// SurveyTemplateCategoriesColumn is the table column denoting the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesColumn = "location_type_survey_template_categories"
-	// ResourceRelationshipFkTable is the table the holds the resource_relationship_fk relation/edge.
-	ResourceRelationshipFkTable = "resource_relationships"
-	// ResourceRelationshipFkInverseTable is the table name for the ResourceRelationship entity.
+	// ResourceRelationshipLocationTable is the table the holds the resource_relationship_location relation/edge.
+	ResourceRelationshipLocationTable = "resource_relationships"
+	// ResourceRelationshipLocationInverseTable is the table name for the ResourceRelationship entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcerelationship" package.
-	ResourceRelationshipFkInverseTable = "resource_relationships"
-	// ResourceRelationshipFkColumn is the table column denoting the resource_relationship_fk relation/edge.
-	ResourceRelationshipFkColumn = "location_type_resource_relationship_fk"
+	ResourceRelationshipLocationInverseTable = "resource_relationships"
+	// ResourceRelationshipLocationColumn is the table column denoting the resource_relationship_location relation/edge.
+	ResourceRelationshipLocationColumn = "location_type_resource_relationship_location"
 	// DocumentCategoryTable is the table the holds the document_category relation/edge.
 	DocumentCategoryTable = "document_categories"
 	// DocumentCategoryInverseTable is the table name for the DocumentCategory entity.

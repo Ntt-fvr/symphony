@@ -10,8 +10,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshiptype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/pkg/errors"
@@ -23,10 +21,6 @@ func handleResourceRelationshipFilter(q *ent.ResourceRelationshipQuery, filter *
 		return resourceRelationshipNameFilter(q, filter)
 	case models.ResourceRelationshipFilterTypeResourceRelationshipFilter:
 		return resourceRelationshipLocationTypeFilter(q, filter)
-	case models.ResourceRelationshipFilterTypeResourceRelationshipType:
-		return resourceRelationshipTypeFilter(q, filter)
-	case models.ResourceRelationshipFilterTypeResourceRelationshipMultiplicity:
-		return resourceRelationshipMultiplcityFilter(q, filter)
 	case models.ResourceRelationshipFilterTypeResourceRelationshipResource:
 		return resourceTypeFilter(q, filter)
 
@@ -47,21 +41,7 @@ func resourceRelationshipNameFilter(q *ent.ResourceRelationshipQuery, filter *mo
 
 func resourceRelationshipLocationTypeFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
-		return q.Where(resourcerelationship.HasLocationtypefkWith(locationtype.IDIn(filter.IDSet...))), nil
-	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
-}
-
-func resourceRelationshipMultiplcityFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
-	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
-		return q.Where(resourcerelationship.HasResourceRelationshipMultiplicityFkWith(resourcerelationshipmultiplicity.IDIn(filter.IDSet...))), nil
-	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
-}
-
-func resourceRelationshipTypeFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
-	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
-		return q.Where(resourcerelationship.HasResourcerelationshiptypefkWith(resourcerelationshiptype.IDIn(filter.IDSet...))), nil
+		return q.Where(resourcerelationship.HasLocationTypeWith(locationtype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

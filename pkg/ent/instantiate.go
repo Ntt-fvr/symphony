@@ -403,18 +403,6 @@ func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *Reso
 }
 
 // Instantiate entity configuration.
-func (c *ResourceRelationshipMultiplicityClient) Instantiate(rrm *ResourceRelationshipMultiplicity) *ResourceRelationshipMultiplicity {
-	rrm.config = c.config
-	return rrm
-}
-
-// Instantiate entity configuration.
-func (c *ResourceRelationshipTypeClient) Instantiate(rrt *ResourceRelationshipType) *ResourceRelationshipType {
-	rrt.config = c.config
-	return rrt
-}
-
-// Instantiate entity configuration.
 func (c *ResourceSRItemsClient) Instantiate(rsi *ResourceSRItems) *ResourceSRItems {
 	rsi.config = c.config
 	return rsi

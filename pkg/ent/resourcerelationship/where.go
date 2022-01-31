@@ -381,6 +381,102 @@ func NameContainsFold(v string) predicate.ResourceRelationship {
 	})
 }
 
+// ResourceRelationshipTypeEQ applies the EQ predicate on the "ResourceRelationshipType" field.
+func ResourceRelationshipTypeEQ(v ResourceRelationshipType) predicate.ResourceRelationship {
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldResourceRelationshipType), v))
+	})
+}
+
+// ResourceRelationshipTypeNEQ applies the NEQ predicate on the "ResourceRelationshipType" field.
+func ResourceRelationshipTypeNEQ(v ResourceRelationshipType) predicate.ResourceRelationship {
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldResourceRelationshipType), v))
+	})
+}
+
+// ResourceRelationshipTypeIn applies the In predicate on the "ResourceRelationshipType" field.
+func ResourceRelationshipTypeIn(vs ...ResourceRelationshipType) predicate.ResourceRelationship {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldResourceRelationshipType), v...))
+	})
+}
+
+// ResourceRelationshipTypeNotIn applies the NotIn predicate on the "ResourceRelationshipType" field.
+func ResourceRelationshipTypeNotIn(vs ...ResourceRelationshipType) predicate.ResourceRelationship {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldResourceRelationshipType), v...))
+	})
+}
+
+// ResourceRelationshipMultiplicityEQ applies the EQ predicate on the "ResourceRelationshipMultiplicity" field.
+func ResourceRelationshipMultiplicityEQ(v ResourceRelationshipMultiplicity) predicate.ResourceRelationship {
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldResourceRelationshipMultiplicity), v))
+	})
+}
+
+// ResourceRelationshipMultiplicityNEQ applies the NEQ predicate on the "ResourceRelationshipMultiplicity" field.
+func ResourceRelationshipMultiplicityNEQ(v ResourceRelationshipMultiplicity) predicate.ResourceRelationship {
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldResourceRelationshipMultiplicity), v))
+	})
+}
+
+// ResourceRelationshipMultiplicityIn applies the In predicate on the "ResourceRelationshipMultiplicity" field.
+func ResourceRelationshipMultiplicityIn(vs ...ResourceRelationshipMultiplicity) predicate.ResourceRelationship {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldResourceRelationshipMultiplicity), v...))
+	})
+}
+
+// ResourceRelationshipMultiplicityNotIn applies the NotIn predicate on the "ResourceRelationshipMultiplicity" field.
+func ResourceRelationshipMultiplicityNotIn(vs ...ResourceRelationshipMultiplicity) predicate.ResourceRelationship {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceRelationship(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldResourceRelationshipMultiplicity), v...))
+	})
+}
+
 // HasResourcetypea applies the HasEdge predicate on the "resourcetypea" edge.
 func HasResourcetypea() predicate.ResourceRelationship {
 	return predicate.ResourceRelationship(func(s *sql.Selector) {
@@ -437,81 +533,25 @@ func HasResourcetypebWith(preds ...predicate.ResourceType) predicate.ResourceRel
 	})
 }
 
-// HasResourcerelationshiptypefk applies the HasEdge predicate on the "resourcerelationshiptypefk" edge.
-func HasResourcerelationshiptypefk() predicate.ResourceRelationship {
+// HasLocationType applies the HasEdge predicate on the "locationType" edge.
+func HasLocationType() predicate.ResourceRelationship {
 	return predicate.ResourceRelationship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcerelationshiptypefkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourcerelationshiptypefkTable, ResourcerelationshiptypefkColumn),
+			sqlgraph.To(LocationTypeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, LocationTypeTable, LocationTypeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasResourcerelationshiptypefkWith applies the HasEdge predicate on the "resourcerelationshiptypefk" edge with a given conditions (other predicates).
-func HasResourcerelationshiptypefkWith(preds ...predicate.ResourceRelationshipType) predicate.ResourceRelationship {
+// HasLocationTypeWith applies the HasEdge predicate on the "locationType" edge with a given conditions (other predicates).
+func HasLocationTypeWith(preds ...predicate.LocationType) predicate.ResourceRelationship {
 	return predicate.ResourceRelationship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcerelationshiptypefkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourcerelationshiptypefkTable, ResourcerelationshiptypefkColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasLocationtypefk applies the HasEdge predicate on the "locationtypefk" edge.
-func HasLocationtypefk() predicate.ResourceRelationship {
-	return predicate.ResourceRelationship(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(LocationtypefkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, LocationtypefkTable, LocationtypefkColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasLocationtypefkWith applies the HasEdge predicate on the "locationtypefk" edge with a given conditions (other predicates).
-func HasLocationtypefkWith(preds ...predicate.LocationType) predicate.ResourceRelationship {
-	return predicate.ResourceRelationship(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(LocationtypefkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, LocationtypefkTable, LocationtypefkColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasResourceRelationshipMultiplicityFk applies the HasEdge predicate on the "resource_relationship_multiplicity_fk" edge.
-func HasResourceRelationshipMultiplicityFk() predicate.ResourceRelationship {
-	return predicate.ResourceRelationship(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceRelationshipMultiplicityFkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourceRelationshipMultiplicityFkTable, ResourceRelationshipMultiplicityFkColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasResourceRelationshipMultiplicityFkWith applies the HasEdge predicate on the "resource_relationship_multiplicity_fk" edge with a given conditions (other predicates).
-func HasResourceRelationshipMultiplicityFkWith(preds ...predicate.ResourceRelationshipMultiplicity) predicate.ResourceRelationship {
-	return predicate.ResourceRelationship(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceRelationshipMultiplicityFkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourceRelationshipMultiplicityFkTable, ResourceRelationshipMultiplicityFkColumn),
+			sqlgraph.To(LocationTypeInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, LocationTypeTable, LocationTypeColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

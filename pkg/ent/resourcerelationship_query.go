@@ -18,8 +18,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshiptype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 )
 
@@ -32,12 +30,10 @@ type ResourceRelationshipQuery struct {
 	unique     []string
 	predicates []predicate.ResourceRelationship
 	// eager-loading edges.
-	withResourcetypea                      *ResourceTypeQuery
-	withResourcetypeb                      *ResourceTypeQuery
-	withResourcerelationshiptypefk         *ResourceRelationshipTypeQuery
-	withLocationtypefk                     *LocationTypeQuery
-	withResourceRelationshipMultiplicityFk *ResourceRelationshipMultiplicityQuery
-	withFKs                                bool
+	withResourcetypea *ResourceTypeQuery
+	withResourcetypeb *ResourceTypeQuery
+	withLocationType  *LocationTypeQuery
+	withFKs           bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -111,30 +107,8 @@ func (rrq *ResourceRelationshipQuery) QueryResourcetypeb() *ResourceTypeQuery {
 	return query
 }
 
-// QueryResourcerelationshiptypefk chains the current query on the resourcerelationshiptypefk edge.
-func (rrq *ResourceRelationshipQuery) QueryResourcerelationshiptypefk() *ResourceRelationshipTypeQuery {
-	query := &ResourceRelationshipTypeQuery{config: rrq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := rrq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := rrq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcerelationship.Table, resourcerelationship.FieldID, selector),
-			sqlgraph.To(resourcerelationshiptype.Table, resourcerelationshiptype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcerelationship.ResourcerelationshiptypefkTable, resourcerelationship.ResourcerelationshiptypefkColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(rrq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryLocationtypefk chains the current query on the locationtypefk edge.
-func (rrq *ResourceRelationshipQuery) QueryLocationtypefk() *LocationTypeQuery {
+// QueryLocationType chains the current query on the locationType edge.
+func (rrq *ResourceRelationshipQuery) QueryLocationType() *LocationTypeQuery {
 	query := &LocationTypeQuery{config: rrq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rrq.prepareQuery(ctx); err != nil {
@@ -147,29 +121,7 @@ func (rrq *ResourceRelationshipQuery) QueryLocationtypefk() *LocationTypeQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcerelationship.Table, resourcerelationship.FieldID, selector),
 			sqlgraph.To(locationtype.Table, locationtype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcerelationship.LocationtypefkTable, resourcerelationship.LocationtypefkColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(rrq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryResourceRelationshipMultiplicityFk chains the current query on the resource_relationship_multiplicity_fk edge.
-func (rrq *ResourceRelationshipQuery) QueryResourceRelationshipMultiplicityFk() *ResourceRelationshipMultiplicityQuery {
-	query := &ResourceRelationshipMultiplicityQuery{config: rrq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := rrq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := rrq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcerelationship.Table, resourcerelationship.FieldID, selector),
-			sqlgraph.To(resourcerelationshipmultiplicity.Table, resourcerelationshipmultiplicity.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcerelationship.ResourceRelationshipMultiplicityFkTable, resourcerelationship.ResourceRelationshipMultiplicityFkColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcerelationship.LocationTypeTable, resourcerelationship.LocationTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rrq.driver.Dialect(), step)
 		return fromU, nil
@@ -347,17 +299,15 @@ func (rrq *ResourceRelationshipQuery) Clone() *ResourceRelationshipQuery {
 		return nil
 	}
 	return &ResourceRelationshipQuery{
-		config:                                 rrq.config,
-		limit:                                  rrq.limit,
-		offset:                                 rrq.offset,
-		order:                                  append([]OrderFunc{}, rrq.order...),
-		unique:                                 append([]string{}, rrq.unique...),
-		predicates:                             append([]predicate.ResourceRelationship{}, rrq.predicates...),
-		withResourcetypea:                      rrq.withResourcetypea.Clone(),
-		withResourcetypeb:                      rrq.withResourcetypeb.Clone(),
-		withResourcerelationshiptypefk:         rrq.withResourcerelationshiptypefk.Clone(),
-		withLocationtypefk:                     rrq.withLocationtypefk.Clone(),
-		withResourceRelationshipMultiplicityFk: rrq.withResourceRelationshipMultiplicityFk.Clone(),
+		config:            rrq.config,
+		limit:             rrq.limit,
+		offset:            rrq.offset,
+		order:             append([]OrderFunc{}, rrq.order...),
+		unique:            append([]string{}, rrq.unique...),
+		predicates:        append([]predicate.ResourceRelationship{}, rrq.predicates...),
+		withResourcetypea: rrq.withResourcetypea.Clone(),
+		withResourcetypeb: rrq.withResourcetypeb.Clone(),
+		withLocationType:  rrq.withLocationType.Clone(),
 		// clone intermediate query.
 		sql:  rrq.sql.Clone(),
 		path: rrq.path,
@@ -386,36 +336,14 @@ func (rrq *ResourceRelationshipQuery) WithResourcetypeb(opts ...func(*ResourceTy
 	return rrq
 }
 
-//  WithResourcerelationshiptypefk tells the query-builder to eager-loads the nodes that are connected to
-// the "resourcerelationshiptypefk" edge. The optional arguments used to configure the query builder of the edge.
-func (rrq *ResourceRelationshipQuery) WithResourcerelationshiptypefk(opts ...func(*ResourceRelationshipTypeQuery)) *ResourceRelationshipQuery {
-	query := &ResourceRelationshipTypeQuery{config: rrq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	rrq.withResourcerelationshiptypefk = query
-	return rrq
-}
-
-//  WithLocationtypefk tells the query-builder to eager-loads the nodes that are connected to
-// the "locationtypefk" edge. The optional arguments used to configure the query builder of the edge.
-func (rrq *ResourceRelationshipQuery) WithLocationtypefk(opts ...func(*LocationTypeQuery)) *ResourceRelationshipQuery {
+//  WithLocationType tells the query-builder to eager-loads the nodes that are connected to
+// the "locationType" edge. The optional arguments used to configure the query builder of the edge.
+func (rrq *ResourceRelationshipQuery) WithLocationType(opts ...func(*LocationTypeQuery)) *ResourceRelationshipQuery {
 	query := &LocationTypeQuery{config: rrq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rrq.withLocationtypefk = query
-	return rrq
-}
-
-//  WithResourceRelationshipMultiplicityFk tells the query-builder to eager-loads the nodes that are connected to
-// the "resource_relationship_multiplicity_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (rrq *ResourceRelationshipQuery) WithResourceRelationshipMultiplicityFk(opts ...func(*ResourceRelationshipMultiplicityQuery)) *ResourceRelationshipQuery {
-	query := &ResourceRelationshipMultiplicityQuery{config: rrq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	rrq.withResourceRelationshipMultiplicityFk = query
+	rrq.withLocationType = query
 	return rrq
 }
 
@@ -489,15 +417,13 @@ func (rrq *ResourceRelationshipQuery) sqlAll(ctx context.Context) ([]*ResourceRe
 		nodes       = []*ResourceRelationship{}
 		withFKs     = rrq.withFKs
 		_spec       = rrq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [3]bool{
 			rrq.withResourcetypea != nil,
 			rrq.withResourcetypeb != nil,
-			rrq.withResourcerelationshiptypefk != nil,
-			rrq.withLocationtypefk != nil,
-			rrq.withResourceRelationshipMultiplicityFk != nil,
+			rrq.withLocationType != nil,
 		}
 	)
-	if rrq.withResourcetypea != nil || rrq.withResourcetypeb != nil || rrq.withResourcerelationshiptypefk != nil || rrq.withLocationtypefk != nil || rrq.withResourceRelationshipMultiplicityFk != nil {
+	if rrq.withResourcetypea != nil || rrq.withResourcetypeb != nil || rrq.withLocationType != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -531,7 +457,7 @@ func (rrq *ResourceRelationshipQuery) sqlAll(ctx context.Context) ([]*ResourceRe
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*ResourceRelationship)
 		for i := range nodes {
-			if fk := nodes[i].resource_type_resource_relationship_fk_a; fk != nil {
+			if fk := nodes[i].resource_type_resource_relationship_a; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -544,7 +470,7 @@ func (rrq *ResourceRelationshipQuery) sqlAll(ctx context.Context) ([]*ResourceRe
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_relationship_fk_a" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_relationship_a" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcetypea = n
@@ -556,7 +482,7 @@ func (rrq *ResourceRelationshipQuery) sqlAll(ctx context.Context) ([]*ResourceRe
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*ResourceRelationship)
 		for i := range nodes {
-			if fk := nodes[i].resource_type_resource_relationship_fk_b; fk != nil {
+			if fk := nodes[i].resource_type_resource_relationship_b; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -569,7 +495,7 @@ func (rrq *ResourceRelationshipQuery) sqlAll(ctx context.Context) ([]*ResourceRe
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_relationship_fk_b" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_relationship_b" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcetypeb = n
@@ -577,36 +503,11 @@ func (rrq *ResourceRelationshipQuery) sqlAll(ctx context.Context) ([]*ResourceRe
 		}
 	}
 
-	if query := rrq.withResourcerelationshiptypefk; query != nil {
+	if query := rrq.withLocationType; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*ResourceRelationship)
 		for i := range nodes {
-			if fk := nodes[i].resource_relationship_type_resource_relationship_fk; fk != nil {
-				ids = append(ids, *fk)
-				nodeids[*fk] = append(nodeids[*fk], nodes[i])
-			}
-		}
-		query.Where(resourcerelationshiptype.IDIn(ids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_relationship_type_resource_relationship_fk" returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.Resourcerelationshiptypefk = n
-			}
-		}
-	}
-
-	if query := rrq.withLocationtypefk; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*ResourceRelationship)
-		for i := range nodes {
-			if fk := nodes[i].location_type_resource_relationship_fk; fk != nil {
+			if fk := nodes[i].location_type_resource_relationship_location; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -619,35 +520,10 @@ func (rrq *ResourceRelationshipQuery) sqlAll(ctx context.Context) ([]*ResourceRe
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "location_type_resource_relationship_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "location_type_resource_relationship_location" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Locationtypefk = n
-			}
-		}
-	}
-
-	if query := rrq.withResourceRelationshipMultiplicityFk; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*ResourceRelationship)
-		for i := range nodes {
-			if fk := nodes[i].resource_relationship_multiplicity_resource_relationship_fk; fk != nil {
-				ids = append(ids, *fk)
-				nodeids[*fk] = append(nodeids[*fk], nodes[i])
-			}
-		}
-		query.Where(resourcerelationshipmultiplicity.IDIn(ids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_relationship_multiplicity_resource_relationship_fk" returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.ResourceRelationshipMultiplicityFk = n
+				nodes[i].Edges.LocationType = n
 			}
 		}
 	}

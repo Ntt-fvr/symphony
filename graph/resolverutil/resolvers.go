@@ -464,24 +464,7 @@ func ResourceTypeFilter(query *ent.ResourceTypeQuery, filters []*models.Resource
 	}
 	return query, nil
 }
-func ResourceRelationshipTypeFilter(query *ent.ResourceRelationshipTypeQuery, filters []*models.ResourceRelationshipTypeFilterInput) (*ent.ResourceRelationshipTypeQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceRelationshipTypeFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-func ResourceRelationshipMultiplicityFilter(query *ent.ResourceRelationshipMultiplicityQuery, filters []*models.ResourceRelationshipMultiplicityFilterInput) (*ent.ResourceRelationshipMultiplicityQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceRelationshipMultiplicityFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
+
 func ResourceSpecificationFilter(query *ent.ResourceSpecificationQuery, filters []*models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
 	var err error
 	for _, f := range filters {

@@ -41,10 +41,10 @@ type ResourceTypeEdges struct {
 	Resourcetypeclass *ResourceTypeClass
 	// Resourcetypebasetype holds the value of the resourcetypebasetype edge.
 	Resourcetypebasetype *ResourceTypeBaseType
-	// ResourceRelationshipFkA holds the value of the resource_relationship_fk_a edge.
-	ResourceRelationshipFkA []*ResourceRelationship
-	// ResourceRelationshipFkB holds the value of the resource_relationship_fk_b edge.
-	ResourceRelationshipFkB []*ResourceRelationship
+	// ResourceRelationshipA holds the value of the resource_relationship_a edge.
+	ResourceRelationshipA []*ResourceRelationship
+	// ResourceRelationshipB holds the value of the resource_relationship_b edge.
+	ResourceRelationshipB []*ResourceRelationship
 	// ResourceSpecificationFk holds the value of the resource_specification_fk edge.
 	ResourceSpecificationFk []*ResourceSpecification
 	// ResourcetypeItems holds the value of the resourcetype_items edge.
@@ -82,22 +82,22 @@ func (e ResourceTypeEdges) ResourcetypebasetypeOrErr() (*ResourceTypeBaseType, e
 	return nil, &NotLoadedError{edge: "resourcetypebasetype"}
 }
 
-// ResourceRelationshipFkAOrErr returns the ResourceRelationshipFkA value or an error if the edge
+// ResourceRelationshipAOrErr returns the ResourceRelationshipA value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeEdges) ResourceRelationshipFkAOrErr() ([]*ResourceRelationship, error) {
+func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceRelationship, error) {
 	if e.loadedTypes[2] {
-		return e.ResourceRelationshipFkA, nil
+		return e.ResourceRelationshipA, nil
 	}
-	return nil, &NotLoadedError{edge: "resource_relationship_fk_a"}
+	return nil, &NotLoadedError{edge: "resource_relationship_a"}
 }
 
-// ResourceRelationshipFkBOrErr returns the ResourceRelationshipFkB value or an error if the edge
+// ResourceRelationshipBOrErr returns the ResourceRelationshipB value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeEdges) ResourceRelationshipFkBOrErr() ([]*ResourceRelationship, error) {
+func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceRelationship, error) {
 	if e.loadedTypes[3] {
-		return e.ResourceRelationshipFkB, nil
+		return e.ResourceRelationshipB, nil
 	}
-	return nil, &NotLoadedError{edge: "resource_relationship_fk_b"}
+	return nil, &NotLoadedError{edge: "resource_relationship_b"}
 }
 
 // ResourceSpecificationFkOrErr returns the ResourceSpecificationFk value or an error if the edge
@@ -191,14 +191,14 @@ func (rt *ResourceType) QueryResourcetypebasetype() *ResourceTypeBaseTypeQuery {
 	return (&ResourceTypeClient{config: rt.config}).QueryResourcetypebasetype(rt)
 }
 
-// QueryResourceRelationshipFkA queries the resource_relationship_fk_a edge of the ResourceType.
-func (rt *ResourceType) QueryResourceRelationshipFkA() *ResourceRelationshipQuery {
-	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipFkA(rt)
+// QueryResourceRelationshipA queries the resource_relationship_a edge of the ResourceType.
+func (rt *ResourceType) QueryResourceRelationshipA() *ResourceRelationshipQuery {
+	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipA(rt)
 }
 
-// QueryResourceRelationshipFkB queries the resource_relationship_fk_b edge of the ResourceType.
-func (rt *ResourceType) QueryResourceRelationshipFkB() *ResourceRelationshipQuery {
-	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipFkB(rt)
+// QueryResourceRelationshipB queries the resource_relationship_b edge of the ResourceType.
+func (rt *ResourceType) QueryResourceRelationshipB() *ResourceRelationshipQuery {
+	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipB(rt)
 }
 
 // QueryResourceSpecificationFk queries the resource_specification_fk edge of the ResourceType.
