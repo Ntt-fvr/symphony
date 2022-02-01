@@ -200,7 +200,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
 
   return (
     <Card className={classes.root}>
-      <CardHeader className={classes.header}>Add Resource Type</CardHeader>
+      <CardHeader className={classes.header}>Add relationship</CardHeader>
       <form className={classes.formField} autoComplete="off">
         {/* <TextField
           required
@@ -318,4 +318,4 @@ const AddRelationshipsTypeForm = (props: Props) => {
     </Card>
   );
 };
-export default AddRelationshipsTypeForm;
+export {AddRelationshipsTypeForm};

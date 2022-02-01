@@ -8,24 +8,17 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 
 // DESING SYSTEM //
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import Button from '@symphony/design-system/components/Button';
+
 import Card from '@symphony/design-system/components/Card/Card';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@symphony/design-system/components/IconButton';
-import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Text from '@symphony/design-system/components/Text';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 // import {SettingsIcon} from '@symphony/design-system/icons/Actions/SettingsIcon';
@@ -36,6 +29,10 @@ const useStyles = makeStyles(() => ({
       cursor: 'default',
     },
     marginBottom: '7px',
+    '& .cardContainer': {
+      height: '70px',
+      padding: '11px',
+    },
   },
   container: {
     '& .MuiAccordionSummary-root': {
@@ -50,7 +47,7 @@ const useStyles = makeStyles(() => ({
     color: DARK.D500,
   },
   deleteIcon: {
-    marginRight: '1rem',
+    // marginRight: '1rem',
     color: DARK.D300,
   },
   settingsIcon: {
@@ -61,6 +58,20 @@ const useStyles = makeStyles(() => ({
   },
   inside: {
     // border: '1px solid red',
+    // display: 'flex',
+    // alignItems: 'center',
+  },
+  containerInner: {
+    // border: '1px solid red',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 0 0 15px',
+  },
+  containerDelete: {
+    // border: '1px solid red',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   inline: {
     display: 'flex',
@@ -110,12 +121,11 @@ type Props = $ReadOnly<{|
   },
 |}>;
 
-export default function RelationshipTypeItemList(props: Props) {
+const RelationshipsTypeItemList = (props: Props) => {
   // const {edit, handleRemove, formValues, resourceDataLenght} = props;
   const {...item} = props;
-  console.log('item -> ', item);
+
   const classes = useStyles();
-  // const [open, setOpen] = useState(false);
 
   // const filterDataById = resourceDataLenght
   //   .map(item => item.node)
@@ -130,7 +140,7 @@ export default function RelationshipTypeItemList(props: Props) {
     <div className={classes.root}>
       <Card>
         <Grid container>
-          <Grid sm={3} className={classes.inside}>
+          <Grid sm={4} className={classes.inside}>
             <div className={classes.inline}>
               <div className={classes.iconContainer}>
                 <SettingsIcon />
@@ -139,90 +149,24 @@ export default function RelationshipTypeItemList(props: Props) {
                 {item.resourceTypeFkA.name}
               </Text>
             </div>
-            {/* <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} /> */}
           </Grid>
-          <Grid sm={2} className={classes.inside}>
+          <Grid sm={2} className={classes.containerInner}>
             <Text useEllipsis={true}>Belongs to</Text>
           </Grid>
-          <Grid sm={3} md={3} lg={3} className={classes.inside}>
+          <Grid sm={2} className={classes.containerInner}>
             <Text useEllipsis={true}>Many to many</Text>
           </Grid>
-          <Grid sm={3} md={3} lg={3} className={classes.inside}>
+          <Grid sm={3} md={3} lg={3} className={classes.containerInner}>
             <Text useEllipsis={true} weight={'bold'}>
               {item.resourceTypeFkB.name}
             </Text>
           </Grid>
-          <Grid sm={1} className={classes.inside}>
+          <Grid sm={1} className={classes.containerDelete}>
             <DeleteOutlinedIcon className={classes.deleteIcon} />
           </Grid>
         </Grid>
       </Card>
     </div>
   );
-}
-
-/*
- <Accordion
-        className={classes.container}
-        expanded={open}
-        onChange={handleOpen}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header">
-          <Grid container item xs={12}>
-            <Grid item xs container justify="flex-start" alignItems="center">
-              <IconButton
-                icon={SettingsIcon}
-                variant="contained"
-                className={classes.settingsIcon}
-                skin="secondaryGray"
-                aria-label="upload picture"
-              />
-              <Text useEllipsis={true} weight="bold">
-                {formValues.name}
-              </Text>
-            </Grid>
-            <Grid
-              item
-              xs
-              container
-              alignItems="center"
-              className={classes.detailHeader}>
-              {filterDataById.length} Resource specification instances of the
-              type
-            </Grid>
-            <Grid item xs={2} container justify="flex-end" alignItems="center">
-              <DeleteOutlinedIcon
-                className={classes.deleteIcon}
-                onClick={handleRemove}
-              />
-              <IconButton icon={EditIcon} onClick={edit} />
-            </Grid>
-          </Grid>
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <Grid container style={{textAlign: 'center'}}>
-            <Grid item xs={4}>
-              <span className={classes.detailHeader}>Resource name: </span>
-              <br />
-              <strong>{formValues.name}</strong>
-            </Grid>
-            <Grid item xs={4}>
-              <span className={classes.detailHeader}>Class: </span>
-              <br />
-              <strong>{formValues.resourceTypeBaseTypeFk.name}</strong>
-            </Grid>
-            <Grid item xs={4}>
-              <span className={classes.detailHeader}>Resource type class:</span>
-              <br />
-              <strong>{formValues.resourceTypeClassFk.name}</strong>
-            </Grid>
-          </Grid>
-        </AccordionDetails>
-      </Accordion>
-
-
-
-*/
+};
+export {RelationshipsTypeItemList};

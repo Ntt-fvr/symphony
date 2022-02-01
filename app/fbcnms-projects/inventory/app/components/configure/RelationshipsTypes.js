@@ -7,19 +7,20 @@
  * @flow
  * @format
  */
-import AddRelationshipsTypeForm from './AddRelationshipsTypeForm';
 import ConfigureTitle from '../assurance/common/ConfigureTitle';
 import React, {useCallback, useEffect, useState} from 'react';
-import RelationshipsTypeItem from './RelationshipsTypeItem';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import TitleTextCardsResource from './TitleTextCardsResource';
 import fbt from 'fbt';
-import {EditResourceTypeItem} from './EditResourceTypeItem';
+import symphony from '@symphony/design-system/theme/symphony';
+import {AddRelationshipsTypeForm} from './AddRelationshipsTypeForm';
+import {RelationshipsTypeItemList} from './RelationshipsTypeItemList';
+// import {EditResourceTypeItem} from './EditResourceTypeItem';
+import {TitleTextCardsRelationships} from './TitleTextCardsRelationships';
 import {fetchQuery, graphql} from 'relay-runtime';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+// import {useLazyLoadQuery} from 'react-relay/hooks';
 
 // MUTATIONS //
-import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
+// import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
 // import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
 // import type {PropertyType} from '../../common/PropertyType';
 
@@ -30,6 +31,28 @@ const useStyles = makeStyles(() => ({
   root: {
     padding: '24px 25px 34px 34px',
     margin: '0',
+  },
+  listContainer: {
+    overflow: 'auto',
+    paddingRight: '9px',
+    maxHeight: 'calc(95vh - 156px)',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: symphony.palette.D300,
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: symphony.palette.D100,
+      borderRadius: '4px',
+    },
   },
 }));
 
@@ -101,15 +124,6 @@ const RelationshipsTypes = () => {
   }, [setRelationships]);
   console.log(relationships);
 
-  // const showEditResourceItemForm = (resources: Resources) => {
-  //   setShowEditForm(true);
-  //   setDataEdit(resources);
-  // };
-
-  // const hideEditResourceItemForm = () => {
-  //   setShowEditForm(false);
-  // };
-
   // const handleRemove = id => {
   //   const variables: RemoveResourceTypeMutationVariables = {
   //     id: id,
@@ -117,37 +131,23 @@ const RelationshipsTypes = () => {
   //   RemoveResourceTypeMutation(variables, {onCompleted: () => isCompleted()});
   // };
 
-  // if (showEditForm) {
-  //   return (
-  //     <EditResourceTypeItem
-  //       isCompleted={isCompleted}
-  //       formValues={dataEdit.item.node}
-  //       resources={resourceTypes.resourceTypes?.edges.map(item => item.node)}
-  //       resourceSpecifications={resourceTypes.resourceSpecifications?.edges.map(
-  //         item => item.node,
-  //       )}
-  //       hideEditResourceTypeForm={hideEditResourceItemForm}
-  //     />
-  //   );
-  // }
-
   return (
     <Grid className={classes.root} container>
       <Grid item xs={12} style={{marginBottom: '1rem'}}>
         <ConfigureTitle
           title={fbt('Relationships', 'Relationships Title')}
           subtitle={fbt(
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            'Define and manage relationships between resource types for network modeling. You can not edit these relationships. Remove and create relationships as required, assuring you are not impacting inventory data.',
             'Relationships description',
           )}
         />
       </Grid>
       <Grid item xs={12} lg={9}>
-        <TitleTextCardsResource />
-        <List disablePadding>
-          {relationships.resourceRelationships?.edges.map(item => (
-            <RelationshipsTypeItem
-              key={item.id}
+        <TitleTextCardsRelationships />
+        <List disablePadding className={classes.listContainer}>
+          {relationships?.resourceRelationships?.edges.map((item, index) => (
+            <RelationshipsTypeItemList
+              key={index}
               // handleRemove={() => handleRemove(item.node?.id)}
               {...item.node}
             />
