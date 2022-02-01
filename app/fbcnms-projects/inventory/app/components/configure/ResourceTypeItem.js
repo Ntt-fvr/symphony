@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
-    marginBottom: '7px',
+    marginBottom: '12px',
   },
   container: {
     '& .MuiAccordionSummary-root': {
