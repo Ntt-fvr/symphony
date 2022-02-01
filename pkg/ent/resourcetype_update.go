@@ -79,34 +79,34 @@ func (rtu *ResourceTypeUpdate) SetResourcetypebasetype(r *ResourceTypeBaseType) 
 	return rtu.SetResourcetypebasetypeID(r.ID)
 }
 
-// AddResourceRelationshipFkAIDs adds the resource_relationship_fk_a edge to ResourceRelationship by ids.
-func (rtu *ResourceTypeUpdate) AddResourceRelationshipFkAIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.AddResourceRelationshipFkAIDs(ids...)
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+func (rtu *ResourceTypeUpdate) AddResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdate {
+	rtu.mutation.AddResourceRelationshipAIDs(ids...)
 	return rtu
 }
 
-// AddResourceRelationshipFkA adds the resource_relationship_fk_a edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) AddResourceRelationshipFkA(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceRelationship.
+func (rtu *ResourceTypeUpdate) AddResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtu.AddResourceRelationshipFkAIDs(ids...)
+	return rtu.AddResourceRelationshipAIDs(ids...)
 }
 
-// AddResourceRelationshipFkBIDs adds the resource_relationship_fk_b edge to ResourceRelationship by ids.
-func (rtu *ResourceTypeUpdate) AddResourceRelationshipFkBIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.AddResourceRelationshipFkBIDs(ids...)
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+func (rtu *ResourceTypeUpdate) AddResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdate {
+	rtu.mutation.AddResourceRelationshipBIDs(ids...)
 	return rtu
 }
 
-// AddResourceRelationshipFkB adds the resource_relationship_fk_b edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) AddResourceRelationshipFkB(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceRelationship.
+func (rtu *ResourceTypeUpdate) AddResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtu.AddResourceRelationshipFkBIDs(ids...)
+	return rtu.AddResourceRelationshipBIDs(ids...)
 }
 
 // AddResourceSpecificationFkIDs adds the resource_specification_fk edge to ResourceSpecification by ids.
@@ -156,46 +156,46 @@ func (rtu *ResourceTypeUpdate) ClearResourcetypebasetype() *ResourceTypeUpdate {
 	return rtu
 }
 
-// ClearResourceRelationshipFkA clears all "resource_relationship_fk_a" edges to type ResourceRelationship.
-func (rtu *ResourceTypeUpdate) ClearResourceRelationshipFkA() *ResourceTypeUpdate {
-	rtu.mutation.ClearResourceRelationshipFkA()
+// ClearResourceRelationshipA clears all "resource_relationship_a" edges to type ResourceRelationship.
+func (rtu *ResourceTypeUpdate) ClearResourceRelationshipA() *ResourceTypeUpdate {
+	rtu.mutation.ClearResourceRelationshipA()
 	return rtu
 }
 
-// RemoveResourceRelationshipFkAIDs removes the resource_relationship_fk_a edge to ResourceRelationship by ids.
-func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipFkAIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.RemoveResourceRelationshipFkAIDs(ids...)
+// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceRelationship by ids.
+func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdate {
+	rtu.mutation.RemoveResourceRelationshipAIDs(ids...)
 	return rtu
 }
 
-// RemoveResourceRelationshipFkA removes resource_relationship_fk_a edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipFkA(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// RemoveResourceRelationshipA removes resource_relationship_a edges to ResourceRelationship.
+func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtu.RemoveResourceRelationshipFkAIDs(ids...)
+	return rtu.RemoveResourceRelationshipAIDs(ids...)
 }
 
-// ClearResourceRelationshipFkB clears all "resource_relationship_fk_b" edges to type ResourceRelationship.
-func (rtu *ResourceTypeUpdate) ClearResourceRelationshipFkB() *ResourceTypeUpdate {
-	rtu.mutation.ClearResourceRelationshipFkB()
+// ClearResourceRelationshipB clears all "resource_relationship_b" edges to type ResourceRelationship.
+func (rtu *ResourceTypeUpdate) ClearResourceRelationshipB() *ResourceTypeUpdate {
+	rtu.mutation.ClearResourceRelationshipB()
 	return rtu
 }
 
-// RemoveResourceRelationshipFkBIDs removes the resource_relationship_fk_b edge to ResourceRelationship by ids.
-func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipFkBIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.RemoveResourceRelationshipFkBIDs(ids...)
+// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceRelationship by ids.
+func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdate {
+	rtu.mutation.RemoveResourceRelationshipBIDs(ids...)
 	return rtu
 }
 
-// RemoveResourceRelationshipFkB removes resource_relationship_fk_b edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipFkB(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// RemoveResourceRelationshipB removes resource_relationship_b edges to ResourceRelationship.
+func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtu.RemoveResourceRelationshipFkBIDs(ids...)
+	return rtu.RemoveResourceRelationshipBIDs(ids...)
 }
 
 // ClearResourceSpecificationFk clears all "resource_specification_fk" edges to type ResourceSpecification.
@@ -418,12 +418,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rtu.mutation.ResourceRelationshipFkACleared() {
+	if rtu.mutation.ResourceRelationshipACleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkATable,
-			Columns: []string{resourcetype.ResourceRelationshipFkAColumn},
+			Table:   resourcetype.ResourceRelationshipATable,
+			Columns: []string{resourcetype.ResourceRelationshipAColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -434,12 +434,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtu.mutation.RemovedResourceRelationshipFkAIDs(); len(nodes) > 0 && !rtu.mutation.ResourceRelationshipFkACleared() {
+	if nodes := rtu.mutation.RemovedResourceRelationshipAIDs(); len(nodes) > 0 && !rtu.mutation.ResourceRelationshipACleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkATable,
-			Columns: []string{resourcetype.ResourceRelationshipFkAColumn},
+			Table:   resourcetype.ResourceRelationshipATable,
+			Columns: []string{resourcetype.ResourceRelationshipAColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -453,12 +453,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtu.mutation.ResourceRelationshipFkAIDs(); len(nodes) > 0 {
+	if nodes := rtu.mutation.ResourceRelationshipAIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkATable,
-			Columns: []string{resourcetype.ResourceRelationshipFkAColumn},
+			Table:   resourcetype.ResourceRelationshipATable,
+			Columns: []string{resourcetype.ResourceRelationshipAColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -472,12 +472,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rtu.mutation.ResourceRelationshipFkBCleared() {
+	if rtu.mutation.ResourceRelationshipBCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkBTable,
-			Columns: []string{resourcetype.ResourceRelationshipFkBColumn},
+			Table:   resourcetype.ResourceRelationshipBTable,
+			Columns: []string{resourcetype.ResourceRelationshipBColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -488,12 +488,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtu.mutation.RemovedResourceRelationshipFkBIDs(); len(nodes) > 0 && !rtu.mutation.ResourceRelationshipFkBCleared() {
+	if nodes := rtu.mutation.RemovedResourceRelationshipBIDs(); len(nodes) > 0 && !rtu.mutation.ResourceRelationshipBCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkBTable,
-			Columns: []string{resourcetype.ResourceRelationshipFkBColumn},
+			Table:   resourcetype.ResourceRelationshipBTable,
+			Columns: []string{resourcetype.ResourceRelationshipBColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -507,12 +507,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtu.mutation.ResourceRelationshipFkBIDs(); len(nodes) > 0 {
+	if nodes := rtu.mutation.ResourceRelationshipBIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkBTable,
-			Columns: []string{resourcetype.ResourceRelationshipFkBColumn},
+			Table:   resourcetype.ResourceRelationshipBTable,
+			Columns: []string{resourcetype.ResourceRelationshipBColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -696,34 +696,34 @@ func (rtuo *ResourceTypeUpdateOne) SetResourcetypebasetype(r *ResourceTypeBaseTy
 	return rtuo.SetResourcetypebasetypeID(r.ID)
 }
 
-// AddResourceRelationshipFkAIDs adds the resource_relationship_fk_a edge to ResourceRelationship by ids.
-func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipFkAIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.AddResourceRelationshipFkAIDs(ids...)
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdateOne {
+	rtuo.mutation.AddResourceRelationshipAIDs(ids...)
 	return rtuo
 }
 
-// AddResourceRelationshipFkA adds the resource_relationship_fk_a edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipFkA(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceRelationship.
+func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtuo.AddResourceRelationshipFkAIDs(ids...)
+	return rtuo.AddResourceRelationshipAIDs(ids...)
 }
 
-// AddResourceRelationshipFkBIDs adds the resource_relationship_fk_b edge to ResourceRelationship by ids.
-func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipFkBIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.AddResourceRelationshipFkBIDs(ids...)
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdateOne {
+	rtuo.mutation.AddResourceRelationshipBIDs(ids...)
 	return rtuo
 }
 
-// AddResourceRelationshipFkB adds the resource_relationship_fk_b edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipFkB(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceRelationship.
+func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtuo.AddResourceRelationshipFkBIDs(ids...)
+	return rtuo.AddResourceRelationshipBIDs(ids...)
 }
 
 // AddResourceSpecificationFkIDs adds the resource_specification_fk edge to ResourceSpecification by ids.
@@ -773,46 +773,46 @@ func (rtuo *ResourceTypeUpdateOne) ClearResourcetypebasetype() *ResourceTypeUpda
 	return rtuo
 }
 
-// ClearResourceRelationshipFkA clears all "resource_relationship_fk_a" edges to type ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) ClearResourceRelationshipFkA() *ResourceTypeUpdateOne {
-	rtuo.mutation.ClearResourceRelationshipFkA()
+// ClearResourceRelationshipA clears all "resource_relationship_a" edges to type ResourceRelationship.
+func (rtuo *ResourceTypeUpdateOne) ClearResourceRelationshipA() *ResourceTypeUpdateOne {
+	rtuo.mutation.ClearResourceRelationshipA()
 	return rtuo
 }
 
-// RemoveResourceRelationshipFkAIDs removes the resource_relationship_fk_a edge to ResourceRelationship by ids.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipFkAIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.RemoveResourceRelationshipFkAIDs(ids...)
+// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceRelationship by ids.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdateOne {
+	rtuo.mutation.RemoveResourceRelationshipAIDs(ids...)
 	return rtuo
 }
 
-// RemoveResourceRelationshipFkA removes resource_relationship_fk_a edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipFkA(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// RemoveResourceRelationshipA removes resource_relationship_a edges to ResourceRelationship.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtuo.RemoveResourceRelationshipFkAIDs(ids...)
+	return rtuo.RemoveResourceRelationshipAIDs(ids...)
 }
 
-// ClearResourceRelationshipFkB clears all "resource_relationship_fk_b" edges to type ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) ClearResourceRelationshipFkB() *ResourceTypeUpdateOne {
-	rtuo.mutation.ClearResourceRelationshipFkB()
+// ClearResourceRelationshipB clears all "resource_relationship_b" edges to type ResourceRelationship.
+func (rtuo *ResourceTypeUpdateOne) ClearResourceRelationshipB() *ResourceTypeUpdateOne {
+	rtuo.mutation.ClearResourceRelationshipB()
 	return rtuo
 }
 
-// RemoveResourceRelationshipFkBIDs removes the resource_relationship_fk_b edge to ResourceRelationship by ids.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipFkBIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.RemoveResourceRelationshipFkBIDs(ids...)
+// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceRelationship by ids.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdateOne {
+	rtuo.mutation.RemoveResourceRelationshipBIDs(ids...)
 	return rtuo
 }
 
-// RemoveResourceRelationshipFkB removes resource_relationship_fk_b edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipFkB(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// RemoveResourceRelationshipB removes resource_relationship_b edges to ResourceRelationship.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtuo.RemoveResourceRelationshipFkBIDs(ids...)
+	return rtuo.RemoveResourceRelationshipBIDs(ids...)
 }
 
 // ClearResourceSpecificationFk clears all "resource_specification_fk" edges to type ResourceSpecification.
@@ -1033,12 +1033,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rtuo.mutation.ResourceRelationshipFkACleared() {
+	if rtuo.mutation.ResourceRelationshipACleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkATable,
-			Columns: []string{resourcetype.ResourceRelationshipFkAColumn},
+			Table:   resourcetype.ResourceRelationshipATable,
+			Columns: []string{resourcetype.ResourceRelationshipAColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1049,12 +1049,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtuo.mutation.RemovedResourceRelationshipFkAIDs(); len(nodes) > 0 && !rtuo.mutation.ResourceRelationshipFkACleared() {
+	if nodes := rtuo.mutation.RemovedResourceRelationshipAIDs(); len(nodes) > 0 && !rtuo.mutation.ResourceRelationshipACleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkATable,
-			Columns: []string{resourcetype.ResourceRelationshipFkAColumn},
+			Table:   resourcetype.ResourceRelationshipATable,
+			Columns: []string{resourcetype.ResourceRelationshipAColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1068,12 +1068,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtuo.mutation.ResourceRelationshipFkAIDs(); len(nodes) > 0 {
+	if nodes := rtuo.mutation.ResourceRelationshipAIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkATable,
-			Columns: []string{resourcetype.ResourceRelationshipFkAColumn},
+			Table:   resourcetype.ResourceRelationshipATable,
+			Columns: []string{resourcetype.ResourceRelationshipAColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1087,12 +1087,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rtuo.mutation.ResourceRelationshipFkBCleared() {
+	if rtuo.mutation.ResourceRelationshipBCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkBTable,
-			Columns: []string{resourcetype.ResourceRelationshipFkBColumn},
+			Table:   resourcetype.ResourceRelationshipBTable,
+			Columns: []string{resourcetype.ResourceRelationshipBColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1103,12 +1103,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtuo.mutation.RemovedResourceRelationshipFkBIDs(); len(nodes) > 0 && !rtuo.mutation.ResourceRelationshipFkBCleared() {
+	if nodes := rtuo.mutation.RemovedResourceRelationshipBIDs(); len(nodes) > 0 && !rtuo.mutation.ResourceRelationshipBCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkBTable,
-			Columns: []string{resourcetype.ResourceRelationshipFkBColumn},
+			Table:   resourcetype.ResourceRelationshipBTable,
+			Columns: []string{resourcetype.ResourceRelationshipBColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1122,12 +1122,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtuo.mutation.ResourceRelationshipFkBIDs(); len(nodes) > 0 {
+	if nodes := rtuo.mutation.ResourceRelationshipBIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceRelationshipFkBTable,
-			Columns: []string{resourcetype.ResourceRelationshipFkBColumn},
+			Table:   resourcetype.ResourceRelationshipBTable,
+			Columns: []string{resourcetype.ResourceRelationshipBColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

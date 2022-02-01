@@ -695,44 +695,6 @@ func (r queryResolver) ResourceTypes(
 		)
 }
 
-func (r queryResolver) ResourceRelationshipTypes(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceRelationshipTypeOrder,
-	filterBy []*models.ResourceRelationshipTypeFilterInput,
-) (*ent.ResourceRelationshipTypeConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceRelationshipType.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceRelationshipTypeOrder(orderBy),
-			ent.WithResourceRelationshipTypeFilter(
-				func(query *ent.ResourceRelationshipTypeQuery) (*ent.ResourceRelationshipTypeQuery, error) {
-					return resolverutil.ResourceRelationshipTypeFilter(query, filterBy)
-				},
-			),
-		)
-}
-func (r queryResolver) ResourceRelationshipMultiplicities(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceRelationshipMultiplicityOrder,
-	filterBy []*models.ResourceRelationshipMultiplicityFilterInput,
-) (*ent.ResourceRelationshipMultiplicityConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceRelationshipMultiplicity.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceRelationshipMultiplicityOrder(orderBy),
-			ent.WithResourceRelationshipMultiplicityFilter(
-				func(query *ent.ResourceRelationshipMultiplicityQuery) (*ent.ResourceRelationshipMultiplicityQuery, error) {
-					return resolverutil.ResourceRelationshipMultiplicityFilter(query, filterBy)
-				},
-			),
-		)
-}
 func (r queryResolver) ResourceRelationships(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

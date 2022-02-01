@@ -1,7 +1,6 @@
 // Copyright (c) 2004-present Facebook All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
-
 package schema
 
 import (
@@ -33,9 +32,9 @@ func (ResourceType) Edges() []ent.Edge {
 			Ref("resource_type_fk").Unique().Annotations(entgql.OrderField("ResourceTypeClass")),
 		edge.From("resourcetypebasetype", ResourceTypeBaseType.Type).
 			Ref("resource_type_fk").Unique().Annotations(entgql.OrderField("ResourceTypeBaseType")),
-		edge.To("resource_relationship_fk_a", ResourceRelationship.Type).
+		edge.To("resource_relationship_a", ResourceRelationship.Type).
 			Annotations(entgql.MapsTo("resourcerelationshipa")),
-		edge.To("resource_relationship_fk_b", ResourceRelationship.Type).
+		edge.To("resource_relationship_b", ResourceRelationship.Type).
 			Annotations(entgql.MapsTo("resourcerelationshipb")),
 		edge.To("resource_specification_fk", ResourceSpecification.Type).
 			Annotations(entgql.MapsTo("resourcespecification")),
@@ -47,10 +46,10 @@ func (ResourceType) Edges() []ent.Edge {
 // Policy returns entity policy.
 func (ResourceType) Policy() ent.Policy {
 	/*return authz.NewPolicy(
-		authz.WithMutationRules(
-			authz.AssuranceTemplatesWritePolicyRule(),
-		),
-	)*/
+	  authz.WithMutationRules(
+	  authz.AssuranceTemplatesWritePolicyRule(),
+	  ),
+	  )*/
 	return authz.NewPolicy(
 		authz.WithMutationRules(
 			privacy.AlwaysAllowRule(),

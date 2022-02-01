@@ -7,6 +7,9 @@
 package resourcerelationship
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebook/ent"
@@ -23,17 +26,17 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldResourceRelationshipType holds the string denoting the resourcerelationshiptype field in the database.
+	FieldResourceRelationshipType = "resource_relationship_type"
+	// FieldResourceRelationshipMultiplicity holds the string denoting the resourcerelationshipmultiplicity field in the database.
+	FieldResourceRelationshipMultiplicity = "resource_relationship_multiplicity"
 
 	// EdgeResourcetypea holds the string denoting the resourcetypea edge name in mutations.
 	EdgeResourcetypea = "resourcetypea"
 	// EdgeResourcetypeb holds the string denoting the resourcetypeb edge name in mutations.
 	EdgeResourcetypeb = "resourcetypeb"
-	// EdgeResourcerelationshiptypefk holds the string denoting the resourcerelationshiptypefk edge name in mutations.
-	EdgeResourcerelationshiptypefk = "resourcerelationshiptypefk"
-	// EdgeLocationtypefk holds the string denoting the locationtypefk edge name in mutations.
-	EdgeLocationtypefk = "locationtypefk"
-	// EdgeResourceRelationshipMultiplicityFk holds the string denoting the resource_relationship_multiplicity_fk edge name in mutations.
-	EdgeResourceRelationshipMultiplicityFk = "resource_relationship_multiplicity_fk"
+	// EdgeLocationType holds the string denoting the locationtype edge name in mutations.
+	EdgeLocationType = "locationType"
 
 	// Table holds the table name of the resourcerelationship in the database.
 	Table = "resource_relationships"
@@ -43,35 +46,21 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "resourcetype" package.
 	ResourcetypeaInverseTable = "resource_types"
 	// ResourcetypeaColumn is the table column denoting the resourcetypea relation/edge.
-	ResourcetypeaColumn = "resource_type_resource_relationship_fk_a"
+	ResourcetypeaColumn = "resource_type_resource_relationship_a"
 	// ResourcetypebTable is the table the holds the resourcetypeb relation/edge.
 	ResourcetypebTable = "resource_relationships"
 	// ResourcetypebInverseTable is the table name for the ResourceType entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcetype" package.
 	ResourcetypebInverseTable = "resource_types"
 	// ResourcetypebColumn is the table column denoting the resourcetypeb relation/edge.
-	ResourcetypebColumn = "resource_type_resource_relationship_fk_b"
-	// ResourcerelationshiptypefkTable is the table the holds the resourcerelationshiptypefk relation/edge.
-	ResourcerelationshiptypefkTable = "resource_relationships"
-	// ResourcerelationshiptypefkInverseTable is the table name for the ResourceRelationshipType entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcerelationshiptype" package.
-	ResourcerelationshiptypefkInverseTable = "resource_relationship_types"
-	// ResourcerelationshiptypefkColumn is the table column denoting the resourcerelationshiptypefk relation/edge.
-	ResourcerelationshiptypefkColumn = "resource_relationship_type_resource_relationship_fk"
-	// LocationtypefkTable is the table the holds the locationtypefk relation/edge.
-	LocationtypefkTable = "resource_relationships"
-	// LocationtypefkInverseTable is the table name for the LocationType entity.
+	ResourcetypebColumn = "resource_type_resource_relationship_b"
+	// LocationTypeTable is the table the holds the locationType relation/edge.
+	LocationTypeTable = "resource_relationships"
+	// LocationTypeInverseTable is the table name for the LocationType entity.
 	// It exists in this package in order to avoid circular dependency with the "locationtype" package.
-	LocationtypefkInverseTable = "location_types"
-	// LocationtypefkColumn is the table column denoting the locationtypefk relation/edge.
-	LocationtypefkColumn = "location_type_resource_relationship_fk"
-	// ResourceRelationshipMultiplicityFkTable is the table the holds the resource_relationship_multiplicity_fk relation/edge.
-	ResourceRelationshipMultiplicityFkTable = "resource_relationships"
-	// ResourceRelationshipMultiplicityFkInverseTable is the table name for the ResourceRelationshipMultiplicity entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcerelationshipmultiplicity" package.
-	ResourceRelationshipMultiplicityFkInverseTable = "resource_relationship_multiplicities"
-	// ResourceRelationshipMultiplicityFkColumn is the table column denoting the resource_relationship_multiplicity_fk relation/edge.
-	ResourceRelationshipMultiplicityFkColumn = "resource_relationship_multiplicity_resource_relationship_fk"
+	LocationTypeInverseTable = "location_types"
+	// LocationTypeColumn is the table column denoting the locationType relation/edge.
+	LocationTypeColumn = "location_type_resource_relationship_location"
 )
 
 // Columns holds all SQL columns for resourcerelationship fields.
@@ -80,15 +69,15 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
+	FieldResourceRelationshipType,
+	FieldResourceRelationshipMultiplicity,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceRelationship type.
 var ForeignKeys = []string{
-	"location_type_resource_relationship_fk",
-	"resource_relationship_multiplicity_resource_relationship_fk",
-	"resource_relationship_type_resource_relationship_fk",
-	"resource_type_resource_relationship_fk_a",
-	"resource_type_resource_relationship_fk_b",
+	"location_type_resource_relationship_location",
+	"resource_type_resource_relationship_a",
+	"resource_type_resource_relationship_b",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -124,3 +113,90 @@ var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 )
+
+// ResourceRelationshipType defines the type for the ResourceRelationshipType enum field.
+type ResourceRelationshipType string
+
+// ResourceRelationshipType values.
+const (
+	ResourceRelationshipTypeBELONGS_TO       ResourceRelationshipType = "BELONGS_TO"
+	ResourceRelationshipTypeLOCATED_IN       ResourceRelationshipType = "LOCATED_IN"
+	ResourceRelationshipTypePHYSICAL_LINK    ResourceRelationshipType = "PHYSICAL_LINK"
+	ResourceRelationshipTypeLOGICAL_LINK     ResourceRelationshipType = "LOGICAL_LINK"
+	ResourceRelationshipTypeCROSS_CONNECTION ResourceRelationshipType = "CROSS_CONNECTION"
+)
+
+func (_resourcerelationshiptype ResourceRelationshipType) String() string {
+	return string(_resourcerelationshiptype)
+}
+
+// ResourceRelationshipTypeValidator is a validator for the "ResourceRelationshipType" field enum values. It is called by the builders before save.
+func ResourceRelationshipTypeValidator(_resourcerelationshiptype ResourceRelationshipType) error {
+	switch _resourcerelationshiptype {
+	case ResourceRelationshipTypeBELONGS_TO, ResourceRelationshipTypeLOCATED_IN, ResourceRelationshipTypePHYSICAL_LINK, ResourceRelationshipTypeLOGICAL_LINK, ResourceRelationshipTypeCROSS_CONNECTION:
+		return nil
+	default:
+		return fmt.Errorf("resourcerelationship: invalid enum value for ResourceRelationshipType field: %q", _resourcerelationshiptype)
+	}
+}
+
+// ResourceRelationshipMultiplicity defines the type for the ResourceRelationshipMultiplicity enum field.
+type ResourceRelationshipMultiplicity string
+
+// ResourceRelationshipMultiplicity values.
+const (
+	ResourceRelationshipMultiplicityONE_TO_ONE   ResourceRelationshipMultiplicity = "ONE_TO_ONE"
+	ResourceRelationshipMultiplicityONE_TO_MANY  ResourceRelationshipMultiplicity = "ONE_TO_MANY"
+	ResourceRelationshipMultiplicityMANY_TO_ONE  ResourceRelationshipMultiplicity = "MANY_TO_ONE"
+	ResourceRelationshipMultiplicityMANY_TO_MANY ResourceRelationshipMultiplicity = "MANY_TO_MANY"
+)
+
+func (_resourcerelationshipmultiplicity ResourceRelationshipMultiplicity) String() string {
+	return string(_resourcerelationshipmultiplicity)
+}
+
+// ResourceRelationshipMultiplicityValidator is a validator for the "ResourceRelationshipMultiplicity" field enum values. It is called by the builders before save.
+func ResourceRelationshipMultiplicityValidator(_resourcerelationshipmultiplicity ResourceRelationshipMultiplicity) error {
+	switch _resourcerelationshipmultiplicity {
+	case ResourceRelationshipMultiplicityONE_TO_ONE, ResourceRelationshipMultiplicityONE_TO_MANY, ResourceRelationshipMultiplicityMANY_TO_ONE, ResourceRelationshipMultiplicityMANY_TO_MANY:
+		return nil
+	default:
+		return fmt.Errorf("resourcerelationship: invalid enum value for ResourceRelationshipMultiplicity field: %q", _resourcerelationshipmultiplicity)
+	}
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (_resourcerelationshiptype ResourceRelationshipType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(_resourcerelationshiptype.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (_resourcerelationshiptype *ResourceRelationshipType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*_resourcerelationshiptype = ResourceRelationshipType(str)
+	if err := ResourceRelationshipTypeValidator(*_resourcerelationshiptype); err != nil {
+		return fmt.Errorf("%s is not a valid ResourceRelationshipType", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (_resourcerelationshipmultiplicity ResourceRelationshipMultiplicity) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(_resourcerelationshipmultiplicity.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (_resourcerelationshipmultiplicity *ResourceRelationshipMultiplicity) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*_resourcerelationshipmultiplicity = ResourceRelationshipMultiplicity(str)
+	if err := ResourceRelationshipMultiplicityValidator(*_resourcerelationshipmultiplicity); err != nil {
+		return fmt.Errorf("%s is not a valid ResourceRelationshipMultiplicity", str)
+	}
+	return nil
+}

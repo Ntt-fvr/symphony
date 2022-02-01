@@ -871,32 +871,6 @@ func (f ResourceRelationshipFunc) Mutate(ctx context.Context, m ent.Mutation) (e
 	return f(ctx, mv)
 }
 
-// The ResourceRelationshipMultiplicityFunc type is an adapter to allow the use of ordinary
-// function as ResourceRelationshipMultiplicity mutator.
-type ResourceRelationshipMultiplicityFunc func(context.Context, *ent.ResourceRelationshipMultiplicityMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ResourceRelationshipMultiplicityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ResourceRelationshipMultiplicityMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceRelationshipMultiplicityMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The ResourceRelationshipTypeFunc type is an adapter to allow the use of ordinary
-// function as ResourceRelationshipType mutator.
-type ResourceRelationshipTypeFunc func(context.Context, *ent.ResourceRelationshipTypeMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ResourceRelationshipTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ResourceRelationshipTypeMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceRelationshipTypeMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The ResourceSRItemsFunc type is an adapter to allow the use of ordinary
 // function as ResourceSRItems mutator.
 type ResourceSRItemsFunc func(context.Context, *ent.ResourceSRItemsMutation) (ent.Value, error)

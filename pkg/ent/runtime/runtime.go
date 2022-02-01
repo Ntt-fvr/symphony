@@ -76,8 +76,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshiptype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
@@ -1908,60 +1906,6 @@ func init() {
 	resourcerelationshipDescName := resourcerelationshipFields[0].Descriptor()
 	// resourcerelationship.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	resourcerelationship.NameValidator = resourcerelationshipDescName.Validators[0].(func(string) error)
-	resourcerelationshipmultiplicityMixin := schema.ResourceRelationshipMultiplicity{}.Mixin()
-	resourcerelationshipmultiplicity.Policy = privacy.NewPolicies(schema.ResourceRelationshipMultiplicity{})
-	resourcerelationshipmultiplicity.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := resourcerelationshipmultiplicity.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	resourcerelationshipmultiplicityMixinFields0 := resourcerelationshipmultiplicityMixin[0].Fields()
-	resourcerelationshipmultiplicityFields := schema.ResourceRelationshipMultiplicity{}.Fields()
-	_ = resourcerelationshipmultiplicityFields
-	// resourcerelationshipmultiplicityDescCreateTime is the schema descriptor for create_time field.
-	resourcerelationshipmultiplicityDescCreateTime := resourcerelationshipmultiplicityMixinFields0[0].Descriptor()
-	// resourcerelationshipmultiplicity.DefaultCreateTime holds the default value on creation for the create_time field.
-	resourcerelationshipmultiplicity.DefaultCreateTime = resourcerelationshipmultiplicityDescCreateTime.Default.(func() time.Time)
-	// resourcerelationshipmultiplicityDescUpdateTime is the schema descriptor for update_time field.
-	resourcerelationshipmultiplicityDescUpdateTime := resourcerelationshipmultiplicityMixinFields0[1].Descriptor()
-	// resourcerelationshipmultiplicity.DefaultUpdateTime holds the default value on creation for the update_time field.
-	resourcerelationshipmultiplicity.DefaultUpdateTime = resourcerelationshipmultiplicityDescUpdateTime.Default.(func() time.Time)
-	// resourcerelationshipmultiplicity.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	resourcerelationshipmultiplicity.UpdateDefaultUpdateTime = resourcerelationshipmultiplicityDescUpdateTime.UpdateDefault.(func() time.Time)
-	// resourcerelationshipmultiplicityDescName is the schema descriptor for name field.
-	resourcerelationshipmultiplicityDescName := resourcerelationshipmultiplicityFields[0].Descriptor()
-	// resourcerelationshipmultiplicity.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	resourcerelationshipmultiplicity.NameValidator = resourcerelationshipmultiplicityDescName.Validators[0].(func(string) error)
-	resourcerelationshiptypeMixin := schema.ResourceRelationshipType{}.Mixin()
-	resourcerelationshiptype.Policy = privacy.NewPolicies(schema.ResourceRelationshipType{})
-	resourcerelationshiptype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := resourcerelationshiptype.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	resourcerelationshiptypeMixinFields0 := resourcerelationshiptypeMixin[0].Fields()
-	resourcerelationshiptypeFields := schema.ResourceRelationshipType{}.Fields()
-	_ = resourcerelationshiptypeFields
-	// resourcerelationshiptypeDescCreateTime is the schema descriptor for create_time field.
-	resourcerelationshiptypeDescCreateTime := resourcerelationshiptypeMixinFields0[0].Descriptor()
-	// resourcerelationshiptype.DefaultCreateTime holds the default value on creation for the create_time field.
-	resourcerelationshiptype.DefaultCreateTime = resourcerelationshiptypeDescCreateTime.Default.(func() time.Time)
-	// resourcerelationshiptypeDescUpdateTime is the schema descriptor for update_time field.
-	resourcerelationshiptypeDescUpdateTime := resourcerelationshiptypeMixinFields0[1].Descriptor()
-	// resourcerelationshiptype.DefaultUpdateTime holds the default value on creation for the update_time field.
-	resourcerelationshiptype.DefaultUpdateTime = resourcerelationshiptypeDescUpdateTime.Default.(func() time.Time)
-	// resourcerelationshiptype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	resourcerelationshiptype.UpdateDefaultUpdateTime = resourcerelationshiptypeDescUpdateTime.UpdateDefault.(func() time.Time)
-	// resourcerelationshiptypeDescName is the schema descriptor for name field.
-	resourcerelationshiptypeDescName := resourcerelationshiptypeFields[0].Descriptor()
-	// resourcerelationshiptype.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	resourcerelationshiptype.NameValidator = resourcerelationshiptypeDescName.Validators[0].(func(string) error)
 	resourcesritemsMixin := schema.ResourceSRItems{}.Mixin()
 	resourcesritems.Policy = privacy.NewPolicies(schema.ResourceSRItems{})
 	resourcesritems.Hooks[0] = func(next ent.Mutator) ent.Mutator {

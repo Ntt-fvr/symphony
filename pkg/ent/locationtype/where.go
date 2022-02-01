@@ -798,25 +798,25 @@ func HasSurveyTemplateCategoriesWith(preds ...predicate.SurveyTemplateCategory) 
 	})
 }
 
-// HasResourceRelationshipFk applies the HasEdge predicate on the "resource_relationship_fk" edge.
-func HasResourceRelationshipFk() predicate.LocationType {
+// HasResourceRelationshipLocation applies the HasEdge predicate on the "resource_relationship_location" edge.
+func HasResourceRelationshipLocation() predicate.LocationType {
 	return predicate.LocationType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceRelationshipFkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceRelationshipFkTable, ResourceRelationshipFkColumn),
+			sqlgraph.To(ResourceRelationshipLocationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceRelationshipLocationTable, ResourceRelationshipLocationColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasResourceRelationshipFkWith applies the HasEdge predicate on the "resource_relationship_fk" edge with a given conditions (other predicates).
-func HasResourceRelationshipFkWith(preds ...predicate.ResourceRelationship) predicate.LocationType {
+// HasResourceRelationshipLocationWith applies the HasEdge predicate on the "resource_relationship_location" edge with a given conditions (other predicates).
+func HasResourceRelationshipLocationWith(preds ...predicate.ResourceRelationship) predicate.LocationType {
 	return predicate.LocationType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceRelationshipFkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceRelationshipFkTable, ResourceRelationshipFkColumn),
+			sqlgraph.To(ResourceRelationshipLocationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceRelationshipLocationTable, ResourceRelationshipLocationColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

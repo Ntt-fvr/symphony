@@ -14,8 +14,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshiptype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 )
 
@@ -30,14 +28,16 @@ type ResourceRelationship struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// ResourceRelationshipType holds the value of the "ResourceRelationshipType" field.
+	ResourceRelationshipType resourcerelationship.ResourceRelationshipType `json:"ResourceRelationshipType,omitempty"`
+	// ResourceRelationshipMultiplicity holds the value of the "ResourceRelationshipMultiplicity" field.
+	ResourceRelationshipMultiplicity resourcerelationship.ResourceRelationshipMultiplicity `json:"ResourceRelationshipMultiplicity,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceRelationshipQuery when eager-loading is set.
-	Edges                                                       ResourceRelationshipEdges `json:"edges"`
-	location_type_resource_relationship_fk                      *int
-	resource_relationship_multiplicity_resource_relationship_fk *int
-	resource_relationship_type_resource_relationship_fk         *int
-	resource_type_resource_relationship_fk_a                    *int
-	resource_type_resource_relationship_fk_b                    *int
+	Edges                                        ResourceRelationshipEdges `json:"edges"`
+	location_type_resource_relationship_location *int
+	resource_type_resource_relationship_a        *int
+	resource_type_resource_relationship_b        *int
 }
 
 // ResourceRelationshipEdges holds the relations/edges for other nodes in the graph.
@@ -46,15 +46,11 @@ type ResourceRelationshipEdges struct {
 	Resourcetypea *ResourceType
 	// Resourcetypeb holds the value of the resourcetypeb edge.
 	Resourcetypeb *ResourceType
-	// Resourcerelationshiptypefk holds the value of the resourcerelationshiptypefk edge.
-	Resourcerelationshiptypefk *ResourceRelationshipType
-	// Locationtypefk holds the value of the locationtypefk edge.
-	Locationtypefk *LocationType
-	// ResourceRelationshipMultiplicityFk holds the value of the resource_relationship_multiplicity_fk edge.
-	ResourceRelationshipMultiplicityFk *ResourceRelationshipMultiplicity
+	// LocationType holds the value of the locationType edge.
+	LocationType *LocationType
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [3]bool
 }
 
 // ResourcetypeaOrErr returns the Resourcetypea value or an error if the edge
@@ -85,46 +81,18 @@ func (e ResourceRelationshipEdges) ResourcetypebOrErr() (*ResourceType, error) {
 	return nil, &NotLoadedError{edge: "resourcetypeb"}
 }
 
-// ResourcerelationshiptypefkOrErr returns the Resourcerelationshiptypefk value or an error if the edge
+// LocationTypeOrErr returns the LocationType value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ResourceRelationshipEdges) ResourcerelationshiptypefkOrErr() (*ResourceRelationshipType, error) {
+func (e ResourceRelationshipEdges) LocationTypeOrErr() (*LocationType, error) {
 	if e.loadedTypes[2] {
-		if e.Resourcerelationshiptypefk == nil {
-			// The edge resourcerelationshiptypefk was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: resourcerelationshiptype.Label}
-		}
-		return e.Resourcerelationshiptypefk, nil
-	}
-	return nil, &NotLoadedError{edge: "resourcerelationshiptypefk"}
-}
-
-// LocationtypefkOrErr returns the Locationtypefk value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ResourceRelationshipEdges) LocationtypefkOrErr() (*LocationType, error) {
-	if e.loadedTypes[3] {
-		if e.Locationtypefk == nil {
-			// The edge locationtypefk was loaded in eager-loading,
+		if e.LocationType == nil {
+			// The edge locationType was loaded in eager-loading,
 			// but was not found.
 			return nil, &NotFoundError{label: locationtype.Label}
 		}
-		return e.Locationtypefk, nil
+		return e.LocationType, nil
 	}
-	return nil, &NotLoadedError{edge: "locationtypefk"}
-}
-
-// ResourceRelationshipMultiplicityFkOrErr returns the ResourceRelationshipMultiplicityFk value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ResourceRelationshipEdges) ResourceRelationshipMultiplicityFkOrErr() (*ResourceRelationshipMultiplicity, error) {
-	if e.loadedTypes[4] {
-		if e.ResourceRelationshipMultiplicityFk == nil {
-			// The edge resource_relationship_multiplicity_fk was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: resourcerelationshipmultiplicity.Label}
-		}
-		return e.ResourceRelationshipMultiplicityFk, nil
-	}
-	return nil, &NotLoadedError{edge: "resource_relationship_multiplicity_fk"}
+	return nil, &NotLoadedError{edge: "locationType"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -134,17 +102,17 @@ func (*ResourceRelationship) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+		&sql.NullString{}, // ResourceRelationshipType
+		&sql.NullString{}, // ResourceRelationshipMultiplicity
 	}
 }
 
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*ResourceRelationship) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // location_type_resource_relationship_fk
-		&sql.NullInt64{}, // resource_relationship_multiplicity_resource_relationship_fk
-		&sql.NullInt64{}, // resource_relationship_type_resource_relationship_fk
-		&sql.NullInt64{}, // resource_type_resource_relationship_fk_a
-		&sql.NullInt64{}, // resource_type_resource_relationship_fk_b
+		&sql.NullInt64{}, // location_type_resource_relationship_location
+		&sql.NullInt64{}, // resource_type_resource_relationship_a
+		&sql.NullInt64{}, // resource_type_resource_relationship_b
 	}
 }
 
@@ -175,37 +143,35 @@ func (rr *ResourceRelationship) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rr.Name = value.String
 	}
-	values = values[3:]
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field ResourceRelationshipType", values[3])
+	} else if value.Valid {
+		rr.ResourceRelationshipType = resourcerelationship.ResourceRelationshipType(value.String)
+	}
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field ResourceRelationshipMultiplicity", values[4])
+	} else if value.Valid {
+		rr.ResourceRelationshipMultiplicity = resourcerelationship.ResourceRelationshipMultiplicity(value.String)
+	}
+	values = values[5:]
 	if len(values) == len(resourcerelationship.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field location_type_resource_relationship_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field location_type_resource_relationship_location", value)
 		} else if value.Valid {
-			rr.location_type_resource_relationship_fk = new(int)
-			*rr.location_type_resource_relationship_fk = int(value.Int64)
+			rr.location_type_resource_relationship_location = new(int)
+			*rr.location_type_resource_relationship_location = int(value.Int64)
 		}
 		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_relationship_multiplicity_resource_relationship_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_relationship_a", value)
 		} else if value.Valid {
-			rr.resource_relationship_multiplicity_resource_relationship_fk = new(int)
-			*rr.resource_relationship_multiplicity_resource_relationship_fk = int(value.Int64)
+			rr.resource_type_resource_relationship_a = new(int)
+			*rr.resource_type_resource_relationship_a = int(value.Int64)
 		}
 		if value, ok := values[2].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_relationship_type_resource_relationship_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_relationship_b", value)
 		} else if value.Valid {
-			rr.resource_relationship_type_resource_relationship_fk = new(int)
-			*rr.resource_relationship_type_resource_relationship_fk = int(value.Int64)
-		}
-		if value, ok := values[3].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_relationship_fk_a", value)
-		} else if value.Valid {
-			rr.resource_type_resource_relationship_fk_a = new(int)
-			*rr.resource_type_resource_relationship_fk_a = int(value.Int64)
-		}
-		if value, ok := values[4].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_relationship_fk_b", value)
-		} else if value.Valid {
-			rr.resource_type_resource_relationship_fk_b = new(int)
-			*rr.resource_type_resource_relationship_fk_b = int(value.Int64)
+			rr.resource_type_resource_relationship_b = new(int)
+			*rr.resource_type_resource_relationship_b = int(value.Int64)
 		}
 	}
 	return nil
@@ -221,19 +187,9 @@ func (rr *ResourceRelationship) QueryResourcetypeb() *ResourceTypeQuery {
 	return (&ResourceRelationshipClient{config: rr.config}).QueryResourcetypeb(rr)
 }
 
-// QueryResourcerelationshiptypefk queries the resourcerelationshiptypefk edge of the ResourceRelationship.
-func (rr *ResourceRelationship) QueryResourcerelationshiptypefk() *ResourceRelationshipTypeQuery {
-	return (&ResourceRelationshipClient{config: rr.config}).QueryResourcerelationshiptypefk(rr)
-}
-
-// QueryLocationtypefk queries the locationtypefk edge of the ResourceRelationship.
-func (rr *ResourceRelationship) QueryLocationtypefk() *LocationTypeQuery {
-	return (&ResourceRelationshipClient{config: rr.config}).QueryLocationtypefk(rr)
-}
-
-// QueryResourceRelationshipMultiplicityFk queries the resource_relationship_multiplicity_fk edge of the ResourceRelationship.
-func (rr *ResourceRelationship) QueryResourceRelationshipMultiplicityFk() *ResourceRelationshipMultiplicityQuery {
-	return (&ResourceRelationshipClient{config: rr.config}).QueryResourceRelationshipMultiplicityFk(rr)
+// QueryLocationType queries the locationType edge of the ResourceRelationship.
+func (rr *ResourceRelationship) QueryLocationType() *LocationTypeQuery {
+	return (&ResourceRelationshipClient{config: rr.config}).QueryLocationType(rr)
 }
 
 // Update returns a builder for updating this ResourceRelationship.
@@ -265,6 +221,10 @@ func (rr *ResourceRelationship) String() string {
 	builder.WriteString(rr.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(rr.Name)
+	builder.WriteString(", ResourceRelationshipType=")
+	builder.WriteString(fmt.Sprintf("%v", rr.ResourceRelationshipType))
+	builder.WriteString(", ResourceRelationshipMultiplicity=")
+	builder.WriteString(fmt.Sprintf("%v", rr.ResourceRelationshipMultiplicity))
 	builder.WriteByte(')')
 	return builder.String()
 }

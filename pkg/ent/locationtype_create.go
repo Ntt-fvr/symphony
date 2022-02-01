@@ -164,19 +164,19 @@ func (ltc *LocationTypeCreate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 	return ltc.AddSurveyTemplateCategoryIDs(ids...)
 }
 
-// AddResourceRelationshipFkIDs adds the resource_relationship_fk edge to ResourceRelationship by ids.
-func (ltc *LocationTypeCreate) AddResourceRelationshipFkIDs(ids ...int) *LocationTypeCreate {
-	ltc.mutation.AddResourceRelationshipFkIDs(ids...)
+// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceRelationship by ids.
+func (ltc *LocationTypeCreate) AddResourceRelationshipLocationIDs(ids ...int) *LocationTypeCreate {
+	ltc.mutation.AddResourceRelationshipLocationIDs(ids...)
 	return ltc
 }
 
-// AddResourceRelationshipFk adds the resource_relationship_fk edges to ResourceRelationship.
-func (ltc *LocationTypeCreate) AddResourceRelationshipFk(r ...*ResourceRelationship) *LocationTypeCreate {
+// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceRelationship.
+func (ltc *LocationTypeCreate) AddResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return ltc.AddResourceRelationshipFkIDs(ids...)
+	return ltc.AddResourceRelationshipLocationIDs(ids...)
 }
 
 // AddDocumentCategoryIDs adds the document_category edge to DocumentCategory by ids.
@@ -425,12 +425,12 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ltc.mutation.ResourceRelationshipFkIDs(); len(nodes) > 0 {
+	if nodes := ltc.mutation.ResourceRelationshipLocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.ResourceRelationshipLocationTable,
+			Columns: []string{locationtype.ResourceRelationshipLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

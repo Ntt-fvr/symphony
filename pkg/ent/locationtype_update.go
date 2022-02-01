@@ -168,19 +168,19 @@ func (ltu *LocationTypeUpdate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 	return ltu.AddSurveyTemplateCategoryIDs(ids...)
 }
 
-// AddResourceRelationshipFkIDs adds the resource_relationship_fk edge to ResourceRelationship by ids.
-func (ltu *LocationTypeUpdate) AddResourceRelationshipFkIDs(ids ...int) *LocationTypeUpdate {
-	ltu.mutation.AddResourceRelationshipFkIDs(ids...)
+// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceRelationship by ids.
+func (ltu *LocationTypeUpdate) AddResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdate {
+	ltu.mutation.AddResourceRelationshipLocationIDs(ids...)
 	return ltu
 }
 
-// AddResourceRelationshipFk adds the resource_relationship_fk edges to ResourceRelationship.
-func (ltu *LocationTypeUpdate) AddResourceRelationshipFk(r ...*ResourceRelationship) *LocationTypeUpdate {
+// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceRelationship.
+func (ltu *LocationTypeUpdate) AddResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return ltu.AddResourceRelationshipFkIDs(ids...)
+	return ltu.AddResourceRelationshipLocationIDs(ids...)
 }
 
 // AddDocumentCategoryIDs adds the document_category edge to DocumentCategory by ids.
@@ -266,25 +266,25 @@ func (ltu *LocationTypeUpdate) RemoveSurveyTemplateCategories(s ...*SurveyTempla
 	return ltu.RemoveSurveyTemplateCategoryIDs(ids...)
 }
 
-// ClearResourceRelationshipFk clears all "resource_relationship_fk" edges to type ResourceRelationship.
-func (ltu *LocationTypeUpdate) ClearResourceRelationshipFk() *LocationTypeUpdate {
-	ltu.mutation.ClearResourceRelationshipFk()
+// ClearResourceRelationshipLocation clears all "resource_relationship_location" edges to type ResourceRelationship.
+func (ltu *LocationTypeUpdate) ClearResourceRelationshipLocation() *LocationTypeUpdate {
+	ltu.mutation.ClearResourceRelationshipLocation()
 	return ltu
 }
 
-// RemoveResourceRelationshipFkIDs removes the resource_relationship_fk edge to ResourceRelationship by ids.
-func (ltu *LocationTypeUpdate) RemoveResourceRelationshipFkIDs(ids ...int) *LocationTypeUpdate {
-	ltu.mutation.RemoveResourceRelationshipFkIDs(ids...)
+// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceRelationship by ids.
+func (ltu *LocationTypeUpdate) RemoveResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdate {
+	ltu.mutation.RemoveResourceRelationshipLocationIDs(ids...)
 	return ltu
 }
 
-// RemoveResourceRelationshipFk removes resource_relationship_fk edges to ResourceRelationship.
-func (ltu *LocationTypeUpdate) RemoveResourceRelationshipFk(r ...*ResourceRelationship) *LocationTypeUpdate {
+// RemoveResourceRelationshipLocation removes resource_relationship_location edges to ResourceRelationship.
+func (ltu *LocationTypeUpdate) RemoveResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return ltu.RemoveResourceRelationshipFkIDs(ids...)
+	return ltu.RemoveResourceRelationshipLocationIDs(ids...)
 }
 
 // ClearDocumentCategory clears all "document_category" edges to type DocumentCategory.
@@ -616,12 +616,12 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ltu.mutation.ResourceRelationshipFkCleared() {
+	if ltu.mutation.ResourceRelationshipLocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.ResourceRelationshipLocationTable,
+			Columns: []string{locationtype.ResourceRelationshipLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -632,12 +632,12 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ltu.mutation.RemovedResourceRelationshipFkIDs(); len(nodes) > 0 && !ltu.mutation.ResourceRelationshipFkCleared() {
+	if nodes := ltu.mutation.RemovedResourceRelationshipLocationIDs(); len(nodes) > 0 && !ltu.mutation.ResourceRelationshipLocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.ResourceRelationshipLocationTable,
+			Columns: []string{locationtype.ResourceRelationshipLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -651,12 +651,12 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ltu.mutation.ResourceRelationshipFkIDs(); len(nodes) > 0 {
+	if nodes := ltu.mutation.ResourceRelationshipLocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.ResourceRelationshipLocationTable,
+			Columns: []string{locationtype.ResourceRelationshipLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -875,19 +875,19 @@ func (ltuo *LocationTypeUpdateOne) AddSurveyTemplateCategories(s ...*SurveyTempl
 	return ltuo.AddSurveyTemplateCategoryIDs(ids...)
 }
 
-// AddResourceRelationshipFkIDs adds the resource_relationship_fk edge to ResourceRelationship by ids.
-func (ltuo *LocationTypeUpdateOne) AddResourceRelationshipFkIDs(ids ...int) *LocationTypeUpdateOne {
-	ltuo.mutation.AddResourceRelationshipFkIDs(ids...)
+// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceRelationship by ids.
+func (ltuo *LocationTypeUpdateOne) AddResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdateOne {
+	ltuo.mutation.AddResourceRelationshipLocationIDs(ids...)
 	return ltuo
 }
 
-// AddResourceRelationshipFk adds the resource_relationship_fk edges to ResourceRelationship.
-func (ltuo *LocationTypeUpdateOne) AddResourceRelationshipFk(r ...*ResourceRelationship) *LocationTypeUpdateOne {
+// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceRelationship.
+func (ltuo *LocationTypeUpdateOne) AddResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return ltuo.AddResourceRelationshipFkIDs(ids...)
+	return ltuo.AddResourceRelationshipLocationIDs(ids...)
 }
 
 // AddDocumentCategoryIDs adds the document_category edge to DocumentCategory by ids.
@@ -973,25 +973,25 @@ func (ltuo *LocationTypeUpdateOne) RemoveSurveyTemplateCategories(s ...*SurveyTe
 	return ltuo.RemoveSurveyTemplateCategoryIDs(ids...)
 }
 
-// ClearResourceRelationshipFk clears all "resource_relationship_fk" edges to type ResourceRelationship.
-func (ltuo *LocationTypeUpdateOne) ClearResourceRelationshipFk() *LocationTypeUpdateOne {
-	ltuo.mutation.ClearResourceRelationshipFk()
+// ClearResourceRelationshipLocation clears all "resource_relationship_location" edges to type ResourceRelationship.
+func (ltuo *LocationTypeUpdateOne) ClearResourceRelationshipLocation() *LocationTypeUpdateOne {
+	ltuo.mutation.ClearResourceRelationshipLocation()
 	return ltuo
 }
 
-// RemoveResourceRelationshipFkIDs removes the resource_relationship_fk edge to ResourceRelationship by ids.
-func (ltuo *LocationTypeUpdateOne) RemoveResourceRelationshipFkIDs(ids ...int) *LocationTypeUpdateOne {
-	ltuo.mutation.RemoveResourceRelationshipFkIDs(ids...)
+// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceRelationship by ids.
+func (ltuo *LocationTypeUpdateOne) RemoveResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdateOne {
+	ltuo.mutation.RemoveResourceRelationshipLocationIDs(ids...)
 	return ltuo
 }
 
-// RemoveResourceRelationshipFk removes resource_relationship_fk edges to ResourceRelationship.
-func (ltuo *LocationTypeUpdateOne) RemoveResourceRelationshipFk(r ...*ResourceRelationship) *LocationTypeUpdateOne {
+// RemoveResourceRelationshipLocation removes resource_relationship_location edges to ResourceRelationship.
+func (ltuo *LocationTypeUpdateOne) RemoveResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return ltuo.RemoveResourceRelationshipFkIDs(ids...)
+	return ltuo.RemoveResourceRelationshipLocationIDs(ids...)
 }
 
 // ClearDocumentCategory clears all "document_category" edges to type DocumentCategory.
@@ -1321,12 +1321,12 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ltuo.mutation.ResourceRelationshipFkCleared() {
+	if ltuo.mutation.ResourceRelationshipLocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.ResourceRelationshipLocationTable,
+			Columns: []string{locationtype.ResourceRelationshipLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1337,12 +1337,12 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ltuo.mutation.RemovedResourceRelationshipFkIDs(); len(nodes) > 0 && !ltuo.mutation.ResourceRelationshipFkCleared() {
+	if nodes := ltuo.mutation.RemovedResourceRelationshipLocationIDs(); len(nodes) > 0 && !ltuo.mutation.ResourceRelationshipLocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.ResourceRelationshipLocationTable,
+			Columns: []string{locationtype.ResourceRelationshipLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1356,12 +1356,12 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ltuo.mutation.ResourceRelationshipFkIDs(); len(nodes) > 0 {
+	if nodes := ltuo.mutation.ResourceRelationshipLocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   locationtype.ResourceRelationshipFkTable,
-			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Table:   locationtype.ResourceRelationshipLocationTable,
+			Columns: []string{locationtype.ResourceRelationshipLocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

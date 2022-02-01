@@ -16,8 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshipmultiplicity"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationshiptype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 )
 
@@ -37,6 +35,18 @@ func (rru *ResourceRelationshipUpdate) Where(ps ...predicate.ResourceRelationshi
 // SetName sets the name field.
 func (rru *ResourceRelationshipUpdate) SetName(s string) *ResourceRelationshipUpdate {
 	rru.mutation.SetName(s)
+	return rru
+}
+
+// SetResourceRelationshipType sets the ResourceRelationshipType field.
+func (rru *ResourceRelationshipUpdate) SetResourceRelationshipType(rrt resourcerelationship.ResourceRelationshipType) *ResourceRelationshipUpdate {
+	rru.mutation.SetResourceRelationshipType(rrt)
+	return rru
+}
+
+// SetResourceRelationshipMultiplicity sets the ResourceRelationshipMultiplicity field.
+func (rru *ResourceRelationshipUpdate) SetResourceRelationshipMultiplicity(rrm resourcerelationship.ResourceRelationshipMultiplicity) *ResourceRelationshipUpdate {
+	rru.mutation.SetResourceRelationshipMultiplicity(rrm)
 	return rru
 }
 
@@ -78,61 +88,23 @@ func (rru *ResourceRelationshipUpdate) SetResourcetypeb(r *ResourceType) *Resour
 	return rru.SetResourcetypebID(r.ID)
 }
 
-// SetResourcerelationshiptypefkID sets the resourcerelationshiptypefk edge to ResourceRelationshipType by id.
-func (rru *ResourceRelationshipUpdate) SetResourcerelationshiptypefkID(id int) *ResourceRelationshipUpdate {
-	rru.mutation.SetResourcerelationshiptypefkID(id)
+// SetLocationTypeID sets the locationType edge to LocationType by id.
+func (rru *ResourceRelationshipUpdate) SetLocationTypeID(id int) *ResourceRelationshipUpdate {
+	rru.mutation.SetLocationTypeID(id)
 	return rru
 }
 
-// SetNillableResourcerelationshiptypefkID sets the resourcerelationshiptypefk edge to ResourceRelationshipType by id if the given value is not nil.
-func (rru *ResourceRelationshipUpdate) SetNillableResourcerelationshiptypefkID(id *int) *ResourceRelationshipUpdate {
+// SetNillableLocationTypeID sets the locationType edge to LocationType by id if the given value is not nil.
+func (rru *ResourceRelationshipUpdate) SetNillableLocationTypeID(id *int) *ResourceRelationshipUpdate {
 	if id != nil {
-		rru = rru.SetResourcerelationshiptypefkID(*id)
+		rru = rru.SetLocationTypeID(*id)
 	}
 	return rru
 }
 
-// SetResourcerelationshiptypefk sets the resourcerelationshiptypefk edge to ResourceRelationshipType.
-func (rru *ResourceRelationshipUpdate) SetResourcerelationshiptypefk(r *ResourceRelationshipType) *ResourceRelationshipUpdate {
-	return rru.SetResourcerelationshiptypefkID(r.ID)
-}
-
-// SetLocationtypefkID sets the locationtypefk edge to LocationType by id.
-func (rru *ResourceRelationshipUpdate) SetLocationtypefkID(id int) *ResourceRelationshipUpdate {
-	rru.mutation.SetLocationtypefkID(id)
-	return rru
-}
-
-// SetNillableLocationtypefkID sets the locationtypefk edge to LocationType by id if the given value is not nil.
-func (rru *ResourceRelationshipUpdate) SetNillableLocationtypefkID(id *int) *ResourceRelationshipUpdate {
-	if id != nil {
-		rru = rru.SetLocationtypefkID(*id)
-	}
-	return rru
-}
-
-// SetLocationtypefk sets the locationtypefk edge to LocationType.
-func (rru *ResourceRelationshipUpdate) SetLocationtypefk(l *LocationType) *ResourceRelationshipUpdate {
-	return rru.SetLocationtypefkID(l.ID)
-}
-
-// SetResourceRelationshipMultiplicityFkID sets the resource_relationship_multiplicity_fk edge to ResourceRelationshipMultiplicity by id.
-func (rru *ResourceRelationshipUpdate) SetResourceRelationshipMultiplicityFkID(id int) *ResourceRelationshipUpdate {
-	rru.mutation.SetResourceRelationshipMultiplicityFkID(id)
-	return rru
-}
-
-// SetNillableResourceRelationshipMultiplicityFkID sets the resource_relationship_multiplicity_fk edge to ResourceRelationshipMultiplicity by id if the given value is not nil.
-func (rru *ResourceRelationshipUpdate) SetNillableResourceRelationshipMultiplicityFkID(id *int) *ResourceRelationshipUpdate {
-	if id != nil {
-		rru = rru.SetResourceRelationshipMultiplicityFkID(*id)
-	}
-	return rru
-}
-
-// SetResourceRelationshipMultiplicityFk sets the resource_relationship_multiplicity_fk edge to ResourceRelationshipMultiplicity.
-func (rru *ResourceRelationshipUpdate) SetResourceRelationshipMultiplicityFk(r *ResourceRelationshipMultiplicity) *ResourceRelationshipUpdate {
-	return rru.SetResourceRelationshipMultiplicityFkID(r.ID)
+// SetLocationType sets the locationType edge to LocationType.
+func (rru *ResourceRelationshipUpdate) SetLocationType(l *LocationType) *ResourceRelationshipUpdate {
+	return rru.SetLocationTypeID(l.ID)
 }
 
 // Mutation returns the ResourceRelationshipMutation object of the builder.
@@ -152,21 +124,9 @@ func (rru *ResourceRelationshipUpdate) ClearResourcetypeb() *ResourceRelationshi
 	return rru
 }
 
-// ClearResourcerelationshiptypefk clears the "resourcerelationshiptypefk" edge to type ResourceRelationshipType.
-func (rru *ResourceRelationshipUpdate) ClearResourcerelationshiptypefk() *ResourceRelationshipUpdate {
-	rru.mutation.ClearResourcerelationshiptypefk()
-	return rru
-}
-
-// ClearLocationtypefk clears the "locationtypefk" edge to type LocationType.
-func (rru *ResourceRelationshipUpdate) ClearLocationtypefk() *ResourceRelationshipUpdate {
-	rru.mutation.ClearLocationtypefk()
-	return rru
-}
-
-// ClearResourceRelationshipMultiplicityFk clears the "resource_relationship_multiplicity_fk" edge to type ResourceRelationshipMultiplicity.
-func (rru *ResourceRelationshipUpdate) ClearResourceRelationshipMultiplicityFk() *ResourceRelationshipUpdate {
-	rru.mutation.ClearResourceRelationshipMultiplicityFk()
+// ClearLocationType clears the "locationType" edge to type LocationType.
+func (rru *ResourceRelationshipUpdate) ClearLocationType() *ResourceRelationshipUpdate {
+	rru.mutation.ClearLocationType()
 	return rru
 }
 
@@ -243,6 +203,16 @@ func (rru *ResourceRelationshipUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := rru.mutation.ResourceRelationshipType(); ok {
+		if err := resourcerelationship.ResourceRelationshipTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceRelationshipType", err: fmt.Errorf("ent: validator failed for field \"ResourceRelationshipType\": %w", err)}
+		}
+	}
+	if v, ok := rru.mutation.ResourceRelationshipMultiplicity(); ok {
+		if err := resourcerelationship.ResourceRelationshipMultiplicityValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceRelationshipMultiplicity", err: fmt.Errorf("ent: validator failed for field \"ResourceRelationshipMultiplicity\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -276,6 +246,20 @@ func (rru *ResourceRelationshipUpdate) sqlSave(ctx context.Context) (n int, err 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: resourcerelationship.FieldName,
+		})
+	}
+	if value, ok := rru.mutation.ResourceRelationshipType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcerelationship.FieldResourceRelationshipType,
+		})
+	}
+	if value, ok := rru.mutation.ResourceRelationshipMultiplicity(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcerelationship.FieldResourceRelationshipMultiplicity,
 		})
 	}
 	if rru.mutation.ResourcetypeaCleared() {
@@ -348,47 +332,12 @@ func (rru *ResourceRelationshipUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rru.mutation.ResourcerelationshiptypefkCleared() {
+	if rru.mutation.LocationTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   resourcerelationship.ResourcerelationshiptypefkTable,
-			Columns: []string{resourcerelationship.ResourcerelationshiptypefkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshiptype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rru.mutation.ResourcerelationshiptypefkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.ResourcerelationshiptypefkTable,
-			Columns: []string{resourcerelationship.ResourcerelationshiptypefkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshiptype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rru.mutation.LocationtypefkCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.LocationtypefkTable,
-			Columns: []string{resourcerelationship.LocationtypefkColumn},
+			Table:   resourcerelationship.LocationTypeTable,
+			Columns: []string{resourcerelationship.LocationTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -399,52 +348,17 @@ func (rru *ResourceRelationshipUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rru.mutation.LocationtypefkIDs(); len(nodes) > 0 {
+	if nodes := rru.mutation.LocationTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   resourcerelationship.LocationtypefkTable,
-			Columns: []string{resourcerelationship.LocationtypefkColumn},
+			Table:   resourcerelationship.LocationTypeTable,
+			Columns: []string{resourcerelationship.LocationTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: locationtype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rru.mutation.ResourceRelationshipMultiplicityFkCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.ResourceRelationshipMultiplicityFkTable,
-			Columns: []string{resourcerelationship.ResourceRelationshipMultiplicityFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshipmultiplicity.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rru.mutation.ResourceRelationshipMultiplicityFkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.ResourceRelationshipMultiplicityFkTable,
-			Columns: []string{resourcerelationship.ResourceRelationshipMultiplicityFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshipmultiplicity.FieldID,
 				},
 			},
 		}
@@ -474,6 +388,18 @@ type ResourceRelationshipUpdateOne struct {
 // SetName sets the name field.
 func (rruo *ResourceRelationshipUpdateOne) SetName(s string) *ResourceRelationshipUpdateOne {
 	rruo.mutation.SetName(s)
+	return rruo
+}
+
+// SetResourceRelationshipType sets the ResourceRelationshipType field.
+func (rruo *ResourceRelationshipUpdateOne) SetResourceRelationshipType(rrt resourcerelationship.ResourceRelationshipType) *ResourceRelationshipUpdateOne {
+	rruo.mutation.SetResourceRelationshipType(rrt)
+	return rruo
+}
+
+// SetResourceRelationshipMultiplicity sets the ResourceRelationshipMultiplicity field.
+func (rruo *ResourceRelationshipUpdateOne) SetResourceRelationshipMultiplicity(rrm resourcerelationship.ResourceRelationshipMultiplicity) *ResourceRelationshipUpdateOne {
+	rruo.mutation.SetResourceRelationshipMultiplicity(rrm)
 	return rruo
 }
 
@@ -515,61 +441,23 @@ func (rruo *ResourceRelationshipUpdateOne) SetResourcetypeb(r *ResourceType) *Re
 	return rruo.SetResourcetypebID(r.ID)
 }
 
-// SetResourcerelationshiptypefkID sets the resourcerelationshiptypefk edge to ResourceRelationshipType by id.
-func (rruo *ResourceRelationshipUpdateOne) SetResourcerelationshiptypefkID(id int) *ResourceRelationshipUpdateOne {
-	rruo.mutation.SetResourcerelationshiptypefkID(id)
+// SetLocationTypeID sets the locationType edge to LocationType by id.
+func (rruo *ResourceRelationshipUpdateOne) SetLocationTypeID(id int) *ResourceRelationshipUpdateOne {
+	rruo.mutation.SetLocationTypeID(id)
 	return rruo
 }
 
-// SetNillableResourcerelationshiptypefkID sets the resourcerelationshiptypefk edge to ResourceRelationshipType by id if the given value is not nil.
-func (rruo *ResourceRelationshipUpdateOne) SetNillableResourcerelationshiptypefkID(id *int) *ResourceRelationshipUpdateOne {
+// SetNillableLocationTypeID sets the locationType edge to LocationType by id if the given value is not nil.
+func (rruo *ResourceRelationshipUpdateOne) SetNillableLocationTypeID(id *int) *ResourceRelationshipUpdateOne {
 	if id != nil {
-		rruo = rruo.SetResourcerelationshiptypefkID(*id)
+		rruo = rruo.SetLocationTypeID(*id)
 	}
 	return rruo
 }
 
-// SetResourcerelationshiptypefk sets the resourcerelationshiptypefk edge to ResourceRelationshipType.
-func (rruo *ResourceRelationshipUpdateOne) SetResourcerelationshiptypefk(r *ResourceRelationshipType) *ResourceRelationshipUpdateOne {
-	return rruo.SetResourcerelationshiptypefkID(r.ID)
-}
-
-// SetLocationtypefkID sets the locationtypefk edge to LocationType by id.
-func (rruo *ResourceRelationshipUpdateOne) SetLocationtypefkID(id int) *ResourceRelationshipUpdateOne {
-	rruo.mutation.SetLocationtypefkID(id)
-	return rruo
-}
-
-// SetNillableLocationtypefkID sets the locationtypefk edge to LocationType by id if the given value is not nil.
-func (rruo *ResourceRelationshipUpdateOne) SetNillableLocationtypefkID(id *int) *ResourceRelationshipUpdateOne {
-	if id != nil {
-		rruo = rruo.SetLocationtypefkID(*id)
-	}
-	return rruo
-}
-
-// SetLocationtypefk sets the locationtypefk edge to LocationType.
-func (rruo *ResourceRelationshipUpdateOne) SetLocationtypefk(l *LocationType) *ResourceRelationshipUpdateOne {
-	return rruo.SetLocationtypefkID(l.ID)
-}
-
-// SetResourceRelationshipMultiplicityFkID sets the resource_relationship_multiplicity_fk edge to ResourceRelationshipMultiplicity by id.
-func (rruo *ResourceRelationshipUpdateOne) SetResourceRelationshipMultiplicityFkID(id int) *ResourceRelationshipUpdateOne {
-	rruo.mutation.SetResourceRelationshipMultiplicityFkID(id)
-	return rruo
-}
-
-// SetNillableResourceRelationshipMultiplicityFkID sets the resource_relationship_multiplicity_fk edge to ResourceRelationshipMultiplicity by id if the given value is not nil.
-func (rruo *ResourceRelationshipUpdateOne) SetNillableResourceRelationshipMultiplicityFkID(id *int) *ResourceRelationshipUpdateOne {
-	if id != nil {
-		rruo = rruo.SetResourceRelationshipMultiplicityFkID(*id)
-	}
-	return rruo
-}
-
-// SetResourceRelationshipMultiplicityFk sets the resource_relationship_multiplicity_fk edge to ResourceRelationshipMultiplicity.
-func (rruo *ResourceRelationshipUpdateOne) SetResourceRelationshipMultiplicityFk(r *ResourceRelationshipMultiplicity) *ResourceRelationshipUpdateOne {
-	return rruo.SetResourceRelationshipMultiplicityFkID(r.ID)
+// SetLocationType sets the locationType edge to LocationType.
+func (rruo *ResourceRelationshipUpdateOne) SetLocationType(l *LocationType) *ResourceRelationshipUpdateOne {
+	return rruo.SetLocationTypeID(l.ID)
 }
 
 // Mutation returns the ResourceRelationshipMutation object of the builder.
@@ -589,21 +477,9 @@ func (rruo *ResourceRelationshipUpdateOne) ClearResourcetypeb() *ResourceRelatio
 	return rruo
 }
 
-// ClearResourcerelationshiptypefk clears the "resourcerelationshiptypefk" edge to type ResourceRelationshipType.
-func (rruo *ResourceRelationshipUpdateOne) ClearResourcerelationshiptypefk() *ResourceRelationshipUpdateOne {
-	rruo.mutation.ClearResourcerelationshiptypefk()
-	return rruo
-}
-
-// ClearLocationtypefk clears the "locationtypefk" edge to type LocationType.
-func (rruo *ResourceRelationshipUpdateOne) ClearLocationtypefk() *ResourceRelationshipUpdateOne {
-	rruo.mutation.ClearLocationtypefk()
-	return rruo
-}
-
-// ClearResourceRelationshipMultiplicityFk clears the "resource_relationship_multiplicity_fk" edge to type ResourceRelationshipMultiplicity.
-func (rruo *ResourceRelationshipUpdateOne) ClearResourceRelationshipMultiplicityFk() *ResourceRelationshipUpdateOne {
-	rruo.mutation.ClearResourceRelationshipMultiplicityFk()
+// ClearLocationType clears the "locationType" edge to type LocationType.
+func (rruo *ResourceRelationshipUpdateOne) ClearLocationType() *ResourceRelationshipUpdateOne {
+	rruo.mutation.ClearLocationType()
 	return rruo
 }
 
@@ -680,6 +556,16 @@ func (rruo *ResourceRelationshipUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := rruo.mutation.ResourceRelationshipType(); ok {
+		if err := resourcerelationship.ResourceRelationshipTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceRelationshipType", err: fmt.Errorf("ent: validator failed for field \"ResourceRelationshipType\": %w", err)}
+		}
+	}
+	if v, ok := rruo.mutation.ResourceRelationshipMultiplicity(); ok {
+		if err := resourcerelationship.ResourceRelationshipMultiplicityValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceRelationshipMultiplicity", err: fmt.Errorf("ent: validator failed for field \"ResourceRelationshipMultiplicity\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -711,6 +597,20 @@ func (rruo *ResourceRelationshipUpdateOne) sqlSave(ctx context.Context) (_node *
 			Type:   field.TypeString,
 			Value:  value,
 			Column: resourcerelationship.FieldName,
+		})
+	}
+	if value, ok := rruo.mutation.ResourceRelationshipType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcerelationship.FieldResourceRelationshipType,
+		})
+	}
+	if value, ok := rruo.mutation.ResourceRelationshipMultiplicity(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcerelationship.FieldResourceRelationshipMultiplicity,
 		})
 	}
 	if rruo.mutation.ResourcetypeaCleared() {
@@ -783,47 +683,12 @@ func (rruo *ResourceRelationshipUpdateOne) sqlSave(ctx context.Context) (_node *
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rruo.mutation.ResourcerelationshiptypefkCleared() {
+	if rruo.mutation.LocationTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   resourcerelationship.ResourcerelationshiptypefkTable,
-			Columns: []string{resourcerelationship.ResourcerelationshiptypefkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshiptype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rruo.mutation.ResourcerelationshiptypefkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.ResourcerelationshiptypefkTable,
-			Columns: []string{resourcerelationship.ResourcerelationshiptypefkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshiptype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rruo.mutation.LocationtypefkCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.LocationtypefkTable,
-			Columns: []string{resourcerelationship.LocationtypefkColumn},
+			Table:   resourcerelationship.LocationTypeTable,
+			Columns: []string{resourcerelationship.LocationTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -834,52 +699,17 @@ func (rruo *ResourceRelationshipUpdateOne) sqlSave(ctx context.Context) (_node *
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rruo.mutation.LocationtypefkIDs(); len(nodes) > 0 {
+	if nodes := rruo.mutation.LocationTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   resourcerelationship.LocationtypefkTable,
-			Columns: []string{resourcerelationship.LocationtypefkColumn},
+			Table:   resourcerelationship.LocationTypeTable,
+			Columns: []string{resourcerelationship.LocationTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: locationtype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rruo.mutation.ResourceRelationshipMultiplicityFkCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.ResourceRelationshipMultiplicityFkTable,
-			Columns: []string{resourcerelationship.ResourceRelationshipMultiplicityFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshipmultiplicity.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rruo.mutation.ResourceRelationshipMultiplicityFkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcerelationship.ResourceRelationshipMultiplicityFkTable,
-			Columns: []string{resourcerelationship.ResourceRelationshipMultiplicityFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationshipmultiplicity.FieldID,
 				},
 			},
 		}

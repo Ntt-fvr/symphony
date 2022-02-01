@@ -1317,30 +1317,6 @@ func (rr *ResourceRelationshipQuery) collectField(ctx *graphql.OperationContext,
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (rrm *ResourceRelationshipMultiplicityQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceRelationshipMultiplicityQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		rrm = rrm.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return rrm
-}
-
-func (rrm *ResourceRelationshipMultiplicityQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceRelationshipMultiplicityQuery {
-	return rrm
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (rrt *ResourceRelationshipTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceRelationshipTypeQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		rrt = rrt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return rrt
-}
-
-func (rrt *ResourceRelationshipTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceRelationshipTypeQuery {
-	return rrt
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rsi *ResourceSRItemsQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceSRItemsQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rsi = rsi.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1408,11 +1384,11 @@ func (rt *ResourceTypeQuery) collectField(ctx *graphql.OperationContext, field g
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "resourcerelationshipa":
-			rt = rt.WithResourceRelationshipFkA(func(query *ResourceRelationshipQuery) {
+			rt = rt.WithResourceRelationshipA(func(query *ResourceRelationshipQuery) {
 				query.collectField(ctx, field)
 			})
 		case "resourcerelationshipb":
-			rt = rt.WithResourceRelationshipFkB(func(query *ResourceRelationshipQuery) {
+			rt = rt.WithResourceRelationshipB(func(query *ResourceRelationshipQuery) {
 				query.collectField(ctx, field)
 			})
 		case "resourcespecification":

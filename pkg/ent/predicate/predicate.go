@@ -208,12 +208,6 @@ type ReportFilter func(*sql.Selector)
 // ResourceRelationship is the predicate function for resourcerelationship builders.
 type ResourceRelationship func(*sql.Selector)
 
-// ResourceRelationshipMultiplicity is the predicate function for resourcerelationshipmultiplicity builders.
-type ResourceRelationshipMultiplicity func(*sql.Selector)
-
-// ResourceRelationshipType is the predicate function for resourcerelationshiptype builders.
-type ResourceRelationshipType func(*sql.Selector)
-
 // ResourceSRItems is the predicate function for resourcesritems builders.
 type ResourceSRItems func(*sql.Selector)
 

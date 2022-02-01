@@ -71,8 +71,6 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the PermissionsPolicy type.
 var ForeignKeys = []string{
-	"resource_relationship_multiplicity_policies",
-	"resource_relationship_type_policies",
 	"resource_type_base_type_policies",
 	"resource_type_class_policies",
 }
