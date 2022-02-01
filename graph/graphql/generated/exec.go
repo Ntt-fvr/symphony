@@ -104,7 +104,6 @@ type ResolverRoot interface {
 	ReportFilter() ReportFilterResolver
 	ResourceSRItems() ResourceSRItemsResolver
 	ResourceSpecification() ResourceSpecificationResolver
-	ResourceSpecificationRelationship() ResourceSpecificationRelationshipResolver
 	ResourceType() ResourceTypeResolver
 	Rule() RuleResolver
 	RuleType() RuleTypeResolver
@@ -1707,10 +1706,10 @@ type ComplexityRoot struct {
 	}
 
 	ResourceSRItems struct {
-		ID                                  func(childComplexity int) int
-		Name                                func(childComplexity int) int
-		ResourceSpecificationRelationshipFk func(childComplexity int) int
-		ResourceTypeFk                      func(childComplexity int) int
+		ID                                func(childComplexity int) int
+		Name                              func(childComplexity int) int
+		ResourceSpecificationRelationship func(childComplexity int) int
+		Resourcetype                      func(childComplexity int) int
 	}
 
 	ResourceSRItemsConnection struct {
@@ -1725,10 +1724,10 @@ type ComplexityRoot struct {
 	}
 
 	ResourceSpecification struct {
-		ID             func(childComplexity int) int
-		Name           func(childComplexity int) int
-		PropertyTypes  func(childComplexity int) int
-		ResourceTypeFk func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Name          func(childComplexity int) int
+		PropertyTypes func(childComplexity int) int
+		Resourcetype  func(childComplexity int) int
 	}
 
 	ResourceSpecificationConnection struct {
@@ -1743,9 +1742,9 @@ type ComplexityRoot struct {
 	}
 
 	ResourceSpecificationRelationship struct {
-		ID                      func(childComplexity int) int
-		Name                    func(childComplexity int) int
-		ResourceSpecificationFk func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		Resourcespecification func(childComplexity int) int
 	}
 
 	ResourceSpecificationRelationshipConnection struct {
@@ -2832,15 +2831,10 @@ type ReportFilterResolver interface {
 	Filters(ctx context.Context, obj *ent.ReportFilter) ([]*models.GeneralFilter, error)
 }
 type ResourceSRItemsResolver interface {
-	ResourceSpecificationRelationshipFk(ctx context.Context, obj *ent.ResourceSRItems) (*ent.ResourceSpecificationRelationship, error)
-	ResourceTypeFk(ctx context.Context, obj *ent.ResourceSRItems) (*ent.ResourceType, error)
+	ResourceSpecificationRelationship(ctx context.Context, obj *ent.ResourceSRItems) (*ent.ResourceSpecificationRelationship, error)
 }
 type ResourceSpecificationResolver interface {
-	ResourceTypeFk(ctx context.Context, obj *ent.ResourceSpecification) (*ent.ResourceType, error)
 	PropertyTypes(ctx context.Context, obj *ent.ResourceSpecification) ([]*ent.PropertyType, error)
-}
-type ResourceSpecificationRelationshipResolver interface {
-	ResourceSpecificationFk(ctx context.Context, obj *ent.ResourceSpecificationRelationship) (*ent.ResourceSpecification, error)
 }
 type ResourceTypeResolver interface {
 	ResourceTypeBaseTypeFk(ctx context.Context, obj *ent.ResourceType) (*ent.ResourceTypeBaseType, error)
@@ -11620,19 +11614,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceSRItems.Name(childComplexity), true
 
-	case "ResourceSRItems.resourceSpecificationRelationshipFk":
-		if e.complexity.ResourceSRItems.ResourceSpecificationRelationshipFk == nil {
+	case "ResourceSRItems.resourceSpecificationRelationship":
+		if e.complexity.ResourceSRItems.ResourceSpecificationRelationship == nil {
 			break
 		}
 
-		return e.complexity.ResourceSRItems.ResourceSpecificationRelationshipFk(childComplexity), true
+		return e.complexity.ResourceSRItems.ResourceSpecificationRelationship(childComplexity), true
 
-	case "ResourceSRItems.resourceTypeFk":
-		if e.complexity.ResourceSRItems.ResourceTypeFk == nil {
+	case "ResourceSRItems.resourceType":
+		if e.complexity.ResourceSRItems.Resourcetype == nil {
 			break
 		}
 
-		return e.complexity.ResourceSRItems.ResourceTypeFk(childComplexity), true
+		return e.complexity.ResourceSRItems.Resourcetype(childComplexity), true
 
 	case "ResourceSRItemsConnection.edges":
 		if e.complexity.ResourceSRItemsConnection.Edges == nil {
@@ -11690,12 +11684,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceSpecification.PropertyTypes(childComplexity), true
 
-	case "ResourceSpecification.resourceTypeFk":
-		if e.complexity.ResourceSpecification.ResourceTypeFk == nil {
+	case "ResourceSpecification.resourceType":
+		if e.complexity.ResourceSpecification.Resourcetype == nil {
 			break
 		}
 
-		return e.complexity.ResourceSpecification.ResourceTypeFk(childComplexity), true
+		return e.complexity.ResourceSpecification.Resourcetype(childComplexity), true
 
 	case "ResourceSpecificationConnection.edges":
 		if e.complexity.ResourceSpecificationConnection.Edges == nil {
@@ -11746,12 +11740,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceSpecificationRelationship.Name(childComplexity), true
 
-	case "ResourceSpecificationRelationship.resourceSpecificationFk":
-		if e.complexity.ResourceSpecificationRelationship.ResourceSpecificationFk == nil {
+	case "ResourceSpecificationRelationship.resourceSpecification":
+		if e.complexity.ResourceSpecificationRelationship.Resourcespecification == nil {
 			break
 		}
 
-		return e.complexity.ResourceSpecificationRelationship.ResourceSpecificationFk(childComplexity), true
+		return e.complexity.ResourceSpecificationRelationship.Resourcespecification(childComplexity), true
 
 	case "ResourceSpecificationRelationshipConnection.edges":
 		if e.complexity.ResourceSpecificationRelationshipConnection.Edges == nil {
@@ -19106,6 +19100,16 @@ enum ResourceTypeOrderField {
   NAME
 
   """
+  Order ResourceType by TypeClass.
+  """
+  RESOURCE_TYPE_CLASS
+  
+  """
+  Order ResourceType by BaseType.
+  """
+  RESOURCE_TYPE_BASE_TYPE
+
+  """
   Order ResourceType by creation time.
   """
   CREATED_AT
@@ -19167,6 +19171,20 @@ type ResourceTypeEdge {
 Properties by which ResourceRelationship connections can be ordered.
 """
 enum ResourceRelationshipOrderField {
+  """
+  Order ResourceRelationship by ResourceTypeA.
+  """
+  RESOURCE_TYPE_A
+
+  """
+  Order ResourceRelationship by ResourceTypeB.
+  """
+  RESOURCE_TYPE_B
+
+  """
+  Order ResourceRelationship by LocationType.
+  """
+  LOCATION_TYPE
 
   """
   Order ResourceRelationship by ResourceRelationshipType.
@@ -19243,6 +19261,11 @@ enum ResourceSpecificationOrderField {
   Order ResourceSpecification by name.
   """
   NAME
+
+  """
+  Order ResourceType by name.
+  """
+  RESOURCE_TYPE
 
   """
   Order ResourceSpecification by creation time.
@@ -23857,19 +23880,19 @@ enum AppointmentStatus
 type ResourceSpecification implements Node {
   id: ID!
   name: String!  
-  resourceTypeFk: ResourceType
+  resourceType: ResourceType
   propertyTypes: [PropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
-  resourceTypeFk: ID!
+  resourceType: ID!
   propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 input EditResourceSpecificationInput {
   id: ID!
   name: String!
-  resourceTypeFk: ID 
+  resourceType: ID 
   propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
@@ -23889,18 +23912,18 @@ input ResourceSpecificationFilterInput {
 type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
-  resourceSpecificationFk: ResourceSpecification!
+  resourceSpecification: ResourceSpecification!
 }
 
 input AddResourceSpecificationRelationshipInput {  
   name: String!
-  resourceSpecificationFk: ID!
+  resourceSpecification: ID!
 }
 
 input EditResourceSpecificationRelationshipInput {
   id: ID!
   name: String!
-  resourceSpecificationFk: ID
+  resourceSpecification: ID
 }
 
 enum ResourceSpecificationRelationshipFilterType {
@@ -23919,21 +23942,21 @@ input ResourceSpecificationRelationshipFilterInput {
 type ResourceSRItems implements Node {
   id: ID!
   name: String!
-  resourceSpecificationRelationshipFk: ResourceSpecificationRelationship!
-  resourceTypeFk: ResourceType!
+  resourceSpecificationRelationship: ResourceSpecificationRelationship!
+  resourceType: ResourceType!
 }
 
 input AddResourceSRItemsInput {  
   name: String!
-  resourceSpecificationRelationshipFk: ID!
-  resourceTypeFk: ID!
+  resourceSpecificationRelationship: ID!
+  resourceType: ID!
 }
 
 input EditResourceSRItemsInput {
   id: ID!
   name: String!
-  resourceSpecificationRelationshipFk: ID
-  resourceTypeFk: ID
+  resourceSpecificationRelationship: ID
+  resourceType: ID
 }
 
 enum ResourceSRItemsFilterType {
@@ -71134,7 +71157,7 @@ func (ec *executionContext) _ResourceSRItems_name(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceSRItems_resourceSpecificationRelationshipFk(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSRItems) (ret graphql.Marshaler) {
+func (ec *executionContext) _ResourceSRItems_resourceSpecificationRelationship(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSRItems) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -71152,7 +71175,7 @@ func (ec *executionContext) _ResourceSRItems_resourceSpecificationRelationshipFk
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ResourceSRItems().ResourceSpecificationRelationshipFk(rctx, obj)
+		return ec.resolvers.ResourceSRItems().ResourceSpecificationRelationship(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -71169,7 +71192,7 @@ func (ec *executionContext) _ResourceSRItems_resourceSpecificationRelationshipFk
 	return ec.marshalNResourceSpecificationRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceSRItems_resourceTypeFk(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSRItems) (ret graphql.Marshaler) {
+func (ec *executionContext) _ResourceSRItems_resourceType(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSRItems) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -71181,13 +71204,13 @@ func (ec *executionContext) _ResourceSRItems_resourceTypeFk(ctx context.Context,
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ResourceSRItems().ResourceTypeFk(rctx, obj)
+		return obj.Resourcetype(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -71446,7 +71469,7 @@ func (ec *executionContext) _ResourceSpecification_name(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceSpecification_resourceTypeFk(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
+func (ec *executionContext) _ResourceSpecification_resourceType(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -71458,13 +71481,13 @@ func (ec *executionContext) _ResourceSpecification_resourceTypeFk(ctx context.Co
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ResourceSpecification().ResourceTypeFk(rctx, obj)
+		return obj.Resourcetype(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -71755,7 +71778,7 @@ func (ec *executionContext) _ResourceSpecificationRelationship_name(ctx context.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceSpecificationRelationship_resourceSpecificationFk(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationRelationship) (ret graphql.Marshaler) {
+func (ec *executionContext) _ResourceSpecificationRelationship_resourceSpecification(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationRelationship) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -71767,13 +71790,13 @@ func (ec *executionContext) _ResourceSpecificationRelationship_resourceSpecifica
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ResourceSpecificationRelationship().ResourceSpecificationFk(rctx, obj)
+		return obj.Resourcespecification(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -88439,19 +88462,19 @@ func (ec *executionContext) unmarshalInputAddResourceSRItemsInput(ctx context.Co
 			if err != nil {
 				return it, err
 			}
-		case "resourceSpecificationRelationshipFk":
+		case "resourceSpecificationRelationship":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationRelationshipFk"))
-			it.ResourceSpecificationRelationshipFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationRelationship"))
+			it.ResourceSpecificationRelationship, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeFk":
+		case "resourceType":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeFk"))
-			it.ResourceTypeFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceType"))
+			it.ResourceType, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -88475,11 +88498,11 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationInput(ctx cont
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeFk":
+		case "resourceType":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeFk"))
-			it.ResourceTypeFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceType"))
+			it.ResourceType, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -88537,11 +88560,11 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipIn
 			if err != nil {
 				return it, err
 			}
-		case "resourceSpecificationFk":
+		case "resourceSpecification":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationFk"))
-			it.ResourceSpecificationFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
+			it.ResourceSpecification, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -92899,19 +92922,19 @@ func (ec *executionContext) unmarshalInputEditResourceSRItemsInput(ctx context.C
 			if err != nil {
 				return it, err
 			}
-		case "resourceSpecificationRelationshipFk":
+		case "resourceSpecificationRelationship":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationRelationshipFk"))
-			it.ResourceSpecificationRelationshipFk, err = ec.unmarshalOID2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationRelationship"))
+			it.ResourceSpecificationRelationship, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeFk":
+		case "resourceType":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeFk"))
-			it.ResourceTypeFk, err = ec.unmarshalOID2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceType"))
+			it.ResourceType, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -92943,11 +92966,11 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationInput(ctx con
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeFk":
+		case "resourceType":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeFk"))
-			it.ResourceTypeFk, err = ec.unmarshalOID2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceType"))
+			it.ResourceType, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -93013,11 +93036,11 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationRelationshipI
 			if err != nil {
 				return it, err
 			}
-		case "resourceSpecificationFk":
+		case "resourceSpecification":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationFk"))
-			it.ResourceSpecificationFk, err = ec.unmarshalOID2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
+			it.ResourceSpecification, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -111562,7 +111585,7 @@ func (ec *executionContext) _ResourceSRItems(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "resourceSpecificationRelationshipFk":
+		case "resourceSpecificationRelationship":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -111570,13 +111593,13 @@ func (ec *executionContext) _ResourceSRItems(ctx context.Context, sel ast.Select
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceSRItems_resourceSpecificationRelationshipFk(ctx, field, obj)
+				res = ec._ResourceSRItems_resourceSpecificationRelationship(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "resourceTypeFk":
+		case "resourceType":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -111584,7 +111607,7 @@ func (ec *executionContext) _ResourceSRItems(ctx context.Context, sel ast.Select
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceSRItems_resourceTypeFk(ctx, field, obj)
+				res = ec._ResourceSRItems_resourceType(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -111688,7 +111711,7 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "resourceTypeFk":
+		case "resourceType":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -111696,7 +111719,7 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceSpecification_resourceTypeFk(ctx, field, obj)
+				res = ec._ResourceSpecification_resourceType(ctx, field, obj)
 				return res
 			})
 		case "propertyTypes":
@@ -111811,7 +111834,7 @@ func (ec *executionContext) _ResourceSpecificationRelationship(ctx context.Conte
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "resourceSpecificationFk":
+		case "resourceSpecification":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -111819,7 +111842,7 @@ func (ec *executionContext) _ResourceSpecificationRelationship(ctx context.Conte
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceSpecificationRelationship_resourceSpecificationFk(ctx, field, obj)
+				res = ec._ResourceSpecificationRelationship_resourceSpecification(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

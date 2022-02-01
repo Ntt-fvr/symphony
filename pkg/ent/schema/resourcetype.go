@@ -29,14 +29,14 @@ func (ResourceType) Fields() []ent.Field {
 func (ResourceType) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("resourcetypeclass", ResourceTypeClass.Type).
-			Ref("resource_type_fk").Unique().Annotations(entgql.OrderField("ResourceTypeClass")),
+			Ref("resource_type_class").Unique().Annotations(entgql.OrderField("RESOURCE_TYPE_CLASS")),
 		edge.From("resourcetypebasetype", ResourceTypeBaseType.Type).
-			Ref("resource_type_fk").Unique().Annotations(entgql.OrderField("ResourceTypeBaseType")),
+			Ref("resource_base_type").Unique().Annotations(entgql.OrderField("RESOURCE_TYPE_BASE_TYPE")),
 		edge.To("resource_relationship_a", ResourceRelationship.Type).
 			Annotations(entgql.MapsTo("resourcerelationshipa")),
 		edge.To("resource_relationship_b", ResourceRelationship.Type).
 			Annotations(entgql.MapsTo("resourcerelationshipb")),
-		edge.To("resource_specification_fk", ResourceSpecification.Type).
+		edge.To("resource_specification", ResourceSpecification.Type).
 			Annotations(entgql.MapsTo("resourcespecification")),
 		edge.To("resourcetype_items", ResourceSRItems.Type).
 			Annotations(entgql.MapsTo("resourcetype")),

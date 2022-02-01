@@ -380,20 +380,20 @@ type AddResourceRelationshipInput struct {
 }
 
 type AddResourceSRItemsInput struct {
-	Name                                string `json:"name"`
-	ResourceSpecificationRelationshipFk int    `json:"resourceSpecificationRelationshipFk"`
-	ResourceTypeFk                      int    `json:"resourceTypeFk"`
+	Name                              string `json:"name"`
+	ResourceSpecificationRelationship int    `json:"resourceSpecificationRelationship"`
+	ResourceType                      int    `json:"resourceType"`
 }
 
 type AddResourceSpecificationInput struct {
-	Name           string                      `json:"name"`
-	ResourceTypeFk int                         `json:"resourceTypeFk"`
-	PropertyTypes  []*models.PropertyTypeInput `json:"propertyTypes"`
+	Name          string                      `json:"name"`
+	ResourceType  int                         `json:"resourceType"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type AddResourceSpecificationRelationshipInput struct {
-	Name                    string `json:"name"`
-	ResourceSpecificationFk int    `json:"resourceSpecificationFk"`
+	Name                  string `json:"name"`
+	ResourceSpecification int    `json:"resourceSpecification"`
 }
 
 type AddResourceTypeBaseTypeInput struct {
@@ -989,23 +989,23 @@ type EditResourceRelationshipInput struct {
 }
 
 type EditResourceSRItemsInput struct {
-	ID                                  int    `json:"id"`
-	Name                                string `json:"name"`
-	ResourceSpecificationRelationshipFk *int   `json:"resourceSpecificationRelationshipFk"`
-	ResourceTypeFk                      *int   `json:"resourceTypeFk"`
+	ID                                int    `json:"id"`
+	Name                              string `json:"name"`
+	ResourceSpecificationRelationship *int   `json:"resourceSpecificationRelationship"`
+	ResourceType                      *int   `json:"resourceType"`
 }
 
 type EditResourceSpecificationInput struct {
-	ID             int                         `json:"id"`
-	Name           string                      `json:"name"`
-	ResourceTypeFk *int                        `json:"resourceTypeFk"`
-	PropertyTypes  []*models.PropertyTypeInput `json:"propertyTypes"`
+	ID            int                         `json:"id"`
+	Name          string                      `json:"name"`
+	ResourceType  *int                        `json:"resourceType"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type EditResourceSpecificationRelationshipInput struct {
-	ID                      int    `json:"id"`
-	Name                    string `json:"name"`
-	ResourceSpecificationFk *int   `json:"resourceSpecificationFk"`
+	ID                    int    `json:"id"`
+	Name                  string `json:"name"`
+	ResourceSpecification *int   `json:"resourceSpecification"`
 }
 
 type EditResourceTypeBaseTypeInput struct {

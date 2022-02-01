@@ -13,7 +13,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
@@ -38,34 +37,19 @@ func (rtbtu *ResourceTypeBaseTypeUpdate) SetName(s string) *ResourceTypeBaseType
 	return rtbtu
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (rtbtu *ResourceTypeBaseTypeUpdate) AddResourceTypeFkIDs(ids ...int) *ResourceTypeBaseTypeUpdate {
-	rtbtu.mutation.AddResourceTypeFkIDs(ids...)
+// AddResourceBaseTypeIDs adds the resource_base_type edge to ResourceType by ids.
+func (rtbtu *ResourceTypeBaseTypeUpdate) AddResourceBaseTypeIDs(ids ...int) *ResourceTypeBaseTypeUpdate {
+	rtbtu.mutation.AddResourceBaseTypeIDs(ids...)
 	return rtbtu
 }
 
-// AddResourceTypeFk adds the resource_type_fk edges to ResourceType.
-func (rtbtu *ResourceTypeBaseTypeUpdate) AddResourceTypeFk(r ...*ResourceType) *ResourceTypeBaseTypeUpdate {
+// AddResourceBaseType adds the resource_base_type edges to ResourceType.
+func (rtbtu *ResourceTypeBaseTypeUpdate) AddResourceBaseType(r ...*ResourceType) *ResourceTypeBaseTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtbtu.AddResourceTypeFkIDs(ids...)
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (rtbtu *ResourceTypeBaseTypeUpdate) AddPolicyIDs(ids ...int) *ResourceTypeBaseTypeUpdate {
-	rtbtu.mutation.AddPolicyIDs(ids...)
-	return rtbtu
-}
-
-// AddPolicies adds the policies edges to PermissionsPolicy.
-func (rtbtu *ResourceTypeBaseTypeUpdate) AddPolicies(p ...*PermissionsPolicy) *ResourceTypeBaseTypeUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtbtu.AddPolicyIDs(ids...)
+	return rtbtu.AddResourceBaseTypeIDs(ids...)
 }
 
 // Mutation returns the ResourceTypeBaseTypeMutation object of the builder.
@@ -73,46 +57,25 @@ func (rtbtu *ResourceTypeBaseTypeUpdate) Mutation() *ResourceTypeBaseTypeMutatio
 	return rtbtu.mutation
 }
 
-// ClearResourceTypeFk clears all "resource_type_fk" edges to type ResourceType.
-func (rtbtu *ResourceTypeBaseTypeUpdate) ClearResourceTypeFk() *ResourceTypeBaseTypeUpdate {
-	rtbtu.mutation.ClearResourceTypeFk()
+// ClearResourceBaseType clears all "resource_base_type" edges to type ResourceType.
+func (rtbtu *ResourceTypeBaseTypeUpdate) ClearResourceBaseType() *ResourceTypeBaseTypeUpdate {
+	rtbtu.mutation.ClearResourceBaseType()
 	return rtbtu
 }
 
-// RemoveResourceTypeFkIDs removes the resource_type_fk edge to ResourceType by ids.
-func (rtbtu *ResourceTypeBaseTypeUpdate) RemoveResourceTypeFkIDs(ids ...int) *ResourceTypeBaseTypeUpdate {
-	rtbtu.mutation.RemoveResourceTypeFkIDs(ids...)
+// RemoveResourceBaseTypeIDs removes the resource_base_type edge to ResourceType by ids.
+func (rtbtu *ResourceTypeBaseTypeUpdate) RemoveResourceBaseTypeIDs(ids ...int) *ResourceTypeBaseTypeUpdate {
+	rtbtu.mutation.RemoveResourceBaseTypeIDs(ids...)
 	return rtbtu
 }
 
-// RemoveResourceTypeFk removes resource_type_fk edges to ResourceType.
-func (rtbtu *ResourceTypeBaseTypeUpdate) RemoveResourceTypeFk(r ...*ResourceType) *ResourceTypeBaseTypeUpdate {
+// RemoveResourceBaseType removes resource_base_type edges to ResourceType.
+func (rtbtu *ResourceTypeBaseTypeUpdate) RemoveResourceBaseType(r ...*ResourceType) *ResourceTypeBaseTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtbtu.RemoveResourceTypeFkIDs(ids...)
-}
-
-// ClearPolicies clears all "policies" edges to type PermissionsPolicy.
-func (rtbtu *ResourceTypeBaseTypeUpdate) ClearPolicies() *ResourceTypeBaseTypeUpdate {
-	rtbtu.mutation.ClearPolicies()
-	return rtbtu
-}
-
-// RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
-func (rtbtu *ResourceTypeBaseTypeUpdate) RemovePolicyIDs(ids ...int) *ResourceTypeBaseTypeUpdate {
-	rtbtu.mutation.RemovePolicyIDs(ids...)
-	return rtbtu
-}
-
-// RemovePolicies removes policies edges to PermissionsPolicy.
-func (rtbtu *ResourceTypeBaseTypeUpdate) RemovePolicies(p ...*PermissionsPolicy) *ResourceTypeBaseTypeUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtbtu.RemovePolicyIDs(ids...)
+	return rtbtu.RemoveResourceBaseTypeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -223,12 +186,12 @@ func (rtbtu *ResourceTypeBaseTypeUpdate) sqlSave(ctx context.Context) (n int, er
 			Column: resourcetypebasetype.FieldName,
 		})
 	}
-	if rtbtu.mutation.ResourceTypeFkCleared() {
+	if rtbtu.mutation.ResourceBaseTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypebasetype.ResourceTypeFkTable,
-			Columns: []string{resourcetypebasetype.ResourceTypeFkColumn},
+			Table:   resourcetypebasetype.ResourceBaseTypeTable,
+			Columns: []string{resourcetypebasetype.ResourceBaseTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -239,31 +202,12 @@ func (rtbtu *ResourceTypeBaseTypeUpdate) sqlSave(ctx context.Context) (n int, er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtbtu.mutation.RemovedResourceTypeFkIDs(); len(nodes) > 0 && !rtbtu.mutation.ResourceTypeFkCleared() {
+	if nodes := rtbtu.mutation.RemovedResourceBaseTypeIDs(); len(nodes) > 0 && !rtbtu.mutation.ResourceBaseTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypebasetype.ResourceTypeFkTable,
-			Columns: []string{resourcetypebasetype.ResourceTypeFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtbtu.mutation.ResourceTypeFkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypebasetype.ResourceTypeFkTable,
-			Columns: []string{resourcetypebasetype.ResourceTypeFkColumn},
+			Table:   resourcetypebasetype.ResourceBaseTypeTable,
+			Columns: []string{resourcetypebasetype.ResourceBaseTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -275,54 +219,19 @@ func (rtbtu *ResourceTypeBaseTypeUpdate) sqlSave(ctx context.Context) (n int, er
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rtbtu.mutation.PoliciesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypebasetype.PoliciesTable,
-			Columns: []string{resourcetypebasetype.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtbtu.mutation.RemovedPoliciesIDs(); len(nodes) > 0 && !rtbtu.mutation.PoliciesCleared() {
+	if nodes := rtbtu.mutation.ResourceBaseTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypebasetype.PoliciesTable,
-			Columns: []string{resourcetypebasetype.PoliciesColumn},
+			Table:   resourcetypebasetype.ResourceBaseTypeTable,
+			Columns: []string{resourcetypebasetype.ResourceBaseTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtbtu.mutation.PoliciesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypebasetype.PoliciesTable,
-			Columns: []string{resourcetypebasetype.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
+					Column: resourcetype.FieldID,
 				},
 			},
 		}
@@ -355,34 +264,19 @@ func (rtbtuo *ResourceTypeBaseTypeUpdateOne) SetName(s string) *ResourceTypeBase
 	return rtbtuo
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) AddResourceTypeFkIDs(ids ...int) *ResourceTypeBaseTypeUpdateOne {
-	rtbtuo.mutation.AddResourceTypeFkIDs(ids...)
+// AddResourceBaseTypeIDs adds the resource_base_type edge to ResourceType by ids.
+func (rtbtuo *ResourceTypeBaseTypeUpdateOne) AddResourceBaseTypeIDs(ids ...int) *ResourceTypeBaseTypeUpdateOne {
+	rtbtuo.mutation.AddResourceBaseTypeIDs(ids...)
 	return rtbtuo
 }
 
-// AddResourceTypeFk adds the resource_type_fk edges to ResourceType.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) AddResourceTypeFk(r ...*ResourceType) *ResourceTypeBaseTypeUpdateOne {
+// AddResourceBaseType adds the resource_base_type edges to ResourceType.
+func (rtbtuo *ResourceTypeBaseTypeUpdateOne) AddResourceBaseType(r ...*ResourceType) *ResourceTypeBaseTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtbtuo.AddResourceTypeFkIDs(ids...)
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) AddPolicyIDs(ids ...int) *ResourceTypeBaseTypeUpdateOne {
-	rtbtuo.mutation.AddPolicyIDs(ids...)
-	return rtbtuo
-}
-
-// AddPolicies adds the policies edges to PermissionsPolicy.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) AddPolicies(p ...*PermissionsPolicy) *ResourceTypeBaseTypeUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtbtuo.AddPolicyIDs(ids...)
+	return rtbtuo.AddResourceBaseTypeIDs(ids...)
 }
 
 // Mutation returns the ResourceTypeBaseTypeMutation object of the builder.
@@ -390,46 +284,25 @@ func (rtbtuo *ResourceTypeBaseTypeUpdateOne) Mutation() *ResourceTypeBaseTypeMut
 	return rtbtuo.mutation
 }
 
-// ClearResourceTypeFk clears all "resource_type_fk" edges to type ResourceType.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) ClearResourceTypeFk() *ResourceTypeBaseTypeUpdateOne {
-	rtbtuo.mutation.ClearResourceTypeFk()
+// ClearResourceBaseType clears all "resource_base_type" edges to type ResourceType.
+func (rtbtuo *ResourceTypeBaseTypeUpdateOne) ClearResourceBaseType() *ResourceTypeBaseTypeUpdateOne {
+	rtbtuo.mutation.ClearResourceBaseType()
 	return rtbtuo
 }
 
-// RemoveResourceTypeFkIDs removes the resource_type_fk edge to ResourceType by ids.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) RemoveResourceTypeFkIDs(ids ...int) *ResourceTypeBaseTypeUpdateOne {
-	rtbtuo.mutation.RemoveResourceTypeFkIDs(ids...)
+// RemoveResourceBaseTypeIDs removes the resource_base_type edge to ResourceType by ids.
+func (rtbtuo *ResourceTypeBaseTypeUpdateOne) RemoveResourceBaseTypeIDs(ids ...int) *ResourceTypeBaseTypeUpdateOne {
+	rtbtuo.mutation.RemoveResourceBaseTypeIDs(ids...)
 	return rtbtuo
 }
 
-// RemoveResourceTypeFk removes resource_type_fk edges to ResourceType.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) RemoveResourceTypeFk(r ...*ResourceType) *ResourceTypeBaseTypeUpdateOne {
+// RemoveResourceBaseType removes resource_base_type edges to ResourceType.
+func (rtbtuo *ResourceTypeBaseTypeUpdateOne) RemoveResourceBaseType(r ...*ResourceType) *ResourceTypeBaseTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtbtuo.RemoveResourceTypeFkIDs(ids...)
-}
-
-// ClearPolicies clears all "policies" edges to type PermissionsPolicy.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) ClearPolicies() *ResourceTypeBaseTypeUpdateOne {
-	rtbtuo.mutation.ClearPolicies()
-	return rtbtuo
-}
-
-// RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) RemovePolicyIDs(ids ...int) *ResourceTypeBaseTypeUpdateOne {
-	rtbtuo.mutation.RemovePolicyIDs(ids...)
-	return rtbtuo
-}
-
-// RemovePolicies removes policies edges to PermissionsPolicy.
-func (rtbtuo *ResourceTypeBaseTypeUpdateOne) RemovePolicies(p ...*PermissionsPolicy) *ResourceTypeBaseTypeUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtbtuo.RemovePolicyIDs(ids...)
+	return rtbtuo.RemoveResourceBaseTypeIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -538,12 +411,12 @@ func (rtbtuo *ResourceTypeBaseTypeUpdateOne) sqlSave(ctx context.Context) (_node
 			Column: resourcetypebasetype.FieldName,
 		})
 	}
-	if rtbtuo.mutation.ResourceTypeFkCleared() {
+	if rtbtuo.mutation.ResourceBaseTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypebasetype.ResourceTypeFkTable,
-			Columns: []string{resourcetypebasetype.ResourceTypeFkColumn},
+			Table:   resourcetypebasetype.ResourceBaseTypeTable,
+			Columns: []string{resourcetypebasetype.ResourceBaseTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -554,31 +427,12 @@ func (rtbtuo *ResourceTypeBaseTypeUpdateOne) sqlSave(ctx context.Context) (_node
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtbtuo.mutation.RemovedResourceTypeFkIDs(); len(nodes) > 0 && !rtbtuo.mutation.ResourceTypeFkCleared() {
+	if nodes := rtbtuo.mutation.RemovedResourceBaseTypeIDs(); len(nodes) > 0 && !rtbtuo.mutation.ResourceBaseTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypebasetype.ResourceTypeFkTable,
-			Columns: []string{resourcetypebasetype.ResourceTypeFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtbtuo.mutation.ResourceTypeFkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypebasetype.ResourceTypeFkTable,
-			Columns: []string{resourcetypebasetype.ResourceTypeFkColumn},
+			Table:   resourcetypebasetype.ResourceBaseTypeTable,
+			Columns: []string{resourcetypebasetype.ResourceBaseTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -590,54 +444,19 @@ func (rtbtuo *ResourceTypeBaseTypeUpdateOne) sqlSave(ctx context.Context) (_node
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rtbtuo.mutation.PoliciesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypebasetype.PoliciesTable,
-			Columns: []string{resourcetypebasetype.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtbtuo.mutation.RemovedPoliciesIDs(); len(nodes) > 0 && !rtbtuo.mutation.PoliciesCleared() {
+	if nodes := rtbtuo.mutation.ResourceBaseTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypebasetype.PoliciesTable,
-			Columns: []string{resourcetypebasetype.PoliciesColumn},
+			Table:   resourcetypebasetype.ResourceBaseTypeTable,
+			Columns: []string{resourcetypebasetype.ResourceBaseTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtbtuo.mutation.PoliciesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypebasetype.PoliciesTable,
-			Columns: []string{resourcetypebasetype.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
+					Column: resourcetype.FieldID,
 				},
 			},
 		}

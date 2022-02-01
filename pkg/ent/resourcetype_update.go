@@ -109,19 +109,19 @@ func (rtu *ResourceTypeUpdate) AddResourceRelationshipB(r ...*ResourceRelationsh
 	return rtu.AddResourceRelationshipBIDs(ids...)
 }
 
-// AddResourceSpecificationFkIDs adds the resource_specification_fk edge to ResourceSpecification by ids.
-func (rtu *ResourceTypeUpdate) AddResourceSpecificationFkIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.AddResourceSpecificationFkIDs(ids...)
+// AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecification by ids.
+func (rtu *ResourceTypeUpdate) AddResourceSpecificationIDs(ids ...int) *ResourceTypeUpdate {
+	rtu.mutation.AddResourceSpecificationIDs(ids...)
 	return rtu
 }
 
-// AddResourceSpecificationFk adds the resource_specification_fk edges to ResourceSpecification.
-func (rtu *ResourceTypeUpdate) AddResourceSpecificationFk(r ...*ResourceSpecification) *ResourceTypeUpdate {
+// AddResourceSpecification adds the resource_specification edges to ResourceSpecification.
+func (rtu *ResourceTypeUpdate) AddResourceSpecification(r ...*ResourceSpecification) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtu.AddResourceSpecificationFkIDs(ids...)
+	return rtu.AddResourceSpecificationIDs(ids...)
 }
 
 // AddResourcetypeItemIDs adds the resourcetype_items edge to ResourceSRItems by ids.
@@ -198,25 +198,25 @@ func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipB(r ...*ResourceRelatio
 	return rtu.RemoveResourceRelationshipBIDs(ids...)
 }
 
-// ClearResourceSpecificationFk clears all "resource_specification_fk" edges to type ResourceSpecification.
-func (rtu *ResourceTypeUpdate) ClearResourceSpecificationFk() *ResourceTypeUpdate {
-	rtu.mutation.ClearResourceSpecificationFk()
+// ClearResourceSpecification clears all "resource_specification" edges to type ResourceSpecification.
+func (rtu *ResourceTypeUpdate) ClearResourceSpecification() *ResourceTypeUpdate {
+	rtu.mutation.ClearResourceSpecification()
 	return rtu
 }
 
-// RemoveResourceSpecificationFkIDs removes the resource_specification_fk edge to ResourceSpecification by ids.
-func (rtu *ResourceTypeUpdate) RemoveResourceSpecificationFkIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.RemoveResourceSpecificationFkIDs(ids...)
+// RemoveResourceSpecificationIDs removes the resource_specification edge to ResourceSpecification by ids.
+func (rtu *ResourceTypeUpdate) RemoveResourceSpecificationIDs(ids ...int) *ResourceTypeUpdate {
+	rtu.mutation.RemoveResourceSpecificationIDs(ids...)
 	return rtu
 }
 
-// RemoveResourceSpecificationFk removes resource_specification_fk edges to ResourceSpecification.
-func (rtu *ResourceTypeUpdate) RemoveResourceSpecificationFk(r ...*ResourceSpecification) *ResourceTypeUpdate {
+// RemoveResourceSpecification removes resource_specification edges to ResourceSpecification.
+func (rtu *ResourceTypeUpdate) RemoveResourceSpecification(r ...*ResourceSpecification) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtu.RemoveResourceSpecificationFkIDs(ids...)
+	return rtu.RemoveResourceSpecificationIDs(ids...)
 }
 
 // ClearResourcetypeItems clears all "resourcetype_items" edges to type ResourceSRItems.
@@ -526,12 +526,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rtu.mutation.ResourceSpecificationFkCleared() {
+	if rtu.mutation.ResourceSpecificationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceSpecificationFkTable,
-			Columns: []string{resourcetype.ResourceSpecificationFkColumn},
+			Table:   resourcetype.ResourceSpecificationTable,
+			Columns: []string{resourcetype.ResourceSpecificationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -542,12 +542,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtu.mutation.RemovedResourceSpecificationFkIDs(); len(nodes) > 0 && !rtu.mutation.ResourceSpecificationFkCleared() {
+	if nodes := rtu.mutation.RemovedResourceSpecificationIDs(); len(nodes) > 0 && !rtu.mutation.ResourceSpecificationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceSpecificationFkTable,
-			Columns: []string{resourcetype.ResourceSpecificationFkColumn},
+			Table:   resourcetype.ResourceSpecificationTable,
+			Columns: []string{resourcetype.ResourceSpecificationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -561,12 +561,12 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtu.mutation.ResourceSpecificationFkIDs(); len(nodes) > 0 {
+	if nodes := rtu.mutation.ResourceSpecificationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceSpecificationFkTable,
-			Columns: []string{resourcetype.ResourceSpecificationFkColumn},
+			Table:   resourcetype.ResourceSpecificationTable,
+			Columns: []string{resourcetype.ResourceSpecificationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -726,19 +726,19 @@ func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipB(r ...*ResourceRelati
 	return rtuo.AddResourceRelationshipBIDs(ids...)
 }
 
-// AddResourceSpecificationFkIDs adds the resource_specification_fk edge to ResourceSpecification by ids.
-func (rtuo *ResourceTypeUpdateOne) AddResourceSpecificationFkIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.AddResourceSpecificationFkIDs(ids...)
+// AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecification by ids.
+func (rtuo *ResourceTypeUpdateOne) AddResourceSpecificationIDs(ids ...int) *ResourceTypeUpdateOne {
+	rtuo.mutation.AddResourceSpecificationIDs(ids...)
 	return rtuo
 }
 
-// AddResourceSpecificationFk adds the resource_specification_fk edges to ResourceSpecification.
-func (rtuo *ResourceTypeUpdateOne) AddResourceSpecificationFk(r ...*ResourceSpecification) *ResourceTypeUpdateOne {
+// AddResourceSpecification adds the resource_specification edges to ResourceSpecification.
+func (rtuo *ResourceTypeUpdateOne) AddResourceSpecification(r ...*ResourceSpecification) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtuo.AddResourceSpecificationFkIDs(ids...)
+	return rtuo.AddResourceSpecificationIDs(ids...)
 }
 
 // AddResourcetypeItemIDs adds the resourcetype_items edge to ResourceSRItems by ids.
@@ -815,25 +815,25 @@ func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipB(r ...*ResourceRel
 	return rtuo.RemoveResourceRelationshipBIDs(ids...)
 }
 
-// ClearResourceSpecificationFk clears all "resource_specification_fk" edges to type ResourceSpecification.
-func (rtuo *ResourceTypeUpdateOne) ClearResourceSpecificationFk() *ResourceTypeUpdateOne {
-	rtuo.mutation.ClearResourceSpecificationFk()
+// ClearResourceSpecification clears all "resource_specification" edges to type ResourceSpecification.
+func (rtuo *ResourceTypeUpdateOne) ClearResourceSpecification() *ResourceTypeUpdateOne {
+	rtuo.mutation.ClearResourceSpecification()
 	return rtuo
 }
 
-// RemoveResourceSpecificationFkIDs removes the resource_specification_fk edge to ResourceSpecification by ids.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceSpecificationFkIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.RemoveResourceSpecificationFkIDs(ids...)
+// RemoveResourceSpecificationIDs removes the resource_specification edge to ResourceSpecification by ids.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceSpecificationIDs(ids ...int) *ResourceTypeUpdateOne {
+	rtuo.mutation.RemoveResourceSpecificationIDs(ids...)
 	return rtuo
 }
 
-// RemoveResourceSpecificationFk removes resource_specification_fk edges to ResourceSpecification.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceSpecificationFk(r ...*ResourceSpecification) *ResourceTypeUpdateOne {
+// RemoveResourceSpecification removes resource_specification edges to ResourceSpecification.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceSpecification(r ...*ResourceSpecification) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtuo.RemoveResourceSpecificationFkIDs(ids...)
+	return rtuo.RemoveResourceSpecificationIDs(ids...)
 }
 
 // ClearResourcetypeItems clears all "resourcetype_items" edges to type ResourceSRItems.
@@ -1141,12 +1141,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rtuo.mutation.ResourceSpecificationFkCleared() {
+	if rtuo.mutation.ResourceSpecificationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceSpecificationFkTable,
-			Columns: []string{resourcetype.ResourceSpecificationFkColumn},
+			Table:   resourcetype.ResourceSpecificationTable,
+			Columns: []string{resourcetype.ResourceSpecificationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1157,12 +1157,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtuo.mutation.RemovedResourceSpecificationFkIDs(); len(nodes) > 0 && !rtuo.mutation.ResourceSpecificationFkCleared() {
+	if nodes := rtuo.mutation.RemovedResourceSpecificationIDs(); len(nodes) > 0 && !rtuo.mutation.ResourceSpecificationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceSpecificationFkTable,
-			Columns: []string{resourcetype.ResourceSpecificationFkColumn},
+			Table:   resourcetype.ResourceSpecificationTable,
+			Columns: []string{resourcetype.ResourceSpecificationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1176,12 +1176,12 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtuo.mutation.ResourceSpecificationFkIDs(); len(nodes) > 0 {
+	if nodes := rtuo.mutation.ResourceSpecificationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceSpecificationFkTable,
-			Columns: []string{resourcetype.ResourceSpecificationFkColumn},
+			Table:   resourcetype.ResourceSpecificationTable,
+			Columns: []string{resourcetype.ResourceSpecificationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

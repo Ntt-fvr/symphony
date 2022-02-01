@@ -33,7 +33,7 @@ type ResourceSpecificationQuery struct {
 	predicates []predicate.ResourceSpecification
 	// eager-loading edges.
 	withResourcetype          *ResourceTypeQuery
-	withPropertyTypeFk        *PropertyTypeQuery
+	withPropertyType          *PropertyTypeQuery
 	withResourceSpecification *ResourceSpecificationRelationshipQuery
 	withFKs                   bool
 	// intermediate query (i.e. traversal path).
@@ -87,8 +87,8 @@ func (rsq *ResourceSpecificationQuery) QueryResourcetype() *ResourceTypeQuery {
 	return query
 }
 
-// QueryPropertyTypeFk chains the current query on the property_type_fk edge.
-func (rsq *ResourceSpecificationQuery) QueryPropertyTypeFk() *PropertyTypeQuery {
+// QueryPropertyType chains the current query on the property_type edge.
+func (rsq *ResourceSpecificationQuery) QueryPropertyType() *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: rsq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rsq.prepareQuery(ctx); err != nil {
@@ -101,7 +101,7 @@ func (rsq *ResourceSpecificationQuery) QueryPropertyTypeFk() *PropertyTypeQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.PropertyTypeFkTable, resourcespecification.PropertyTypeFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.PropertyTypeTable, resourcespecification.PropertyTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
 		return fromU, nil
@@ -308,7 +308,7 @@ func (rsq *ResourceSpecificationQuery) Clone() *ResourceSpecificationQuery {
 		unique:                    append([]string{}, rsq.unique...),
 		predicates:                append([]predicate.ResourceSpecification{}, rsq.predicates...),
 		withResourcetype:          rsq.withResourcetype.Clone(),
-		withPropertyTypeFk:        rsq.withPropertyTypeFk.Clone(),
+		withPropertyType:          rsq.withPropertyType.Clone(),
 		withResourceSpecification: rsq.withResourceSpecification.Clone(),
 		// clone intermediate query.
 		sql:  rsq.sql.Clone(),
@@ -327,14 +327,14 @@ func (rsq *ResourceSpecificationQuery) WithResourcetype(opts ...func(*ResourceTy
 	return rsq
 }
 
-//  WithPropertyTypeFk tells the query-builder to eager-loads the nodes that are connected to
-// the "property_type_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (rsq *ResourceSpecificationQuery) WithPropertyTypeFk(opts ...func(*PropertyTypeQuery)) *ResourceSpecificationQuery {
+//  WithPropertyType tells the query-builder to eager-loads the nodes that are connected to
+// the "property_type" edge. The optional arguments used to configure the query builder of the edge.
+func (rsq *ResourceSpecificationQuery) WithPropertyType(opts ...func(*PropertyTypeQuery)) *ResourceSpecificationQuery {
 	query := &PropertyTypeQuery{config: rsq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rsq.withPropertyTypeFk = query
+	rsq.withPropertyType = query
 	return rsq
 }
 
@@ -421,7 +421,7 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		_spec       = rsq.querySpec()
 		loadedTypes = [3]bool{
 			rsq.withResourcetype != nil,
-			rsq.withPropertyTypeFk != nil,
+			rsq.withPropertyType != nil,
 			rsq.withResourceSpecification != nil,
 		}
 	)
@@ -459,7 +459,7 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*ResourceSpecification)
 		for i := range nodes {
-			if fk := nodes[i].resource_type_resource_specification_fk; fk != nil {
+			if fk := nodes[i].resource_type_resource_specification; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -472,7 +472,7 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_specification_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_specification" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcetype = n
@@ -480,32 +480,32 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		}
 	}
 
-	if query := rsq.withPropertyTypeFk; query != nil {
+	if query := rsq.withPropertyType; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*ResourceSpecification)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.PropertyTypeFk = []*PropertyType{}
+			nodes[i].Edges.PropertyType = []*PropertyType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyType(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcespecification.PropertyTypeFkColumn, fks...))
+			s.Where(sql.InValues(resourcespecification.PropertyTypeColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.resource_specification_property_type_fk
+			fk := n.resource_specification_property_type
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_specification_property_type_fk" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "resource_specification_property_type" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_property_type_fk" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_property_type" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.PropertyTypeFk = append(node.Edges.PropertyTypeFk, n)
+			node.Edges.PropertyType = append(node.Edges.PropertyType, n)
 		}
 	}
 

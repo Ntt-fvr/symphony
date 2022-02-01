@@ -10267,15 +10267,15 @@ func (c *ResourceSpecificationClient) QueryResourcetype(rs *ResourceSpecificatio
 	return query
 }
 
-// QueryPropertyTypeFk queries the property_type_fk edge of a ResourceSpecification.
-func (c *ResourceSpecificationClient) QueryPropertyTypeFk(rs *ResourceSpecification) *PropertyTypeQuery {
+// QueryPropertyType queries the property_type edge of a ResourceSpecification.
+func (c *ResourceSpecificationClient) QueryPropertyType(rs *ResourceSpecification) *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := rs.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.PropertyTypeFkTable, resourcespecification.PropertyTypeFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.PropertyTypeTable, resourcespecification.PropertyTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
 		return fromV, nil
@@ -10573,15 +10573,15 @@ func (c *ResourceTypeClient) QueryResourceRelationshipB(rt *ResourceType) *Resou
 	return query
 }
 
-// QueryResourceSpecificationFk queries the resource_specification_fk edge of a ResourceType.
-func (c *ResourceTypeClient) QueryResourceSpecificationFk(rt *ResourceType) *ResourceSpecificationQuery {
+// QueryResourceSpecification queries the resource_specification edge of a ResourceType.
+func (c *ResourceTypeClient) QueryResourceSpecification(rt *ResourceType) *ResourceSpecificationQuery {
 	query := &ResourceSpecificationQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := rt.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, id),
 			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceSpecificationFkTable, resourcetype.ResourceSpecificationFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceSpecificationTable, resourcetype.ResourceSpecificationColumn),
 		)
 		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
 		return fromV, nil
@@ -10694,31 +10694,15 @@ func (c *ResourceTypeBaseTypeClient) GetX(ctx context.Context, id int) *Resource
 	return obj
 }
 
-// QueryResourceTypeFk queries the resource_type_fk edge of a ResourceTypeBaseType.
-func (c *ResourceTypeBaseTypeClient) QueryResourceTypeFk(rtbt *ResourceTypeBaseType) *ResourceTypeQuery {
+// QueryResourceBaseType queries the resource_base_type edge of a ResourceTypeBaseType.
+func (c *ResourceTypeBaseTypeClient) QueryResourceBaseType(rtbt *ResourceTypeBaseType) *ResourceTypeQuery {
 	query := &ResourceTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := rtbt.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetypebasetype.Table, resourcetypebasetype.FieldID, id),
 			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypebasetype.ResourceTypeFkTable, resourcetypebasetype.ResourceTypeFkColumn),
-		)
-		fromV = sqlgraph.Neighbors(rtbt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryPolicies queries the policies edge of a ResourceTypeBaseType.
-func (c *ResourceTypeBaseTypeClient) QueryPolicies(rtbt *ResourceTypeBaseType) *PermissionsPolicyQuery {
-	query := &PermissionsPolicyQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rtbt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetypebasetype.Table, resourcetypebasetype.FieldID, id),
-			sqlgraph.To(permissionspolicy.Table, permissionspolicy.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypebasetype.PoliciesTable, resourcetypebasetype.PoliciesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypebasetype.ResourceBaseTypeTable, resourcetypebasetype.ResourceBaseTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(rtbt.driver.Dialect(), step)
 		return fromV, nil
@@ -10815,31 +10799,15 @@ func (c *ResourceTypeClassClient) GetX(ctx context.Context, id int) *ResourceTyp
 	return obj
 }
 
-// QueryResourceTypeFk queries the resource_type_fk edge of a ResourceTypeClass.
-func (c *ResourceTypeClassClient) QueryResourceTypeFk(rtc *ResourceTypeClass) *ResourceTypeQuery {
+// QueryResourceTypeClass queries the resource_type_class edge of a ResourceTypeClass.
+func (c *ResourceTypeClassClient) QueryResourceTypeClass(rtc *ResourceTypeClass) *ResourceTypeQuery {
 	query := &ResourceTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := rtc.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetypeclass.Table, resourcetypeclass.FieldID, id),
 			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypeclass.ResourceTypeFkTable, resourcetypeclass.ResourceTypeFkColumn),
-		)
-		fromV = sqlgraph.Neighbors(rtc.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryPolicies queries the policies edge of a ResourceTypeClass.
-func (c *ResourceTypeClassClient) QueryPolicies(rtc *ResourceTypeClass) *PermissionsPolicyQuery {
-	query := &PermissionsPolicyQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rtc.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetypeclass.Table, resourcetypeclass.FieldID, id),
-			sqlgraph.To(permissionspolicy.Table, permissionspolicy.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypeclass.PoliciesTable, resourcetypeclass.PoliciesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypeclass.ResourceTypeClassTable, resourcetypeclass.ResourceTypeClassColumn),
 		)
 		fromV = sqlgraph.Neighbors(rtc.driver.Dialect(), step)
 		return fromV, nil

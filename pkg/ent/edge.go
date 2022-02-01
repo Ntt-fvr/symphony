@@ -1728,10 +1728,10 @@ func (rs *ResourceSpecification) Resourcetype(ctx context.Context) (*ResourceTyp
 	return result, MaskNotFound(err)
 }
 
-func (rs *ResourceSpecification) PropertyTypeFk(ctx context.Context) ([]*PropertyType, error) {
-	result, err := rs.Edges.PropertyTypeFkOrErr()
+func (rs *ResourceSpecification) PropertyType(ctx context.Context) ([]*PropertyType, error) {
+	result, err := rs.Edges.PropertyTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = rs.QueryPropertyTypeFk().All(ctx)
+		result, err = rs.QueryPropertyType().All(ctx)
 	}
 	return result, err
 }
@@ -1792,10 +1792,10 @@ func (rt *ResourceType) ResourceRelationshipB(ctx context.Context) ([]*ResourceR
 	return result, err
 }
 
-func (rt *ResourceType) ResourceSpecificationFk(ctx context.Context) ([]*ResourceSpecification, error) {
-	result, err := rt.Edges.ResourceSpecificationFkOrErr()
+func (rt *ResourceType) ResourceSpecification(ctx context.Context) ([]*ResourceSpecification, error) {
+	result, err := rt.Edges.ResourceSpecificationOrErr()
 	if IsNotLoaded(err) {
-		result, err = rt.QueryResourceSpecificationFk().All(ctx)
+		result, err = rt.QueryResourceSpecification().All(ctx)
 	}
 	return result, err
 }
@@ -1808,34 +1808,18 @@ func (rt *ResourceType) ResourcetypeItems(ctx context.Context) ([]*ResourceSRIte
 	return result, err
 }
 
-func (rtbt *ResourceTypeBaseType) ResourceTypeFk(ctx context.Context) ([]*ResourceType, error) {
-	result, err := rtbt.Edges.ResourceTypeFkOrErr()
+func (rtbt *ResourceTypeBaseType) ResourceBaseType(ctx context.Context) ([]*ResourceType, error) {
+	result, err := rtbt.Edges.ResourceBaseTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = rtbt.QueryResourceTypeFk().All(ctx)
+		result, err = rtbt.QueryResourceBaseType().All(ctx)
 	}
 	return result, err
 }
 
-func (rtbt *ResourceTypeBaseType) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
-	result, err := rtbt.Edges.PoliciesOrErr()
+func (rtc *ResourceTypeClass) ResourceTypeClass(ctx context.Context) ([]*ResourceType, error) {
+	result, err := rtc.Edges.ResourceTypeClassOrErr()
 	if IsNotLoaded(err) {
-		result, err = rtbt.QueryPolicies().All(ctx)
-	}
-	return result, err
-}
-
-func (rtc *ResourceTypeClass) ResourceTypeFk(ctx context.Context) ([]*ResourceType, error) {
-	result, err := rtc.Edges.ResourceTypeFkOrErr()
-	if IsNotLoaded(err) {
-		result, err = rtc.QueryResourceTypeFk().All(ctx)
-	}
-	return result, err
-}
-
-func (rtc *ResourceTypeClass) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
-	result, err := rtc.Edges.PoliciesOrErr()
-	if IsNotLoaded(err) {
-		result, err = rtc.QueryPolicies().All(ctx)
+		result, err = rtc.QueryResourceTypeClass().All(ctx)
 	}
 	return result, err
 }

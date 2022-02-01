@@ -33,7 +33,6 @@ type PermissionsPolicyQuery struct {
 	// eager-loading edges.
 	withGroups       *UsersGroupQuery
 	withOrganization *OrganizationQuery
-	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -381,23 +380,16 @@ func (ppq *PermissionsPolicyQuery) prepareQuery(ctx context.Context) error {
 func (ppq *PermissionsPolicyQuery) sqlAll(ctx context.Context) ([]*PermissionsPolicy, error) {
 	var (
 		nodes       = []*PermissionsPolicy{}
-		withFKs     = ppq.withFKs
 		_spec       = ppq.querySpec()
 		loadedTypes = [2]bool{
 			ppq.withGroups != nil,
 			ppq.withOrganization != nil,
 		}
 	)
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, permissionspolicy.ForeignKeys...)
-	}
 	_spec.ScanValues = func() []interface{} {
 		node := &PermissionsPolicy{config: ppq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
-		if withFKs {
-			values = append(values, node.fkValues()...)
-		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {

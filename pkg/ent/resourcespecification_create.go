@@ -80,19 +80,19 @@ func (rsc *ResourceSpecificationCreate) SetResourcetype(r *ResourceType) *Resour
 	return rsc.SetResourcetypeID(r.ID)
 }
 
-// AddPropertyTypeFkIDs adds the property_type_fk edge to PropertyType by ids.
-func (rsc *ResourceSpecificationCreate) AddPropertyTypeFkIDs(ids ...int) *ResourceSpecificationCreate {
-	rsc.mutation.AddPropertyTypeFkIDs(ids...)
+// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
+func (rsc *ResourceSpecificationCreate) AddPropertyTypeIDs(ids ...int) *ResourceSpecificationCreate {
+	rsc.mutation.AddPropertyTypeIDs(ids...)
 	return rsc
 }
 
-// AddPropertyTypeFk adds the property_type_fk edges to PropertyType.
-func (rsc *ResourceSpecificationCreate) AddPropertyTypeFk(p ...*PropertyType) *ResourceSpecificationCreate {
+// AddPropertyType adds the property_type edges to PropertyType.
+func (rsc *ResourceSpecificationCreate) AddPropertyType(p ...*PropertyType) *ResourceSpecificationCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return rsc.AddPropertyTypeFkIDs(ids...)
+	return rsc.AddPropertyTypeIDs(ids...)
 }
 
 // AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecificationRelationship by ids.
@@ -258,12 +258,12 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rsc.mutation.PropertyTypeFkIDs(); len(nodes) > 0 {
+	if nodes := rsc.mutation.PropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeFkTable,
-			Columns: []string{resourcespecification.PropertyTypeFkColumn},
+			Table:   resourcespecification.PropertyTypeTable,
+			Columns: []string{resourcespecification.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

@@ -14,7 +14,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
 )
@@ -60,34 +59,19 @@ func (rtcc *ResourceTypeClassCreate) SetName(s string) *ResourceTypeClassCreate 
 	return rtcc
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (rtcc *ResourceTypeClassCreate) AddResourceTypeFkIDs(ids ...int) *ResourceTypeClassCreate {
-	rtcc.mutation.AddResourceTypeFkIDs(ids...)
+// AddResourceTypeClasIDs adds the resource_type_class edge to ResourceType by ids.
+func (rtcc *ResourceTypeClassCreate) AddResourceTypeClasIDs(ids ...int) *ResourceTypeClassCreate {
+	rtcc.mutation.AddResourceTypeClasIDs(ids...)
 	return rtcc
 }
 
-// AddResourceTypeFk adds the resource_type_fk edges to ResourceType.
-func (rtcc *ResourceTypeClassCreate) AddResourceTypeFk(r ...*ResourceType) *ResourceTypeClassCreate {
+// AddResourceTypeClass adds the resource_type_class edges to ResourceType.
+func (rtcc *ResourceTypeClassCreate) AddResourceTypeClass(r ...*ResourceType) *ResourceTypeClassCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtcc.AddResourceTypeFkIDs(ids...)
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (rtcc *ResourceTypeClassCreate) AddPolicyIDs(ids ...int) *ResourceTypeClassCreate {
-	rtcc.mutation.AddPolicyIDs(ids...)
-	return rtcc
-}
-
-// AddPolicies adds the policies edges to PermissionsPolicy.
-func (rtcc *ResourceTypeClassCreate) AddPolicies(p ...*PermissionsPolicy) *ResourceTypeClassCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtcc.AddPolicyIDs(ids...)
+	return rtcc.AddResourceTypeClasIDs(ids...)
 }
 
 // Mutation returns the ResourceTypeClassMutation object of the builder.
@@ -219,36 +203,17 @@ func (rtcc *ResourceTypeClassCreate) createSpec() (*ResourceTypeClass, *sqlgraph
 		})
 		_node.Name = value
 	}
-	if nodes := rtcc.mutation.ResourceTypeFkIDs(); len(nodes) > 0 {
+	if nodes := rtcc.mutation.ResourceTypeClassIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypeclass.ResourceTypeFkTable,
-			Columns: []string{resourcetypeclass.ResourceTypeFkColumn},
+			Table:   resourcetypeclass.ResourceTypeClassTable,
+			Columns: []string{resourcetypeclass.ResourceTypeClassColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := rtcc.mutation.PoliciesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypeclass.PoliciesTable,
-			Columns: []string{resourcetypeclass.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
 				},
 			},
 		}
