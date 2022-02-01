@@ -17,8 +17,9 @@ import (
 
 func handleResourceRelationshipFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
 	switch filter.FilterType {
-	case models.ResourceRelationshipFilterTypeName:
-		return resourceRelationshipNameFilter(q, filter)
+	/*case models.ResourceRelationshipFilterTypeName:
+	return resourceRelationshipNameFilter(q, filter)
+	*/
 	case models.ResourceRelationshipFilterTypeResourceRelationshipFilter:
 		return resourceRelationshipLocationTypeFilter(q, filter)
 	case models.ResourceRelationshipFilterTypeResourceRelationshipResource:
@@ -30,14 +31,14 @@ func handleResourceRelationshipFilter(q *ent.ResourceRelationshipQuery, filter *
 
 }
 
-func resourceRelationshipNameFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
+/*func resourceRelationshipNameFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(resourcerelationship.NameContainsFold(*filter.StringValue)), nil
 	} else if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
 		return q.Where(resourcerelationship.NameEQ(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
-}
+}*/
 
 func resourceRelationshipLocationTypeFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
@@ -52,6 +53,24 @@ func resourceTypeFilter(q *ent.ResourceRelationshipQuery, filter *models.Resourc
 		predicatesType = append(predicatesType, resourcerelationship.Or(resourcerelationship.HasResourcetypeaWith(resourcetype.IDIn(filter.IDSet...)), resourcerelationship.HasResourcetypebWith(resourcetype.IDIn(filter.IDSet...))))
 
 		return q.Where(predicatesType...), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+//ResourceRelationshipType
+
+func resourceRelationshipTypeFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
+	if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
+		return q.Where(resourcerelationship.ResourceRelationshipTypeEQ(*filter.TypeValue)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+//ResourceRelationshipMultiplicity
+
+func resourceRelationshipMultiplicityFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
+	if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
+		return q.Where(resourcerelationship.ResourceRelationshipMultiplicityEQ(*filter.MultiplicityValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

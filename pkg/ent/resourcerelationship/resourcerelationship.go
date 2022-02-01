@@ -24,8 +24,6 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
 	// FieldResourceRelationshipType holds the string denoting the resourcerelationshiptype field in the database.
 	FieldResourceRelationshipType = "resource_relationship_type"
 	// FieldResourceRelationshipMultiplicity holds the string denoting the resourcerelationshipmultiplicity field in the database.
@@ -68,7 +66,6 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
-	FieldName,
 	FieldResourceRelationshipType,
 	FieldResourceRelationshipMultiplicity,
 }
@@ -110,8 +107,6 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	UpdateDefaultUpdateTime func() time.Time
-	// NameValidator is a validator for the "name" field. It is called by the builders before save.
-	NameValidator func(string) error
 )
 
 // ResourceRelationshipType defines the type for the ResourceRelationshipType enum field.

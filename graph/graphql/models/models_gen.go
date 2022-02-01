@@ -372,7 +372,6 @@ type AddRecommendationsSourcesInput struct {
 }
 
 type AddResourceRelationshipInput struct {
-	Name                             string                                                `json:"name"`
 	ResourceRelationshipType         resourcerelationship.ResourceRelationshipType         `json:"resourceRelationshipType"`
 	ResourceRelationshipMultiplicity resourcerelationship.ResourceRelationshipMultiplicity `json:"resourceRelationshipMultiplicity"`
 	LocationType                     *int                                                  `json:"locationType"`
@@ -982,7 +981,6 @@ type EditReportFilterInput struct {
 
 type EditResourceRelationshipInput struct {
 	ID                               int                                                   `json:"id"`
-	Name                             string                                                `json:"name"`
 	ResourceRelationshipType         resourcerelationship.ResourceRelationshipType         `json:"resourceRelationshipType"`
 	ResourceRelationshipMultiplicity resourcerelationship.ResourceRelationshipMultiplicity `json:"resourceRelationshipMultiplicity"`
 	LocationType                     *int                                                  `json:"locationType"`
@@ -1480,12 +1478,14 @@ type ReportFilterInput struct {
 }
 
 type ResourceRelationshipFilterInput struct {
-	FilterType  ResourceRelationshipFilterType `json:"filterType"`
-	Operator    enum.FilterOperator            `json:"operator"`
-	StringValue *string                        `json:"stringValue"`
-	IDSet       []int                          `json:"idSet"`
-	MaxDepth    *int                           `json:"maxDepth"`
-	StringSet   []string                       `json:"stringSet"`
+	FilterType        ResourceRelationshipFilterType                         `json:"filterType"`
+	Operator          enum.FilterOperator                                    `json:"operator"`
+	StringValue       *string                                                `json:"stringValue"`
+	MultiplicityValue *resourcerelationship.ResourceRelationshipMultiplicity `json:"multiplicityValue"`
+	TypeValue         *resourcerelationship.ResourceRelationshipType         `json:"typeValue"`
+	IDSet             []int                                                  `json:"idSet"`
+	MaxDepth          *int                                                   `json:"maxDepth"`
+	StringSet         []string                                               `json:"stringSet"`
 }
 
 type ResourceSRItemsFilterInput struct {
@@ -3074,7 +3074,6 @@ type ResourceRelationshipFilterType string
 
 const (
 	ResourceRelationshipFilterTypeID                               ResourceRelationshipFilterType = "ID"
-	ResourceRelationshipFilterTypeName                             ResourceRelationshipFilterType = "NAME"
 	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
 	ResourceRelationshipFilterTypeResourceRelationshipFilter       ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_FILTER"
 	ResourceRelationshipFilterTypeResourceRelationshipType         ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
@@ -3083,7 +3082,6 @@ const (
 
 var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
 	ResourceRelationshipFilterTypeID,
-	ResourceRelationshipFilterTypeName,
 	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity,
 	ResourceRelationshipFilterTypeResourceRelationshipFilter,
 	ResourceRelationshipFilterTypeResourceRelationshipType,
@@ -3092,7 +3090,7 @@ var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
 
 func (e ResourceRelationshipFilterType) IsValid() bool {
 	switch e {
-	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeName, ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipFilter, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResource:
+	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipFilter, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResource:
 		return true
 	}
 	return false

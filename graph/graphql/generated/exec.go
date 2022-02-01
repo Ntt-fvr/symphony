@@ -1689,7 +1689,6 @@ type ComplexityRoot struct {
 	ResourceRelationship struct {
 		ID                               func(childComplexity int) int
 		LocationType                     func(childComplexity int) int
-		Name                             func(childComplexity int) int
 		ResourceRelationshipMultiplicity func(childComplexity int) int
 		ResourceRelationshipType         func(childComplexity int) int
 		Resourcetypea                    func(childComplexity int) int
@@ -11544,13 +11543,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceRelationship.LocationType(childComplexity), true
 
-	case "ResourceRelationship.name":
-		if e.complexity.ResourceRelationship.Name == nil {
-			break
-		}
-
-		return e.complexity.ResourceRelationship.Name(childComplexity), true
-
 	case "ResourceRelationship.resourceRelationshipMultiplicity":
 		if e.complexity.ResourceRelationship.ResourceRelationshipMultiplicity == nil {
 			break
@@ -19175,10 +19167,17 @@ type ResourceTypeEdge {
 Properties by which ResourceRelationship connections can be ordered.
 """
 enum ResourceRelationshipOrderField {
+
   """
-  Order ResourceRelationship by name.
+  Order ResourceRelationship by ResourceRelationshipType.
   """
-  NAME
+  RESOURCE_RELATIONSHIP_TYPE
+
+  """
+  Order ResourceRelationship by ResourceRelationshipMultiplicity.
+  """
+  RESOURCE_RELATIONSHIP_MULTIPLICITY
+
   """
   Order ResourceRelationship by creation time.
   """
@@ -23699,7 +23698,6 @@ enum ResourceRelationshipMultiplicityKind
 
 type ResourceRelationship implements Node {
   id: ID!
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
   locationType: LocationType
@@ -23708,7 +23706,6 @@ type ResourceRelationship implements Node {
 }
 
 input AddResourceRelationshipInput {
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity:ResourceRelationshipMultiplicityKind!
   locationType: ID
@@ -23718,7 +23715,6 @@ input AddResourceRelationshipInput {
 
 input EditResourceRelationshipInput {
   id: ID!
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
   locationType: ID
@@ -23728,7 +23724,6 @@ input EditResourceRelationshipInput {
 
 enum ResourceRelationshipFilterType {
   ID 
-  NAME
   RESOURCE_RELATIONSHIP_MULTIPLICITY
   RESOURCE_RELATIONSHIP_FILTER
   RESOURCE_RELATIONSHIP_TYPE
@@ -23739,6 +23734,8 @@ input ResourceRelationshipFilterInput {
   filterType: ResourceRelationshipFilterType!
   operator: FilterOperator!
   stringValue: String
+  multiplicityValue: ResourceRelationshipMultiplicityKind
+  typeValue: ResourceRelationshipTypeKind
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
@@ -70726,41 +70723,6 @@ func (ec *executionContext) _ResourceRelationship_id(ctx context.Context, field 
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceRelationship_name(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceRelationship) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceRelationship",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ResourceRelationship_resourceRelationshipType(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceRelationship) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -88417,14 +88379,6 @@ func (ec *executionContext) unmarshalInputAddResourceRelationshipInput(ctx conte
 
 	for k, v := range asMap {
 		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "resourceRelationshipType":
 			var err error
 
@@ -92877,14 +92831,6 @@ func (ec *executionContext) unmarshalInputEditResourceRelationshipInput(ctx cont
 			if err != nil {
 				return it, err
 			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "resourceRelationshipType":
 			var err error
 
@@ -97120,6 +97066,22 @@ func (ec *executionContext) unmarshalInputResourceRelationshipFilterInput(ctx co
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
 			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "multiplicityValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("multiplicityValue"))
+			it.MultiplicityValue, err = ec.unmarshalOResourceRelationshipMultiplicityKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcerelationshipᚐResourceRelationshipMultiplicity(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "typeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeValue"))
+			it.TypeValue, err = ec.unmarshalOResourceRelationshipTypeKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcerelationshipᚐResourceRelationshipType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -111453,11 +111415,6 @@ func (ec *executionContext) _ResourceRelationship(ctx context.Context, sel ast.S
 			out.Values[i] = graphql.MarshalString("ResourceRelationship")
 		case "id":
 			out.Values[i] = ec._ResourceRelationship_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "name":
-			out.Values[i] = ec._ResourceRelationship_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
@@ -129366,6 +129323,22 @@ func (ec *executionContext) unmarshalOResourceRelationshipFilterInput2ᚕᚖgith
 	return res, nil
 }
 
+func (ec *executionContext) unmarshalOResourceRelationshipMultiplicityKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcerelationshipᚐResourceRelationshipMultiplicity(ctx context.Context, v interface{}) (*resourcerelationship.ResourceRelationshipMultiplicity, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(resourcerelationship.ResourceRelationshipMultiplicity)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOResourceRelationshipMultiplicityKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcerelationshipᚐResourceRelationshipMultiplicity(ctx context.Context, sel ast.SelectionSet, v *resourcerelationship.ResourceRelationshipMultiplicity) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOResourceRelationshipOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceRelationshipOrder(ctx context.Context, v interface{}) (*ent.ResourceRelationshipOrder, error) {
 	if v == nil {
 		return nil, nil
@@ -129384,6 +129357,22 @@ func (ec *executionContext) unmarshalOResourceRelationshipOrderField2ᚖgithub�
 }
 
 func (ec *executionContext) marshalOResourceRelationshipOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceRelationshipOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceRelationshipOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOResourceRelationshipTypeKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcerelationshipᚐResourceRelationshipType(ctx context.Context, v interface{}) (*resourcerelationship.ResourceRelationshipType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(resourcerelationship.ResourceRelationshipType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOResourceRelationshipTypeKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcerelationshipᚐResourceRelationshipType(ctx context.Context, sel ast.SelectionSet, v *resourcerelationship.ResourceRelationshipType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
