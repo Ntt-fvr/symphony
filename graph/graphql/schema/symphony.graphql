@@ -4558,6 +4558,16 @@ enum ResourceTypeOrderField {
   NAME
 
   """
+  Order ResourceType by TypeClass.
+  """
+  RESOURCE_TYPE_CLASS
+  
+  """
+  Order ResourceType by BaseType.
+  """
+  RESOURCE_TYPE_BASE_TYPE
+
+  """
   Order ResourceType by creation time.
   """
   CREATED_AT
@@ -4620,9 +4630,30 @@ Properties by which ResourceRelationship connections can be ordered.
 """
 enum ResourceRelationshipOrderField {
   """
-  Order ResourceRelationship by name.
+  Order ResourceRelationship by ResourceTypeA.
   """
-  NAME
+  RESOURCE_TYPE_A
+
+  """
+  Order ResourceRelationship by ResourceTypeB.
+  """
+  RESOURCE_TYPE_B
+
+  """
+  Order ResourceRelationship by LocationType.
+  """
+  LOCATION_TYPE
+
+  """
+  Order ResourceRelationship by ResourceRelationshipType.
+  """
+  RESOURCE_RELATIONSHIP_TYPE
+
+  """
+  Order ResourceRelationship by ResourceRelationshipMultiplicity.
+  """
+  RESOURCE_RELATIONSHIP_MULTIPLICITY
+
   """
   Order ResourceRelationship by creation time.
   """
@@ -4688,6 +4719,11 @@ enum ResourceSpecificationOrderField {
   Order ResourceSpecification by name.
   """
   NAME
+
+  """
+  Order ResourceType by name.
+  """
+  RESOURCE_TYPE
 
   """
   Order ResourceSpecification by creation time.
@@ -9143,7 +9179,6 @@ enum ResourceRelationshipMultiplicityKind
 
 type ResourceRelationship implements Node {
   id: ID!
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
   locationType: LocationType
@@ -9152,7 +9187,6 @@ type ResourceRelationship implements Node {
 }
 
 input AddResourceRelationshipInput {
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity:ResourceRelationshipMultiplicityKind!
   locationType: ID
@@ -9162,7 +9196,6 @@ input AddResourceRelationshipInput {
 
 input EditResourceRelationshipInput {
   id: ID!
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
   locationType: ID
@@ -9172,7 +9205,6 @@ input EditResourceRelationshipInput {
 
 enum ResourceRelationshipFilterType {
   ID 
-  NAME
   RESOURCE_RELATIONSHIP_MULTIPLICITY
   RESOURCE_RELATIONSHIP_FILTER
   RESOURCE_RELATIONSHIP_TYPE
@@ -9183,6 +9215,8 @@ input ResourceRelationshipFilterInput {
   filterType: ResourceRelationshipFilterType!
   operator: FilterOperator!
   stringValue: String
+  multiplicityValue: ResourceRelationshipMultiplicityKind
+  typeValue: ResourceRelationshipTypeKind
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
@@ -9304,19 +9338,19 @@ enum AppointmentStatus
 type ResourceSpecification implements Node {
   id: ID!
   name: String!  
-  resourceTypeFk: ResourceType
+  resourceType: ResourceType
   propertyTypes: [PropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
-  resourceTypeFk: ID!
+  resourceType: ID!
   propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 input EditResourceSpecificationInput {
   id: ID!
   name: String!
-  resourceTypeFk: ID 
+  resourceType: ID 
   propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
@@ -9336,18 +9370,18 @@ input ResourceSpecificationFilterInput {
 type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
-  resourceSpecificationFk: ResourceSpecification!
+  resourceSpecification: ResourceSpecification!
 }
 
 input AddResourceSpecificationRelationshipInput {  
   name: String!
-  resourceSpecificationFk: ID!
+  resourceSpecification: ID!
 }
 
 input EditResourceSpecificationRelationshipInput {
   id: ID!
   name: String!
-  resourceSpecificationFk: ID
+  resourceSpecification: ID
 }
 
 enum ResourceSpecificationRelationshipFilterType {
@@ -9366,21 +9400,21 @@ input ResourceSpecificationRelationshipFilterInput {
 type ResourceSRItems implements Node {
   id: ID!
   name: String!
-  resourceSpecificationRelationshipFk: ResourceSpecificationRelationship!
-  resourceTypeFk: ResourceType!
+  resourceSpecificationRelationship: ResourceSpecificationRelationship!
+  resourceType: ResourceType!
 }
 
 input AddResourceSRItemsInput {  
   name: String!
-  resourceSpecificationRelationshipFk: ID!
-  resourceTypeFk: ID!
+  resourceSpecificationRelationship: ID!
+  resourceType: ID!
 }
 
 input EditResourceSRItemsInput {
   id: ID!
   name: String!
-  resourceSpecificationRelationshipFk: ID
-  resourceTypeFk: ID
+  resourceSpecificationRelationship: ID
+  resourceType: ID
 }
 
 enum ResourceSRItemsFilterType {

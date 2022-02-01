@@ -16,7 +16,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
@@ -31,8 +30,7 @@ type ResourceTypeClassQuery struct {
 	unique     []string
 	predicates []predicate.ResourceTypeClass
 	// eager-loading edges.
-	withResourceTypeFk *ResourceTypeQuery
-	withPolicies       *PermissionsPolicyQuery
+	withResourceTypeClass *ResourceTypeQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -62,8 +60,8 @@ func (rtcq *ResourceTypeClassQuery) Order(o ...OrderFunc) *ResourceTypeClassQuer
 	return rtcq
 }
 
-// QueryResourceTypeFk chains the current query on the resource_type_fk edge.
-func (rtcq *ResourceTypeClassQuery) QueryResourceTypeFk() *ResourceTypeQuery {
+// QueryResourceTypeClass chains the current query on the resource_type_class edge.
+func (rtcq *ResourceTypeClassQuery) QueryResourceTypeClass() *ResourceTypeQuery {
 	query := &ResourceTypeQuery{config: rtcq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rtcq.prepareQuery(ctx); err != nil {
@@ -76,29 +74,7 @@ func (rtcq *ResourceTypeClassQuery) QueryResourceTypeFk() *ResourceTypeQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetypeclass.Table, resourcetypeclass.FieldID, selector),
 			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypeclass.ResourceTypeFkTable, resourcetypeclass.ResourceTypeFkColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(rtcq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryPolicies chains the current query on the policies edge.
-func (rtcq *ResourceTypeClassQuery) QueryPolicies() *PermissionsPolicyQuery {
-	query := &PermissionsPolicyQuery{config: rtcq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := rtcq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := rtcq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetypeclass.Table, resourcetypeclass.FieldID, selector),
-			sqlgraph.To(permissionspolicy.Table, permissionspolicy.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypeclass.PoliciesTable, resourcetypeclass.PoliciesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypeclass.ResourceTypeClassTable, resourcetypeclass.ResourceTypeClassColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rtcq.driver.Dialect(), step)
 		return fromU, nil
@@ -276,39 +252,27 @@ func (rtcq *ResourceTypeClassQuery) Clone() *ResourceTypeClassQuery {
 		return nil
 	}
 	return &ResourceTypeClassQuery{
-		config:             rtcq.config,
-		limit:              rtcq.limit,
-		offset:             rtcq.offset,
-		order:              append([]OrderFunc{}, rtcq.order...),
-		unique:             append([]string{}, rtcq.unique...),
-		predicates:         append([]predicate.ResourceTypeClass{}, rtcq.predicates...),
-		withResourceTypeFk: rtcq.withResourceTypeFk.Clone(),
-		withPolicies:       rtcq.withPolicies.Clone(),
+		config:                rtcq.config,
+		limit:                 rtcq.limit,
+		offset:                rtcq.offset,
+		order:                 append([]OrderFunc{}, rtcq.order...),
+		unique:                append([]string{}, rtcq.unique...),
+		predicates:            append([]predicate.ResourceTypeClass{}, rtcq.predicates...),
+		withResourceTypeClass: rtcq.withResourceTypeClass.Clone(),
 		// clone intermediate query.
 		sql:  rtcq.sql.Clone(),
 		path: rtcq.path,
 	}
 }
 
-//  WithResourceTypeFk tells the query-builder to eager-loads the nodes that are connected to
-// the "resource_type_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (rtcq *ResourceTypeClassQuery) WithResourceTypeFk(opts ...func(*ResourceTypeQuery)) *ResourceTypeClassQuery {
+//  WithResourceTypeClass tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_type_class" edge. The optional arguments used to configure the query builder of the edge.
+func (rtcq *ResourceTypeClassQuery) WithResourceTypeClass(opts ...func(*ResourceTypeQuery)) *ResourceTypeClassQuery {
 	query := &ResourceTypeQuery{config: rtcq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rtcq.withResourceTypeFk = query
-	return rtcq
-}
-
-//  WithPolicies tells the query-builder to eager-loads the nodes that are connected to
-// the "policies" edge. The optional arguments used to configure the query builder of the edge.
-func (rtcq *ResourceTypeClassQuery) WithPolicies(opts ...func(*PermissionsPolicyQuery)) *ResourceTypeClassQuery {
-	query := &PermissionsPolicyQuery{config: rtcq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	rtcq.withPolicies = query
+	rtcq.withResourceTypeClass = query
 	return rtcq
 }
 
@@ -381,9 +345,8 @@ func (rtcq *ResourceTypeClassQuery) sqlAll(ctx context.Context) ([]*ResourceType
 	var (
 		nodes       = []*ResourceTypeClass{}
 		_spec       = rtcq.querySpec()
-		loadedTypes = [2]bool{
-			rtcq.withResourceTypeFk != nil,
-			rtcq.withPolicies != nil,
+		loadedTypes = [1]bool{
+			rtcq.withResourceTypeClass != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -407,61 +370,32 @@ func (rtcq *ResourceTypeClassQuery) sqlAll(ctx context.Context) ([]*ResourceType
 		return nodes, nil
 	}
 
-	if query := rtcq.withResourceTypeFk; query != nil {
+	if query := rtcq.withResourceTypeClass; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*ResourceTypeClass)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceTypeFk = []*ResourceType{}
+			nodes[i].Edges.ResourceTypeClass = []*ResourceType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ResourceType(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcetypeclass.ResourceTypeFkColumn, fks...))
+			s.Where(sql.InValues(resourcetypeclass.ResourceTypeClassColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.resource_type_class_resource_type_fk
+			fk := n.resource_type_class_resource_type_class
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_type_class_resource_type_fk" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "resource_type_class_resource_type_class" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_class_resource_type_fk" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_class_resource_type_class" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.ResourceTypeFk = append(node.Edges.ResourceTypeFk, n)
-		}
-	}
-
-	if query := rtcq.withPolicies; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ResourceTypeClass)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Policies = []*PermissionsPolicy{}
-		}
-		query.withFKs = true
-		query.Where(predicate.PermissionsPolicy(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcetypeclass.PoliciesColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.resource_type_class_policies
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_type_class_policies" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_class_policies" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.Policies = append(node.Edges.Policies, n)
+			node.Edges.ResourceTypeClass = append(node.Edges.ResourceTypeClass, n)
 		}
 	}
 

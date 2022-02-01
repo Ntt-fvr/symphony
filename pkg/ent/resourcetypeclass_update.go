@@ -13,7 +13,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
@@ -38,34 +37,19 @@ func (rtcu *ResourceTypeClassUpdate) SetName(s string) *ResourceTypeClassUpdate 
 	return rtcu
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (rtcu *ResourceTypeClassUpdate) AddResourceTypeFkIDs(ids ...int) *ResourceTypeClassUpdate {
-	rtcu.mutation.AddResourceTypeFkIDs(ids...)
+// AddResourceTypeClasIDs adds the resource_type_class edge to ResourceType by ids.
+func (rtcu *ResourceTypeClassUpdate) AddResourceTypeClasIDs(ids ...int) *ResourceTypeClassUpdate {
+	rtcu.mutation.AddResourceTypeClasIDs(ids...)
 	return rtcu
 }
 
-// AddResourceTypeFk adds the resource_type_fk edges to ResourceType.
-func (rtcu *ResourceTypeClassUpdate) AddResourceTypeFk(r ...*ResourceType) *ResourceTypeClassUpdate {
+// AddResourceTypeClass adds the resource_type_class edges to ResourceType.
+func (rtcu *ResourceTypeClassUpdate) AddResourceTypeClass(r ...*ResourceType) *ResourceTypeClassUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtcu.AddResourceTypeFkIDs(ids...)
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (rtcu *ResourceTypeClassUpdate) AddPolicyIDs(ids ...int) *ResourceTypeClassUpdate {
-	rtcu.mutation.AddPolicyIDs(ids...)
-	return rtcu
-}
-
-// AddPolicies adds the policies edges to PermissionsPolicy.
-func (rtcu *ResourceTypeClassUpdate) AddPolicies(p ...*PermissionsPolicy) *ResourceTypeClassUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtcu.AddPolicyIDs(ids...)
+	return rtcu.AddResourceTypeClasIDs(ids...)
 }
 
 // Mutation returns the ResourceTypeClassMutation object of the builder.
@@ -73,46 +57,25 @@ func (rtcu *ResourceTypeClassUpdate) Mutation() *ResourceTypeClassMutation {
 	return rtcu.mutation
 }
 
-// ClearResourceTypeFk clears all "resource_type_fk" edges to type ResourceType.
-func (rtcu *ResourceTypeClassUpdate) ClearResourceTypeFk() *ResourceTypeClassUpdate {
-	rtcu.mutation.ClearResourceTypeFk()
+// ClearResourceTypeClass clears all "resource_type_class" edges to type ResourceType.
+func (rtcu *ResourceTypeClassUpdate) ClearResourceTypeClass() *ResourceTypeClassUpdate {
+	rtcu.mutation.ClearResourceTypeClass()
 	return rtcu
 }
 
-// RemoveResourceTypeFkIDs removes the resource_type_fk edge to ResourceType by ids.
-func (rtcu *ResourceTypeClassUpdate) RemoveResourceTypeFkIDs(ids ...int) *ResourceTypeClassUpdate {
-	rtcu.mutation.RemoveResourceTypeFkIDs(ids...)
+// RemoveResourceTypeClasIDs removes the resource_type_class edge to ResourceType by ids.
+func (rtcu *ResourceTypeClassUpdate) RemoveResourceTypeClasIDs(ids ...int) *ResourceTypeClassUpdate {
+	rtcu.mutation.RemoveResourceTypeClasIDs(ids...)
 	return rtcu
 }
 
-// RemoveResourceTypeFk removes resource_type_fk edges to ResourceType.
-func (rtcu *ResourceTypeClassUpdate) RemoveResourceTypeFk(r ...*ResourceType) *ResourceTypeClassUpdate {
+// RemoveResourceTypeClass removes resource_type_class edges to ResourceType.
+func (rtcu *ResourceTypeClassUpdate) RemoveResourceTypeClass(r ...*ResourceType) *ResourceTypeClassUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtcu.RemoveResourceTypeFkIDs(ids...)
-}
-
-// ClearPolicies clears all "policies" edges to type PermissionsPolicy.
-func (rtcu *ResourceTypeClassUpdate) ClearPolicies() *ResourceTypeClassUpdate {
-	rtcu.mutation.ClearPolicies()
-	return rtcu
-}
-
-// RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
-func (rtcu *ResourceTypeClassUpdate) RemovePolicyIDs(ids ...int) *ResourceTypeClassUpdate {
-	rtcu.mutation.RemovePolicyIDs(ids...)
-	return rtcu
-}
-
-// RemovePolicies removes policies edges to PermissionsPolicy.
-func (rtcu *ResourceTypeClassUpdate) RemovePolicies(p ...*PermissionsPolicy) *ResourceTypeClassUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtcu.RemovePolicyIDs(ids...)
+	return rtcu.RemoveResourceTypeClasIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -223,12 +186,12 @@ func (rtcu *ResourceTypeClassUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: resourcetypeclass.FieldName,
 		})
 	}
-	if rtcu.mutation.ResourceTypeFkCleared() {
+	if rtcu.mutation.ResourceTypeClassCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypeclass.ResourceTypeFkTable,
-			Columns: []string{resourcetypeclass.ResourceTypeFkColumn},
+			Table:   resourcetypeclass.ResourceTypeClassTable,
+			Columns: []string{resourcetypeclass.ResourceTypeClassColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -239,31 +202,12 @@ func (rtcu *ResourceTypeClassUpdate) sqlSave(ctx context.Context) (n int, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtcu.mutation.RemovedResourceTypeFkIDs(); len(nodes) > 0 && !rtcu.mutation.ResourceTypeFkCleared() {
+	if nodes := rtcu.mutation.RemovedResourceTypeClassIDs(); len(nodes) > 0 && !rtcu.mutation.ResourceTypeClassCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypeclass.ResourceTypeFkTable,
-			Columns: []string{resourcetypeclass.ResourceTypeFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtcu.mutation.ResourceTypeFkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypeclass.ResourceTypeFkTable,
-			Columns: []string{resourcetypeclass.ResourceTypeFkColumn},
+			Table:   resourcetypeclass.ResourceTypeClassTable,
+			Columns: []string{resourcetypeclass.ResourceTypeClassColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -275,54 +219,19 @@ func (rtcu *ResourceTypeClassUpdate) sqlSave(ctx context.Context) (n int, err er
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rtcu.mutation.PoliciesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypeclass.PoliciesTable,
-			Columns: []string{resourcetypeclass.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtcu.mutation.RemovedPoliciesIDs(); len(nodes) > 0 && !rtcu.mutation.PoliciesCleared() {
+	if nodes := rtcu.mutation.ResourceTypeClassIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypeclass.PoliciesTable,
-			Columns: []string{resourcetypeclass.PoliciesColumn},
+			Table:   resourcetypeclass.ResourceTypeClassTable,
+			Columns: []string{resourcetypeclass.ResourceTypeClassColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtcu.mutation.PoliciesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypeclass.PoliciesTable,
-			Columns: []string{resourcetypeclass.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
+					Column: resourcetype.FieldID,
 				},
 			},
 		}
@@ -355,34 +264,19 @@ func (rtcuo *ResourceTypeClassUpdateOne) SetName(s string) *ResourceTypeClassUpd
 	return rtcuo
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (rtcuo *ResourceTypeClassUpdateOne) AddResourceTypeFkIDs(ids ...int) *ResourceTypeClassUpdateOne {
-	rtcuo.mutation.AddResourceTypeFkIDs(ids...)
+// AddResourceTypeClasIDs adds the resource_type_class edge to ResourceType by ids.
+func (rtcuo *ResourceTypeClassUpdateOne) AddResourceTypeClasIDs(ids ...int) *ResourceTypeClassUpdateOne {
+	rtcuo.mutation.AddResourceTypeClasIDs(ids...)
 	return rtcuo
 }
 
-// AddResourceTypeFk adds the resource_type_fk edges to ResourceType.
-func (rtcuo *ResourceTypeClassUpdateOne) AddResourceTypeFk(r ...*ResourceType) *ResourceTypeClassUpdateOne {
+// AddResourceTypeClass adds the resource_type_class edges to ResourceType.
+func (rtcuo *ResourceTypeClassUpdateOne) AddResourceTypeClass(r ...*ResourceType) *ResourceTypeClassUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtcuo.AddResourceTypeFkIDs(ids...)
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (rtcuo *ResourceTypeClassUpdateOne) AddPolicyIDs(ids ...int) *ResourceTypeClassUpdateOne {
-	rtcuo.mutation.AddPolicyIDs(ids...)
-	return rtcuo
-}
-
-// AddPolicies adds the policies edges to PermissionsPolicy.
-func (rtcuo *ResourceTypeClassUpdateOne) AddPolicies(p ...*PermissionsPolicy) *ResourceTypeClassUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtcuo.AddPolicyIDs(ids...)
+	return rtcuo.AddResourceTypeClasIDs(ids...)
 }
 
 // Mutation returns the ResourceTypeClassMutation object of the builder.
@@ -390,46 +284,25 @@ func (rtcuo *ResourceTypeClassUpdateOne) Mutation() *ResourceTypeClassMutation {
 	return rtcuo.mutation
 }
 
-// ClearResourceTypeFk clears all "resource_type_fk" edges to type ResourceType.
-func (rtcuo *ResourceTypeClassUpdateOne) ClearResourceTypeFk() *ResourceTypeClassUpdateOne {
-	rtcuo.mutation.ClearResourceTypeFk()
+// ClearResourceTypeClass clears all "resource_type_class" edges to type ResourceType.
+func (rtcuo *ResourceTypeClassUpdateOne) ClearResourceTypeClass() *ResourceTypeClassUpdateOne {
+	rtcuo.mutation.ClearResourceTypeClass()
 	return rtcuo
 }
 
-// RemoveResourceTypeFkIDs removes the resource_type_fk edge to ResourceType by ids.
-func (rtcuo *ResourceTypeClassUpdateOne) RemoveResourceTypeFkIDs(ids ...int) *ResourceTypeClassUpdateOne {
-	rtcuo.mutation.RemoveResourceTypeFkIDs(ids...)
+// RemoveResourceTypeClasIDs removes the resource_type_class edge to ResourceType by ids.
+func (rtcuo *ResourceTypeClassUpdateOne) RemoveResourceTypeClasIDs(ids ...int) *ResourceTypeClassUpdateOne {
+	rtcuo.mutation.RemoveResourceTypeClasIDs(ids...)
 	return rtcuo
 }
 
-// RemoveResourceTypeFk removes resource_type_fk edges to ResourceType.
-func (rtcuo *ResourceTypeClassUpdateOne) RemoveResourceTypeFk(r ...*ResourceType) *ResourceTypeClassUpdateOne {
+// RemoveResourceTypeClass removes resource_type_class edges to ResourceType.
+func (rtcuo *ResourceTypeClassUpdateOne) RemoveResourceTypeClass(r ...*ResourceType) *ResourceTypeClassUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtcuo.RemoveResourceTypeFkIDs(ids...)
-}
-
-// ClearPolicies clears all "policies" edges to type PermissionsPolicy.
-func (rtcuo *ResourceTypeClassUpdateOne) ClearPolicies() *ResourceTypeClassUpdateOne {
-	rtcuo.mutation.ClearPolicies()
-	return rtcuo
-}
-
-// RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
-func (rtcuo *ResourceTypeClassUpdateOne) RemovePolicyIDs(ids ...int) *ResourceTypeClassUpdateOne {
-	rtcuo.mutation.RemovePolicyIDs(ids...)
-	return rtcuo
-}
-
-// RemovePolicies removes policies edges to PermissionsPolicy.
-func (rtcuo *ResourceTypeClassUpdateOne) RemovePolicies(p ...*PermissionsPolicy) *ResourceTypeClassUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtcuo.RemovePolicyIDs(ids...)
+	return rtcuo.RemoveResourceTypeClasIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -538,12 +411,12 @@ func (rtcuo *ResourceTypeClassUpdateOne) sqlSave(ctx context.Context) (_node *Re
 			Column: resourcetypeclass.FieldName,
 		})
 	}
-	if rtcuo.mutation.ResourceTypeFkCleared() {
+	if rtcuo.mutation.ResourceTypeClassCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypeclass.ResourceTypeFkTable,
-			Columns: []string{resourcetypeclass.ResourceTypeFkColumn},
+			Table:   resourcetypeclass.ResourceTypeClassTable,
+			Columns: []string{resourcetypeclass.ResourceTypeClassColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -554,31 +427,12 @@ func (rtcuo *ResourceTypeClassUpdateOne) sqlSave(ctx context.Context) (_node *Re
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtcuo.mutation.RemovedResourceTypeFkIDs(); len(nodes) > 0 && !rtcuo.mutation.ResourceTypeFkCleared() {
+	if nodes := rtcuo.mutation.RemovedResourceTypeClassIDs(); len(nodes) > 0 && !rtcuo.mutation.ResourceTypeClassCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypeclass.ResourceTypeFkTable,
-			Columns: []string{resourcetypeclass.ResourceTypeFkColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtcuo.mutation.ResourceTypeFkIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypeclass.ResourceTypeFkTable,
-			Columns: []string{resourcetypeclass.ResourceTypeFkColumn},
+			Table:   resourcetypeclass.ResourceTypeClassTable,
+			Columns: []string{resourcetypeclass.ResourceTypeClassColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -590,54 +444,19 @@ func (rtcuo *ResourceTypeClassUpdateOne) sqlSave(ctx context.Context) (_node *Re
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rtcuo.mutation.PoliciesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypeclass.PoliciesTable,
-			Columns: []string{resourcetypeclass.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rtcuo.mutation.RemovedPoliciesIDs(); len(nodes) > 0 && !rtcuo.mutation.PoliciesCleared() {
+	if nodes := rtcuo.mutation.ResourceTypeClassIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypeclass.PoliciesTable,
-			Columns: []string{resourcetypeclass.PoliciesColumn},
+			Table:   resourcetypeclass.ResourceTypeClassTable,
+			Columns: []string{resourcetypeclass.ResourceTypeClassColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtcuo.mutation.PoliciesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypeclass.PoliciesTable,
-			Columns: []string{resourcetypeclass.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
+					Column: resourcetype.FieldID,
 				},
 			},
 		}

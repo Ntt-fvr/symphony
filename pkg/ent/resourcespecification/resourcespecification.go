@@ -26,8 +26,8 @@ const (
 
 	// EdgeResourcetype holds the string denoting the resourcetype edge name in mutations.
 	EdgeResourcetype = "resourcetype"
-	// EdgePropertyTypeFk holds the string denoting the property_type_fk edge name in mutations.
-	EdgePropertyTypeFk = "property_type_fk"
+	// EdgePropertyType holds the string denoting the property_type edge name in mutations.
+	EdgePropertyType = "property_type"
 	// EdgeResourceSpecification holds the string denoting the resource_specification edge name in mutations.
 	EdgeResourceSpecification = "resource_specification"
 
@@ -39,14 +39,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "resourcetype" package.
 	ResourcetypeInverseTable = "resource_types"
 	// ResourcetypeColumn is the table column denoting the resourcetype relation/edge.
-	ResourcetypeColumn = "resource_type_resource_specification_fk"
-	// PropertyTypeFkTable is the table the holds the property_type_fk relation/edge.
-	PropertyTypeFkTable = "property_types"
-	// PropertyTypeFkInverseTable is the table name for the PropertyType entity.
+	ResourcetypeColumn = "resource_type_resource_specification"
+	// PropertyTypeTable is the table the holds the property_type relation/edge.
+	PropertyTypeTable = "property_types"
+	// PropertyTypeInverseTable is the table name for the PropertyType entity.
 	// It exists in this package in order to avoid circular dependency with the "propertytype" package.
-	PropertyTypeFkInverseTable = "property_types"
-	// PropertyTypeFkColumn is the table column denoting the property_type_fk relation/edge.
-	PropertyTypeFkColumn = "resource_specification_property_type_fk"
+	PropertyTypeInverseTable = "property_types"
+	// PropertyTypeColumn is the table column denoting the property_type relation/edge.
+	PropertyTypeColumn = "resource_specification_property_type"
 	// ResourceSpecificationTable is the table the holds the resource_specification relation/edge.
 	ResourceSpecificationTable = "resource_specification_relationships"
 	// ResourceSpecificationInverseTable is the table name for the ResourceSpecificationRelationship entity.
@@ -66,7 +66,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceSpecification type.
 var ForeignKeys = []string{
-	"resource_type_resource_specification_fk",
+	"resource_type_resource_specification",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

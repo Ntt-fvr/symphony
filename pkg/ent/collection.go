@@ -1339,8 +1339,8 @@ func (rs *ResourceSpecificationQuery) CollectFields(ctx context.Context, satisfi
 func (rs *ResourceSpecificationQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceSpecificationQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "PROPERTYTYPE":
-			rs = rs.WithPropertyTypeFk(func(query *PropertyTypeQuery) {
+		case "propertytype":
+			rs = rs.WithPropertyType(func(query *PropertyTypeQuery) {
 				query.collectField(ctx, field)
 			})
 		case "resourcespecification":
@@ -1392,7 +1392,7 @@ func (rt *ResourceTypeQuery) collectField(ctx *graphql.OperationContext, field g
 				query.collectField(ctx, field)
 			})
 		case "resourcespecification":
-			rt = rt.WithResourceSpecificationFk(func(query *ResourceSpecificationQuery) {
+			rt = rt.WithResourceSpecification(func(query *ResourceSpecificationQuery) {
 				query.collectField(ctx, field)
 			})
 		case "resourcetype":
@@ -1416,7 +1416,7 @@ func (rtbt *ResourceTypeBaseTypeQuery) collectField(ctx *graphql.OperationContex
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "resourcetype":
-			rtbt = rtbt.WithResourceTypeFk(func(query *ResourceTypeQuery) {
+			rtbt = rtbt.WithResourceBaseType(func(query *ResourceTypeQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -1436,7 +1436,7 @@ func (rtc *ResourceTypeClassQuery) collectField(ctx *graphql.OperationContext, f
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "resourcetype":
-			rtc = rtc.WithResourceTypeFk(func(query *ResourceTypeQuery) {
+			rtc = rtc.WithResourceTypeClass(func(query *ResourceTypeQuery) {
 				query.collectField(ctx, field)
 			})
 		}

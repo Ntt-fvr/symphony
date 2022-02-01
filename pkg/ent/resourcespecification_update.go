@@ -58,19 +58,19 @@ func (rsu *ResourceSpecificationUpdate) SetResourcetype(r *ResourceType) *Resour
 	return rsu.SetResourcetypeID(r.ID)
 }
 
-// AddPropertyTypeFkIDs adds the property_type_fk edge to PropertyType by ids.
-func (rsu *ResourceSpecificationUpdate) AddPropertyTypeFkIDs(ids ...int) *ResourceSpecificationUpdate {
-	rsu.mutation.AddPropertyTypeFkIDs(ids...)
+// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
+func (rsu *ResourceSpecificationUpdate) AddPropertyTypeIDs(ids ...int) *ResourceSpecificationUpdate {
+	rsu.mutation.AddPropertyTypeIDs(ids...)
 	return rsu
 }
 
-// AddPropertyTypeFk adds the property_type_fk edges to PropertyType.
-func (rsu *ResourceSpecificationUpdate) AddPropertyTypeFk(p ...*PropertyType) *ResourceSpecificationUpdate {
+// AddPropertyType adds the property_type edges to PropertyType.
+func (rsu *ResourceSpecificationUpdate) AddPropertyType(p ...*PropertyType) *ResourceSpecificationUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return rsu.AddPropertyTypeFkIDs(ids...)
+	return rsu.AddPropertyTypeIDs(ids...)
 }
 
 // AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecificationRelationship by ids.
@@ -99,25 +99,25 @@ func (rsu *ResourceSpecificationUpdate) ClearResourcetype() *ResourceSpecificati
 	return rsu
 }
 
-// ClearPropertyTypeFk clears all "property_type_fk" edges to type PropertyType.
-func (rsu *ResourceSpecificationUpdate) ClearPropertyTypeFk() *ResourceSpecificationUpdate {
-	rsu.mutation.ClearPropertyTypeFk()
+// ClearPropertyType clears all "property_type" edges to type PropertyType.
+func (rsu *ResourceSpecificationUpdate) ClearPropertyType() *ResourceSpecificationUpdate {
+	rsu.mutation.ClearPropertyType()
 	return rsu
 }
 
-// RemovePropertyTypeFkIDs removes the property_type_fk edge to PropertyType by ids.
-func (rsu *ResourceSpecificationUpdate) RemovePropertyTypeFkIDs(ids ...int) *ResourceSpecificationUpdate {
-	rsu.mutation.RemovePropertyTypeFkIDs(ids...)
+// RemovePropertyTypeIDs removes the property_type edge to PropertyType by ids.
+func (rsu *ResourceSpecificationUpdate) RemovePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdate {
+	rsu.mutation.RemovePropertyTypeIDs(ids...)
 	return rsu
 }
 
-// RemovePropertyTypeFk removes property_type_fk edges to PropertyType.
-func (rsu *ResourceSpecificationUpdate) RemovePropertyTypeFk(p ...*PropertyType) *ResourceSpecificationUpdate {
+// RemovePropertyType removes property_type edges to PropertyType.
+func (rsu *ResourceSpecificationUpdate) RemovePropertyType(p ...*PropertyType) *ResourceSpecificationUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return rsu.RemovePropertyTypeFkIDs(ids...)
+	return rsu.RemovePropertyTypeIDs(ids...)
 }
 
 // ClearResourceSpecification clears all "resource_specification" edges to type ResourceSpecificationRelationship.
@@ -284,12 +284,12 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rsu.mutation.PropertyTypeFkCleared() {
+	if rsu.mutation.PropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeFkTable,
-			Columns: []string{resourcespecification.PropertyTypeFkColumn},
+			Table:   resourcespecification.PropertyTypeTable,
+			Columns: []string{resourcespecification.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -300,12 +300,12 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsu.mutation.RemovedPropertyTypeFkIDs(); len(nodes) > 0 && !rsu.mutation.PropertyTypeFkCleared() {
+	if nodes := rsu.mutation.RemovedPropertyTypeIDs(); len(nodes) > 0 && !rsu.mutation.PropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeFkTable,
-			Columns: []string{resourcespecification.PropertyTypeFkColumn},
+			Table:   resourcespecification.PropertyTypeTable,
+			Columns: []string{resourcespecification.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -319,12 +319,12 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsu.mutation.PropertyTypeFkIDs(); len(nodes) > 0 {
+	if nodes := rsu.mutation.PropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeFkTable,
-			Columns: []string{resourcespecification.PropertyTypeFkColumn},
+			Table:   resourcespecification.PropertyTypeTable,
+			Columns: []string{resourcespecification.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -435,19 +435,19 @@ func (rsuo *ResourceSpecificationUpdateOne) SetResourcetype(r *ResourceType) *Re
 	return rsuo.SetResourcetypeID(r.ID)
 }
 
-// AddPropertyTypeFkIDs adds the property_type_fk edge to PropertyType by ids.
-func (rsuo *ResourceSpecificationUpdateOne) AddPropertyTypeFkIDs(ids ...int) *ResourceSpecificationUpdateOne {
-	rsuo.mutation.AddPropertyTypeFkIDs(ids...)
+// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
+func (rsuo *ResourceSpecificationUpdateOne) AddPropertyTypeIDs(ids ...int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.AddPropertyTypeIDs(ids...)
 	return rsuo
 }
 
-// AddPropertyTypeFk adds the property_type_fk edges to PropertyType.
-func (rsuo *ResourceSpecificationUpdateOne) AddPropertyTypeFk(p ...*PropertyType) *ResourceSpecificationUpdateOne {
+// AddPropertyType adds the property_type edges to PropertyType.
+func (rsuo *ResourceSpecificationUpdateOne) AddPropertyType(p ...*PropertyType) *ResourceSpecificationUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return rsuo.AddPropertyTypeFkIDs(ids...)
+	return rsuo.AddPropertyTypeIDs(ids...)
 }
 
 // AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecificationRelationship by ids.
@@ -476,25 +476,25 @@ func (rsuo *ResourceSpecificationUpdateOne) ClearResourcetype() *ResourceSpecifi
 	return rsuo
 }
 
-// ClearPropertyTypeFk clears all "property_type_fk" edges to type PropertyType.
-func (rsuo *ResourceSpecificationUpdateOne) ClearPropertyTypeFk() *ResourceSpecificationUpdateOne {
-	rsuo.mutation.ClearPropertyTypeFk()
+// ClearPropertyType clears all "property_type" edges to type PropertyType.
+func (rsuo *ResourceSpecificationUpdateOne) ClearPropertyType() *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ClearPropertyType()
 	return rsuo
 }
 
-// RemovePropertyTypeFkIDs removes the property_type_fk edge to PropertyType by ids.
-func (rsuo *ResourceSpecificationUpdateOne) RemovePropertyTypeFkIDs(ids ...int) *ResourceSpecificationUpdateOne {
-	rsuo.mutation.RemovePropertyTypeFkIDs(ids...)
+// RemovePropertyTypeIDs removes the property_type edge to PropertyType by ids.
+func (rsuo *ResourceSpecificationUpdateOne) RemovePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.RemovePropertyTypeIDs(ids...)
 	return rsuo
 }
 
-// RemovePropertyTypeFk removes property_type_fk edges to PropertyType.
-func (rsuo *ResourceSpecificationUpdateOne) RemovePropertyTypeFk(p ...*PropertyType) *ResourceSpecificationUpdateOne {
+// RemovePropertyType removes property_type edges to PropertyType.
+func (rsuo *ResourceSpecificationUpdateOne) RemovePropertyType(p ...*PropertyType) *ResourceSpecificationUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return rsuo.RemovePropertyTypeFkIDs(ids...)
+	return rsuo.RemovePropertyTypeIDs(ids...)
 }
 
 // ClearResourceSpecification clears all "resource_specification" edges to type ResourceSpecificationRelationship.
@@ -659,12 +659,12 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rsuo.mutation.PropertyTypeFkCleared() {
+	if rsuo.mutation.PropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeFkTable,
-			Columns: []string{resourcespecification.PropertyTypeFkColumn},
+			Table:   resourcespecification.PropertyTypeTable,
+			Columns: []string{resourcespecification.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -675,12 +675,12 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsuo.mutation.RemovedPropertyTypeFkIDs(); len(nodes) > 0 && !rsuo.mutation.PropertyTypeFkCleared() {
+	if nodes := rsuo.mutation.RemovedPropertyTypeIDs(); len(nodes) > 0 && !rsuo.mutation.PropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeFkTable,
-			Columns: []string{resourcespecification.PropertyTypeFkColumn},
+			Table:   resourcespecification.PropertyTypeTable,
+			Columns: []string{resourcespecification.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -694,12 +694,12 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsuo.mutation.PropertyTypeFkIDs(); len(nodes) > 0 {
+	if nodes := rsuo.mutation.PropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeFkTable,
-			Columns: []string{resourcespecification.PropertyTypeFkColumn},
+			Table:   resourcespecification.PropertyTypeTable,
+			Columns: []string{resourcespecification.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

@@ -29,16 +29,16 @@ type ResourceSpecification struct {
 	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceSpecificationQuery when eager-loading is set.
-	Edges                                   ResourceSpecificationEdges `json:"edges"`
-	resource_type_resource_specification_fk *int
+	Edges                                ResourceSpecificationEdges `json:"edges"`
+	resource_type_resource_specification *int
 }
 
 // ResourceSpecificationEdges holds the relations/edges for other nodes in the graph.
 type ResourceSpecificationEdges struct {
 	// Resourcetype holds the value of the resourcetype edge.
 	Resourcetype *ResourceType
-	// PropertyTypeFk holds the value of the property_type_fk edge.
-	PropertyTypeFk []*PropertyType
+	// PropertyType holds the value of the property_type edge.
+	PropertyType []*PropertyType
 	// ResourceSpecification holds the value of the resource_specification edge.
 	ResourceSpecification []*ResourceSpecificationRelationship
 	// loadedTypes holds the information for reporting if a
@@ -60,13 +60,13 @@ func (e ResourceSpecificationEdges) ResourcetypeOrErr() (*ResourceType, error) {
 	return nil, &NotLoadedError{edge: "resourcetype"}
 }
 
-// PropertyTypeFkOrErr returns the PropertyTypeFk value or an error if the edge
+// PropertyTypeOrErr returns the PropertyType value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceSpecificationEdges) PropertyTypeFkOrErr() ([]*PropertyType, error) {
+func (e ResourceSpecificationEdges) PropertyTypeOrErr() ([]*PropertyType, error) {
 	if e.loadedTypes[1] {
-		return e.PropertyTypeFk, nil
+		return e.PropertyType, nil
 	}
-	return nil, &NotLoadedError{edge: "property_type_fk"}
+	return nil, &NotLoadedError{edge: "property_type"}
 }
 
 // ResourceSpecificationOrErr returns the ResourceSpecification value or an error if the edge
@@ -91,7 +91,7 @@ func (*ResourceSpecification) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*ResourceSpecification) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // resource_type_resource_specification_fk
+		&sql.NullInt64{}, // resource_type_resource_specification
 	}
 }
 
@@ -125,10 +125,10 @@ func (rs *ResourceSpecification) assignValues(values ...interface{}) error {
 	values = values[3:]
 	if len(values) == len(resourcespecification.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_specification_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_specification", value)
 		} else if value.Valid {
-			rs.resource_type_resource_specification_fk = new(int)
-			*rs.resource_type_resource_specification_fk = int(value.Int64)
+			rs.resource_type_resource_specification = new(int)
+			*rs.resource_type_resource_specification = int(value.Int64)
 		}
 	}
 	return nil
@@ -139,9 +139,9 @@ func (rs *ResourceSpecification) QueryResourcetype() *ResourceTypeQuery {
 	return (&ResourceSpecificationClient{config: rs.config}).QueryResourcetype(rs)
 }
 
-// QueryPropertyTypeFk queries the property_type_fk edge of the ResourceSpecification.
-func (rs *ResourceSpecification) QueryPropertyTypeFk() *PropertyTypeQuery {
-	return (&ResourceSpecificationClient{config: rs.config}).QueryPropertyTypeFk(rs)
+// QueryPropertyType queries the property_type edge of the ResourceSpecification.
+func (rs *ResourceSpecification) QueryPropertyType() *PropertyTypeQuery {
+	return (&ResourceSpecificationClient{config: rs.config}).QueryPropertyType(rs)
 }
 
 // QueryResourceSpecification queries the resource_specification edge of the ResourceSpecification.

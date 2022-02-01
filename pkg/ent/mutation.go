@@ -53896,7 +53896,6 @@ type ResourceRelationshipMutation struct {
 	id                                *int
 	create_time                       *time.Time
 	update_time                       *time.Time
-	name                              *string
 	_ResourceRelationshipType         *resourcerelationship.ResourceRelationshipType
 	_ResourceRelationshipMultiplicity *resourcerelationship.ResourceRelationshipMultiplicity
 	clearedFields                     map[string]struct{}
@@ -54062,43 +54061,6 @@ func (m *ResourceRelationshipMutation) OldUpdateTime(ctx context.Context) (v tim
 // ResetUpdateTime reset all changes of the "update_time" field.
 func (m *ResourceRelationshipMutation) ResetUpdateTime() {
 	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *ResourceRelationshipMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *ResourceRelationshipMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the ResourceRelationship.
-// If the ResourceRelationship object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceRelationshipMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *ResourceRelationshipMutation) ResetName() {
-	m.name = nil
 }
 
 // SetResourceRelationshipType sets the ResourceRelationshipType field.
@@ -54306,15 +54268,12 @@ func (m *ResourceRelationshipMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ResourceRelationshipMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 4)
 	if m.create_time != nil {
 		fields = append(fields, resourcerelationship.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, resourcerelationship.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, resourcerelationship.FieldName)
 	}
 	if m._ResourceRelationshipType != nil {
 		fields = append(fields, resourcerelationship.FieldResourceRelationshipType)
@@ -54334,8 +54293,6 @@ func (m *ResourceRelationshipMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case resourcerelationship.FieldUpdateTime:
 		return m.UpdateTime()
-	case resourcerelationship.FieldName:
-		return m.Name()
 	case resourcerelationship.FieldResourceRelationshipType:
 		return m.ResourceRelationshipType()
 	case resourcerelationship.FieldResourceRelationshipMultiplicity:
@@ -54353,8 +54310,6 @@ func (m *ResourceRelationshipMutation) OldField(ctx context.Context, name string
 		return m.OldCreateTime(ctx)
 	case resourcerelationship.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case resourcerelationship.FieldName:
-		return m.OldName(ctx)
 	case resourcerelationship.FieldResourceRelationshipType:
 		return m.OldResourceRelationshipType(ctx)
 	case resourcerelationship.FieldResourceRelationshipMultiplicity:
@@ -54381,13 +54336,6 @@ func (m *ResourceRelationshipMutation) SetField(name string, value ent.Value) er
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateTime(v)
-		return nil
-	case resourcerelationship.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
 		return nil
 	case resourcerelationship.FieldResourceRelationshipType:
 		v, ok := value.(resourcerelationship.ResourceRelationshipType)
@@ -54458,9 +54406,6 @@ func (m *ResourceRelationshipMutation) ResetField(name string) error {
 		return nil
 	case resourcerelationship.FieldUpdateTime:
 		m.ResetUpdateTime()
-		return nil
-	case resourcerelationship.FieldName:
-		m.ResetName()
 		return nil
 	case resourcerelationship.FieldResourceRelationshipType:
 		m.ResetResourceRelationshipType()
@@ -55133,9 +55078,9 @@ type ResourceSpecificationMutation struct {
 	clearedFields                 map[string]struct{}
 	resourcetype                  *int
 	clearedresourcetype           bool
-	property_type_fk              map[int]struct{}
-	removedproperty_type_fk       map[int]struct{}
-	clearedproperty_type_fk       bool
+	property_type                 map[int]struct{}
+	removedproperty_type          map[int]struct{}
+	clearedproperty_type          bool
 	resource_specification        map[int]struct{}
 	removedresource_specification map[int]struct{}
 	clearedresource_specification bool
@@ -55373,57 +55318,57 @@ func (m *ResourceSpecificationMutation) ResetResourcetype() {
 	m.clearedresourcetype = false
 }
 
-// AddPropertyTypeFkIDs adds the property_type_fk edge to PropertyType by ids.
-func (m *ResourceSpecificationMutation) AddPropertyTypeFkIDs(ids ...int) {
-	if m.property_type_fk == nil {
-		m.property_type_fk = make(map[int]struct{})
+// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
+func (m *ResourceSpecificationMutation) AddPropertyTypeIDs(ids ...int) {
+	if m.property_type == nil {
+		m.property_type = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.property_type_fk[ids[i]] = struct{}{}
+		m.property_type[ids[i]] = struct{}{}
 	}
 }
 
-// ClearPropertyTypeFk clears the property_type_fk edge to PropertyType.
-func (m *ResourceSpecificationMutation) ClearPropertyTypeFk() {
-	m.clearedproperty_type_fk = true
+// ClearPropertyType clears the property_type edge to PropertyType.
+func (m *ResourceSpecificationMutation) ClearPropertyType() {
+	m.clearedproperty_type = true
 }
 
-// PropertyTypeFkCleared returns if the edge property_type_fk was cleared.
-func (m *ResourceSpecificationMutation) PropertyTypeFkCleared() bool {
-	return m.clearedproperty_type_fk
+// PropertyTypeCleared returns if the edge property_type was cleared.
+func (m *ResourceSpecificationMutation) PropertyTypeCleared() bool {
+	return m.clearedproperty_type
 }
 
-// RemovePropertyTypeFkIDs removes the property_type_fk edge to PropertyType by ids.
-func (m *ResourceSpecificationMutation) RemovePropertyTypeFkIDs(ids ...int) {
-	if m.removedproperty_type_fk == nil {
-		m.removedproperty_type_fk = make(map[int]struct{})
+// RemovePropertyTypeIDs removes the property_type edge to PropertyType by ids.
+func (m *ResourceSpecificationMutation) RemovePropertyTypeIDs(ids ...int) {
+	if m.removedproperty_type == nil {
+		m.removedproperty_type = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedproperty_type_fk[ids[i]] = struct{}{}
+		m.removedproperty_type[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedPropertyTypeFk returns the removed ids of property_type_fk.
-func (m *ResourceSpecificationMutation) RemovedPropertyTypeFkIDs() (ids []int) {
-	for id := range m.removedproperty_type_fk {
+// RemovedPropertyType returns the removed ids of property_type.
+func (m *ResourceSpecificationMutation) RemovedPropertyTypeIDs() (ids []int) {
+	for id := range m.removedproperty_type {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// PropertyTypeFkIDs returns the property_type_fk ids in the mutation.
-func (m *ResourceSpecificationMutation) PropertyTypeFkIDs() (ids []int) {
-	for id := range m.property_type_fk {
+// PropertyTypeIDs returns the property_type ids in the mutation.
+func (m *ResourceSpecificationMutation) PropertyTypeIDs() (ids []int) {
+	for id := range m.property_type {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetPropertyTypeFk reset all changes of the "property_type_fk" edge.
-func (m *ResourceSpecificationMutation) ResetPropertyTypeFk() {
-	m.property_type_fk = nil
-	m.clearedproperty_type_fk = false
-	m.removedproperty_type_fk = nil
+// ResetPropertyType reset all changes of the "property_type" edge.
+func (m *ResourceSpecificationMutation) ResetPropertyType() {
+	m.property_type = nil
+	m.clearedproperty_type = false
+	m.removedproperty_type = nil
 }
 
 // AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecificationRelationship by ids.
@@ -55632,8 +55577,8 @@ func (m *ResourceSpecificationMutation) AddedEdges() []string {
 	if m.resourcetype != nil {
 		edges = append(edges, resourcespecification.EdgeResourcetype)
 	}
-	if m.property_type_fk != nil {
-		edges = append(edges, resourcespecification.EdgePropertyTypeFk)
+	if m.property_type != nil {
+		edges = append(edges, resourcespecification.EdgePropertyType)
 	}
 	if m.resource_specification != nil {
 		edges = append(edges, resourcespecification.EdgeResourceSpecification)
@@ -55649,9 +55594,9 @@ func (m *ResourceSpecificationMutation) AddedIDs(name string) []ent.Value {
 		if id := m.resourcetype; id != nil {
 			return []ent.Value{*id}
 		}
-	case resourcespecification.EdgePropertyTypeFk:
-		ids := make([]ent.Value, 0, len(m.property_type_fk))
-		for id := range m.property_type_fk {
+	case resourcespecification.EdgePropertyType:
+		ids := make([]ent.Value, 0, len(m.property_type))
+		for id := range m.property_type {
 			ids = append(ids, id)
 		}
 		return ids
@@ -55669,8 +55614,8 @@ func (m *ResourceSpecificationMutation) AddedIDs(name string) []ent.Value {
 // mutation.
 func (m *ResourceSpecificationMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.removedproperty_type_fk != nil {
-		edges = append(edges, resourcespecification.EdgePropertyTypeFk)
+	if m.removedproperty_type != nil {
+		edges = append(edges, resourcespecification.EdgePropertyType)
 	}
 	if m.removedresource_specification != nil {
 		edges = append(edges, resourcespecification.EdgeResourceSpecification)
@@ -55682,9 +55627,9 @@ func (m *ResourceSpecificationMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *ResourceSpecificationMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case resourcespecification.EdgePropertyTypeFk:
-		ids := make([]ent.Value, 0, len(m.removedproperty_type_fk))
-		for id := range m.removedproperty_type_fk {
+	case resourcespecification.EdgePropertyType:
+		ids := make([]ent.Value, 0, len(m.removedproperty_type))
+		for id := range m.removedproperty_type {
 			ids = append(ids, id)
 		}
 		return ids
@@ -55705,8 +55650,8 @@ func (m *ResourceSpecificationMutation) ClearedEdges() []string {
 	if m.clearedresourcetype {
 		edges = append(edges, resourcespecification.EdgeResourcetype)
 	}
-	if m.clearedproperty_type_fk {
-		edges = append(edges, resourcespecification.EdgePropertyTypeFk)
+	if m.clearedproperty_type {
+		edges = append(edges, resourcespecification.EdgePropertyType)
 	}
 	if m.clearedresource_specification {
 		edges = append(edges, resourcespecification.EdgeResourceSpecification)
@@ -55720,8 +55665,8 @@ func (m *ResourceSpecificationMutation) EdgeCleared(name string) bool {
 	switch name {
 	case resourcespecification.EdgeResourcetype:
 		return m.clearedresourcetype
-	case resourcespecification.EdgePropertyTypeFk:
-		return m.clearedproperty_type_fk
+	case resourcespecification.EdgePropertyType:
+		return m.clearedproperty_type
 	case resourcespecification.EdgeResourceSpecification:
 		return m.clearedresource_specification
 	}
@@ -55747,8 +55692,8 @@ func (m *ResourceSpecificationMutation) ResetEdge(name string) error {
 	case resourcespecification.EdgeResourcetype:
 		m.ResetResourcetype()
 		return nil
-	case resourcespecification.EdgePropertyTypeFk:
-		m.ResetPropertyTypeFk()
+	case resourcespecification.EdgePropertyType:
+		m.ResetPropertyType()
 		return nil
 	case resourcespecification.EdgeResourceSpecification:
 		m.ResetResourceSpecification()
@@ -56316,32 +56261,32 @@ func (m *ResourceSpecificationRelationshipMutation) ResetEdge(name string) error
 // nodes in the graph.
 type ResourceTypeMutation struct {
 	config
-	op                               Op
-	typ                              string
-	id                               *int
-	create_time                      *time.Time
-	update_time                      *time.Time
-	name                             *string
-	clearedFields                    map[string]struct{}
-	resourcetypeclass                *int
-	clearedresourcetypeclass         bool
-	resourcetypebasetype             *int
-	clearedresourcetypebasetype      bool
-	resource_relationship_a          map[int]struct{}
-	removedresource_relationship_a   map[int]struct{}
-	clearedresource_relationship_a   bool
-	resource_relationship_b          map[int]struct{}
-	removedresource_relationship_b   map[int]struct{}
-	clearedresource_relationship_b   bool
-	resource_specification_fk        map[int]struct{}
-	removedresource_specification_fk map[int]struct{}
-	clearedresource_specification_fk bool
-	resourcetype_items               map[int]struct{}
-	removedresourcetype_items        map[int]struct{}
-	clearedresourcetype_items        bool
-	done                             bool
-	oldValue                         func(context.Context) (*ResourceType, error)
-	predicates                       []predicate.ResourceType
+	op                             Op
+	typ                            string
+	id                             *int
+	create_time                    *time.Time
+	update_time                    *time.Time
+	name                           *string
+	clearedFields                  map[string]struct{}
+	resourcetypeclass              *int
+	clearedresourcetypeclass       bool
+	resourcetypebasetype           *int
+	clearedresourcetypebasetype    bool
+	resource_relationship_a        map[int]struct{}
+	removedresource_relationship_a map[int]struct{}
+	clearedresource_relationship_a bool
+	resource_relationship_b        map[int]struct{}
+	removedresource_relationship_b map[int]struct{}
+	clearedresource_relationship_b bool
+	resource_specification         map[int]struct{}
+	removedresource_specification  map[int]struct{}
+	clearedresource_specification  bool
+	resourcetype_items             map[int]struct{}
+	removedresourcetype_items      map[int]struct{}
+	clearedresourcetype_items      bool
+	done                           bool
+	oldValue                       func(context.Context) (*ResourceType, error)
+	predicates                     []predicate.ResourceType
 }
 
 var _ ent.Mutation = (*ResourceTypeMutation)(nil)
@@ -56718,57 +56663,57 @@ func (m *ResourceTypeMutation) ResetResourceRelationshipB() {
 	m.removedresource_relationship_b = nil
 }
 
-// AddResourceSpecificationFkIDs adds the resource_specification_fk edge to ResourceSpecification by ids.
-func (m *ResourceTypeMutation) AddResourceSpecificationFkIDs(ids ...int) {
-	if m.resource_specification_fk == nil {
-		m.resource_specification_fk = make(map[int]struct{})
+// AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecification by ids.
+func (m *ResourceTypeMutation) AddResourceSpecificationIDs(ids ...int) {
+	if m.resource_specification == nil {
+		m.resource_specification = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.resource_specification_fk[ids[i]] = struct{}{}
+		m.resource_specification[ids[i]] = struct{}{}
 	}
 }
 
-// ClearResourceSpecificationFk clears the resource_specification_fk edge to ResourceSpecification.
-func (m *ResourceTypeMutation) ClearResourceSpecificationFk() {
-	m.clearedresource_specification_fk = true
+// ClearResourceSpecification clears the resource_specification edge to ResourceSpecification.
+func (m *ResourceTypeMutation) ClearResourceSpecification() {
+	m.clearedresource_specification = true
 }
 
-// ResourceSpecificationFkCleared returns if the edge resource_specification_fk was cleared.
-func (m *ResourceTypeMutation) ResourceSpecificationFkCleared() bool {
-	return m.clearedresource_specification_fk
+// ResourceSpecificationCleared returns if the edge resource_specification was cleared.
+func (m *ResourceTypeMutation) ResourceSpecificationCleared() bool {
+	return m.clearedresource_specification
 }
 
-// RemoveResourceSpecificationFkIDs removes the resource_specification_fk edge to ResourceSpecification by ids.
-func (m *ResourceTypeMutation) RemoveResourceSpecificationFkIDs(ids ...int) {
-	if m.removedresource_specification_fk == nil {
-		m.removedresource_specification_fk = make(map[int]struct{})
+// RemoveResourceSpecificationIDs removes the resource_specification edge to ResourceSpecification by ids.
+func (m *ResourceTypeMutation) RemoveResourceSpecificationIDs(ids ...int) {
+	if m.removedresource_specification == nil {
+		m.removedresource_specification = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedresource_specification_fk[ids[i]] = struct{}{}
+		m.removedresource_specification[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedResourceSpecificationFk returns the removed ids of resource_specification_fk.
-func (m *ResourceTypeMutation) RemovedResourceSpecificationFkIDs() (ids []int) {
-	for id := range m.removedresource_specification_fk {
+// RemovedResourceSpecification returns the removed ids of resource_specification.
+func (m *ResourceTypeMutation) RemovedResourceSpecificationIDs() (ids []int) {
+	for id := range m.removedresource_specification {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResourceSpecificationFkIDs returns the resource_specification_fk ids in the mutation.
-func (m *ResourceTypeMutation) ResourceSpecificationFkIDs() (ids []int) {
-	for id := range m.resource_specification_fk {
+// ResourceSpecificationIDs returns the resource_specification ids in the mutation.
+func (m *ResourceTypeMutation) ResourceSpecificationIDs() (ids []int) {
+	for id := range m.resource_specification {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetResourceSpecificationFk reset all changes of the "resource_specification_fk" edge.
-func (m *ResourceTypeMutation) ResetResourceSpecificationFk() {
-	m.resource_specification_fk = nil
-	m.clearedresource_specification_fk = false
-	m.removedresource_specification_fk = nil
+// ResetResourceSpecification reset all changes of the "resource_specification" edge.
+func (m *ResourceTypeMutation) ResetResourceSpecification() {
+	m.resource_specification = nil
+	m.clearedresource_specification = false
+	m.removedresource_specification = nil
 }
 
 // AddResourcetypeItemIDs adds the resourcetype_items edge to ResourceSRItems by ids.
@@ -56986,8 +56931,8 @@ func (m *ResourceTypeMutation) AddedEdges() []string {
 	if m.resource_relationship_b != nil {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipB)
 	}
-	if m.resource_specification_fk != nil {
-		edges = append(edges, resourcetype.EdgeResourceSpecificationFk)
+	if m.resource_specification != nil {
+		edges = append(edges, resourcetype.EdgeResourceSpecification)
 	}
 	if m.resourcetype_items != nil {
 		edges = append(edges, resourcetype.EdgeResourcetypeItems)
@@ -57019,9 +56964,9 @@ func (m *ResourceTypeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case resourcetype.EdgeResourceSpecificationFk:
-		ids := make([]ent.Value, 0, len(m.resource_specification_fk))
-		for id := range m.resource_specification_fk {
+	case resourcetype.EdgeResourceSpecification:
+		ids := make([]ent.Value, 0, len(m.resource_specification))
+		for id := range m.resource_specification {
 			ids = append(ids, id)
 		}
 		return ids
@@ -57045,8 +56990,8 @@ func (m *ResourceTypeMutation) RemovedEdges() []string {
 	if m.removedresource_relationship_b != nil {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipB)
 	}
-	if m.removedresource_specification_fk != nil {
-		edges = append(edges, resourcetype.EdgeResourceSpecificationFk)
+	if m.removedresource_specification != nil {
+		edges = append(edges, resourcetype.EdgeResourceSpecification)
 	}
 	if m.removedresourcetype_items != nil {
 		edges = append(edges, resourcetype.EdgeResourcetypeItems)
@@ -57070,9 +57015,9 @@ func (m *ResourceTypeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case resourcetype.EdgeResourceSpecificationFk:
-		ids := make([]ent.Value, 0, len(m.removedresource_specification_fk))
-		for id := range m.removedresource_specification_fk {
+	case resourcetype.EdgeResourceSpecification:
+		ids := make([]ent.Value, 0, len(m.removedresource_specification))
+		for id := range m.removedresource_specification {
 			ids = append(ids, id)
 		}
 		return ids
@@ -57102,8 +57047,8 @@ func (m *ResourceTypeMutation) ClearedEdges() []string {
 	if m.clearedresource_relationship_b {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipB)
 	}
-	if m.clearedresource_specification_fk {
-		edges = append(edges, resourcetype.EdgeResourceSpecificationFk)
+	if m.clearedresource_specification {
+		edges = append(edges, resourcetype.EdgeResourceSpecification)
 	}
 	if m.clearedresourcetype_items {
 		edges = append(edges, resourcetype.EdgeResourcetypeItems)
@@ -57123,8 +57068,8 @@ func (m *ResourceTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedresource_relationship_a
 	case resourcetype.EdgeResourceRelationshipB:
 		return m.clearedresource_relationship_b
-	case resourcetype.EdgeResourceSpecificationFk:
-		return m.clearedresource_specification_fk
+	case resourcetype.EdgeResourceSpecification:
+		return m.clearedresource_specification
 	case resourcetype.EdgeResourcetypeItems:
 		return m.clearedresourcetype_items
 	}
@@ -57162,8 +57107,8 @@ func (m *ResourceTypeMutation) ResetEdge(name string) error {
 	case resourcetype.EdgeResourceRelationshipB:
 		m.ResetResourceRelationshipB()
 		return nil
-	case resourcetype.EdgeResourceSpecificationFk:
-		m.ResetResourceSpecificationFk()
+	case resourcetype.EdgeResourceSpecification:
+		m.ResetResourceSpecification()
 		return nil
 	case resourcetype.EdgeResourcetypeItems:
 		m.ResetResourcetypeItems()
@@ -57176,22 +57121,19 @@ func (m *ResourceTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ResourceTypeBaseTypeMutation struct {
 	config
-	op                      Op
-	typ                     string
-	id                      *int
-	create_time             *time.Time
-	update_time             *time.Time
-	name                    *string
-	clearedFields           map[string]struct{}
-	resource_type_fk        map[int]struct{}
-	removedresource_type_fk map[int]struct{}
-	clearedresource_type_fk bool
-	policies                map[int]struct{}
-	removedpolicies         map[int]struct{}
-	clearedpolicies         bool
-	done                    bool
-	oldValue                func(context.Context) (*ResourceTypeBaseType, error)
-	predicates              []predicate.ResourceTypeBaseType
+	op                        Op
+	typ                       string
+	id                        *int
+	create_time               *time.Time
+	update_time               *time.Time
+	name                      *string
+	clearedFields             map[string]struct{}
+	resource_base_type        map[int]struct{}
+	removedresource_base_type map[int]struct{}
+	clearedresource_base_type bool
+	done                      bool
+	oldValue                  func(context.Context) (*ResourceTypeBaseType, error)
+	predicates                []predicate.ResourceTypeBaseType
 }
 
 var _ ent.Mutation = (*ResourceTypeBaseTypeMutation)(nil)
@@ -57384,110 +57326,57 @@ func (m *ResourceTypeBaseTypeMutation) ResetName() {
 	m.name = nil
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (m *ResourceTypeBaseTypeMutation) AddResourceTypeFkIDs(ids ...int) {
-	if m.resource_type_fk == nil {
-		m.resource_type_fk = make(map[int]struct{})
+// AddResourceBaseTypeIDs adds the resource_base_type edge to ResourceType by ids.
+func (m *ResourceTypeBaseTypeMutation) AddResourceBaseTypeIDs(ids ...int) {
+	if m.resource_base_type == nil {
+		m.resource_base_type = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.resource_type_fk[ids[i]] = struct{}{}
+		m.resource_base_type[ids[i]] = struct{}{}
 	}
 }
 
-// ClearResourceTypeFk clears the resource_type_fk edge to ResourceType.
-func (m *ResourceTypeBaseTypeMutation) ClearResourceTypeFk() {
-	m.clearedresource_type_fk = true
+// ClearResourceBaseType clears the resource_base_type edge to ResourceType.
+func (m *ResourceTypeBaseTypeMutation) ClearResourceBaseType() {
+	m.clearedresource_base_type = true
 }
 
-// ResourceTypeFkCleared returns if the edge resource_type_fk was cleared.
-func (m *ResourceTypeBaseTypeMutation) ResourceTypeFkCleared() bool {
-	return m.clearedresource_type_fk
+// ResourceBaseTypeCleared returns if the edge resource_base_type was cleared.
+func (m *ResourceTypeBaseTypeMutation) ResourceBaseTypeCleared() bool {
+	return m.clearedresource_base_type
 }
 
-// RemoveResourceTypeFkIDs removes the resource_type_fk edge to ResourceType by ids.
-func (m *ResourceTypeBaseTypeMutation) RemoveResourceTypeFkIDs(ids ...int) {
-	if m.removedresource_type_fk == nil {
-		m.removedresource_type_fk = make(map[int]struct{})
+// RemoveResourceBaseTypeIDs removes the resource_base_type edge to ResourceType by ids.
+func (m *ResourceTypeBaseTypeMutation) RemoveResourceBaseTypeIDs(ids ...int) {
+	if m.removedresource_base_type == nil {
+		m.removedresource_base_type = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedresource_type_fk[ids[i]] = struct{}{}
+		m.removedresource_base_type[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedResourceTypeFk returns the removed ids of resource_type_fk.
-func (m *ResourceTypeBaseTypeMutation) RemovedResourceTypeFkIDs() (ids []int) {
-	for id := range m.removedresource_type_fk {
+// RemovedResourceBaseType returns the removed ids of resource_base_type.
+func (m *ResourceTypeBaseTypeMutation) RemovedResourceBaseTypeIDs() (ids []int) {
+	for id := range m.removedresource_base_type {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResourceTypeFkIDs returns the resource_type_fk ids in the mutation.
-func (m *ResourceTypeBaseTypeMutation) ResourceTypeFkIDs() (ids []int) {
-	for id := range m.resource_type_fk {
+// ResourceBaseTypeIDs returns the resource_base_type ids in the mutation.
+func (m *ResourceTypeBaseTypeMutation) ResourceBaseTypeIDs() (ids []int) {
+	for id := range m.resource_base_type {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetResourceTypeFk reset all changes of the "resource_type_fk" edge.
-func (m *ResourceTypeBaseTypeMutation) ResetResourceTypeFk() {
-	m.resource_type_fk = nil
-	m.clearedresource_type_fk = false
-	m.removedresource_type_fk = nil
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (m *ResourceTypeBaseTypeMutation) AddPolicyIDs(ids ...int) {
-	if m.policies == nil {
-		m.policies = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.policies[ids[i]] = struct{}{}
-	}
-}
-
-// ClearPolicies clears the policies edge to PermissionsPolicy.
-func (m *ResourceTypeBaseTypeMutation) ClearPolicies() {
-	m.clearedpolicies = true
-}
-
-// PoliciesCleared returns if the edge policies was cleared.
-func (m *ResourceTypeBaseTypeMutation) PoliciesCleared() bool {
-	return m.clearedpolicies
-}
-
-// RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
-func (m *ResourceTypeBaseTypeMutation) RemovePolicyIDs(ids ...int) {
-	if m.removedpolicies == nil {
-		m.removedpolicies = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedpolicies[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedPolicies returns the removed ids of policies.
-func (m *ResourceTypeBaseTypeMutation) RemovedPoliciesIDs() (ids []int) {
-	for id := range m.removedpolicies {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// PoliciesIDs returns the policies ids in the mutation.
-func (m *ResourceTypeBaseTypeMutation) PoliciesIDs() (ids []int) {
-	for id := range m.policies {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetPolicies reset all changes of the "policies" edge.
-func (m *ResourceTypeBaseTypeMutation) ResetPolicies() {
-	m.policies = nil
-	m.clearedpolicies = false
-	m.removedpolicies = nil
+// ResetResourceBaseType reset all changes of the "resource_base_type" edge.
+func (m *ResourceTypeBaseTypeMutation) ResetResourceBaseType() {
+	m.resource_base_type = nil
+	m.clearedresource_base_type = false
+	m.removedresource_base_type = nil
 }
 
 // Op returns the operation name.
@@ -57639,12 +57528,9 @@ func (m *ResourceTypeBaseTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ResourceTypeBaseTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.resource_type_fk != nil {
-		edges = append(edges, resourcetypebasetype.EdgeResourceTypeFk)
-	}
-	if m.policies != nil {
-		edges = append(edges, resourcetypebasetype.EdgePolicies)
+	edges := make([]string, 0, 1)
+	if m.resource_base_type != nil {
+		edges = append(edges, resourcetypebasetype.EdgeResourceBaseType)
 	}
 	return edges
 }
@@ -57653,15 +57539,9 @@ func (m *ResourceTypeBaseTypeMutation) AddedEdges() []string {
 // the given edge name.
 func (m *ResourceTypeBaseTypeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case resourcetypebasetype.EdgeResourceTypeFk:
-		ids := make([]ent.Value, 0, len(m.resource_type_fk))
-		for id := range m.resource_type_fk {
-			ids = append(ids, id)
-		}
-		return ids
-	case resourcetypebasetype.EdgePolicies:
-		ids := make([]ent.Value, 0, len(m.policies))
-		for id := range m.policies {
+	case resourcetypebasetype.EdgeResourceBaseType:
+		ids := make([]ent.Value, 0, len(m.resource_base_type))
+		for id := range m.resource_base_type {
 			ids = append(ids, id)
 		}
 		return ids
@@ -57672,12 +57552,9 @@ func (m *ResourceTypeBaseTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ResourceTypeBaseTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removedresource_type_fk != nil {
-		edges = append(edges, resourcetypebasetype.EdgeResourceTypeFk)
-	}
-	if m.removedpolicies != nil {
-		edges = append(edges, resourcetypebasetype.EdgePolicies)
+	edges := make([]string, 0, 1)
+	if m.removedresource_base_type != nil {
+		edges = append(edges, resourcetypebasetype.EdgeResourceBaseType)
 	}
 	return edges
 }
@@ -57686,15 +57563,9 @@ func (m *ResourceTypeBaseTypeMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *ResourceTypeBaseTypeMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case resourcetypebasetype.EdgeResourceTypeFk:
-		ids := make([]ent.Value, 0, len(m.removedresource_type_fk))
-		for id := range m.removedresource_type_fk {
-			ids = append(ids, id)
-		}
-		return ids
-	case resourcetypebasetype.EdgePolicies:
-		ids := make([]ent.Value, 0, len(m.removedpolicies))
-		for id := range m.removedpolicies {
+	case resourcetypebasetype.EdgeResourceBaseType:
+		ids := make([]ent.Value, 0, len(m.removedresource_base_type))
+		for id := range m.removedresource_base_type {
 			ids = append(ids, id)
 		}
 		return ids
@@ -57705,12 +57576,9 @@ func (m *ResourceTypeBaseTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ResourceTypeBaseTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedresource_type_fk {
-		edges = append(edges, resourcetypebasetype.EdgeResourceTypeFk)
-	}
-	if m.clearedpolicies {
-		edges = append(edges, resourcetypebasetype.EdgePolicies)
+	edges := make([]string, 0, 1)
+	if m.clearedresource_base_type {
+		edges = append(edges, resourcetypebasetype.EdgeResourceBaseType)
 	}
 	return edges
 }
@@ -57719,10 +57587,8 @@ func (m *ResourceTypeBaseTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ResourceTypeBaseTypeMutation) EdgeCleared(name string) bool {
 	switch name {
-	case resourcetypebasetype.EdgeResourceTypeFk:
-		return m.clearedresource_type_fk
-	case resourcetypebasetype.EdgePolicies:
-		return m.clearedpolicies
+	case resourcetypebasetype.EdgeResourceBaseType:
+		return m.clearedresource_base_type
 	}
 	return false
 }
@@ -57740,11 +57606,8 @@ func (m *ResourceTypeBaseTypeMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *ResourceTypeBaseTypeMutation) ResetEdge(name string) error {
 	switch name {
-	case resourcetypebasetype.EdgeResourceTypeFk:
-		m.ResetResourceTypeFk()
-		return nil
-	case resourcetypebasetype.EdgePolicies:
-		m.ResetPolicies()
+	case resourcetypebasetype.EdgeResourceBaseType:
+		m.ResetResourceBaseType()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceTypeBaseType edge %s", name)
@@ -57754,22 +57617,19 @@ func (m *ResourceTypeBaseTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ResourceTypeClassMutation struct {
 	config
-	op                      Op
-	typ                     string
-	id                      *int
-	create_time             *time.Time
-	update_time             *time.Time
-	name                    *string
-	clearedFields           map[string]struct{}
-	resource_type_fk        map[int]struct{}
-	removedresource_type_fk map[int]struct{}
-	clearedresource_type_fk bool
-	policies                map[int]struct{}
-	removedpolicies         map[int]struct{}
-	clearedpolicies         bool
-	done                    bool
-	oldValue                func(context.Context) (*ResourceTypeClass, error)
-	predicates              []predicate.ResourceTypeClass
+	op                         Op
+	typ                        string
+	id                         *int
+	create_time                *time.Time
+	update_time                *time.Time
+	name                       *string
+	clearedFields              map[string]struct{}
+	resource_type_class        map[int]struct{}
+	removedresource_type_class map[int]struct{}
+	clearedresource_type_class bool
+	done                       bool
+	oldValue                   func(context.Context) (*ResourceTypeClass, error)
+	predicates                 []predicate.ResourceTypeClass
 }
 
 var _ ent.Mutation = (*ResourceTypeClassMutation)(nil)
@@ -57962,110 +57822,57 @@ func (m *ResourceTypeClassMutation) ResetName() {
 	m.name = nil
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (m *ResourceTypeClassMutation) AddResourceTypeFkIDs(ids ...int) {
-	if m.resource_type_fk == nil {
-		m.resource_type_fk = make(map[int]struct{})
+// AddResourceTypeClasIDs adds the resource_type_class edge to ResourceType by ids.
+func (m *ResourceTypeClassMutation) AddResourceTypeClasIDs(ids ...int) {
+	if m.resource_type_class == nil {
+		m.resource_type_class = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.resource_type_fk[ids[i]] = struct{}{}
+		m.resource_type_class[ids[i]] = struct{}{}
 	}
 }
 
-// ClearResourceTypeFk clears the resource_type_fk edge to ResourceType.
-func (m *ResourceTypeClassMutation) ClearResourceTypeFk() {
-	m.clearedresource_type_fk = true
+// ClearResourceTypeClass clears the resource_type_class edge to ResourceType.
+func (m *ResourceTypeClassMutation) ClearResourceTypeClass() {
+	m.clearedresource_type_class = true
 }
 
-// ResourceTypeFkCleared returns if the edge resource_type_fk was cleared.
-func (m *ResourceTypeClassMutation) ResourceTypeFkCleared() bool {
-	return m.clearedresource_type_fk
+// ResourceTypeClassCleared returns if the edge resource_type_class was cleared.
+func (m *ResourceTypeClassMutation) ResourceTypeClassCleared() bool {
+	return m.clearedresource_type_class
 }
 
-// RemoveResourceTypeFkIDs removes the resource_type_fk edge to ResourceType by ids.
-func (m *ResourceTypeClassMutation) RemoveResourceTypeFkIDs(ids ...int) {
-	if m.removedresource_type_fk == nil {
-		m.removedresource_type_fk = make(map[int]struct{})
+// RemoveResourceTypeClasIDs removes the resource_type_class edge to ResourceType by ids.
+func (m *ResourceTypeClassMutation) RemoveResourceTypeClasIDs(ids ...int) {
+	if m.removedresource_type_class == nil {
+		m.removedresource_type_class = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedresource_type_fk[ids[i]] = struct{}{}
+		m.removedresource_type_class[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedResourceTypeFk returns the removed ids of resource_type_fk.
-func (m *ResourceTypeClassMutation) RemovedResourceTypeFkIDs() (ids []int) {
-	for id := range m.removedresource_type_fk {
+// RemovedResourceTypeClass returns the removed ids of resource_type_class.
+func (m *ResourceTypeClassMutation) RemovedResourceTypeClassIDs() (ids []int) {
+	for id := range m.removedresource_type_class {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResourceTypeFkIDs returns the resource_type_fk ids in the mutation.
-func (m *ResourceTypeClassMutation) ResourceTypeFkIDs() (ids []int) {
-	for id := range m.resource_type_fk {
+// ResourceTypeClassIDs returns the resource_type_class ids in the mutation.
+func (m *ResourceTypeClassMutation) ResourceTypeClassIDs() (ids []int) {
+	for id := range m.resource_type_class {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetResourceTypeFk reset all changes of the "resource_type_fk" edge.
-func (m *ResourceTypeClassMutation) ResetResourceTypeFk() {
-	m.resource_type_fk = nil
-	m.clearedresource_type_fk = false
-	m.removedresource_type_fk = nil
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (m *ResourceTypeClassMutation) AddPolicyIDs(ids ...int) {
-	if m.policies == nil {
-		m.policies = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.policies[ids[i]] = struct{}{}
-	}
-}
-
-// ClearPolicies clears the policies edge to PermissionsPolicy.
-func (m *ResourceTypeClassMutation) ClearPolicies() {
-	m.clearedpolicies = true
-}
-
-// PoliciesCleared returns if the edge policies was cleared.
-func (m *ResourceTypeClassMutation) PoliciesCleared() bool {
-	return m.clearedpolicies
-}
-
-// RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
-func (m *ResourceTypeClassMutation) RemovePolicyIDs(ids ...int) {
-	if m.removedpolicies == nil {
-		m.removedpolicies = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedpolicies[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedPolicies returns the removed ids of policies.
-func (m *ResourceTypeClassMutation) RemovedPoliciesIDs() (ids []int) {
-	for id := range m.removedpolicies {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// PoliciesIDs returns the policies ids in the mutation.
-func (m *ResourceTypeClassMutation) PoliciesIDs() (ids []int) {
-	for id := range m.policies {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetPolicies reset all changes of the "policies" edge.
-func (m *ResourceTypeClassMutation) ResetPolicies() {
-	m.policies = nil
-	m.clearedpolicies = false
-	m.removedpolicies = nil
+// ResetResourceTypeClass reset all changes of the "resource_type_class" edge.
+func (m *ResourceTypeClassMutation) ResetResourceTypeClass() {
+	m.resource_type_class = nil
+	m.clearedresource_type_class = false
+	m.removedresource_type_class = nil
 }
 
 // Op returns the operation name.
@@ -58217,12 +58024,9 @@ func (m *ResourceTypeClassMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ResourceTypeClassMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.resource_type_fk != nil {
-		edges = append(edges, resourcetypeclass.EdgeResourceTypeFk)
-	}
-	if m.policies != nil {
-		edges = append(edges, resourcetypeclass.EdgePolicies)
+	edges := make([]string, 0, 1)
+	if m.resource_type_class != nil {
+		edges = append(edges, resourcetypeclass.EdgeResourceTypeClass)
 	}
 	return edges
 }
@@ -58231,15 +58035,9 @@ func (m *ResourceTypeClassMutation) AddedEdges() []string {
 // the given edge name.
 func (m *ResourceTypeClassMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case resourcetypeclass.EdgeResourceTypeFk:
-		ids := make([]ent.Value, 0, len(m.resource_type_fk))
-		for id := range m.resource_type_fk {
-			ids = append(ids, id)
-		}
-		return ids
-	case resourcetypeclass.EdgePolicies:
-		ids := make([]ent.Value, 0, len(m.policies))
-		for id := range m.policies {
+	case resourcetypeclass.EdgeResourceTypeClass:
+		ids := make([]ent.Value, 0, len(m.resource_type_class))
+		for id := range m.resource_type_class {
 			ids = append(ids, id)
 		}
 		return ids
@@ -58250,12 +58048,9 @@ func (m *ResourceTypeClassMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ResourceTypeClassMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removedresource_type_fk != nil {
-		edges = append(edges, resourcetypeclass.EdgeResourceTypeFk)
-	}
-	if m.removedpolicies != nil {
-		edges = append(edges, resourcetypeclass.EdgePolicies)
+	edges := make([]string, 0, 1)
+	if m.removedresource_type_class != nil {
+		edges = append(edges, resourcetypeclass.EdgeResourceTypeClass)
 	}
 	return edges
 }
@@ -58264,15 +58059,9 @@ func (m *ResourceTypeClassMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *ResourceTypeClassMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case resourcetypeclass.EdgeResourceTypeFk:
-		ids := make([]ent.Value, 0, len(m.removedresource_type_fk))
-		for id := range m.removedresource_type_fk {
-			ids = append(ids, id)
-		}
-		return ids
-	case resourcetypeclass.EdgePolicies:
-		ids := make([]ent.Value, 0, len(m.removedpolicies))
-		for id := range m.removedpolicies {
+	case resourcetypeclass.EdgeResourceTypeClass:
+		ids := make([]ent.Value, 0, len(m.removedresource_type_class))
+		for id := range m.removedresource_type_class {
 			ids = append(ids, id)
 		}
 		return ids
@@ -58283,12 +58072,9 @@ func (m *ResourceTypeClassMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ResourceTypeClassMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedresource_type_fk {
-		edges = append(edges, resourcetypeclass.EdgeResourceTypeFk)
-	}
-	if m.clearedpolicies {
-		edges = append(edges, resourcetypeclass.EdgePolicies)
+	edges := make([]string, 0, 1)
+	if m.clearedresource_type_class {
+		edges = append(edges, resourcetypeclass.EdgeResourceTypeClass)
 	}
 	return edges
 }
@@ -58297,10 +58083,8 @@ func (m *ResourceTypeClassMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ResourceTypeClassMutation) EdgeCleared(name string) bool {
 	switch name {
-	case resourcetypeclass.EdgeResourceTypeFk:
-		return m.clearedresource_type_fk
-	case resourcetypeclass.EdgePolicies:
-		return m.clearedpolicies
+	case resourcetypeclass.EdgeResourceTypeClass:
+		return m.clearedresource_type_class
 	}
 	return false
 }
@@ -58318,11 +58102,8 @@ func (m *ResourceTypeClassMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *ResourceTypeClassMutation) ResetEdge(name string) error {
 	switch name {
-	case resourcetypeclass.EdgeResourceTypeFk:
-		m.ResetResourceTypeFk()
-		return nil
-	case resourcetypeclass.EdgePolicies:
-		m.ResetPolicies()
+	case resourcetypeclass.EdgeResourceTypeClass:
+		m.ResetResourceTypeClass()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceTypeClass edge %s", name)

@@ -16203,13 +16203,23 @@ func (rr *ResourceRelationshipQuery) Paginate(
 }
 
 var (
-	// ResourceRelationshipOrderFieldName orders ResourceRelationship by name.
-	ResourceRelationshipOrderFieldName = &ResourceRelationshipOrderField{
-		field: resourcerelationship.FieldName,
+	// ResourceRelationshipOrderFieldResourceRelationshipType orders ResourceRelationship by ResourceRelationshipType.
+	ResourceRelationshipOrderFieldResourceRelationshipType = &ResourceRelationshipOrderField{
+		field: resourcerelationship.FieldResourceRelationshipType,
 		toCursor: func(rr *ResourceRelationship) Cursor {
 			return Cursor{
 				ID:    rr.ID,
-				Value: rr.Name,
+				Value: rr.ResourceRelationshipType,
+			}
+		},
+	}
+	// ResourceRelationshipOrderFieldResourceRelationshipMultiplicity orders ResourceRelationship by ResourceRelationshipMultiplicity.
+	ResourceRelationshipOrderFieldResourceRelationshipMultiplicity = &ResourceRelationshipOrderField{
+		field: resourcerelationship.FieldResourceRelationshipMultiplicity,
+		toCursor: func(rr *ResourceRelationship) Cursor {
+			return Cursor{
+				ID:    rr.ID,
+				Value: rr.ResourceRelationshipMultiplicity,
 			}
 		},
 	}
@@ -16219,8 +16229,10 @@ var (
 func (f ResourceRelationshipOrderField) String() string {
 	var str string
 	switch f.field {
-	case resourcerelationship.FieldName:
-		str = "NAME"
+	case resourcerelationship.FieldResourceRelationshipType:
+		str = "RESOURCE_RELATIONSHIP_TYPE"
+	case resourcerelationship.FieldResourceRelationshipMultiplicity:
+		str = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
 	}
 	return str
 }
@@ -16237,8 +16249,10 @@ func (f *ResourceRelationshipOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("ResourceRelationshipOrderField %T must be a string", v)
 	}
 	switch str {
-	case "NAME":
-		*f = *ResourceRelationshipOrderFieldName
+	case "RESOURCE_RELATIONSHIP_TYPE":
+		*f = *ResourceRelationshipOrderFieldResourceRelationshipType
+	case "RESOURCE_RELATIONSHIP_MULTIPLICITY":
+		*f = *ResourceRelationshipOrderFieldResourceRelationshipMultiplicity
 	default:
 		return fmt.Errorf("%s is not a valid ResourceRelationshipOrderField", str)
 	}
