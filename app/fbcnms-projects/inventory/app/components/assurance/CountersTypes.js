@@ -11,7 +11,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 
 // MUTATIONS //
 import type {RemoveCountersTypesMutationVariables} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';

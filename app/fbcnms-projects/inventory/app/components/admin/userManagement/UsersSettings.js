@@ -35,7 +35,7 @@ import {UserRoles} from '@fbcnms/auth/types';
 
 import renderList from '@fbcnms/util/renderList';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useAxios} from '@fbcnms/ui/hooks';
 import {useCallback, useContext, useState} from 'react';

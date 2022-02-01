@@ -14,7 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 
 import AddButton from './common/AddButton';
 import Switch from '@symphony/design-system/components/switch/Switch';

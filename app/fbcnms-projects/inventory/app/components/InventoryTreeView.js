@@ -17,7 +17,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import RelayEnvironment from '../common/RelayEnvironment';
 import Text from '@symphony/design-system/components/Text';
 import {FormContextProvider} from '../common/FormContext';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../common/RelayUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo, useState} from 'react';
 

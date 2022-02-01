@@ -17,7 +17,7 @@ import MapLayerLegend from './MapLayerLegend';
 import MapView from './MapView';
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 import {locationsToGeoJSONSource} from './MapUtil';
 import {makeStyles} from '@material-ui/styles';
 

@@ -15,7 +15,7 @@ import type {UserSearchByAppointmentContextQuery} from './__generated__/UserSear
 import RelayEnvironment from '../../../../../common/RelayEnvironment';
 import createSearchWithFiltersContext from './SearchWithFiltersContext';
 import {USER_STATUSES} from '../UserManagementUtils';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../../../../common/RelayUtils';
 
 const userSearchByAppointmentQuery = graphql`
   query UserSearchByAppointmentContextQuery(
