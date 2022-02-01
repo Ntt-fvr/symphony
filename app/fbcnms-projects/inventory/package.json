@@ -5,7 +5,12 @@
   "scripts": {
     "build": "rimraf static/dist && NODE_ENV=production webpack -r '@fbcnms/babel-register' --config ./config/webpack.production.config.js",
     "dev": "webpack-dev-server --hot -r '@fbcnms/babel-register' --public 0.0.0.0:443 --host 0.0.0.0 --disable-host-check --config ./config/webpack.config.js",
-    "relay": "relay-compiler --src ./app --schema ../../../graph/graphql/schema/symphony.graphql"
+    "relay": "relay-compiler"
+  },
+  "relay": {
+    "src": "./app",
+    "schema": "../../../graph/graphql/schema/symphony.graphql",
+    "language": "flow"
   },
   "dependencies": {
     "@date-io/moment": "^1.3.13",
