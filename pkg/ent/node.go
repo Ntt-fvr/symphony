@@ -5816,7 +5816,7 @@ func (rr *ResourceRelationship) Node(ctx context.Context) (node *Node, err error
 	node = &Node{
 		ID:     rr.ID,
 		Type:   "ResourceRelationship",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 4),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -5836,18 +5836,10 @@ func (rr *ResourceRelationship) Node(ctx context.Context) (node *Node, err error
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(rr.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
 	if buf, err = json.Marshal(rr.ResourceRelationshipType); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[2] = &Field{
 		Type:  "resourcerelationship.ResourceRelationshipType",
 		Name:  "ResourceRelationshipType",
 		Value: string(buf),
@@ -5855,7 +5847,7 @@ func (rr *ResourceRelationship) Node(ctx context.Context) (node *Node, err error
 	if buf, err = json.Marshal(rr.ResourceRelationshipMultiplicity); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "resourcerelationship.ResourceRelationshipMultiplicity",
 		Name:  "ResourceRelationshipMultiplicity",
 		Value: string(buf),

@@ -32,12 +32,6 @@ func (rru *ResourceRelationshipUpdate) Where(ps ...predicate.ResourceRelationshi
 	return rru
 }
 
-// SetName sets the name field.
-func (rru *ResourceRelationshipUpdate) SetName(s string) *ResourceRelationshipUpdate {
-	rru.mutation.SetName(s)
-	return rru
-}
-
 // SetResourceRelationshipType sets the ResourceRelationshipType field.
 func (rru *ResourceRelationshipUpdate) SetResourceRelationshipType(rrt resourcerelationship.ResourceRelationshipType) *ResourceRelationshipUpdate {
 	rru.mutation.SetResourceRelationshipType(rrt)
@@ -198,11 +192,6 @@ func (rru *ResourceRelationshipUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (rru *ResourceRelationshipUpdate) check() error {
-	if v, ok := rru.mutation.Name(); ok {
-		if err := resourcerelationship.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if v, ok := rru.mutation.ResourceRelationshipType(); ok {
 		if err := resourcerelationship.ResourceRelationshipTypeValidator(v); err != nil {
 			return &ValidationError{Name: "ResourceRelationshipType", err: fmt.Errorf("ent: validator failed for field \"ResourceRelationshipType\": %w", err)}
@@ -239,13 +228,6 @@ func (rru *ResourceRelationshipUpdate) sqlSave(ctx context.Context) (n int, err 
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: resourcerelationship.FieldUpdateTime,
-		})
-	}
-	if value, ok := rru.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resourcerelationship.FieldName,
 		})
 	}
 	if value, ok := rru.mutation.ResourceRelationshipType(); ok {
@@ -383,12 +365,6 @@ type ResourceRelationshipUpdateOne struct {
 	config
 	hooks    []Hook
 	mutation *ResourceRelationshipMutation
-}
-
-// SetName sets the name field.
-func (rruo *ResourceRelationshipUpdateOne) SetName(s string) *ResourceRelationshipUpdateOne {
-	rruo.mutation.SetName(s)
-	return rruo
 }
 
 // SetResourceRelationshipType sets the ResourceRelationshipType field.
@@ -551,11 +527,6 @@ func (rruo *ResourceRelationshipUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (rruo *ResourceRelationshipUpdateOne) check() error {
-	if v, ok := rruo.mutation.Name(); ok {
-		if err := resourcerelationship.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if v, ok := rruo.mutation.ResourceRelationshipType(); ok {
 		if err := resourcerelationship.ResourceRelationshipTypeValidator(v); err != nil {
 			return &ValidationError{Name: "ResourceRelationshipType", err: fmt.Errorf("ent: validator failed for field \"ResourceRelationshipType\": %w", err)}
@@ -590,13 +561,6 @@ func (rruo *ResourceRelationshipUpdateOne) sqlSave(ctx context.Context) (_node *
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: resourcerelationship.FieldUpdateTime,
-		})
-	}
-	if value, ok := rruo.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resourcerelationship.FieldName,
 		})
 	}
 	if value, ok := rruo.mutation.ResourceRelationshipType(); ok {

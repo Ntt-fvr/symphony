@@ -26,8 +26,6 @@ type ResourceRelationship struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
 	// ResourceRelationshipType holds the value of the "ResourceRelationshipType" field.
 	ResourceRelationshipType resourcerelationship.ResourceRelationshipType `json:"ResourceRelationshipType,omitempty"`
 	// ResourceRelationshipMultiplicity holds the value of the "ResourceRelationshipMultiplicity" field.
@@ -101,7 +99,6 @@ func (*ResourceRelationship) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // name
 		&sql.NullString{}, // ResourceRelationshipType
 		&sql.NullString{}, // ResourceRelationshipMultiplicity
 	}
@@ -139,21 +136,16 @@ func (rr *ResourceRelationship) assignValues(values ...interface{}) error {
 		rr.UpdateTime = value.Time
 	}
 	if value, ok := values[2].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field name", values[2])
-	} else if value.Valid {
-		rr.Name = value.String
-	}
-	if value, ok := values[3].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field ResourceRelationshipType", values[3])
+		return fmt.Errorf("unexpected type %T for field ResourceRelationshipType", values[2])
 	} else if value.Valid {
 		rr.ResourceRelationshipType = resourcerelationship.ResourceRelationshipType(value.String)
 	}
-	if value, ok := values[4].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field ResourceRelationshipMultiplicity", values[4])
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field ResourceRelationshipMultiplicity", values[3])
 	} else if value.Valid {
 		rr.ResourceRelationshipMultiplicity = resourcerelationship.ResourceRelationshipMultiplicity(value.String)
 	}
-	values = values[5:]
+	values = values[4:]
 	if len(values) == len(resourcerelationship.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field location_type_resource_relationship_location", value)
@@ -219,8 +211,6 @@ func (rr *ResourceRelationship) String() string {
 	builder.WriteString(rr.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(rr.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", name=")
-	builder.WriteString(rr.Name)
 	builder.WriteString(", ResourceRelationshipType=")
 	builder.WriteString(fmt.Sprintf("%v", rr.ResourceRelationshipType))
 	builder.WriteString(", ResourceRelationshipMultiplicity=")

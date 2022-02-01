@@ -59,7 +59,6 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 		fmt.Println("Ingreso a valor")
 		typ, err := client.
 			ResourceRelationship.Create().
-			SetName(input.Name).
 			SetNillableLocationTypeID(input.LocationType).
 			SetResourceRelationshipMultiplicity(input.ResourceRelationshipMultiplicity).
 			SetResourceRelationshipType(input.ResourceRelationshipType).
@@ -77,7 +76,6 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 	fmt.Println("Paso a validacion normal")
 	typ, err := client.
 		ResourceRelationship.Create().
-		SetName(input.Name).
 		SetResourceRelationshipMultiplicity(input.ResourceRelationshipMultiplicity).
 		SetResourceRelationshipType(input.ResourceRelationshipType).
 		SetNillableResourcetypebID(input.ResourceTypeB).
@@ -190,7 +188,6 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 		if valor {
 			typ, err := client.
 				ResourceRelationship.UpdateOne(et).
-				SetName(input.Name).
 				SetNillableLocationTypeID(locationtypeid).
 				SetResourceRelationshipMultiplicity(resourceMultiplicity).
 				SetResourceRelationshipType(resourceType).
@@ -208,7 +205,6 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 		}
 		typ, err := client.
 			ResourceRelationship.UpdateOne(et).
-			SetName(input.Name).
 			SetResourceRelationshipMultiplicity(resourceMultiplicity).
 			SetResourceRelationshipType(resourceType).
 			SetResourcetypeaID(resourcetypeAid).

@@ -4619,10 +4619,17 @@ type ResourceTypeEdge {
 Properties by which ResourceRelationship connections can be ordered.
 """
 enum ResourceRelationshipOrderField {
+
   """
-  Order ResourceRelationship by name.
+  Order ResourceRelationship by ResourceRelationshipType.
   """
-  NAME
+  RESOURCE_RELATIONSHIP_TYPE
+
+  """
+  Order ResourceRelationship by ResourceRelationshipMultiplicity.
+  """
+  RESOURCE_RELATIONSHIP_MULTIPLICITY
+
   """
   Order ResourceRelationship by creation time.
   """
@@ -9143,7 +9150,6 @@ enum ResourceRelationshipMultiplicityKind
 
 type ResourceRelationship implements Node {
   id: ID!
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
   locationType: LocationType
@@ -9152,7 +9158,6 @@ type ResourceRelationship implements Node {
 }
 
 input AddResourceRelationshipInput {
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity:ResourceRelationshipMultiplicityKind!
   locationType: ID
@@ -9162,7 +9167,6 @@ input AddResourceRelationshipInput {
 
 input EditResourceRelationshipInput {
   id: ID!
-  name: String!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
   locationType: ID
@@ -9172,7 +9176,6 @@ input EditResourceRelationshipInput {
 
 enum ResourceRelationshipFilterType {
   ID 
-  NAME
   RESOURCE_RELATIONSHIP_MULTIPLICITY
   RESOURCE_RELATIONSHIP_FILTER
   RESOURCE_RELATIONSHIP_TYPE
@@ -9183,6 +9186,8 @@ input ResourceRelationshipFilterInput {
   filterType: ResourceRelationshipFilterType!
   operator: FilterOperator!
   stringValue: String
+  multiplicityValue: ResourceRelationshipMultiplicityKind
+  typeValue: ResourceRelationshipTypeKind
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]

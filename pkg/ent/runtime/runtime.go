@@ -1902,10 +1902,6 @@ func init() {
 	resourcerelationship.DefaultUpdateTime = resourcerelationshipDescUpdateTime.Default.(func() time.Time)
 	// resourcerelationship.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	resourcerelationship.UpdateDefaultUpdateTime = resourcerelationshipDescUpdateTime.UpdateDefault.(func() time.Time)
-	// resourcerelationshipDescName is the schema descriptor for name field.
-	resourcerelationshipDescName := resourcerelationshipFields[0].Descriptor()
-	// resourcerelationship.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	resourcerelationship.NameValidator = resourcerelationshipDescName.Validators[0].(func(string) error)
 	resourcesritemsMixin := schema.ResourceSRItems{}.Mixin()
 	resourcesritems.Policy = privacy.NewPolicies(schema.ResourceSRItems{})
 	resourcesritems.Hooks[0] = func(next ent.Mutator) ent.Mutator {

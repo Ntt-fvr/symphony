@@ -20,8 +20,6 @@ type ResourceRelationship struct {
 // ResourceRelationship returns property type resourceType.
 func (ResourceRelationship) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique().
-			Annotations(entgql.OrderField("NAME")),
 		field.Enum("ResourceRelationshipType").
 			Values(
 				"BELONGS_TO",
@@ -29,14 +27,14 @@ func (ResourceRelationship) Fields() []ent.Field {
 				"PHYSICAL_LINK",
 				"LOGICAL_LINK",
 				"CROSS_CONNECTION",
-			),
+			).Annotations(entgql.OrderField("RESOURCE_RELATIONSHIP_TYPE")),
 		field.Enum("ResourceRelationshipMultiplicity").
 			Values(
 				"ONE_TO_ONE",
 				"ONE_TO_MANY",
 				"MANY_TO_ONE",
 				"MANY_TO_MANY",
-			),
+			).Annotations(entgql.OrderField("RESOURCE_RELATIONSHIP_MULTIPLICITY")),
 	}
 }
 
