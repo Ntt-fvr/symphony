@@ -405,9 +405,9 @@ type AddResourceTypeClassInput struct {
 }
 
 type AddResourceTypeInput struct {
-	Name                   string `json:"name"`
-	ResourceTypeBaseTypeFk int    `json:"resourceTypeBaseTypeFk"`
-	ResourceTypeClassFk    int    `json:"resourceTypeClassFk"`
+	Name                 string `json:"name"`
+	ResourceTypeBaseType int    `json:"resourceTypeBaseType"`
+	ResourceTypeClass    int    `json:"resourceTypeClass"`
 }
 
 type AddRuleInput struct {
@@ -1019,10 +1019,10 @@ type EditResourceTypeClassInput struct {
 }
 
 type EditResourceTypeInput struct {
-	ID                     int    `json:"id"`
-	Name                   string `json:"name"`
-	ResourceTypeBaseTypeFk *int   `json:"resourceTypeBaseTypeFk"`
-	ResourceTypeClassFk    *int   `json:"resourceTypeClassFk"`
+	ID                   int    `json:"id"`
+	Name                 string `json:"name"`
+	ResourceTypeBaseType *int   `json:"resourceTypeBaseType"`
+	ResourceTypeClass    *int   `json:"resourceTypeClass"`
 }
 
 type EditRuleInput struct {
@@ -3073,24 +3073,22 @@ func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 type ResourceRelationshipFilterType string
 
 const (
-	ResourceRelationshipFilterTypeID                               ResourceRelationshipFilterType = "ID"
 	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
-	ResourceRelationshipFilterTypeResourceRelationshipFilter       ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_FILTER"
+	ResourceRelationshipFilterTypeResourceRelationshipLocationType ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_LOCATION_TYPE"
 	ResourceRelationshipFilterTypeResourceRelationshipType         ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
 	ResourceRelationshipFilterTypeResourceRelationshipResource     ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE"
 )
 
 var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
-	ResourceRelationshipFilterTypeID,
 	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity,
-	ResourceRelationshipFilterTypeResourceRelationshipFilter,
+	ResourceRelationshipFilterTypeResourceRelationshipLocationType,
 	ResourceRelationshipFilterTypeResourceRelationshipType,
 	ResourceRelationshipFilterTypeResourceRelationshipResource,
 }
 
 func (e ResourceRelationshipFilterType) IsValid() bool {
 	switch e {
-	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipFilter, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResource:
+	case ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipLocationType, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResource:
 		return true
 	}
 	return false
@@ -3321,18 +3319,20 @@ func (e ResourceTypeClassFilterType) MarshalGQL(w io.Writer) {
 type ResourceTypeFilterType string
 
 const (
-	ResourceTypeFilterTypeID   ResourceTypeFilterType = "ID"
-	ResourceTypeFilterTypeName ResourceTypeFilterType = "NAME"
+	ResourceTypeFilterTypeName                 ResourceTypeFilterType = "NAME"
+	ResourceTypeFilterTypeResourceTypeClass    ResourceTypeFilterType = "RESOURCE_TYPE_CLASS"
+	ResourceTypeFilterTypeResourceTypeBaseType ResourceTypeFilterType = "RESOURCE_TYPE_BASE_TYPE"
 )
 
 var AllResourceTypeFilterType = []ResourceTypeFilterType{
-	ResourceTypeFilterTypeID,
 	ResourceTypeFilterTypeName,
+	ResourceTypeFilterTypeResourceTypeClass,
+	ResourceTypeFilterTypeResourceTypeBaseType,
 }
 
 func (e ResourceTypeFilterType) IsValid() bool {
 	switch e {
-	case ResourceTypeFilterTypeID, ResourceTypeFilterTypeName:
+	case ResourceTypeFilterTypeName, ResourceTypeFilterTypeResourceTypeClass, ResourceTypeFilterTypeResourceTypeBaseType:
 		return true
 	}
 	return false

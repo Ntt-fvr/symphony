@@ -104,7 +104,6 @@ type ResolverRoot interface {
 	ReportFilter() ReportFilterResolver
 	ResourceSRItems() ResourceSRItemsResolver
 	ResourceSpecification() ResourceSpecificationResolver
-	ResourceType() ResourceTypeResolver
 	Rule() RuleResolver
 	RuleType() RuleTypeResolver
 	Service() ServiceResolver
@@ -1759,10 +1758,10 @@ type ComplexityRoot struct {
 	}
 
 	ResourceType struct {
-		ID                     func(childComplexity int) int
-		Name                   func(childComplexity int) int
-		ResourceTypeBaseTypeFk func(childComplexity int) int
-		ResourceTypeClassFk    func(childComplexity int) int
+		ID                   func(childComplexity int) int
+		Name                 func(childComplexity int) int
+		Resourcetypebasetype func(childComplexity int) int
+		Resourcetypeclass    func(childComplexity int) int
 	}
 
 	ResourceTypeBaseType struct {
@@ -2835,10 +2834,6 @@ type ResourceSRItemsResolver interface {
 }
 type ResourceSpecificationResolver interface {
 	PropertyTypes(ctx context.Context, obj *ent.ResourceSpecification) ([]*ent.PropertyType, error)
-}
-type ResourceTypeResolver interface {
-	ResourceTypeBaseTypeFk(ctx context.Context, obj *ent.ResourceType) (*ent.ResourceTypeBaseType, error)
-	ResourceTypeClassFk(ctx context.Context, obj *ent.ResourceType) (*ent.ResourceTypeClass, error)
 }
 type RuleResolver interface {
 	RuleLimit(ctx context.Context, obj *ent.Rule) ([]*ent.RuleLimit, error)
@@ -11796,19 +11791,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceType.Name(childComplexity), true
 
-	case "ResourceType.resourceTypeBaseTypeFk":
-		if e.complexity.ResourceType.ResourceTypeBaseTypeFk == nil {
+	case "ResourceType.resourceTypeBaseType":
+		if e.complexity.ResourceType.Resourcetypebasetype == nil {
 			break
 		}
 
-		return e.complexity.ResourceType.ResourceTypeBaseTypeFk(childComplexity), true
+		return e.complexity.ResourceType.Resourcetypebasetype(childComplexity), true
 
-	case "ResourceType.resourceTypeClassFk":
-		if e.complexity.ResourceType.ResourceTypeClassFk == nil {
+	case "ResourceType.resourceTypeClass":
+		if e.complexity.ResourceType.Resourcetypeclass == nil {
 			break
 		}
 
-		return e.complexity.ResourceType.ResourceTypeClassFk(childComplexity), true
+		return e.complexity.ResourceType.Resourcetypeclass(childComplexity), true
 
 	case "ResourceTypeBaseType.id":
 		if e.complexity.ResourceTypeBaseType.ID == nil {
@@ -23667,26 +23662,27 @@ input ResourceTypeBaseTypeFilterInput {
 type ResourceType implements Node {
   id: ID!
   name: String!
-  resourceTypeBaseTypeFk: ResourceTypeBaseType
-  resourceTypeClassFk: ResourceTypeClass
+  resourceTypeBaseType: ResourceTypeBaseType
+  resourceTypeClass: ResourceTypeClass
 }
 
 input AddResourceTypeInput {  
   name: String!
-  resourceTypeBaseTypeFk: ID!
-  resourceTypeClassFk: ID!
+  resourceTypeBaseType: ID!
+  resourceTypeClass: ID!
 }
 
 input EditResourceTypeInput {
   id: ID!
   name: String!
-  resourceTypeBaseTypeFk: ID
-  resourceTypeClassFk: ID 
+  resourceTypeBaseType: ID
+  resourceTypeClass: ID 
 }
 
 enum ResourceTypeFilterType {
-  ID
   NAME
+  RESOURCE_TYPE_CLASS
+  RESOURCE_TYPE_BASE_TYPE
 }
 
 input ResourceTypeFilterInput {
@@ -23746,9 +23742,8 @@ input EditResourceRelationshipInput {
 }
 
 enum ResourceRelationshipFilterType {
-  ID 
   RESOURCE_RELATIONSHIP_MULTIPLICITY
-  RESOURCE_RELATIONSHIP_FILTER
+  RESOURCE_RELATIONSHIP_LOCATION_TYPE
   RESOURCE_RELATIONSHIP_TYPE
   RESOURCE_RELATIONSHIP_RESOURCE
 }
@@ -72055,7 +72050,7 @@ func (ec *executionContext) _ResourceType_name(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceType_resourceTypeBaseTypeFk(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
+func (ec *executionContext) _ResourceType_resourceTypeBaseType(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -72067,13 +72062,13 @@ func (ec *executionContext) _ResourceType_resourceTypeBaseTypeFk(ctx context.Con
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ResourceType().ResourceTypeBaseTypeFk(rctx, obj)
+		return obj.Resourcetypebasetype(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -72087,7 +72082,7 @@ func (ec *executionContext) _ResourceType_resourceTypeBaseTypeFk(ctx context.Con
 	return ec.marshalOResourceTypeBaseType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceType_resourceTypeClassFk(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
+func (ec *executionContext) _ResourceType_resourceTypeClass(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -72099,13 +72094,13 @@ func (ec *executionContext) _ResourceType_resourceTypeClassFk(ctx context.Contex
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ResourceType().ResourceTypeClassFk(rctx, obj)
+		return obj.Resourcetypeclass(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -88628,19 +88623,19 @@ func (ec *executionContext) unmarshalInputAddResourceTypeInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeBaseTypeFk":
+		case "resourceTypeBaseType":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeBaseTypeFk"))
-			it.ResourceTypeBaseTypeFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeBaseType"))
+			it.ResourceTypeBaseType, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeClassFk":
+		case "resourceTypeClass":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeClassFk"))
-			it.ResourceTypeClassFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeClass"))
+			it.ResourceTypeClass, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -93128,19 +93123,19 @@ func (ec *executionContext) unmarshalInputEditResourceTypeInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeBaseTypeFk":
+		case "resourceTypeBaseType":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeBaseTypeFk"))
-			it.ResourceTypeBaseTypeFk, err = ec.unmarshalOID2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeBaseType"))
+			it.ResourceTypeBaseType, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "resourceTypeClassFk":
+		case "resourceTypeClass":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeClassFk"))
-			it.ResourceTypeClassFk, err = ec.unmarshalOID2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeClass"))
+			it.ResourceTypeClass, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -111946,7 +111941,7 @@ func (ec *executionContext) _ResourceType(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "resourceTypeBaseTypeFk":
+		case "resourceTypeBaseType":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -111954,10 +111949,10 @@ func (ec *executionContext) _ResourceType(ctx context.Context, sel ast.Selection
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceType_resourceTypeBaseTypeFk(ctx, field, obj)
+				res = ec._ResourceType_resourceTypeBaseType(ctx, field, obj)
 				return res
 			})
-		case "resourceTypeClassFk":
+		case "resourceTypeClass":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -111965,7 +111960,7 @@ func (ec *executionContext) _ResourceType(ctx context.Context, sel ast.Selection
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceType_resourceTypeClassFk(ctx, field, obj)
+				res = ec._ResourceType_resourceTypeClass(ctx, field, obj)
 				return res
 			})
 		default:

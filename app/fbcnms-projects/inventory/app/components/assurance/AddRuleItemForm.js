@@ -19,7 +19,7 @@ import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
 import AddRuleLimitMutation from '../../mutations/AddRuleLimitMutation';
 import AddRuleMutation from '../../mutations/AddRuleMutation';
-import Button from '@symphony/design-system/components/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -196,11 +196,6 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     minHeight: '36px',
   },
-  actionAddRule: {
-    marginRight: '1.5rem',
-    width: '98px',
-    alignSelf: 'flex-end',
-  },
   selectAlarm: {
     '& .MuiOutlinedInput-root ': {
       color: '#FFFFFF',
@@ -350,29 +345,23 @@ const AddRuleItemForm = (props: Props) => {
             />
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                className={classes.actionAddRule}
-                onClick={() => {
-                  handleClick();
-                  hideAddRuleForm();
-                }}
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              variant={'outlined'}
+              onClick={() => {
+                hideAddRuleForm();
+              }}>
+              Cancel
+            </ButtonSaveDelete>
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                className={classes.actionAddRule}
-                onClick={() => {
-                  hideAddRuleForm();
-                }}
-                skin="brightGray">
-                Cancel
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              onClick={() => {
+                handleClick();
+                hideAddRuleForm();
+              }}
+              disabled={handleDisable}>
+              Save
+            </ButtonSaveDelete>
           </Grid>
         </Grid>
 

@@ -82,7 +82,7 @@ const searchCallback = (searchTerm: string, filters: appointmentsFilters) => {
       duration: duration,
     },
   ).then(response => {
-    if (response.usersAvailability.length < 1) {
+    if (!response.usersAvailability || response.usersAvailability.length < 1) {
       return [];
     }
     return response.usersAvailability

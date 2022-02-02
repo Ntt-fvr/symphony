@@ -14,9 +14,8 @@ import fbt from 'fbt';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 
-import Button from '@material-ui/core/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import FormField from '@symphony/design-system/components/FormField/FormField';
@@ -24,7 +23,7 @@ import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import {MenuItem, Select} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 
 import Switch from '@symphony/design-system/components/switch/Switch';
 
@@ -117,11 +116,6 @@ const useStyles = makeStyles(() => ({
     '@media (max-width: 768px)': {
       display: 'none',
     },
-  },
-  option: {
-    width: '111px',
-    height: '36px',
-    alignSelf: 'flex-end',
   },
 }));
 
@@ -304,28 +298,15 @@ const KqiFormEditTarget = (props: Props) => {
             <DeleteOutlinedIcon style={{color: DARK.D300}} />
           </IconButton>
         </Grid>
-        <Grid style={{marginRight: '1rem'}}>
-          <FormField>
-            <Button
-              className={classes.option}
-              variant="outlined"
-              color="primary"
-              onClick={() => returnFormEdit()}>
-              Cancel
-            </Button>
-          </FormField>
+        <Grid>
+          <ButtonSaveDelete variant="outlined" onClick={() => returnFormEdit()}>
+            Cancel
+          </ButtonSaveDelete>
         </Grid>
         <Grid>
-          <FormField>
-            <Button
-              onClick={handleClick}
-              className={classes.option}
-              variant="contained"
-              color="primary"
-              disabled={handleDisable}>
-              Save
-            </Button>
-          </FormField>
+          <ButtonSaveDelete onClick={handleClick} disabled={handleDisable}>
+            Save
+          </ButtonSaveDelete>
         </Grid>
       </Grid>
       <Grid className={classes.container} item xs>
@@ -447,11 +428,7 @@ const KqiFormEditTarget = (props: Props) => {
               <Grid item xs={12} className={classes.title}>
                 <Text style={{fontSize: '14px'}}>Active Hours</Text>
               </Grid>
-              <Grid
-                container
-                item
-                xs={12}
-                alignItems="center">
+              <Grid container item xs={12} alignItems="center">
                 <Grid className={classes.subtitle} item xs={3} lg={3} xl={2}>
                   <Text variant="caption">From</Text>
                 </Grid>

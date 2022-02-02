@@ -40,7 +40,7 @@ class ConnectionException(Exception):
 
 
 class InvalidPayloadException(Exception):
-    """Exception thrown if payload recived from server is mal-formed or cannot be parsed """
+    """Exception thrown if payload recived from server is mal-formed or cannot be parsed"""
 
 
 class SubscriptionClient:

@@ -293,9 +293,9 @@ func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return resourceRelationshipResolver{}
 }*/
 
-func (r resolver) ResourceType() generated.ResourceTypeResolver {
+/*func (r resolver) ResourceType() generated.ResourceTypeResolver {
 	return resourceTypeResolver{}
-}
+}*/
 
 func (r resolver) ResourceSpecification() generated.ResourceSpecificationResolver {
 	return resourceSpecificationResolver{}
