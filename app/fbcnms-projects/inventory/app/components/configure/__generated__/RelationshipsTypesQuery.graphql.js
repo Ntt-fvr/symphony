@@ -21,6 +21,7 @@ export type RelationshipsTypesQueryResponse = {|
   +resourceRelationships: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
+        +id: string,
         +resourceRelationshipType: ResourceRelationshipTypeKind,
         +resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind,
         +resourceTypeA: {|
@@ -47,6 +48,7 @@ query RelationshipsTypesQuery {
   resourceRelationships {
     edges {
       node {
+        id
         resourceRelationshipType
         resourceRelationshipMultiplicity
         resourceTypeA {
@@ -57,7 +59,6 @@ query RelationshipsTypesQuery {
           id
           name
         }
-        id
       }
     }
   }
@@ -69,25 +70,11 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resourceRelationshipType",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "resourceRelationshipMultiplicity",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = [
-  (v2/*: any*/),
+v1 = [
+  (v0/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -96,62 +83,64 @@ v3 = [
     "storageKey": null
   }
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "ResourceType",
-  "kind": "LinkedField",
-  "name": "resourceTypeA",
-  "plural": false,
-  "selections": (v3/*: any*/),
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "ResourceType",
-  "kind": "LinkedField",
-  "name": "resourceTypeB",
-  "plural": false,
-  "selections": (v3/*: any*/),
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "RelationshipsTypesQuery",
+v2 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ResourceRelationshipConnection",
+    "kind": "LinkedField",
+    "name": "resourceRelationships",
+    "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ResourceRelationshipConnection",
+        "concreteType": "ResourceRelationshipEdge",
         "kind": "LinkedField",
-        "name": "resourceRelationships",
-        "plural": false,
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ResourceRelationshipEdge",
+            "concreteType": "ResourceRelationship",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "node",
+            "plural": false,
             "selections": [
+              (v0/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ResourceRelationship",
+                "kind": "ScalarField",
+                "name": "resourceRelationshipType",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourceRelationshipMultiplicity",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceType",
                 "kind": "LinkedField",
-                "name": "node",
+                "name": "resourceTypeA",
                 "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v4/*: any*/),
-                  (v5/*: any*/)
-                ],
+                "selections": (v1/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceType",
+                "kind": "LinkedField",
+                "name": "resourceTypeB",
+                "plural": false,
+                "selections": (v1/*: any*/),
                 "storageKey": null
               }
             ],
@@ -161,6 +150,16 @@ return {
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RelationshipsTypesQuery",
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -169,58 +168,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "RelationshipsTypesQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ResourceRelationshipConnection",
-        "kind": "LinkedField",
-        "name": "resourceRelationships",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceRelationshipEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceRelationship",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v2/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "70d55c39721342e36b4dfc50fffa6d67",
+    "cacheID": "7c2bf01d409b6db43204824a6c5b1829",
     "id": null,
     "metadata": {},
     "name": "RelationshipsTypesQuery",
     "operationKind": "query",
-    "text": "query RelationshipsTypesQuery {\n  resourceRelationships {\n    edges {\n      node {\n        resourceRelationshipType\n        resourceRelationshipMultiplicity\n        resourceTypeA {\n          id\n          name\n        }\n        resourceTypeB {\n          id\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query RelationshipsTypesQuery {\n  resourceRelationships {\n    edges {\n      node {\n        id\n        resourceRelationshipType\n        resourceRelationshipMultiplicity\n        resourceTypeA {\n          id\n          name\n        }\n        resourceTypeB {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a4f8dc5966581d84eee4eddbbe7f1180';
+(node/*: any*/).hash = 'f9d7f8002add5410bbd5e687fdc328ce';
 
 module.exports = node;

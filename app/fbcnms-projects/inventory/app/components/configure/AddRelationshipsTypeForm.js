@@ -94,6 +94,14 @@ const addRelationshipsTypeForm = graphql`
         node {
           id
           name
+          resourceTypeBaseType {
+            id
+            name
+          }
+          resourceTypeClass {
+            id
+            name
+          }
         }
       }
     }
@@ -129,7 +137,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
     addRelationshipsTypeForm,
     {},
   );
-
+  console.log('-->  ', data);
   // const names = resourceNames?.map(item => item.node.name);
 
   // const handleDisable = useDisabledButton(resources.data, names, 3);
@@ -192,14 +200,14 @@ const AddRelationshipsTypeForm = (props: Props) => {
           className={classes.select}
           label="Select base type A"
           onChange={handleChange}
-          name=""
+          name="baseTypeA"
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypeClasses.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+          {data.resourceTypes?.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node.id}>
+              {item.node.resourceTypeBaseType.name}
             </MenuItem>
-          ))}  */}
+          ))}
         </TextField>
 
         <TextField
@@ -212,9 +220,9 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceTypeA"
           variant="outlined"
           defaultValue="">
-          {data.resourceTypes?.edges.map(item => (
-            <MenuItem key={item.id} value={item.node?.id}>
-              {item.node?.name}
+          {data.resourceTypes?.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node.id}>
+              {item.node.name}
             </MenuItem>
           ))}
         </TextField>
@@ -233,11 +241,6 @@ const AddRelationshipsTypeForm = (props: Props) => {
           <MenuItem value={'PHYSICAL_LINK'}>PHYSICAL_LINK</MenuItem>
           <MenuItem value={'LOGICAL_LINK'}>LOGICAL_LINK</MenuItem>
           <MenuItem value={'CROSS_CONNECTION'}>CROSS_CONNECTION</MenuItem>
-          {/* {data.resourceRelationshipTypes?.edges.map(item => (
-            <MenuItem key={item.id} value={item.node?.id}>
-              {item.node?.name}
-            </MenuItem>
-          ))} */}
         </TextField>
         <TextField
           required
@@ -253,11 +256,6 @@ const AddRelationshipsTypeForm = (props: Props) => {
           <MenuItem value={'MANY_TO_ONE'}>MANY_TO_ONE</MenuItem>
           <MenuItem value={'ONE_TO_MANY'}>ONE_TO_MANY</MenuItem>
           <MenuItem value={'ONE_TO_ONE'}>ONE_TO_ONE</MenuItem>
-          {/* {data.resourceRelationshipMultiplicities?.edges.map(item => (
-            <MenuItem key={item.id} value={item.node?.id}>
-              {item.node?.name}
-            </MenuItem>
-          ))} */}
         </TextField>
         <TextField
           required
@@ -265,12 +263,12 @@ const AddRelationshipsTypeForm = (props: Props) => {
           className={classes.select}
           label="Select base type B"
           onChange={handleChange}
-          name="resourceTypeB"
+          name="baseTypeB"
           variant="outlined"
           defaultValue="">
           {data.resourceTypes?.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+            <MenuItem key={index} value={item.node.id}>
+              {item.node.resourceTypeBaseType.name}
             </MenuItem>
           ))}
         </TextField>
@@ -281,14 +279,14 @@ const AddRelationshipsTypeForm = (props: Props) => {
           className={classes.select}
           label="Select resource type B"
           onChange={handleChange}
-          name="resourceTypesB"
+          name="resourceTypeB"
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypes?.edges.map(item => (
-            <MenuItem key={item.id} value={item.node?.id}>
-              {item.node?.name}
+          {data.resourceTypes?.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node.id}>
+              {item.node.name}
             </MenuItem>
-          ))} */}
+          ))}
         </TextField>
       </form>
       <FormField>

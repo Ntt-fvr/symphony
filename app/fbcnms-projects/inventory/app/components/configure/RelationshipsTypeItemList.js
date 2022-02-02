@@ -119,14 +119,15 @@ type Props = $ReadOnly<{|
     id: string,
     name: string,
   },
+  handleRemove: any,
 |}>;
 
 const RelationshipsTypeItemList = (props: Props) => {
   // const {edit, handleRemove, formValues, resourceDataLenght} = props;
-  const {...item} = props;
-
+  // const {...item} = props;
+  const {handleRemove, item} = props;
   const classes = useStyles();
-
+  console.log('ITEM   ', item);
   // const filterDataById = resourceDataLenght
   //   .map(item => item.node)
   //   .filter(rsData => rsData?.resourceType?.id === formValues.id);
@@ -166,7 +167,10 @@ const RelationshipsTypeItemList = (props: Props) => {
             </Text>
           </Grid>
           <Grid sm={1} className={classes.containerDelete}>
-            <DeleteOutlinedIcon className={classes.deleteIcon} />
+            <DeleteOutlinedIcon
+              onClick={handleRemove}
+              className={classes.deleteIcon}
+            />
           </Grid>
         </Grid>
       </Card>

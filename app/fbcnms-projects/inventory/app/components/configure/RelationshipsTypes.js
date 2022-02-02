@@ -20,8 +20,10 @@ import {fetchQuery, graphql} from 'relay-runtime';
 // import {useLazyLoadQuery} from 'react-relay/hooks';
 
 // MUTATIONS //
-// import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
-// import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
+import RemoveResourceRelationshipMutation from '../../mutations/RemoveResourceRelationshipMutation';
+
+import type {RemoveResourceRelationshipMutationVariables} from '../../mutations/__generated__/RemoveResourceRelationshipMutation.graphql';
+
 // import type {PropertyType} from '../../common/PropertyType';
 
 import {Grid, List} from '@material-ui/core';
@@ -61,6 +63,7 @@ const RelationshipsTypesQuery = graphql`
     resourceRelationships {
       edges {
         node {
+          id
           resourceRelationshipType
           resourceRelationshipMultiplicity
           resourceTypeA {
@@ -118,14 +121,16 @@ const RelationshipsTypes = () => {
       setRelationships(data);
     });
   }, [setRelationships]);
-  console.log(relationships);
+  console.log('TYPES  ', relationships);
 
-  // const handleRemove = id => {
-  //   const variables: RemoveResourceTypeMutationVariables = {
-  //     id: id,
-  //   };
-  //   RemoveResourceTypeMutation(variables, {onCompleted: () => isCompleted()});
-  // };
+  const handleRemove = id => {
+    const variables: RemoveResourceRelationshipMutationVariables = {
+      id: id,
+    };
+    RemoveResourceRelationshipMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
+  };
 
   return (
     <Grid className={classes.root} container>
@@ -141,10 +146,11 @@ const RelationshipsTypes = () => {
       <Grid item xs={12} lg={9}>
         <TitleTextCardsRelationships />
         <List disablePadding className={classes.listContainer}>
-          {relationships?.resourceRelationships?.edges.map((item, index) => (
+          {relationships.resourceRelationships?.edges.map((item, index) => (
             <RelationshipsTypeItemList
               key={index}
-              // handleRemove={() => handleRemove(item.node?.id)}
+              handleRemove={() => handleRemove(item.node.id)}
+              item={item.node}
               {...item.node}
             />
           ))}

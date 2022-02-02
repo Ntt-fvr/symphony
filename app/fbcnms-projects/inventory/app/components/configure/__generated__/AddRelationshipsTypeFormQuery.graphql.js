@@ -21,6 +21,14 @@ export type AddRelationshipsTypeFormQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
+        +resourceTypeBaseType: ?{|
+          +id: string,
+          +name: string,
+        |},
+        +resourceTypeClass: ?{|
+          +id: string,
+          +name: string,
+        |},
       |}
     |}>
   |}
@@ -39,6 +47,14 @@ query AddRelationshipsTypeFormQuery {
       node {
         id
         name
+        resourceTypeBaseType {
+          id
+          name
+        }
+        resourceTypeClass {
+          id
+          name
+        }
       }
     }
   }
@@ -46,7 +62,25 @@ query AddRelationshipsTypeFormQuery {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+],
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -71,18 +105,26 @@ var v0 = [
             "name": "node",
             "plural": false,
             "selections": [
+              (v0/*: any*/),
+              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "id",
+                "concreteType": "ResourceTypeBaseType",
+                "kind": "LinkedField",
+                "name": "resourceTypeBaseType",
+                "plural": false,
+                "selections": (v2/*: any*/),
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "name",
+                "concreteType": "ResourceTypeClass",
+                "kind": "LinkedField",
+                "name": "resourceTypeClass",
+                "plural": false,
+                "selections": (v2/*: any*/),
                 "storageKey": null
               }
             ],
@@ -101,7 +143,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddRelationshipsTypeFormQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -110,19 +152,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AddRelationshipsTypeFormQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "e6c44dc62ade909f9753cfe60d25afff",
+    "cacheID": "a4b1e6a52d5386fb3acca19b79071233",
     "id": null,
     "metadata": {},
     "name": "AddRelationshipsTypeFormQuery",
     "operationKind": "query",
-    "text": "query AddRelationshipsTypeFormQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddRelationshipsTypeFormQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType {\n          id\n          name\n        }\n        resourceTypeClass {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f9d63b3fe6de5e4e362a1b3c2e0f9afc';
+(node/*: any*/).hash = '09cab02acb5827f5b03a4ce5a0e39ed2';
 
 module.exports = node;
