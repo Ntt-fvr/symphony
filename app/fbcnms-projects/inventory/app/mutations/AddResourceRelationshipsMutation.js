@@ -25,7 +25,6 @@ const mutation = graphql`
   ) {
     addResourceRelationship(input: $input) {
       id
-      name
     }
   }
 `;

@@ -146,19 +146,23 @@ const RelationshipsTypeItemList = (props: Props) => {
                 <SettingsIcon />
               </div>
               <Text useEllipsis={true} weight={'bold'}>
-                {item.resourceTypeFkA.name}
+                {item.resourceTypeA.name}
               </Text>
             </div>
           </Grid>
           <Grid sm={2} className={classes.containerInner}>
-            <Text useEllipsis={true}>Belongs to</Text>
+            <Text useEllipsis={true}>
+              {item.resourceRelationshipType.toLowerCase()}
+            </Text>
           </Grid>
           <Grid sm={2} className={classes.containerInner}>
-            <Text useEllipsis={true}>Many to many</Text>
+            <Text useEllipsis={true}>
+              {item.resourceRelationshipMultiplicity.toLowerCase()}
+            </Text>
           </Grid>
           <Grid sm={3} md={3} lg={3} className={classes.containerInner}>
             <Text useEllipsis={true} weight={'bold'}>
-              {item.resourceTypeFkB.name}
+              {item.resourceTypeB.name}
             </Text>
           </Grid>
           <Grid sm={1} className={classes.containerDelete}>

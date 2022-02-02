@@ -14,21 +14,21 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ResourceRelationshipMultiplicityKind = "MANY_TO_MANY" | "MANY_TO_ONE" | "ONE_TO_MANY" | "ONE_TO_ONE" | "%future added value";
+export type ResourceRelationshipTypeKind = "BELONGS_TO" | "CROSS_CONNECTION" | "LOCATED_IN" | "LOGICAL_LINK" | "PHYSICAL_LINK" | "%future added value";
 export type AddResourceRelationshipInput = {|
-  name: string,
-  resourceRelationshipTypeFk: string,
-  resourceRelationshipMultiplicityFk: string,
-  locationTypeFk?: ?string,
-  resourceTypeFkA: string,
-  resourceTypeFkB?: ?string,
+  resourceRelationshipType: ResourceRelationshipTypeKind,
+  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind,
+  locationType?: ?string,
+  resourceTypeA: string,
+  resourceTypeB?: ?string,
 |};
 export type AddResourceRelationshipsMutationVariables = {|
   input: AddResourceRelationshipInput
 |};
 export type AddResourceRelationshipsMutationResponse = {|
   +addResourceRelationship: {|
-    +id: string,
-    +name: string,
+    +id: string
   |}
 |};
 export type AddResourceRelationshipsMutation = {|
@@ -44,7 +44,6 @@ mutation AddResourceRelationshipsMutation(
 ) {
   addResourceRelationship(input: $input) {
     id
-    name
   }
 }
 */
@@ -78,13 +77,6 @@ v1 = [
         "kind": "ScalarField",
         "name": "id",
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
       }
     ],
     "storageKey": null
@@ -108,16 +100,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0aa91bbf5e953847fd25ab19b58eca44",
+    "cacheID": "febfafe7d6922d62fc05ad337067fc22",
     "id": null,
     "metadata": {},
     "name": "AddResourceRelationshipsMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceRelationshipsMutation(\n  $input: AddResourceRelationshipInput!\n) {\n  addResourceRelationship(input: $input) {\n    id\n    name\n  }\n}\n"
+    "text": "mutation AddResourceRelationshipsMutation(\n  $input: AddResourceRelationshipInput!\n) {\n  addResourceRelationship(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bb85a911d274fdb8e64e9b7bfeddf1c2';
+(node/*: any*/).hash = '56f88c9d08cbb5e5c8711f732f805d4e';
 
 module.exports = node;

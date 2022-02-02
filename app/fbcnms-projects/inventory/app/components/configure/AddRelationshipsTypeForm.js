@@ -16,8 +16,8 @@ import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMes
 // MUTATIONS //
 // import type {AddResourceTypeFormQuery} from './__generated__/AddResourceTypeFormQuery.graphql';
 
-import type {AddResourceRelationshipsMutationVariables} from '../../mutations/__generated__/AddResourceRelationshipsMutation.graphql';
-
+// import type {AddResourceRelationshipsMutationVariables} from '../../mutations/__generated__/AddResourceRelationshipsMutation.graphql';
+//
 // DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -29,10 +29,10 @@ import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
-import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
+// import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
 
-import {useDisabledButton} from './../assurance/common/useDisabledButton';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+// import {useDisabledButton} from './../assurance/common/useDisabledButton';
+// import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -85,34 +85,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const addRelationshipsTypeForm = graphql`
-  query AddRelationshipsTypeFormQuery {
-    resourceRelationshipMultiplicities {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-    resourceRelationshipTypes {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-    resourceTypes {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
+// const addRelationshipsTypeForm = graphql`
+//   query AddRelationshipsTypeFormQuery {
+//     resourceTypes {
+//       edges {
+//         node {
+//           id
+//           name
+//         }
+//       }
+//     }
+//   }
+// `;
 
 type Node = {
   node: {
@@ -139,10 +123,10 @@ const AddRelationshipsTypeForm = (props: Props) => {
   const [relationships, setRelationships] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
 
-  const data = useLazyLoadQuery<AddRelationshipTypeFormQuery>(
-    addRelationshipsTypeForm,
-    {},
-  );
+  // const data = useLazyLoadQuery<AddRelationshipTypeFormQuery>(
+  //   addRelationshipsTypeForm,
+  //   {},
+  // );
 
   // const names = resourceNames?.map(item => item.node.name);
 
@@ -162,26 +146,26 @@ const AddRelationshipsTypeForm = (props: Props) => {
     });
   }
 
-  function handleClick() {
-    const variables: AddResourceRelationshipsMutationVariables = {
-      input: {
-        name: relationships.data.name,
-        resourceRelationshipTypeFk:
-          relationships.data.resourceRelationshipTypes,
-        resourceRelationshipMultiplicityFk:
-          relationships.data.resourceRelationshipMultiplicityFk,
-        resourceTypeFkA: relationships.data.resourceTypesA,
-        resourceTypeFkB: relationships.data.resourceTypesB,
-      },
-    };
-    setShowChecking(true);
-    AddResourceRelationshipsMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        setRelationships({data: {}});
-      },
-    });
-  }
+  // function handleClick() {
+  //   const variables: AddResourceRelationshipsMutationVariables = {
+  //     input: {
+  //       name: relationships.data.name,
+  //       resourceRelationshipTypeFk:
+  //         relationships.data.resourceRelationshipTypes,
+  //       resourceRelationshipMultiplicityFk:
+  //         relationships.data.resourceRelationshipMultiplicityFk,
+  //       resourceTypeFkA: relationships.data.resourceTypesA,
+  //       resourceTypeFkB: relationships.data.resourceTypesB,
+  //     },
+  //   };
+  //   setShowChecking(true);
+  //   AddResourceRelationshipsMutation(variables, {
+  //     onCompleted: () => {
+  //       isCompleted();
+  //       setRelationships({data: {}});
+  //     },
+  //   });
+  // }
 
   const setReturn = () => {
     setShowChecking(false);
@@ -202,7 +186,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add relationship</CardHeader>
       <form className={classes.formField} autoComplete="off">
-        {/* <TextField
+        <TextField
           required
           select
           className={classes.select}
@@ -211,21 +195,13 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name=""
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeClasses.edges.map((item, index) => (
+          {/* {data.resourceTypeClasses.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))} 
-        </TextField> */}
-        <TextField
-          required
-          className={classes.input}
-          id="resource-name"
-          label="Resource name"
-          variant="outlined"
-          name="name"
-          onChange={handleChange}
-        />
+          ))}  */}
+        </TextField>
+
         <TextField
           required
           id="resourceTypesA"
@@ -236,11 +212,11 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceTypesA"
           variant="outlined"
           defaultValue="">
-          {data.resourceTypes.edges.map(item => (
+          {/* {data.resourceTypes?.edges.map(item => (
             <MenuItem key={item.id} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -252,11 +228,11 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceRelationshipTypes"
           variant="outlined"
           defaultValue="">
-          {data.resourceRelationshipTypes.edges.map(item => (
+          {/* {data.resourceRelationshipTypes?.edges.map(item => (
             <MenuItem key={item.id} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -268,11 +244,11 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceRelationshipMultiplicityFk"
           variant="outlined"
           defaultValue="">
-          {data.resourceRelationshipMultiplicities.edges.map(item => (
+          {/* {data.resourceRelationshipMultiplicities?.edges.map(item => (
             <MenuItem key={item.id} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
         <TextField
           required
@@ -299,17 +275,17 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceTypesB"
           variant="outlined"
           defaultValue="">
-          {data.resourceTypes.edges.map(item => (
+          {/* {data.resourceTypes?.edges.map(item => (
             <MenuItem key={item.id} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))}
+          ))} */}
         </TextField>
       </form>
       <FormField>
         <Button
           className={classes.addResource}
-          onClick={handleClick}
+          // onClick={handleClick}
           // disabled={handleDisable}
         >
           Add Relationship
