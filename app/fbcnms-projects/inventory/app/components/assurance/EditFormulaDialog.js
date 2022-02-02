@@ -275,7 +275,7 @@ const EditFormulaDialog = (props: Props) => {
                         label={item.counterFk?.name}
                         style={{
                           backgroundColor: item.color,
-                          color: 'black',
+                          color: symphony.palette.white,
                           fontWeight: '500',
                         }}
                         draggable="true"

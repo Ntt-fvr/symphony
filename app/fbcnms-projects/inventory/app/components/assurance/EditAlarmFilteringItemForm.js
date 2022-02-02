@@ -13,7 +13,7 @@ import fbt from 'fbt';
 
 import moment from 'moment';
 
-import Button from '@material-ui/core/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
@@ -49,18 +49,14 @@ import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 
 const useStyles = makeStyles(() => ({
   root: {
+    flexGrow: 1,
     padding: '40px',
   },
   header: {
-    marginBottom: '36px',
+    marginBottom: '16px',
   },
   containerStyle: {
     padding: '0 7px 22px 7px',
-  },
-  option: {
-    width: '111px',
-    height: '38px',
-    alignSelf: 'flex-end',
   },
   titleSwitch: {
     '& .followingText': {
@@ -200,7 +196,12 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   return (
     <Grid className={classes.root}>
       <Grid container>
-        <Grid className={classes.header} container alignItems="center">
+        <Grid
+          className={classes.header}
+          container
+          direction="row"
+          justifycontent="flex-end"
+          alignItems="center">
           <Grid item xs>
             <Text variant="h6" weight="bold">
               {fbt('Edit Alarm Filtering', ' ')}
@@ -220,31 +221,21 @@ const EditAlarmFilteringItemForm = (props: Props) => {
             </IconButton>
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                style={{marginRight: '1rem'}}
-                className={classes.option}
-                variant="outlined"
-                color="primary"
-                onClick={() => closeEditForm()}>
-                Cancel
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              variant="outlined"
+              onClick={() => closeEditForm()}>
+              Cancel
+            </ButtonSaveDelete>
           </Grid>
           <Grid>
-            <FormField>
-              <Button
-                onClick={() => {
-                  handleClickEdit();
-                  closeEditForm();
-                }}
-                className={classes.option}
-                variant="contained"
-                color="primary"
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
+            <ButtonSaveDelete
+              onClick={() => {
+                handleClickEdit();
+                closeEditForm();
+              }}
+              disabled={handleDisable}>
+              Save
+            </ButtonSaveDelete>
           </Grid>
         </Grid>
         <Grid item xs>
