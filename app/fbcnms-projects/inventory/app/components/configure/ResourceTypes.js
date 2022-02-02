@@ -18,9 +18,10 @@ import {EditResourceTypeItem} from './EditResourceTypeItem';
 import {fetchQuery, graphql} from 'relay-runtime';
 
 // MUTATIONS //
-import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
-import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
+import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
+
+import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
 
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -39,11 +40,11 @@ const ResourceTypesQuery = graphql`
         node {
           id
           name
-          resourceTypeBaseTypeFk {
+          resourceTypeBaseType {
             id
             name
           }
-          resourceTypeClassFk {
+          resourceTypeClass {
             id
             name
           }
@@ -55,7 +56,7 @@ const ResourceTypesQuery = graphql`
         node {
           id
           name
-          resourceTypeFk {
+          resourceType {
             id
           }
           propertyTypes {
@@ -92,11 +93,11 @@ type Resources = {
       resourceTypeFk: {
         id: string,
       },
-      resourceTypeBaseTypeFk: {
+      resourceTypeBaseType: {
         id: string,
         name: string,
       },
-      resourceTypeClassFk: {
+      resourceTypeClass: {
         id: string,
         name: string,
       },

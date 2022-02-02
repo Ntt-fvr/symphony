@@ -43,8 +43,8 @@ func AddResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T,
 
 	resourcetype, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
 		Name:                   "my_test_1_resource_type",
-		ResourceTypeClassFk:    resourcetypeclass1.ID,
-		ResourceTypeBaseTypeFk: resourcetypebasetype1.ID,
+		resourceTypeClass:    resourcetypeclass1.ID,
+		resourceTypeBaseType: resourcetypebasetype1.ID,
 	})
 	require.NoError(t, err)
 

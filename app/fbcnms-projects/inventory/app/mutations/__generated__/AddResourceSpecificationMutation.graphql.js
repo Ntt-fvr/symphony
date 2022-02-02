@@ -17,7 +17,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type AddResourceSpecificationInput = {|
   name: string,
-  resourceTypeFk: string,
+  resourceType: string,
   propertyTypes?: ?$ReadOnlyArray<PropertyTypeInput>,
 |};
 export type PropertyTypeInput = {|

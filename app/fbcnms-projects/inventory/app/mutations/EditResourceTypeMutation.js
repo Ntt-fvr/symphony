@@ -26,11 +26,11 @@
       editResourceType(input: $input) {
         id
         name
-        resourceTypeBaseTypeFk {
+        resourceTypeBaseType {
             id
             name
           }
-        resourceTypeClassFk {
+        resourceTypeClass {
           id
           name
         }

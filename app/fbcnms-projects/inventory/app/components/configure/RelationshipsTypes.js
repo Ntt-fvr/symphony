@@ -85,11 +85,11 @@ type Resources = {
       resourceType: {
         id: string,
       },
-      resourceTypeBaseTypeFk: {
+      resourceTypeBaseType: {
         id: string,
         name: string,
       },
-      resourceTypeClassFk: {
+      resourceTypeClass: {
         id: string,
         name: string,
       },

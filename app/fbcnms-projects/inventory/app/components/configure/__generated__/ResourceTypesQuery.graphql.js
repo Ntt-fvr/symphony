@@ -22,11 +22,11 @@ export type ResourceTypesQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
-        +resourceTypeBaseTypeFk: ?{|
+        +resourceTypeBaseType: ?{|
           +id: string,
           +name: string,
         |},
-        +resourceTypeClassFk: ?{|
+        +resourceTypeClass: ?{|
           +id: string,
           +name: string,
         |},
@@ -38,7 +38,7 @@ export type ResourceTypesQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
-        +resourceTypeFk: ?{|
+        +resourceType: ?{|
           +id: string
         |},
         +propertyTypes: $ReadOnlyArray<?{|
@@ -79,11 +79,11 @@ query ResourceTypesQuery {
       node {
         id
         name
-        resourceTypeBaseTypeFk {
+        resourceTypeBaseType {
           id
           name
         }
-        resourceTypeClassFk {
+        resourceTypeClass {
           id
           name
         }
@@ -95,7 +95,7 @@ query ResourceTypesQuery {
       node {
         id
         name
-        resourceTypeFk {
+        resourceType {
           id
         }
         propertyTypes {
@@ -175,7 +175,7 @@ v3 = [
                 "args": null,
                 "concreteType": "ResourceTypeBaseType",
                 "kind": "LinkedField",
-                "name": "resourceTypeBaseTypeFk",
+                "name": "resourceTypeBaseType",
                 "plural": false,
                 "selections": (v2/*: any*/),
                 "storageKey": null
@@ -185,7 +185,7 @@ v3 = [
                 "args": null,
                 "concreteType": "ResourceTypeClass",
                 "kind": "LinkedField",
-                "name": "resourceTypeClassFk",
+                "name": "resourceTypeClass",
                 "plural": false,
                 "selections": (v2/*: any*/),
                 "storageKey": null
@@ -230,7 +230,7 @@ v3 = [
                 "args": null,
                 "concreteType": "ResourceType",
                 "kind": "LinkedField",
-                "name": "resourceTypeFk",
+                "name": "resourceType",
                 "plural": false,
                 "selections": [
                   (v0/*: any*/)
@@ -390,16 +390,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "dd791fce28796f6b09d161db629e7e81",
+    "cacheID": "b91c052b79ef7e8c025f1fff6cddabcf",
     "id": null,
     "metadata": {},
     "name": "ResourceTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseTypeFk {\n          id\n          name\n        }\n        resourceTypeClassFk {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceTypeFk {\n          id\n        }\n        propertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType {\n          id\n          name\n        }\n        resourceTypeClass {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n        }\n        propertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3412341443fd2f6db39187ab2f347054';
+(node/*: any*/).hash = 'a4f56873186124dd785ac8a1add71f69';
 
 module.exports = node;

@@ -105,10 +105,10 @@ type Props = $ReadOnly<{|
   // formValues: {
   //   id: string,
   //   name: string,
-  //   resourceTypeClassFk: {
+  //   resourceTypeClass: {
   //     name: string,
   //   },
-  //   resourceTypeBaseTypeFk: {
+  //   resourceTypeBaseType: {
   //     name: string,
   //   },
   // },
