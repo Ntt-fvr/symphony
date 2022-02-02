@@ -14,10 +14,12 @@ import React, {useMemo, useState} from 'react';
 import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
+import type {ResourceRelationshipTypeKind} from '../../mutations/__generated__/AddResourceRelationshipsMutation.graphql';
+
 // import type {AddResourceTypeFormQuery} from './__generated__/AddResourceTypeFormQuery.graphql';
 
-// import type {AddResourceRelationshipsMutationVariables} from '../../mutations/__generated__/AddResourceRelationshipsMutation.graphql';
-//
+import type {AddResourceRelationshipsMutationVariables} from '../../mutations/__generated__/AddResourceRelationshipsMutation.graphql';
+
 // DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -29,10 +31,10 @@ import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
-// import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
+import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
 
 // import {useDisabledButton} from './../assurance/common/useDisabledButton';
-// import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -85,18 +87,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// const addRelationshipsTypeForm = graphql`
-//   query AddRelationshipsTypeFormQuery {
-//     resourceTypes {
-//       edges {
-//         node {
-//           id
-//           name
-//         }
-//       }
-//     }
-//   }
-// `;
+const addRelationshipsTypeForm = graphql`
+  query AddRelationshipsTypeFormQuery {
+    resourceTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 type Node = {
   node: {
@@ -123,10 +125,10 @@ const AddRelationshipsTypeForm = (props: Props) => {
   const [relationships, setRelationships] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
 
-  // const data = useLazyLoadQuery<AddRelationshipTypeFormQuery>(
-  //   addRelationshipsTypeForm,
-  //   {},
-  // );
+  const data = useLazyLoadQuery<AddRelationshipsTypeFormQuery>(
+    addRelationshipsTypeForm,
+    {},
+  );
 
   // const names = resourceNames?.map(item => item.node.name);
 
@@ -146,26 +148,24 @@ const AddRelationshipsTypeForm = (props: Props) => {
     });
   }
 
-  // function handleClick() {
-  //   const variables: AddResourceRelationshipsMutationVariables = {
-  //     input: {
-  //       name: relationships.data.name,
-  //       resourceRelationshipTypeFk:
-  //         relationships.data.resourceRelationshipTypes,
-  //       resourceRelationshipMultiplicityFk:
-  //         relationships.data.resourceRelationshipMultiplicityFk,
-  //       resourceTypeFkA: relationships.data.resourceTypesA,
-  //       resourceTypeFkB: relationships.data.resourceTypesB,
-  //     },
-  //   };
-  //   setShowChecking(true);
-  //   AddResourceRelationshipsMutation(variables, {
-  //     onCompleted: () => {
-  //       isCompleted();
-  //       setRelationships({data: {}});
-  //     },
-  //   });
-  // }
+  function handleClick() {
+    const variables: AddResourceRelationshipsMutationVariables = {
+      input: {
+        resourceRelationshipType: relationships.data.resourceRelationshipTypes,
+        resourceRelationshipMultiplicity:
+          relationships.data.resourceRelationshipMultiplicity,
+        resourceTypeA: relationships.data.resourceTypeA,
+        resourceTypeB: relationships.data.resourceTypeB,
+      },
+    };
+    setShowChecking(true);
+    AddResourceRelationshipsMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setRelationships({data: {}});
+      },
+    });
+  }
 
   const setReturn = () => {
     setShowChecking(false);
@@ -209,18 +209,18 @@ const AddRelationshipsTypeForm = (props: Props) => {
           className={classes.select}
           label="Select resource type A"
           onChange={handleChange}
-          name="resourceTypesA"
+          name="resourceTypeA"
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypes?.edges.map(item => (
+          {data.resourceTypes?.edges.map(item => (
             <MenuItem key={item.id} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))} */}
+          ))}
         </TextField>
         <TextField
           required
-          id="resourceRelationshipTypes"
+          id="outlined-select-currency-native"
           select
           className={classes.select}
           label="Select relationship type"
@@ -228,6 +228,11 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceRelationshipTypes"
           variant="outlined"
           defaultValue="">
+          <MenuItem value={'BELONGS_TO'}>BELONGS_TO</MenuItem>
+          <MenuItem value={'LOCATED_IN'}>LOCATED_IN</MenuItem>
+          <MenuItem value={'PHYSICAL_LINK'}>PHYSICAL_LINK</MenuItem>
+          <MenuItem value={'LOGICAL_LINK'}>LOGICAL_LINK</MenuItem>
+          <MenuItem value={'CROSS_CONNECTION'}>CROSS_CONNECTION</MenuItem>
           {/* {data.resourceRelationshipTypes?.edges.map(item => (
             <MenuItem key={item.id} value={item.node?.id}>
               {item.node?.name}
@@ -236,14 +241,18 @@ const AddRelationshipsTypeForm = (props: Props) => {
         </TextField>
         <TextField
           required
-          id="resourceRelationshipMultiplicityFk"
+          id="outlined-select-currency-native"
           select
           className={classes.select}
           label="Select relationship multiplicity"
           onChange={handleChange}
-          name="resourceRelationshipMultiplicityFk"
+          name="resourceRelationshipMultiplicity"
           variant="outlined"
           defaultValue="">
+          <MenuItem value={'MANY_TO_MANY'}>MANY_TO_MANY</MenuItem>
+          <MenuItem value={'MANY_TO_ONE'}>MANY_TO_ONE</MenuItem>
+          <MenuItem value={'ONE_TO_MANY'}>ONE_TO_MANY</MenuItem>
+          <MenuItem value={'ONE_TO_ONE'}>ONE_TO_ONE</MenuItem>
           {/* {data.resourceRelationshipMultiplicities?.edges.map(item => (
             <MenuItem key={item.id} value={item.node?.id}>
               {item.node?.name}
@@ -256,14 +265,14 @@ const AddRelationshipsTypeForm = (props: Props) => {
           className={classes.select}
           label="Select base type B"
           onChange={handleChange}
-          name=""
+          name="resourceTypeB"
           variant="outlined"
           defaultValue="">
-          {/* {data.resourceTypeClasses.edges.map((item, index) => (
+          {data.resourceTypes?.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
-          ))} */}
+          ))}
         </TextField>
         <TextField
           required
@@ -285,7 +294,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
       <FormField>
         <Button
           className={classes.addResource}
-          // onClick={handleClick}
+          onClick={handleClick}
           // disabled={handleDisable}
         >
           Add Relationship

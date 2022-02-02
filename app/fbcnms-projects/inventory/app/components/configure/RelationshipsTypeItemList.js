@@ -94,7 +94,7 @@ const useStyles = makeStyles(() => ({
 
 type Node = {
   node: {
-    resourceTypeFk: {
+    resourceType: {
       id: string,
     },
   },
@@ -129,7 +129,7 @@ const RelationshipsTypeItemList = (props: Props) => {
 
   // const filterDataById = resourceDataLenght
   //   .map(item => item.node)
-  //   .filter(rsData => rsData?.resourceTypeFk?.id === formValues.id);
+  //   .filter(rsData => rsData?.resourceType?.id === formValues.id);
 
   // function handleOpen(event) {
   //   event.stopPropagation();

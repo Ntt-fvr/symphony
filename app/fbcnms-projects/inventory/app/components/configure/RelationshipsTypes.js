@@ -82,7 +82,7 @@ type Resources = {
     node: {
       id: string,
       name: string,
-      resourceTypeFk: {
+      resourceType: {
         id: string,
       },
       resourceTypeBaseTypeFk: {
