@@ -3157,18 +3157,18 @@ func (e ResourceSRItemsFilterType) MarshalGQL(w io.Writer) {
 type ResourceSpecificationFilterType string
 
 const (
-	ResourceSpecificationFilterTypeID   ResourceSpecificationFilterType = "ID"
-	ResourceSpecificationFilterTypeName ResourceSpecificationFilterType = "NAME"
+	ResourceSpecificationFilterTypeName         ResourceSpecificationFilterType = "NAME"
+	ResourceSpecificationFilterTypeResourceType ResourceSpecificationFilterType = "RESOURCE_TYPE"
 )
 
 var AllResourceSpecificationFilterType = []ResourceSpecificationFilterType{
-	ResourceSpecificationFilterTypeID,
 	ResourceSpecificationFilterTypeName,
+	ResourceSpecificationFilterTypeResourceType,
 }
 
 func (e ResourceSpecificationFilterType) IsValid() bool {
 	switch e {
-	case ResourceSpecificationFilterTypeID, ResourceSpecificationFilterTypeName:
+	case ResourceSpecificationFilterTypeName, ResourceSpecificationFilterTypeResourceType:
 		return true
 	}
 	return false
