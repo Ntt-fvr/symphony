@@ -34,13 +34,7 @@ class TestProject(BaseTest):
         )
 
         user_name = f"{self.random_string()}@fb.com"
-        self.user = add_user(client=self.client, 
-        email=user_name, 
-        password=user_name,
-        firstName="leon" ,
-        lastName= "alvares",
-        organization=self.test_organization_created.id,
-        )
+        self.user = add_user(client=self.client, email=user_name, password=user_name)
         self.work_order_type = add_work_order_type(
             self.client,
             name="Work order type",
@@ -119,14 +113,9 @@ class TestProject(BaseTest):
 
 
         user_name = f"{self.random_string()}@fb.com"
-        user = add_user(client=self.client, 
-        email=user_name, 
-        password=user_name,
-        firstName="juan" ,
-        lastName= "swored",
-        organization=self.test_organization_created,)
+        user = add_user(client=self.client, email=user_name, password=user_name)
         edited_project = edit_project(
-        client=self.client, project_id=self.project.id, new_creator_id=user.id
+            client=self.client, project_id=self.project.id, new_creator_id=user.id
         )
         fetched_project = get_project_by_id(client=self.client, id=edited_project.id)
         self.assertEqual(self.project.id, fetched_project.id)

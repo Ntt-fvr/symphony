@@ -16,6 +16,16 @@ This is template for release notes
 -->
 
 ***
+## 2.4.14 - release date 02.02.2022
+### Changes
+- Document category:
+    -`get_document_category_by_names`.
+
+### Features
+-Add document category to a location type
+***
+
+***
 ## 2.3.14 - release date 04.01.2022
 ### Changes
 - Documentation: New documentation pertaining to entities is added, in addition to notices on the entities.
