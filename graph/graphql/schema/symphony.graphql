@@ -4558,6 +4558,16 @@ enum ResourceTypeOrderField {
   NAME
 
   """
+  Order ResourceType by TypeClass.
+  """
+  RESOURCE_TYPE_CLASS
+  
+  """
+  Order ResourceType by BaseType.
+  """
+  RESOURCE_TYPE_BASE_TYPE
+
+  """
   Order ResourceType by creation time.
   """
   CREATED_AT
@@ -4619,6 +4629,20 @@ type ResourceTypeEdge {
 Properties by which ResourceRelationship connections can be ordered.
 """
 enum ResourceRelationshipOrderField {
+  """
+  Order ResourceRelationship by ResourceTypeA.
+  """
+  RESOURCE_TYPE_A
+
+  """
+  Order ResourceRelationship by ResourceTypeB.
+  """
+  RESOURCE_TYPE_B
+
+  """
+  Order ResourceRelationship by LocationType.
+  """
+  LOCATION_TYPE
 
   """
   Order ResourceRelationship by ResourceRelationshipType.
@@ -4695,6 +4719,11 @@ enum ResourceSpecificationOrderField {
   Order ResourceSpecification by name.
   """
   NAME
+
+  """
+  Order ResourceType by name.
+  """
+  RESOURCE_TYPE
 
   """
   Order ResourceSpecification by creation time.
@@ -9309,19 +9338,19 @@ enum AppointmentStatus
 type ResourceSpecification implements Node {
   id: ID!
   name: String!  
-  resourceTypeFk: ResourceType
+  resourceType: ResourceType
   propertyTypes: [PropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
-  resourceTypeFk: ID!
+  resourceType: ID!
   propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 input EditResourceSpecificationInput {
   id: ID!
   name: String!
-  resourceTypeFk: ID 
+  resourceType: ID 
   propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
@@ -9341,18 +9370,18 @@ input ResourceSpecificationFilterInput {
 type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
-  resourceSpecificationFk: ResourceSpecification!
+  resourceSpecification: ResourceSpecification!
 }
 
 input AddResourceSpecificationRelationshipInput {  
   name: String!
-  resourceSpecificationFk: ID!
+  resourceSpecification: ID!
 }
 
 input EditResourceSpecificationRelationshipInput {
   id: ID!
   name: String!
-  resourceSpecificationFk: ID
+  resourceSpecification: ID
 }
 
 enum ResourceSpecificationRelationshipFilterType {
@@ -9371,21 +9400,21 @@ input ResourceSpecificationRelationshipFilterInput {
 type ResourceSRItems implements Node {
   id: ID!
   name: String!
-  resourceSpecificationRelationshipFk: ResourceSpecificationRelationship!
-  resourceTypeFk: ResourceType!
+  resourceSpecificationRelationship: ResourceSpecificationRelationship!
+  resourceType: ResourceType!
 }
 
 input AddResourceSRItemsInput {  
   name: String!
-  resourceSpecificationRelationshipFk: ID!
-  resourceTypeFk: ID!
+  resourceSpecificationRelationship: ID!
+  resourceType: ID!
 }
 
 input EditResourceSRItemsInput {
   id: ID!
   name: String!
-  resourceSpecificationRelationshipFk: ID
-  resourceTypeFk: ID
+  resourceSpecificationRelationship: ID
+  resourceType: ID
 }
 
 enum ResourceSRItemsFilterType {

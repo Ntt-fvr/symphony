@@ -16,7 +16,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
@@ -31,8 +30,7 @@ type ResourceTypeBaseTypeQuery struct {
 	unique     []string
 	predicates []predicate.ResourceTypeBaseType
 	// eager-loading edges.
-	withResourceTypeFk *ResourceTypeQuery
-	withPolicies       *PermissionsPolicyQuery
+	withResourceBaseType *ResourceTypeQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -62,8 +60,8 @@ func (rtbtq *ResourceTypeBaseTypeQuery) Order(o ...OrderFunc) *ResourceTypeBaseT
 	return rtbtq
 }
 
-// QueryResourceTypeFk chains the current query on the resource_type_fk edge.
-func (rtbtq *ResourceTypeBaseTypeQuery) QueryResourceTypeFk() *ResourceTypeQuery {
+// QueryResourceBaseType chains the current query on the resource_base_type edge.
+func (rtbtq *ResourceTypeBaseTypeQuery) QueryResourceBaseType() *ResourceTypeQuery {
 	query := &ResourceTypeQuery{config: rtbtq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rtbtq.prepareQuery(ctx); err != nil {
@@ -76,29 +74,7 @@ func (rtbtq *ResourceTypeBaseTypeQuery) QueryResourceTypeFk() *ResourceTypeQuery
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetypebasetype.Table, resourcetypebasetype.FieldID, selector),
 			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypebasetype.ResourceTypeFkTable, resourcetypebasetype.ResourceTypeFkColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(rtbtq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryPolicies chains the current query on the policies edge.
-func (rtbtq *ResourceTypeBaseTypeQuery) QueryPolicies() *PermissionsPolicyQuery {
-	query := &PermissionsPolicyQuery{config: rtbtq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := rtbtq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := rtbtq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetypebasetype.Table, resourcetypebasetype.FieldID, selector),
-			sqlgraph.To(permissionspolicy.Table, permissionspolicy.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypebasetype.PoliciesTable, resourcetypebasetype.PoliciesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcetypebasetype.ResourceBaseTypeTable, resourcetypebasetype.ResourceBaseTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rtbtq.driver.Dialect(), step)
 		return fromU, nil
@@ -276,39 +252,27 @@ func (rtbtq *ResourceTypeBaseTypeQuery) Clone() *ResourceTypeBaseTypeQuery {
 		return nil
 	}
 	return &ResourceTypeBaseTypeQuery{
-		config:             rtbtq.config,
-		limit:              rtbtq.limit,
-		offset:             rtbtq.offset,
-		order:              append([]OrderFunc{}, rtbtq.order...),
-		unique:             append([]string{}, rtbtq.unique...),
-		predicates:         append([]predicate.ResourceTypeBaseType{}, rtbtq.predicates...),
-		withResourceTypeFk: rtbtq.withResourceTypeFk.Clone(),
-		withPolicies:       rtbtq.withPolicies.Clone(),
+		config:               rtbtq.config,
+		limit:                rtbtq.limit,
+		offset:               rtbtq.offset,
+		order:                append([]OrderFunc{}, rtbtq.order...),
+		unique:               append([]string{}, rtbtq.unique...),
+		predicates:           append([]predicate.ResourceTypeBaseType{}, rtbtq.predicates...),
+		withResourceBaseType: rtbtq.withResourceBaseType.Clone(),
 		// clone intermediate query.
 		sql:  rtbtq.sql.Clone(),
 		path: rtbtq.path,
 	}
 }
 
-//  WithResourceTypeFk tells the query-builder to eager-loads the nodes that are connected to
-// the "resource_type_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (rtbtq *ResourceTypeBaseTypeQuery) WithResourceTypeFk(opts ...func(*ResourceTypeQuery)) *ResourceTypeBaseTypeQuery {
+//  WithResourceBaseType tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_base_type" edge. The optional arguments used to configure the query builder of the edge.
+func (rtbtq *ResourceTypeBaseTypeQuery) WithResourceBaseType(opts ...func(*ResourceTypeQuery)) *ResourceTypeBaseTypeQuery {
 	query := &ResourceTypeQuery{config: rtbtq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rtbtq.withResourceTypeFk = query
-	return rtbtq
-}
-
-//  WithPolicies tells the query-builder to eager-loads the nodes that are connected to
-// the "policies" edge. The optional arguments used to configure the query builder of the edge.
-func (rtbtq *ResourceTypeBaseTypeQuery) WithPolicies(opts ...func(*PermissionsPolicyQuery)) *ResourceTypeBaseTypeQuery {
-	query := &PermissionsPolicyQuery{config: rtbtq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	rtbtq.withPolicies = query
+	rtbtq.withResourceBaseType = query
 	return rtbtq
 }
 
@@ -381,9 +345,8 @@ func (rtbtq *ResourceTypeBaseTypeQuery) sqlAll(ctx context.Context) ([]*Resource
 	var (
 		nodes       = []*ResourceTypeBaseType{}
 		_spec       = rtbtq.querySpec()
-		loadedTypes = [2]bool{
-			rtbtq.withResourceTypeFk != nil,
-			rtbtq.withPolicies != nil,
+		loadedTypes = [1]bool{
+			rtbtq.withResourceBaseType != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -407,61 +370,32 @@ func (rtbtq *ResourceTypeBaseTypeQuery) sqlAll(ctx context.Context) ([]*Resource
 		return nodes, nil
 	}
 
-	if query := rtbtq.withResourceTypeFk; query != nil {
+	if query := rtbtq.withResourceBaseType; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*ResourceTypeBaseType)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceTypeFk = []*ResourceType{}
+			nodes[i].Edges.ResourceBaseType = []*ResourceType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ResourceType(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcetypebasetype.ResourceTypeFkColumn, fks...))
+			s.Where(sql.InValues(resourcetypebasetype.ResourceBaseTypeColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.resource_type_base_type_resource_type_fk
+			fk := n.resource_type_base_type_resource_base_type
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_type_base_type_resource_type_fk" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "resource_type_base_type_resource_base_type" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_base_type_resource_type_fk" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_base_type_resource_base_type" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.ResourceTypeFk = append(node.Edges.ResourceTypeFk, n)
-		}
-	}
-
-	if query := rtbtq.withPolicies; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ResourceTypeBaseType)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Policies = []*PermissionsPolicy{}
-		}
-		query.withFKs = true
-		query.Where(predicate.PermissionsPolicy(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcetypebasetype.PoliciesColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.resource_type_base_type_policies
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_type_base_type_policies" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_base_type_policies" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.Policies = append(node.Edges.Policies, n)
+			node.Edges.ResourceBaseType = append(node.Edges.ResourceBaseType, n)
 		}
 	}
 

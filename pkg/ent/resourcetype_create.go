@@ -131,19 +131,19 @@ func (rtc *ResourceTypeCreate) AddResourceRelationshipB(r ...*ResourceRelationsh
 	return rtc.AddResourceRelationshipBIDs(ids...)
 }
 
-// AddResourceSpecificationFkIDs adds the resource_specification_fk edge to ResourceSpecification by ids.
-func (rtc *ResourceTypeCreate) AddResourceSpecificationFkIDs(ids ...int) *ResourceTypeCreate {
-	rtc.mutation.AddResourceSpecificationFkIDs(ids...)
+// AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecification by ids.
+func (rtc *ResourceTypeCreate) AddResourceSpecificationIDs(ids ...int) *ResourceTypeCreate {
+	rtc.mutation.AddResourceSpecificationIDs(ids...)
 	return rtc
 }
 
-// AddResourceSpecificationFk adds the resource_specification_fk edges to ResourceSpecification.
-func (rtc *ResourceTypeCreate) AddResourceSpecificationFk(r ...*ResourceSpecification) *ResourceTypeCreate {
+// AddResourceSpecification adds the resource_specification edges to ResourceSpecification.
+func (rtc *ResourceTypeCreate) AddResourceSpecification(r ...*ResourceSpecification) *ResourceTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtc.AddResourceSpecificationFkIDs(ids...)
+	return rtc.AddResourceSpecificationIDs(ids...)
 }
 
 // AddResourcetypeItemIDs adds the resourcetype_items edge to ResourceSRItems by ids.
@@ -366,12 +366,12 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rtc.mutation.ResourceSpecificationFkIDs(); len(nodes) > 0 {
+	if nodes := rtc.mutation.ResourceSpecificationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetype.ResourceSpecificationFkTable,
-			Columns: []string{resourcetype.ResourceSpecificationFkColumn},
+			Table:   resourcetype.ResourceSpecificationTable,
+			Columns: []string{resourcetype.ResourceSpecificationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

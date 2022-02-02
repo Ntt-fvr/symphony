@@ -493,25 +493,25 @@ func HasResourceRelationshipBWith(preds ...predicate.ResourceRelationship) predi
 	})
 }
 
-// HasResourceSpecificationFk applies the HasEdge predicate on the "resource_specification_fk" edge.
-func HasResourceSpecificationFk() predicate.ResourceType {
+// HasResourceSpecification applies the HasEdge predicate on the "resource_specification" edge.
+func HasResourceSpecification() predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceSpecificationFkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationFkTable, ResourceSpecificationFkColumn),
+			sqlgraph.To(ResourceSpecificationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationTable, ResourceSpecificationColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasResourceSpecificationFkWith applies the HasEdge predicate on the "resource_specification_fk" edge with a given conditions (other predicates).
-func HasResourceSpecificationFkWith(preds ...predicate.ResourceSpecification) predicate.ResourceType {
+// HasResourceSpecificationWith applies the HasEdge predicate on the "resource_specification" edge with a given conditions (other predicates).
+func HasResourceSpecificationWith(preds ...predicate.ResourceSpecification) predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceSpecificationFkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationFkTable, ResourceSpecificationFkColumn),
+			sqlgraph.To(ResourceSpecificationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationTable, ResourceSpecificationColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

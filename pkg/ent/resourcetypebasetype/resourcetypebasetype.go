@@ -24,27 +24,18 @@ const (
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 
-	// EdgeResourceTypeFk holds the string denoting the resource_type_fk edge name in mutations.
-	EdgeResourceTypeFk = "resource_type_fk"
-	// EdgePolicies holds the string denoting the policies edge name in mutations.
-	EdgePolicies = "policies"
+	// EdgeResourceBaseType holds the string denoting the resource_base_type edge name in mutations.
+	EdgeResourceBaseType = "resource_base_type"
 
 	// Table holds the table name of the resourcetypebasetype in the database.
 	Table = "resource_type_base_types"
-	// ResourceTypeFkTable is the table the holds the resource_type_fk relation/edge.
-	ResourceTypeFkTable = "resource_types"
-	// ResourceTypeFkInverseTable is the table name for the ResourceType entity.
+	// ResourceBaseTypeTable is the table the holds the resource_base_type relation/edge.
+	ResourceBaseTypeTable = "resource_types"
+	// ResourceBaseTypeInverseTable is the table name for the ResourceType entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcetype" package.
-	ResourceTypeFkInverseTable = "resource_types"
-	// ResourceTypeFkColumn is the table column denoting the resource_type_fk relation/edge.
-	ResourceTypeFkColumn = "resource_type_base_type_resource_type_fk"
-	// PoliciesTable is the table the holds the policies relation/edge.
-	PoliciesTable = "permissions_policies"
-	// PoliciesInverseTable is the table name for the PermissionsPolicy entity.
-	// It exists in this package in order to avoid circular dependency with the "permissionspolicy" package.
-	PoliciesInverseTable = "permissions_policies"
-	// PoliciesColumn is the table column denoting the policies relation/edge.
-	PoliciesColumn = "resource_type_base_type_policies"
+	ResourceBaseTypeInverseTable = "resource_types"
+	// ResourceBaseTypeColumn is the table column denoting the resource_base_type relation/edge.
+	ResourceBaseTypeColumn = "resource_type_base_type_resource_base_type"
 )
 
 // Columns holds all SQL columns for resourcetypebasetype fields.

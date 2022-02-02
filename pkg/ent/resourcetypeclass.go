@@ -33,31 +33,20 @@ type ResourceTypeClass struct {
 
 // ResourceTypeClassEdges holds the relations/edges for other nodes in the graph.
 type ResourceTypeClassEdges struct {
-	// ResourceTypeFk holds the value of the resource_type_fk edge.
-	ResourceTypeFk []*ResourceType
-	// Policies holds the value of the policies edge.
-	Policies []*PermissionsPolicy
+	// ResourceTypeClass holds the value of the resource_type_class edge.
+	ResourceTypeClass []*ResourceType
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [1]bool
 }
 
-// ResourceTypeFkOrErr returns the ResourceTypeFk value or an error if the edge
+// ResourceTypeClassOrErr returns the ResourceTypeClass value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeClassEdges) ResourceTypeFkOrErr() ([]*ResourceType, error) {
+func (e ResourceTypeClassEdges) ResourceTypeClassOrErr() ([]*ResourceType, error) {
 	if e.loadedTypes[0] {
-		return e.ResourceTypeFk, nil
+		return e.ResourceTypeClass, nil
 	}
-	return nil, &NotLoadedError{edge: "resource_type_fk"}
-}
-
-// PoliciesOrErr returns the Policies value or an error if the edge
-// was not loaded in eager-loading.
-func (e ResourceTypeClassEdges) PoliciesOrErr() ([]*PermissionsPolicy, error) {
-	if e.loadedTypes[1] {
-		return e.Policies, nil
-	}
-	return nil, &NotLoadedError{edge: "policies"}
+	return nil, &NotLoadedError{edge: "resource_type_class"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -100,14 +89,9 @@ func (rtc *ResourceTypeClass) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryResourceTypeFk queries the resource_type_fk edge of the ResourceTypeClass.
-func (rtc *ResourceTypeClass) QueryResourceTypeFk() *ResourceTypeQuery {
-	return (&ResourceTypeClassClient{config: rtc.config}).QueryResourceTypeFk(rtc)
-}
-
-// QueryPolicies queries the policies edge of the ResourceTypeClass.
-func (rtc *ResourceTypeClass) QueryPolicies() *PermissionsPolicyQuery {
-	return (&ResourceTypeClassClient{config: rtc.config}).QueryPolicies(rtc)
+// QueryResourceTypeClass queries the resource_type_class edge of the ResourceTypeClass.
+func (rtc *ResourceTypeClass) QueryResourceTypeClass() *ResourceTypeQuery {
+	return (&ResourceTypeClassClient{config: rtc.config}).QueryResourceTypeClass(rtc)
 }
 
 // Update returns a builder for updating this ResourceTypeClass.

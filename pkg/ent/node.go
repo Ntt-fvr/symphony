@@ -5984,9 +5984,9 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 	}
 	node.Edges[1] = &Edge{
 		Type: "PropertyType",
-		Name: "property_type_fk",
+		Name: "property_type",
 	}
-	node.Edges[1].IDs, err = rs.QueryPropertyTypeFk().
+	node.Edges[1].IDs, err = rs.QueryPropertyType().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -6134,9 +6134,9 @@ func (rt *ResourceType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[4] = &Edge{
 		Type: "ResourceSpecification",
-		Name: "resource_specification_fk",
+		Name: "resource_specification",
 	}
-	node.Edges[4].IDs, err = rt.QueryResourceSpecificationFk().
+	node.Edges[4].IDs, err = rt.QueryResourceSpecification().
 		Select(resourcespecification.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -6160,7 +6160,7 @@ func (rtbt *ResourceTypeBaseType) Node(ctx context.Context) (node *Node, err err
 		ID:     rtbt.ID,
 		Type:   "ResourceTypeBaseType",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(rtbt.CreateTime); err != nil {
@@ -6189,20 +6189,10 @@ func (rtbt *ResourceTypeBaseType) Node(ctx context.Context) (node *Node, err err
 	}
 	node.Edges[0] = &Edge{
 		Type: "ResourceType",
-		Name: "resource_type_fk",
+		Name: "resource_base_type",
 	}
-	node.Edges[0].IDs, err = rtbt.QueryResourceTypeFk().
+	node.Edges[0].IDs, err = rtbt.QueryResourceBaseType().
 		Select(resourcetype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "PermissionsPolicy",
-		Name: "policies",
-	}
-	node.Edges[1].IDs, err = rtbt.QueryPolicies().
-		Select(permissionspolicy.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -6215,7 +6205,7 @@ func (rtc *ResourceTypeClass) Node(ctx context.Context) (node *Node, err error) 
 		ID:     rtc.ID,
 		Type:   "ResourceTypeClass",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(rtc.CreateTime); err != nil {
@@ -6244,20 +6234,10 @@ func (rtc *ResourceTypeClass) Node(ctx context.Context) (node *Node, err error) 
 	}
 	node.Edges[0] = &Edge{
 		Type: "ResourceType",
-		Name: "resource_type_fk",
+		Name: "resource_type_class",
 	}
-	node.Edges[0].IDs, err = rtc.QueryResourceTypeFk().
+	node.Edges[0].IDs, err = rtc.QueryResourceTypeClass().
 		Select(resourcetype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "PermissionsPolicy",
-		Name: "policies",
-	}
-	node.Edges[1].IDs, err = rtc.QueryPolicies().
-		Select(permissionspolicy.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

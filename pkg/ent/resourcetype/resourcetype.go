@@ -32,8 +32,8 @@ const (
 	EdgeResourceRelationshipA = "resource_relationship_a"
 	// EdgeResourceRelationshipB holds the string denoting the resource_relationship_b edge name in mutations.
 	EdgeResourceRelationshipB = "resource_relationship_b"
-	// EdgeResourceSpecificationFk holds the string denoting the resource_specification_fk edge name in mutations.
-	EdgeResourceSpecificationFk = "resource_specification_fk"
+	// EdgeResourceSpecification holds the string denoting the resource_specification edge name in mutations.
+	EdgeResourceSpecification = "resource_specification"
 	// EdgeResourcetypeItems holds the string denoting the resourcetype_items edge name in mutations.
 	EdgeResourcetypeItems = "resourcetype_items"
 
@@ -45,14 +45,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "resourcetypeclass" package.
 	ResourcetypeclassInverseTable = "resource_type_classes"
 	// ResourcetypeclassColumn is the table column denoting the resourcetypeclass relation/edge.
-	ResourcetypeclassColumn = "resource_type_class_resource_type_fk"
+	ResourcetypeclassColumn = "resource_type_class_resource_type_class"
 	// ResourcetypebasetypeTable is the table the holds the resourcetypebasetype relation/edge.
 	ResourcetypebasetypeTable = "resource_types"
 	// ResourcetypebasetypeInverseTable is the table name for the ResourceTypeBaseType entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcetypebasetype" package.
 	ResourcetypebasetypeInverseTable = "resource_type_base_types"
 	// ResourcetypebasetypeColumn is the table column denoting the resourcetypebasetype relation/edge.
-	ResourcetypebasetypeColumn = "resource_type_base_type_resource_type_fk"
+	ResourcetypebasetypeColumn = "resource_type_base_type_resource_base_type"
 	// ResourceRelationshipATable is the table the holds the resource_relationship_a relation/edge.
 	ResourceRelationshipATable = "resource_relationships"
 	// ResourceRelationshipAInverseTable is the table name for the ResourceRelationship entity.
@@ -67,13 +67,13 @@ const (
 	ResourceRelationshipBInverseTable = "resource_relationships"
 	// ResourceRelationshipBColumn is the table column denoting the resource_relationship_b relation/edge.
 	ResourceRelationshipBColumn = "resource_type_resource_relationship_b"
-	// ResourceSpecificationFkTable is the table the holds the resource_specification_fk relation/edge.
-	ResourceSpecificationFkTable = "resource_specifications"
-	// ResourceSpecificationFkInverseTable is the table name for the ResourceSpecification entity.
+	// ResourceSpecificationTable is the table the holds the resource_specification relation/edge.
+	ResourceSpecificationTable = "resource_specifications"
+	// ResourceSpecificationInverseTable is the table name for the ResourceSpecification entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcespecification" package.
-	ResourceSpecificationFkInverseTable = "resource_specifications"
-	// ResourceSpecificationFkColumn is the table column denoting the resource_specification_fk relation/edge.
-	ResourceSpecificationFkColumn = "resource_type_resource_specification_fk"
+	ResourceSpecificationInverseTable = "resource_specifications"
+	// ResourceSpecificationColumn is the table column denoting the resource_specification relation/edge.
+	ResourceSpecificationColumn = "resource_type_resource_specification"
 	// ResourcetypeItemsTable is the table the holds the resourcetype_items relation/edge.
 	ResourcetypeItemsTable = "resource_sr_items"
 	// ResourcetypeItemsInverseTable is the table name for the ResourceSRItems entity.
@@ -93,8 +93,8 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceType type.
 var ForeignKeys = []string{
-	"resource_type_base_type_resource_type_fk",
-	"resource_type_class_resource_type_fk",
+	"resource_type_base_type_resource_base_type",
+	"resource_type_class_resource_type_class",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -17,7 +17,7 @@ import (
 
 type resourceSpecificationRelationshipResolver struct{}
 
-func (r resourceSpecificationRelationshipResolver) ResourceSpecificationFk(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) (*ent.ResourceSpecification, error) {
+func (r resourceSpecificationRelationshipResolver) ResourceSpecification(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) (*ent.ResourceSpecification, error) {
 	variable, err := resourceSpecificationRelationship.Resourcespecification(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
@@ -25,7 +25,7 @@ func (r resourceSpecificationRelationshipResolver) ResourceSpecificationFk(ctx c
 	return variable, nil
 }
 
-func (r resourceSpecificationRelationshipResolver) ResourceSpecificationRelationshipItemsFk(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) ([]*ent.ResourceSRItems, error) {
+func (r resourceSpecificationRelationshipResolver) ResourceSpecificationRelationshipItems(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) ([]*ent.ResourceSRItems, error) {
 	variable, err := resourceSpecificationRelationship.ResourceSr(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
@@ -38,7 +38,7 @@ func (r mutationResolver) AddResourceSpecificationRelationship(ctx context.Conte
 	typ, err := client.
 		ResourceSpecificationRelationship.Create().
 		SetName(input.Name).
-		SetNillableResourcespecificationID(&input.ResourceSpecificationFk).
+		SetNillableResourcespecificationID(&input.ResourceSpecification).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -81,11 +81,11 @@ func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Cont
 		return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
 	}
 
-	if input.Name != et.Name || input.ResourceSpecificationFk != &resourcespecification.ID {
+	if input.Name != et.Name || input.ResourceSpecification != &resourcespecification.ID {
 		if et, err = client.ResourceSpecificationRelationship.
 			UpdateOne(et).
 			SetName(input.Name).
-			SetNillableResourcespecificationID(input.ResourceSpecificationFk).
+			SetNillableResourcespecificationID(input.ResourceSpecification).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)

@@ -81,7 +81,7 @@ type PropertyType struct {
 	location_type_property_types            *int
 	project_template_properties             *int
 	project_type_properties                 *int
-	resource_specification_property_type_fk *int
+	resource_specification_property_type    *int
 	service_type_property_types             *int
 	work_order_template_property_types      *int
 	work_order_type_property_types          *int
@@ -319,7 +319,7 @@ func (*PropertyType) fkValues() []interface{} {
 		&sql.NullInt64{}, // location_type_property_types
 		&sql.NullInt64{}, // project_template_properties
 		&sql.NullInt64{}, // project_type_properties
-		&sql.NullInt64{}, // resource_specification_property_type_fk
+		&sql.NullInt64{}, // resource_specification_property_type
 		&sql.NullInt64{}, // service_type_property_types
 		&sql.NullInt64{}, // work_order_template_property_types
 		&sql.NullInt64{}, // work_order_type_property_types
@@ -491,10 +491,10 @@ func (pt *PropertyType) assignValues(values ...interface{}) error {
 			*pt.project_type_properties = int(value.Int64)
 		}
 		if value, ok := values[6].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_specification_property_type_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field resource_specification_property_type", value)
 		} else if value.Valid {
-			pt.resource_specification_property_type_fk = new(int)
-			*pt.resource_specification_property_type_fk = int(value.Int64)
+			pt.resource_specification_property_type = new(int)
+			*pt.resource_specification_property_type = int(value.Int64)
 		}
 		if value, ok := values[7].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field service_type_property_types", value)

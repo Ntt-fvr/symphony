@@ -381,53 +381,25 @@ func NameContainsFold(v string) predicate.ResourceTypeClass {
 	})
 }
 
-// HasResourceTypeFk applies the HasEdge predicate on the "resource_type_fk" edge.
-func HasResourceTypeFk() predicate.ResourceTypeClass {
+// HasResourceTypeClass applies the HasEdge predicate on the "resource_type_class" edge.
+func HasResourceTypeClass() predicate.ResourceTypeClass {
 	return predicate.ResourceTypeClass(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceTypeFkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceTypeFkTable, ResourceTypeFkColumn),
+			sqlgraph.To(ResourceTypeClassTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceTypeClassTable, ResourceTypeClassColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasResourceTypeFkWith applies the HasEdge predicate on the "resource_type_fk" edge with a given conditions (other predicates).
-func HasResourceTypeFkWith(preds ...predicate.ResourceType) predicate.ResourceTypeClass {
+// HasResourceTypeClassWith applies the HasEdge predicate on the "resource_type_class" edge with a given conditions (other predicates).
+func HasResourceTypeClassWith(preds ...predicate.ResourceType) predicate.ResourceTypeClass {
 	return predicate.ResourceTypeClass(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceTypeFkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceTypeFkTable, ResourceTypeFkColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasPolicies applies the HasEdge predicate on the "policies" edge.
-func HasPolicies() predicate.ResourceTypeClass {
-	return predicate.ResourceTypeClass(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PoliciesTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PoliciesTable, PoliciesColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasPoliciesWith applies the HasEdge predicate on the "policies" edge with a given conditions (other predicates).
-func HasPoliciesWith(preds ...predicate.PermissionsPolicy) predicate.ResourceTypeClass {
-	return predicate.ResourceTypeClass(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PoliciesInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PoliciesTable, PoliciesColumn),
+			sqlgraph.To(ResourceTypeClassInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceTypeClassTable, ResourceTypeClassColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

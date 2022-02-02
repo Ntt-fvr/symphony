@@ -29,9 +29,8 @@ func (ResourceTypeBaseType) Fields() []ent.Field {
 // Edges returns property type edges.
 func (ResourceTypeBaseType) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("resource_type_fk", ResourceType.Type).
+		edge.To("resource_base_type", ResourceType.Type).
 			Annotations(entgql.MapsTo("resourcetype")),
-		edge.To("policies", PermissionsPolicy.Type),
 	}
 }
 

@@ -14,7 +14,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
 )
@@ -60,34 +59,19 @@ func (rtbtc *ResourceTypeBaseTypeCreate) SetName(s string) *ResourceTypeBaseType
 	return rtbtc
 }
 
-// AddResourceTypeFkIDs adds the resource_type_fk edge to ResourceType by ids.
-func (rtbtc *ResourceTypeBaseTypeCreate) AddResourceTypeFkIDs(ids ...int) *ResourceTypeBaseTypeCreate {
-	rtbtc.mutation.AddResourceTypeFkIDs(ids...)
+// AddResourceBaseTypeIDs adds the resource_base_type edge to ResourceType by ids.
+func (rtbtc *ResourceTypeBaseTypeCreate) AddResourceBaseTypeIDs(ids ...int) *ResourceTypeBaseTypeCreate {
+	rtbtc.mutation.AddResourceBaseTypeIDs(ids...)
 	return rtbtc
 }
 
-// AddResourceTypeFk adds the resource_type_fk edges to ResourceType.
-func (rtbtc *ResourceTypeBaseTypeCreate) AddResourceTypeFk(r ...*ResourceType) *ResourceTypeBaseTypeCreate {
+// AddResourceBaseType adds the resource_base_type edges to ResourceType.
+func (rtbtc *ResourceTypeBaseTypeCreate) AddResourceBaseType(r ...*ResourceType) *ResourceTypeBaseTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rtbtc.AddResourceTypeFkIDs(ids...)
-}
-
-// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
-func (rtbtc *ResourceTypeBaseTypeCreate) AddPolicyIDs(ids ...int) *ResourceTypeBaseTypeCreate {
-	rtbtc.mutation.AddPolicyIDs(ids...)
-	return rtbtc
-}
-
-// AddPolicies adds the policies edges to PermissionsPolicy.
-func (rtbtc *ResourceTypeBaseTypeCreate) AddPolicies(p ...*PermissionsPolicy) *ResourceTypeBaseTypeCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return rtbtc.AddPolicyIDs(ids...)
+	return rtbtc.AddResourceBaseTypeIDs(ids...)
 }
 
 // Mutation returns the ResourceTypeBaseTypeMutation object of the builder.
@@ -219,36 +203,17 @@ func (rtbtc *ResourceTypeBaseTypeCreate) createSpec() (*ResourceTypeBaseType, *s
 		})
 		_node.Name = value
 	}
-	if nodes := rtbtc.mutation.ResourceTypeFkIDs(); len(nodes) > 0 {
+	if nodes := rtbtc.mutation.ResourceBaseTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcetypebasetype.ResourceTypeFkTable,
-			Columns: []string{resourcetypebasetype.ResourceTypeFkColumn},
+			Table:   resourcetypebasetype.ResourceBaseTypeTable,
+			Columns: []string{resourcetypebasetype.ResourceBaseTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := rtbtc.mutation.PoliciesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetypebasetype.PoliciesTable,
-			Columns: []string{resourcetypebasetype.PoliciesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: permissionspolicy.FieldID,
 				},
 			},
 		}

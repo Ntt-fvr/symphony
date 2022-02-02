@@ -18,7 +18,7 @@ import (
 
 type resourceSpecificationResolver struct{}
 
-func (resourceSpecificationResolver) ResourceTypeFk(ctx context.Context, resourceSpecification *ent.ResourceSpecification) (*ent.ResourceType, error) {
+func (resourceSpecificationResolver) ResourceType(ctx context.Context, resourceSpecification *ent.ResourceSpecification) (*ent.ResourceType, error) {
 	variable, err := resourceSpecification.Resourcetype(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
@@ -27,7 +27,7 @@ func (resourceSpecificationResolver) ResourceTypeFk(ctx context.Context, resourc
 
 }
 func (resourceSpecificationResolver) PropertyTypes(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.PropertyType, error) {
-	variable, err := resourceSpecification.PropertyTypeFk(ctx)
+	variable, err := resourceSpecification.PropertyType(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
 	}
@@ -35,7 +35,7 @@ func (resourceSpecificationResolver) PropertyTypes(ctx context.Context, resource
 	return variable, nil
 
 }
-func (r resourceSpecificationResolver) ResourceSpecificationRelationshipFk(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.ResourceSpecificationRelationship, error) {
+func (r resourceSpecificationResolver) ResourceSpecificationRelationship(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.ResourceSpecificationRelationship, error) {
 	variable, err := resourceSpecification.ResourceSpecification(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
@@ -50,7 +50,7 @@ func (r mutationResolver) AddResourceSpecification(ctx context.Context, input mo
 	typ, err := client.
 		ResourceSpecification.Create().
 		SetName(input.Name).
-		SetResourcetypeID(input.ResourceTypeFk).
+		SetResourcetypeID(input.ResourceType).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -127,11 +127,11 @@ func (r mutationResolver) EditResourceSpecification(ctx context.Context, input m
 		}
 	}
 
-	if input.Name != et.Name || input.ResourceTypeFk != &resourcetype.ID {
+	if input.Name != et.Name || input.ResourceType != &resourcetype.ID {
 		if et, err = client.ResourceSpecification.
 			UpdateOne(et).
 			SetName(input.Name).
-			SetNillableResourcetypeID(input.ResourceTypeFk).
+			SetNillableResourcetypeID(input.ResourceType).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)

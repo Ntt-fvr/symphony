@@ -34,13 +34,13 @@ type ResourceTypeQuery struct {
 	unique     []string
 	predicates []predicate.ResourceType
 	// eager-loading edges.
-	withResourcetypeclass       *ResourceTypeClassQuery
-	withResourcetypebasetype    *ResourceTypeBaseTypeQuery
-	withResourceRelationshipA   *ResourceRelationshipQuery
-	withResourceRelationshipB   *ResourceRelationshipQuery
-	withResourceSpecificationFk *ResourceSpecificationQuery
-	withResourcetypeItems       *ResourceSRItemsQuery
-	withFKs                     bool
+	withResourcetypeclass     *ResourceTypeClassQuery
+	withResourcetypebasetype  *ResourceTypeBaseTypeQuery
+	withResourceRelationshipA *ResourceRelationshipQuery
+	withResourceRelationshipB *ResourceRelationshipQuery
+	withResourceSpecification *ResourceSpecificationQuery
+	withResourcetypeItems     *ResourceSRItemsQuery
+	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -158,8 +158,8 @@ func (rtq *ResourceTypeQuery) QueryResourceRelationshipB() *ResourceRelationship
 	return query
 }
 
-// QueryResourceSpecificationFk chains the current query on the resource_specification_fk edge.
-func (rtq *ResourceTypeQuery) QueryResourceSpecificationFk() *ResourceSpecificationQuery {
+// QueryResourceSpecification chains the current query on the resource_specification edge.
+func (rtq *ResourceTypeQuery) QueryResourceSpecification() *ResourceSpecificationQuery {
 	query := &ResourceSpecificationQuery{config: rtq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rtq.prepareQuery(ctx); err != nil {
@@ -172,7 +172,7 @@ func (rtq *ResourceTypeQuery) QueryResourceSpecificationFk() *ResourceSpecificat
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, selector),
 			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceSpecificationFkTable, resourcetype.ResourceSpecificationFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceSpecificationTable, resourcetype.ResourceSpecificationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
 		return fromU, nil
@@ -372,18 +372,18 @@ func (rtq *ResourceTypeQuery) Clone() *ResourceTypeQuery {
 		return nil
 	}
 	return &ResourceTypeQuery{
-		config:                      rtq.config,
-		limit:                       rtq.limit,
-		offset:                      rtq.offset,
-		order:                       append([]OrderFunc{}, rtq.order...),
-		unique:                      append([]string{}, rtq.unique...),
-		predicates:                  append([]predicate.ResourceType{}, rtq.predicates...),
-		withResourcetypeclass:       rtq.withResourcetypeclass.Clone(),
-		withResourcetypebasetype:    rtq.withResourcetypebasetype.Clone(),
-		withResourceRelationshipA:   rtq.withResourceRelationshipA.Clone(),
-		withResourceRelationshipB:   rtq.withResourceRelationshipB.Clone(),
-		withResourceSpecificationFk: rtq.withResourceSpecificationFk.Clone(),
-		withResourcetypeItems:       rtq.withResourcetypeItems.Clone(),
+		config:                    rtq.config,
+		limit:                     rtq.limit,
+		offset:                    rtq.offset,
+		order:                     append([]OrderFunc{}, rtq.order...),
+		unique:                    append([]string{}, rtq.unique...),
+		predicates:                append([]predicate.ResourceType{}, rtq.predicates...),
+		withResourcetypeclass:     rtq.withResourcetypeclass.Clone(),
+		withResourcetypebasetype:  rtq.withResourcetypebasetype.Clone(),
+		withResourceRelationshipA: rtq.withResourceRelationshipA.Clone(),
+		withResourceRelationshipB: rtq.withResourceRelationshipB.Clone(),
+		withResourceSpecification: rtq.withResourceSpecification.Clone(),
+		withResourcetypeItems:     rtq.withResourcetypeItems.Clone(),
 		// clone intermediate query.
 		sql:  rtq.sql.Clone(),
 		path: rtq.path,
@@ -434,14 +434,14 @@ func (rtq *ResourceTypeQuery) WithResourceRelationshipB(opts ...func(*ResourceRe
 	return rtq
 }
 
-//  WithResourceSpecificationFk tells the query-builder to eager-loads the nodes that are connected to
-// the "resource_specification_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (rtq *ResourceTypeQuery) WithResourceSpecificationFk(opts ...func(*ResourceSpecificationQuery)) *ResourceTypeQuery {
+//  WithResourceSpecification tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_specification" edge. The optional arguments used to configure the query builder of the edge.
+func (rtq *ResourceTypeQuery) WithResourceSpecification(opts ...func(*ResourceSpecificationQuery)) *ResourceTypeQuery {
 	query := &ResourceSpecificationQuery{config: rtq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rtq.withResourceSpecificationFk = query
+	rtq.withResourceSpecification = query
 	return rtq
 }
 
@@ -531,7 +531,7 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 			rtq.withResourcetypebasetype != nil,
 			rtq.withResourceRelationshipA != nil,
 			rtq.withResourceRelationshipB != nil,
-			rtq.withResourceSpecificationFk != nil,
+			rtq.withResourceSpecification != nil,
 			rtq.withResourcetypeItems != nil,
 		}
 	)
@@ -569,7 +569,7 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*ResourceType)
 		for i := range nodes {
-			if fk := nodes[i].resource_type_class_resource_type_fk; fk != nil {
+			if fk := nodes[i].resource_type_class_resource_type_class; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -582,7 +582,7 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_class_resource_type_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_class_resource_type_class" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcetypeclass = n
@@ -594,7 +594,7 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*ResourceType)
 		for i := range nodes {
-			if fk := nodes[i].resource_type_base_type_resource_type_fk; fk != nil {
+			if fk := nodes[i].resource_type_base_type_resource_base_type; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -607,7 +607,7 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_base_type_resource_type_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_base_type_resource_base_type" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcetypebasetype = n
@@ -673,32 +673,32 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 		}
 	}
 
-	if query := rtq.withResourceSpecificationFk; query != nil {
+	if query := rtq.withResourceSpecification; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*ResourceType)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceSpecificationFk = []*ResourceSpecification{}
+			nodes[i].Edges.ResourceSpecification = []*ResourceSpecification{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ResourceSpecification(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcetype.ResourceSpecificationFkColumn, fks...))
+			s.Where(sql.InValues(resourcetype.ResourceSpecificationColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.resource_type_resource_specification_fk
+			fk := n.resource_type_resource_specification
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_type_resource_specification_fk" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "resource_type_resource_specification" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_specification_fk" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_specification" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.ResourceSpecificationFk = append(node.Edges.ResourceSpecificationFk, n)
+			node.Edges.ResourceSpecification = append(node.Edges.ResourceSpecification, n)
 		}
 	}
 

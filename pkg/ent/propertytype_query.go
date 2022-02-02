@@ -1070,7 +1070,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PropertyType)
 		for i := range nodes {
-			if fk := nodes[i].resource_specification_property_type_fk; fk != nil {
+			if fk := nodes[i].resource_specification_property_type; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -1083,7 +1083,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_property_type_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_property_type" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcespecification = n

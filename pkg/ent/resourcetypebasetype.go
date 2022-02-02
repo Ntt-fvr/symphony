@@ -33,31 +33,20 @@ type ResourceTypeBaseType struct {
 
 // ResourceTypeBaseTypeEdges holds the relations/edges for other nodes in the graph.
 type ResourceTypeBaseTypeEdges struct {
-	// ResourceTypeFk holds the value of the resource_type_fk edge.
-	ResourceTypeFk []*ResourceType
-	// Policies holds the value of the policies edge.
-	Policies []*PermissionsPolicy
+	// ResourceBaseType holds the value of the resource_base_type edge.
+	ResourceBaseType []*ResourceType
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [1]bool
 }
 
-// ResourceTypeFkOrErr returns the ResourceTypeFk value or an error if the edge
+// ResourceBaseTypeOrErr returns the ResourceBaseType value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeBaseTypeEdges) ResourceTypeFkOrErr() ([]*ResourceType, error) {
+func (e ResourceTypeBaseTypeEdges) ResourceBaseTypeOrErr() ([]*ResourceType, error) {
 	if e.loadedTypes[0] {
-		return e.ResourceTypeFk, nil
+		return e.ResourceBaseType, nil
 	}
-	return nil, &NotLoadedError{edge: "resource_type_fk"}
-}
-
-// PoliciesOrErr returns the Policies value or an error if the edge
-// was not loaded in eager-loading.
-func (e ResourceTypeBaseTypeEdges) PoliciesOrErr() ([]*PermissionsPolicy, error) {
-	if e.loadedTypes[1] {
-		return e.Policies, nil
-	}
-	return nil, &NotLoadedError{edge: "policies"}
+	return nil, &NotLoadedError{edge: "resource_base_type"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -100,14 +89,9 @@ func (rtbt *ResourceTypeBaseType) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryResourceTypeFk queries the resource_type_fk edge of the ResourceTypeBaseType.
-func (rtbt *ResourceTypeBaseType) QueryResourceTypeFk() *ResourceTypeQuery {
-	return (&ResourceTypeBaseTypeClient{config: rtbt.config}).QueryResourceTypeFk(rtbt)
-}
-
-// QueryPolicies queries the policies edge of the ResourceTypeBaseType.
-func (rtbt *ResourceTypeBaseType) QueryPolicies() *PermissionsPolicyQuery {
-	return (&ResourceTypeBaseTypeClient{config: rtbt.config}).QueryPolicies(rtbt)
+// QueryResourceBaseType queries the resource_base_type edge of the ResourceTypeBaseType.
+func (rtbt *ResourceTypeBaseType) QueryResourceBaseType() *ResourceTypeQuery {
+	return (&ResourceTypeBaseTypeClient{config: rtbt.config}).QueryResourceBaseType(rtbt)
 }
 
 // Update returns a builder for updating this ResourceTypeBaseType.
