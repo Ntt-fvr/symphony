@@ -14,24 +14,47 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Grid from '@material-ui/core/Grid';
 import PropertyComboList from './PropertyComboList';
 import PropertyTypesTableDispatcher from '../../form/context/property_types/PropertyTypesTableDispatcher';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useReducer} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import Strings from '@fbcnms/strings/Strings';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import {
+  DependentPropertyTypesReducer,
+  DependentPropertyTypesReducerInit,
+  DependentPropertyTypesReducerTypes,
+} from './DependentPropertyTypesReducer';
 import {PropertyType} from '../../../common/PropertyType';
 
 type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
+  onSave: () => void,
   property: PropertyType,
   setShowCompleteMessage: () => void,
 |}>;
 
 const PropertyComboSelectContent = (props: Props) => {
-  const {onClose, classes, property, setShowCompleteMessage} = props;
+  const {onClose, classes, property, setShowCompleteMessage, onSave} = props;
   const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
-  const [dependenceProperty, setDependenceProperty] = useState({});
+  const [state, dispatch] = useReducer(
+    DependentPropertyTypesReducer,
+    JSON.parse(property.stringValue),
+    DependentPropertyTypesReducerInit,
+  );
+
+  const handleDependenceProperty = id => {
+    const action = {
+      type: DependentPropertyTypesReducerTypes.updateDependenceProperty,
+      payload: propertyTypes.find(property => property.id === id),
+    };
+    dispatch(action);
+  };
+
+  const saveButtonClicked = () => {
+    setShowCompleteMessage(true);
+    onSave([state]);
+  };
 
   return (
     <>
@@ -82,21 +105,23 @@ const PropertyComboSelectContent = (props: Props) => {
                   value: property.id,
                 };
               })}
-              selectedValue={dependenceProperty}
-              onChange={setDependenceProperty}
+              selectedValue={state.tempId}
+              onChange={handleDependenceProperty}
               className={classes.selectInput}
             />
           </Grid>
         </Grid>
-        <PropertyComboList classes={classes} property={property} />
+        <PropertyComboList
+          classes={classes}
+          propertyTypeValues={state.propertyTypeValues}
+          dispatch={dispatch}
+        />
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
         <Button onClick={onClose} skin="primary-outlined">
           {Strings.common.cancelButton}
         </Button>
-        <Button onClick={() => setShowCompleteMessage(true)}>
-          {Strings.common.saveButton}
-        </Button>
+        <Button onClick={saveButtonClicked}>{Strings.common.saveButton}</Button>
       </DialogActions>
     </>
   );

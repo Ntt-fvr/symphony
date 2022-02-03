@@ -47,4 +47,5 @@ export type FeatureID =
   | 'projects_column_selector'
   | 'multicontractor'
   | 'scheduling_filter_dates'
+  | 'property_combo'
   | 'equipment_&_ports_module';

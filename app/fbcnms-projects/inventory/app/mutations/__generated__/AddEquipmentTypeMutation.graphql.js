@@ -63,6 +63,15 @@ export type PropertyTypeInput = {|
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
   isListable?: ?boolean,
+  propertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+|};
+export type AddPropertyTypeValueInput = {|
+  id?: ?string,
+  name: string,
+  propertyType?: ?string,
+  propertyTypeValue?: ?string,
+  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
 |};
 export type AddEquipmentTypeMutationVariables = {|
   input: AddEquipmentTypeInput

@@ -118,6 +118,7 @@ export const toMutablePropertyType = (
   isMandatory: immutablePropertyType.isMandatory,
   isListable: immutablePropertyType.isListable,
   isDeleted: immutablePropertyType.isDeleted,
+  propertyType: immutablePropertyType.propertyType,
 });
 
 export const convertPropertyTypeToMutationInput = (

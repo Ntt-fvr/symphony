@@ -98,10 +98,11 @@ type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   property: PropertyType,
+  onSave: () => void,
 |}>;
 
 const PropertyComboPrincipalDialog = (props: Props) => {
-  const {open, onClose, property} = props;
+  const {open, onClose, property, onSave} = props;
   const [showCompleteMessage, setShowCompleteMessage] = useState<boolean>(
     false,
   );
@@ -124,6 +125,7 @@ const PropertyComboPrincipalDialog = (props: Props) => {
           onClose={onClose}
           classes={classes}
           property={property}
+          onSave={onSave}
           setShowCompleteMessage={setShowCompleteMessage}
         />
       )}

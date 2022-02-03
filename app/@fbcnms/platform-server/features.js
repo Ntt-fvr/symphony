@@ -264,6 +264,11 @@ export const arrayConfigs = [
     title: 'Enable Equipment & Ports',
     enabledByDefault: true,
   },
+  {
+    id: 'property_combo',
+    title: 'Combo de Propiedades',
+    enabledByDefault: false,
+  },
 ];
 
 export const featureConfigs: {[FeatureID]: FeatureConfig} = {};

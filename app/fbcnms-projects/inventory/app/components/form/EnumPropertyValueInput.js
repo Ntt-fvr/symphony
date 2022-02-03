@@ -15,6 +15,7 @@ import PropertyComboPrincipalDialog from '../work_orders/property_combo/Property
 import React, {useState} from 'react';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import update from 'immutability-helper';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {MultipleSelectionIcon} from '@symphony/design-system/icons';
 import {isJSON} from '@symphony/design-system/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
@@ -35,6 +36,7 @@ type Props<T: Property | PropertyType> = $ReadOnly<{|
   onChange: T => void,
   disabled?: ?boolean,
   showPropertyCombo?: ?boolean,
+  isPropertyComboEnum?: ?boolean,
 |}>;
 
 function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
@@ -44,7 +46,12 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
     onChange,
     disabled,
     showPropertyCombo = false,
+    isPropertyComboEnum = false,
   } = props;
+
+  const propertyComboFeatureFlag = useFeatureFlag('property_combo');
+  const allowPropertyCombo = showPropertyCombo && propertyComboFeatureFlag;
+
   const jsonStr = property.stringValue || '';
   const options = isJSON(jsonStr) ? JSON.parse(jsonStr) : [];
   const optionsArr = Array.isArray(options) ? options : [];
@@ -69,20 +76,28 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
         placeholder="Press Enter after each value"
         onChange={newEntries => {
           setTokens(newEntries);
-          onChange(
-            update(property, {
-              stringValue: {
-                $set: JSON.stringify(newEntries.map(t => t.label)),
-              },
-            }),
-          );
+          isPropertyComboEnum
+            ? onChange(
+                update(property, {
+                  propertyTypeValues: {
+                    $set: newEntries.map(t => ({name: t.label})),
+                  },
+                }),
+              )
+            : onChange(
+                update(property, {
+                  stringValue: {
+                    $set: JSON.stringify(newEntries.map(t => t.label)),
+                  },
+                }),
+              );
         }}
         onBlur={() => {
           onBlur && onBlur();
         }}
         className={classes.input}
       />
-      {showPropertyCombo && (
+      {allowPropertyCombo && (
         <div>
           <IconButton
             skin="primary"
@@ -93,6 +108,15 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
             open={viewDialogProperty}
             onClose={hideDialog}
             property={property}
+            onSave={propertyTypes => {
+              onChange(
+                update(property, {
+                  propertyTypes: {
+                    $set: propertyTypes,
+                  },
+                }),
+              );
+            }}
           />
         </div>
       )}

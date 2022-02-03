@@ -13,15 +13,27 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
+import {DependentPropertyTypesReducerTypes} from './DependentPropertyTypesReducer';
 import {NextArrowIcon} from '@symphony/design-system/icons';
 
 type Props = $ReadOnly<{|
-  propertyChoiceList: string[],
+  propertyTypeValues: string[],
 |}>;
 
 const PropertyComboList = (props: Props) => {
-  const {classes, property} = props;
-  const propertyChoiceList = JSON.parse(property.stringValue);
+  const {classes, propertyTypeValues, dispatch} = props;
+
+  const handlePropertyTypeValues = propertyTypeValue => {
+    const indexProperty = propertyTypeValues.findIndex(
+      property => propertyTypeValue.name === property.name,
+    );
+    propertyTypeValues.splice(indexProperty, 1, propertyTypeValue);
+    const action = {
+      type: DependentPropertyTypesReducerTypes.updatePropertyTypesValue,
+      payload: propertyTypeValues,
+    };
+    dispatch(action);
+  };
 
   return (
     <Grid
@@ -29,7 +41,7 @@ const PropertyComboList = (props: Props) => {
       spacing={1}
       className={classes.tableHeader}
       alignItems="center">
-      {propertyChoiceList?.map(propertyChoice => (
+      {propertyTypeValues?.map(propertyTypeValue => (
         <>
           <Grid item xs={5}>
             <TextField
@@ -39,14 +51,18 @@ const PropertyComboList = (props: Props) => {
               fullWidth
               name="primaryProperty"
               variant="outlined"
-              value={propertyChoice}
+              value={propertyTypeValue.name}
             />
           </Grid>
           <Grid item xs={2} className={classes.arrowIcon}>
             <IconButton skin="darkGray" icon={NextArrowIcon} disabled />
           </Grid>
           <Grid item xs={5}>
-            <EnumPropertyValueInput property={property} />
+            <EnumPropertyValueInput
+              property={propertyTypeValue}
+              onChange={handlePropertyTypeValues}
+              isPropertyComboEnum={true}
+            />
           </Grid>
         </>
       ))}

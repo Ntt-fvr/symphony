@@ -98,9 +98,10 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
 
     const disabled = this.props.disabled || showDisabled;
     const property = this.props.property;
-    const propertyType = !!property.propertyType
-      ? property.propertyType
-      : property;
+    // const propertyType = !!property.propertyType
+    //   ? property.propertyType
+    //   : property;
+    const propertyType = property;
     const label = headlineVariant === 'form' ? null : this.props.label;
     const propInputType = propertyType.type;
     switch (propInputType) {
