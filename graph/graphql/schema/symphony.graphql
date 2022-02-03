@@ -1596,8 +1596,8 @@ type PropertyType implements Node {
   isMandatory: Boolean
   isDeleted: Boolean
   isListable: Boolean
-  propertyType: [PropertyType]!
-  propertyTypeValue: [PropertyTypeValue!]
+  dependencePropertyTypes: [PropertyType]!
+  propertyTypeValues: [PropertyTypeValue!]
 }
 
 type DocumentCategory implements Node {
@@ -1635,7 +1635,7 @@ input PropertyTypeInput
   isMandatory: Boolean
   isDeleted: Boolean
   isListable: Boolean
-  propertyTypes: [PropertyTypeInput]
+  dependencePropertyTypes: [PropertyTypeInput]
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
 

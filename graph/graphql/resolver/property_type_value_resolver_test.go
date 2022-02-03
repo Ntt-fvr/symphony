@@ -37,7 +37,7 @@ func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.Mu
 	propertyTypeLocation1 := pkgmodels.PropertyTypeInput{
 		Name: "location_type_property_father",
 		Type: "string",
-		PropertyTypes: []*pkgmodels.PropertyTypeInput{
+		DependencePropertyTypes: []*pkgmodels.PropertyTypeInput{
 			{
 				Name: "location_type_property_son",
 				Type: "string",
@@ -73,7 +73,7 @@ func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.Mu
 		ID:   &propertyFather.ID,
 		Name: "Location_Type_Father",
 		Type: "string",
-		PropertyTypes: []*pkgmodels.PropertyTypeInput{
+		DependencePropertyTypes: []*pkgmodels.PropertyTypeInput{
 			{
 				ID:   &propertySon.ID,
 				Name: "Location_Type_Son",
@@ -104,7 +104,7 @@ func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.Mu
 	propertyType1 := pkgmodels.PropertyTypeInput{
 		Name: "Criticidad",
 		Type: "string",
-		PropertyTypes: []*pkgmodels.PropertyTypeInput{
+		DependencePropertyTypes: []*pkgmodels.PropertyTypeInput{
 			{
 				Name: "Nivel_Impacto",
 				Type: "string",
@@ -183,7 +183,7 @@ func EditProjectTypeTest(ctx context.Context, t *testing.T, mr generated.Mutatio
 		ID:   &propertyType,
 		Name: "Criticidad",
 		Type: "string",
-		PropertyTypes: []*pkgmodels.PropertyTypeInput{
+		DependencePropertyTypes: []*pkgmodels.PropertyTypeInput{
 			{
 				Name: "Posible Responsable",
 				Type: "string",

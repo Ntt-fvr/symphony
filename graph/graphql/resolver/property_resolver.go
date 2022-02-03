@@ -21,7 +21,7 @@ func (propertyTypeResolver) RawValue(ctx context.Context, propertyType *ent.Prop
 	return &raw, err
 }
 
-func (propertyTypeResolver) PropertyType(ctx context.Context, propertyType *ent.PropertyType) ([]*ent.PropertyType, error) {
+func (propertyTypeResolver) DependencePropertyTypes(ctx context.Context, propertyType *ent.PropertyType) ([]*ent.PropertyType, error) {
 	variable, err := propertyType.ProperType(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
@@ -29,7 +29,7 @@ func (propertyTypeResolver) PropertyType(ctx context.Context, propertyType *ent.
 	return variable, nil
 }
 
-func (propertyTypeResolver) PropertyTypeValue(ctx context.Context, propertyType *ent.PropertyType) ([]*ent.PropertyTypeValue, error) {
+func (propertyTypeResolver) PropertyTypeValues(ctx context.Context, propertyType *ent.PropertyType) ([]*ent.PropertyTypeValue, error) {
 	variable, err := propertyType.PropType(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)

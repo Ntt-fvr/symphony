@@ -1489,29 +1489,29 @@ type ComplexityRoot struct {
 	}
 
 	PropertyType struct {
-		BoolVal            func(childComplexity int) int
-		Category           func(childComplexity int) int
-		Deleted            func(childComplexity int) int
-		Editable           func(childComplexity int) int
-		ExternalID         func(childComplexity int) int
-		FloatVal           func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Index              func(childComplexity int) int
-		IntVal             func(childComplexity int) int
-		IsInstanceProperty func(childComplexity int) int
-		LatitudeVal        func(childComplexity int) int
-		Listable           func(childComplexity int) int
-		LongitudeVal       func(childComplexity int) int
-		Mandatory          func(childComplexity int) int
-		Name               func(childComplexity int) int
-		NodeType           func(childComplexity int) int
-		PropertyType       func(childComplexity int) int
-		PropertyTypeValue  func(childComplexity int) int
-		RangeFromVal       func(childComplexity int) int
-		RangeToVal         func(childComplexity int) int
-		RawValue           func(childComplexity int) int
-		StringVal          func(childComplexity int) int
-		Type               func(childComplexity int) int
+		BoolVal                 func(childComplexity int) int
+		Category                func(childComplexity int) int
+		Deleted                 func(childComplexity int) int
+		DependencePropertyTypes func(childComplexity int) int
+		Editable                func(childComplexity int) int
+		ExternalID              func(childComplexity int) int
+		FloatVal                func(childComplexity int) int
+		ID                      func(childComplexity int) int
+		Index                   func(childComplexity int) int
+		IntVal                  func(childComplexity int) int
+		IsInstanceProperty      func(childComplexity int) int
+		LatitudeVal             func(childComplexity int) int
+		Listable                func(childComplexity int) int
+		LongitudeVal            func(childComplexity int) int
+		Mandatory               func(childComplexity int) int
+		Name                    func(childComplexity int) int
+		NodeType                func(childComplexity int) int
+		PropertyTypeValues      func(childComplexity int) int
+		RangeFromVal            func(childComplexity int) int
+		RangeToVal              func(childComplexity int) int
+		RawValue                func(childComplexity int) int
+		StringVal               func(childComplexity int) int
+		Type                    func(childComplexity int) int
 	}
 
 	PropertyTypeValue struct {
@@ -2600,8 +2600,8 @@ type PropertyResolver interface {
 type PropertyTypeResolver interface {
 	RawValue(ctx context.Context, obj *ent.PropertyType) (*string, error)
 
-	PropertyType(ctx context.Context, obj *ent.PropertyType) ([]*ent.PropertyType, error)
-	PropertyTypeValue(ctx context.Context, obj *ent.PropertyType) ([]*ent.PropertyTypeValue, error)
+	DependencePropertyTypes(ctx context.Context, obj *ent.PropertyType) ([]*ent.PropertyType, error)
+	PropertyTypeValues(ctx context.Context, obj *ent.PropertyType) ([]*ent.PropertyTypeValue, error)
 }
 type PropertyTypeValueResolver interface {
 	PropertyTypeValue(ctx context.Context, obj *ent.PropertyTypeValue) (*ent.PropertyTypeValue, error)
@@ -9878,6 +9878,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyType.Deleted(childComplexity), true
 
+	case "PropertyType.dependencePropertyTypes":
+		if e.complexity.PropertyType.DependencePropertyTypes == nil {
+			break
+		}
+
+		return e.complexity.PropertyType.DependencePropertyTypes(childComplexity), true
+
 	case "PropertyType.isEditable":
 		if e.complexity.PropertyType.Editable == nil {
 			break
@@ -9969,19 +9976,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyType.NodeType(childComplexity), true
 
-	case "PropertyType.propertyType":
-		if e.complexity.PropertyType.PropertyType == nil {
+	case "PropertyType.propertyTypeValues":
+		if e.complexity.PropertyType.PropertyTypeValues == nil {
 			break
 		}
 
-		return e.complexity.PropertyType.PropertyType(childComplexity), true
-
-	case "PropertyType.propertyTypeValue":
-		if e.complexity.PropertyType.PropertyTypeValue == nil {
-			break
-		}
-
-		return e.complexity.PropertyType.PropertyTypeValue(childComplexity), true
+		return e.complexity.PropertyType.PropertyTypeValues(childComplexity), true
 
 	case "PropertyType.rangeFromValue":
 		if e.complexity.PropertyType.RangeFromVal == nil {
@@ -15358,8 +15358,8 @@ type PropertyType implements Node {
   isMandatory: Boolean
   isDeleted: Boolean
   isListable: Boolean
-  propertyType: [PropertyType]!
-  propertyTypeValue: [PropertyTypeValue!]
+  dependencePropertyTypes: [PropertyType]!
+  propertyTypeValues: [PropertyTypeValue!]
 }
 
 type DocumentCategory implements Node {
@@ -15397,7 +15397,7 @@ input PropertyTypeInput
   isMandatory: Boolean
   isDeleted: Boolean
   isListable: Boolean
-  propertyTypes: [PropertyTypeInput]
+  dependencePropertyTypes: [PropertyTypeInput]
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
 
@@ -62932,7 +62932,7 @@ func (ec *executionContext) _PropertyType_isListable(ctx context.Context, field 
 	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PropertyType_propertyType(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
+func (ec *executionContext) _PropertyType_dependencePropertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -62950,7 +62950,7 @@ func (ec *executionContext) _PropertyType_propertyType(ctx context.Context, fiel
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.PropertyType().PropertyType(rctx, obj)
+		return ec.resolvers.PropertyType().DependencePropertyTypes(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -62967,7 +62967,7 @@ func (ec *executionContext) _PropertyType_propertyType(ctx context.Context, fiel
 	return ec.marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PropertyType_propertyTypeValue(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
+func (ec *executionContext) _PropertyType_propertyTypeValues(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -62985,7 +62985,7 @@ func (ec *executionContext) _PropertyType_propertyTypeValue(ctx context.Context,
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.PropertyType().PropertyTypeValue(rctx, obj)
+		return ec.resolvers.PropertyType().PropertyTypeValues(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -91005,11 +91005,11 @@ func (ec *executionContext) unmarshalInputPropertyTypeInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
-		case "propertyTypes":
+		case "dependencePropertyTypes":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
-			it.PropertyTypes, err = ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dependencePropertyTypes"))
+			it.DependencePropertyTypes, err = ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -103612,7 +103612,7 @@ func (ec *executionContext) _PropertyType(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._PropertyType_isDeleted(ctx, field, obj)
 		case "isListable":
 			out.Values[i] = ec._PropertyType_isListable(ctx, field, obj)
-		case "propertyType":
+		case "dependencePropertyTypes":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -103620,13 +103620,13 @@ func (ec *executionContext) _PropertyType(ctx context.Context, sel ast.Selection
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._PropertyType_propertyType(ctx, field, obj)
+				res = ec._PropertyType_dependencePropertyTypes(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "propertyTypeValue":
+		case "propertyTypeValues":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -103634,7 +103634,7 @@ func (ec *executionContext) _PropertyType(ctx context.Context, sel ast.Selection
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._PropertyType_propertyTypeValue(ctx, field, obj)
+				res = ec._PropertyType_propertyTypeValues(ctx, field, obj)
 				return res
 			})
 		default:

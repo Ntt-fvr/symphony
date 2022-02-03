@@ -264,8 +264,8 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 
 	for i, propertyType := range inputs {
 		idPropType := listPropType[i]
-		if len(propertyType.PropertyTypes) > 0 {
-			var propsTypes = propertyType.PropertyTypes
+		if len(propertyType.DependencePropertyTypes) > 0 {
+			var propsTypes = propertyType.DependencePropertyTypes
 			for _, propType := range propsTypes {
 				pro, err1 := client.PropertyType.Create().
 					SetName(propType.Name).
@@ -3169,8 +3169,8 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 	if err := et.Exec(ctx); err != nil {
 		return errors.Wrap(err, "updating property type")
 	}
-	if len(input.PropertyTypes) > 0 {
-		for _, propertyTypes := range input.PropertyTypes {
+	if len(input.DependencePropertyTypes) > 0 {
+		for _, propertyTypes := range input.DependencePropertyTypes {
 			if propertyTypes.ID != nil {
 				pt := client.PropertyType.
 					UpdateOneID(*propertyTypes.ID).
