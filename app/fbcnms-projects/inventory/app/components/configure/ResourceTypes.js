@@ -26,7 +26,7 @@ import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutati
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     padding: '24px 25px 34px 34px',
     margin: '0',

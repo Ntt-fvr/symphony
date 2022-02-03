@@ -49,6 +49,7 @@ const useStyles = makeStyles(() => ({
   deleteIcon: {
     // marginRight: '1rem',
     color: DARK.D300,
+    cursor: 'pointer',
   },
   settingsIcon: {
     marginRight: '1rem',
@@ -127,7 +128,7 @@ const RelationshipsTypeItemList = (props: Props) => {
   // const {...item} = props;
   const {handleRemove, item} = props;
   const classes = useStyles();
-  console.log('ITEM   ', item);
+  // console.log('ITEM   ', item);
   // const filterDataById = resourceDataLenght
   //   .map(item => item.node)
   //   .filter(rsData => rsData?.resourceType?.id === formValues.id);

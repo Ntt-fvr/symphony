@@ -21,6 +21,16 @@ export const useDisabledButton = (element: any, name: any, number: number) => {
     [element, name, number],
   );
 };
+export const useDisabledButtonSelect = (element: any, number: number) => {
+  return useMemo(
+    () =>
+      !(
+        Object.values(element).length === number &&
+        !Object.values(element).some(item => item === '')
+      ),
+    [element, number],
+  );
+};
 
 export const useDisabledButtonEdit = (
   dataInputsObject: any,

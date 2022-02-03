@@ -33,7 +33,7 @@ import {makeStyles} from '@material-ui/styles';
 
 import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
 
-// import {useDisabledButton} from './../assurance/common/useDisabledButton';
+import {useDisabledButtonSelect} from './../assurance/common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -116,7 +116,7 @@ type Node = {
 
 type Props = $ReadOnly<{|
   isCompleted: void => void,
-  resourceNames?: Array<Node>,
+  relationshipNames?: Array<Node>,
 |}>;
 
 type Resources = {
@@ -137,10 +137,10 @@ const AddRelationshipsTypeForm = (props: Props) => {
     addRelationshipsTypeForm,
     {},
   );
-  console.log('-->  ', data);
+
   // const names = resourceNames?.map(item => item.node.name);
 
-  // const handleDisable = useDisabledButton(resources.data, names, 3);
+  const handleDisable = useDisabledButtonSelect(relationships.data, 4);
 
   // const handleHasError = useMemo(
   //   () => names?.some(item => item === resources.data.name),
@@ -293,8 +293,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
         <Button
           className={classes.addResource}
           onClick={handleClick}
-          // disabled={handleDisable}
-        >
+          disabled={handleDisable}>
           Add Relationship
         </Button>
       </FormField>

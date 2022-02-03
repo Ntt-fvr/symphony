@@ -121,7 +121,7 @@ const RelationshipsTypes = () => {
       setRelationships(data);
     });
   }, [setRelationships]);
-  console.log('TYPES  ', relationships);
+  // console.log('TYPES  ', relationships.resourceRelationships?.edges);
 
   const handleRemove = id => {
     const variables: RemoveResourceRelationshipMutationVariables = {
@@ -157,10 +157,7 @@ const RelationshipsTypes = () => {
         </List>
       </Grid>
       <Grid item xs={12} lg={3}>
-        <AddRelationshipsTypeForm
-          isCompleted={isCompleted}
-          // resourceNames={resourceTypes.resourceTypes?.edges}
-        />
+        <AddRelationshipsTypeForm isCompleted={isCompleted} />
       </Grid>
     </Grid>
   );
