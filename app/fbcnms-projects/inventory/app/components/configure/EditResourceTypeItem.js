@@ -121,7 +121,7 @@ type Resource = {
 export type ResourceSpecifications = {
   id: string,
   name: string,
-  resourceTypeFk: {
+  resourceType: {
     id: string,
   },
   propertyTypes: Array<PropertyType>,
@@ -131,14 +131,14 @@ type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
-    resourceTypeFk: {
+    resourceType: {
       id: string,
     },
-    resourceTypeBaseTypeFk: {
+    resourceTypeBaseType: {
       id: string,
       name: string,
     },
-    resourceTypeClassFk: {
+    resourceTypeClass: {
       id: string,
       name: string,
     },
@@ -166,10 +166,8 @@ export const EditResourceTypeItem = (props: Props) => {
 
   const name = useFormInput(formValues.name);
 
-  const resourceTypeBaseTypeFk = useFormInput(
-    formValues.resourceTypeBaseTypeFk.id,
-  );
-  const resourceTypeClassFk = useFormInput(formValues.resourceTypeClassFk.id);
+  const resourceTypeBaseType = useFormInput(formValues.resourceTypeBaseType.id);
+  const resourceTypeClass = useFormInput(formValues.resourceTypeClass.id);
   const data = useLazyLoadQuery<EditResourceTypeItemQuery>(
     EditResourceTypeQuery,
     {},
@@ -179,8 +177,8 @@ export const EditResourceTypeItem = (props: Props) => {
 
   const dataInputsObject = [
     name.value.trim(),
-    resourceTypeBaseTypeFk.value,
-    resourceTypeClassFk.value,
+    resourceTypeBaseType.value,
+    resourceTypeClass.value,
   ];
 
   const inputFilter = () => {
@@ -192,8 +190,9 @@ export const EditResourceTypeItem = (props: Props) => {
   };
 
   const filterDataById = resourceSpecifications.filter(
-    rsData => rsData?.resourceTypeFk?.id === formValues.id,
+    rsData => rsData?.resourceType?.id === formValues.id,
   );
+
   const showEditFormData = (dataForm: ResourceSpecifications) => {
     setOpenFormEdit(true);
     setDataEdit(dataForm);
@@ -208,8 +207,8 @@ export const EditResourceTypeItem = (props: Props) => {
       input: {
         id: formValues.id,
         name: name.value,
-        resourceTypeBaseTypeFk: resourceTypeBaseTypeFk.value,
-        resourceTypeClassFk: resourceTypeClassFk.value,
+        resourceTypeBaseType: resourceTypeBaseType.value,
+        resourceTypeClass: resourceTypeClass.value,
       },
     };
     EditResourceTypeMutation(variables, {
@@ -305,9 +304,9 @@ export const EditResourceTypeItem = (props: Props) => {
                   select
                   label="Class"
                   variant="outlined"
-                  name="resourceTypeBaseTypeFk"
+                  name="resourceTypeBaseType"
                   fullWidth
-                  {...resourceTypeBaseTypeFk}>
+                  {...resourceTypeBaseType}>
                   {data.resourceTypeBaseTypes.edges.map((item, index) => (
                     <MenuItem key={index} value={item.node?.id}>
                       {item.node?.name}
@@ -323,10 +322,10 @@ export const EditResourceTypeItem = (props: Props) => {
                   select
                   label="Resource type base type"
                   variant="outlined"
-                  name="resourceTypeClassFk"
+                  name="resourceTypeClass"
                   type="string"
                   fullWidth
-                  {...resourceTypeClassFk}>
+                  {...resourceTypeClass}>
                   {data.resourceTypeClasses.edges.map((item, index) => (
                     <MenuItem key={index} value={item.node?.id}>
                       {item.node?.name}

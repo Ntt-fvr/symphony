@@ -171,7 +171,7 @@ export const AddEditResourceSpecification = (props: Props) => {
     const variables: AddResourceSpecificationMutationVariables = {
       input: {
         name: resourceSpecification.data.name,
-        resourceTypeFk: formValues.id,
+        resourceType: formValues.id,
         propertyTypes: convertPropertyTypeToMutationInput(propertyTypes),
       },
     };
@@ -189,7 +189,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         id: dataForm.id,
         name: nameEdit.value,
-        resourceTypeFk: dataForm.resourceTypeFk.id,
+        resourceType: dataForm.resourceType.id,
         propertyTypes: convertPropertyTypeToMutationInput(propertyTypes),
       },
     };

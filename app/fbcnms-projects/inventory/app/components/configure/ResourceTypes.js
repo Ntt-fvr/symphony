@@ -40,11 +40,11 @@ const ResourceTypesQuery = graphql`
         node {
           id
           name
-          resourceTypeBaseTypeFk {
+          resourceTypeBaseType {
             id
             name
           }
-          resourceTypeClassFk {
+          resourceTypeClass {
             id
             name
           }
@@ -56,7 +56,7 @@ const ResourceTypesQuery = graphql`
         node {
           id
           name
-          resourceTypeFk {
+          resourceType {
             id
           }
           propertyTypes {
@@ -90,14 +90,14 @@ type Resources = {
     node: {
       id: string,
       name: string,
-      resourceTypeFk: {
+      resourceType: {
         id: string,
       },
-      resourceTypeBaseTypeFk: {
+      resourceTypeBaseType: {
         id: string,
         name: string,
       },
-      resourceTypeClassFk: {
+      resourceTypeClass: {
         id: string,
         name: string,
       },

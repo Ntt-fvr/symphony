@@ -21,7 +21,7 @@ export type RelationshipTypeItemQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
-        +resourceSpecificationFk: {|
+        +resourceSpecification: {|
           +id: string,
           +name: string,
         |},
@@ -43,7 +43,7 @@ query RelationshipTypeItemQuery {
       node {
         id
         name
-        resourceSpecificationFk {
+        resourceSpecification {
           id
           name
         }
@@ -100,7 +100,7 @@ v2 = [
                 "args": null,
                 "concreteType": "ResourceSpecification",
                 "kind": "LinkedField",
-                "name": "resourceSpecificationFk",
+                "name": "resourceSpecification",
                 "plural": false,
                 "selections": [
                   (v0/*: any*/),
@@ -136,16 +136,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "29c1809b77e530460215c074c42a0043",
+    "cacheID": "957d85dec7564ee441da27af11edf566",
     "id": null,
     "metadata": {},
     "name": "RelationshipTypeItemQuery",
     "operationKind": "query",
-    "text": "query RelationshipTypeItemQuery {\n  resourceSpecificationRelationships {\n    edges {\n      node {\n        id\n        name\n        resourceSpecificationFk {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RelationshipTypeItemQuery {\n  resourceSpecificationRelationships {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eb0caf29df4d718e0dbfcf36f9397482';
+(node/*: any*/).hash = '020ff37fce8b6a2910bc13114b2207d1';
 
 module.exports = node;

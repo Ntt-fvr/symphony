@@ -16,8 +16,8 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddResourceTypeInput = {|
   name: string,
-  resourceTypeBaseTypeFk: string,
-  resourceTypeClassFk: string,
+  resourceTypeBaseType: string,
+  resourceTypeClass: string,
 |};
 export type AddResourceTypeMutationVariables = {|
   input: AddResourceTypeInput

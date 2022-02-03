@@ -38,7 +38,7 @@ const ResourceSpecificationRelationshipsQuery = graphql`
         node {
           id
           name
-          resourceSpecificationFk {
+          resourceSpecification {
             id
             name
           }
@@ -124,7 +124,7 @@ export default function RelationshipTypeItem(props: Props) {
   );
 
   const filterRelationshipsById = data.resourceSpecificationRelationships.edges
-    .filter(item => item.node?.resourceSpecificationFk.id === dataForm.id)
+    .filter(item => item.node?.resourceSpecification.id === dataForm.id)
     .map(item => item.node);
 
   function handleOpen(event) {

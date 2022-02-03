@@ -58,7 +58,7 @@ const useStyles = makeStyles(() => ({
 
 type Node = {
   node: {
-    resourceTypeFk: {
+    resourceType: {
       id: string,
     },
   },
@@ -69,10 +69,10 @@ type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
-    resourceTypeClassFk: {
+    resourceTypeClass: {
       name: string,
     },
-    resourceTypeBaseTypeFk: {
+    resourceTypeBaseType: {
       name: string,
     },
   },
@@ -88,7 +88,7 @@ export default function ResourceTypeItem(props: Props) {
 
   const filterDataById = resourceDataLenght
     .map(item => item.node)
-    .filter(rsData => rsData?.resourceTypeFk?.id === formValues.id);
+    .filter(rsData => rsData?.resourceType?.id === formValues.id);
 
   function handleOpen(event) {
     event.stopPropagation();
@@ -147,12 +147,12 @@ export default function ResourceTypeItem(props: Props) {
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Class: </span>
               <br />
-              <strong>{formValues.resourceTypeBaseTypeFk.name}</strong>
+              <strong>{formValues.resourceTypeBaseType.name}</strong>
             </Grid>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Resource type class:</span>
               <br />
-              <strong>{formValues.resourceTypeClassFk.name}</strong>
+              <strong>{formValues.resourceTypeClass.name}</strong>
             </Grid>
           </Grid>
         </AccordionDetails>
