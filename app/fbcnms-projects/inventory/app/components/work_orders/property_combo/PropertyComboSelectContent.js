@@ -25,6 +25,7 @@ import {
   DependentPropertyTypesReducerTypes,
 } from './DependentPropertyTypesReducer';
 import {PropertyType} from '../../../common/PropertyType';
+import {isTempId} from '../../../common/EntUtils';
 
 type Props = $ReadOnly<{|
   open: boolean,
@@ -37,9 +38,13 @@ type Props = $ReadOnly<{|
 const PropertyComboSelectContent = (props: Props) => {
   const {onClose, classes, property, setShowCompleteMessage, onSave} = props;
   const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
+  const DependentPropertyTypesInitialState = {
+    propertyTypeValues: JSON.parse(property.stringValue),
+    dependentProperty: property.propertyType ? property.propertyType[0] : null,
+  };
   const [state, dispatch] = useReducer(
     DependentPropertyTypesReducer,
-    JSON.parse(property.stringValue),
+    DependentPropertyTypesInitialState,
     DependentPropertyTypesReducerInit,
   );
 
@@ -53,6 +58,7 @@ const PropertyComboSelectContent = (props: Props) => {
 
   const saveButtonClicked = () => {
     setShowCompleteMessage(true);
+    isTempId(state.id) && delete state.id;
     onSave([state]);
   };
 
@@ -105,7 +111,7 @@ const PropertyComboSelectContent = (props: Props) => {
                   value: property.id,
                 };
               })}
-              selectedValue={state.tempId}
+              selectedValue={state.id}
               onChange={handleDependenceProperty}
               className={classes.selectInput}
             />
