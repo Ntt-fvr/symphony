@@ -9125,26 +9125,27 @@ input ResourceTypeBaseTypeFilterInput {
 type ResourceType implements Node {
   id: ID!
   name: String!
-  resourceTypeBaseTypeFk: ResourceTypeBaseType
-  resourceTypeClassFk: ResourceTypeClass
+  resourceTypeBaseType: ResourceTypeBaseType
+  resourceTypeClass: ResourceTypeClass
 }
 
 input AddResourceTypeInput {  
   name: String!
-  resourceTypeBaseTypeFk: ID!
-  resourceTypeClassFk: ID!
+  resourceTypeBaseType: ID!
+  resourceTypeClass: ID!
 }
 
 input EditResourceTypeInput {
   id: ID!
   name: String!
-  resourceTypeBaseTypeFk: ID
-  resourceTypeClassFk: ID 
+  resourceTypeBaseType: ID
+  resourceTypeClass: ID 
 }
 
 enum ResourceTypeFilterType {
-  ID
   NAME
+  RESOURCE_TYPE_CLASS
+  RESOURCE_TYPE_BASE_TYPE
 }
 
 input ResourceTypeFilterInput {
@@ -9204,9 +9205,8 @@ input EditResourceRelationshipInput {
 }
 
 enum ResourceRelationshipFilterType {
-  ID 
   RESOURCE_RELATIONSHIP_MULTIPLICITY
-  RESOURCE_RELATIONSHIP_FILTER
+  RESOURCE_RELATIONSHIP_LOCATION_TYPE
   RESOURCE_RELATIONSHIP_TYPE
   RESOURCE_RELATIONSHIP_RESOURCE
 }
@@ -9355,9 +9355,10 @@ input EditResourceSpecificationInput {
     @uniqueField(typ: "property type", field: "Name")
 }
 enum ResourceSpecificationFilterType {
-  ID
   NAME  
+  RESOURCE_TYPE
 }
+
 input ResourceSpecificationFilterInput {
   filterType: ResourceSpecificationFilterType!
   operator: FilterOperator!

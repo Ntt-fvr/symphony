@@ -26,6 +26,7 @@ class Entity(Enum):
     Document = "Document"
     PropertyType = "PropertyType"
     Property = "Property"
+    DocumentCategory = "DocumentCategory"
     User = "User"
     recommendations="recommendations"
     RecomendationSources="RecomendationSources"

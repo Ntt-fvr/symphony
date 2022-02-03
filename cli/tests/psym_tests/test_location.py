@@ -24,7 +24,7 @@ from psym.api.location_type import (
     add_location_type,
     add_property_types_to_location_type,
 )
-from psym.common.data_class import PropertyDefinition
+from psym.common.data_class import DocumentCategory, PropertyDefinition
 from psym.exceptions import LocationCannotBeDeletedWithDependency
 from psym.graphql.enum.property_kind import PropertyKind
 
@@ -51,6 +51,16 @@ class TestLocation(BaseTest):
                     is_fixed=False,
                 ),
             ],
+            document_categories=[
+                DocumentCategory(
+                    index=0,
+                    name="DATAFILLS"
+                ),
+                DocumentCategory(
+                    index=1,
+                    name="TOPOLOGIA"
+                ),
+            ],
         )
         add_location_type(
             client=self.client,
@@ -61,6 +71,16 @@ class TestLocation(BaseTest):
                     property_kind=PropertyKind.string,
                     default_raw_value=None,
                     is_fixed=False,
+                ),
+            ],
+            document_categories=[
+                DocumentCategory(
+                    index=0,
+                    name="DATAFILLS_TOWN"
+                ),
+                DocumentCategory(
+                    index=1,
+                    name="TOPOLOGIA_TOWN"
                 ),
             ],
         )
@@ -217,8 +237,27 @@ class TestLocation(BaseTest):
         for doc in docs:
             self.assertEqual(doc.category, "test_category")
             delete_document(self.client, doc)
+    
+    def test_location_add_file_with_document_category(self) -> None:
+        temp_file_path = os.path.join(self.tmpdir, ".".join(["temp_file", "txt"]))
+        with open(temp_file_path, "wb") as tmp_file:
+            tmp_file.write(b"TEST DATA FILE")
 
-    #@unittest.skip("fixme to support location file category")
+        add_file(
+            client=self.client,
+            local_file_path=temp_file_path,
+            entity_type="LOCATION",
+            entity_id=self.location_1.id,
+            document_category_id=self.location_type.document_categories[0].id
+        )
+
+        docs = get_location_documents(client=self.client, location=self.location_1)
+        self.assertEqual(len(docs), 1)
+        self.assertEqual(docs[0].document_category.id, self.location_type.document_categories[0].id)
+        self.assertEqual(docs[0].document_category.name, self.location_type.document_categories[0].name)
+        for doc in docs:
+            delete_document(self.client, doc)
+
     def test_location_upload_folder(self) -> None:
         fetch_location = get_location(
             client=self.client, location_hirerchy=[("City", "Lima1")]
@@ -235,9 +274,12 @@ class TestLocation(BaseTest):
             entity_type="LOCATION",
             entity_id=self.location_1.id,
             category="test_category",
+            document_category_id=self.location_type.document_categories[0].id
         )
 
         docs = get_location_documents(client=self.client, location=self.location_1)
+        self.assertEqual(docs[0].document_category.id, self.location_type.document_categories[0].id)
+        self.assertEqual(docs[0].document_category.name, self.location_type.document_categories[0].name)
         self.assertEqual(len(docs), len(self.suffixes))
         for doc in docs:
             self.assertEqual(doc.category, "test_category")

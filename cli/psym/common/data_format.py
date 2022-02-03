@@ -5,6 +5,7 @@
 
 from numbers import Number
 from typing import List, Sequence, cast
+from psym.graphql.fragment.document_category import DocumentCategoryFragment
 
 from psym.graphql.fragment.equipment import EquipmentFragment
 from psym.graphql.fragment.equipment_port_type import EquipmentPortTypeFragment
@@ -17,9 +18,11 @@ from psym.graphql.fragment.property_type import PropertyTypeFragment
 from psym.graphql.fragment.service_type import ServiceTypeFragment
 from psym.graphql.fragment.work_order import WorkOrderFragment
 from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
+from psym.graphql.input.document_category_input import DocumentCategoryInput
 from psym.graphql.input.property_type_input import PropertyTypeInput
 
 from .data_class import (
+    DocumentCategory,
     Equipment,
     EquipmentPortType,
     EquipmentType,
@@ -68,6 +71,33 @@ def format_to_property_definition(
     )
 
 
+def format_to_document_category(
+    document_category_fragment: DocumentCategoryFragment,
+) -> DocumentCategory:
+    """This function gets `psym.graphql.fragment.property_type.DocumentCategoryFragment` object as argument
+    and formats it to `psym.common.data_class.DocumentCategory` object
+
+        :param document_category_fragment: Existing document category fragment object
+        :type document_category_fragment: :class:`~psym.graphql.fragment.document_category.DocumentCategoryFragment`
+
+        :return: DocumentCategory object
+        :rtype: :class:`~psym.common.data_class.DocumentCategory`
+
+        **Example**
+
+        .. code-block:: python
+
+            property_definition = format_to_document_category(
+                document_category_fragment=document_category_fragment,
+            )
+    """
+    return DocumentCategory(
+        id=document_category_fragment.id,
+        name=document_category_fragment.name,
+        index=document_category_fragment.index,
+    )
+
+
 def format_to_property_definitions(
     data: Sequence[PropertyTypeFragment],
 ) -> Sequence[PropertyDefinition]:
@@ -90,6 +120,34 @@ def format_to_property_definitions(
     return [
         format_to_property_definition(property_type_fragment)
         for property_type_fragment in data
+    ]
+
+
+def format_to_document_categories(
+    data: Sequence[DocumentCategoryFragment],
+) -> Sequence[DocumentCategory]:
+    """This function gets Sequence[ `DocumentCategoryFragment` ] as argument and formats it to Sequence[ `DocumentCategory` ]
+
+    :param data: Existing document category fragments sequence
+    :type data: Sequence[ :class:`~psym.graphql.fragment.document_category.DocumentCategoryFragment` ]
+
+    :return: DocumentCategories sequence
+    :rtype: Sequence[ :class:`~psym.common.data_class.DocumentCategory` ]
+
+    **Example**
+
+    .. code-block:: python
+
+        document_categories = format_to_document_categories(
+            data=document_category_fragments,
+        )
+    """
+    if data is None:
+        return []
+        
+    return [
+        format_to_document_category(document_category_fragment)
+        for document_category_fragment in data
     ]
 
 
@@ -173,6 +231,33 @@ def format_to_property_type_input(
     )
 
 
+def format_to_document_category_input(
+    document_category: DocumentCategory,
+) -> DocumentCategoryInput:
+    """This function gets `DocumentCategory` object as argument and formats it to `DocumentCategoryInput` object
+
+    :param document_category: Document category object
+    :type document_category: :class:`~psym.common.data_class.DocumentCategory`
+
+    :return: DocumentCategoryInput object
+    :rtype: :class:`~psym.graphql.input.document_category.DocumentCategoryInput`
+
+    **Example**
+
+    .. code-block:: python
+
+        property_type_input = format_to_document_category_input(
+            document_category=document_category,
+        )
+    """
+
+    return DocumentCategoryInput(
+        id=document_category.id,
+        name=document_category.name,
+        index=document_category.index,
+    )
+
+
 def format_to_property_type_inputs(
     data: Sequence[PropertyDefinition],
 ) -> List[PropertyTypeInput]:
@@ -195,6 +280,34 @@ def format_to_property_type_inputs(
     return [
         format_to_property_type_input(property_definition)
         for property_definition in data
+    ]
+
+
+def format_to_document_category_inputs(
+    document_category_list: Sequence[DocumentCategory],
+) -> List[DocumentCategoryInput]:
+    """This function gets Sequence[ `DocumentCategory` ] as argument and formats it to Sequence[ `DocumentCategoryInput` ]
+
+    :param data: Existing documents categories sequence
+    :type data: Sequence[ :class:`~psym.common.data_class.DocumentCategory` ]
+
+    :return: DocumentCategoryInput list
+    :rtype: List[ :class:`~psym.graphql.input.document_category.DocumentCategoryInput` ]
+
+    **Example**
+
+    .. code-block:: python
+
+        document_category_input = format_to_document_category_inputs(
+            data=documents_categories,
+        )
+    """
+    if document_category_list is None:
+        return []
+
+    return [
+        format_to_document_category_input(document_category)
+        for document_category in document_category_list
     ]
 
 
@@ -396,6 +509,9 @@ def format_to_location_type(
         id=location_type_fragment.id,
         property_types=format_to_property_definitions(
             location_type_fragment.propertyTypes
+        ),
+        document_categories=format_to_document_categories(
+            location_type_fragment.documentCategories
         ),
         map_type=location_type_fragment.mapType,
         map_zoom_level=location_type_fragment.mapZoomLevel,

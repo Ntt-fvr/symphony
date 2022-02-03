@@ -17,7 +17,7 @@ import (
 
 type resourceTypeResolver struct{}
 
-func (resourceTypeResolver) ResourceTypeBaseTypeFk(ctx context.Context, resourceType *ent.ResourceType) (*ent.ResourceTypeBaseType, error) {
+func (resourceTypeResolver) ResourceTypeBaseType(ctx context.Context, resourceType *ent.ResourceType) (*ent.ResourceTypeBaseType, error) {
 	variable, err := resourceType.Resourcetypebasetype(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
@@ -25,7 +25,8 @@ func (resourceTypeResolver) ResourceTypeBaseTypeFk(ctx context.Context, resource
 		return variable, nil
 	}
 }
-func (resourceTypeResolver) ResourceTypeClassFk(ctx context.Context, resourceType *ent.ResourceType) (*ent.ResourceTypeClass, error) {
+
+func (resourceTypeResolver) ResourceTypeClass(ctx context.Context, resourceType *ent.ResourceType) (*ent.ResourceTypeClass, error) {
 	variable, err := resourceType.Resourcetypeclass(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
@@ -34,7 +35,7 @@ func (resourceTypeResolver) ResourceTypeClassFk(ctx context.Context, resourceTyp
 	}
 }
 
-func (r resourceTypeResolver) ResourceSpecificationRelationshipItemsFk(ctx context.Context, resourceType *ent.ResourceType) ([]*ent.ResourceSRItems, error) {
+func (r resourceTypeResolver) ResourceSpecificationRelationshipItems(ctx context.Context, resourceType *ent.ResourceType) ([]*ent.ResourceSRItems, error) {
 	variable, err := resourceType.ResourcetypeItems(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
@@ -47,8 +48,8 @@ func (r mutationResolver) AddResourceType(ctx context.Context, input models.AddR
 	typ, err := client.
 		ResourceType.Create().
 		SetName(input.Name).
-		SetResourcetypebasetypeID(input.ResourceTypeBaseTypeFk).
-		SetResourcetypeclassID(input.ResourceTypeClassFk).
+		SetResourcetypebasetypeID(input.ResourceTypeBaseType).
+		SetResourcetypeclassID(input.ResourceTypeClass).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -94,12 +95,12 @@ func (r mutationResolver) EditResourceType(ctx context.Context, input models.Edi
 	if err3 != nil {
 		return nil, errors.Wrap(err4, "has ocurred error on proces: %v")
 	}
-	if input.Name != et.Name || input.ResourceTypeBaseTypeFk != &typebasetype.ID || input.ResourceTypeClassFk != &typeclass.ID {
+	if input.Name != et.Name || input.ResourceTypeBaseType != &typebasetype.ID || input.ResourceTypeClass != &typeclass.ID {
 		if et, err = client.ResourceType.
 			UpdateOne(et).
 			SetName(input.Name).
-			SetNillableResourcetypebasetypeID(input.ResourceTypeBaseTypeFk).
-			SetNillableResourcetypeclassID(input.ResourceTypeClassFk).
+			SetNillableResourcetypebasetypeID(input.ResourceTypeBaseType).
+			SetNillableResourcetypeclassID(input.ResourceTypeClass).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)

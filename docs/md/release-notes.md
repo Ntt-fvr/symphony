@@ -7,6 +7,10 @@ title: Release Notes
 
 ### Release Notes
 
+* 02/03/2022
+    * LocatioType
+        * **[Python API]** **[Assurance]**		Add document category to a location type.
+
 
 * 04/01/2022
     * Documentation
