@@ -264,8 +264,8 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 
 	for i, propertyType := range inputs {
 		idPropType := listPropType[i]
-		if len(propertyType.PropertyTypes) > 0 {
-			var propsTypes = propertyType.PropertyTypes
+		if len(propertyType.DependencePropertyTypes) > 0 {
+			var propsTypes = propertyType.DependencePropertyTypes
 			for _, propType := range propsTypes {
 				pro, err1 := client.PropertyType.Create().
 					SetName(propType.Name).
@@ -1079,7 +1079,7 @@ func (r mutationResolver) AddEquipmentPortType(
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetLinkEquipmentPortTypeID(et.ID)
-	}, input.Properties); err != nil {
+	}, input.LinkProperties); err != nil {
 		return nil, err
 	}
 	return et, nil
@@ -2339,13 +2339,15 @@ func (r mutationResolver) EditServiceType(ctx context.Context, data models.Servi
 		return nil, errors.Wrapf(err, "updating service type: id=%q", data.ID)
 	}
 	for _, s := range data.Properties {
+		var edited []*pkgmodels.PropertyTypeInput
 		if s.ID == nil {
 			if err := r.validateAddedNewPropertyType(s); err != nil {
 				return nil, err
 			}
+			edited = append(edited, s)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 				ptc.SetServiceTypeID(typ.ID)
-			}, data.Properties); err != nil {
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, s); err != nil {
@@ -2673,13 +2675,15 @@ func (r mutationResolver) EditLocationType(
 		return nil, errors.Wrapf(err, "updating location type: id=%q", input.ID)
 	}
 	for _, l := range input.Properties {
+		var edited []*pkgmodels.PropertyTypeInput
 		if l.ID == nil {
 			if err := r.validateAddedNewPropertyType(l); err != nil {
 				return nil, err
 			}
+			edited = append(edited, l)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-				ptc.SetLocationTypeID(typ.ID)
-			}, input.Properties); err != nil {
+				ptc.SetLocationType(typ)
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, l); err != nil {
@@ -2810,13 +2814,15 @@ func (r mutationResolver) EditEquipmentType(
 	}
 
 	for _, e := range input.Properties {
+		var edited []*pkgmodels.PropertyTypeInput
 		if e.ID == nil {
 			if err := r.validateAddedNewPropertyType(e); err != nil {
 				return nil, err
 			}
+			edited = append(edited, e)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 				ptc.SetEquipmentTypeID(et.ID)
-			}, input.Properties); err != nil {
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, e); err != nil {
@@ -2914,15 +2920,16 @@ func (r mutationResolver) EditEquipmentPortType(
 			return nil, errors.Wrap(err, "updating equipment port type")
 		}
 	}
-
+	var edited []*pkgmodels.PropertyTypeInput
 	for _, e := range input.Properties {
 		if e.ID == nil {
 			if err := r.validateAddedNewPropertyType(e); err != nil {
 				return nil, err
 			}
+			edited = append(edited, e)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 				ptc.SetEquipmentPortTypeID(pt.ID)
-			}, input.Properties); err != nil {
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else {
@@ -2943,9 +2950,10 @@ func (r mutationResolver) EditEquipmentPortType(
 			if err := r.validateAddedNewPropertyType(link); err != nil {
 				return nil, err
 			}
+			edited = append(edited, link)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-				ptc.SetEquipmentPortTypeID(pt.ID)
-			}, input.LinkProperties); err != nil {
+				ptc.SetLinkEquipmentPortTypeID(pt.ID)
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else {
@@ -3161,8 +3169,8 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 	if err := et.Exec(ctx); err != nil {
 		return errors.Wrap(err, "updating property type")
 	}
-	if len(input.PropertyTypes) > 0 {
-		for _, propertyTypes := range input.PropertyTypes {
+	if len(input.DependencePropertyTypes) > 0 {
+		for _, propertyTypes := range input.DependencePropertyTypes {
 			if propertyTypes.ID != nil {
 				pt := client.PropertyType.
 					UpdateOneID(*propertyTypes.ID).
@@ -3234,9 +3242,7 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 
 				if len(propertyTypes.PropertyTypeValues) > 0 {
 					for _, propertyTypeValue := range propertyTypes.PropertyTypeValues {
-						fmt.Println("PropertyTypeValue: ", propertyTypeValue.ID)
 						if propertyTypeValue.ID == nil {
-							fmt.Println("Ingreso al ID null")
 							ptv := pkgmodels.AddPropertyTypeValueInput{
 								Name:               propertyTypeValue.Name,
 								PropertyTypeValues: propertyTypeValue.PropertyTypeValues,
@@ -3250,7 +3256,6 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 								return gqlerror.Errorf("has occurred error on process: %v", err1)
 							}
 						} else {
-							fmt.Println("Ingreso al ID not null")
 							var arrayEdit []*models.EditPropertyTypeValueInput
 							for _, proTyV := range propertyTypeValue.PropertyTypeValues {
 								var arrayEditSon []*models.EditPropertyTypeValueInput
@@ -3286,7 +3291,6 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 					}
 				}
 			} else {
-				fmt.Println("Ingreso else mutation hija")
 				var arrayProperties []*pkgmodels.PropertyTypeInput
 				arrayProperties = append(arrayProperties, propertyTypes)
 				err2 := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {

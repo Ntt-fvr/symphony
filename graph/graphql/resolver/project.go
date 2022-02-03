@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
@@ -87,13 +88,15 @@ func (r mutationResolver) EditProjectType(
 		return nil, errors.Wrapf(err, "updating project template: id=%q", pt.ID)
 	}
 	for _, p := range input.Properties {
+		var edited []*pkgmodels.PropertyTypeInput
 		if p.ID == nil {
 			if err := r.validateAddedNewPropertyType(p); err != nil {
 				return nil, err
 			}
+			edited = append(edited, p)
 			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 				ptc.SetProjectTypeID(pt.ID)
-			}, input.Properties); err != nil {
+			}, edited); err != nil {
 				return nil, err
 			}
 		} else if err := r.updatePropType(ctx, p); err != nil {
