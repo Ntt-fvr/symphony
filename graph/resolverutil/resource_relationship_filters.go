@@ -48,14 +48,14 @@ func resourceRelationshipResourceTypeFilter(q *ent.ResourceRelationshipQuery, fi
 }
 
 func resourceRelationshipTypeFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
-	if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
+	if filter.Operator == enum.FilterOperatorIs && filter.TypeValue != nil {
 		return q.Where(resourcerelationship.ResourceRelationshipTypeEQ(*filter.TypeValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func resourceRelationshipMultiplicityFilter(q *ent.ResourceRelationshipQuery, filter *models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
-	if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
+	if filter.Operator == enum.FilterOperatorIs && filter.MultiplicityValue != nil {
 		return q.Where(resourcerelationship.ResourceRelationshipMultiplicityEQ(*filter.MultiplicityValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)

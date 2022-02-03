@@ -23892,9 +23892,10 @@ input EditResourceSpecificationInput {
     @uniqueField(typ: "property type", field: "Name")
 }
 enum ResourceSpecificationFilterType {
-  ID
   NAME  
+  RESOURCE_TYPE
 }
+
 input ResourceSpecificationFilterInput {
   filterType: ResourceSpecificationFilterType!
   operator: FilterOperator!
