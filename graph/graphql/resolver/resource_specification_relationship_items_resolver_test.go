@@ -42,35 +42,35 @@ func AddResourceSpecificationRelationshipItemsTest(ctx context.Context, t *testi
 	require.NoError(t, err)
 
 	resourcetype, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                   "my_test_1_resource_type",
-		ResourceTypeClassFk:    resourcetypeclass1.ID,
-		ResourceTypeBaseTypeFk: resourcetypebasetype1.ID,
+		Name:                 "my_test_1_resource_type",
+		ResourceTypeClass:    resourcetypeclass1.ID,
+		ResourceTypeBaseType: resourcetypebasetype1.ID,
 	})
 	require.NoError(t, err)
 
 	resourcespecification, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-		Name:           "my_test_1_resource_specification",
-		ResourceTypeFk: resourcetype.ID,
+		Name:         "my_test_1_resource_specification",
+		ResourceType: resourcetype.ID,
 	})
 	require.NoError(t, err)
 
 	resourcespecifcationrelationship, err := mr.AddResourceSpecificationRelationship(ctx, models.AddResourceSpecificationRelationshipInput{
-		Name:                    "my_test_1_resource_specification",
-		ResourceSpecificationFk: resourcespecification.ID,
+		Name:                  "my_test_1_resource_specification",
+		ResourceSpecification: resourcespecification.ID,
 	})
 	require.NoError(t, err)
 
 	resource1, err := mr.AddResourceSRItems(ctx, models.AddResourceSRItemsInput{
-		Name:                                "test_resource_sr_items_1",
-		ResourceSpecificationRelationshipFk: resourcespecifcationrelationship.ID,
-		ResourceTypeFk:                      resourcetype.ID,
+		Name:                              "test_resource_sr_items_1",
+		ResourceSpecificationRelationship: resourcespecifcationrelationship.ID,
+		ResourceType:                      resourcetype.ID,
 	})
 	require.NoError(t, err)
 
 	resource2, err := mr.AddResourceSRItems(ctx, models.AddResourceSRItemsInput{
-		Name:                                "test_resource_sr_items_2",
-		ResourceSpecificationRelationshipFk: resourcespecifcationrelationship.ID,
-		ResourceTypeFk:                      resourcetype.ID,
+		Name:                              "test_resource_sr_items_2",
+		ResourceSpecificationRelationship: resourcespecifcationrelationship.ID,
+		ResourceType:                      resourcetype.ID,
 	})
 	require.NoError(t, err)
 
@@ -84,17 +84,17 @@ func AddResourceSpecificationRelationshipItemsTest(ctx context.Context, t *testi
 
 func EditResourceSpecificationRelationshipItemsTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int, resourcetype int, resourcesr int) {
 	_, err := mr.EditResourceSRItems(ctx, models.EditResourceSRItemsInput{
-		ID:                                  id1,
-		Name:                                "resource_sr_items_test_1.1",
-		ResourceSpecificationRelationshipFk: &resourcesr,
-		ResourceTypeFk:                      &resourcetype,
+		ID:                                id1,
+		Name:                              "resource_sr_items_test_1.1",
+		ResourceSpecificationRelationship: &resourcesr,
+		ResourceType:                      &resourcetype,
 	})
 	require.NoError(t, err)
 	_, err = mr.EditResourceSRItems(ctx, models.EditResourceSRItemsInput{
-		ID:                                  id2,
-		Name:                                "resource_sr_items_test_1.1",
-		ResourceSpecificationRelationshipFk: &resourcesr,
-		ResourceTypeFk:                      &resourcetype,
+		ID:                                id2,
+		Name:                              "resource_sr_items_test_1.1",
+		ResourceSpecificationRelationship: &resourcesr,
+		ResourceType:                      &resourcetype,
 	})
 	require.Error(t, err)
 }
