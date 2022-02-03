@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
     marginBottom: '7px',
     '& .cardContainer': {
       height: '70px',
-      padding: '11px',
+      padding: '16px',
     },
   },
   container: {
@@ -83,8 +83,8 @@ const useStyles = makeStyles(() => ({
     marginRight: '10px',
     backgroundColor: symphony.palette.D50,
     color: symphony.palette.D500,
-    width: '48px',
-    height: '48px',
+    width: '38px',
+    height: '38px',
     display: 'flex',
     flexShrink: 0,
     justifyContent: 'center',

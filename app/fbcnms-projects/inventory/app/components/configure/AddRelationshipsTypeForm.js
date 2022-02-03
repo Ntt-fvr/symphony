@@ -198,7 +198,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
           required
           select
           className={classes.select}
-          label="Select base type A"
+          label="Select clase type A"
           onChange={handleChange}
           name="baseTypeA"
           variant="outlined"
@@ -261,7 +261,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
           required
           select
           className={classes.select}
-          label="Select base type B"
+          label="Select clase type B"
           onChange={handleChange}
           name="baseTypeB"
           variant="outlined"
