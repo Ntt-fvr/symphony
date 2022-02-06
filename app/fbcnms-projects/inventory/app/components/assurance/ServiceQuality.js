@@ -21,6 +21,7 @@ import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 
 import KqiSourcesTypes from './KqiSourcesTypes';
 import KqiTypes from './KqiTypes';
+import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -80,12 +81,26 @@ export default function ServiceQuality() {
     tabIndex !== -1 ? tabIndex : 0,
   );
 
+  const [canChangeHistory, setCanChangeHistory] = useState(true);
+
+  const changeTab = index => {
+    setCanChangeHistory(true);
+    setActiveTabBar(index);
+  };
+  window.onpopstate = () => {
+    setCanChangeHistory(false);
+    setActiveTabBar(tabIndex);
+  };
+
   useEffect(() => {
-    /*ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
-      id: tabBars[activeTabBar].id,
-    });
-     */
-    history.push(`/assurance/service_quality/${tabBars[activeTabBar].path}`);
+    ServerLogger.info(
+      LogEvents.SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED,
+      {
+        id: tabBars[activeTabBar].id,
+      },
+    );
+    canChangeHistory &&
+      history.push(`/assurance/service_quality/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 
   return (
@@ -94,9 +109,10 @@ export default function ServiceQuality() {
         spread={true}
         size="large"
         tabs={tabBars.map(tabBar => tabBar.tab)}
-        activeTabIndex={activeTabBar}
-        onChange={setActiveTabBar}
+        activeTabIndex={tabIndex === 0 ? 0 : activeTabBar}
+        onChange={changeTab}
       />
+
       <InventoryErrorBoundary>
         <InventorySuspense>
           <Switch>
@@ -107,7 +123,7 @@ export default function ServiceQuality() {
             />
             <Route exact path={relativeUrl('/kqi')} component={KqiTypes} />
             <Redirect
-              from={relativeUrl('/assurance/service_quality')}
+              from={relativeUrl('/')}
               to={relativeUrl('/kqi_sources')}
             />
           </Switch>

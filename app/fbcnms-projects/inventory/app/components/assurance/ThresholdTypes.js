@@ -12,13 +12,14 @@ import type {RemoveThresholdMutationVariables} from '../../mutations/__generated
 
 import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useEffect, useState} from 'react';
+import EditThresholdItemForm from './EditThresholdItemForm';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ThresholdProvider from './ThresholdProvider';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
-import {EditThresholdItemForm} from './EditThresholdItemForm';
+import symphony from '@symphony/design-system/theme/symphony';
 import {Grid, List} from '@material-ui/core';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
@@ -28,13 +29,36 @@ import AddRuleItemForm from './AddRuleItemForm';
 import EditRuleItemForm from './EditRuleItemForm';
 import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    margin: '40px',
+    flexGrow: 0,
+    padding: '30px',
+    margin: '0',
   },
-  paper: {
-    padding: theme.spacing(2),
+  titleThreshold: {
+    margin: '0 0 40px 0',
+  },
+  listContainer: {
+    overflow: 'auto',
+    paddingRight: '9px',
+    maxHeight: 'calc(95vh - 156px)',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: symphony.palette.D300,
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: symphony.palette.D200,
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: symphony.palette.D400,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: symphony.palette.D100,
+      borderRadius: '4px',
+    },
   },
 }));
 
@@ -123,16 +147,20 @@ const ThresholdTypes = () => {
   const [dataEdit, setDataEdit] = useState({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, ThresholdQuery, {}).then(data => {
       setDataThreshold(data);
     });
-  }, [dataThreshold]);
+  }, [setDataThreshold]);
 
   const handleRemove = id => {
     const variables: RemoveThresholdMutationVariables = {
       id: id,
     };
-    RemoveThresholdMutation(variables);
+    RemoveThresholdMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   // render Add Rule
@@ -151,6 +179,7 @@ const ThresholdTypes = () => {
       <AddRuleItemForm
         threshold={dataEdit.item.node}
         hideAddRuleForm={hideAddRuleForm}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -169,7 +198,11 @@ const ThresholdTypes = () => {
   if (showEditRuleForm) {
     return (
       <ThresholdProvider>
-        <EditRuleItemForm hideAddRuleForm={hideEditRuleForm} />
+        <EditRuleItemForm
+          threshold={dataEdit.item.node}
+          hideAddRuleForm={hideEditRuleForm}
+          isCompleted={isCompleted}
+        />
       </ThresholdProvider>
     );
   }
@@ -195,10 +228,14 @@ const ThresholdTypes = () => {
         <EditThresholdItemForm
           thresholdNames={thresholdNames}
           formValues={dataEdit?.item.node}
+          dataRulesTable={dataThreshold.thresholds?.edges.map(
+            item => item.node,
+          )}
           hideEditThresholdForm={hideEditThresholdForm}
           editRule={() => {
             showEditRuleItemForm(dataEdit);
           }}
+          isCompleted={isCompleted}
         />
       </ThresholdProvider>
     );
@@ -206,40 +243,41 @@ const ThresholdTypes = () => {
 
   return (
     <ThresholdProvider>
-      <div className={classes.root}>
-        <Grid container spacing={3}>
+      <Grid className={classes.root} container spacing={0}>
+        <Grid className={classes.titleThreshold} item xs={12}>
+          <ConfigureTitle
+            title={fbt('Thresholds', 'Threshold Title')}
+            subtitle={fbt(
+              'Thresholds definition for alarm generation',
+              'Threshold description',
+            )}
+          />
+        </Grid>
+        <Grid spacing={1} container>
           <Grid item xs={12} sm={12} lg={9} xl={9}>
-            <ConfigureTitle
-              title={fbt('Thresholds', 'Threshold Title')}
-              subtitle={fbt(
-                'Thresholds definition for alarm generation',
-                'Threshold description',
-              )}
-            />
-          </Grid>
-          <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
             <TitleTextCardsThresholds />
-
-            <List disablePadding>
+            <List disablePadding className={classes.listContainer}>
               {dataThreshold.thresholds?.edges.map((item, index) => (
                 <ThresholdTypeItem
                   key={index}
-                  handleRemove={() => handleRemove(item.node?.id)}
+                  deleteItem={() => handleRemove(item.node?.id)}
                   edit={() => showEditThresholdItemForm({item})}
                   addRule={() => showAddRuleItemForm({item})}
                   editRule={() => showEditRuleItemForm({item})}
+                  isCompleted={isCompleted}
                   {...item?.node}
                 />
               ))}
             </List>
           </Grid>
-          <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
+          <Grid item xs={12} sm={12} lg={3} xl={3}>
             <AddThresholdItemForm
               thresholdNames={dataThreshold.thresholds?.edges}
+              isCompleted={isCompleted}
             />
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     </ThresholdProvider>
   );
 };

@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 )
 
@@ -65,6 +66,25 @@ func (fc *FormulaCreate) SetTextFormula(s string) *FormulaCreate {
 func (fc *FormulaCreate) SetStatus(b bool) *FormulaCreate {
 	fc.mutation.SetStatus(b)
 	return fc
+}
+
+// SetNetworkTypeID sets the networkType edge to NetworkType by id.
+func (fc *FormulaCreate) SetNetworkTypeID(id int) *FormulaCreate {
+	fc.mutation.SetNetworkTypeID(id)
+	return fc
+}
+
+// SetNillableNetworkTypeID sets the networkType edge to NetworkType by id if the given value is not nil.
+func (fc *FormulaCreate) SetNillableNetworkTypeID(id *int) *FormulaCreate {
+	if id != nil {
+		fc = fc.SetNetworkTypeID(*id)
+	}
+	return fc
+}
+
+// SetNetworkType sets the networkType edge to NetworkType.
+func (fc *FormulaCreate) SetNetworkType(n *NetworkType) *FormulaCreate {
+	return fc.SetNetworkTypeID(n.ID)
 }
 
 // SetTechID sets the tech edge to Tech by id.
@@ -259,6 +279,25 @@ func (fc *FormulaCreate) createSpec() (*Formula, *sqlgraph.CreateSpec) {
 			Column: formula.FieldStatus,
 		})
 		_node.Status = value
+	}
+	if nodes := fc.mutation.NetworkTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   formula.NetworkTypeTable,
+			Columns: []string{formula.NetworkTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networktype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := fc.mutation.TechIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

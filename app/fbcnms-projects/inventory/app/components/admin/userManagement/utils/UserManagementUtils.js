@@ -30,6 +30,11 @@ graphql`
     email
     status
     role
+    organizationFk {
+      id
+      name
+      description
+    }
   }
 `;
 
@@ -50,6 +55,13 @@ graphql`
     status
   }
 `;
+graphql`
+  fragment UserManagementUtils_organization on Organization {
+    id
+    name
+    description
+  }
+`;
 
 graphql`
   fragment UserManagementUtils_group on UsersGroup {
@@ -67,6 +79,25 @@ graphql`
   fragment UserManagementUtils_inventoryPolicy on InventoryPolicy {
     read {
       isAllowed
+    }
+    documentCategory {
+      locationTypeID
+      read {
+        isAllowed
+        documentCategoryIds
+      }
+      create {
+        isAllowed
+        documentCategoryIds
+      }
+      update {
+        isAllowed
+        documentCategoryIds
+      }
+      delete {
+        isAllowed
+        documentCategoryIds
+      }
     }
     location {
       create {
@@ -144,6 +175,7 @@ graphql`
       isAllowed
       projectTypeIds
       workOrderTypeIds
+      organizationIds
     }
     templates {
       create {

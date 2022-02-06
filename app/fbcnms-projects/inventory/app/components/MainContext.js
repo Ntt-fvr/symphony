@@ -69,6 +69,11 @@ const meQuery = graphql`
         email
         firstName
         lastName
+        organizationFk {
+          id
+          name
+          description
+        }
       }
       permissions {
         adminPolicy {
@@ -92,6 +97,24 @@ const meQuery = graphql`
             delete {
               isAllowed
               locationTypeIds
+            }
+          }
+          documentCategory {
+            read {
+              isAllowed
+              documentCategoryIds
+            }
+            create {
+              isAllowed
+              documentCategoryIds
+            }
+            update {
+              isAllowed
+              documentCategoryIds 
+            }
+            delete {
+              isAllowed
+              documentCategoryIds
             }
           }
           equipment {
@@ -155,6 +178,7 @@ const meQuery = graphql`
             isAllowed
             projectTypeIds
             workOrderTypeIds
+            organizationIds
           }
           templates {
             create {

@@ -16,7 +16,6 @@ import KpiTypes from './KpiTypes';
 import React, {useEffect, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import ThresholdTypes from './ThresholdTypes';
-import AddRuleItemForm from './AddRuleItemForm';
 import fbt from 'fbt';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
@@ -24,27 +23,12 @@ import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
     transform: 'translateZ(0)',
-  },
-  tabs: {
-    backgroundColor: 'white',
-    borderBottom: `1px ${theme.palette.grey[200]} solid`,
-    minHeight: '60px',
-    overflow: 'visible',
-  },
-  tabContainer: {
-    width: '250px',
-  },
-  tabsRoot: {
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '60px',
   },
 }));
 
@@ -89,12 +73,23 @@ export default function PerformanceCatalog() {
   const [activeTabBar, setActiveTabBar] = useState<number>(
     tabIndex !== -1 ? tabIndex : 0,
   );
+  const [canChangeHistory, setCanChangeHistory] = useState(true);
+
+  const changeTab = index => {
+    setCanChangeHistory(true);
+    setActiveTabBar(index);
+  };
+  window.onpopstate = () => {
+    setCanChangeHistory(false);
+    setActiveTabBar(tabIndex);
+  };
 
   useEffect(() => {
     ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-    history.push(`/assurance/performance/${tabBars[activeTabBar].path}`);
+    canChangeHistory &&
+      history.push(`/assurance/performance/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 
   return (
@@ -103,8 +98,8 @@ export default function PerformanceCatalog() {
         spread={true}
         size="large"
         tabs={tabBars.map(tabBar => tabBar.tab)}
-        activeTabIndex={activeTabBar}
-        onChange={setActiveTabBar}
+        activeTabIndex={tabIndex === 0 ? 0 : activeTabBar}
+        onChange={changeTab}
       />
       <InventoryErrorBoundary>
         <InventorySuspense>
@@ -125,7 +120,7 @@ export default function PerformanceCatalog() {
               component={ThresholdTypes}
             />
             <Redirect
-              from={relativeUrl('/assurance/performance')}
+              from={relativeUrl('/')}
               to={relativeUrl('/counters_types')}
             />
           </Switch>

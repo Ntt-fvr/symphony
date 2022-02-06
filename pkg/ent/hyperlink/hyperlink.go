@@ -34,6 +34,8 @@ const (
 	EdgeLocation = "location"
 	// EdgeWorkOrder holds the string denoting the work_order edge name in mutations.
 	EdgeWorkOrder = "work_order"
+	// EdgeDocumentCategory holds the string denoting the document_category edge name in mutations.
+	EdgeDocumentCategory = "document_category"
 
 	// Table holds the table name of the hyperlink in the database.
 	Table = "hyperlinks"
@@ -58,6 +60,13 @@ const (
 	WorkOrderInverseTable = "work_orders"
 	// WorkOrderColumn is the table column denoting the work_order relation/edge.
 	WorkOrderColumn = "work_order_hyperlinks"
+	// DocumentCategoryTable is the table the holds the document_category relation/edge.
+	DocumentCategoryTable = "hyperlinks"
+	// DocumentCategoryInverseTable is the table name for the DocumentCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "documentcategory" package.
+	DocumentCategoryInverseTable = "document_categories"
+	// DocumentCategoryColumn is the table column denoting the document_category relation/edge.
+	DocumentCategoryColumn = "document_category_hyperlinks"
 )
 
 // Columns holds all SQL columns for hyperlink fields.
@@ -72,6 +81,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Hyperlink type.
 var ForeignKeys = []string{
+	"document_category_hyperlinks",
 	"equipment_hyperlinks",
 	"location_hyperlinks",
 	"work_order_hyperlinks",

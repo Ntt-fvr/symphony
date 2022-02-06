@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -247,7 +248,8 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableRangeToVal(input.RangeToValue).
 			SetNillableEditable(input.IsEditable).
 			SetNillableMandatory(input.IsMandatory).
-			SetNillableDeleted(input.IsDeleted)
+			SetNillableDeleted(input.IsDeleted).
+			SetNillableListable(input.IsListable)
 		parentSetter(builders[i])
 	}
 	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
@@ -657,10 +659,38 @@ func (r mutationResolver) AddLocationType(
 	}, input.Properties...); err != nil {
 		return nil, err
 	}
+	if err := r.AddDocumentCategories(ctx, func(ptc *ent.DocumentCategoryCreate) {
+		ptc.SetLocationTypeID(typ.ID)
+	}, input.DocumentCategories...); err != nil {
+		return nil, err
+	}
 	if _, err := r.AddSurveyTemplateCategories(ctx, typ.ID, input.SurveyTemplateCategories...); err != nil {
 		return nil, err
 	}
 	return typ, nil
+}
+
+func (r mutationResolver) AddDocumentCategories(
+	ctx context.Context, parentSetter func(ptc *ent.DocumentCategoryCreate), inputs ...*pkgmodels.DocumentCategoryInput,
+) error {
+	var (
+		client   = r.ClientFrom(ctx).DocumentCategory
+		builders = make([]*ent.DocumentCategoryCreate, len(inputs))
+	)
+	for i, input := range inputs {
+		builders[i] = client.Create().
+			SetName(input.Name).
+			SetIndex(input.Index)
+		parentSetter(builders[i])
+	}
+	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
+		r.logger.For(ctx).
+			Error("cannot create document Categories",
+				zap.Error(err),
+			)
+		return err
+	}
+	return nil
 }
 
 func (r mutationResolver) AddEquipmentPorts(ctx context.Context, et *ent.EquipmentType, e *ent.Equipment) ([]*ent.EquipmentPort, error) {
@@ -1225,6 +1255,7 @@ func (r mutationResolver) createImage(ctx context.Context, input *models.AddImag
 		}()).
 		SetContentType(input.ContentType).
 		SetNillableCategory(input.Category).
+		SetNillableDocumentCategoryID(input.DocumentCategoryID).
 		SetNillableAnnotation(input.Annotation)
 	if err := entSetter(query); err != nil {
 		return nil, err
@@ -1240,6 +1271,15 @@ func (r mutationResolver) AddImage(ctx context.Context, input models.AddImageInp
 	return r.createImage(ctx, &input, func(create *ent.FileCreate) error {
 		switch input.EntityType {
 		case models.ImageEntityLocation:
+			if input.DocumentCategoryID != nil {
+				lc, err := r.ClientFrom(ctx).Location.Query().Where(location.ID(input.EntityID)).Only(ctx)
+				if err != nil {
+					return err
+				}
+				if _, err := lc.QueryType().QueryDocumentCategory().Where(documentcategory.ID(*input.DocumentCategoryID)).Only(ctx); err != nil {
+					return fmt.Errorf("document category (%q) not registered in location type. %w", *input.DocumentCategoryID, err)
+				}
+			}
 			create.SetLocationID(input.EntityID)
 		case models.ImageEntitySiteSurvey:
 			create.SetSurveyID(input.EntityID)
@@ -1264,7 +1304,8 @@ func (r mutationResolver) AddHyperlink(ctx context.Context, input models.AddHype
 		Create().
 		SetURL(input.URL).
 		SetNillableName(input.DisplayName).
-		SetNillableCategory(input.Category)
+		SetNillableCategory(input.Category).
+		SetNillableDocumentCategoryID(input.DocumentCategoryID)
 	switch input.EntityType {
 	case models.ImageEntityLocation:
 		query = query.SetLocationID(input.EntityID)
@@ -1634,6 +1675,18 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 	} else if _, err := r.deleteTemplate(ctx, wot.ID, enum.PropertyEntityWorkOrder); err != nil {
 		return id, errors.Wrapf(err, "deleting work order template id=%q", wot.ID)
 	}
+
+	appointments, err := wo.QueryAppointment().All(ctx)
+	if err != nil {
+		return id, errors.Wrapf(err, "query work order appointment: id=%q", id)
+	}
+
+	for _, a := range appointments {
+		if _, err := r.RemoveAppointment(ctx, a.ID); err != nil {
+			return id, errors.Wrapf(err, "deleting work order appointment id=%q", a.ID)
+		}
+	}
+
 	if err := client.WorkOrder.DeleteOne(wo).Exec(ctx); err != nil {
 		return id, errors.Wrapf(err, "deleting work order wo=%q", id)
 	}
@@ -2562,6 +2615,21 @@ func (r mutationResolver) EditLocationType(
 			return nil, err
 		}
 	}
+
+	for _, input := range input.DocumentCategories {
+		if input.ID == nil {
+			if err := r.AddDocumentCategories(ctx, func(ptc *ent.DocumentCategoryCreate) {
+				ptc.SetLocationType(typ)
+			}, input); err != nil {
+				if ent.IsConstraintError(err) {
+					return nil, gqlerror.Errorf("There's already a saved document category with that name. Please choose a different name.")
+				}
+				return nil, errors.Wrap(err, "creating Category Document: "+input.Name)
+			}
+		} else if err := r.updateDocumentCategory(ctx, input); err != nil {
+			return nil, err
+		}
+	}
 	return typ, nil
 }
 
@@ -2927,6 +2995,33 @@ func (r mutationResolver) updatePropValues(ctx context.Context, input *models.Pr
 	return pu.Exec(ctx)
 }
 
+func (r mutationResolver) EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error) {
+	client := r.ClientFrom(ctx)
+	et, err := client.PropertyType.Get(ctx, input.ID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		}
+		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
+	}
+
+	var isListable = et.Listable
+	if et.Listable != input.IsListable {
+		isListable = input.IsListable
+	}
+
+	if et, err = client.PropertyType.
+		UpdateOneID(et.ID).
+		SetNillableListable(&isListable).
+		Save(ctx); err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		}
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return et, nil
+}
+
 func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.PropertyTypeInput) error {
 	query := r.ClientFrom(ctx).PropertyType.
 		UpdateOneID(*input.ID).
@@ -2938,7 +3033,8 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 		SetNillableIsInstanceProperty(input.IsInstanceProperty).
 		SetNillableEditable(input.IsEditable).
 		SetNillableMandatory(input.IsMandatory).
-		SetNillableDeleted(input.IsDeleted)
+		SetNillableDeleted(input.IsDeleted).
+		SetNillableListable(input.IsListable)
 	switch input.Type {
 	case propertytype.TypeDate,
 		propertytype.TypeEmail,
@@ -2993,6 +3089,20 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 	}
 	if err := query.Exec(ctx); err != nil {
 		return errors.Wrap(err, "updating property type")
+	}
+	return nil
+}
+
+func (r mutationResolver) updateDocumentCategory(ctx context.Context, input *pkgmodels.DocumentCategoryInput) error {
+	if err := r.ClientFrom(ctx).DocumentCategory.
+		UpdateOneID(*input.ID).
+		SetName(input.Name).
+		SetIndex(input.Index).
+		Exec(ctx); err != nil {
+		if ent.IsConstraintError(err) {
+			return gqlerror.Errorf("There's already a saved document category with that name. Please choose a different name.")
+		}
+		return errors.Wrap(err, "updating Category Document: "+input.Name)
 	}
 	return nil
 }
@@ -3316,4 +3426,11 @@ func (r mutationResolver) MoveEquipmentToLocation(
 		return nil, fmt.Errorf("moving equipment %d to location %d: %w", equipmentID, loc.ID, err)
 	}
 	return e, nil
+}
+
+func (r mutationResolver) RemoveDocumentCategory(ctx context.Context, id int) (int, error) {
+	if err := r.ClientFrom(ctx).DocumentCategory.DeleteOneID(id).Exec(ctx); err != nil {
+		return id, errors.Wrap(err, "removing document category")
+	}
+	return id, nil
 }

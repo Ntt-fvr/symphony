@@ -35,6 +35,11 @@ export type WorkOrderDetails_workOrder = {|
   +id: string,
   +name: string,
   +description: ?string,
+  +organizationFk: ?{|
+    +id: string,
+    +name: string,
+    +description: string,
+  |},
   +workOrderType: {|
     +name: string,
     +id: string,
@@ -48,6 +53,7 @@ export type WorkOrderDetails_workOrder = {|
     +latitude: number,
     +longitude: number,
     +locationType: {|
+      +id: string,
       +mapType: ?string,
       +mapZoomLevel: ?number,
     |},
@@ -369,6 +375,20 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "Organization",
+      "kind": "LinkedField",
+      "name": "organizationFk",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        (v1/*: any*/),
+        (v2/*: any*/)
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "WorkOrderType",
       "kind": "LinkedField",
       "name": "workOrderType",
@@ -417,6 +437,7 @@ return {
           "name": "locationType",
           "plural": false,
           "selections": [
+            (v0/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -1015,6 +1036,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0bd60b08ca0a8e1b232c494f4d55df88';
+(node/*: any*/).hash = '40290a5b16bcf837c2d31ba5332e4e64';
 
 module.exports = node;

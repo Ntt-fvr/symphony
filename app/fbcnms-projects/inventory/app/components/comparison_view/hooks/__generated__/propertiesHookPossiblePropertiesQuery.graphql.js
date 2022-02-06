@@ -24,6 +24,7 @@ export type propertiesHookPossiblePropertiesQueryResponse = {|
     +name: string,
     +type: PropertyKind,
     +stringValue: ?string,
+    +isListable: ?boolean,
   |}>
 |};
 export type propertiesHookPossiblePropertiesQuery = {|
@@ -41,6 +42,7 @@ query propertiesHookPossiblePropertiesQuery(
     name
     type
     stringValue
+    isListable
     id
   }
 }
@@ -81,6 +83,13 @@ v4 = {
   "kind": "ScalarField",
   "name": "stringValue",
   "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isListable",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -99,7 +108,8 @@ return {
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
-          (v4/*: any*/)
+          (v4/*: any*/),
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
@@ -124,6 +134,7 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -137,16 +148,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e0abbdf9be3861677aac8270d30ff7c1",
+    "cacheID": "94d610202e010c1785de5348f458cb2e",
     "id": null,
     "metadata": {},
     "name": "propertiesHookPossiblePropertiesQuery",
     "operationKind": "query",
-    "text": "query propertiesHookPossiblePropertiesQuery(\n  $entityType: PropertyEntity!\n) {\n  possibleProperties(entityType: $entityType) {\n    name\n    type\n    stringValue\n    id\n  }\n}\n"
+    "text": "query propertiesHookPossiblePropertiesQuery(\n  $entityType: PropertyEntity!\n) {\n  possibleProperties(entityType: $entityType) {\n    name\n    type\n    stringValue\n    isListable\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bb938da07f028b2a4f6fc67588a53b78';
+(node/*: any*/).hash = '4ff93c7ecfbfeba7cb7fe6a4251f78c7';
 
 module.exports = node;

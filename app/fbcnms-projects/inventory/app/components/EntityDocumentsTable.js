@@ -17,6 +17,7 @@ import type {EntityDocumentsTable_hyperlinks} from './__generated__/EntityDocume
 import type {MutationCallbacks} from '../mutations/MutationCallbacks.js';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
+import type {DocumentCategoryNode} from '../common/LocationType';
 
 import DeleteImageMutation from '../mutations/DeleteImageMutation';
 import DocumentTable from './DocumentTable';
@@ -35,6 +36,7 @@ type Props = {|
   hyperlinks: EntityDocumentsTable_hyperlinks,
   className?: string,
   onChecked?: any,
+  categories?: $ReadOnlyArray<DocumentCategoryNode>,
   linkToLocationOptions?: boolean,
 |} & WithAlert &
   WithSnackbarProps;
@@ -45,12 +47,13 @@ class EntityDocumentsTable extends React.Component<Props> {
   }
 
   render() {
-    const {files, hyperlinks, className, entityId} = this.props;
+    const {files, hyperlinks, className, entityId, categories} = this.props;
     return (
       <div className={className}>
         <DocumentTable
           entityId={entityId}
           files={files}
+          categories={categories || []}
           hyperlinks={hyperlinks}
           onDocumentDeleted={this.onDocumentDeleted}
           onChecked={this.props.onChecked}
@@ -128,7 +131,7 @@ export default withAlert(
       `,
       hyperlinks: graphql`
         fragment EntityDocumentsTable_hyperlinks on Hyperlink
-          @relay(plural: true) {
+        @relay(plural: true) {
           ...DocumentTable_hyperlinks
         }
       `,

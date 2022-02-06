@@ -31,6 +31,7 @@ type hooks struct {
 	Activity                    []ent.Hook
 	AlarmFilter                 []ent.Hook
 	AlarmStatus                 []ent.Hook
+	Appointment                 []ent.Hook
 	Block                       []ent.Hook
 	BlockInstance               []ent.Hook
 	CheckListCategory           []ent.Hook
@@ -43,6 +44,7 @@ type hooks struct {
 	CounterFamily               []ent.Hook
 	CounterFormula              []ent.Hook
 	Customer                    []ent.Hook
+	DocumentCategory            []ent.Hook
 	Domain                      []ent.Hook
 	EntryPoint                  []ent.Hook
 	Equipment                   []ent.Hook
@@ -58,7 +60,6 @@ type hooks struct {
 	ExportTask                  []ent.Hook
 	Feature                     []ent.Hook
 	File                        []ent.Hook
-	FileCategoryType            []ent.Hook
 	FloorPlan                   []ent.Hook
 	FloorPlanReferencePoint     []ent.Hook
 	FloorPlanScale              []ent.Hook
@@ -69,6 +70,7 @@ type hooks struct {
 	Formula                     []ent.Hook
 	Hyperlink                   []ent.Hook
 	Kpi                         []ent.Hook
+	KpiCategory                 []ent.Hook
 	Kqi                         []ent.Hook
 	KqiCategory                 []ent.Hook
 	KqiComparator               []ent.Hook
@@ -79,6 +81,7 @@ type hooks struct {
 	Link                        []ent.Hook
 	Location                    []ent.Hook
 	LocationType                []ent.Hook
+	NetworkType                 []ent.Hook
 	Organization                []ent.Hook
 	PermissionsPolicy           []ent.Hook
 	Project                     []ent.Hook

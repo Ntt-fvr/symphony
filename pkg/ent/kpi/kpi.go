@@ -30,6 +30,8 @@ const (
 
 	// EdgeDomain holds the string denoting the domain edge name in mutations.
 	EdgeDomain = "domain"
+	// EdgeKpiCategory holds the string denoting the kpicategory edge name in mutations.
+	EdgeKpiCategory = "KpiCategory"
 	// EdgeFormulakpi holds the string denoting the formulakpi edge name in mutations.
 	EdgeFormulakpi = "formulakpi"
 	// EdgeThresholdkpi holds the string denoting the thresholdkpi edge name in mutations.
@@ -44,6 +46,13 @@ const (
 	DomainInverseTable = "domains"
 	// DomainColumn is the table column denoting the domain relation/edge.
 	DomainColumn = "domain_kpidomain"
+	// KpiCategoryTable is the table the holds the KpiCategory relation/edge.
+	KpiCategoryTable = "kpis"
+	// KpiCategoryInverseTable is the table name for the KpiCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "kpicategory" package.
+	KpiCategoryInverseTable = "kpi_categories"
+	// KpiCategoryColumn is the table column denoting the KpiCategory relation/edge.
+	KpiCategoryColumn = "kpi_category_kpicategory"
 	// FormulakpiTable is the table the holds the formulakpi relation/edge.
 	FormulakpiTable = "formulas"
 	// FormulakpiInverseTable is the table name for the Formula entity.
@@ -73,6 +82,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the Kpi type.
 var ForeignKeys = []string{
 	"domain_kpidomain",
+	"kpi_category_kpicategory",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

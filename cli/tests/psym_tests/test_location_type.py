@@ -10,7 +10,7 @@ from psym.api.location_type import (
     get_location_types,
 )
 from psym.common.cache import LOCATION_TYPES
-from psym.common.data_class import PropertyDefinition
+from psym.common.data_class import DocumentCategory, PropertyDefinition
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
@@ -36,6 +36,16 @@ class TestLocationType(BaseTest):
                     is_fixed=False,
                 ),
             ],
+            document_categories=[
+                DocumentCategory(
+                    index=0,
+                    name="DATAFILLS"
+                ),
+                DocumentCategory(
+                    index=1,
+                    name="TOPOLOGIA"
+                ),
+            ],
         )
 
     def test_work_order_type_populated(self) -> None:
@@ -48,6 +58,7 @@ class TestLocationType(BaseTest):
         fetched_location_types = list(get_location_types(client=self.client))
         self.assertEqual(len(fetched_location_types), 1)
         self.assertEqual(self.location_type.id, fetched_location_types[0].id)
+        self.assertEqual(self.location_type.document_categories, fetched_location_types[0].document_categories)
 
     def test_get_location_type_by_id(self) -> None:
         fetched_location_type = get_location_type_by_id(

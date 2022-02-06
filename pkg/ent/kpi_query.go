@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
@@ -33,6 +34,7 @@ type KpiQuery struct {
 	predicates []predicate.Kpi
 	// eager-loading edges.
 	withDomain       *DomainQuery
+	withKpiCategory  *KpiCategoryQuery
 	withFormulakpi   *FormulaQuery
 	withThresholdkpi *ThresholdQuery
 	withFKs          bool
@@ -80,6 +82,28 @@ func (kq *KpiQuery) QueryDomain() *DomainQuery {
 			sqlgraph.From(kpi.Table, kpi.FieldID, selector),
 			sqlgraph.To(domain.Table, domain.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, kpi.DomainTable, kpi.DomainColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(kq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryKpiCategory chains the current query on the KpiCategory edge.
+func (kq *KpiQuery) QueryKpiCategory() *KpiCategoryQuery {
+	query := &KpiCategoryQuery{config: kq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := kq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := kq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpi.Table, kpi.FieldID, selector),
+			sqlgraph.To(kpicategory.Table, kpicategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kpi.KpiCategoryTable, kpi.KpiCategoryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(kq.driver.Dialect(), step)
 		return fromU, nil
@@ -308,6 +332,7 @@ func (kq *KpiQuery) Clone() *KpiQuery {
 		unique:           append([]string{}, kq.unique...),
 		predicates:       append([]predicate.Kpi{}, kq.predicates...),
 		withDomain:       kq.withDomain.Clone(),
+		withKpiCategory:  kq.withKpiCategory.Clone(),
 		withFormulakpi:   kq.withFormulakpi.Clone(),
 		withThresholdkpi: kq.withThresholdkpi.Clone(),
 		// clone intermediate query.
@@ -324,6 +349,17 @@ func (kq *KpiQuery) WithDomain(opts ...func(*DomainQuery)) *KpiQuery {
 		opt(query)
 	}
 	kq.withDomain = query
+	return kq
+}
+
+//  WithKpiCategory tells the query-builder to eager-loads the nodes that are connected to
+// the "KpiCategory" edge. The optional arguments used to configure the query builder of the edge.
+func (kq *KpiQuery) WithKpiCategory(opts ...func(*KpiCategoryQuery)) *KpiQuery {
+	query := &KpiCategoryQuery{config: kq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	kq.withKpiCategory = query
 	return kq
 }
 
@@ -419,13 +455,14 @@ func (kq *KpiQuery) sqlAll(ctx context.Context) ([]*Kpi, error) {
 		nodes       = []*Kpi{}
 		withFKs     = kq.withFKs
 		_spec       = kq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			kq.withDomain != nil,
+			kq.withKpiCategory != nil,
 			kq.withFormulakpi != nil,
 			kq.withThresholdkpi != nil,
 		}
 	)
-	if kq.withDomain != nil {
+	if kq.withDomain != nil || kq.withKpiCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -476,6 +513,31 @@ func (kq *KpiQuery) sqlAll(ctx context.Context) ([]*Kpi, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Domain = n
+			}
+		}
+	}
+
+	if query := kq.withKpiCategory; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Kpi)
+		for i := range nodes {
+			if fk := nodes[i].kpi_category_kpicategory; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(kpicategory.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "kpi_category_kpicategory" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.KpiCategory = n
 			}
 		}
 	}

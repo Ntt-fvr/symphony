@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
@@ -45,6 +46,7 @@ type FileQuery struct {
 	withFloorPlan           *FloorPlanQuery
 	withPhotoSurveyQuestion *SurveyQuestionQuery
 	withSurveyQuestion      *SurveyQuestionQuery
+	withDocumentCategory    *DocumentCategoryQuery
 	withFKs                 bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -273,6 +275,28 @@ func (fq *FileQuery) QuerySurveyQuestion() *SurveyQuestionQuery {
 	return query
 }
 
+// QueryDocumentCategory chains the current query on the document_category edge.
+func (fq *FileQuery) QueryDocumentCategory() *DocumentCategoryQuery {
+	query := &DocumentCategoryQuery{config: fq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, selector),
+			sqlgraph.To(documentcategory.Table, documentcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, file.DocumentCategoryTable, file.DocumentCategoryColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first File entity in the query. Returns *NotFoundError when no file was found.
 func (fq *FileQuery) First(ctx context.Context) (*File, error) {
 	nodes, err := fq.Limit(1).All(ctx)
@@ -458,6 +482,7 @@ func (fq *FileQuery) Clone() *FileQuery {
 		withFloorPlan:           fq.withFloorPlan.Clone(),
 		withPhotoSurveyQuestion: fq.withPhotoSurveyQuestion.Clone(),
 		withSurveyQuestion:      fq.withSurveyQuestion.Clone(),
+		withDocumentCategory:    fq.withDocumentCategory.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,
@@ -563,6 +588,17 @@ func (fq *FileQuery) WithSurveyQuestion(opts ...func(*SurveyQuestionQuery)) *Fil
 	return fq
 }
 
+//  WithDocumentCategory tells the query-builder to eager-loads the nodes that are connected to
+// the "document_category" edge. The optional arguments used to configure the query builder of the edge.
+func (fq *FileQuery) WithDocumentCategory(opts ...func(*DocumentCategoryQuery)) *FileQuery {
+	query := &DocumentCategoryQuery{config: fq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withDocumentCategory = query
+	return fq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -633,7 +669,7 @@ func (fq *FileQuery) sqlAll(ctx context.Context) ([]*File, error) {
 		nodes       = []*File{}
 		withFKs     = fq.withFKs
 		_spec       = fq.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			fq.withLocation != nil,
 			fq.withEquipment != nil,
 			fq.withUser != nil,
@@ -643,9 +679,10 @@ func (fq *FileQuery) sqlAll(ctx context.Context) ([]*File, error) {
 			fq.withFloorPlan != nil,
 			fq.withPhotoSurveyQuestion != nil,
 			fq.withSurveyQuestion != nil,
+			fq.withDocumentCategory != nil,
 		}
 	)
-	if fq.withLocation != nil || fq.withEquipment != nil || fq.withUser != nil || fq.withWorkOrder != nil || fq.withChecklistItem != nil || fq.withSurvey != nil || fq.withFloorPlan != nil || fq.withPhotoSurveyQuestion != nil || fq.withSurveyQuestion != nil {
+	if fq.withLocation != nil || fq.withEquipment != nil || fq.withUser != nil || fq.withWorkOrder != nil || fq.withChecklistItem != nil || fq.withSurvey != nil || fq.withFloorPlan != nil || fq.withPhotoSurveyQuestion != nil || fq.withSurveyQuestion != nil || fq.withDocumentCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -896,6 +933,31 @@ func (fq *FileQuery) sqlAll(ctx context.Context) ([]*File, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.SurveyQuestion = n
+			}
+		}
+	}
+
+	if query := fq.withDocumentCategory; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*File)
+		for i := range nodes {
+			if fk := nodes[i].document_category_files; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(documentcategory.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "document_category_files" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.DocumentCategory = n
 			}
 		}
 	}

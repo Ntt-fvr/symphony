@@ -26,6 +26,7 @@ import axios from 'axios';
 import nullthrows from 'nullthrows';
 import {ConnectionHandler, fetchQuery, graphql} from 'relay-runtime';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
+import {Organization} from './Organizations';
 import {USER_ROLES} from '../utils/UserManagementUtils';
 import {UserRoles} from '@fbcnms/auth/types';
 import {getGraphError} from '../../../../common/EntUtils';
@@ -46,10 +47,47 @@ const usersQuery = graphql`
   }
 `;
 
+const usersByOrganizationQuery = graphql`
+  query UsersByOrganizationQuery($filterBy: [UserFilterInput!]) {
+    users(filterBy: $filterBy) {
+      edges {
+        node {
+          ...UserManagementUtils_user @relay(mask: false)
+        }
+      }
+    }
+  }
+`;
+
 export function useUsers(): $ReadOnlyArray<User> {
   const data = useLazyLoadQuery<UsersQuery>(usersQuery, {});
   const usersData = data.users?.edges || [];
   return usersData.map(p => p.node).filter(Boolean);
+}
+
+export function useUsersOrganization(
+  organizations: [Organization],
+): $ReadOnlyArray<User> {
+  const data = organizations.map(org => {
+    const filterBy = [
+      {
+        filterType: 'USER_ORGANIZATION',
+        operator: 'IS_ONE_OF',
+        idSet: [org.id],
+      },
+    ];
+    const members = useLazyLoadQuery<UsersByOrganizationQuery>(
+      usersByOrganizationQuery,
+      {filterBy},
+    );
+    const usersData = members.users?.edges || [];
+
+    return {
+      ...org,
+      members: usersData.map(p => p.node).filter(Boolean),
+    };
+  });
+  return data;
 }
 
 function roleToNodeRole(role: UserRole): number {
@@ -64,6 +102,7 @@ function createNewUserInPlatformServer(
     email: newUserValue.authID,
     password,
     role: roleToNodeRole(newUserValue.role),
+    organizationFk: newUserValue.organizationFk,
     networkIDs: [],
   };
   return axios
@@ -193,6 +232,7 @@ export function editUser(
           lastName: newUserValue.lastName,
           role: newUserValue.role,
           status: newUserValue.status,
+          organizationFk: newUserValue.organizationFk,
         },
       },
       callbacks,

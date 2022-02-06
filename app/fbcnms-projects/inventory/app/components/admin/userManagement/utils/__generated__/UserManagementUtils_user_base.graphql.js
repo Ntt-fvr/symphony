@@ -27,6 +27,11 @@ export type UserManagementUtils_user_base = {|
   +email: string,
   +status: UserStatus,
   +role: UserRole,
+  +organizationFk: ?{|
+    +id: string,
+    +name: string,
+    +description: string,
+  |},
   +$refType: UserManagementUtils_user_base$ref,
 |};
 export type UserManagementUtils_user_base$data = UserManagementUtils_user_base;
@@ -38,19 +43,21 @@ export type UserManagementUtils_user_base$key = {
 */
 
 
-const node/*: ReaderFragment*/ = {
+const node/*: ReaderFragment*/ = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "UserManagementUtils_user_base",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -92,12 +99,39 @@ const node/*: ReaderFragment*/ = {
       "kind": "ScalarField",
       "name": "role",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "Organization",
+      "kind": "LinkedField",
+      "name": "organizationFk",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "description",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "User",
   "abstractKey": null
 };
+})();
 // prettier-ignore
-(node/*: any*/).hash = '37042ebf2f46af736aac063cef60994e';
+(node/*: any*/).hash = '20143f6c92b471235fe14ed3582d51ed';
 
 module.exports = node;

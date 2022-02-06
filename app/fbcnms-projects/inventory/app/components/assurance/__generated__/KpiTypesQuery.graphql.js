@@ -39,7 +39,15 @@ export type KpiTypesQueryResponse = {|
             +id: string,
             +name: string,
           |},
+          +networkTypeFk: {|
+            +id: string,
+            +name: string,
+          |},
         |}>,
+        +kpiCategoryFK: {|
+          +id: string,
+          +name: string,
+        |},
       |}
     |}>
   |},
@@ -49,6 +57,43 @@ export type KpiTypesQueryResponse = {|
         +name: string,
         +kpi: ?{|
           +name: string
+        |},
+      |}
+    |}>
+  |},
+  +networkTypes: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
+  +counters: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
+  +formulas: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +networkTypeFk: {|
+          +id: string,
+          +name: string,
+        |},
+        +textFormula: string,
+        +status: boolean,
+        +techFk: {|
+          +id: string,
+          +name: string,
+        |},
+        +kpiFk: {|
+          +id: string,
+          +name: string,
         |},
       |}
     |}>
@@ -86,6 +131,14 @@ query KpiTypesQuery {
             id
             name
           }
+          networkTypeFk {
+            id
+            name
+          }
+        }
+        kpiCategoryFK {
+          id
+          name
         }
       }
     }
@@ -99,6 +152,43 @@ query KpiTypesQuery {
           id
         }
         id
+      }
+    }
+  }
+  networkTypes {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  counters {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  formulas {
+    edges {
+      node {
+        id
+        networkTypeFk {
+          id
+          name
+        }
+        textFormula
+        status
+        techFk {
+          id
+          name
+        }
+        kpiFk {
+          id
+          name
+        }
       }
     }
   }
@@ -132,6 +222,43 @@ v3 = [
   (v1/*: any*/)
 ],
 v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "textFormula",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Kpi",
+  "kind": "LinkedField",
+  "name": "kpiFk",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Tech",
+  "kind": "LinkedField",
+  "name": "techFk",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "NetworkType",
+  "kind": "LinkedField",
+  "name": "networkTypeFk",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": null
+},
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "KpiConnection",
@@ -184,37 +311,127 @@ v4 = {
               "plural": true,
               "selections": [
                 (v0/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "textFormula",
-                  "storageKey": null
-                },
+                (v4/*: any*/),
                 (v2/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "Kpi",
-                  "kind": "LinkedField",
-                  "name": "kpiFk",
-                  "plural": false,
-                  "selections": (v3/*: any*/),
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "Tech",
-                  "kind": "LinkedField",
-                  "name": "techFk",
-                  "plural": false,
-                  "selections": (v3/*: any*/),
-                  "storageKey": null
-                }
+                (v5/*: any*/),
+                (v6/*: any*/),
+                (v7/*: any*/)
               ],
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "KpiCategory",
+              "kind": "LinkedField",
+              "name": "kpiCategoryFK",
+              "plural": false,
+              "selections": (v3/*: any*/),
+              "storageKey": null
             }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "NetworkTypeConnection",
+  "kind": "LinkedField",
+  "name": "networkTypes",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "NetworkTypeEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "NetworkType",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": (v3/*: any*/),
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "CounterConnection",
+  "kind": "LinkedField",
+  "name": "counters",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "CounterEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "Counter",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": (v3/*: any*/),
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "FormulaConnection",
+  "kind": "LinkedField",
+  "name": "formulas",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "FormulaEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "Formula",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/),
+            (v7/*: any*/),
+            (v4/*: any*/),
+            (v2/*: any*/),
+            (v6/*: any*/),
+            (v5/*: any*/)
           ],
           "storageKey": null
         }
@@ -231,7 +448,7 @@ return {
     "metadata": null,
     "name": "KpiTypesQuery",
     "selections": [
-      (v4/*: any*/),
+      (v8/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -277,7 +494,10 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v9/*: any*/),
+      (v10/*: any*/),
+      (v11/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -288,7 +508,7 @@ return {
     "kind": "Operation",
     "name": "KpiTypesQuery",
     "selections": [
-      (v4/*: any*/),
+      (v8/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -336,20 +556,23 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v9/*: any*/),
+      (v10/*: any*/),
+      (v11/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "552384b1ec34d70e37c8928b666a6b56",
+    "cacheID": "0e5dd92613ab3d468632d8aa1896c7e9",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n          networkTypeFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n  networkTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  counters {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  formulas {\n    edges {\n      node {\n        id\n        networkTypeFk {\n          id\n          name\n        }\n        textFormula\n        status\n        techFk {\n          id\n          name\n        }\n        kpiFk {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '79ff9a3173b3be46ce0416a4df08dd48';
+(node/*: any*/).hash = '5b00a31e79a5fbb6120c5e5c77b79905';
 
 module.exports = node;

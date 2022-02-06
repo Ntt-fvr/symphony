@@ -104,12 +104,36 @@ const initialLocationCUDRule = {
   },
 };
 
+//TODO: cHECK IDS null
+const initialdocumentCategoryCRUDRule = {
+  locationTypeID: 0,
+  create: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+  delete: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+  update: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+  read: {
+    ...initialBasicRule,
+    documentCategoryIds: null,
+  },
+};
+
 const initialInventoryRules = {
   read: {
     isAllowed: PERMISSION_RULE_VALUES.YES,
   },
   location: {
     ...initialLocationCUDRule,
+  },
+  documentCategory: {
+    ...initialdocumentCategoryCRUDRule,
   },
   equipment: {
     ...initialCUDRule,
@@ -143,6 +167,7 @@ const initialWorkforceRules = {
     ...initialBasicRule,
     projectTypeIds: null,
     workOrderTypeIds: null,
+    organizationIds: null,
   },
   data: {
     ...initialWorkforceCUDRules,
@@ -156,7 +181,7 @@ const getInitialNewPolicy: (policyType: ?string) => PermissionsPolicy = (
   policyType: ?string,
 ) => {
   let type = POLICY_TYPES.InventoryPolicy.key;
-  if (policyType == POLICY_TYPES.WorkforcePolicy.key) {
+  if (policyType === POLICY_TYPES.WorkforcePolicy.key) {
     type = POLICY_TYPES.WorkforcePolicy.key;
   }
 
@@ -218,7 +243,7 @@ function PermissionsPolicyCard(props: Props) {
       }
       redirectToPoliciesView();
     }
-    if (fetchedPolicy?.id == policy?.id) {
+    if (fetchedPolicy?.id === policy?.id) {
       return;
     }
     setPolicy(fetchedPolicy);
@@ -320,7 +345,6 @@ function PermissionsPolicyCard(props: Props) {
   if (policy == null) {
     return null;
   }
-
   return (
     <InventoryErrorBoundary>
       <FormContextProvider permissions={{adminRightsRequired: true}}>
