@@ -38,7 +38,7 @@ func (r mutationResolver) AddResourceSRItems(ctx context.Context, input models.A
 	client := r.ClientFrom(ctx)
 	typ, err := client.
 		ResourceSRItems.Create().
-		SetName(input.Name).
+		SetNillableName(input.Name).
 		SetResourcesrID(input.ResourceSpecificationRelationship).
 		SetResourcetypeID(input.ResourceType).
 		Save(ctx)
@@ -90,7 +90,7 @@ func (r mutationResolver) EditResourceSRItems(ctx context.Context, input models.
 	if input.Name != et.Name || input.ResourceSpecificationRelationship != &resourcespecificationrelationship.ID || input.ResourceType != &resourcetype.ID {
 		if et, err = client.ResourceSRItems.
 			UpdateOne(et).
-			SetName(input.Name).
+			SetNillableName(input.Name).
 			SetNillableResourcesrID(input.ResourceSpecificationRelationship).
 			SetNillableResourcetypeID(input.ResourceType).
 			Save(ctx); err != nil {

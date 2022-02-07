@@ -60,6 +60,14 @@ func (rsic *ResourceSRItemsCreate) SetName(s string) *ResourceSRItemsCreate {
 	return rsic
 }
 
+// SetNillableName sets the name field if the given value is not nil.
+func (rsic *ResourceSRItemsCreate) SetNillableName(s *string) *ResourceSRItemsCreate {
+	if s != nil {
+		rsic.SetName(*s)
+	}
+	return rsic
+}
+
 // SetResourcesrID sets the resourcesr edge to ResourceSpecificationRelationship by id.
 func (rsic *ResourceSRItemsCreate) SetResourcesrID(id int) *ResourceSRItemsCreate {
 	rsic.mutation.SetResourcesrID(id)
@@ -168,14 +176,6 @@ func (rsic *ResourceSRItemsCreate) check() error {
 	if _, ok := rsic.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
-	if _, ok := rsic.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := rsic.mutation.Name(); ok {
-		if err := resourcesritems.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	return nil
 }
 
@@ -225,7 +225,7 @@ func (rsic *ResourceSRItemsCreate) createSpec() (*ResourceSRItems, *sqlgraph.Cre
 			Value:  value,
 			Column: resourcesritems.FieldName,
 		})
-		_node.Name = value
+		_node.Name = &value
 	}
 	if nodes := rsic.mutation.ResourcesrIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

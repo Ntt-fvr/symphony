@@ -9400,20 +9400,20 @@ input ResourceSpecificationRelationshipFilterInput {
 
 type ResourceSRItems implements Node {
   id: ID!
-  name: String!
+  name: String
   resourceSpecificationRelationship: ResourceSpecificationRelationship!
   resourceType: ResourceType!
 }
 
 input AddResourceSRItemsInput {  
-  name: String!
+  name: String
   resourceSpecificationRelationship: ID!
   resourceType: ID!
 }
 
 input EditResourceSRItemsInput {
   id: ID!
-  name: String!
+  name: String
   resourceSpecificationRelationship: ID
   resourceType: ID
 }

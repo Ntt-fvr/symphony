@@ -1925,10 +1925,6 @@ func init() {
 	resourcesritems.DefaultUpdateTime = resourcesritemsDescUpdateTime.Default.(func() time.Time)
 	// resourcesritems.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	resourcesritems.UpdateDefaultUpdateTime = resourcesritemsDescUpdateTime.UpdateDefault.(func() time.Time)
-	// resourcesritemsDescName is the schema descriptor for name field.
-	resourcesritemsDescName := resourcesritemsFields[0].Descriptor()
-	// resourcesritems.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	resourcesritems.NameValidator = resourcesritemsDescName.Validators[0].(func(string) error)
 	resourcespecificationMixin := schema.ResourceSpecification{}.Mixin()
 	resourcespecification.Policy = privacy.NewPolicies(schema.ResourceSpecification{})
 	resourcespecification.Hooks[0] = func(next ent.Mutator) ent.Mutator {

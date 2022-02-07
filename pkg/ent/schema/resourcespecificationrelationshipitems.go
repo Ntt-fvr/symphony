@@ -21,8 +21,8 @@ type ResourceSRItems struct {
 // ResourceSRItems returns property type Resource.
 func (ResourceSRItems) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique().
-			Annotations(entgql.OrderField("NAME")),
+		field.String("name").
+			Annotations(entgql.OrderField("NAME")).Optional().Nillable(),
 	}
 }
 
@@ -30,7 +30,7 @@ func (ResourceSRItems) Fields() []ent.Field {
 func (ResourceSRItems) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("resourcesr", ResourceSpecificationRelationship.Type).
-			Ref("resource_sr").Unique().Annotations(entgql.OrderField("NAME")),
+			Ref("resource_sr").Unique(),
 		edge.From("resourcetype", ResourceType.Type).
 			Ref("resourcetype_items").Unique().Annotations(entgql.OrderField("ResourceType")),
 	}
