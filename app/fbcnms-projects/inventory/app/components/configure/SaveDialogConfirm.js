@@ -76,7 +76,7 @@ const SaveDialogConfirm = (props: Props) => {
       className={classes.root}>
       <DialogActions>
         <Button onClick={onClose} skin="regular">
-          <CloseIcon fontSize="medium" color="action" />
+          <CloseIcon size="medium" color="action" />
         </Button>
       </DialogActions>
       <DialogTitle className={classes.dialogTitle}>

@@ -18,7 +18,7 @@ export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum"
 export type EditResourceSpecificationInput = {|
   id: string,
   name: string,
-  resourceTypeFk?: ?string,
+  resourceType?: ?string,
   propertyTypes?: ?$ReadOnlyArray<PropertyTypeInput>,
 |};
 export type PropertyTypeInput = {|

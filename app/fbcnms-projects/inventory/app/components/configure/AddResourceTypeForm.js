@@ -158,8 +158,8 @@ export default function AddResourceTypeForm(props: Props) {
     const variables: AddResourceTypeMutationVariables = {
       input: {
         name: resources.data.name,
-        resourceTypeClassFk: resources.data.class,
-        resourceTypeBaseTypeFk: resources.data.resourceTypeClass,
+        resourceTypeClass: resources.data.class,
+        resourceTypeBaseType: resources.data.resourceTypeClass,
       },
     };
     setShowChecking(true);
