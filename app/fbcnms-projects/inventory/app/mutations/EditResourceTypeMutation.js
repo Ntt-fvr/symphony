@@ -8,48 +8,47 @@
  * @format
  */
 
- import type {
-    EditResourceTypeMutation,
-    EditResourceTypeMutationResponse,
-    EditResourceTypeMutationVariables,
-  } from './__generated__/EditResourceTypeMutation.graphql';
-  
-  import type {MutationCallbacks} from './MutationCallbacks.js';
-  
-  import type {SelectorStoreUpdater} from 'relay-runtime';
-  
-  import RelayEnvironment from '../common/RelayEnvironment.js';
-  import {commitMutation, graphql} from 'react-relay';
-  
-  const mutation = graphql`
-    mutation EditResourceTypeMutation($input: EditResourceTypeInput!) {
-      editResourceType(input: $input) {
+import type {
+  EditResourceTypeMutation,
+  EditResourceTypeMutationResponse,
+  EditResourceTypeMutationVariables,
+} from './__generated__/EditResourceTypeMutation.graphql';
+
+import type {MutationCallbacks} from './MutationCallbacks.js';
+
+import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
+
+const mutation = graphql`
+  mutation EditResourceTypeMutation($input: EditResourceTypeInput!) {
+    editResourceType(input: $input) {
+      id
+      name
+      resourceTypeBaseType {
         id
         name
-        resourceTypeBaseType {
-            id
-            name
-          }
-        resourceTypeClass {
-          id
-          name
-        }
+      }
+      resourceTypeClass {
+        id
+        name
       }
     }
-  `;
-  
-  export default (
-    variables: EditResourceTypeMutationVariables,
-    callbacks?: MutationCallbacks<EditResourceTypeMutationResponse>,
-    updater?: SelectorStoreUpdater,
-  ) => {
-    const {onCompleted, onError} = callbacks ? callbacks : {};
-    commitMutation<EditResourceTypeMutation>(RelayEnvironment, {
-      mutation,
-      variables,
-      updater,
-      onCompleted,
-      onError,
-    });
-  };
-  
+  }
+`;
+
+export default (
+  variables: EditResourceTypeMutationVariables,
+  callbacks?: MutationCallbacks<EditResourceTypeMutationResponse>,
+  updater?: SelectorStoreUpdater,
+) => {
+  const {onCompleted, onError} = callbacks ? callbacks : {};
+  commitMutation<EditResourceTypeMutation>(RelayEnvironment, {
+    mutation,
+    variables,
+    updater,
+    onCompleted,
+    onError,
+  });
+};

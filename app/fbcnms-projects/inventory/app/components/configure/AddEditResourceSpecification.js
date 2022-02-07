@@ -14,29 +14,30 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Grid from '@material-ui/core/Grid';
 
-import React, {useState, useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import RelationshipTypeItem from './RelationshipTypeItem';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
+import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
+import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
+import type {ResourceSpecifications} from './EditResourceTypeItem';
+
+import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
+import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
-import {toMutablePropertyType} from '../../common/PropertyType';
-import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
-import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
-import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
-import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
-import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
-import type {ResourceSpecifications} from './EditResourceTypeItem';
+import SaveDialogConfirm from './SaveDialogConfirm';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
-import {useFormInput} from '../assurance/common/useFormInput';
+import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from './../assurance/common/useDisabledButton';
+import {useFormInput} from '../assurance/common/useFormInput';
+import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 import {useValidationEdit} from './../assurance/common/useValidation';
-import SaveDialogConfirm from './SaveDialogConfirm';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -130,8 +131,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   const inputFilter = () => {
     return (
       namesFilter?.filter(
-        item =>
-          item === nameEdit.value && item !== formValues.name,
+        item => item === nameEdit.value && item !== formValues.name,
       ) || []
     );
   };
@@ -171,7 +171,7 @@ export const AddEditResourceSpecification = (props: Props) => {
     const variables: AddResourceSpecificationMutationVariables = {
       input: {
         name: resourceSpecification.data.name,
-        resourceTypeFk: formValues.id,
+        resourceType: formValues.id,
         propertyTypes: convertPropertyTypeToMutationInput(propertyTypes),
       },
     };
@@ -189,7 +189,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         id: dataForm.id,
         name: nameEdit.value,
-        resourceTypeFk: dataForm.resourceTypeFk.id,
+        resourceType: dataForm.resourceType.id,
         propertyTypes: convertPropertyTypeToMutationInput(propertyTypes),
       },
     };
@@ -323,7 +323,7 @@ export const AddEditResourceSpecification = (props: Props) => {
           Relationship types definition
         </Text>
       </Grid>
-      <RelationshipTypeItem />
+      <RelationshipTypeItem dataForm={dataForm} />
     </div>
   );
 };

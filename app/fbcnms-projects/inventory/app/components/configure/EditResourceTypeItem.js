@@ -13,27 +13,28 @@ import fbt from 'fbt';
 
 import {useFormInput} from '../assurance/common/useFormInput';
 
-import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
 import type {EditResourceTypeItemQuery} from './__generated__/EditResourceTypeItemQuery.graphql';
 import type {EditResourceTypeMutationVariables} from '../../mutations/__generated__/EditResourceTypeMutation.graphql';
+import type {PropertyType} from '../../common/PropertyType';
+
 import AddIcon from '@material-ui/icons/Add';
-import symphony from '@symphony/design-system/theme/symphony';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Divider from '@material-ui/core/Divider';
+import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import symphony from '@symphony/design-system/theme/symphony';
+import {AddEditResourceSpecification} from './AddEditResourceSpecification';
 import {Grid, MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useValidationEdit} from '../assurance/common/useValidation';
-import {AddEditResourceSpecification} from './AddEditResourceSpecification';
-import type {PropertyType} from '../../common/PropertyType';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -120,7 +121,7 @@ type Resource = {
 export type ResourceSpecifications = {
   id: string,
   name: string,
-  resourceTypeFk: {
+  resourceType: {
     id: string,
   },
   propertyTypes: Array<PropertyType>,
@@ -130,7 +131,7 @@ type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
-    resourceTypeFk: {
+    resourceType: {
       id: string,
     },
     resourceTypeBaseType: {
@@ -165,9 +166,7 @@ export const EditResourceTypeItem = (props: Props) => {
 
   const name = useFormInput(formValues.name);
 
-  const resourceTypeBaseType = useFormInput(
-    formValues.resourceTypeBaseType.id,
-  );
+  const resourceTypeBaseType = useFormInput(formValues.resourceTypeBaseType.id);
   const resourceTypeClass = useFormInput(formValues.resourceTypeClass.id);
   const data = useLazyLoadQuery<EditResourceTypeItemQuery>(
     EditResourceTypeQuery,
@@ -191,8 +190,9 @@ export const EditResourceTypeItem = (props: Props) => {
   };
 
   const filterDataById = resourceSpecifications.filter(
-    rsData => rsData?.resourceTypeFk?.id === formValues.id,
+    rsData => rsData?.resourceType?.id === formValues.id,
   );
+
   const showEditFormData = (dataForm: ResourceSpecifications) => {
     setOpenFormEdit(true);
     setDataEdit(dataForm);

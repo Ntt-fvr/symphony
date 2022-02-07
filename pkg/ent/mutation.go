@@ -54724,7 +54724,7 @@ func (m *ResourceSRItemsMutation) Name() (r string, exists bool) {
 // If the ResourceSRItems object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceSRItemsMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *ResourceSRItemsMutation) OldName(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
 	}
@@ -54738,9 +54738,22 @@ func (m *ResourceSRItemsMutation) OldName(ctx context.Context) (v string, err er
 	return oldValue.Name, nil
 }
 
+// ClearName clears the value of name.
+func (m *ResourceSRItemsMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[resourcesritems.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the field name was cleared in this mutation.
+func (m *ResourceSRItemsMutation) NameCleared() bool {
+	_, ok := m.clearedFields[resourcesritems.FieldName]
+	return ok
+}
+
 // ResetName reset all changes of the "name" field.
 func (m *ResourceSRItemsMutation) ResetName() {
 	m.name = nil
+	delete(m.clearedFields, resourcesritems.FieldName)
 }
 
 // SetResourcesrID sets the resourcesr edge to ResourceSpecificationRelationship by id.
@@ -54933,7 +54946,11 @@ func (m *ResourceSRItemsMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
 func (m *ResourceSRItemsMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(resourcesritems.FieldName) {
+		fields = append(fields, resourcesritems.FieldName)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicates if this field was
@@ -54946,6 +54963,11 @@ func (m *ResourceSRItemsMutation) FieldCleared(name string) bool {
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ResourceSRItemsMutation) ClearField(name string) error {
+	switch name {
+	case resourcesritems.FieldName:
+		m.ClearName()
+		return nil
+	}
 	return fmt.Errorf("unknown ResourceSRItems nullable field %s", name)
 }
 

@@ -27,7 +27,7 @@ type ResourceSRItems struct {
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceSRItemsQuery when eager-loading is set.
 	Edges                                           ResourceSRItemsEdges `json:"edges"`
@@ -117,7 +117,8 @@ func (rsi *ResourceSRItems) assignValues(values ...interface{}) error {
 	if value, ok := values[2].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field name", values[2])
 	} else if value.Valid {
-		rsi.Name = value.String
+		rsi.Name = new(string)
+		*rsi.Name = value.String
 	}
 	values = values[3:]
 	if len(values) == len(resourcesritems.ForeignKeys) {
@@ -174,8 +175,10 @@ func (rsi *ResourceSRItems) String() string {
 	builder.WriteString(rsi.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(rsi.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", name=")
-	builder.WriteString(rsi.Name)
+	if v := rsi.Name; v != nil {
+		builder.WriteString(", name=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

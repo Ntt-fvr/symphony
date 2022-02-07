@@ -38,6 +38,20 @@ func (rsiu *ResourceSRItemsUpdate) SetName(s string) *ResourceSRItemsUpdate {
 	return rsiu
 }
 
+// SetNillableName sets the name field if the given value is not nil.
+func (rsiu *ResourceSRItemsUpdate) SetNillableName(s *string) *ResourceSRItemsUpdate {
+	if s != nil {
+		rsiu.SetName(*s)
+	}
+	return rsiu
+}
+
+// ClearName clears the value of name.
+func (rsiu *ResourceSRItemsUpdate) ClearName() *ResourceSRItemsUpdate {
+	rsiu.mutation.ClearName()
+	return rsiu
+}
+
 // SetResourcesrID sets the resourcesr edge to ResourceSpecificationRelationship by id.
 func (rsiu *ResourceSRItemsUpdate) SetResourcesrID(id int) *ResourceSRItemsUpdate {
 	rsiu.mutation.SetResourcesrID(id)
@@ -101,18 +115,12 @@ func (rsiu *ResourceSRItemsUpdate) Save(ctx context.Context) (int, error) {
 	)
 	rsiu.defaults()
 	if len(rsiu.hooks) == 0 {
-		if err = rsiu.check(); err != nil {
-			return 0, err
-		}
 		affected, err = rsiu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ResourceSRItemsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = rsiu.check(); err != nil {
-				return 0, err
 			}
 			rsiu.mutation = mutation
 			affected, err = rsiu.sqlSave(ctx)
@@ -159,16 +167,6 @@ func (rsiu *ResourceSRItemsUpdate) defaults() {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (rsiu *ResourceSRItemsUpdate) check() error {
-	if v, ok := rsiu.mutation.Name(); ok {
-		if err := resourcesritems.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	return nil
-}
-
 func (rsiu *ResourceSRItemsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -198,6 +196,12 @@ func (rsiu *ResourceSRItemsUpdate) sqlSave(ctx context.Context) (n int, err erro
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: resourcesritems.FieldName,
+		})
+	}
+	if rsiu.mutation.NameCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: resourcesritems.FieldName,
 		})
 	}
@@ -295,6 +299,20 @@ func (rsiuo *ResourceSRItemsUpdateOne) SetName(s string) *ResourceSRItemsUpdateO
 	return rsiuo
 }
 
+// SetNillableName sets the name field if the given value is not nil.
+func (rsiuo *ResourceSRItemsUpdateOne) SetNillableName(s *string) *ResourceSRItemsUpdateOne {
+	if s != nil {
+		rsiuo.SetName(*s)
+	}
+	return rsiuo
+}
+
+// ClearName clears the value of name.
+func (rsiuo *ResourceSRItemsUpdateOne) ClearName() *ResourceSRItemsUpdateOne {
+	rsiuo.mutation.ClearName()
+	return rsiuo
+}
+
 // SetResourcesrID sets the resourcesr edge to ResourceSpecificationRelationship by id.
 func (rsiuo *ResourceSRItemsUpdateOne) SetResourcesrID(id int) *ResourceSRItemsUpdateOne {
 	rsiuo.mutation.SetResourcesrID(id)
@@ -358,18 +376,12 @@ func (rsiuo *ResourceSRItemsUpdateOne) Save(ctx context.Context) (*ResourceSRIte
 	)
 	rsiuo.defaults()
 	if len(rsiuo.hooks) == 0 {
-		if err = rsiuo.check(); err != nil {
-			return nil, err
-		}
 		node, err = rsiuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ResourceSRItemsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = rsiuo.check(); err != nil {
-				return nil, err
 			}
 			rsiuo.mutation = mutation
 			node, err = rsiuo.sqlSave(ctx)
@@ -416,16 +428,6 @@ func (rsiuo *ResourceSRItemsUpdateOne) defaults() {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (rsiuo *ResourceSRItemsUpdateOne) check() error {
-	if v, ok := rsiuo.mutation.Name(); ok {
-		if err := resourcesritems.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	return nil
-}
-
 func (rsiuo *ResourceSRItemsUpdateOne) sqlSave(ctx context.Context) (_node *ResourceSRItems, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -453,6 +455,12 @@ func (rsiuo *ResourceSRItemsUpdateOne) sqlSave(ctx context.Context) (_node *Reso
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: resourcesritems.FieldName,
+		})
+	}
+	if rsiuo.mutation.NameCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: resourcesritems.FieldName,
 		})
 	}

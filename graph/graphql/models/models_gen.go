@@ -380,9 +380,9 @@ type AddResourceRelationshipInput struct {
 }
 
 type AddResourceSRItemsInput struct {
-	Name                              string `json:"name"`
-	ResourceSpecificationRelationship int    `json:"resourceSpecificationRelationship"`
-	ResourceType                      int    `json:"resourceType"`
+	Name                              *string `json:"name"`
+	ResourceSpecificationRelationship int     `json:"resourceSpecificationRelationship"`
+	ResourceType                      int     `json:"resourceType"`
 }
 
 type AddResourceSpecificationInput struct {
@@ -989,10 +989,10 @@ type EditResourceRelationshipInput struct {
 }
 
 type EditResourceSRItemsInput struct {
-	ID                                int    `json:"id"`
-	Name                              string `json:"name"`
-	ResourceSpecificationRelationship *int   `json:"resourceSpecificationRelationship"`
-	ResourceType                      *int   `json:"resourceType"`
+	ID                                int     `json:"id"`
+	Name                              *string `json:"name"`
+	ResourceSpecificationRelationship *int    `json:"resourceSpecificationRelationship"`
+	ResourceType                      *int    `json:"resourceType"`
 }
 
 type EditResourceSpecificationInput struct {
