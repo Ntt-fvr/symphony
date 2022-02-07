@@ -356,6 +356,7 @@ type FilterOperator string
 const (
 	FilterOperatorIs                     FilterOperator = "IS"
 	FilterOperatorIsNil                  FilterOperator = "IS_NIL"
+	FilterOperatorIsNilOrDateGreaterThan FilterOperator = "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN"
 	FilterOperatorContains               FilterOperator = "CONTAINS"
 	FilterOperatorIsOneOf                FilterOperator = "IS_ONE_OF"
 	FilterOperatorIsNotOneOf             FilterOperator = "IS_NOT_ONE_OF"
