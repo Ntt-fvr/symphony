@@ -33,6 +33,7 @@ import {makeStyles} from '@material-ui/styles';
 
 import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
 
+import {GroupSelectClassRelationships} from './GroupSelectClassRelationships';
 import {useDisabledButtonSelect} from './../assurance/common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
@@ -88,8 +89,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const addRelationshipsTypeForm = graphql`
-  query AddRelationshipsTypeFormQuery {
-    resourceTypes {
+  query AddRelationshipsTypeFormQuery($filterBy: [ResourceTypeFilterInput!]) {
+    resourceTypes(filterBy: $filterBy) {
       edges {
         node {
           id
@@ -194,38 +195,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add relationship</CardHeader>
       <form className={classes.formField} autoComplete="off">
-        <TextField
-          required
-          select
-          className={classes.select}
-          label="Select clase type A"
-          onChange={handleChange}
-          name="baseTypeA"
-          variant="outlined"
-          defaultValue="">
-          {data.resourceTypes?.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node.id}>
-              {item.node.resourceTypeBaseType.name}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <TextField
-          required
-          id="resourceTypesA"
-          select
-          className={classes.select}
-          label="Select resource type A"
-          onChange={handleChange}
-          name="resourceTypeA"
-          variant="outlined"
-          defaultValue="">
-          {data.resourceTypes?.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node.id}>
-              {item.node.name}
-            </MenuItem>
-          ))}
-        </TextField>
+        <GroupSelectClassRelationships />
         <TextField
           required
           id="outlined-select-currency-native"
@@ -257,43 +227,14 @@ const AddRelationshipsTypeForm = (props: Props) => {
           <MenuItem value={'ONE_TO_MANY'}>ONE_TO_MANY</MenuItem>
           <MenuItem value={'ONE_TO_ONE'}>ONE_TO_ONE</MenuItem>
         </TextField>
-        <TextField
-          required
-          select
-          className={classes.select}
-          label="Select clase type B"
-          onChange={handleChange}
-          name="baseTypeB"
-          variant="outlined"
-          defaultValue="">
-          {data.resourceTypes?.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node.id}>
-              {item.node.resourceTypeBaseType.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          required
-          id="resourceTypesB"
-          select
-          className={classes.select}
-          label="Select resource type B"
-          onChange={handleChange}
-          name="resourceTypeB"
-          variant="outlined"
-          defaultValue="">
-          {data.resourceTypes?.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node.id}>
-              {item.node.name}
-            </MenuItem>
-          ))}
-        </TextField>
+        <GroupSelectClassRelationships />
       </form>
       <FormField>
         <Button
           className={classes.addResource}
           onClick={handleClick}
-          disabled={handleDisable}>
+          // disabled={handleDisable}
+        >
           Add Relationship
         </Button>
       </FormField>
