@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 // COMPONENTS //
 import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMessage';
@@ -26,9 +26,10 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
+import RelayEnvironment from '../../common/RelayEnvironment';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
-import {graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
@@ -131,22 +132,48 @@ type Resources = {
 const AddRelationshipsTypeForm = (props: Props) => {
   const {isCompleted} = props;
   const classes = useStyles();
-  const [relationships, setRelationships] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
+  const [relationships, setRelationships] = useState<Resources>({data: {}});
+  const [dataQuery, setDataQuery] = useState({data: {}});
+  const [dataQuery2, setDataQuery2] = useState({data: {}});
+  const [filterR, setFilterR] = useState({});
 
-  const data = useLazyLoadQuery<AddRelationshipsTypeFormQuery>(
-    addRelationshipsTypeForm,
-    {},
-  );
+  useEffect(() => {
+    data();
+  }, []);
 
-  // const names = resourceNames?.map(item => item.node.name);
+  const data = () => {
+    fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {}).then(data => {
+      setFilterR(data);
+    });
+  };
 
-  const handleDisable = useDisabledButtonSelect(relationships.data, 4);
-
-  // const handleHasError = useMemo(
-  //   () => names?.some(item => item === resources.data.name),
-  //   [names, resources.data.name],
-  // );
+  const isCompleted2 = id => {
+    fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {
+      filterBy: [
+        {
+          filterType: 'RESOURCE_TYPE_CLASS',
+          operator: 'IS_ONE_OF',
+          idSet: [id],
+        },
+      ],
+    }).then(data => {
+      setDataQuery(data);
+    });
+  };
+  const isCompleted3 = id => {
+    fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {
+      filterBy: [
+        {
+          filterType: 'RESOURCE_TYPE_CLASS',
+          operator: 'IS_ONE_OF',
+          idSet: [id],
+        },
+      ],
+    }).then(data => {
+      setDataQuery2(data);
+    });
+  };
 
   function handleChange({target}) {
     setRelationships({
@@ -176,6 +203,25 @@ const AddRelationshipsTypeForm = (props: Props) => {
     });
   }
 
+  const handleHasError = !relationships?.data?.resourceTypeA
+    ? ''
+    : relationships?.data?.resourceTypeA === relationships?.data?.resourceTypeB
+    ? true
+    : false;
+  const handleDisable = useDisabledButtonSelect(
+    relationships.data,
+    4,
+    handleHasError,
+  );
+
+  const helperText = !relationships?.data?.resourceTypeA
+    ? ''
+    : relationships?.data?.resourceTypeA === relationships?.data?.resourceTypeB
+    ? 'Resource name existing'
+    : '';
+  // debugger;
+  console.log('ERROR   ', handleHasError);
+  console.log('NAME   ', helperText);
   const setReturn = () => {
     setShowChecking(false);
   };
@@ -195,10 +241,47 @@ const AddRelationshipsTypeForm = (props: Props) => {
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add relationship</CardHeader>
       <form className={classes.formField} autoComplete="off">
-        <GroupSelectClassRelationships />
         <TextField
           required
-          id="outlined-select-currency-native"
+          id="standard-select-currency-native"
+          select
+          className={classes.select}
+          label="CLASE A"
+          // onChange={handleChange}
+          name="classTypeA"
+          variant="outlined"
+          defaultValue="">
+          {filterR.resourceTypes?.edges.map((item, index) => (
+            <MenuItem
+              key={index}
+              value={item.node.resourceTypeClass.id}
+              onClick={() => isCompleted2(item.node.resourceTypeClass.id)}>
+              {item.node.resourceTypeClass.name}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          required
+          id="standard-select-currency-native"
+          select
+          className={classes.select}
+          label="RESOURCE TYPE A"
+          onChange={handleChange}
+          name="resourceTypeA"
+          variant="outlined"
+          value={relationships?.data?.resourceTypeA}
+          error={handleHasError}
+          helperText={helperText}>
+          {dataQuery.resourceTypes?.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node.id}>
+              {item.node.name}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          required
+          id="standard-select-currency-native"
           select
           className={classes.select}
           label="Select relationship type"
@@ -214,7 +297,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
         </TextField>
         <TextField
           required
-          id="outlined-select-currency-native"
+          id="standard-select-currency-native"
           select
           className={classes.select}
           label="Select relationship multiplicity"
@@ -227,14 +310,50 @@ const AddRelationshipsTypeForm = (props: Props) => {
           <MenuItem value={'ONE_TO_MANY'}>ONE_TO_MANY</MenuItem>
           <MenuItem value={'ONE_TO_ONE'}>ONE_TO_ONE</MenuItem>
         </TextField>
-        <GroupSelectClassRelationships />
+        <TextField
+          required
+          id="standard-select-currency-native"
+          select
+          className={classes.select}
+          label="CLASE B"
+          // onChange={handleChange}
+          name="classTypeB"
+          variant="outlined"
+          defaultValue="">
+          {filterR.resourceTypes?.edges.map((item, index) => (
+            <MenuItem
+              key={index}
+              value={item.node.resourceTypeClass.id}
+              onClick={() => isCompleted3(item.node.resourceTypeClass.id)}>
+              {item.node.resourceTypeClass.name}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          required
+          id="standard-select-currency-native"
+          select
+          className={classes.select}
+          label="RESOURCE TYPE B"
+          onChange={handleChange}
+          name="resourceTypeB"
+          variant="outlined"
+          defaultValue=""
+          error={handleHasError}
+          helperText={helperText}>
+          {dataQuery2.resourceTypes?.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node.id}>
+              {item.node.name}
+            </MenuItem>
+          ))}
+        </TextField>
       </form>
       <FormField>
         <Button
           className={classes.addResource}
           onClick={handleClick}
-          // disabled={handleDisable}
-        >
+          disabled={handleDisable}>
           Add Relationship
         </Button>
       </FormField>

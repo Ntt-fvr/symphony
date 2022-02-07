@@ -21,14 +21,19 @@ export const useDisabledButton = (element: any, name: any, number: number) => {
     [element, name, number],
   );
 };
-export const useDisabledButtonSelect = (element: any, number: number) => {
+export const useDisabledButtonSelect = (
+  element: any,
+  number: number,
+  error: boolean,
+) => {
   return useMemo(
     () =>
       !(
         Object.values(element).length === number &&
-        !Object.values(element).some(item => item === '')
+        !Object.values(element).some(item => item === '') &&
+        !error
       ),
-    [element, number],
+    [element, number, error],
   );
 };
 
