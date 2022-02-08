@@ -17,6 +17,26 @@ import (
 
 type resourceSpecificationRelationshipResolver struct{}
 
+func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.Context, input models.AddResourceSpecificationRelationShipListInput) ([]*ent.ResourceSpecificationRelationship, error) {
+	var resourceSpecification []*ent.ResourceSpecificationRelationship
+	for _, resource_specification := range input.NameList {
+		client := r.ClientFrom(ctx)
+		typ, err := client.ResourceSpecificationRelationship.Create().
+			SetName(resource_specification.Name).
+			SetResourcespecificationID(input.ResourceSpecification).
+			Save(ctx)
+		if err != nil {
+			if ent.IsConstraintError(err) {
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+			}
+			return nil, fmt.Errorf("has occurred error on process: %w", err)
+		}
+		resourceSpecification = append(resourceSpecification, typ)
+	}
+
+	return resourceSpecification, nil
+}
+
 func (r resourceSpecificationRelationshipResolver) ResourceSpecification(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) (*ent.ResourceSpecification, error) {
 	variable, err := resourceSpecificationRelationship.Resourcespecification(ctx)
 	if err != nil {
