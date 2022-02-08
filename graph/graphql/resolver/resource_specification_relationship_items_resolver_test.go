@@ -59,16 +59,18 @@ func AddResourceSpecificationRelationshipItemsTest(ctx context.Context, t *testi
 		ResourceSpecification: resourcespecification.ID,
 	})
 	require.NoError(t, err)
-
+	name1 := "test_resource_sr_items_1"
+	name2 := "test_resource_sr_items_2"
+	name3 := "test_resource_sr_items_test_1"
 	resource1, err := mr.AddResourceSRItems(ctx, models.AddResourceSRItemsInput{
-		Name:                              "test_resource_sr_items_1",
+		Name:                              &name1,
 		ResourceSpecificationRelationship: resourcespecifcationrelationship.ID,
 		ResourceType:                      resourcetype.ID,
 	})
 	require.NoError(t, err)
 
 	resource2, err := mr.AddResourceSRItems(ctx, models.AddResourceSRItemsInput{
-		Name:                              "test_resource_sr_items_2",
+		Name:                              &name2,
 		ResourceSpecificationRelationship: resourcespecifcationrelationship.ID,
 		ResourceType:                      resourcetype.ID,
 	})
@@ -76,23 +78,24 @@ func AddResourceSpecificationRelationshipItemsTest(ctx context.Context, t *testi
 
 	id1, id2 := resource1.ID, resource2.ID
 	_, err = mr.AddResourceSRItems(ctx, models.AddResourceSRItemsInput{
-		Name: "test_resource_sr_items_test_1",
+		Name: &name3,
 	})
 	require.Error(t, err)
 	return id1, id2, resourcetype.ID, resourcespecifcationrelationship.ID
 }
 
 func EditResourceSpecificationRelationshipItemsTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int, resourcetype int, resourcesr int) {
+	name := "resource_sr_items_test_1.1"
 	_, err := mr.EditResourceSRItems(ctx, models.EditResourceSRItemsInput{
 		ID:                                id1,
-		Name:                              "resource_sr_items_test_1.1",
+		Name:                              &name,
 		ResourceSpecificationRelationship: &resourcesr,
 		ResourceType:                      &resourcetype,
 	})
 	require.NoError(t, err)
 	_, err = mr.EditResourceSRItems(ctx, models.EditResourceSRItemsInput{
-		ID:                                id2,
-		Name:                              "resource_sr_items_test_1.1",
+		ID:                                1234,
+		Name:                              &name,
 		ResourceSpecificationRelationship: &resourcesr,
 		ResourceType:                      &resourcetype,
 	})

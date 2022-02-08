@@ -8,6 +8,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
@@ -24,9 +25,45 @@ func TestAddRemoveResourceSpecificationRelationshipResolver(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
+	_, err := AddResourceSpecificationRelationShipListTest(ctx, t, mr)
+	if err != nil {
+		return
+	}
 	id1, id2, resourcespecification := AddResourceSpecificationRelationshipTest(ctx, t, mr)
 	EditResourceSpecificationRelationshipTest(ctx, t, mr, id1, id2, resourcespecification)
 	RemoveResourceSpecificationRelationshipTest(ctx, t, mr, id1, id2)
+}
+
+func AddResourceSpecificationRelationShipListTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) ([]*ent.ResourceSpecificationRelationship, error) {
+	resourceTypeClass, err := mr.AddResourceTypeClass(ctx, models.AddResourceTypeClassInput{
+		Name: "resource_type_class_test_2",
+	})
+	require.NoError(t, err)
+	resourceTypeBaseType, err := mr.AddResourceTypeBaseType(ctx, models.AddResourceTypeBaseTypeInput{
+		Name: "resource_type_base_type_test_2",
+	})
+	require.NoError(t, err)
+	resourceType, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
+		Name:                 "resource_type_test_2",
+		ResourceTypeClass:    resourceTypeClass.ID,
+		ResourceTypeBaseType: resourceTypeBaseType.ID,
+	})
+	require.NoError(t, err)
+	resourceSpecification, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
+		Name:         "resource_specification_test_2",
+		ResourceType: resourceType.ID,
+	})
+	require.NoError(t, err)
+	resourceSpecificationRelationShip, err := mr.AddResourceSpecificationRelationShipList(ctx, models.AddResourceSpecificationRelationShipListInput{
+		ResourceSpecification: resourceSpecification.ID,
+		NameList: []*models.ResourceSpecificationRelationShipListInput{
+			{
+				Name: "PORT_1_OLT_PORT_EXT",
+			},
+		},
+	})
+	require.NoError(t, err)
+	return resourceSpecificationRelationShip, nil
 }
 
 func AddResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {

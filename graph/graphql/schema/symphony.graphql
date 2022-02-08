@@ -8086,6 +8086,7 @@ type Mutation {
   editAppointment(input: EditAppointmentInput!): Appointment!
   removeAppointment(id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
+  addResourceSpecificationRelationShipList(input: AddResourceSpecificationRelationShipListInput!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   removeResourceSpecificationRelationship(id: ID!): ID!
@@ -9185,6 +9186,14 @@ type ResourceRelationship implements Node {
   locationType: LocationType
   resourceTypeA: ResourceType!
   resourceTypeB: ResourceType
+}
+input ResourceSpecificationRelationShipListInput {
+  name: String!
+}
+
+input AddResourceSpecificationRelationShipListInput {
+  resourceSpecification: ID!
+  nameList: [ResourceSpecificationRelationShipListInput]!
 }
 
 input AddResourceRelationshipInput {
