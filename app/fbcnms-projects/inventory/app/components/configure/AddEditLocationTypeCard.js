@@ -163,6 +163,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
               <Grid item xs={12} xl={7}>
                 <CardSection className={classes.section} title="Properties">
                   <PropertyTypeTable
+                    supportCategories
                     propertyTypes={propertyTypes}
                     onPropertiesChanged={this._propertyChangedHandler}
                   />
@@ -213,6 +214,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
   // eslint-disable-next-line flowtype/no-weak-types
   deleteTempId = (definition: any) => {
     const newDef = {...definition};
+
     if (definition.id && definition.id.includes('@tmp')) {
       newDef['id'] = undefined;
     }
@@ -236,7 +238,19 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         mapZoomLevel: parseInt(mapZoomLevel, 10),
         properties: propertyTypes
           .filter(propType => !!propType.name)
-          .map(this.deleteTempId),
+          .map(prop => {
+            const property = prop.id.includes('@tmp');
+            const reasign = {
+              ...prop,
+              propertyCategoryID: prop.propertyCategory?.id.includes('@tmp')
+                ? null
+                : prop.propertyCategory?.id,
+            };
+            delete reasign['propertyCategory'];
+            const variable = property ? this.deleteTempId(reasign) : reasign;
+
+            return variable;
+          }),
         surveyTemplateCategories: surveyTemplateCategories
           .filter(category => !!category.categoryTitle)
           .map(category => ({
@@ -276,7 +290,20 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         mapZoomLevel: parseInt(mapZoomLevel, 10),
         properties: propertyTypes
           .filter(propType => !!propType.name)
-          .map(this.deleteTempId),
+          .map(prop => {
+            const property = prop.id.includes('@tmp');
+            const reasign = {
+              ...prop,
+              propertyCategoryID: prop.propertyCategory?.id.includes('@tmp')
+                ? null
+                : prop.propertyCategory?.id,
+            };
+            delete reasign['propertyCategory'];
+
+            const variable = property ? this.deleteTempId(reasign) : reasign;
+
+            return variable;
+          }),
         documentCategories: documentCategories
           .filter(propType => !!propType.name)
           .map(cat => {
@@ -480,6 +507,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         isEditable: p.isEditable,
         isMandatory: p.isMandatory,
         isInstanceProperty: p.isInstanceProperty,
+        propertyCategory: p.propertyCategory,
       }));
 
     const surveyTemplateCategories = (
@@ -589,6 +617,10 @@ export default withStyles(styles)(
               isEditable
               isMandatory
               isInstanceProperty
+              propertyCategory {
+                id
+                name
+              }
             }
             documentCategories {
               id

@@ -329,6 +329,20 @@ func (w WorkOrderFilterType) String() string {
 	return string(w)
 }
 
+// PropertyCategoryFilterType specifies what filters should we apply on property category
+type PropertiesByCategoryFilterType string
+
+const (
+	PropertiesByCategoryFilterTypePropCategoryID    PropertiesByCategoryFilterType = "PROPERTY_CATEGORY_ID"
+	PropertiesByCategoryFilterTypeLocationID        PropertiesByCategoryFilterType = "LOCATION_ID"
+	PropertiesByCategoryFilterTypePropCategoryIsNil PropertiesByCategoryFilterType = "PROPERTY_CATEGORY_IS_NIL"
+)
+
+// String implements Getter interface.
+func (w PropertiesByCategoryFilterType) String() string {
+	return string(w)
+}
+
 // ProjectFilterType specifies what filters should we apply on Projects
 type ProjectFilterType string
 
@@ -368,6 +382,18 @@ const (
 // String implements Getter interface.
 func (f FilterOperator) String() string {
 	return string(f)
+}
+
+// ParameterCatalogEntity is the type of parameter catalog
+type ParameterCatalogEntity string
+
+const (
+	ParameterCatalogEntityPropertyCategory ParameterCatalogEntity = "PROPERTY_CATEGORY"
+)
+
+// String implements Getter interface.
+func (p ParameterCatalogEntity) String() string {
+	return string(p)
 }
 
 // PropertyEntity is the entity for the property.

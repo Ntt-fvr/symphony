@@ -95,6 +95,7 @@ class CategoryTypeTable extends React.Component<Props> {
                 Name
               </TableCell>
               <TableCell component="div" />
+              <TableCell component="div" />
             </TableRow>
           </TableHead>
           <DroppableTableBody onDragEnd={this._onDragEnd}>
