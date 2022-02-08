@@ -8,20 +8,15 @@
  * @format
  */
 
-import React from 'react';
-
-// DESING SYSTEM //
-
 import Card from '@symphony/design-system/components/Card/Card';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Grid from '@material-ui/core/Grid';
+import React from 'react';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Text from '@symphony/design-system/components/Text';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
-
-// import {SettingsIcon} from '@symphony/design-system/icons/Actions/SettingsIcon';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -34,42 +29,16 @@ const useStyles = makeStyles(() => ({
       padding: '16px',
     },
   },
-  container: {
-    '& .MuiAccordionSummary-root': {
-      padding: '5px 15px',
-    },
-    align: 'center',
-    '&.MuiPaper-elevation1': {
-      boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
-    },
-  },
-  detailHeader: {
-    color: DARK.D500,
-  },
   deleteIcon: {
-    // marginRight: '1rem',
     color: DARK.D300,
     cursor: 'pointer',
   },
-  settingsIcon: {
-    marginRight: '1rem',
-    color: DARK.D300,
-    borderRadius: '100%',
-    padding: '5.5px',
-  },
-  inside: {
-    // border: '1px solid red',
-    // display: 'flex',
-    // alignItems: 'center',
-  },
   containerInner: {
-    // border: '1px solid red',
     display: 'flex',
     alignItems: 'center',
     padding: '0 0 0 15px',
   },
   containerDelete: {
-    // border: '1px solid red',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -93,56 +62,31 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Node = {
-  node: {
-    resourceType: {
-      id: string,
-    },
-  },
-};
-
 type Props = $ReadOnly<{|
-  // name: string,
-  // formValues: {
-  //   id: string,
-  //   name: string,
-  //   resourceTypeClass: {
-  //     name: string,
-  //   },
-  //   resourceTypeBaseType: {
-  //     name: string,
-  //   },
-  // },
-  // edit: () => void,
-  // handleRemove: void => void,
-  // resourceDataLenght: Array<Node>,
   item: {
     id: string,
     name: string,
+    resourceTypeA: {
+      name: string,
+    },
+    resourceTypeB: {
+      name: string,
+    },
+    resourceRelationshipType: string,
+    resourceRelationshipMultiplicity: string,
   },
-  handleRemove: any,
+  handleRemove: () => void,
 |}>;
 
 const RelationshipsTypeItemList = (props: Props) => {
-  // const {edit, handleRemove, formValues, resourceDataLenght} = props;
-  // const {...item} = props;
   const {handleRemove, item} = props;
   const classes = useStyles();
-  // console.log('ITEM   ', item);
-  // const filterDataById = resourceDataLenght
-  //   .map(item => item.node)
-  //   .filter(rsData => rsData?.resourceType?.id === formValues.id);
-
-  // function handleOpen(event) {
-  //   event.stopPropagation();
-  //   setOpen(!open);
-  // }
 
   return (
     <div className={classes.root}>
       <Card>
         <Grid container>
-          <Grid sm={4} className={classes.inside}>
+          <Grid item sm={4}>
             <div className={classes.inline}>
               <div className={classes.iconContainer}>
                 <SettingsIcon />
@@ -152,22 +96,22 @@ const RelationshipsTypeItemList = (props: Props) => {
               </Text>
             </div>
           </Grid>
-          <Grid sm={2} className={classes.containerInner}>
+          <Grid item sm={2} className={classes.containerInner}>
             <Text useEllipsis={true}>
               {item.resourceRelationshipType.toLowerCase()}
             </Text>
           </Grid>
-          <Grid sm={2} className={classes.containerInner}>
+          <Grid item sm={2} className={classes.containerInner}>
             <Text useEllipsis={true}>
               {item.resourceRelationshipMultiplicity.toLowerCase()}
             </Text>
           </Grid>
-          <Grid sm={3} md={3} lg={3} className={classes.containerInner}>
+          <Grid item sm={3} md={3} lg={3} className={classes.containerInner}>
             <Text useEllipsis={true} weight={'bold'}>
               {item.resourceTypeB.name}
             </Text>
           </Grid>
-          <Grid sm={1} className={classes.containerDelete}>
+          <Grid item sm={1} className={classes.containerDelete}>
             <DeleteOutlinedIcon
               onClick={handleRemove}
               className={classes.deleteIcon}

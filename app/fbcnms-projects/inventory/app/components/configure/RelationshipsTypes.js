@@ -7,26 +7,19 @@
  * @flow
  * @format
  */
+import type {RemoveResourceRelationshipMutationVariables} from '../../mutations/__generated__/RemoveResourceRelationshipMutation.graphql';
+
 import ConfigureTitle from '../assurance/common/ConfigureTitle';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
+import RemoveResourceRelationshipMutation from '../../mutations/RemoveResourceRelationshipMutation';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddRelationshipsTypeForm} from './AddRelationshipsTypeForm';
+import {Grid, List} from '@material-ui/core';
 import {RelationshipsTypeItemList} from './RelationshipsTypeItemList';
-// import {EditResourceTypeItem} from './EditResourceTypeItem';
 import {TitleTextCardsRelationships} from './TitleTextCardsRelationships';
 import {fetchQuery, graphql} from 'relay-runtime';
-// import {useLazyLoadQuery} from 'react-relay/hooks';
-
-// MUTATIONS //
-import RemoveResourceRelationshipMutation from '../../mutations/RemoveResourceRelationshipMutation';
-
-import type {RemoveResourceRelationshipMutationVariables} from '../../mutations/__generated__/RemoveResourceRelationshipMutation.graphql';
-
-// import type {PropertyType} from '../../common/PropertyType';
-
-import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -80,38 +73,10 @@ const RelationshipsTypesQuery = graphql`
   }
 `;
 
-type Resources = {
-  item: {
-    node: {
-      id: string,
-      name: string,
-      resourceType: {
-        id: string,
-      },
-      resourceTypeBaseType: {
-        id: string,
-        name: string,
-      },
-      resourceTypeClass: {
-        id: string,
-        name: string,
-      },
-      propertyTypes: Array<PropertyType>,
-    },
-  },
-};
-
 const RelationshipsTypes = () => {
   const classes = useStyles();
-
-  // const dataServices = useLazyLoadQuery<RelationshipsTypesQuery>(
-  //   relationshipsTypes,
-  //   {},
-  // );
   const [relationships, setRelationships] = useState({});
-  // const [showEditForm, setShowEditForm] = useState(false);
-  // const [dataEdit, setDataEdit] = useState<Resources>({});
-  // console.log('Query -> ', dataServices);
+
   useEffect(() => {
     isCompleted();
   }, []);
@@ -121,7 +86,6 @@ const RelationshipsTypes = () => {
       setRelationships(data);
     });
   }, [setRelationships]);
-  // console.log('TYPES  ', relationships.resourceRelationships?.edges);
 
   const handleRemove = id => {
     const variables: RemoveResourceRelationshipMutationVariables = {

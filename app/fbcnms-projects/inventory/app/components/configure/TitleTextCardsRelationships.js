@@ -15,21 +15,6 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     padding: '0  25px 10px 15px',
-    // border: ' 1px solid red',
-  },
-  globalCenter: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  titleGeneral: {
-    justifyContent: 'flex-start',
-  },
-  accionDelete: {
-    // marginRight: '1rem',
-  },
-  action: {
-    // flexWrap: 'nowrap',
-    // border: '1px solid red',
   },
 }));
 
@@ -37,23 +22,13 @@ function TitleTextCardsRelationships() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid className={classes.container} item xs={11}>
+      <Grid item xs={11}>
         <Text useEllipsis={true} color="primary" variant="subtitle2">
           Resources Name
         </Text>
       </Grid>
-      <Grid
-        container
-        alignItems="center"
-        justify="center"
-        className={classes.action}
-        xs={1}
-        item>
-        <Text
-          className={classes.accionDelete}
-          useEllipsis={true}
-          color="primary"
-          variant="subtitle2">
+      <Grid container alignItems="center" justify="center" xs={1} item>
+        <Text useEllipsis={true} color="primary" variant="subtitle2">
           Delete
         </Text>
       </Grid>
