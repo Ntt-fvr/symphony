@@ -20,7 +20,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {DeleteIcon} from '@symphony/design-system/icons';
 import {PropertyType} from '../../../common/PropertyType';
-import {isTempId} from '../../../common/EntUtils';
 
 type Props = $ReadOnly<{|
   dependentProperty: PropertyType,
@@ -28,7 +27,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const PropertyComboTableItem = (props: Props) => {
-  const {dependentProperty, classes, supportMandatory, supportDelete} = props;
+  const {dependentProperty, classes, supportMandatory} = props;
 
   return (
     <TableRow>
@@ -41,12 +40,16 @@ const PropertyComboTableItem = (props: Props) => {
             placeholder="Name"
             className={classes.input}
             value={dependentProperty.name}
+            disabled={true}
           />
         </FormField>
       </TableCell>
       <TableCell className={classes.cell} component="div" scope="row">
         <FormField>
-          <PropertyTypeSelect propertyType={dependentProperty} />
+          <PropertyTypeSelect
+            propertyType={dependentProperty}
+            disabled={true}
+          />
         </FormField>
       </TableCell>
       <TableCell className={classes.cell} component="div" scope="row">
@@ -55,7 +58,8 @@ const PropertyComboTableItem = (props: Props) => {
           className={classes.input}
           inputType="PropertyType"
           property={dependentProperty}
-          showPropertyCombo={true}
+          disabled={true}
+          isDependentProperty={true}
         />
       </TableCell>
       <TableCell padding="checkbox" component="div">
@@ -63,23 +67,24 @@ const PropertyComboTableItem = (props: Props) => {
           <Checkbox
             checked={!dependentProperty.isInstanceProperty}
             title={null}
+            disabled={true}
           />
         </FormField>
       </TableCell>
       {supportMandatory && (
         <TableCell padding="checkbox" component="div">
           <FormField>
-            <Checkbox checked={!!dependentProperty.isMandatory} title={null} />
+            <Checkbox
+              checked={!!dependentProperty.isMandatory}
+              title={null}
+              disabled={true}
+            />
           </FormField>
         </TableCell>
       )}
       <TableCell className={classes.actionsBar} align="right" component="div">
         <FormAction>
-          <IconButton
-            skin="primary"
-            disabled={!supportDelete && !isTempId(dependentProperty)}
-            icon={DeleteIcon}
-          />
+          <IconButton skin="primary" icon={DeleteIcon} disabled={true} />
         </FormAction>
       </TableCell>{' '}
     </TableRow>

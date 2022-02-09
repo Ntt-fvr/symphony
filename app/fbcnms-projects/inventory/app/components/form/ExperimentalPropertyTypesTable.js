@@ -242,8 +242,8 @@ const ExperimentalPropertyTypesTable = ({
                     </FormAction>
                   </TableCell>
                 </DraggableTableRow>
-                {property.propertyType?.length > 0 &&
-                  property.propertyType?.map(dependentProperty => (
+                {property.dependencePropertyTypes?.length > 0 &&
+                  property.dependencePropertyTypes?.map(dependentProperty => (
                     <PropertyComboTableItem
                       dependentProperty={dependentProperty}
                       classes={classes}

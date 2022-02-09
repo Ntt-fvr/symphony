@@ -80,7 +80,7 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
     isInstanceProperty
     isDeleted
     category
-    propertyType {
+    dependencePropertyTypes {
       id
       name
       type
@@ -99,7 +99,7 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
       isInstanceProperty
       isDeleted
       category
-      propertyTypeValue {
+      propertyTypeValues {
         id
         name
         propertyTypeValues {
@@ -447,7 +447,7 @@ return {
                         "args": null,
                         "concreteType": "PropertyType",
                         "kind": "LinkedField",
-                        "name": "propertyType",
+                        "name": "dependencePropertyTypes",
                         "plural": true,
                         "selections": [
                           (v0/*: any*/),
@@ -473,7 +473,7 @@ return {
                             "args": null,
                             "concreteType": "PropertyTypeValue",
                             "kind": "LinkedField",
-                            "name": "propertyTypeValue",
+                            "name": "propertyTypeValues",
                             "plural": true,
                             "selections": [
                               (v0/*: any*/),
@@ -575,7 +575,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "538cefab0fcb45851754b1a79f794ad1",
+    "cacheID": "5a0e51db177977a9001a8d17a4be03d2",
     "id": null,
     "metadata": {
       "connection": [
@@ -591,7 +591,7 @@ return {
     },
     "name": "WorkOrderTypesQuery",
     "operationKind": "query",
-    "text": "query WorkOrderTypesQuery {\n  workOrderTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkOrderTypeCard_workOrderType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValue {\n        id\n        name\n        propertyTypeValues {\n          id\n          name\n        }\n      }\n    }\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
+    "text": "query WorkOrderTypesQuery {\n  workOrderTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkOrderTypeCard_workOrderType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        name\n        propertyTypeValues {\n          id\n          name\n        }\n      }\n    }\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
   }
 };
 })();

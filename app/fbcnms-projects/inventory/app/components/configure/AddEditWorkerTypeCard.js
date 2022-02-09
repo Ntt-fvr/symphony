@@ -277,6 +277,34 @@ export default createFragmentContainer(withAlert(AddEditWorkerTypeCard), {
         isInstanceProperty
         isDeleted
         category
+        dependencePropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isMandatory
+          isInstanceProperty
+          isDeleted
+          category
+          propertyTypeValues {
+            id
+            name
+            propertyTypeValues {
+              id
+              name
+            }
+          }
+        }
       }
     }
   `,

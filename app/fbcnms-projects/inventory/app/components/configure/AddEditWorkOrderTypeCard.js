@@ -341,7 +341,7 @@ export default createFragmentContainer(withAlert(AddEditWorkOrderTypeCard), {
         isInstanceProperty
         isDeleted
         category
-        propertyType {
+        dependencePropertyTypes {
           id
           name
           type
@@ -360,7 +360,7 @@ export default createFragmentContainer(withAlert(AddEditWorkOrderTypeCard), {
           isInstanceProperty
           isDeleted
           category
-          propertyTypeValue {
+          propertyTypeValues {
             id
             name
             propertyTypeValues {

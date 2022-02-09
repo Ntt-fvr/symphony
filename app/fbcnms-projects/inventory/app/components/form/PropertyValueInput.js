@@ -44,6 +44,7 @@ type Props<T: Property | PropertyType> = {|
   headlineVariant?: 'headline' | 'form',
   fullWidth?: boolean,
   showPropertyCombo?: boolean,
+  isDependentProperty?: boolean,
 |} & WithStyles<typeof styles>;
 
 const styles = {
@@ -94,14 +95,14 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
       headlineVariant,
       onKeyDown,
       showPropertyCombo = false,
+      isDependentProperty = false,
     } = this.props;
 
     const disabled = this.props.disabled || showDisabled;
     const property = this.props.property;
-    // const propertyType = !!property.propertyType
-    //   ? property.propertyType
-    //   : property;
-    const propertyType = property;
+    const propertyType = !!property.propertyType
+      ? property.propertyType
+      : property;
     const label = headlineVariant === 'form' ? null : this.props.label;
     const propInputType = propertyType.type;
     switch (propInputType) {
@@ -119,6 +120,7 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
             onChange={onChange}
             disabled={disabled}
             showPropertyCombo={showPropertyCombo}
+            isDependentProperty={isDependentProperty}
           />
         );
       }

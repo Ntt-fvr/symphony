@@ -21,7 +21,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const PropertyComboList = (props: Props) => {
-  const {classes, propertyTypeValues, dispatch} = props;
+  const {classes, propertyTypeValues, dispatch, disabled} = props;
 
   const handlePropertyTypeValues = propertyTypeValue => {
     const indexProperty = propertyTypeValues.findIndex(
@@ -43,7 +43,7 @@ const PropertyComboList = (props: Props) => {
       alignItems="center">
       {propertyTypeValues?.map(propertyTypeValue => (
         <>
-          <Grid item xs={5}>
+          <Grid item xs={5} key={propertyTypeValue.id}>
             <TextField
               required
               disabled
@@ -62,6 +62,7 @@ const PropertyComboList = (props: Props) => {
               property={propertyTypeValue}
               onChange={handlePropertyTypeValues}
               isPropertyComboEnum={true}
+              disabled={disabled}
             />
           </Grid>
         </>

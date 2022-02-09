@@ -25,6 +25,10 @@ import {
   DependentPropertyTypesReducerTypes,
 } from './DependentPropertyTypesReducer';
 import {PropertyType} from '../../../common/PropertyType';
+import {
+  getDependencePropertyType,
+  getPorpertyTypeValuesToReducer,
+} from './PropertyComboHelpers';
 import {isTempId} from '../../../common/EntUtils';
 
 type Props = $ReadOnly<{|
@@ -38,9 +42,14 @@ type Props = $ReadOnly<{|
 const PropertyComboSelectContent = (props: Props) => {
   const {onClose, classes, property, setShowCompleteMessage, onSave} = props;
   const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
+
+  const dependentPropertyInitial = getDependencePropertyType(property);
+  const propertyTypesFinal = [...propertyTypes];
+  dependentPropertyInitial && propertyTypesFinal.push(dependentPropertyInitial);
+
   const DependentPropertyTypesInitialState = {
-    propertyTypeValues: JSON.parse(property.stringValue),
-    dependentProperty: property.propertyType ? property.propertyType[0] : null,
+    propertyTypeValues: getPorpertyTypeValuesToReducer(property),
+    dependentPropertyInitial,
   };
   const [state, dispatch] = useReducer(
     DependentPropertyTypesReducer,
@@ -104,7 +113,7 @@ const PropertyComboSelectContent = (props: Props) => {
           </Grid>
           <Grid item xs={5}>
             <Select
-              options={propertyTypes.map(property => {
+              options={propertyTypesFinal.map(property => {
                 return {
                   key: property.id,
                   label: property.name,
@@ -114,6 +123,7 @@ const PropertyComboSelectContent = (props: Props) => {
               selectedValue={state.id}
               onChange={handleDependenceProperty}
               className={classes.selectInput}
+              disabled={!!dependentPropertyInitial}
             />
           </Grid>
         </Grid>
@@ -121,6 +131,7 @@ const PropertyComboSelectContent = (props: Props) => {
           classes={classes}
           propertyTypeValues={state.propertyTypeValues}
           dispatch={dispatch}
+          disabled={!!property.dependencePropertyTypes}
         />
       </DialogContent>
       <DialogActions className={classes.dialogActions}>

@@ -45,7 +45,7 @@ export type AddEditWorkOrderTypeCard_workOrderType = {|
     +isInstanceProperty: ?boolean,
     +isDeleted: ?boolean,
     +category: ?string,
-    +propertyType: $ReadOnlyArray<?{|
+    +dependencePropertyTypes: $ReadOnlyArray<?{|
       +id: string,
       +name: string,
       +type: PropertyKind,
@@ -64,7 +64,7 @@ export type AddEditWorkOrderTypeCard_workOrderType = {|
       +isInstanceProperty: ?boolean,
       +isDeleted: ?boolean,
       +category: ?string,
-      +propertyTypeValue: ?$ReadOnlyArray<{|
+      +propertyTypeValues: ?$ReadOnlyArray<{|
         +id: string,
         +name: string,
         +propertyTypeValues: ?$ReadOnlyArray<?{|
@@ -295,7 +295,7 @@ return {
           "args": null,
           "concreteType": "PropertyType",
           "kind": "LinkedField",
-          "name": "propertyType",
+          "name": "dependencePropertyTypes",
           "plural": true,
           "selections": [
             (v0/*: any*/),
@@ -321,7 +321,7 @@ return {
               "args": null,
               "concreteType": "PropertyTypeValue",
               "kind": "LinkedField",
-              "name": "propertyTypeValue",
+              "name": "propertyTypeValues",
               "plural": true,
               "selections": [
                 (v0/*: any*/),
@@ -405,6 +405,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '62f1f6b48c25dfdf5a4e03c3dc76ca53';
+(node/*: any*/).hash = 'e0514c0b3b92f129165cc9674b8a162f';
 
 module.exports = node;

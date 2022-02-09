@@ -64,7 +64,7 @@ export type PropertyTypeInput = {|
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
   isListable?: ?boolean,
-  propertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
   propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
 |};
 export type AddPropertyTypeValueInput = {|

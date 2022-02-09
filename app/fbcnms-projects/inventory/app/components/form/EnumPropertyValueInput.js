@@ -17,6 +17,10 @@ import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import update from 'immutability-helper';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {MultipleSelectionIcon} from '@symphony/design-system/icons';
+import {
+  getAllInputValuesDependentPropertyInString,
+  getAllInputValuesEnumPropertyInString,
+} from '../work_orders/property_combo/PropertyComboHelpers';
 import {isJSON} from '@symphony/design-system/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
 
@@ -37,6 +41,7 @@ type Props<T: Property | PropertyType> = $ReadOnly<{|
   disabled?: ?boolean,
   showPropertyCombo?: ?boolean,
   isPropertyComboEnum?: ?boolean,
+  isDependentProperty?: boolean,
 |}>;
 
 function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
@@ -47,12 +52,24 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
     disabled,
     showPropertyCombo = false,
     isPropertyComboEnum = false,
+    isDependentProperty = false,
   } = props;
 
   const propertyComboFeatureFlag = useFeatureFlag('property_combo');
   const allowPropertyCombo = showPropertyCombo && propertyComboFeatureFlag;
 
-  const jsonStr = property.stringValue || '';
+  const dependentPropertyValues = isDependentProperty
+    ? getAllInputValuesDependentPropertyInString(property, isDependentProperty)
+    : null;
+
+  const enumPropertyValues =
+    isPropertyComboEnum && property.propertyTypeValues?.length > 0
+      ? getAllInputValuesEnumPropertyInString(property.propertyTypeValues)
+      : null;
+
+  const jsonStr =
+    dependentPropertyValues || enumPropertyValues || property.stringValue || [];
+
   const options = isJSON(jsonStr) ? JSON.parse(jsonStr) : [];
   const optionsArr = Array.isArray(options) ? options : [];
   const [tokens, setTokens] = useState(
@@ -111,7 +128,7 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
             onSave={propertyTypes => {
               onChange(
                 update(property, {
-                  propertyTypes: {
+                  dependencePropertyTypes: {
                     $set: propertyTypes,
                   },
                 }),

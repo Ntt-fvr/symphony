@@ -38,6 +38,7 @@ export type PropertyType = {|
   isMandatory?: ?boolean,
   isListable?: ?boolean,
   isDeleted?: ?boolean,
+  dependencePropertyTypes?: ?(PropertyType[]),
 |};
 
 export const getPropertyDefaultValue = (propertyType: PropertyType) => {
@@ -118,7 +119,7 @@ export const toMutablePropertyType = (
   isMandatory: immutablePropertyType.isMandatory,
   isListable: immutablePropertyType.isListable,
   isDeleted: immutablePropertyType.isDeleted,
-  propertyType: immutablePropertyType.propertyType,
+  dependencePropertyTypes: immutablePropertyType.dependencePropertyTypes,
 });
 
 export const convertPropertyTypeToMutationInput = (

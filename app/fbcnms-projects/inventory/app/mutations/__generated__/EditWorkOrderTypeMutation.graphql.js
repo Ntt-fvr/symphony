@@ -48,7 +48,7 @@ export type PropertyTypeInput = {|
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
   isListable?: ?boolean,
-  propertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
   propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
 |};
 export type AddPropertyTypeValueInput = {|
@@ -129,7 +129,7 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
     isInstanceProperty
     isDeleted
     category
-    propertyType {
+    dependencePropertyTypes {
       id
       name
       type
@@ -148,7 +148,7 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
       isInstanceProperty
       isDeleted
       category
-      propertyTypeValue {
+      propertyTypeValues {
         id
         name
         propertyTypeValues {
@@ -423,7 +423,7 @@ return {
                 "args": null,
                 "concreteType": "PropertyType",
                 "kind": "LinkedField",
-                "name": "propertyType",
+                "name": "dependencePropertyTypes",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
@@ -449,7 +449,7 @@ return {
                     "args": null,
                     "concreteType": "PropertyTypeValue",
                     "kind": "LinkedField",
-                    "name": "propertyTypeValue",
+                    "name": "propertyTypeValues",
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
@@ -533,12 +533,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "53c7b706e1137eb70225760f059646de",
+    "cacheID": "b44422368c69822a7c556dc7f380853d",
     "id": null,
     "metadata": {},
     "name": "EditWorkOrderTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation EditWorkOrderTypeMutation(\n  $input: EditWorkOrderTypeInput!\n) {\n  editWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValue {\n        id\n        name\n        propertyTypeValues {\n          id\n          name\n        }\n      }\n    }\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
+    "text": "mutation EditWorkOrderTypeMutation(\n  $input: EditWorkOrderTypeInput!\n) {\n  editWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        name\n        propertyTypeValues {\n          id\n          name\n        }\n      }\n    }\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
   }
 };
 })();
