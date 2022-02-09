@@ -12,13 +12,13 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-// ResourceRelationship defines the property type schema.
-type ResourceRelationship struct {
+// ResourceTypeRelationship defines the property type schema.
+type ResourceTypeRelationship struct {
 	schema
 }
 
-// ResourceRelationship returns property type resourceType.
-func (ResourceRelationship) Fields() []ent.Field {
+// ResourceTypeRelationship returns property type resourceType.
+func (ResourceTypeRelationship) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("ResourceRelationshipType").
 			Values(
@@ -39,7 +39,7 @@ func (ResourceRelationship) Fields() []ent.Field {
 }
 
 // Edges returns property type edges.
-func (ResourceRelationship) Edges() []ent.Edge {
+func (ResourceTypeRelationship) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("resourcetypea", ResourceType.Type).
 			Ref("resource_relationship_a").Unique().Annotations(entgql.OrderField("RESOURCE_TYPE_A")),
@@ -51,7 +51,7 @@ func (ResourceRelationship) Edges() []ent.Edge {
 }
 
 // Policy returns entity policy.
-func (ResourceRelationship) Policy() ent.Policy {
+func (ResourceTypeRelationship) Policy() ent.Policy {
 	/*return authz.NewPolicy(
 	  authz.WithMutationRules(
 	  authz.AssuranceTemplatesWritePolicyRule(),

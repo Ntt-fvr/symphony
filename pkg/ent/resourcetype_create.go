@@ -14,12 +14,12 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 )
 
 // ResourceTypeCreate is the builder for creating a ResourceType entity.
@@ -101,14 +101,14 @@ func (rtc *ResourceTypeCreate) SetResourcetypebasetype(r *ResourceTypeBaseType) 
 	return rtc.SetResourcetypebasetypeID(r.ID)
 }
 
-// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (rtc *ResourceTypeCreate) AddResourceRelationshipAIDs(ids ...int) *ResourceTypeCreate {
 	rtc.mutation.AddResourceRelationshipAIDs(ids...)
 	return rtc
 }
 
-// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceRelationship.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeCreate {
+// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceTypeRelationship.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipA(r ...*ResourceTypeRelationship) *ResourceTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -116,14 +116,14 @@ func (rtc *ResourceTypeCreate) AddResourceRelationshipA(r ...*ResourceRelationsh
 	return rtc.AddResourceRelationshipAIDs(ids...)
 }
 
-// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (rtc *ResourceTypeCreate) AddResourceRelationshipBIDs(ids ...int) *ResourceTypeCreate {
 	rtc.mutation.AddResourceRelationshipBIDs(ids...)
 	return rtc
 }
 
-// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceRelationship.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeCreate {
+// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceTypeRelationship.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipB(r ...*ResourceTypeRelationship) *ResourceTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -338,7 +338,7 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -357,7 +357,7 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}

@@ -54,17 +54,17 @@ const (
 	// ResourcetypebasetypeColumn is the table column denoting the resourcetypebasetype relation/edge.
 	ResourcetypebasetypeColumn = "resource_type_base_type_resource_base_type"
 	// ResourceRelationshipATable is the table the holds the resource_relationship_a relation/edge.
-	ResourceRelationshipATable = "resource_relationships"
-	// ResourceRelationshipAInverseTable is the table name for the ResourceRelationship entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcerelationship" package.
-	ResourceRelationshipAInverseTable = "resource_relationships"
+	ResourceRelationshipATable = "resource_type_relationships"
+	// ResourceRelationshipAInverseTable is the table name for the ResourceTypeRelationship entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcetyperelationship" package.
+	ResourceRelationshipAInverseTable = "resource_type_relationships"
 	// ResourceRelationshipAColumn is the table column denoting the resource_relationship_a relation/edge.
 	ResourceRelationshipAColumn = "resource_type_resource_relationship_a"
 	// ResourceRelationshipBTable is the table the holds the resource_relationship_b relation/edge.
-	ResourceRelationshipBTable = "resource_relationships"
-	// ResourceRelationshipBInverseTable is the table name for the ResourceRelationship entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcerelationship" package.
-	ResourceRelationshipBInverseTable = "resource_relationships"
+	ResourceRelationshipBTable = "resource_type_relationships"
+	// ResourceRelationshipBInverseTable is the table name for the ResourceTypeRelationship entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcetyperelationship" package.
+	ResourceRelationshipBInverseTable = "resource_type_relationships"
 	// ResourceRelationshipBColumn is the table column denoting the resource_relationship_b relation/edge.
 	ResourceRelationshipBColumn = "resource_type_resource_relationship_b"
 	// ResourceSpecificationTable is the table the holds the resource_specification relation/edge.

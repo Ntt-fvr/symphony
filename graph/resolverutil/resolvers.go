@@ -474,10 +474,10 @@ func ResourceSpecificationFilter(query *ent.ResourceSpecificationQuery, filters 
 	}
 	return query, nil
 }
-func ResourceRelationshipFilter(query *ent.ResourceRelationshipQuery, filters []*models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
+func ResourceTypeRelationshipFilter(query *ent.ResourceTypeRelationshipQuery, filters []*models.ResourceTypeRelationshipFilterInput) (*ent.ResourceTypeRelationshipQuery, error) {
 	var err error
 	for _, f := range filters {
-		if query, err = handleResourceRelationshipFilter(query, f); err != nil {
+		if query, err = handleResourceTypeRelationshipFilter(query, f); err != nil {
 			return nil, err
 		}
 	}

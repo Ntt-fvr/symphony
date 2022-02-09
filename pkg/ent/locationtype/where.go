@@ -811,7 +811,7 @@ func HasResourceRelationshipLocation() predicate.LocationType {
 }
 
 // HasResourceRelationshipLocationWith applies the HasEdge predicate on the "resource_relationship_location" edge with a given conditions (other predicates).
-func HasResourceRelationshipLocationWith(preds ...predicate.ResourceRelationship) predicate.LocationType {
+func HasResourceRelationshipLocationWith(preds ...predicate.ResourceTypeRelationship) predicate.LocationType {
 	return predicate.LocationType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

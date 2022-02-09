@@ -48,7 +48,7 @@ type LocationTypeEdges struct {
 	// SurveyTemplateCategories holds the value of the survey_template_categories edge.
 	SurveyTemplateCategories []*SurveyTemplateCategory
 	// ResourceRelationshipLocation holds the value of the resource_relationship_location edge.
-	ResourceRelationshipLocation []*ResourceRelationship
+	ResourceRelationshipLocation []*ResourceTypeRelationship
 	// DocumentCategory holds the value of the document_category edge.
 	DocumentCategory []*DocumentCategory
 	// loadedTypes holds the information for reporting if a
@@ -85,7 +85,7 @@ func (e LocationTypeEdges) SurveyTemplateCategoriesOrErr() ([]*SurveyTemplateCat
 
 // ResourceRelationshipLocationOrErr returns the ResourceRelationshipLocation value or an error if the edge
 // was not loaded in eager-loading.
-func (e LocationTypeEdges) ResourceRelationshipLocationOrErr() ([]*ResourceRelationship, error) {
+func (e LocationTypeEdges) ResourceRelationshipLocationOrErr() ([]*ResourceTypeRelationship, error) {
 	if e.loadedTypes[3] {
 		return e.ResourceRelationshipLocation, nil
 	}
@@ -181,7 +181,7 @@ func (lt *LocationType) QuerySurveyTemplateCategories() *SurveyTemplateCategoryQ
 }
 
 // QueryResourceRelationshipLocation queries the resource_relationship_location edge of the LocationType.
-func (lt *LocationType) QueryResourceRelationshipLocation() *ResourceRelationshipQuery {
+func (lt *LocationType) QueryResourceRelationshipLocation() *ResourceTypeRelationshipQuery {
 	return (&LocationTypeClient{config: lt.config}).QueryResourceRelationshipLocation(lt)
 }
 

@@ -42,9 +42,9 @@ type ResourceTypeEdges struct {
 	// Resourcetypebasetype holds the value of the resourcetypebasetype edge.
 	Resourcetypebasetype *ResourceTypeBaseType
 	// ResourceRelationshipA holds the value of the resource_relationship_a edge.
-	ResourceRelationshipA []*ResourceRelationship
+	ResourceRelationshipA []*ResourceTypeRelationship
 	// ResourceRelationshipB holds the value of the resource_relationship_b edge.
-	ResourceRelationshipB []*ResourceRelationship
+	ResourceRelationshipB []*ResourceTypeRelationship
 	// ResourceSpecification holds the value of the resource_specification edge.
 	ResourceSpecification []*ResourceSpecification
 	// ResourcetypeItems holds the value of the resourcetype_items edge.
@@ -84,7 +84,7 @@ func (e ResourceTypeEdges) ResourcetypebasetypeOrErr() (*ResourceTypeBaseType, e
 
 // ResourceRelationshipAOrErr returns the ResourceRelationshipA value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceRelationship, error) {
+func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceTypeRelationship, error) {
 	if e.loadedTypes[2] {
 		return e.ResourceRelationshipA, nil
 	}
@@ -93,7 +93,7 @@ func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceRelationship
 
 // ResourceRelationshipBOrErr returns the ResourceRelationshipB value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceRelationship, error) {
+func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceTypeRelationship, error) {
 	if e.loadedTypes[3] {
 		return e.ResourceRelationshipB, nil
 	}
@@ -192,12 +192,12 @@ func (rt *ResourceType) QueryResourcetypebasetype() *ResourceTypeBaseTypeQuery {
 }
 
 // QueryResourceRelationshipA queries the resource_relationship_a edge of the ResourceType.
-func (rt *ResourceType) QueryResourceRelationshipA() *ResourceRelationshipQuery {
+func (rt *ResourceType) QueryResourceRelationshipA() *ResourceTypeRelationshipQuery {
 	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipA(rt)
 }
 
 // QueryResourceRelationshipB queries the resource_relationship_b edge of the ResourceType.
-func (rt *ResourceType) QueryResourceRelationshipB() *ResourceRelationshipQuery {
+func (rt *ResourceType) QueryResourceRelationshipB() *ResourceTypeRelationshipQuery {
 	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipB(rt)
 }
 

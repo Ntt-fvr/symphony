@@ -397,12 +397,6 @@ func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 }
 
 // Instantiate entity configuration.
-func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *ResourceRelationship {
-	rr.config = c.config
-	return rr
-}
-
-// Instantiate entity configuration.
 func (c *ResourceSRItemsClient) Instantiate(rsi *ResourceSRItems) *ResourceSRItems {
 	rsi.config = c.config
 	return rsi
@@ -436,6 +430,12 @@ func (c *ResourceTypeBaseTypeClient) Instantiate(rtbt *ResourceTypeBaseType) *Re
 func (c *ResourceTypeClassClient) Instantiate(rtc *ResourceTypeClass) *ResourceTypeClass {
 	rtc.config = c.config
 	return rtc
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeRelationshipClient) Instantiate(rtr *ResourceTypeRelationship) *ResourceTypeRelationship {
+	rtr.config = c.config
+	return rtr
 }
 
 // Instantiate entity configuration.

@@ -4626,72 +4626,72 @@ type ResourceTypeEdge {
 }
 
 """
-Properties by which ResourceRelationship connections can be ordered.
+Properties by which ResourceTypeRelationship connections can be ordered.
 """
-enum ResourceRelationshipOrderField {
+enum ResourceTypeRelationshipOrderField {
   """
-  Order ResourceRelationship by ResourceTypeA.
+  Order ResourceTypeRelationship by ResourceTypeA.
   """
   RESOURCE_TYPE_A
 
   """
-  Order ResourceRelationship by ResourceTypeB.
+  Order ResourceTypeRelationship by ResourceTypeB.
   """
   RESOURCE_TYPE_B
 
   """
-  Order ResourceRelationship by LocationType.
+  Order ResourceTypeRelationship by LocationType.
   """
   LOCATION_TYPE
 
   """
-  Order ResourceRelationship by ResourceRelationshipType.
+  Order ResourceTypeRelationship by ResourceRelationshipType.
   """
   RESOURCE_RELATIONSHIP_TYPE
 
   """
-  Order ResourceRelationship by ResourceRelationshipMultiplicity.
+  Order ResourceTypeRelationship by ResourceRelationshipMultiplicity.
   """
   RESOURCE_RELATIONSHIP_MULTIPLICITY
 
   """
-  Order ResourceRelationship by creation time.
+  Order ResourceTypeRelationship by creation time.
   """
   CREATED_AT
 
   """
-  Order ResourceRelationship by update time.
+  Order ResourceTypeRelationship by update time.
   """
   UPDATED_AT
 }
 
 """
-Ordering options for ResourceRelationship connections.
+Ordering options for ResourceTypeRelationship connections.
 """
-input ResourceRelationshipOrder {
+input ResourceTypeRelationshipOrder {
   """
   The ordering direction.
   """
   direction: OrderDirection!
 
   """
-  The field to order ResourceRelationship by.
+  The field to order ResourceTypeRelationship by.
   """
-  field: ResourceRelationshipOrderField
+  field: ResourceTypeRelationshipOrderField
 }
 
 """
-A connection to a list of ResourceRelationship.
+A connection to a list of ResourceTypeRelationship.
 """
-type ResourceRelationshipConnection {
+type ResourceTypeRelationshipConnection {
   """
-  Total ResourceRelationship of projects in all pages.
+  Total ResourceTypeRelationship of projects in all pages.
   """
   totalCount: Int!
   """
-  A list of ResourceRelationship edges.
+  A list of ResourceTypeRelationship edges.
   """
-  edges: [ResourceRelationshipEdge!]!
+  edges: [ResourceTypeRelationshipEdge!]!
   """
   Information to aid in pagination.
   """
@@ -4699,13 +4699,13 @@ type ResourceRelationshipConnection {
 }
 
 """
-A ResourceRelationship edge in a connection.
+A ResourceTypeRelationship edge in a connection.
 """
-type ResourceRelationshipEdge {
+type ResourceTypeRelationshipEdge {
   """
-  The ResourceRelationship at the end of the edge.
+  The ResourceTypeRelationship at the end of the edge.
   """
-  node: ResourceRelationship
+  node: ResourceTypeRelationship
   """
   A cursor for use in pagination.
   """
@@ -7676,9 +7676,9 @@ type Query {
   ): ResourceTypeConnection!
   
   """
-  A list of resourceRelationships.
+  A list of resourceTypeRelationships.
   """
-  resourceRelationships(
+  resourceTypeRelationships(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7700,15 +7700,15 @@ type Query {
     last: Int @numberValue(min: 0)
 
     """
-    Ordering options for the returned resourceRelationships.
+    Ordering options for the returned resourceTypeRelationships.
     """
-    orderBy: ResourceRelationshipOrder
+    orderBy: ResourceTypeRelationshipOrder
 
     
-    #Filtering options for the returned resourceRelationships.
+    #Filtering options for the returned resourceTypeRelationships.
     
-    filterBy: [ResourceRelationshipFilterInput!]
-  ): ResourceRelationshipConnection!
+    filterBy: [ResourceTypeRelationshipFilterInput!]
+  ): ResourceTypeRelationshipConnection!
 
   """
   A list of resourceSpecifications.
@@ -8045,9 +8045,9 @@ type Mutation {
   addResourceType(input: AddResourceTypeInput!):ResourceType!
   editResourceType(input: EditResourceTypeInput!): ResourceType!
   removeResourceType(id: ID!): ID!
-  addResourceRelationship(input: AddResourceRelationshipInput!):ResourceRelationship!
-  editResourceRelationship(input: EditResourceRelationshipInput!): ResourceRelationship!
-  removeResourceRelationship(id: ID!): ID!
+  addResourceTypeRelationship(input: AddResourceTypeRelationshipInput!):ResourceTypeRelationship!
+  editResourceTypeRelationship(input: EditResourceTypeRelationshipInput!): ResourceTypeRelationship!
+  removeResourceTypeRelationship(id: ID!): ID!
   addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
@@ -9160,7 +9160,7 @@ input ResourceTypeFilterInput {
 
 enum ResourceRelationshipTypeKind
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/resourcerelationship.ResourceRelationshipType"
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship.ResourceRelationshipType"
   ) {
   BELONGS_TO
   LOCATED_IN
@@ -9171,7 +9171,7 @@ enum ResourceRelationshipTypeKind
 
 enum ResourceRelationshipMultiplicityKind
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/resourcerelationship.ResourceRelationshipMultiplicity"
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship.ResourceRelationshipMultiplicity"
   ) {
   ONE_TO_ONE
   ONE_TO_MANY
@@ -9179,7 +9179,7 @@ enum ResourceRelationshipMultiplicityKind
   MANY_TO_MANY
 }
 
-type ResourceRelationship implements Node {
+type ResourceTypeRelationship implements Node {
   id: ID!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
@@ -9196,7 +9196,7 @@ input AddResourceSpecificationRelationShipListInput {
   nameList: [ResourceSpecificationRelationShipListInput]!
 }
 
-input AddResourceRelationshipInput {
+input AddResourceTypeRelationshipInput {
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity:ResourceRelationshipMultiplicityKind!
   locationType: ID
@@ -9204,7 +9204,7 @@ input AddResourceRelationshipInput {
   resourceTypeB: ID
 }
 
-input EditResourceRelationshipInput {
+input EditResourceTypeRelationshipInput {
   id: ID!
   resourceRelationshipType: ResourceRelationshipTypeKind!
   resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
@@ -9213,15 +9213,15 @@ input EditResourceRelationshipInput {
   resourceTypeB: ID
 }
 
-enum ResourceRelationshipFilterType {
+enum ResourceTypeRelationshipFilterType {
   RESOURCE_RELATIONSHIP_MULTIPLICITY
   RESOURCE_RELATIONSHIP_LOCATION_TYPE
   RESOURCE_RELATIONSHIP_TYPE
   RESOURCE_RELATIONSHIP_RESOURCE
 }
 
-input ResourceRelationshipFilterInput {
-  filterType: ResourceRelationshipFilterType!
+input ResourceTypeRelationshipFilterInput {
+  filterType: ResourceTypeRelationshipFilterType!
   operator: FilterOperator!
   stringValue: String
   multiplicityValue: ResourceRelationshipMultiplicityKind
@@ -9396,6 +9396,7 @@ input EditResourceSpecificationRelationshipInput {
 
 enum ResourceSpecificationRelationshipFilterType {
   NAME
+  RESOURCE_SPECIFICATION
 }
 
 input ResourceSpecificationRelationshipFilterInput {

@@ -450,7 +450,7 @@ func HasResourceRelationshipA() predicate.ResourceType {
 }
 
 // HasResourceRelationshipAWith applies the HasEdge predicate on the "resource_relationship_a" edge with a given conditions (other predicates).
-func HasResourceRelationshipAWith(preds ...predicate.ResourceRelationship) predicate.ResourceType {
+func HasResourceRelationshipAWith(preds ...predicate.ResourceTypeRelationship) predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
@@ -478,7 +478,7 @@ func HasResourceRelationshipB() predicate.ResourceType {
 }
 
 // HasResourceRelationshipBWith applies the HasEdge predicate on the "resource_relationship_b" edge with a given conditions (other predicates).
-func HasResourceRelationshipBWith(preds ...predicate.ResourceRelationship) predicate.ResourceType {
+func HasResourceRelationshipBWith(preds ...predicate.ResourceTypeRelationship) predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

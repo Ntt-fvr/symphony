@@ -93,13 +93,13 @@ type hooks struct {
 	RecommendationsCategory           []ent.Hook
 	RecommendationsSources            []ent.Hook
 	ReportFilter                      []ent.Hook
-	ResourceRelationship              []ent.Hook
 	ResourceSRItems                   []ent.Hook
 	ResourceSpecification             []ent.Hook
 	ResourceSpecificationRelationship []ent.Hook
 	ResourceType                      []ent.Hook
 	ResourceTypeBaseType              []ent.Hook
 	ResourceTypeClass                 []ent.Hook
+	ResourceTypeRelationship          []ent.Hook
 	Rule                              []ent.Hook
 	RuleLimit                         []ent.Hook
 	RuleType                          []ent.Hook

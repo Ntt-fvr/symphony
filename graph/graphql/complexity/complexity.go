@@ -172,7 +172,7 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.ResourceSRItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSRItemsOrder, _ []*models.ResourceSRItemsFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.ResourceRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceRelationshipOrder, _ []*models.ResourceRelationshipFilterInput) int {
+	complexity.Query.ResourceTypeRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeRelationshipOrder, _ []*models.ResourceTypeRelationshipFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.ResourceSpecifications = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationOrder, _ []*models.ResourceSpecificationFilterInput) int {

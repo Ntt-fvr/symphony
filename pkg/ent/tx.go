@@ -146,8 +146,6 @@ type Tx struct {
 	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
-	// ResourceRelationship is the client for interacting with the ResourceRelationship builders.
-	ResourceRelationship *ResourceRelationshipClient
 	// ResourceSRItems is the client for interacting with the ResourceSRItems builders.
 	ResourceSRItems *ResourceSRItemsClient
 	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
@@ -160,6 +158,8 @@ type Tx struct {
 	ResourceTypeBaseType *ResourceTypeBaseTypeClient
 	// ResourceTypeClass is the client for interacting with the ResourceTypeClass builders.
 	ResourceTypeClass *ResourceTypeClassClient
+	// ResourceTypeRelationship is the client for interacting with the ResourceTypeRelationship builders.
+	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
@@ -406,13 +406,13 @@ func (tx *Tx) init() {
 	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
 	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
-	tx.ResourceRelationship = NewResourceRelationshipClient(tx.config)
 	tx.ResourceSRItems = NewResourceSRItemsClient(tx.config)
 	tx.ResourceSpecification = NewResourceSpecificationClient(tx.config)
 	tx.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(tx.config)
 	tx.ResourceType = NewResourceTypeClient(tx.config)
 	tx.ResourceTypeBaseType = NewResourceTypeBaseTypeClient(tx.config)
 	tx.ResourceTypeClass = NewResourceTypeClassClient(tx.config)
+	tx.ResourceTypeRelationship = NewResourceTypeRelationshipClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)
 	tx.RuleType = NewRuleTypeClient(tx.config)

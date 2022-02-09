@@ -695,21 +695,21 @@ func (r queryResolver) ResourceTypes(
 		)
 }
 
-func (r queryResolver) ResourceRelationships(
+func (r queryResolver) ResourceTypeRelationships(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceRelationshipOrder,
-	filterBy []*models.ResourceRelationshipFilterInput,
-) (*ent.ResourceRelationshipConnection, error) {
+	orderBy *ent.ResourceTypeRelationshipOrder,
+	filterBy []*models.ResourceTypeRelationshipFilterInput,
+) (*ent.ResourceTypeRelationshipConnection, error) {
 	return r.ClientFrom(ctx).
-		ResourceRelationship.
+		ResourceTypeRelationship.
 		Query().
 		Paginate(ctx, after, first, before, last,
-			ent.WithResourceRelationshipOrder(orderBy),
-			ent.WithResourceRelationshipFilter(
-				func(query *ent.ResourceRelationshipQuery) (*ent.ResourceRelationshipQuery, error) {
-					return resolverutil.ResourceRelationshipFilter(query, filterBy)
+			ent.WithResourceTypeRelationshipOrder(orderBy),
+			ent.WithResourceTypeRelationshipFilter(
+				func(query *ent.ResourceTypeRelationshipQuery) (*ent.ResourceTypeRelationshipQuery, error) {
+					return resolverutil.ResourceTypeRelationshipFilter(query, filterBy)
 				},
 			),
 		)

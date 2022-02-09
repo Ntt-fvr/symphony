@@ -79,13 +79,13 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -189,13 +189,13 @@ const (
 	TypeRecommendationsCategory           = "RecommendationsCategory"
 	TypeRecommendationsSources            = "RecommendationsSources"
 	TypeReportFilter                      = "ReportFilter"
-	TypeResourceRelationship              = "ResourceRelationship"
 	TypeResourceSRItems                   = "ResourceSRItems"
 	TypeResourceSpecification             = "ResourceSpecification"
 	TypeResourceSpecificationRelationship = "ResourceSpecificationRelationship"
 	TypeResourceType                      = "ResourceType"
 	TypeResourceTypeBaseType              = "ResourceTypeBaseType"
 	TypeResourceTypeClass                 = "ResourceTypeClass"
+	TypeResourceTypeRelationship          = "ResourceTypeRelationship"
 	TypeRule                              = "Rule"
 	TypeRuleLimit                         = "RuleLimit"
 	TypeRuleType                          = "RuleType"
@@ -41184,7 +41184,7 @@ func (m *LocationTypeMutation) ResetSurveyTemplateCategories() {
 	m.removedsurvey_template_categories = nil
 }
 
-// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceRelationship by ids.
+// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceTypeRelationship by ids.
 func (m *LocationTypeMutation) AddResourceRelationshipLocationIDs(ids ...int) {
 	if m.resource_relationship_location == nil {
 		m.resource_relationship_location = make(map[int]struct{})
@@ -41194,7 +41194,7 @@ func (m *LocationTypeMutation) AddResourceRelationshipLocationIDs(ids ...int) {
 	}
 }
 
-// ClearResourceRelationshipLocation clears the resource_relationship_location edge to ResourceRelationship.
+// ClearResourceRelationshipLocation clears the resource_relationship_location edge to ResourceTypeRelationship.
 func (m *LocationTypeMutation) ClearResourceRelationshipLocation() {
 	m.clearedresource_relationship_location = true
 }
@@ -41204,7 +41204,7 @@ func (m *LocationTypeMutation) ResourceRelationshipLocationCleared() bool {
 	return m.clearedresource_relationship_location
 }
 
-// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceTypeRelationship by ids.
 func (m *LocationTypeMutation) RemoveResourceRelationshipLocationIDs(ids ...int) {
 	if m.removedresource_relationship_location == nil {
 		m.removedresource_relationship_location = make(map[int]struct{})
@@ -53887,652 +53887,6 @@ func (m *ReportFilterMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ReportFilter edge %s", name)
 }
 
-// ResourceRelationshipMutation represents an operation that mutate the ResourceRelationships
-// nodes in the graph.
-type ResourceRelationshipMutation struct {
-	config
-	op                                Op
-	typ                               string
-	id                                *int
-	create_time                       *time.Time
-	update_time                       *time.Time
-	_ResourceRelationshipType         *resourcerelationship.ResourceRelationshipType
-	_ResourceRelationshipMultiplicity *resourcerelationship.ResourceRelationshipMultiplicity
-	clearedFields                     map[string]struct{}
-	resourcetypea                     *int
-	clearedresourcetypea              bool
-	resourcetypeb                     *int
-	clearedresourcetypeb              bool
-	locationType                      *int
-	clearedlocationType               bool
-	done                              bool
-	oldValue                          func(context.Context) (*ResourceRelationship, error)
-	predicates                        []predicate.ResourceRelationship
-}
-
-var _ ent.Mutation = (*ResourceRelationshipMutation)(nil)
-
-// resourcerelationshipOption allows to manage the mutation configuration using functional options.
-type resourcerelationshipOption func(*ResourceRelationshipMutation)
-
-// newResourceRelationshipMutation creates new mutation for ResourceRelationship.
-func newResourceRelationshipMutation(c config, op Op, opts ...resourcerelationshipOption) *ResourceRelationshipMutation {
-	m := &ResourceRelationshipMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeResourceRelationship,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withResourceRelationshipID sets the id field of the mutation.
-func withResourceRelationshipID(id int) resourcerelationshipOption {
-	return func(m *ResourceRelationshipMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *ResourceRelationship
-		)
-		m.oldValue = func(ctx context.Context) (*ResourceRelationship, error) {
-			once.Do(func() {
-				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().ResourceRelationship.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withResourceRelationship sets the old ResourceRelationship of the mutation.
-func withResourceRelationship(node *ResourceRelationship) resourcerelationshipOption {
-	return func(m *ResourceRelationshipMutation) {
-		m.oldValue = func(context.Context) (*ResourceRelationship, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ResourceRelationshipMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m ResourceRelationshipMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the id value in the mutation. Note that, the id
-// is available only if it was provided to the builder.
-func (m *ResourceRelationshipMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// SetCreateTime sets the create_time field.
-func (m *ResourceRelationshipMutation) SetCreateTime(t time.Time) {
-	m.create_time = &t
-}
-
-// CreateTime returns the create_time value in the mutation.
-func (m *ResourceRelationshipMutation) CreateTime() (r time.Time, exists bool) {
-	v := m.create_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreateTime returns the old create_time value of the ResourceRelationship.
-// If the ResourceRelationship object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceRelationshipMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
-	}
-	return oldValue.CreateTime, nil
-}
-
-// ResetCreateTime reset all changes of the "create_time" field.
-func (m *ResourceRelationshipMutation) ResetCreateTime() {
-	m.create_time = nil
-}
-
-// SetUpdateTime sets the update_time field.
-func (m *ResourceRelationshipMutation) SetUpdateTime(t time.Time) {
-	m.update_time = &t
-}
-
-// UpdateTime returns the update_time value in the mutation.
-func (m *ResourceRelationshipMutation) UpdateTime() (r time.Time, exists bool) {
-	v := m.update_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateTime returns the old update_time value of the ResourceRelationship.
-// If the ResourceRelationship object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceRelationshipMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
-	}
-	return oldValue.UpdateTime, nil
-}
-
-// ResetUpdateTime reset all changes of the "update_time" field.
-func (m *ResourceRelationshipMutation) ResetUpdateTime() {
-	m.update_time = nil
-}
-
-// SetResourceRelationshipType sets the ResourceRelationshipType field.
-func (m *ResourceRelationshipMutation) SetResourceRelationshipType(rrt resourcerelationship.ResourceRelationshipType) {
-	m._ResourceRelationshipType = &rrt
-}
-
-// ResourceRelationshipType returns the ResourceRelationshipType value in the mutation.
-func (m *ResourceRelationshipMutation) ResourceRelationshipType() (r resourcerelationship.ResourceRelationshipType, exists bool) {
-	v := m._ResourceRelationshipType
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldResourceRelationshipType returns the old ResourceRelationshipType value of the ResourceRelationship.
-// If the ResourceRelationship object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceRelationshipMutation) OldResourceRelationshipType(ctx context.Context) (v resourcerelationship.ResourceRelationshipType, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldResourceRelationshipType is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldResourceRelationshipType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldResourceRelationshipType: %w", err)
-	}
-	return oldValue.ResourceRelationshipType, nil
-}
-
-// ResetResourceRelationshipType reset all changes of the "ResourceRelationshipType" field.
-func (m *ResourceRelationshipMutation) ResetResourceRelationshipType() {
-	m._ResourceRelationshipType = nil
-}
-
-// SetResourceRelationshipMultiplicity sets the ResourceRelationshipMultiplicity field.
-func (m *ResourceRelationshipMutation) SetResourceRelationshipMultiplicity(rrm resourcerelationship.ResourceRelationshipMultiplicity) {
-	m._ResourceRelationshipMultiplicity = &rrm
-}
-
-// ResourceRelationshipMultiplicity returns the ResourceRelationshipMultiplicity value in the mutation.
-func (m *ResourceRelationshipMutation) ResourceRelationshipMultiplicity() (r resourcerelationship.ResourceRelationshipMultiplicity, exists bool) {
-	v := m._ResourceRelationshipMultiplicity
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldResourceRelationshipMultiplicity returns the old ResourceRelationshipMultiplicity value of the ResourceRelationship.
-// If the ResourceRelationship object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceRelationshipMutation) OldResourceRelationshipMultiplicity(ctx context.Context) (v resourcerelationship.ResourceRelationshipMultiplicity, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldResourceRelationshipMultiplicity is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldResourceRelationshipMultiplicity requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldResourceRelationshipMultiplicity: %w", err)
-	}
-	return oldValue.ResourceRelationshipMultiplicity, nil
-}
-
-// ResetResourceRelationshipMultiplicity reset all changes of the "ResourceRelationshipMultiplicity" field.
-func (m *ResourceRelationshipMutation) ResetResourceRelationshipMultiplicity() {
-	m._ResourceRelationshipMultiplicity = nil
-}
-
-// SetResourcetypeaID sets the resourcetypea edge to ResourceType by id.
-func (m *ResourceRelationshipMutation) SetResourcetypeaID(id int) {
-	m.resourcetypea = &id
-}
-
-// ClearResourcetypea clears the resourcetypea edge to ResourceType.
-func (m *ResourceRelationshipMutation) ClearResourcetypea() {
-	m.clearedresourcetypea = true
-}
-
-// ResourcetypeaCleared returns if the edge resourcetypea was cleared.
-func (m *ResourceRelationshipMutation) ResourcetypeaCleared() bool {
-	return m.clearedresourcetypea
-}
-
-// ResourcetypeaID returns the resourcetypea id in the mutation.
-func (m *ResourceRelationshipMutation) ResourcetypeaID() (id int, exists bool) {
-	if m.resourcetypea != nil {
-		return *m.resourcetypea, true
-	}
-	return
-}
-
-// ResourcetypeaIDs returns the resourcetypea ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// ResourcetypeaID instead. It exists only for internal usage by the builders.
-func (m *ResourceRelationshipMutation) ResourcetypeaIDs() (ids []int) {
-	if id := m.resourcetypea; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetResourcetypea reset all changes of the "resourcetypea" edge.
-func (m *ResourceRelationshipMutation) ResetResourcetypea() {
-	m.resourcetypea = nil
-	m.clearedresourcetypea = false
-}
-
-// SetResourcetypebID sets the resourcetypeb edge to ResourceType by id.
-func (m *ResourceRelationshipMutation) SetResourcetypebID(id int) {
-	m.resourcetypeb = &id
-}
-
-// ClearResourcetypeb clears the resourcetypeb edge to ResourceType.
-func (m *ResourceRelationshipMutation) ClearResourcetypeb() {
-	m.clearedresourcetypeb = true
-}
-
-// ResourcetypebCleared returns if the edge resourcetypeb was cleared.
-func (m *ResourceRelationshipMutation) ResourcetypebCleared() bool {
-	return m.clearedresourcetypeb
-}
-
-// ResourcetypebID returns the resourcetypeb id in the mutation.
-func (m *ResourceRelationshipMutation) ResourcetypebID() (id int, exists bool) {
-	if m.resourcetypeb != nil {
-		return *m.resourcetypeb, true
-	}
-	return
-}
-
-// ResourcetypebIDs returns the resourcetypeb ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// ResourcetypebID instead. It exists only for internal usage by the builders.
-func (m *ResourceRelationshipMutation) ResourcetypebIDs() (ids []int) {
-	if id := m.resourcetypeb; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetResourcetypeb reset all changes of the "resourcetypeb" edge.
-func (m *ResourceRelationshipMutation) ResetResourcetypeb() {
-	m.resourcetypeb = nil
-	m.clearedresourcetypeb = false
-}
-
-// SetLocationTypeID sets the locationType edge to LocationType by id.
-func (m *ResourceRelationshipMutation) SetLocationTypeID(id int) {
-	m.locationType = &id
-}
-
-// ClearLocationType clears the locationType edge to LocationType.
-func (m *ResourceRelationshipMutation) ClearLocationType() {
-	m.clearedlocationType = true
-}
-
-// LocationTypeCleared returns if the edge locationType was cleared.
-func (m *ResourceRelationshipMutation) LocationTypeCleared() bool {
-	return m.clearedlocationType
-}
-
-// LocationTypeID returns the locationType id in the mutation.
-func (m *ResourceRelationshipMutation) LocationTypeID() (id int, exists bool) {
-	if m.locationType != nil {
-		return *m.locationType, true
-	}
-	return
-}
-
-// LocationTypeIDs returns the locationType ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// LocationTypeID instead. It exists only for internal usage by the builders.
-func (m *ResourceRelationshipMutation) LocationTypeIDs() (ids []int) {
-	if id := m.locationType; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetLocationType reset all changes of the "locationType" edge.
-func (m *ResourceRelationshipMutation) ResetLocationType() {
-	m.locationType = nil
-	m.clearedlocationType = false
-}
-
-// Op returns the operation name.
-func (m *ResourceRelationshipMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (ResourceRelationship).
-func (m *ResourceRelationshipMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during
-// this mutation. Note that, in order to get all numeric
-// fields that were in/decremented, call AddedFields().
-func (m *ResourceRelationshipMutation) Fields() []string {
-	fields := make([]string, 0, 4)
-	if m.create_time != nil {
-		fields = append(fields, resourcerelationship.FieldCreateTime)
-	}
-	if m.update_time != nil {
-		fields = append(fields, resourcerelationship.FieldUpdateTime)
-	}
-	if m._ResourceRelationshipType != nil {
-		fields = append(fields, resourcerelationship.FieldResourceRelationshipType)
-	}
-	if m._ResourceRelationshipMultiplicity != nil {
-		fields = append(fields, resourcerelationship.FieldResourceRelationshipMultiplicity)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name.
-// The second boolean value indicates that this field was
-// not set, or was not define in the schema.
-func (m *ResourceRelationshipMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case resourcerelationship.FieldCreateTime:
-		return m.CreateTime()
-	case resourcerelationship.FieldUpdateTime:
-		return m.UpdateTime()
-	case resourcerelationship.FieldResourceRelationshipType:
-		return m.ResourceRelationshipType()
-	case resourcerelationship.FieldResourceRelationshipMultiplicity:
-		return m.ResourceRelationshipMultiplicity()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database.
-// An error is returned if the mutation operation is not UpdateOne,
-// or the query to the database was failed.
-func (m *ResourceRelationshipMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case resourcerelationship.FieldCreateTime:
-		return m.OldCreateTime(ctx)
-	case resourcerelationship.FieldUpdateTime:
-		return m.OldUpdateTime(ctx)
-	case resourcerelationship.FieldResourceRelationshipType:
-		return m.OldResourceRelationshipType(ctx)
-	case resourcerelationship.FieldResourceRelationshipMultiplicity:
-		return m.OldResourceRelationshipMultiplicity(ctx)
-	}
-	return nil, fmt.Errorf("unknown ResourceRelationship field %s", name)
-}
-
-// SetField sets the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ResourceRelationshipMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case resourcerelationship.FieldCreateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreateTime(v)
-		return nil
-	case resourcerelationship.FieldUpdateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateTime(v)
-		return nil
-	case resourcerelationship.FieldResourceRelationshipType:
-		v, ok := value.(resourcerelationship.ResourceRelationshipType)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetResourceRelationshipType(v)
-		return nil
-	case resourcerelationship.FieldResourceRelationshipMultiplicity:
-		v, ok := value.(resourcerelationship.ResourceRelationshipMultiplicity)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetResourceRelationshipMultiplicity(v)
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceRelationship field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented
-// or decremented during this mutation.
-func (m *ResourceRelationshipMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was in/decremented
-// from a field with the given name. The second value indicates
-// that this field was not set, or was not define in the schema.
-func (m *ResourceRelationshipMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ResourceRelationshipMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown ResourceRelationship numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared
-// during this mutation.
-func (m *ResourceRelationshipMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicates if this field was
-// cleared in this mutation.
-func (m *ResourceRelationshipMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value for the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *ResourceRelationshipMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ResourceRelationship nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation regarding the
-// given field name. It returns an error if the field is not
-// defined in the schema.
-func (m *ResourceRelationshipMutation) ResetField(name string) error {
-	switch name {
-	case resourcerelationship.FieldCreateTime:
-		m.ResetCreateTime()
-		return nil
-	case resourcerelationship.FieldUpdateTime:
-		m.ResetUpdateTime()
-		return nil
-	case resourcerelationship.FieldResourceRelationshipType:
-		m.ResetResourceRelationshipType()
-		return nil
-	case resourcerelationship.FieldResourceRelationshipMultiplicity:
-		m.ResetResourceRelationshipMultiplicity()
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceRelationship field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this
-// mutation.
-func (m *ResourceRelationshipMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.resourcetypea != nil {
-		edges = append(edges, resourcerelationship.EdgeResourcetypea)
-	}
-	if m.resourcetypeb != nil {
-		edges = append(edges, resourcerelationship.EdgeResourcetypeb)
-	}
-	if m.locationType != nil {
-		edges = append(edges, resourcerelationship.EdgeLocationType)
-	}
-	return edges
-}
-
-// AddedIDs returns all ids (to other nodes) that were added for
-// the given edge name.
-func (m *ResourceRelationshipMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case resourcerelationship.EdgeResourcetypea:
-		if id := m.resourcetypea; id != nil {
-			return []ent.Value{*id}
-		}
-	case resourcerelationship.EdgeResourcetypeb:
-		if id := m.resourcetypeb; id != nil {
-			return []ent.Value{*id}
-		}
-	case resourcerelationship.EdgeLocationType:
-		if id := m.locationType; id != nil {
-			return []ent.Value{*id}
-		}
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this
-// mutation.
-func (m *ResourceRelationshipMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
-	return edges
-}
-
-// RemovedIDs returns all ids (to other nodes) that were removed for
-// the given edge name.
-func (m *ResourceRelationshipMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this
-// mutation.
-func (m *ResourceRelationshipMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.clearedresourcetypea {
-		edges = append(edges, resourcerelationship.EdgeResourcetypea)
-	}
-	if m.clearedresourcetypeb {
-		edges = append(edges, resourcerelationship.EdgeResourcetypeb)
-	}
-	if m.clearedlocationType {
-		edges = append(edges, resourcerelationship.EdgeLocationType)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean indicates if this edge was
-// cleared in this mutation.
-func (m *ResourceRelationshipMutation) EdgeCleared(name string) bool {
-	switch name {
-	case resourcerelationship.EdgeResourcetypea:
-		return m.clearedresourcetypea
-	case resourcerelationship.EdgeResourcetypeb:
-		return m.clearedresourcetypeb
-	case resourcerelationship.EdgeLocationType:
-		return m.clearedlocationType
-	}
-	return false
-}
-
-// ClearEdge clears the value for the given name. It returns an
-// error if the edge name is not defined in the schema.
-func (m *ResourceRelationshipMutation) ClearEdge(name string) error {
-	switch name {
-	case resourcerelationship.EdgeResourcetypea:
-		m.ClearResourcetypea()
-		return nil
-	case resourcerelationship.EdgeResourcetypeb:
-		m.ClearResourcetypeb()
-		return nil
-	case resourcerelationship.EdgeLocationType:
-		m.ClearLocationType()
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceRelationship unique edge %s", name)
-}
-
-// ResetEdge resets all changes in the mutation regarding the
-// given edge name. It returns an error if the edge is not
-// defined in the schema.
-func (m *ResourceRelationshipMutation) ResetEdge(name string) error {
-	switch name {
-	case resourcerelationship.EdgeResourcetypea:
-		m.ResetResourcetypea()
-		return nil
-	case resourcerelationship.EdgeResourcetypeb:
-		m.ResetResourcetypeb()
-		return nil
-	case resourcerelationship.EdgeLocationType:
-		m.ResetLocationType()
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceRelationship edge %s", name)
-}
-
 // ResourceSRItemsMutation represents an operation that mutate the ResourceSRItemsSlice
 // nodes in the graph.
 type ResourceSRItemsMutation struct {
@@ -56579,7 +55933,7 @@ func (m *ResourceTypeMutation) ResetResourcetypebasetype() {
 	m.clearedresourcetypebasetype = false
 }
 
-// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (m *ResourceTypeMutation) AddResourceRelationshipAIDs(ids ...int) {
 	if m.resource_relationship_a == nil {
 		m.resource_relationship_a = make(map[int]struct{})
@@ -56589,7 +55943,7 @@ func (m *ResourceTypeMutation) AddResourceRelationshipAIDs(ids ...int) {
 	}
 }
 
-// ClearResourceRelationshipA clears the resource_relationship_a edge to ResourceRelationship.
+// ClearResourceRelationshipA clears the resource_relationship_a edge to ResourceTypeRelationship.
 func (m *ResourceTypeMutation) ClearResourceRelationshipA() {
 	m.clearedresource_relationship_a = true
 }
@@ -56599,7 +55953,7 @@ func (m *ResourceTypeMutation) ResourceRelationshipACleared() bool {
 	return m.clearedresource_relationship_a
 }
 
-// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (m *ResourceTypeMutation) RemoveResourceRelationshipAIDs(ids ...int) {
 	if m.removedresource_relationship_a == nil {
 		m.removedresource_relationship_a = make(map[int]struct{})
@@ -56632,7 +55986,7 @@ func (m *ResourceTypeMutation) ResetResourceRelationshipA() {
 	m.removedresource_relationship_a = nil
 }
 
-// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (m *ResourceTypeMutation) AddResourceRelationshipBIDs(ids ...int) {
 	if m.resource_relationship_b == nil {
 		m.resource_relationship_b = make(map[int]struct{})
@@ -56642,7 +55996,7 @@ func (m *ResourceTypeMutation) AddResourceRelationshipBIDs(ids ...int) {
 	}
 }
 
-// ClearResourceRelationshipB clears the resource_relationship_b edge to ResourceRelationship.
+// ClearResourceRelationshipB clears the resource_relationship_b edge to ResourceTypeRelationship.
 func (m *ResourceTypeMutation) ClearResourceRelationshipB() {
 	m.clearedresource_relationship_b = true
 }
@@ -56652,7 +56006,7 @@ func (m *ResourceTypeMutation) ResourceRelationshipBCleared() bool {
 	return m.clearedresource_relationship_b
 }
 
-// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (m *ResourceTypeMutation) RemoveResourceRelationshipBIDs(ids ...int) {
 	if m.removedresource_relationship_b == nil {
 		m.removedresource_relationship_b = make(map[int]struct{})
@@ -58129,6 +57483,652 @@ func (m *ResourceTypeClassMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceTypeClass edge %s", name)
+}
+
+// ResourceTypeRelationshipMutation represents an operation that mutate the ResourceTypeRelationships
+// nodes in the graph.
+type ResourceTypeRelationshipMutation struct {
+	config
+	op                                Op
+	typ                               string
+	id                                *int
+	create_time                       *time.Time
+	update_time                       *time.Time
+	_ResourceRelationshipType         *resourcetyperelationship.ResourceRelationshipType
+	_ResourceRelationshipMultiplicity *resourcetyperelationship.ResourceRelationshipMultiplicity
+	clearedFields                     map[string]struct{}
+	resourcetypea                     *int
+	clearedresourcetypea              bool
+	resourcetypeb                     *int
+	clearedresourcetypeb              bool
+	locationType                      *int
+	clearedlocationType               bool
+	done                              bool
+	oldValue                          func(context.Context) (*ResourceTypeRelationship, error)
+	predicates                        []predicate.ResourceTypeRelationship
+}
+
+var _ ent.Mutation = (*ResourceTypeRelationshipMutation)(nil)
+
+// resourcetyperelationshipOption allows to manage the mutation configuration using functional options.
+type resourcetyperelationshipOption func(*ResourceTypeRelationshipMutation)
+
+// newResourceTypeRelationshipMutation creates new mutation for ResourceTypeRelationship.
+func newResourceTypeRelationshipMutation(c config, op Op, opts ...resourcetyperelationshipOption) *ResourceTypeRelationshipMutation {
+	m := &ResourceTypeRelationshipMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeResourceTypeRelationship,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withResourceTypeRelationshipID sets the id field of the mutation.
+func withResourceTypeRelationshipID(id int) resourcetyperelationshipOption {
+	return func(m *ResourceTypeRelationshipMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ResourceTypeRelationship
+		)
+		m.oldValue = func(ctx context.Context) (*ResourceTypeRelationship, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ResourceTypeRelationship.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withResourceTypeRelationship sets the old ResourceTypeRelationship of the mutation.
+func withResourceTypeRelationship(node *ResourceTypeRelationship) resourcetyperelationshipOption {
+	return func(m *ResourceTypeRelationshipMutation) {
+		m.oldValue = func(context.Context) (*ResourceTypeRelationship, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ResourceTypeRelationshipMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ResourceTypeRelationshipMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ResourceTypeRelationshipMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ResourceTypeRelationshipMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ResourceTypeRelationshipMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the ResourceTypeRelationship.
+// If the ResourceTypeRelationship object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceTypeRelationshipMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ResourceTypeRelationshipMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ResourceTypeRelationshipMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ResourceTypeRelationshipMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the ResourceTypeRelationship.
+// If the ResourceTypeRelationship object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceTypeRelationshipMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ResourceTypeRelationshipMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetResourceRelationshipType sets the ResourceRelationshipType field.
+func (m *ResourceTypeRelationshipMutation) SetResourceRelationshipType(rrt resourcetyperelationship.ResourceRelationshipType) {
+	m._ResourceRelationshipType = &rrt
+}
+
+// ResourceRelationshipType returns the ResourceRelationshipType value in the mutation.
+func (m *ResourceTypeRelationshipMutation) ResourceRelationshipType() (r resourcetyperelationship.ResourceRelationshipType, exists bool) {
+	v := m._ResourceRelationshipType
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResourceRelationshipType returns the old ResourceRelationshipType value of the ResourceTypeRelationship.
+// If the ResourceTypeRelationship object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceTypeRelationshipMutation) OldResourceRelationshipType(ctx context.Context) (v resourcetyperelationship.ResourceRelationshipType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldResourceRelationshipType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldResourceRelationshipType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResourceRelationshipType: %w", err)
+	}
+	return oldValue.ResourceRelationshipType, nil
+}
+
+// ResetResourceRelationshipType reset all changes of the "ResourceRelationshipType" field.
+func (m *ResourceTypeRelationshipMutation) ResetResourceRelationshipType() {
+	m._ResourceRelationshipType = nil
+}
+
+// SetResourceRelationshipMultiplicity sets the ResourceRelationshipMultiplicity field.
+func (m *ResourceTypeRelationshipMutation) SetResourceRelationshipMultiplicity(rrm resourcetyperelationship.ResourceRelationshipMultiplicity) {
+	m._ResourceRelationshipMultiplicity = &rrm
+}
+
+// ResourceRelationshipMultiplicity returns the ResourceRelationshipMultiplicity value in the mutation.
+func (m *ResourceTypeRelationshipMutation) ResourceRelationshipMultiplicity() (r resourcetyperelationship.ResourceRelationshipMultiplicity, exists bool) {
+	v := m._ResourceRelationshipMultiplicity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResourceRelationshipMultiplicity returns the old ResourceRelationshipMultiplicity value of the ResourceTypeRelationship.
+// If the ResourceTypeRelationship object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceTypeRelationshipMutation) OldResourceRelationshipMultiplicity(ctx context.Context) (v resourcetyperelationship.ResourceRelationshipMultiplicity, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldResourceRelationshipMultiplicity is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldResourceRelationshipMultiplicity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResourceRelationshipMultiplicity: %w", err)
+	}
+	return oldValue.ResourceRelationshipMultiplicity, nil
+}
+
+// ResetResourceRelationshipMultiplicity reset all changes of the "ResourceRelationshipMultiplicity" field.
+func (m *ResourceTypeRelationshipMutation) ResetResourceRelationshipMultiplicity() {
+	m._ResourceRelationshipMultiplicity = nil
+}
+
+// SetResourcetypeaID sets the resourcetypea edge to ResourceType by id.
+func (m *ResourceTypeRelationshipMutation) SetResourcetypeaID(id int) {
+	m.resourcetypea = &id
+}
+
+// ClearResourcetypea clears the resourcetypea edge to ResourceType.
+func (m *ResourceTypeRelationshipMutation) ClearResourcetypea() {
+	m.clearedresourcetypea = true
+}
+
+// ResourcetypeaCleared returns if the edge resourcetypea was cleared.
+func (m *ResourceTypeRelationshipMutation) ResourcetypeaCleared() bool {
+	return m.clearedresourcetypea
+}
+
+// ResourcetypeaID returns the resourcetypea id in the mutation.
+func (m *ResourceTypeRelationshipMutation) ResourcetypeaID() (id int, exists bool) {
+	if m.resourcetypea != nil {
+		return *m.resourcetypea, true
+	}
+	return
+}
+
+// ResourcetypeaIDs returns the resourcetypea ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ResourcetypeaID instead. It exists only for internal usage by the builders.
+func (m *ResourceTypeRelationshipMutation) ResourcetypeaIDs() (ids []int) {
+	if id := m.resourcetypea; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetResourcetypea reset all changes of the "resourcetypea" edge.
+func (m *ResourceTypeRelationshipMutation) ResetResourcetypea() {
+	m.resourcetypea = nil
+	m.clearedresourcetypea = false
+}
+
+// SetResourcetypebID sets the resourcetypeb edge to ResourceType by id.
+func (m *ResourceTypeRelationshipMutation) SetResourcetypebID(id int) {
+	m.resourcetypeb = &id
+}
+
+// ClearResourcetypeb clears the resourcetypeb edge to ResourceType.
+func (m *ResourceTypeRelationshipMutation) ClearResourcetypeb() {
+	m.clearedresourcetypeb = true
+}
+
+// ResourcetypebCleared returns if the edge resourcetypeb was cleared.
+func (m *ResourceTypeRelationshipMutation) ResourcetypebCleared() bool {
+	return m.clearedresourcetypeb
+}
+
+// ResourcetypebID returns the resourcetypeb id in the mutation.
+func (m *ResourceTypeRelationshipMutation) ResourcetypebID() (id int, exists bool) {
+	if m.resourcetypeb != nil {
+		return *m.resourcetypeb, true
+	}
+	return
+}
+
+// ResourcetypebIDs returns the resourcetypeb ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ResourcetypebID instead. It exists only for internal usage by the builders.
+func (m *ResourceTypeRelationshipMutation) ResourcetypebIDs() (ids []int) {
+	if id := m.resourcetypeb; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetResourcetypeb reset all changes of the "resourcetypeb" edge.
+func (m *ResourceTypeRelationshipMutation) ResetResourcetypeb() {
+	m.resourcetypeb = nil
+	m.clearedresourcetypeb = false
+}
+
+// SetLocationTypeID sets the locationType edge to LocationType by id.
+func (m *ResourceTypeRelationshipMutation) SetLocationTypeID(id int) {
+	m.locationType = &id
+}
+
+// ClearLocationType clears the locationType edge to LocationType.
+func (m *ResourceTypeRelationshipMutation) ClearLocationType() {
+	m.clearedlocationType = true
+}
+
+// LocationTypeCleared returns if the edge locationType was cleared.
+func (m *ResourceTypeRelationshipMutation) LocationTypeCleared() bool {
+	return m.clearedlocationType
+}
+
+// LocationTypeID returns the locationType id in the mutation.
+func (m *ResourceTypeRelationshipMutation) LocationTypeID() (id int, exists bool) {
+	if m.locationType != nil {
+		return *m.locationType, true
+	}
+	return
+}
+
+// LocationTypeIDs returns the locationType ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// LocationTypeID instead. It exists only for internal usage by the builders.
+func (m *ResourceTypeRelationshipMutation) LocationTypeIDs() (ids []int) {
+	if id := m.locationType; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLocationType reset all changes of the "locationType" edge.
+func (m *ResourceTypeRelationshipMutation) ResetLocationType() {
+	m.locationType = nil
+	m.clearedlocationType = false
+}
+
+// Op returns the operation name.
+func (m *ResourceTypeRelationshipMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (ResourceTypeRelationship).
+func (m *ResourceTypeRelationshipMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ResourceTypeRelationshipMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, resourcetyperelationship.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, resourcetyperelationship.FieldUpdateTime)
+	}
+	if m._ResourceRelationshipType != nil {
+		fields = append(fields, resourcetyperelationship.FieldResourceRelationshipType)
+	}
+	if m._ResourceRelationshipMultiplicity != nil {
+		fields = append(fields, resourcetyperelationship.FieldResourceRelationshipMultiplicity)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ResourceTypeRelationshipMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case resourcetyperelationship.FieldCreateTime:
+		return m.CreateTime()
+	case resourcetyperelationship.FieldUpdateTime:
+		return m.UpdateTime()
+	case resourcetyperelationship.FieldResourceRelationshipType:
+		return m.ResourceRelationshipType()
+	case resourcetyperelationship.FieldResourceRelationshipMultiplicity:
+		return m.ResourceRelationshipMultiplicity()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ResourceTypeRelationshipMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case resourcetyperelationship.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case resourcetyperelationship.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case resourcetyperelationship.FieldResourceRelationshipType:
+		return m.OldResourceRelationshipType(ctx)
+	case resourcetyperelationship.FieldResourceRelationshipMultiplicity:
+		return m.OldResourceRelationshipMultiplicity(ctx)
+	}
+	return nil, fmt.Errorf("unknown ResourceTypeRelationship field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ResourceTypeRelationshipMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case resourcetyperelationship.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case resourcetyperelationship.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case resourcetyperelationship.FieldResourceRelationshipType:
+		v, ok := value.(resourcetyperelationship.ResourceRelationshipType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResourceRelationshipType(v)
+		return nil
+	case resourcetyperelationship.FieldResourceRelationshipMultiplicity:
+		v, ok := value.(resourcetyperelationship.ResourceRelationshipMultiplicity)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResourceRelationshipMultiplicity(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ResourceTypeRelationship field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ResourceTypeRelationshipMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ResourceTypeRelationshipMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ResourceTypeRelationshipMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ResourceTypeRelationship numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ResourceTypeRelationshipMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ResourceTypeRelationshipMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ResourceTypeRelationshipMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ResourceTypeRelationship nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ResourceTypeRelationshipMutation) ResetField(name string) error {
+	switch name {
+	case resourcetyperelationship.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case resourcetyperelationship.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case resourcetyperelationship.FieldResourceRelationshipType:
+		m.ResetResourceRelationshipType()
+		return nil
+	case resourcetyperelationship.FieldResourceRelationshipMultiplicity:
+		m.ResetResourceRelationshipMultiplicity()
+		return nil
+	}
+	return fmt.Errorf("unknown ResourceTypeRelationship field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ResourceTypeRelationshipMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.resourcetypea != nil {
+		edges = append(edges, resourcetyperelationship.EdgeResourcetypea)
+	}
+	if m.resourcetypeb != nil {
+		edges = append(edges, resourcetyperelationship.EdgeResourcetypeb)
+	}
+	if m.locationType != nil {
+		edges = append(edges, resourcetyperelationship.EdgeLocationType)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ResourceTypeRelationshipMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case resourcetyperelationship.EdgeResourcetypea:
+		if id := m.resourcetypea; id != nil {
+			return []ent.Value{*id}
+		}
+	case resourcetyperelationship.EdgeResourcetypeb:
+		if id := m.resourcetypeb; id != nil {
+			return []ent.Value{*id}
+		}
+	case resourcetyperelationship.EdgeLocationType:
+		if id := m.locationType; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ResourceTypeRelationshipMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ResourceTypeRelationshipMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ResourceTypeRelationshipMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedresourcetypea {
+		edges = append(edges, resourcetyperelationship.EdgeResourcetypea)
+	}
+	if m.clearedresourcetypeb {
+		edges = append(edges, resourcetyperelationship.EdgeResourcetypeb)
+	}
+	if m.clearedlocationType {
+		edges = append(edges, resourcetyperelationship.EdgeLocationType)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ResourceTypeRelationshipMutation) EdgeCleared(name string) bool {
+	switch name {
+	case resourcetyperelationship.EdgeResourcetypea:
+		return m.clearedresourcetypea
+	case resourcetyperelationship.EdgeResourcetypeb:
+		return m.clearedresourcetypeb
+	case resourcetyperelationship.EdgeLocationType:
+		return m.clearedlocationType
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ResourceTypeRelationshipMutation) ClearEdge(name string) error {
+	switch name {
+	case resourcetyperelationship.EdgeResourcetypea:
+		m.ClearResourcetypea()
+		return nil
+	case resourcetyperelationship.EdgeResourcetypeb:
+		m.ClearResourcetypeb()
+		return nil
+	case resourcetyperelationship.EdgeLocationType:
+		m.ClearLocationType()
+		return nil
+	}
+	return fmt.Errorf("unknown ResourceTypeRelationship unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ResourceTypeRelationshipMutation) ResetEdge(name string) error {
+	switch name {
+	case resourcetyperelationship.EdgeResourcetypea:
+		m.ResetResourcetypea()
+		return nil
+	case resourcetyperelationship.EdgeResourcetypeb:
+		m.ResetResourcetypeb()
+		return nil
+	case resourcetyperelationship.EdgeLocationType:
+		m.ResetLocationType()
+		return nil
+	}
+	return fmt.Errorf("unknown ResourceTypeRelationship edge %s", name)
 }
 
 // RuleMutation represents an operation that mutate the Rules

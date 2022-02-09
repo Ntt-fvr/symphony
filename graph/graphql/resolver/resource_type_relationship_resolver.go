@@ -10,17 +10,17 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type resourceRelationshipResolver struct{}
+type resourceTypeRelationshipResolver struct{}
 
 var condicionEspecial1 = []string{"LOCATED_IN"}
 
-func (resourceRelationshipResolver) ResourceTypeA(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceType, error) {
-	variable, err := resourceRelationship.Resourcetypea(ctx)
+func (resourceTypeRelationshipResolver) ResourceTypeA(ctx context.Context, resourceTypeRelationship *ent.ResourceTypeRelationship) (*ent.ResourceType, error) {
+	variable, err := resourceTypeRelationship.Resourcetypea(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
@@ -28,8 +28,8 @@ func (resourceRelationshipResolver) ResourceTypeA(ctx context.Context, resourceR
 	}
 }
 
-func (resourceRelationshipResolver) ResourceTypeB(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.ResourceType, error) {
-	variable, err := resourceRelationship.Resourcetypeb(ctx)
+func (resourceTypeRelationshipResolver) ResourceTypeB(ctx context.Context, resourceTypeRelationship *ent.ResourceTypeRelationship) (*ent.ResourceType, error) {
+	variable, err := resourceTypeRelationship.Resourcetypeb(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
@@ -37,8 +37,8 @@ func (resourceRelationshipResolver) ResourceTypeB(ctx context.Context, resourceR
 	}
 }
 
-func (resourceRelationshipResolver) LocationType(ctx context.Context, resourceRelationship *ent.ResourceRelationship) (*ent.LocationType, error) {
-	variable, err := resourceRelationship.LocationType(ctx)
+func (resourceTypeRelationshipResolver) LocationType(ctx context.Context, resourceTypeRelationship *ent.ResourceTypeRelationship) (*ent.LocationType, error) {
+	variable, err := resourceTypeRelationship.LocationType(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
@@ -46,7 +46,7 @@ func (resourceRelationshipResolver) LocationType(ctx context.Context, resourceRe
 	}
 }
 
-func (r mutationResolver) AddResourceRelationship(ctx context.Context, input models.AddResourceRelationshipInput) (*ent.ResourceRelationship, error) {
+func (r mutationResolver) AddResourceTypeRelationship(ctx context.Context, input models.AddResourceTypeRelationshipInput) (*ent.ResourceTypeRelationship, error) {
 	client := r.ClientFrom(ctx)
 
 	valor, err := validateCondition(string(input.ResourceRelationshipType), input.LocationType, input.ResourceTypeA, condicionEspecial1)
@@ -58,7 +58,7 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 	if valor {
 		fmt.Println("Ingreso a valor")
 		typ, err := client.
-			ResourceRelationship.Create().
+			ResourceTypeRelationship.Create().
 			SetNillableLocationTypeID(input.LocationType).
 			SetResourceRelationshipMultiplicity(input.ResourceRelationshipMultiplicity).
 			SetResourceRelationshipType(input.ResourceRelationshipType).
@@ -75,7 +75,7 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 	}
 	fmt.Println("Paso a validacion normal")
 	typ, err := client.
-		ResourceRelationship.Create().
+		ResourceTypeRelationship.Create().
 		SetResourceRelationshipMultiplicity(input.ResourceRelationshipMultiplicity).
 		SetResourceRelationshipType(input.ResourceRelationshipType).
 		SetNillableResourcetypebID(input.ResourceTypeB).
@@ -91,11 +91,11 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 
 }
 
-func (r mutationResolver) RemoveResourceRelationship(ctx context.Context, id int) (int, error) {
+func (r mutationResolver) RemoveResourceTypeRelationship(ctx context.Context, id int) (int, error) {
 	client := r.ClientFrom(ctx)
-	t, err := client.ResourceRelationship.Query().
+	t, err := client.ResourceTypeRelationship.Query().
 		Where(
-			resourcerelationship.ID(id),
+			resourcetyperelationship.ID(id),
 		).
 		Only(ctx)
 	if err != nil {
@@ -103,7 +103,7 @@ func (r mutationResolver) RemoveResourceRelationship(ctx context.Context, id int
 	}
 	//TODO: borrar o editar los edges relacionados
 
-	if err := client.ResourceRelationship.DeleteOne(t).Exec(ctx); err != nil {
+	if err := client.ResourceTypeRelationship.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has ocurred error on proces: %v")
 	}
 	return id, nil
@@ -126,9 +126,9 @@ func validateCondition(multiplicity string, locationID *int, resourcetypea int, 
 
 }
 
-func (r mutationResolver) EditResourceRelationship(ctx context.Context, input models.EditResourceRelationshipInput) (*ent.ResourceRelationship, error) {
+func (r mutationResolver) EditResourceTypeRelationship(ctx context.Context, input models.EditResourceTypeRelationshipInput) (*ent.ResourceTypeRelationship, error) {
 	client := r.ClientFrom(ctx)
-	et, err := client.ResourceRelationship.Get(ctx, input.ID)
+	et, err := client.ResourceTypeRelationship.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
@@ -187,7 +187,7 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 
 		if valor {
 			typ, err := client.
-				ResourceRelationship.UpdateOne(et).
+				ResourceTypeRelationship.UpdateOne(et).
 				SetNillableLocationTypeID(locationtypeid).
 				SetResourceRelationshipMultiplicity(resourceMultiplicity).
 				SetResourceRelationshipType(resourceType).
@@ -204,7 +204,7 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 
 		}
 		typ, err := client.
-			ResourceRelationship.UpdateOne(et).
+			ResourceTypeRelationship.UpdateOne(et).
 			SetResourceRelationshipMultiplicity(resourceMultiplicity).
 			SetResourceRelationshipType(resourceType).
 			SetResourcetypeaID(resourcetypeAid).
