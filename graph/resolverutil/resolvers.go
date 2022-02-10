@@ -437,24 +437,6 @@ func NetworkTypeFilter(query *ent.NetworkTypeQuery, filters []*models.NetworkTyp
 	return query, nil
 }
 
-func ResourceTypeClassFilter(query *ent.ResourceTypeClassQuery, filters []*models.ResourceTypeClassFilterInput) (*ent.ResourceTypeClassQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceTypeClassFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-func ResourceTypeBaseTypeFilter(query *ent.ResourceTypeBaseTypeQuery, filters []*models.ResourceTypeBaseTypeFilterInput) (*ent.ResourceTypeBaseTypeQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceTypeBaseTypeFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
 func ResourceTypeFilter(query *ent.ResourceTypeQuery, filters []*models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
 	var err error
 	for _, f := range filters {

@@ -910,32 +910,6 @@ func (f ResourceTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
-// The ResourceTypeBaseTypeFunc type is an adapter to allow the use of ordinary
-// function as ResourceTypeBaseType mutator.
-type ResourceTypeBaseTypeFunc func(context.Context, *ent.ResourceTypeBaseTypeMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ResourceTypeBaseTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ResourceTypeBaseTypeMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceTypeBaseTypeMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The ResourceTypeClassFunc type is an adapter to allow the use of ordinary
-// function as ResourceTypeClass mutator.
-type ResourceTypeClassFunc func(context.Context, *ent.ResourceTypeClassMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ResourceTypeClassFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ResourceTypeClassMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceTypeClassMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The ResourceTypeRelationshipFunc type is an adapter to allow the use of ordinary
 // function as ResourceTypeRelationship mutator.
 type ResourceTypeRelationshipFunc func(context.Context, *ent.ResourceTypeRelationshipMutation) (ent.Value, error)

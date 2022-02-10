@@ -28,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -1190,8 +1191,6 @@ type ComplexityRoot struct {
 		AddResourceSpecificationRelationShipList func(childComplexity int, input models.AddResourceSpecificationRelationShipListInput) int
 		AddResourceSpecificationRelationship     func(childComplexity int, input models.AddResourceSpecificationRelationshipInput) int
 		AddResourceType                          func(childComplexity int, input models.AddResourceTypeInput) int
-		AddResourceTypeBaseType                  func(childComplexity int, input models.AddResourceTypeBaseTypeInput) int
-		AddResourceTypeClass                     func(childComplexity int, input models.AddResourceTypeClassInput) int
 		AddResourceTypeRelationship              func(childComplexity int, input models.AddResourceTypeRelationshipInput) int
 		AddRule                                  func(childComplexity int, input models.AddRuleInput) int
 		AddRuleLimit                             func(childComplexity int, input models.AddRuleLimitInput) int
@@ -1272,8 +1271,6 @@ type ComplexityRoot struct {
 		EditResourceSpecification                func(childComplexity int, input models.EditResourceSpecificationInput) int
 		EditResourceSpecificationRelationship    func(childComplexity int, input models.EditResourceSpecificationRelationshipInput) int
 		EditResourceType                         func(childComplexity int, input models.EditResourceTypeInput) int
-		EditResourceTypeBaseType                 func(childComplexity int, input models.EditResourceTypeBaseTypeInput) int
-		EditResourceTypeClass                    func(childComplexity int, input models.EditResourceTypeClassInput) int
 		EditResourceTypeRelationship             func(childComplexity int, input models.EditResourceTypeRelationshipInput) int
 		EditRule                                 func(childComplexity int, input models.EditRuleInput) int
 		EditRuleLimit                            func(childComplexity int, input models.EditRuleLimitInput) int
@@ -1331,8 +1328,6 @@ type ComplexityRoot struct {
 		RemoveResourceSpecification              func(childComplexity int, id int) int
 		RemoveResourceSpecificationRelationship  func(childComplexity int, id int) int
 		RemoveResourceType                       func(childComplexity int, id int) int
-		RemoveResourceTypeBaseType               func(childComplexity int, id int) int
-		RemoveResourceTypeClass                  func(childComplexity int, id int) int
 		RemoveResourceTypeRelationship           func(childComplexity int, id int) int
 		RemoveRule                               func(childComplexity int, id int) int
 		RemoveRuleLimit                          func(childComplexity int, id int) int
@@ -1591,8 +1586,6 @@ type ComplexityRoot struct {
 		ResourceSRItems                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceSRItemsOrder, filterBy []*models.ResourceSRItemsFilterInput) int
 		ResourceSpecificationRelationships func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceSpecificationRelationshipOrder, filterBy []*models.ResourceSpecificationRelationshipFilterInput) int
 		ResourceSpecifications             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceSpecificationOrder, filterBy []*models.ResourceSpecificationFilterInput) int
-		ResourceTypeBaseTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeBaseTypeOrder, filterBy []*models.ResourceTypeBaseTypeFilterInput) int
-		ResourceTypeClasses                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeClassOrder, filterBy []*models.ResourceTypeClassFilterInput) int
 		ResourceTypeRelationships          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeRelationshipOrder, filterBy []*models.ResourceTypeRelationshipFilterInput) int
 		ResourceTypes                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeOrder, filterBy []*models.ResourceTypeFilterInput) int
 		RuleTypes                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) int
@@ -1741,40 +1734,8 @@ type ComplexityRoot struct {
 	ResourceType struct {
 		ID                   func(childComplexity int) int
 		Name                 func(childComplexity int) int
-		Resourcetypebasetype func(childComplexity int) int
-		Resourcetypeclass    func(childComplexity int) int
-	}
-
-	ResourceTypeBaseType struct {
-		ID   func(childComplexity int) int
-		Name func(childComplexity int) int
-	}
-
-	ResourceTypeBaseTypeConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	ResourceTypeBaseTypeEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
-	}
-
-	ResourceTypeClass struct {
-		ID   func(childComplexity int) int
-		Name func(childComplexity int) int
-	}
-
-	ResourceTypeClassConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	ResourceTypeClassEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
+		ResourceTypeBaseType func(childComplexity int) int
+		ResourceTypeClass    func(childComplexity int) int
 	}
 
 	ResourceTypeConnection struct {
@@ -2674,12 +2635,6 @@ type MutationResolver interface {
 	AddOrganization(ctx context.Context, input models.AddOrganizationInput) (*ent.Organization, error)
 	EditOrganization(ctx context.Context, input models.EditOrganizationInput) (*ent.Organization, error)
 	RemoveOrganization(ctx context.Context, id int) (int, error)
-	AddResourceTypeBaseType(ctx context.Context, input models.AddResourceTypeBaseTypeInput) (*ent.ResourceTypeBaseType, error)
-	EditResourceTypeBaseType(ctx context.Context, input models.EditResourceTypeBaseTypeInput) (*ent.ResourceTypeBaseType, error)
-	RemoveResourceTypeBaseType(ctx context.Context, id int) (int, error)
-	AddResourceTypeClass(ctx context.Context, input models.AddResourceTypeClassInput) (*ent.ResourceTypeClass, error)
-	EditResourceTypeClass(ctx context.Context, input models.EditResourceTypeClassInput) (*ent.ResourceTypeClass, error)
-	RemoveResourceTypeClass(ctx context.Context, id int) (int, error)
 	AddResourceType(ctx context.Context, input models.AddResourceTypeInput) (*ent.ResourceType, error)
 	EditResourceType(ctx context.Context, input models.EditResourceTypeInput) (*ent.ResourceType, error)
 	RemoveResourceType(ctx context.Context, id int) (int, error)
@@ -2813,8 +2768,6 @@ type QueryResolver interface {
 	Formulas(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) (*ent.FormulaConnection, error)
 	Techs(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TechOrder, filterBy []*models.TechFilterInput) (*ent.TechConnection, error)
 	NetworkTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.NetworkTypeOrder, filterBy []*models.NetworkTypeFilterInput) (*ent.NetworkTypeConnection, error)
-	ResourceTypeClasses(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeClassOrder, filterBy []*models.ResourceTypeClassFilterInput) (*ent.ResourceTypeClassConnection, error)
-	ResourceTypeBaseTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeBaseTypeOrder, filterBy []*models.ResourceTypeBaseTypeFilterInput) (*ent.ResourceTypeBaseTypeConnection, error)
 	ResourceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeOrder, filterBy []*models.ResourceTypeFilterInput) (*ent.ResourceTypeConnection, error)
 	ResourceTypeRelationships(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeRelationshipOrder, filterBy []*models.ResourceTypeRelationshipFilterInput) (*ent.ResourceTypeRelationshipConnection, error)
 	ResourceSpecifications(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceSpecificationOrder, filterBy []*models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationConnection, error)
@@ -7661,30 +7614,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddResourceType(childComplexity, args["input"].(models.AddResourceTypeInput)), true
 
-	case "Mutation.addResourceTypeBaseType":
-		if e.complexity.Mutation.AddResourceTypeBaseType == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_addResourceTypeBaseType_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AddResourceTypeBaseType(childComplexity, args["input"].(models.AddResourceTypeBaseTypeInput)), true
-
-	case "Mutation.addResourceTypeClass":
-		if e.complexity.Mutation.AddResourceTypeClass == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_addResourceTypeClass_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AddResourceTypeClass(childComplexity, args["input"].(models.AddResourceTypeClassInput)), true
-
 	case "Mutation.addResourceTypeRelationship":
 		if e.complexity.Mutation.AddResourceTypeRelationship == nil {
 			break
@@ -8645,30 +8574,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditResourceType(childComplexity, args["input"].(models.EditResourceTypeInput)), true
 
-	case "Mutation.editResourceTypeBaseType":
-		if e.complexity.Mutation.EditResourceTypeBaseType == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_editResourceTypeBaseType_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.EditResourceTypeBaseType(childComplexity, args["input"].(models.EditResourceTypeBaseTypeInput)), true
-
-	case "Mutation.editResourceTypeClass":
-		if e.complexity.Mutation.EditResourceTypeClass == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_editResourceTypeClass_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.EditResourceTypeClass(childComplexity, args["input"].(models.EditResourceTypeClassInput)), true
-
 	case "Mutation.editResourceTypeRelationship":
 		if e.complexity.Mutation.EditResourceTypeRelationship == nil {
 			break
@@ -9352,30 +9257,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveResourceType(childComplexity, args["id"].(int)), true
-
-	case "Mutation.removeResourceTypeBaseType":
-		if e.complexity.Mutation.RemoveResourceTypeBaseType == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeResourceTypeBaseType_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveResourceTypeBaseType(childComplexity, args["id"].(int)), true
-
-	case "Mutation.removeResourceTypeClass":
-		if e.complexity.Mutation.RemoveResourceTypeClass == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeResourceTypeClass_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveResourceTypeClass(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeResourceTypeRelationship":
 		if e.complexity.Mutation.RemoveResourceTypeRelationship == nil {
@@ -10998,30 +10879,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ResourceSpecifications(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceSpecificationOrder), args["filterBy"].([]*models.ResourceSpecificationFilterInput)), true
 
-	case "Query.resourceTypeBaseTypes":
-		if e.complexity.Query.ResourceTypeBaseTypes == nil {
-			break
-		}
-
-		args, err := ec.field_Query_resourceTypeBaseTypes_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ResourceTypeBaseTypes(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeBaseTypeOrder), args["filterBy"].([]*models.ResourceTypeBaseTypeFilterInput)), true
-
-	case "Query.resourceTypeClasses":
-		if e.complexity.Query.ResourceTypeClasses == nil {
-			break
-		}
-
-		args, err := ec.field_Query_resourceTypeClasses_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ResourceTypeClasses(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeClassOrder), args["filterBy"].([]*models.ResourceTypeClassFilterInput)), true
-
 	case "Query.resourceTypeRelationships":
 		if e.complexity.Query.ResourceTypeRelationships == nil {
 			break
@@ -11729,116 +11586,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.ResourceType.Name(childComplexity), true
 
 	case "ResourceType.resourceTypeBaseType":
-		if e.complexity.ResourceType.Resourcetypebasetype == nil {
+		if e.complexity.ResourceType.ResourceTypeBaseType == nil {
 			break
 		}
 
-		return e.complexity.ResourceType.Resourcetypebasetype(childComplexity), true
+		return e.complexity.ResourceType.ResourceTypeBaseType(childComplexity), true
 
 	case "ResourceType.resourceTypeClass":
-		if e.complexity.ResourceType.Resourcetypeclass == nil {
+		if e.complexity.ResourceType.ResourceTypeClass == nil {
 			break
 		}
 
-		return e.complexity.ResourceType.Resourcetypeclass(childComplexity), true
-
-	case "ResourceTypeBaseType.id":
-		if e.complexity.ResourceTypeBaseType.ID == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeBaseType.ID(childComplexity), true
-
-	case "ResourceTypeBaseType.name":
-		if e.complexity.ResourceTypeBaseType.Name == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeBaseType.Name(childComplexity), true
-
-	case "ResourceTypeBaseTypeConnection.edges":
-		if e.complexity.ResourceTypeBaseTypeConnection.Edges == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeBaseTypeConnection.Edges(childComplexity), true
-
-	case "ResourceTypeBaseTypeConnection.pageInfo":
-		if e.complexity.ResourceTypeBaseTypeConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeBaseTypeConnection.PageInfo(childComplexity), true
-
-	case "ResourceTypeBaseTypeConnection.totalCount":
-		if e.complexity.ResourceTypeBaseTypeConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeBaseTypeConnection.TotalCount(childComplexity), true
-
-	case "ResourceTypeBaseTypeEdge.cursor":
-		if e.complexity.ResourceTypeBaseTypeEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeBaseTypeEdge.Cursor(childComplexity), true
-
-	case "ResourceTypeBaseTypeEdge.node":
-		if e.complexity.ResourceTypeBaseTypeEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeBaseTypeEdge.Node(childComplexity), true
-
-	case "ResourceTypeClass.id":
-		if e.complexity.ResourceTypeClass.ID == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeClass.ID(childComplexity), true
-
-	case "ResourceTypeClass.name":
-		if e.complexity.ResourceTypeClass.Name == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeClass.Name(childComplexity), true
-
-	case "ResourceTypeClassConnection.edges":
-		if e.complexity.ResourceTypeClassConnection.Edges == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeClassConnection.Edges(childComplexity), true
-
-	case "ResourceTypeClassConnection.pageInfo":
-		if e.complexity.ResourceTypeClassConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeClassConnection.PageInfo(childComplexity), true
-
-	case "ResourceTypeClassConnection.totalCount":
-		if e.complexity.ResourceTypeClassConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeClassConnection.TotalCount(childComplexity), true
-
-	case "ResourceTypeClassEdge.cursor":
-		if e.complexity.ResourceTypeClassEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeClassEdge.Cursor(childComplexity), true
-
-	case "ResourceTypeClassEdge.node":
-		if e.complexity.ResourceTypeClassEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.ResourceTypeClassEdge.Node(childComplexity), true
+		return e.complexity.ResourceType.ResourceTypeClass(childComplexity), true
 
 	case "ResourceTypeConnection.edges":
 		if e.complexity.ResourceTypeConnection.Edges == nil {
@@ -16652,36 +16411,6 @@ input OrganizationFilterInput {
   stringSet: [String!]
 }
 
-type ResourceTypeClass implements Node {
-  id: ID!
-  name: String!
-  
-}
-
-input AddResourceTypeClassInput {  
-  name: String!   
-}
-
-input EditResourceTypeClassInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceTypeClassFilterType {
-  ID
-  NAME
-  
-}
-
-input ResourceTypeClassFilterInput {
-  filterType: ResourceTypeClassFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
 """
 A connection to a list of permissions policies.
 """
@@ -18959,140 +18688,6 @@ type NetworkTypeEdge {
   The network types at the end of the edge.
   """
   node: NetworkType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceTypeClass connections can be ordered.
-"""
-enum ResourceTypeClassOrderField {
-  """
-  Order ResourceTypeClass by name.
-  """
-  NAME
-
-  """
-  Order ResourceTypeClass by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceTypeClass by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceTypeClass connections.
-"""
-input ResourceTypeClassOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceTypeClass by.
-  """
-  field: ResourceTypeClassOrderField
-}
-
-"""
-A connection to a list of ResourceTypeClass.
-"""
-type ResourceTypeClassConnection {
-  """
-  Total ResourceTypeClass of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceTypeClass edges.
-  """
-  edges: [ResourceTypeClassEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceTypeClass edge in a connection.
-"""
-type ResourceTypeClassEdge {
-  """
-  The ResourceTypeClass at the end of the edge.
-  """
-  node: ResourceTypeClass
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceTypeBaseType connections can be ordered.
-"""
-enum ResourceTypeBaseTypeOrderField {
-  """
-  Order ResourceTypeBaseType by name.
-  """
-  NAME
-
-  """
-  Order ResourceTypeBaseType by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceTypeBaseType by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceTypeBaseType connections.
-"""
-input ResourceTypeBaseTypeOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceTypeBaseType by.
-  """
-  field: ResourceTypeBaseTypeOrderField
-}
-
-"""
-A connection to a list of ResourceTypeBaseType.
-"""
-type ResourceTypeBaseTypeConnection {
-  """
-  Total ResourceTypeBaseType of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceTypeBaseType edges.
-  """
-  edges: [ResourceTypeBaseTypeEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceTypeBaseType edge in a connection.
-"""
-type ResourceTypeBaseTypeEdge {
-  """
-  The ResourceTypeBaseType at the end of the edge.
-  """
-  node: ResourceTypeBaseType
   """
   A cursor for use in pagination.
   """
@@ -22120,77 +21715,7 @@ type Query {
     
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
-    
-  """
-  A list of resourceTypeClasses.
-  """
-  
-  resourceTypeClasses(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
 
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeClass.
-    """
-    orderBy: ResourceTypeClassOrder
-
-    
-    #Filtering options for the returned resourceTypeClass.
-    
-    filterBy: [ResourceTypeClassFilterInput!]
-  ): ResourceTypeClassConnection!
-
-  """
-  A list of resourceTypeBaseTypes.
-  """
-  resourceTypeBaseTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeBaseTypes.
-    """
-    orderBy: ResourceTypeBaseTypeOrder
-
-    
-    #Filtering options for the returned resourceTypeBaseTypes.
-    
-    filterBy: [ResourceTypeBaseTypeFilterInput!]
-  ): ResourceTypeBaseTypeConnection!
     """
   A list of resourceTypes.
   """
@@ -22587,12 +22112,6 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
-  addResourceTypeBaseType(input: AddResourceTypeBaseTypeInput!):ResourceTypeBaseType!
-  editResourceTypeBaseType(input: EditResourceTypeBaseTypeInput!): ResourceTypeBaseType!
-  removeResourceTypeBaseType(id: ID!): ID!
-  addResourceTypeClass(input: AddResourceTypeClassInput!):ResourceTypeClass!
-  editResourceTypeClass(input: EditResourceTypeClassInput!): ResourceTypeClass!
-  removeResourceTypeClass(id: ID!): ID!
   addResourceType(input: AddResourceTypeInput!):ResourceType!
   editResourceType(input: EditResourceTypeInput!): ResourceType!
   removeResourceType(id: ID!): ID!
@@ -23645,53 +23164,44 @@ input RecommendationsCategoryFilterInput {
   stringSet: [String!]
 }
 
-type ResourceTypeBaseType implements Node {
-  id: ID!
-  name: String!
-  
+enum ResourceTypeClassKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeClass"
+  ) {
+  LOGICAL_RESOURCE
+	PHYSICAL_RESOURCE
+	VIRTUAL_RESOURCE
 }
 
-input AddResourceTypeBaseTypeInput {  
-  name: String!   
-}
-
-input EditResourceTypeBaseTypeInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceTypeBaseTypeFilterType {
-  ID
-  NAME
-}
-
-input ResourceTypeBaseTypeFilterInput {
-  filterType: ResourceTypeBaseTypeFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
+enum ResourceTypeBaseTypeKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeBaseType"
+  ) {
+  EQUIPMENT
+	SLOT
+	RACK
+	PORT
+	CARD
 }
 
 type ResourceType implements Node {
   id: ID!
   name: String!
-  resourceTypeBaseType: ResourceTypeBaseType
-  resourceTypeClass: ResourceTypeClass
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
 }
 
 input AddResourceTypeInput {  
   name: String!
-  resourceTypeBaseType: ID!
-  resourceTypeClass: ID!
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
 }
 
 input EditResourceTypeInput {
   id: ID!
   name: String!
-  resourceTypeBaseType: ID
-  resourceTypeClass: ID 
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
 }
 
 enum ResourceTypeFilterType {
@@ -23704,6 +23214,8 @@ input ResourceTypeFilterInput {
   filterType: ResourceTypeFilterType!
   operator: FilterOperator!
   stringValue: String
+  typeClassValue: ResourceTypeClassKind
+  typeBaseTypeValue: ResourceTypeBaseTypeKind
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
@@ -25216,36 +24728,6 @@ func (ec *executionContext) field_Mutation_addResourceSpecification_args(ctx con
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_addResourceTypeBaseType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.AddResourceTypeBaseTypeInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddResourceTypeBaseTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceTypeBaseTypeInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_addResourceTypeClass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.AddResourceTypeClassInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddResourceTypeClassInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceTypeClassInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_addResourceTypeRelationship_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -26545,36 +26027,6 @@ func (ec *executionContext) field_Mutation_editResourceSpecification_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_editResourceTypeBaseType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.EditResourceTypeBaseTypeInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNEditResourceTypeBaseTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceTypeBaseTypeInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_editResourceTypeClass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.EditResourceTypeClassInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNEditResourceTypeClassInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceTypeClassInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_editResourceTypeRelationship_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -27479,36 +26931,6 @@ func (ec *executionContext) field_Mutation_removeResourceSpecificationRelationsh
 }
 
 func (ec *executionContext) field_Mutation_removeResourceSpecification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_removeResourceTypeBaseType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_removeResourceTypeClass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -31964,202 +31386,6 @@ func (ec *executionContext) field_Query_resourceSpecifications_args(ctx context.
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
 		arg5, err = ec.unmarshalOResourceSpecificationFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filterBy"] = arg5
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_resourceTypeBaseTypes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *ent.Cursor
-	if tmp, ok := rawArgs["after"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["after"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["first"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["first"] = arg1
-	var arg2 *ent.Cursor
-	if tmp, ok := rawArgs["before"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["before"] = arg2
-	var arg3 *int
-	if tmp, ok := rawArgs["last"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg3 = data
-		} else if tmp == nil {
-			arg3 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["last"] = arg3
-	var arg4 *ent.ResourceTypeBaseTypeOrder
-	if tmp, ok := rawArgs["orderBy"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-		arg4, err = ec.unmarshalOResourceTypeBaseTypeOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeOrder(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["orderBy"] = arg4
-	var arg5 []*models.ResourceTypeBaseTypeFilterInput
-	if tmp, ok := rawArgs["filterBy"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
-		arg5, err = ec.unmarshalOResourceTypeBaseTypeFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeBaseTypeFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filterBy"] = arg5
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_resourceTypeClasses_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *ent.Cursor
-	if tmp, ok := rawArgs["after"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["after"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["first"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["first"] = arg1
-	var arg2 *ent.Cursor
-	if tmp, ok := rawArgs["before"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["before"] = arg2
-	var arg3 *int
-	if tmp, ok := rawArgs["last"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg3 = data
-		} else if tmp == nil {
-			arg3 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["last"] = arg3
-	var arg4 *ent.ResourceTypeClassOrder
-	if tmp, ok := rawArgs["orderBy"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-		arg4, err = ec.unmarshalOResourceTypeClassOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassOrder(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["orderBy"] = arg4
-	var arg5 []*models.ResourceTypeClassFilterInput
-	if tmp, ok := rawArgs["filterBy"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
-		arg5, err = ec.unmarshalOResourceTypeClassFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeClassFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -60173,258 +59399,6 @@ func (ec *executionContext) _Mutation_removeOrganization(ctx context.Context, fi
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_addResourceTypeBaseType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addResourceTypeBaseType_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddResourceTypeBaseType(rctx, args["input"].(models.AddResourceTypeBaseTypeInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeBaseType)
-	fc.Result = res
-	return ec.marshalNResourceTypeBaseType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_editResourceTypeBaseType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_editResourceTypeBaseType_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditResourceTypeBaseType(rctx, args["input"].(models.EditResourceTypeBaseTypeInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeBaseType)
-	fc.Result = res
-	return ec.marshalNResourceTypeBaseType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_removeResourceTypeBaseType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_removeResourceTypeBaseType_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveResourceTypeBaseType(rctx, args["id"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_addResourceTypeClass(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addResourceTypeClass_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddResourceTypeClass(rctx, args["input"].(models.AddResourceTypeClassInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeClass)
-	fc.Result = res
-	return ec.marshalNResourceTypeClass2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClass(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_editResourceTypeClass(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_editResourceTypeClass_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditResourceTypeClass(rctx, args["input"].(models.EditResourceTypeClassInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeClass)
-	fc.Result = res
-	return ec.marshalNResourceTypeClass2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClass(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_removeResourceTypeClass(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_removeResourceTypeClass_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveResourceTypeClass(rctx, args["id"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_addResourceType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -69018,90 +67992,6 @@ func (ec *executionContext) _Query_networkTypes(ctx context.Context, field graph
 	return ec.marshalNNetworkTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐNetworkTypeConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_resourceTypeClasses(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_resourceTypeClasses_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ResourceTypeClasses(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeClassOrder), args["filterBy"].([]*models.ResourceTypeClassFilterInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeClassConnection)
-	fc.Result = res
-	return ec.marshalNResourceTypeClassConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_resourceTypeBaseTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_resourceTypeBaseTypes_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ResourceTypeBaseTypes(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeBaseTypeOrder), args["filterBy"].([]*models.ResourceTypeBaseTypeFilterInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeBaseTypeConnection)
-	fc.Result = res
-	return ec.marshalNResourceTypeBaseTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeConnection(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Query_resourceTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -71764,25 +70654,28 @@ func (ec *executionContext) _ResourceType_resourceTypeBaseType(ctx context.Conte
 		Object:     "ResourceType",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
+		IsMethod:   false,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Resourcetypebasetype(ctx)
+		return obj.ResourceTypeBaseType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.ResourceTypeBaseType)
+	res := resTmp.(resourcetype.ResourceTypeBaseType)
 	fc.Result = res
-	return ec.marshalOResourceTypeBaseType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx, field.Selections, res)
+	return ec.marshalNResourceTypeBaseTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceType_resourceTypeClass(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
@@ -71796,38 +70689,6 @@ func (ec *executionContext) _ResourceType_resourceTypeClass(ctx context.Context,
 		Object:     "ResourceType",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Resourcetypeclass(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeClass)
-	fc.Result = res
-	return ec.marshalOResourceTypeClass2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClass(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeBaseType_id(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeBaseType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeBaseType",
-		Field:      field,
-		Args:       nil,
 		IsMethod:   false,
 		IsResolver: false,
 	}
@@ -71835,7 +70696,7 @@ func (ec *executionContext) _ResourceTypeBaseType_id(ctx context.Context, field 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
+		return obj.ResourceTypeClass, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -71847,458 +70708,9 @@ func (ec *executionContext) _ResourceTypeBaseType_id(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(resourcetype.ResourceTypeClass)
 	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeBaseType_name(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeBaseType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeBaseType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeBaseTypeConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeBaseTypeConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeBaseTypeConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeBaseTypeConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeBaseTypeConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeBaseTypeConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.ResourceTypeBaseTypeEdge)
-	fc.Result = res
-	return ec.marshalNResourceTypeBaseTypeEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeEdgeᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeBaseTypeConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeBaseTypeConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeBaseTypeConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeBaseTypeEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeBaseTypeEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeBaseTypeEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeBaseType)
-	fc.Result = res
-	return ec.marshalOResourceTypeBaseType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeBaseTypeEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeBaseTypeEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeBaseTypeEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.Cursor)
-	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeClass_id(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeClass) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeClass",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeClass_name(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeClass) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeClass",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeClassConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeClassConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeClassConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeClassConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeClassConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeClassConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.ResourceTypeClassEdge)
-	fc.Result = res
-	return ec.marshalNResourceTypeClassEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassEdgeᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeClassConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeClassConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeClassConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeClassEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeClassEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeClassEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceTypeClass)
-	fc.Result = res
-	return ec.marshalOResourceTypeClass2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClass(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ResourceTypeClassEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeClassEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ResourceTypeClassEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.Cursor)
-	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNResourceTypeClassKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceTypeConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeConnection) (ret graphql.Marshaler) {
@@ -88624,46 +87036,6 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipIn
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAddResourceTypeBaseTypeInput(ctx context.Context, obj interface{}) (models.AddResourceTypeBaseTypeInput, error) {
-	var it models.AddResourceTypeBaseTypeInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputAddResourceTypeClassInput(ctx context.Context, obj interface{}) (models.AddResourceTypeClassInput, error) {
-	var it models.AddResourceTypeClassInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputAddResourceTypeInput(ctx context.Context, obj interface{}) (models.AddResourceTypeInput, error) {
 	var it models.AddResourceTypeInput
 	var asMap = obj.(map[string]interface{})
@@ -88682,7 +87054,7 @@ func (ec *executionContext) unmarshalInputAddResourceTypeInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeBaseType"))
-			it.ResourceTypeBaseType, err = ec.unmarshalNID2int(ctx, v)
+			it.ResourceTypeBaseType, err = ec.unmarshalNResourceTypeBaseTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -88690,7 +87062,7 @@ func (ec *executionContext) unmarshalInputAddResourceTypeInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeClass"))
-			it.ResourceTypeClass, err = ec.unmarshalNID2int(ctx, v)
+			it.ResourceTypeClass, err = ec.unmarshalNResourceTypeClassKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -93092,62 +91464,6 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationRelationshipI
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputEditResourceTypeBaseTypeInput(ctx context.Context, obj interface{}) (models.EditResourceTypeBaseTypeInput, error) {
-	var it models.EditResourceTypeBaseTypeInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputEditResourceTypeClassInput(ctx context.Context, obj interface{}) (models.EditResourceTypeClassInput, error) {
-	var it models.EditResourceTypeClassInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputEditResourceTypeInput(ctx context.Context, obj interface{}) (models.EditResourceTypeInput, error) {
 	var it models.EditResourceTypeInput
 	var asMap = obj.(map[string]interface{})
@@ -93174,7 +91490,7 @@ func (ec *executionContext) unmarshalInputEditResourceTypeInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeBaseType"))
-			it.ResourceTypeBaseType, err = ec.unmarshalOID2ᚖint(ctx, v)
+			it.ResourceTypeBaseType, err = ec.unmarshalNResourceTypeBaseTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -93182,7 +91498,7 @@ func (ec *executionContext) unmarshalInputEditResourceTypeInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceTypeClass"))
-			it.ResourceTypeClass, err = ec.unmarshalOID2ᚖint(ctx, v)
+			it.ResourceTypeClass, err = ec.unmarshalNResourceTypeClassKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -97456,190 +95772,6 @@ func (ec *executionContext) unmarshalInputResourceSpecificationRelationshipOrder
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputResourceTypeBaseTypeFilterInput(ctx context.Context, obj interface{}) (models.ResourceTypeBaseTypeFilterInput, error) {
-	var it models.ResourceTypeBaseTypeFilterInput
-	var asMap = obj.(map[string]interface{})
-
-	if _, present := asMap["maxDepth"]; !present {
-		asMap["maxDepth"] = 5
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "filterType":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNResourceTypeBaseTypeFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeBaseTypeFilterType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "operator":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "stringValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
-			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "idSet":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
-			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "maxDepth":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
-			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "stringSet":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
-			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputResourceTypeBaseTypeOrder(ctx context.Context, obj interface{}) (ent.ResourceTypeBaseTypeOrder, error) {
-	var it ent.ResourceTypeBaseTypeOrder
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "direction":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
-			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "field":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
-			it.Field, err = ec.unmarshalOResourceTypeBaseTypeOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeOrderField(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputResourceTypeClassFilterInput(ctx context.Context, obj interface{}) (models.ResourceTypeClassFilterInput, error) {
-	var it models.ResourceTypeClassFilterInput
-	var asMap = obj.(map[string]interface{})
-
-	if _, present := asMap["maxDepth"]; !present {
-		asMap["maxDepth"] = 5
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "filterType":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNResourceTypeClassFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeClassFilterType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "operator":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "stringValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
-			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "idSet":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
-			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "maxDepth":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
-			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "stringSet":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
-			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputResourceTypeClassOrder(ctx context.Context, obj interface{}) (ent.ResourceTypeClassOrder, error) {
-	var it ent.ResourceTypeClassOrder
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "direction":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
-			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "field":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
-			it.Field, err = ec.unmarshalOResourceTypeClassOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassOrderField(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputResourceTypeFilterInput(ctx context.Context, obj interface{}) (models.ResourceTypeFilterInput, error) {
 	var it models.ResourceTypeFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -97671,6 +95803,22 @@ func (ec *executionContext) unmarshalInputResourceTypeFilterInput(ctx context.Co
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
 			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "typeClassValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeClassValue"))
+			it.TypeClassValue, err = ec.unmarshalOResourceTypeClassKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "typeBaseTypeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeBaseTypeValue"))
+			it.TypeBaseTypeValue, err = ec.unmarshalOResourceTypeBaseTypeKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -100720,11 +98868,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Organization(ctx, sel, obj)
-	case *ent.ResourceTypeClass:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._ResourceTypeClass(ctx, sel, obj)
 	case *ent.ProjectType:
 		if obj == nil {
 			return graphql.Null
@@ -100980,11 +99123,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._RecommendationsCategory(ctx, sel, obj)
-	case *ent.ResourceTypeBaseType:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._ResourceTypeBaseType(ctx, sel, obj)
 	case *ent.ResourceType:
 		if obj == nil {
 			return graphql.Null
@@ -108665,36 +106803,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "addResourceTypeBaseType":
-			out.Values[i] = ec._Mutation_addResourceTypeBaseType(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "editResourceTypeBaseType":
-			out.Values[i] = ec._Mutation_editResourceTypeBaseType(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "removeResourceTypeBaseType":
-			out.Values[i] = ec._Mutation_removeResourceTypeBaseType(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "addResourceTypeClass":
-			out.Values[i] = ec._Mutation_addResourceTypeClass(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "editResourceTypeClass":
-			out.Values[i] = ec._Mutation_editResourceTypeClass(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "removeResourceTypeClass":
-			out.Values[i] = ec._Mutation_removeResourceTypeClass(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "addResourceType":
 			out.Values[i] = ec._Mutation_addResourceType(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -110963,34 +109071,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "resourceTypeClasses":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_resourceTypeClasses(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "resourceTypeBaseTypes":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_resourceTypeBaseTypes(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "resourceTypes":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -111924,228 +110004,20 @@ func (ec *executionContext) _ResourceType(ctx context.Context, sel ast.Selection
 		case "id":
 			out.Values[i] = ec._ResourceType_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "name":
 			out.Values[i] = ec._ResourceType_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "resourceTypeBaseType":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._ResourceType_resourceTypeBaseType(ctx, field, obj)
-				return res
-			})
+			out.Values[i] = ec._ResourceType_resourceTypeBaseType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "resourceTypeClass":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._ResourceType_resourceTypeClass(ctx, field, obj)
-				return res
-			})
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var resourceTypeBaseTypeImplementors = []string{"ResourceTypeBaseType", "Node"}
-
-func (ec *executionContext) _ResourceTypeBaseType(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourceTypeBaseType) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, resourceTypeBaseTypeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ResourceTypeBaseType")
-		case "id":
-			out.Values[i] = ec._ResourceTypeBaseType_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._ResourceTypeBaseType_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var resourceTypeBaseTypeConnectionImplementors = []string{"ResourceTypeBaseTypeConnection"}
-
-func (ec *executionContext) _ResourceTypeBaseTypeConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourceTypeBaseTypeConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, resourceTypeBaseTypeConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ResourceTypeBaseTypeConnection")
-		case "totalCount":
-			out.Values[i] = ec._ResourceTypeBaseTypeConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "edges":
-			out.Values[i] = ec._ResourceTypeBaseTypeConnection_edges(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "pageInfo":
-			out.Values[i] = ec._ResourceTypeBaseTypeConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var resourceTypeBaseTypeEdgeImplementors = []string{"ResourceTypeBaseTypeEdge"}
-
-func (ec *executionContext) _ResourceTypeBaseTypeEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourceTypeBaseTypeEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, resourceTypeBaseTypeEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ResourceTypeBaseTypeEdge")
-		case "node":
-			out.Values[i] = ec._ResourceTypeBaseTypeEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._ResourceTypeBaseTypeEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var resourceTypeClassImplementors = []string{"ResourceTypeClass", "Node"}
-
-func (ec *executionContext) _ResourceTypeClass(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourceTypeClass) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, resourceTypeClassImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ResourceTypeClass")
-		case "id":
-			out.Values[i] = ec._ResourceTypeClass_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._ResourceTypeClass_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var resourceTypeClassConnectionImplementors = []string{"ResourceTypeClassConnection"}
-
-func (ec *executionContext) _ResourceTypeClassConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourceTypeClassConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, resourceTypeClassConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ResourceTypeClassConnection")
-		case "totalCount":
-			out.Values[i] = ec._ResourceTypeClassConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "edges":
-			out.Values[i] = ec._ResourceTypeClassConnection_edges(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "pageInfo":
-			out.Values[i] = ec._ResourceTypeClassConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var resourceTypeClassEdgeImplementors = []string{"ResourceTypeClassEdge"}
-
-func (ec *executionContext) _ResourceTypeClassEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourceTypeClassEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, resourceTypeClassEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ResourceTypeClassEdge")
-		case "node":
-			out.Values[i] = ec._ResourceTypeClassEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._ResourceTypeClassEdge_cursor(ctx, field, obj)
+			out.Values[i] = ec._ResourceType_resourceTypeClass(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -116660,16 +114532,6 @@ func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipInput2
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddResourceTypeBaseTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceTypeBaseTypeInput(ctx context.Context, v interface{}) (models.AddResourceTypeBaseTypeInput, error) {
-	res, err := ec.unmarshalInputAddResourceTypeBaseTypeInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNAddResourceTypeClassInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceTypeClassInput(ctx context.Context, v interface{}) (models.AddResourceTypeClassInput, error) {
-	res, err := ec.unmarshalInputAddResourceTypeClassInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNAddResourceTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceTypeInput(ctx context.Context, v interface{}) (models.AddResourceTypeInput, error) {
 	res, err := ec.unmarshalInputAddResourceTypeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -118564,16 +116426,6 @@ func (ec *executionContext) unmarshalNEditResourceSpecificationInput2githubᚗco
 
 func (ec *executionContext) unmarshalNEditResourceSpecificationRelationshipInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceSpecificationRelationshipInput(ctx context.Context, v interface{}) (models.EditResourceSpecificationRelationshipInput, error) {
 	res, err := ec.unmarshalInputEditResourceSpecificationRelationshipInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNEditResourceTypeBaseTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceTypeBaseTypeInput(ctx context.Context, v interface{}) (models.EditResourceTypeBaseTypeInput, error) {
-	res, err := ec.unmarshalInputEditResourceTypeBaseTypeInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNEditResourceTypeClassInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceTypeClassInput(ctx context.Context, v interface{}) (models.EditResourceTypeClassInput, error) {
-	res, err := ec.unmarshalInputEditResourceTypeClassInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -123129,183 +120981,23 @@ func (ec *executionContext) marshalNResourceType2ᚖgithubᚗcomᚋfacebookincub
 	return ec._ResourceType(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResourceTypeBaseType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx context.Context, sel ast.SelectionSet, v ent.ResourceTypeBaseType) graphql.Marshaler {
-	return ec._ResourceTypeBaseType(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNResourceTypeBaseType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeBaseType) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ResourceTypeBaseType(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNResourceTypeBaseTypeConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeConnection(ctx context.Context, sel ast.SelectionSet, v ent.ResourceTypeBaseTypeConnection) graphql.Marshaler {
-	return ec._ResourceTypeBaseTypeConnection(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNResourceTypeBaseTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeBaseTypeConnection) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ResourceTypeBaseTypeConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNResourceTypeBaseTypeEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ResourceTypeBaseTypeEdge) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNResourceTypeBaseTypeEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNResourceTypeBaseTypeEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeEdge(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeBaseTypeEdge) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ResourceTypeBaseTypeEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNResourceTypeBaseTypeFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeBaseTypeFilterInput(ctx context.Context, v interface{}) (*models.ResourceTypeBaseTypeFilterInput, error) {
-	res, err := ec.unmarshalInputResourceTypeBaseTypeFilterInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNResourceTypeBaseTypeFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeBaseTypeFilterType(ctx context.Context, v interface{}) (models.ResourceTypeBaseTypeFilterType, error) {
-	var res models.ResourceTypeBaseTypeFilterType
+func (ec *executionContext) unmarshalNResourceTypeBaseTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx context.Context, v interface{}) (resourcetype.ResourceTypeBaseType, error) {
+	var res resourcetype.ResourceTypeBaseType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNResourceTypeBaseTypeFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeBaseTypeFilterType(ctx context.Context, sel ast.SelectionSet, v models.ResourceTypeBaseTypeFilterType) graphql.Marshaler {
+func (ec *executionContext) marshalNResourceTypeBaseTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx context.Context, sel ast.SelectionSet, v resourcetype.ResourceTypeBaseType) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) marshalNResourceTypeClass2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClass(ctx context.Context, sel ast.SelectionSet, v ent.ResourceTypeClass) graphql.Marshaler {
-	return ec._ResourceTypeClass(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNResourceTypeClass2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClass(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeClass) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ResourceTypeClass(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNResourceTypeClassConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassConnection(ctx context.Context, sel ast.SelectionSet, v ent.ResourceTypeClassConnection) graphql.Marshaler {
-	return ec._ResourceTypeClassConnection(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNResourceTypeClassConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeClassConnection) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ResourceTypeClassConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNResourceTypeClassEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ResourceTypeClassEdge) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNResourceTypeClassEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNResourceTypeClassEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassEdge(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeClassEdge) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ResourceTypeClassEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNResourceTypeClassFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeClassFilterInput(ctx context.Context, v interface{}) (*models.ResourceTypeClassFilterInput, error) {
-	res, err := ec.unmarshalInputResourceTypeClassFilterInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNResourceTypeClassFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeClassFilterType(ctx context.Context, v interface{}) (models.ResourceTypeClassFilterType, error) {
-	var res models.ResourceTypeClassFilterType
+func (ec *executionContext) unmarshalNResourceTypeClassKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx context.Context, v interface{}) (resourcetype.ResourceTypeClass, error) {
+	var res resourcetype.ResourceTypeClass
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNResourceTypeClassFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeClassFilterType(ctx context.Context, sel ast.SelectionSet, v models.ResourceTypeClassFilterType) graphql.Marshaler {
+func (ec *executionContext) marshalNResourceTypeClassKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx context.Context, sel ast.SelectionSet, v resourcetype.ResourceTypeClass) graphql.Marshaler {
 	return v
 }
 
@@ -129714,110 +127406,32 @@ func (ec *executionContext) marshalOResourceType2ᚖgithubᚗcomᚋfacebookincub
 	return ec._ResourceType(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOResourceTypeBaseType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseType(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeBaseType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ResourceTypeBaseType(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOResourceTypeBaseTypeFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeBaseTypeFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ResourceTypeBaseTypeFilterInput, error) {
+func (ec *executionContext) unmarshalOResourceTypeBaseTypeKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx context.Context, v interface{}) (*resourcetype.ResourceTypeBaseType, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.ResourceTypeBaseTypeFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNResourceTypeBaseTypeFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeBaseTypeFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOResourceTypeBaseTypeOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeOrder(ctx context.Context, v interface{}) (*ent.ResourceTypeBaseTypeOrder, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputResourceTypeBaseTypeOrder(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOResourceTypeBaseTypeOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeOrderField(ctx context.Context, v interface{}) (*ent.ResourceTypeBaseTypeOrderField, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(ent.ResourceTypeBaseTypeOrderField)
+	var res = new(resourcetype.ResourceTypeBaseType)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOResourceTypeBaseTypeOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeBaseTypeOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeBaseTypeOrderField) graphql.Marshaler {
+func (ec *executionContext) marshalOResourceTypeBaseTypeKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeBaseType(ctx context.Context, sel ast.SelectionSet, v *resourcetype.ResourceTypeBaseType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) marshalOResourceTypeClass2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClass(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeClass) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ResourceTypeClass(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOResourceTypeClassFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeClassFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ResourceTypeClassFilterInput, error) {
+func (ec *executionContext) unmarshalOResourceTypeClassKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx context.Context, v interface{}) (*resourcetype.ResourceTypeClass, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.ResourceTypeClassFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNResourceTypeClassFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceTypeClassFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOResourceTypeClassOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassOrder(ctx context.Context, v interface{}) (*ent.ResourceTypeClassOrder, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputResourceTypeClassOrder(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOResourceTypeClassOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassOrderField(ctx context.Context, v interface{}) (*ent.ResourceTypeClassOrderField, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(ent.ResourceTypeClassOrderField)
+	var res = new(resourcetype.ResourceTypeClass)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOResourceTypeClassOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeClassOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceTypeClassOrderField) graphql.Marshaler {
+func (ec *executionContext) marshalOResourceTypeClassKind2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx context.Context, sel ast.SelectionSet, v *resourcetype.ResourceTypeClass) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

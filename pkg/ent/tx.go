@@ -154,10 +154,6 @@ type Tx struct {
 	ResourceSpecificationRelationship *ResourceSpecificationRelationshipClient
 	// ResourceType is the client for interacting with the ResourceType builders.
 	ResourceType *ResourceTypeClient
-	// ResourceTypeBaseType is the client for interacting with the ResourceTypeBaseType builders.
-	ResourceTypeBaseType *ResourceTypeBaseTypeClient
-	// ResourceTypeClass is the client for interacting with the ResourceTypeClass builders.
-	ResourceTypeClass *ResourceTypeClassClient
 	// ResourceTypeRelationship is the client for interacting with the ResourceTypeRelationship builders.
 	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
@@ -410,8 +406,6 @@ func (tx *Tx) init() {
 	tx.ResourceSpecification = NewResourceSpecificationClient(tx.config)
 	tx.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(tx.config)
 	tx.ResourceType = NewResourceTypeClient(tx.config)
-	tx.ResourceTypeBaseType = NewResourceTypeBaseTypeClient(tx.config)
-	tx.ResourceTypeClass = NewResourceTypeClassClient(tx.config)
 	tx.ResourceTypeRelationship = NewResourceTypeRelationshipClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)

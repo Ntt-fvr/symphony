@@ -7,6 +7,9 @@
 package resourcetype
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebook/ent"
@@ -23,11 +26,11 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldResourceTypeClass holds the string denoting the resourcetypeclass field in the database.
+	FieldResourceTypeClass = "resource_type_class"
+	// FieldResourceTypeBaseType holds the string denoting the resourcetypebasetype field in the database.
+	FieldResourceTypeBaseType = "resource_type_base_type"
 
-	// EdgeResourcetypeclass holds the string denoting the resourcetypeclass edge name in mutations.
-	EdgeResourcetypeclass = "resourcetypeclass"
-	// EdgeResourcetypebasetype holds the string denoting the resourcetypebasetype edge name in mutations.
-	EdgeResourcetypebasetype = "resourcetypebasetype"
 	// EdgeResourceRelationshipA holds the string denoting the resource_relationship_a edge name in mutations.
 	EdgeResourceRelationshipA = "resource_relationship_a"
 	// EdgeResourceRelationshipB holds the string denoting the resource_relationship_b edge name in mutations.
@@ -39,20 +42,6 @@ const (
 
 	// Table holds the table name of the resourcetype in the database.
 	Table = "resource_types"
-	// ResourcetypeclassTable is the table the holds the resourcetypeclass relation/edge.
-	ResourcetypeclassTable = "resource_types"
-	// ResourcetypeclassInverseTable is the table name for the ResourceTypeClass entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcetypeclass" package.
-	ResourcetypeclassInverseTable = "resource_type_classes"
-	// ResourcetypeclassColumn is the table column denoting the resourcetypeclass relation/edge.
-	ResourcetypeclassColumn = "resource_type_class_resource_type_class"
-	// ResourcetypebasetypeTable is the table the holds the resourcetypebasetype relation/edge.
-	ResourcetypebasetypeTable = "resource_types"
-	// ResourcetypebasetypeInverseTable is the table name for the ResourceTypeBaseType entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcetypebasetype" package.
-	ResourcetypebasetypeInverseTable = "resource_type_base_types"
-	// ResourcetypebasetypeColumn is the table column denoting the resourcetypebasetype relation/edge.
-	ResourcetypebasetypeColumn = "resource_type_base_type_resource_base_type"
 	// ResourceRelationshipATable is the table the holds the resource_relationship_a relation/edge.
 	ResourceRelationshipATable = "resource_type_relationships"
 	// ResourceRelationshipAInverseTable is the table name for the ResourceTypeRelationship entity.
@@ -89,23 +78,14 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the ResourceType type.
-var ForeignKeys = []string{
-	"resource_type_base_type_resource_base_type",
-	"resource_type_class_resource_type_class",
+	FieldResourceTypeClass,
+	FieldResourceTypeBaseType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -130,3 +110,89 @@ var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 )
+
+// ResourceTypeClass defines the type for the ResourceTypeClass enum field.
+type ResourceTypeClass string
+
+// ResourceTypeClass values.
+const (
+	ResourceTypeClassLOGICAL_RESOURCE  ResourceTypeClass = "LOGICAL_RESOURCE"
+	ResourceTypeClassPHYSICAL_RESOURCE ResourceTypeClass = "PHYSICAL_RESOURCE"
+	ResourceTypeClassVIRTUAL_RESOURCE  ResourceTypeClass = "VIRTUAL_RESOURCE"
+)
+
+func (_resourcetypeclass ResourceTypeClass) String() string {
+	return string(_resourcetypeclass)
+}
+
+// ResourceTypeClassValidator is a validator for the "ResourceTypeClass" field enum values. It is called by the builders before save.
+func ResourceTypeClassValidator(_resourcetypeclass ResourceTypeClass) error {
+	switch _resourcetypeclass {
+	case ResourceTypeClassLOGICAL_RESOURCE, ResourceTypeClassPHYSICAL_RESOURCE, ResourceTypeClassVIRTUAL_RESOURCE:
+		return nil
+	default:
+		return fmt.Errorf("resourcetype: invalid enum value for ResourceTypeClass field: %q", _resourcetypeclass)
+	}
+}
+
+// ResourceTypeBaseType defines the type for the ResourceTypeBaseType enum field.
+type ResourceTypeBaseType string
+
+// ResourceTypeBaseType values.
+const (
+	ResourceTypeBaseTypeEQUIPMENT ResourceTypeBaseType = "EQUIPMENT"
+	ResourceTypeBaseTypeSLOT      ResourceTypeBaseType = "SLOT"
+	ResourceTypeBaseTypeRACK      ResourceTypeBaseType = "RACK"
+	ResourceTypeBaseTypePORT      ResourceTypeBaseType = "PORT"
+	ResourceTypeBaseTypeCARD      ResourceTypeBaseType = "CARD"
+)
+
+func (_resourcetypebasetype ResourceTypeBaseType) String() string {
+	return string(_resourcetypebasetype)
+}
+
+// ResourceTypeBaseTypeValidator is a validator for the "ResourceTypeBaseType" field enum values. It is called by the builders before save.
+func ResourceTypeBaseTypeValidator(_resourcetypebasetype ResourceTypeBaseType) error {
+	switch _resourcetypebasetype {
+	case ResourceTypeBaseTypeEQUIPMENT, ResourceTypeBaseTypeSLOT, ResourceTypeBaseTypeRACK, ResourceTypeBaseTypePORT, ResourceTypeBaseTypeCARD:
+		return nil
+	default:
+		return fmt.Errorf("resourcetype: invalid enum value for ResourceTypeBaseType field: %q", _resourcetypebasetype)
+	}
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (_resourcetypeclass ResourceTypeClass) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(_resourcetypeclass.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (_resourcetypeclass *ResourceTypeClass) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*_resourcetypeclass = ResourceTypeClass(str)
+	if err := ResourceTypeClassValidator(*_resourcetypeclass); err != nil {
+		return fmt.Errorf("%s is not a valid ResourceTypeClass", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (_resourcetypebasetype ResourceTypeBaseType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(_resourcetypebasetype.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (_resourcetypebasetype *ResourceTypeBaseType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*_resourcetypebasetype = ResourceTypeBaseType(str)
+	if err := ResourceTypeBaseTypeValidator(*_resourcetypebasetype); err != nil {
+		return fmt.Errorf("%s is not a valid ResourceTypeBaseType", str)
+	}
+	return nil
+}

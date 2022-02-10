@@ -2277,57 +2277,14 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "resource_type_base_type_resource_base_type", Type: field.TypeInt, Nullable: true},
-		{Name: "resource_type_class_resource_type_class", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_type_class", Type: field.TypeEnum, Enums: []string{"LOGICAL_RESOURCE", "PHYSICAL_RESOURCE", "VIRTUAL_RESOURCE"}},
+		{Name: "resource_type_base_type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "SLOT", "RACK", "PORT", "CARD"}},
 	}
 	// ResourceTypesTable holds the schema information for the "resource_types" table.
 	ResourceTypesTable = &schema.Table{
-		Name:       "resource_types",
-		Columns:    ResourceTypesColumns,
-		PrimaryKey: []*schema.Column{ResourceTypesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:  "resource_types_resource_type_base_types_resource_base_type",
-				Columns: []*schema.Column{ResourceTypesColumns[4]},
-
-				RefColumns: []*schema.Column{ResourceTypeBaseTypesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "resource_types_resource_type_classes_resource_type_class",
-				Columns: []*schema.Column{ResourceTypesColumns[5]},
-
-				RefColumns: []*schema.Column{ResourceTypeClassesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// ResourceTypeBaseTypesColumns holds the columns for the "resource_type_base_types" table.
-	ResourceTypeBaseTypesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
-	}
-	// ResourceTypeBaseTypesTable holds the schema information for the "resource_type_base_types" table.
-	ResourceTypeBaseTypesTable = &schema.Table{
-		Name:        "resource_type_base_types",
-		Columns:     ResourceTypeBaseTypesColumns,
-		PrimaryKey:  []*schema.Column{ResourceTypeBaseTypesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
-	}
-	// ResourceTypeClassesColumns holds the columns for the "resource_type_classes" table.
-	ResourceTypeClassesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
-	}
-	// ResourceTypeClassesTable holds the schema information for the "resource_type_classes" table.
-	ResourceTypeClassesTable = &schema.Table{
-		Name:        "resource_type_classes",
-		Columns:     ResourceTypeClassesColumns,
-		PrimaryKey:  []*schema.Column{ResourceTypeClassesColumns[0]},
+		Name:        "resource_types",
+		Columns:     ResourceTypesColumns,
+		PrimaryKey:  []*schema.Column{ResourceTypesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// ResourceTypeRelationshipsColumns holds the columns for the "resource_type_relationships" table.
@@ -3513,8 +3470,6 @@ var (
 		ResourceSpecificationsTable,
 		ResourceSpecificationRelationshipsTable,
 		ResourceTypesTable,
-		ResourceTypeBaseTypesTable,
-		ResourceTypeClassesTable,
 		ResourceTypeRelationshipsTable,
 		RulesTable,
 		RuleLimitsTable,
@@ -3669,8 +3624,6 @@ func init() {
 	ResourceSrItemsTable.ForeignKeys[1].RefTable = ResourceTypesTable
 	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ResourceTypesTable
 	ResourceSpecificationRelationshipsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
-	ResourceTypesTable.ForeignKeys[0].RefTable = ResourceTypeBaseTypesTable
-	ResourceTypesTable.ForeignKeys[1].RefTable = ResourceTypeClassesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[0].RefTable = LocationTypesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[1].RefTable = ResourceTypesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[2].RefTable = ResourceTypesTable

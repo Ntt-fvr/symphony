@@ -91,8 +91,6 @@ func (c *Client) ReadOnly() *Client {
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
 		ResourceSpecificationRelationship: NewResourceSpecificationRelationshipClient(cfg),
 		ResourceType:                      NewResourceTypeClient(cfg),
-		ResourceTypeBaseType:              NewResourceTypeBaseTypeClient(cfg),
-		ResourceTypeClass:                 NewResourceTypeClassClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),

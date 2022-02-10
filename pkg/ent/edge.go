@@ -1736,22 +1736,6 @@ func (rsr *ResourceSpecificationRelationship) ResourceSr(ctx context.Context) ([
 	return result, err
 }
 
-func (rt *ResourceType) Resourcetypeclass(ctx context.Context) (*ResourceTypeClass, error) {
-	result, err := rt.Edges.ResourcetypeclassOrErr()
-	if IsNotLoaded(err) {
-		result, err = rt.QueryResourcetypeclass().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (rt *ResourceType) Resourcetypebasetype(ctx context.Context) (*ResourceTypeBaseType, error) {
-	result, err := rt.Edges.ResourcetypebasetypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = rt.QueryResourcetypebasetype().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
 func (rt *ResourceType) ResourceRelationshipA(ctx context.Context) ([]*ResourceTypeRelationship, error) {
 	result, err := rt.Edges.ResourceRelationshipAOrErr()
 	if IsNotLoaded(err) {
@@ -1780,22 +1764,6 @@ func (rt *ResourceType) ResourcetypeItems(ctx context.Context) ([]*ResourceSRIte
 	result, err := rt.Edges.ResourcetypeItemsOrErr()
 	if IsNotLoaded(err) {
 		result, err = rt.QueryResourcetypeItems().All(ctx)
-	}
-	return result, err
-}
-
-func (rtbt *ResourceTypeBaseType) ResourceBaseType(ctx context.Context) ([]*ResourceType, error) {
-	result, err := rtbt.Edges.ResourceBaseTypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = rtbt.QueryResourceBaseType().All(ctx)
-	}
-	return result, err
-}
-
-func (rtc *ResourceTypeClass) ResourceTypeClass(ctx context.Context) ([]*ResourceType, error) {
-	result, err := rtc.Edges.ResourceTypeClassOrErr()
-	if IsNotLoaded(err) {
-		result, err = rtc.QueryResourceTypeClass().All(ctx)
 	}
 	return result, err
 }

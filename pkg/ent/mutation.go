@@ -83,8 +83,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
@@ -193,8 +191,6 @@ const (
 	TypeResourceSpecification             = "ResourceSpecification"
 	TypeResourceSpecificationRelationship = "ResourceSpecificationRelationship"
 	TypeResourceType                      = "ResourceType"
-	TypeResourceTypeBaseType              = "ResourceTypeBaseType"
-	TypeResourceTypeClass                 = "ResourceTypeClass"
 	TypeResourceTypeRelationship          = "ResourceTypeRelationship"
 	TypeRule                              = "Rule"
 	TypeRuleLimit                         = "RuleLimit"
@@ -55643,11 +55639,9 @@ type ResourceTypeMutation struct {
 	create_time                    *time.Time
 	update_time                    *time.Time
 	name                           *string
+	_ResourceTypeClass             *resourcetype.ResourceTypeClass
+	_ResourceTypeBaseType          *resourcetype.ResourceTypeBaseType
 	clearedFields                  map[string]struct{}
-	resourcetypeclass              *int
-	clearedresourcetypeclass       bool
-	resourcetypebasetype           *int
-	clearedresourcetypebasetype    bool
 	resource_relationship_a        map[int]struct{}
 	removedresource_relationship_a map[int]struct{}
 	clearedresource_relationship_a bool
@@ -55855,82 +55849,78 @@ func (m *ResourceTypeMutation) ResetName() {
 	m.name = nil
 }
 
-// SetResourcetypeclassID sets the resourcetypeclass edge to ResourceTypeClass by id.
-func (m *ResourceTypeMutation) SetResourcetypeclassID(id int) {
-	m.resourcetypeclass = &id
+// SetResourceTypeClass sets the ResourceTypeClass field.
+func (m *ResourceTypeMutation) SetResourceTypeClass(rtc resourcetype.ResourceTypeClass) {
+	m._ResourceTypeClass = &rtc
 }
 
-// ClearResourcetypeclass clears the resourcetypeclass edge to ResourceTypeClass.
-func (m *ResourceTypeMutation) ClearResourcetypeclass() {
-	m.clearedresourcetypeclass = true
-}
-
-// ResourcetypeclassCleared returns if the edge resourcetypeclass was cleared.
-func (m *ResourceTypeMutation) ResourcetypeclassCleared() bool {
-	return m.clearedresourcetypeclass
-}
-
-// ResourcetypeclassID returns the resourcetypeclass id in the mutation.
-func (m *ResourceTypeMutation) ResourcetypeclassID() (id int, exists bool) {
-	if m.resourcetypeclass != nil {
-		return *m.resourcetypeclass, true
+// ResourceTypeClass returns the ResourceTypeClass value in the mutation.
+func (m *ResourceTypeMutation) ResourceTypeClass() (r resourcetype.ResourceTypeClass, exists bool) {
+	v := m._ResourceTypeClass
+	if v == nil {
+		return
 	}
-	return
+	return *v, true
 }
 
-// ResourcetypeclassIDs returns the resourcetypeclass ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// ResourcetypeclassID instead. It exists only for internal usage by the builders.
-func (m *ResourceTypeMutation) ResourcetypeclassIDs() (ids []int) {
-	if id := m.resourcetypeclass; id != nil {
-		ids = append(ids, *id)
+// OldResourceTypeClass returns the old ResourceTypeClass value of the ResourceType.
+// If the ResourceType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceTypeMutation) OldResourceTypeClass(ctx context.Context) (v resourcetype.ResourceTypeClass, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldResourceTypeClass is allowed only on UpdateOne operations")
 	}
-	return
-}
-
-// ResetResourcetypeclass reset all changes of the "resourcetypeclass" edge.
-func (m *ResourceTypeMutation) ResetResourcetypeclass() {
-	m.resourcetypeclass = nil
-	m.clearedresourcetypeclass = false
-}
-
-// SetResourcetypebasetypeID sets the resourcetypebasetype edge to ResourceTypeBaseType by id.
-func (m *ResourceTypeMutation) SetResourcetypebasetypeID(id int) {
-	m.resourcetypebasetype = &id
-}
-
-// ClearResourcetypebasetype clears the resourcetypebasetype edge to ResourceTypeBaseType.
-func (m *ResourceTypeMutation) ClearResourcetypebasetype() {
-	m.clearedresourcetypebasetype = true
-}
-
-// ResourcetypebasetypeCleared returns if the edge resourcetypebasetype was cleared.
-func (m *ResourceTypeMutation) ResourcetypebasetypeCleared() bool {
-	return m.clearedresourcetypebasetype
-}
-
-// ResourcetypebasetypeID returns the resourcetypebasetype id in the mutation.
-func (m *ResourceTypeMutation) ResourcetypebasetypeID() (id int, exists bool) {
-	if m.resourcetypebasetype != nil {
-		return *m.resourcetypebasetype, true
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldResourceTypeClass requires an ID field in the mutation")
 	}
-	return
-}
-
-// ResourcetypebasetypeIDs returns the resourcetypebasetype ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// ResourcetypebasetypeID instead. It exists only for internal usage by the builders.
-func (m *ResourceTypeMutation) ResourcetypebasetypeIDs() (ids []int) {
-	if id := m.resourcetypebasetype; id != nil {
-		ids = append(ids, *id)
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResourceTypeClass: %w", err)
 	}
-	return
+	return oldValue.ResourceTypeClass, nil
 }
 
-// ResetResourcetypebasetype reset all changes of the "resourcetypebasetype" edge.
-func (m *ResourceTypeMutation) ResetResourcetypebasetype() {
-	m.resourcetypebasetype = nil
-	m.clearedresourcetypebasetype = false
+// ResetResourceTypeClass reset all changes of the "ResourceTypeClass" field.
+func (m *ResourceTypeMutation) ResetResourceTypeClass() {
+	m._ResourceTypeClass = nil
+}
+
+// SetResourceTypeBaseType sets the ResourceTypeBaseType field.
+func (m *ResourceTypeMutation) SetResourceTypeBaseType(rtbt resourcetype.ResourceTypeBaseType) {
+	m._ResourceTypeBaseType = &rtbt
+}
+
+// ResourceTypeBaseType returns the ResourceTypeBaseType value in the mutation.
+func (m *ResourceTypeMutation) ResourceTypeBaseType() (r resourcetype.ResourceTypeBaseType, exists bool) {
+	v := m._ResourceTypeBaseType
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResourceTypeBaseType returns the old ResourceTypeBaseType value of the ResourceType.
+// If the ResourceType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceTypeMutation) OldResourceTypeBaseType(ctx context.Context) (v resourcetype.ResourceTypeBaseType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldResourceTypeBaseType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldResourceTypeBaseType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResourceTypeBaseType: %w", err)
+	}
+	return oldValue.ResourceTypeBaseType, nil
+}
+
+// ResetResourceTypeBaseType reset all changes of the "ResourceTypeBaseType" field.
+func (m *ResourceTypeMutation) ResetResourceTypeBaseType() {
+	m._ResourceTypeBaseType = nil
 }
 
 // AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
@@ -56159,7 +56149,7 @@ func (m *ResourceTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ResourceTypeMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, resourcetype.FieldCreateTime)
 	}
@@ -56168,6 +56158,12 @@ func (m *ResourceTypeMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, resourcetype.FieldName)
+	}
+	if m._ResourceTypeClass != nil {
+		fields = append(fields, resourcetype.FieldResourceTypeClass)
+	}
+	if m._ResourceTypeBaseType != nil {
+		fields = append(fields, resourcetype.FieldResourceTypeBaseType)
 	}
 	return fields
 }
@@ -56183,6 +56179,10 @@ func (m *ResourceTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case resourcetype.FieldName:
 		return m.Name()
+	case resourcetype.FieldResourceTypeClass:
+		return m.ResourceTypeClass()
+	case resourcetype.FieldResourceTypeBaseType:
+		return m.ResourceTypeBaseType()
 	}
 	return nil, false
 }
@@ -56198,6 +56198,10 @@ func (m *ResourceTypeMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldUpdateTime(ctx)
 	case resourcetype.FieldName:
 		return m.OldName(ctx)
+	case resourcetype.FieldResourceTypeClass:
+		return m.OldResourceTypeClass(ctx)
+	case resourcetype.FieldResourceTypeBaseType:
+		return m.OldResourceTypeBaseType(ctx)
 	}
 	return nil, fmt.Errorf("unknown ResourceType field %s", name)
 }
@@ -56227,6 +56231,20 @@ func (m *ResourceTypeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case resourcetype.FieldResourceTypeClass:
+		v, ok := value.(resourcetype.ResourceTypeClass)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResourceTypeClass(v)
+		return nil
+	case resourcetype.FieldResourceTypeBaseType:
+		v, ok := value.(resourcetype.ResourceTypeBaseType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResourceTypeBaseType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceType field %s", name)
@@ -56287,6 +56305,12 @@ func (m *ResourceTypeMutation) ResetField(name string) error {
 	case resourcetype.FieldName:
 		m.ResetName()
 		return nil
+	case resourcetype.FieldResourceTypeClass:
+		m.ResetResourceTypeClass()
+		return nil
+	case resourcetype.FieldResourceTypeBaseType:
+		m.ResetResourceTypeBaseType()
+		return nil
 	}
 	return fmt.Errorf("unknown ResourceType field %s", name)
 }
@@ -56294,13 +56318,7 @@ func (m *ResourceTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ResourceTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
-	if m.resourcetypeclass != nil {
-		edges = append(edges, resourcetype.EdgeResourcetypeclass)
-	}
-	if m.resourcetypebasetype != nil {
-		edges = append(edges, resourcetype.EdgeResourcetypebasetype)
-	}
+	edges := make([]string, 0, 4)
 	if m.resource_relationship_a != nil {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipA)
 	}
@@ -56320,14 +56338,6 @@ func (m *ResourceTypeMutation) AddedEdges() []string {
 // the given edge name.
 func (m *ResourceTypeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case resourcetype.EdgeResourcetypeclass:
-		if id := m.resourcetypeclass; id != nil {
-			return []ent.Value{*id}
-		}
-	case resourcetype.EdgeResourcetypebasetype:
-		if id := m.resourcetypebasetype; id != nil {
-			return []ent.Value{*id}
-		}
 	case resourcetype.EdgeResourceRelationshipA:
 		ids := make([]ent.Value, 0, len(m.resource_relationship_a))
 		for id := range m.resource_relationship_a {
@@ -56359,7 +56369,7 @@ func (m *ResourceTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ResourceTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 4)
 	if m.removedresource_relationship_a != nil {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipA)
 	}
@@ -56410,13 +56420,7 @@ func (m *ResourceTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ResourceTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
-	if m.clearedresourcetypeclass {
-		edges = append(edges, resourcetype.EdgeResourcetypeclass)
-	}
-	if m.clearedresourcetypebasetype {
-		edges = append(edges, resourcetype.EdgeResourcetypebasetype)
-	}
+	edges := make([]string, 0, 4)
 	if m.clearedresource_relationship_a {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipA)
 	}
@@ -56436,10 +56440,6 @@ func (m *ResourceTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ResourceTypeMutation) EdgeCleared(name string) bool {
 	switch name {
-	case resourcetype.EdgeResourcetypeclass:
-		return m.clearedresourcetypeclass
-	case resourcetype.EdgeResourcetypebasetype:
-		return m.clearedresourcetypebasetype
 	case resourcetype.EdgeResourceRelationshipA:
 		return m.clearedresource_relationship_a
 	case resourcetype.EdgeResourceRelationshipB:
@@ -56456,12 +56456,6 @@ func (m *ResourceTypeMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *ResourceTypeMutation) ClearEdge(name string) error {
 	switch name {
-	case resourcetype.EdgeResourcetypeclass:
-		m.ClearResourcetypeclass()
-		return nil
-	case resourcetype.EdgeResourcetypebasetype:
-		m.ClearResourcetypebasetype()
-		return nil
 	}
 	return fmt.Errorf("unknown ResourceType unique edge %s", name)
 }
@@ -56471,12 +56465,6 @@ func (m *ResourceTypeMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *ResourceTypeMutation) ResetEdge(name string) error {
 	switch name {
-	case resourcetype.EdgeResourcetypeclass:
-		m.ResetResourcetypeclass()
-		return nil
-	case resourcetype.EdgeResourcetypebasetype:
-		m.ResetResourcetypebasetype()
-		return nil
 	case resourcetype.EdgeResourceRelationshipA:
 		m.ResetResourceRelationshipA()
 		return nil
@@ -56491,998 +56479,6 @@ func (m *ResourceTypeMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceType edge %s", name)
-}
-
-// ResourceTypeBaseTypeMutation represents an operation that mutate the ResourceTypeBaseTypes
-// nodes in the graph.
-type ResourceTypeBaseTypeMutation struct {
-	config
-	op                        Op
-	typ                       string
-	id                        *int
-	create_time               *time.Time
-	update_time               *time.Time
-	name                      *string
-	clearedFields             map[string]struct{}
-	resource_base_type        map[int]struct{}
-	removedresource_base_type map[int]struct{}
-	clearedresource_base_type bool
-	done                      bool
-	oldValue                  func(context.Context) (*ResourceTypeBaseType, error)
-	predicates                []predicate.ResourceTypeBaseType
-}
-
-var _ ent.Mutation = (*ResourceTypeBaseTypeMutation)(nil)
-
-// resourcetypebasetypeOption allows to manage the mutation configuration using functional options.
-type resourcetypebasetypeOption func(*ResourceTypeBaseTypeMutation)
-
-// newResourceTypeBaseTypeMutation creates new mutation for ResourceTypeBaseType.
-func newResourceTypeBaseTypeMutation(c config, op Op, opts ...resourcetypebasetypeOption) *ResourceTypeBaseTypeMutation {
-	m := &ResourceTypeBaseTypeMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeResourceTypeBaseType,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withResourceTypeBaseTypeID sets the id field of the mutation.
-func withResourceTypeBaseTypeID(id int) resourcetypebasetypeOption {
-	return func(m *ResourceTypeBaseTypeMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *ResourceTypeBaseType
-		)
-		m.oldValue = func(ctx context.Context) (*ResourceTypeBaseType, error) {
-			once.Do(func() {
-				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().ResourceTypeBaseType.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withResourceTypeBaseType sets the old ResourceTypeBaseType of the mutation.
-func withResourceTypeBaseType(node *ResourceTypeBaseType) resourcetypebasetypeOption {
-	return func(m *ResourceTypeBaseTypeMutation) {
-		m.oldValue = func(context.Context) (*ResourceTypeBaseType, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ResourceTypeBaseTypeMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m ResourceTypeBaseTypeMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the id value in the mutation. Note that, the id
-// is available only if it was provided to the builder.
-func (m *ResourceTypeBaseTypeMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// SetCreateTime sets the create_time field.
-func (m *ResourceTypeBaseTypeMutation) SetCreateTime(t time.Time) {
-	m.create_time = &t
-}
-
-// CreateTime returns the create_time value in the mutation.
-func (m *ResourceTypeBaseTypeMutation) CreateTime() (r time.Time, exists bool) {
-	v := m.create_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreateTime returns the old create_time value of the ResourceTypeBaseType.
-// If the ResourceTypeBaseType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceTypeBaseTypeMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
-	}
-	return oldValue.CreateTime, nil
-}
-
-// ResetCreateTime reset all changes of the "create_time" field.
-func (m *ResourceTypeBaseTypeMutation) ResetCreateTime() {
-	m.create_time = nil
-}
-
-// SetUpdateTime sets the update_time field.
-func (m *ResourceTypeBaseTypeMutation) SetUpdateTime(t time.Time) {
-	m.update_time = &t
-}
-
-// UpdateTime returns the update_time value in the mutation.
-func (m *ResourceTypeBaseTypeMutation) UpdateTime() (r time.Time, exists bool) {
-	v := m.update_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateTime returns the old update_time value of the ResourceTypeBaseType.
-// If the ResourceTypeBaseType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceTypeBaseTypeMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
-	}
-	return oldValue.UpdateTime, nil
-}
-
-// ResetUpdateTime reset all changes of the "update_time" field.
-func (m *ResourceTypeBaseTypeMutation) ResetUpdateTime() {
-	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *ResourceTypeBaseTypeMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *ResourceTypeBaseTypeMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the ResourceTypeBaseType.
-// If the ResourceTypeBaseType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceTypeBaseTypeMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *ResourceTypeBaseTypeMutation) ResetName() {
-	m.name = nil
-}
-
-// AddResourceBaseTypeIDs adds the resource_base_type edge to ResourceType by ids.
-func (m *ResourceTypeBaseTypeMutation) AddResourceBaseTypeIDs(ids ...int) {
-	if m.resource_base_type == nil {
-		m.resource_base_type = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.resource_base_type[ids[i]] = struct{}{}
-	}
-}
-
-// ClearResourceBaseType clears the resource_base_type edge to ResourceType.
-func (m *ResourceTypeBaseTypeMutation) ClearResourceBaseType() {
-	m.clearedresource_base_type = true
-}
-
-// ResourceBaseTypeCleared returns if the edge resource_base_type was cleared.
-func (m *ResourceTypeBaseTypeMutation) ResourceBaseTypeCleared() bool {
-	return m.clearedresource_base_type
-}
-
-// RemoveResourceBaseTypeIDs removes the resource_base_type edge to ResourceType by ids.
-func (m *ResourceTypeBaseTypeMutation) RemoveResourceBaseTypeIDs(ids ...int) {
-	if m.removedresource_base_type == nil {
-		m.removedresource_base_type = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedresource_base_type[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedResourceBaseType returns the removed ids of resource_base_type.
-func (m *ResourceTypeBaseTypeMutation) RemovedResourceBaseTypeIDs() (ids []int) {
-	for id := range m.removedresource_base_type {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResourceBaseTypeIDs returns the resource_base_type ids in the mutation.
-func (m *ResourceTypeBaseTypeMutation) ResourceBaseTypeIDs() (ids []int) {
-	for id := range m.resource_base_type {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetResourceBaseType reset all changes of the "resource_base_type" edge.
-func (m *ResourceTypeBaseTypeMutation) ResetResourceBaseType() {
-	m.resource_base_type = nil
-	m.clearedresource_base_type = false
-	m.removedresource_base_type = nil
-}
-
-// Op returns the operation name.
-func (m *ResourceTypeBaseTypeMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (ResourceTypeBaseType).
-func (m *ResourceTypeBaseTypeMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during
-// this mutation. Note that, in order to get all numeric
-// fields that were in/decremented, call AddedFields().
-func (m *ResourceTypeBaseTypeMutation) Fields() []string {
-	fields := make([]string, 0, 3)
-	if m.create_time != nil {
-		fields = append(fields, resourcetypebasetype.FieldCreateTime)
-	}
-	if m.update_time != nil {
-		fields = append(fields, resourcetypebasetype.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, resourcetypebasetype.FieldName)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name.
-// The second boolean value indicates that this field was
-// not set, or was not define in the schema.
-func (m *ResourceTypeBaseTypeMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case resourcetypebasetype.FieldCreateTime:
-		return m.CreateTime()
-	case resourcetypebasetype.FieldUpdateTime:
-		return m.UpdateTime()
-	case resourcetypebasetype.FieldName:
-		return m.Name()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database.
-// An error is returned if the mutation operation is not UpdateOne,
-// or the query to the database was failed.
-func (m *ResourceTypeBaseTypeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case resourcetypebasetype.FieldCreateTime:
-		return m.OldCreateTime(ctx)
-	case resourcetypebasetype.FieldUpdateTime:
-		return m.OldUpdateTime(ctx)
-	case resourcetypebasetype.FieldName:
-		return m.OldName(ctx)
-	}
-	return nil, fmt.Errorf("unknown ResourceTypeBaseType field %s", name)
-}
-
-// SetField sets the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ResourceTypeBaseTypeMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case resourcetypebasetype.FieldCreateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreateTime(v)
-		return nil
-	case resourcetypebasetype.FieldUpdateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateTime(v)
-		return nil
-	case resourcetypebasetype.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceTypeBaseType field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented
-// or decremented during this mutation.
-func (m *ResourceTypeBaseTypeMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was in/decremented
-// from a field with the given name. The second value indicates
-// that this field was not set, or was not define in the schema.
-func (m *ResourceTypeBaseTypeMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ResourceTypeBaseTypeMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown ResourceTypeBaseType numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared
-// during this mutation.
-func (m *ResourceTypeBaseTypeMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicates if this field was
-// cleared in this mutation.
-func (m *ResourceTypeBaseTypeMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value for the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *ResourceTypeBaseTypeMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ResourceTypeBaseType nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation regarding the
-// given field name. It returns an error if the field is not
-// defined in the schema.
-func (m *ResourceTypeBaseTypeMutation) ResetField(name string) error {
-	switch name {
-	case resourcetypebasetype.FieldCreateTime:
-		m.ResetCreateTime()
-		return nil
-	case resourcetypebasetype.FieldUpdateTime:
-		m.ResetUpdateTime()
-		return nil
-	case resourcetypebasetype.FieldName:
-		m.ResetName()
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceTypeBaseType field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this
-// mutation.
-func (m *ResourceTypeBaseTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.resource_base_type != nil {
-		edges = append(edges, resourcetypebasetype.EdgeResourceBaseType)
-	}
-	return edges
-}
-
-// AddedIDs returns all ids (to other nodes) that were added for
-// the given edge name.
-func (m *ResourceTypeBaseTypeMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case resourcetypebasetype.EdgeResourceBaseType:
-		ids := make([]ent.Value, 0, len(m.resource_base_type))
-		for id := range m.resource_base_type {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this
-// mutation.
-func (m *ResourceTypeBaseTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.removedresource_base_type != nil {
-		edges = append(edges, resourcetypebasetype.EdgeResourceBaseType)
-	}
-	return edges
-}
-
-// RemovedIDs returns all ids (to other nodes) that were removed for
-// the given edge name.
-func (m *ResourceTypeBaseTypeMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case resourcetypebasetype.EdgeResourceBaseType:
-		ids := make([]ent.Value, 0, len(m.removedresource_base_type))
-		for id := range m.removedresource_base_type {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this
-// mutation.
-func (m *ResourceTypeBaseTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedresource_base_type {
-		edges = append(edges, resourcetypebasetype.EdgeResourceBaseType)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean indicates if this edge was
-// cleared in this mutation.
-func (m *ResourceTypeBaseTypeMutation) EdgeCleared(name string) bool {
-	switch name {
-	case resourcetypebasetype.EdgeResourceBaseType:
-		return m.clearedresource_base_type
-	}
-	return false
-}
-
-// ClearEdge clears the value for the given name. It returns an
-// error if the edge name is not defined in the schema.
-func (m *ResourceTypeBaseTypeMutation) ClearEdge(name string) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown ResourceTypeBaseType unique edge %s", name)
-}
-
-// ResetEdge resets all changes in the mutation regarding the
-// given edge name. It returns an error if the edge is not
-// defined in the schema.
-func (m *ResourceTypeBaseTypeMutation) ResetEdge(name string) error {
-	switch name {
-	case resourcetypebasetype.EdgeResourceBaseType:
-		m.ResetResourceBaseType()
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceTypeBaseType edge %s", name)
-}
-
-// ResourceTypeClassMutation represents an operation that mutate the ResourceTypeClasses
-// nodes in the graph.
-type ResourceTypeClassMutation struct {
-	config
-	op                         Op
-	typ                        string
-	id                         *int
-	create_time                *time.Time
-	update_time                *time.Time
-	name                       *string
-	clearedFields              map[string]struct{}
-	resource_type_class        map[int]struct{}
-	removedresource_type_class map[int]struct{}
-	clearedresource_type_class bool
-	done                       bool
-	oldValue                   func(context.Context) (*ResourceTypeClass, error)
-	predicates                 []predicate.ResourceTypeClass
-}
-
-var _ ent.Mutation = (*ResourceTypeClassMutation)(nil)
-
-// resourcetypeclassOption allows to manage the mutation configuration using functional options.
-type resourcetypeclassOption func(*ResourceTypeClassMutation)
-
-// newResourceTypeClassMutation creates new mutation for ResourceTypeClass.
-func newResourceTypeClassMutation(c config, op Op, opts ...resourcetypeclassOption) *ResourceTypeClassMutation {
-	m := &ResourceTypeClassMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeResourceTypeClass,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withResourceTypeClassID sets the id field of the mutation.
-func withResourceTypeClassID(id int) resourcetypeclassOption {
-	return func(m *ResourceTypeClassMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *ResourceTypeClass
-		)
-		m.oldValue = func(ctx context.Context) (*ResourceTypeClass, error) {
-			once.Do(func() {
-				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().ResourceTypeClass.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withResourceTypeClass sets the old ResourceTypeClass of the mutation.
-func withResourceTypeClass(node *ResourceTypeClass) resourcetypeclassOption {
-	return func(m *ResourceTypeClassMutation) {
-		m.oldValue = func(context.Context) (*ResourceTypeClass, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ResourceTypeClassMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m ResourceTypeClassMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the id value in the mutation. Note that, the id
-// is available only if it was provided to the builder.
-func (m *ResourceTypeClassMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// SetCreateTime sets the create_time field.
-func (m *ResourceTypeClassMutation) SetCreateTime(t time.Time) {
-	m.create_time = &t
-}
-
-// CreateTime returns the create_time value in the mutation.
-func (m *ResourceTypeClassMutation) CreateTime() (r time.Time, exists bool) {
-	v := m.create_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreateTime returns the old create_time value of the ResourceTypeClass.
-// If the ResourceTypeClass object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceTypeClassMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
-	}
-	return oldValue.CreateTime, nil
-}
-
-// ResetCreateTime reset all changes of the "create_time" field.
-func (m *ResourceTypeClassMutation) ResetCreateTime() {
-	m.create_time = nil
-}
-
-// SetUpdateTime sets the update_time field.
-func (m *ResourceTypeClassMutation) SetUpdateTime(t time.Time) {
-	m.update_time = &t
-}
-
-// UpdateTime returns the update_time value in the mutation.
-func (m *ResourceTypeClassMutation) UpdateTime() (r time.Time, exists bool) {
-	v := m.update_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateTime returns the old update_time value of the ResourceTypeClass.
-// If the ResourceTypeClass object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceTypeClassMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
-	}
-	return oldValue.UpdateTime, nil
-}
-
-// ResetUpdateTime reset all changes of the "update_time" field.
-func (m *ResourceTypeClassMutation) ResetUpdateTime() {
-	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *ResourceTypeClassMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *ResourceTypeClassMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the ResourceTypeClass.
-// If the ResourceTypeClass object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ResourceTypeClassMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *ResourceTypeClassMutation) ResetName() {
-	m.name = nil
-}
-
-// AddResourceTypeClasIDs adds the resource_type_class edge to ResourceType by ids.
-func (m *ResourceTypeClassMutation) AddResourceTypeClasIDs(ids ...int) {
-	if m.resource_type_class == nil {
-		m.resource_type_class = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.resource_type_class[ids[i]] = struct{}{}
-	}
-}
-
-// ClearResourceTypeClass clears the resource_type_class edge to ResourceType.
-func (m *ResourceTypeClassMutation) ClearResourceTypeClass() {
-	m.clearedresource_type_class = true
-}
-
-// ResourceTypeClassCleared returns if the edge resource_type_class was cleared.
-func (m *ResourceTypeClassMutation) ResourceTypeClassCleared() bool {
-	return m.clearedresource_type_class
-}
-
-// RemoveResourceTypeClasIDs removes the resource_type_class edge to ResourceType by ids.
-func (m *ResourceTypeClassMutation) RemoveResourceTypeClasIDs(ids ...int) {
-	if m.removedresource_type_class == nil {
-		m.removedresource_type_class = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedresource_type_class[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedResourceTypeClass returns the removed ids of resource_type_class.
-func (m *ResourceTypeClassMutation) RemovedResourceTypeClassIDs() (ids []int) {
-	for id := range m.removedresource_type_class {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResourceTypeClassIDs returns the resource_type_class ids in the mutation.
-func (m *ResourceTypeClassMutation) ResourceTypeClassIDs() (ids []int) {
-	for id := range m.resource_type_class {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetResourceTypeClass reset all changes of the "resource_type_class" edge.
-func (m *ResourceTypeClassMutation) ResetResourceTypeClass() {
-	m.resource_type_class = nil
-	m.clearedresource_type_class = false
-	m.removedresource_type_class = nil
-}
-
-// Op returns the operation name.
-func (m *ResourceTypeClassMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (ResourceTypeClass).
-func (m *ResourceTypeClassMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during
-// this mutation. Note that, in order to get all numeric
-// fields that were in/decremented, call AddedFields().
-func (m *ResourceTypeClassMutation) Fields() []string {
-	fields := make([]string, 0, 3)
-	if m.create_time != nil {
-		fields = append(fields, resourcetypeclass.FieldCreateTime)
-	}
-	if m.update_time != nil {
-		fields = append(fields, resourcetypeclass.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, resourcetypeclass.FieldName)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name.
-// The second boolean value indicates that this field was
-// not set, or was not define in the schema.
-func (m *ResourceTypeClassMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case resourcetypeclass.FieldCreateTime:
-		return m.CreateTime()
-	case resourcetypeclass.FieldUpdateTime:
-		return m.UpdateTime()
-	case resourcetypeclass.FieldName:
-		return m.Name()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database.
-// An error is returned if the mutation operation is not UpdateOne,
-// or the query to the database was failed.
-func (m *ResourceTypeClassMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case resourcetypeclass.FieldCreateTime:
-		return m.OldCreateTime(ctx)
-	case resourcetypeclass.FieldUpdateTime:
-		return m.OldUpdateTime(ctx)
-	case resourcetypeclass.FieldName:
-		return m.OldName(ctx)
-	}
-	return nil, fmt.Errorf("unknown ResourceTypeClass field %s", name)
-}
-
-// SetField sets the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ResourceTypeClassMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case resourcetypeclass.FieldCreateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreateTime(v)
-		return nil
-	case resourcetypeclass.FieldUpdateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateTime(v)
-		return nil
-	case resourcetypeclass.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceTypeClass field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented
-// or decremented during this mutation.
-func (m *ResourceTypeClassMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was in/decremented
-// from a field with the given name. The second value indicates
-// that this field was not set, or was not define in the schema.
-func (m *ResourceTypeClassMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ResourceTypeClassMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown ResourceTypeClass numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared
-// during this mutation.
-func (m *ResourceTypeClassMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicates if this field was
-// cleared in this mutation.
-func (m *ResourceTypeClassMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value for the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *ResourceTypeClassMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ResourceTypeClass nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation regarding the
-// given field name. It returns an error if the field is not
-// defined in the schema.
-func (m *ResourceTypeClassMutation) ResetField(name string) error {
-	switch name {
-	case resourcetypeclass.FieldCreateTime:
-		m.ResetCreateTime()
-		return nil
-	case resourcetypeclass.FieldUpdateTime:
-		m.ResetUpdateTime()
-		return nil
-	case resourcetypeclass.FieldName:
-		m.ResetName()
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceTypeClass field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this
-// mutation.
-func (m *ResourceTypeClassMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.resource_type_class != nil {
-		edges = append(edges, resourcetypeclass.EdgeResourceTypeClass)
-	}
-	return edges
-}
-
-// AddedIDs returns all ids (to other nodes) that were added for
-// the given edge name.
-func (m *ResourceTypeClassMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case resourcetypeclass.EdgeResourceTypeClass:
-		ids := make([]ent.Value, 0, len(m.resource_type_class))
-		for id := range m.resource_type_class {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this
-// mutation.
-func (m *ResourceTypeClassMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.removedresource_type_class != nil {
-		edges = append(edges, resourcetypeclass.EdgeResourceTypeClass)
-	}
-	return edges
-}
-
-// RemovedIDs returns all ids (to other nodes) that were removed for
-// the given edge name.
-func (m *ResourceTypeClassMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case resourcetypeclass.EdgeResourceTypeClass:
-		ids := make([]ent.Value, 0, len(m.removedresource_type_class))
-		for id := range m.removedresource_type_class {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this
-// mutation.
-func (m *ResourceTypeClassMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedresource_type_class {
-		edges = append(edges, resourcetypeclass.EdgeResourceTypeClass)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean indicates if this edge was
-// cleared in this mutation.
-func (m *ResourceTypeClassMutation) EdgeCleared(name string) bool {
-	switch name {
-	case resourcetypeclass.EdgeResourceTypeClass:
-		return m.clearedresource_type_class
-	}
-	return false
-}
-
-// ClearEdge clears the value for the given name. It returns an
-// error if the edge name is not defined in the schema.
-func (m *ResourceTypeClassMutation) ClearEdge(name string) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown ResourceTypeClass unique edge %s", name)
-}
-
-// ResetEdge resets all changes in the mutation regarding the
-// given edge name. It returns an error if the edge is not
-// defined in the schema.
-func (m *ResourceTypeClassMutation) ResetEdge(name string) error {
-	switch name {
-	case resourcetypeclass.EdgeResourceTypeClass:
-		m.ResetResourceTypeClass()
-		return nil
-	}
-	return fmt.Errorf("unknown ResourceTypeClass edge %s", name)
 }
 
 // ResourceTypeRelationshipMutation represents an operation that mutate the ResourceTypeRelationships

@@ -2101,36 +2101,6 @@ input OrganizationFilterInput {
   stringSet: [String!]
 }
 
-type ResourceTypeClass implements Node {
-  id: ID!
-  name: String!
-  
-}
-
-input AddResourceTypeClassInput {  
-  name: String!   
-}
-
-input EditResourceTypeClassInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceTypeClassFilterType {
-  ID
-  NAME
-  
-}
-
-input ResourceTypeClassFilterInput {
-  filterType: ResourceTypeClassFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
 """
 A connection to a list of permissions policies.
 """
@@ -4408,140 +4378,6 @@ type NetworkTypeEdge {
   The network types at the end of the edge.
   """
   node: NetworkType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceTypeClass connections can be ordered.
-"""
-enum ResourceTypeClassOrderField {
-  """
-  Order ResourceTypeClass by name.
-  """
-  NAME
-
-  """
-  Order ResourceTypeClass by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceTypeClass by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceTypeClass connections.
-"""
-input ResourceTypeClassOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceTypeClass by.
-  """
-  field: ResourceTypeClassOrderField
-}
-
-"""
-A connection to a list of ResourceTypeClass.
-"""
-type ResourceTypeClassConnection {
-  """
-  Total ResourceTypeClass of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceTypeClass edges.
-  """
-  edges: [ResourceTypeClassEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceTypeClass edge in a connection.
-"""
-type ResourceTypeClassEdge {
-  """
-  The ResourceTypeClass at the end of the edge.
-  """
-  node: ResourceTypeClass
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceTypeBaseType connections can be ordered.
-"""
-enum ResourceTypeBaseTypeOrderField {
-  """
-  Order ResourceTypeBaseType by name.
-  """
-  NAME
-
-  """
-  Order ResourceTypeBaseType by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceTypeBaseType by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceTypeBaseType connections.
-"""
-input ResourceTypeBaseTypeOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceTypeBaseType by.
-  """
-  field: ResourceTypeBaseTypeOrderField
-}
-
-"""
-A connection to a list of ResourceTypeBaseType.
-"""
-type ResourceTypeBaseTypeConnection {
-  """
-  Total ResourceTypeBaseType of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceTypeBaseType edges.
-  """
-  edges: [ResourceTypeBaseTypeEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceTypeBaseType edge in a connection.
-"""
-type ResourceTypeBaseTypeEdge {
-  """
-  The ResourceTypeBaseType at the end of the edge.
-  """
-  node: ResourceTypeBaseType
   """
   A cursor for use in pagination.
   """
@@ -7569,77 +7405,7 @@ type Query {
     
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
-    
-  """
-  A list of resourceTypeClasses.
-  """
-  
-  resourceTypeClasses(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
 
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeClass.
-    """
-    orderBy: ResourceTypeClassOrder
-
-    
-    #Filtering options for the returned resourceTypeClass.
-    
-    filterBy: [ResourceTypeClassFilterInput!]
-  ): ResourceTypeClassConnection!
-
-  """
-  A list of resourceTypeBaseTypes.
-  """
-  resourceTypeBaseTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeBaseTypes.
-    """
-    orderBy: ResourceTypeBaseTypeOrder
-
-    
-    #Filtering options for the returned resourceTypeBaseTypes.
-    
-    filterBy: [ResourceTypeBaseTypeFilterInput!]
-  ): ResourceTypeBaseTypeConnection!
     """
   A list of resourceTypes.
   """
@@ -8036,12 +7802,6 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
-  addResourceTypeBaseType(input: AddResourceTypeBaseTypeInput!):ResourceTypeBaseType!
-  editResourceTypeBaseType(input: EditResourceTypeBaseTypeInput!): ResourceTypeBaseType!
-  removeResourceTypeBaseType(id: ID!): ID!
-  addResourceTypeClass(input: AddResourceTypeClassInput!):ResourceTypeClass!
-  editResourceTypeClass(input: EditResourceTypeClassInput!): ResourceTypeClass!
-  removeResourceTypeClass(id: ID!): ID!
   addResourceType(input: AddResourceTypeInput!):ResourceType!
   editResourceType(input: EditResourceTypeInput!): ResourceType!
   removeResourceType(id: ID!): ID!
@@ -9094,53 +8854,44 @@ input RecommendationsCategoryFilterInput {
   stringSet: [String!]
 }
 
-type ResourceTypeBaseType implements Node {
-  id: ID!
-  name: String!
-  
+enum ResourceTypeClassKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeClass"
+  ) {
+  LOGICAL_RESOURCE
+	PHYSICAL_RESOURCE
+	VIRTUAL_RESOURCE
 }
 
-input AddResourceTypeBaseTypeInput {  
-  name: String!   
-}
-
-input EditResourceTypeBaseTypeInput {
-  id: ID!
-  name: String!  
-}
-
-enum ResourceTypeBaseTypeFilterType {
-  ID
-  NAME
-}
-
-input ResourceTypeBaseTypeFilterInput {
-  filterType: ResourceTypeBaseTypeFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
+enum ResourceTypeBaseTypeKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeBaseType"
+  ) {
+  EQUIPMENT
+	SLOT
+	RACK
+	PORT
+	CARD
 }
 
 type ResourceType implements Node {
   id: ID!
   name: String!
-  resourceTypeBaseType: ResourceTypeBaseType
-  resourceTypeClass: ResourceTypeClass
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
 }
 
 input AddResourceTypeInput {  
   name: String!
-  resourceTypeBaseType: ID!
-  resourceTypeClass: ID!
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
 }
 
 input EditResourceTypeInput {
   id: ID!
   name: String!
-  resourceTypeBaseType: ID
-  resourceTypeClass: ID 
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
 }
 
 enum ResourceTypeFilterType {
@@ -9153,6 +8904,8 @@ input ResourceTypeFilterInput {
   filterType: ResourceTypeFilterType!
   operator: FilterOperator!
   stringValue: String
+  typeClassValue: ResourceTypeClassKind
+  typeBaseTypeValue: ResourceTypeBaseTypeKind
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]

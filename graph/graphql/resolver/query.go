@@ -637,44 +637,6 @@ func (r queryResolver) NetworkTypes(
 		)
 }
 
-func (r queryResolver) ResourceTypeClasses(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceTypeClassOrder,
-	filterBy []*models.ResourceTypeClassFilterInput,
-) (*ent.ResourceTypeClassConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceTypeClass.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceTypeClassOrder(orderBy),
-			ent.WithResourceTypeClassFilter(
-				func(query *ent.ResourceTypeClassQuery) (*ent.ResourceTypeClassQuery, error) {
-					return resolverutil.ResourceTypeClassFilter(query, filterBy)
-				},
-			),
-		)
-}
-func (r queryResolver) ResourceTypeBaseTypes(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceTypeBaseTypeOrder,
-	filterBy []*models.ResourceTypeBaseTypeFilterInput,
-) (*ent.ResourceTypeBaseTypeConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceTypeBaseType.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceTypeBaseTypeOrder(orderBy),
-			ent.WithResourceTypeBaseTypeFilter(
-				func(query *ent.ResourceTypeBaseTypeQuery) (*ent.ResourceTypeBaseTypeQuery, error) {
-					return resolverutil.ResourceTypeBaseTypeFilter(query, filterBy)
-				},
-			),
-		)
-}
 func (r queryResolver) ResourceTypes(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

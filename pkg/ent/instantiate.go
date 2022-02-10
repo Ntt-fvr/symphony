@@ -421,18 +421,6 @@ func (c *ResourceTypeClient) Instantiate(rt *ResourceType) *ResourceType {
 }
 
 // Instantiate entity configuration.
-func (c *ResourceTypeBaseTypeClient) Instantiate(rtbt *ResourceTypeBaseType) *ResourceTypeBaseType {
-	rtbt.config = c.config
-	return rtbt
-}
-
-// Instantiate entity configuration.
-func (c *ResourceTypeClassClient) Instantiate(rtc *ResourceTypeClass) *ResourceTypeClass {
-	rtc.config = c.config
-	return rtc
-}
-
-// Instantiate entity configuration.
 func (c *ResourceTypeRelationshipClient) Instantiate(rtr *ResourceTypeRelationship) *ResourceTypeRelationship {
 	rtr.config = c.config
 	return rtr

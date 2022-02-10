@@ -217,12 +217,6 @@ type ResourceSpecificationRelationship func(*sql.Selector)
 // ResourceType is the predicate function for resourcetype builders.
 type ResourceType func(*sql.Selector)
 
-// ResourceTypeBaseType is the predicate function for resourcetypebasetype builders.
-type ResourceTypeBaseType func(*sql.Selector)
-
-// ResourceTypeClass is the predicate function for resourcetypeclass builders.
-type ResourceTypeClass func(*sql.Selector)
-
 // ResourceTypeRelationship is the predicate function for resourcetyperelationship builders.
 type ResourceTypeRelationship func(*sql.Selector)
 

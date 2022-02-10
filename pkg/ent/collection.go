@@ -1393,46 +1393,6 @@ func (rt *ResourceTypeQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (rtbt *ResourceTypeBaseTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceTypeBaseTypeQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		rtbt = rtbt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return rtbt
-}
-
-func (rtbt *ResourceTypeBaseTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceTypeBaseTypeQuery {
-	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
-		switch field.Name {
-		case "resourcetype":
-			rtbt = rtbt.WithResourceBaseType(func(query *ResourceTypeQuery) {
-				query.collectField(ctx, field)
-			})
-		}
-	}
-	return rtbt
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (rtc *ResourceTypeClassQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceTypeClassQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		rtc = rtc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return rtc
-}
-
-func (rtc *ResourceTypeClassQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceTypeClassQuery {
-	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
-		switch field.Name {
-		case "resourcetype":
-			rtc = rtc.WithResourceTypeClass(func(query *ResourceTypeQuery) {
-				query.collectField(ctx, field)
-			})
-		}
-	}
-	return rtc
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rtr *ResourceTypeRelationshipQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceTypeRelationshipQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rtr = rtr.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

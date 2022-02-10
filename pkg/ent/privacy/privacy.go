@@ -1824,54 +1824,6 @@ func (f ResourceTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceTypeMutation", m)
 }
 
-// The ResourceTypeBaseTypeQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type ResourceTypeBaseTypeQueryRuleFunc func(context.Context, *ent.ResourceTypeBaseTypeQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f ResourceTypeBaseTypeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.ResourceTypeBaseTypeQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceTypeBaseTypeQuery", q)
-}
-
-// The ResourceTypeBaseTypeMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type ResourceTypeBaseTypeMutationRuleFunc func(context.Context, *ent.ResourceTypeBaseTypeMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f ResourceTypeBaseTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.ResourceTypeBaseTypeMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceTypeBaseTypeMutation", m)
-}
-
-// The ResourceTypeClassQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type ResourceTypeClassQueryRuleFunc func(context.Context, *ent.ResourceTypeClassQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f ResourceTypeClassQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.ResourceTypeClassQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceTypeClassQuery", q)
-}
-
-// The ResourceTypeClassMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type ResourceTypeClassMutationRuleFunc func(context.Context, *ent.ResourceTypeClassMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f ResourceTypeClassMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.ResourceTypeClassMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceTypeClassMutation", m)
-}
-
 // The ResourceTypeRelationshipQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ResourceTypeRelationshipQueryRuleFunc func(context.Context, *ent.ResourceTypeRelationshipQuery) error
