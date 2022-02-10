@@ -874,6 +874,13 @@ type EditOrganizationInput struct {
 	Description string `json:"description"`
 }
 
+type EditParameterCatalogInput struct {
+	ID       *int   `json:"id"`
+	Name     string `json:"name"`
+	Index    int    `json:"index"`
+	Disabled *bool  `json:"disabled"`
+}
+
 type EditPermissionsPolicyInput struct {
 	ID              int                            `json:"id"`
 	Name            *string                        `json:"name"`
@@ -903,6 +910,13 @@ type EditProjectTypeInput struct {
 	Description *string                     `json:"description"`
 	Properties  []*models.PropertyTypeInput `json:"properties"`
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
+}
+
+type EditPropertyCategoryInput struct {
+	ID                 *int   `json:"id"`
+	Name               string `json:"name"`
+	Index              int    `json:"index"`
+	ParameterCatalogID int    `json:"parameterCatalogId"`
 }
 
 type EditRecommendationsCategoryInput struct {
@@ -1316,6 +1330,14 @@ type ProjectFilterInput struct {
 	MaxDepth      *int                      `json:"maxDepth"`
 	StringSet     []string                  `json:"stringSet"`
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
+}
+
+// Model for properties group by property categories
+type PropertiesByCategories struct {
+	ID           *int                `json:"id"`
+	Name         *string             `json:"name"`
+	Properties   []*ent.Property     `json:"properties"`
+	PropertyType []*ent.PropertyType `json:"propertyType"`
 }
 
 type PropertyInput struct {

@@ -29,9 +29,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -249,6 +251,7 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableEditable(input.IsEditable).
 			SetNillableMandatory(input.IsMandatory).
 			SetNillableDeleted(input.IsDeleted).
+			SetNillablePropertyCategoryID(input.PropertyCategoryID).
 			SetNillableListable(input.IsListable)
 		parentSetter(builders[i])
 	}
@@ -3035,6 +3038,12 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 		SetNillableMandatory(input.IsMandatory).
 		SetNillableDeleted(input.IsDeleted).
 		SetNillableListable(input.IsListable)
+
+	if input.PropertyCategoryID != nil {
+		query.SetPropertyCategoryID(*input.PropertyCategoryID)
+	} else {
+		query.ClearPropertyCategory()
+	}
 	switch input.Type {
 	case propertytype.TypeDate,
 		propertytype.TypeEmail,
@@ -3431,6 +3440,143 @@ func (r mutationResolver) MoveEquipmentToLocation(
 func (r mutationResolver) RemoveDocumentCategory(ctx context.Context, id int) (int, error) {
 	if err := r.ClientFrom(ctx).DocumentCategory.DeleteOneID(id).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "removing document category")
+	}
+	return id, nil
+}
+
+func (r mutationResolver) EditPropertyCategories(ctx context.Context, propertyCategories []*models.EditPropertyCategoryInput) ([]*ent.PropertyCategory, error) {
+	var (
+		addBuilders []*ent.PropertyCategoryCreate
+	)
+	for _, pc := range propertyCategories {
+		if pc.ID != nil {
+			_, err := r.UpdatePropertyCategories(ctx, pc)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			builder := r.AddPropertyCategories(ctx, pc)
+			addBuilders = append(addBuilders, builder)
+		}
+	}
+	_, err := r.ClientFrom(ctx).PropertyCategory.CreateBulk(addBuilders...).Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("There's already a saved category with that name. Please choose a different name.")
+		}
+		return nil, err
+	}
+	return r.ClientFrom(ctx).PropertyCategory.Query().All(ctx)
+}
+
+func (r mutationResolver) AddPropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) *ent.PropertyCategoryCreate {
+	propertyCategory := r.ClientFrom(ctx).PropertyCategory.Create().
+		SetName(propertyCategoryInput.Name).
+		SetIndex(propertyCategoryInput.Index).
+		SetParameterCatalogID(propertyCategoryInput.ParameterCatalogID)
+	return propertyCategory
+}
+
+func (r mutationResolver) UpdatePropertyCategories(ctx context.Context, propertyCategoryInput *models.EditPropertyCategoryInput) (*ent.PropertyCategory, error) {
+	pc, err := r.ClientFrom(ctx).PropertyCategory.
+		UpdateOneID(*propertyCategoryInput.ID).
+		SetName(propertyCategoryInput.Name).
+		SetIndex(propertyCategoryInput.Index).
+		SetParameterCatalogID(propertyCategoryInput.ParameterCatalogID).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("There's already a saved category with that name. Please choose a different name.")
+		}
+		return nil, err
+	}
+	return pc, nil
+}
+
+func (r mutationResolver) RemovePropertyCategory(ctx context.Context, id int) (int, error) {
+	client := r.ClientFrom(ctx)
+	count, err := client.PropertyCategory.Query().QueryPropertiesType().Where(propertytype.HasPropertyCategoryWith(propertycategory.ID(id))).Count(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("error querying of properties for ID %d, %w", id, err)
+	}
+	if count > 0 {
+		return count, fmt.Errorf("category property has %d property types associated", count)
+	}
+	if err := client.PropertyCategory.DeleteOneID(id).Exec(ctx); err != nil {
+		return id, fmt.Errorf("removing property category ID %d, %w", id, err)
+	}
+	return id, nil
+}
+
+func (r mutationResolver) EditParametersCatalog(ctx context.Context, parameterCatalogInputs []*models.EditParameterCatalogInput) ([]*ent.ParameterCatalog, error) {
+	var (
+		builders         = make([]*ent.ParameterCatalog, len(parameterCatalogInputs))
+		parameterCatalog *ent.ParameterCatalog
+		err              error
+	)
+	for i, pc := range parameterCatalogInputs {
+		if pc.ID != nil {
+			parameterCatalog, err = r.UpdateParameterCatalog(ctx, pc)
+		} else {
+			parameterCatalog, err = r.AddParametersCatalog(ctx, pc)
+		}
+		if err != nil {
+			return nil, err
+		}
+		builders[i] = parameterCatalog
+	}
+	return builders, nil
+}
+
+func (r mutationResolver) AddParametersCatalog(ctx context.Context, catalogInput *models.EditParameterCatalogInput) (*ent.ParameterCatalog, error) {
+	builder, err := r.ClientFrom(ctx).ParameterCatalog.Create().
+		SetName(catalogInput.Name).
+		SetIndex(catalogInput.Index).
+		SetNillableDisabled(catalogInput.Disabled).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("There's already a saved parameter catalog with that name. Please choose a different name.")
+		}
+		return nil, err
+	}
+	return builder, err
+}
+
+func (r mutationResolver) UpdateParameterCatalog(ctx context.Context, catalogInput *models.EditParameterCatalogInput) (*ent.ParameterCatalog, error) {
+	builder, err := r.ClientFrom(ctx).ParameterCatalog.
+		UpdateOneID(*catalogInput.ID).
+		SetName(catalogInput.Name).
+		SetIndex(catalogInput.Index).
+		SetNillableDisabled(catalogInput.Disabled).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("There's already a saved parameter catalog with that name. Please choose a different name.")
+		}
+		return nil, err
+	}
+	return builder, nil
+}
+
+func (r mutationResolver) RemoveParameterCatalog(ctx context.Context, parameterCatalogEntity enum.ParameterCatalogEntity, id int) (int, error) {
+	client := r.ClientFrom(ctx)
+	var (
+		count int
+	)
+	switch parameterCatalogEntity {
+	case enum.ParameterCatalogEntityPropertyCategory:
+		count = client.ParameterCatalog.Query().QueryPropertyCategories().
+			Where(propertycategory.HasParameterCatalogWith(parametercatalog.ID(id))).
+			CountX(ctx)
+	default:
+		return id, fmt.Errorf("entity type: %s not supported", parameterCatalogEntity)
+	}
+	if count > 0 {
+		return count, fmt.Errorf("parameter catalog ID: %d for entity type %s has %d entities associated", id, parameterCatalogEntity, count)
+	}
+	if err := client.ParameterCatalog.DeleteOneID(id).Exec(ctx); err != nil {
+		return id, fmt.Errorf("removing parameter catalog ID %d, %w", id, err)
 	}
 	return id, nil
 }

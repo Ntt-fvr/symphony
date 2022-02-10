@@ -27,6 +27,7 @@ type Props = $ReadOnly<{|
     onShow: () => void,
     onHide: () => void,
     contextRef: TRefCallbackFor<?HTMLElement>,
+    isVisible?: boolean,
   ) => React.Node,
   popover: React.Node,
   position?: ContextualLayerPosition,
@@ -66,7 +67,7 @@ const BasePopoverTrigger = (
 
   return (
     <>
-      {children(onShow, onHide, refCallback)}
+      {children(onShow, onHide, refCallback, isVisible)}
       {contextRef.current != null ? (
         <BaseContexualLayer
           ref={ref}
