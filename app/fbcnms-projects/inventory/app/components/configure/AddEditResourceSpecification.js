@@ -124,7 +124,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
     (dataForm?.propertyTypes ?? []).filter(Boolean).map(toMutablePropertyType),
   );
-  console.log('--->  ', dataForm);
+
   const nameEdit = useFormInput(dataForm.name);
 
   const namesFilter = filterData?.map(item => item.name);

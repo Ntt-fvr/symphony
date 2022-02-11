@@ -63,6 +63,10 @@ const useStyles = makeStyles(() => ({
       justifyContent: 'center',
     },
   },
+  mapping: {
+    cursor: 'pointer',
+    color: '#8895AD',
+  },
   selectMenu: {
     height: '14px',
   },
@@ -152,21 +156,15 @@ const ExperimentalPropertyTypesTableParameters = ({
                       placeholder="Name"
                       autoComplete="off"
                       className={classes.input}
-                      value={property.name}
-                      onChange={({target}) =>
-                        dispatch({
-                          type: 'UPDATE_PROPERTY_TYPE_NAME',
-                          id: property.id,
-                          name: target.value,
-                        })
-                      }
-                      onBlur={() =>
-                        dispatch({
-                          type: 'UPDATE_PROPERTY_TYPE_NAME',
-                          id: property.id,
-                          name: property.name.trim(),
-                        })
-                      }
+                      value={''}
+                      onChange={({target}) => {}}
+                      // onBlur={() =>
+                      //   dispatch({
+                      //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                      //     id: property.id,
+                      //     name: property.name.trim(),
+                      //   })
+                      // }
                     />
                   </FormField>
                 </TableCell>
@@ -216,19 +214,17 @@ const ExperimentalPropertyTypesTableParameters = ({
                 </TableCell>
                 <TableCell className={classes.checkbox} component="div">
                   <FormAction>
-                    <IconButton aria-label="delete">
-                      <SubjectIcon
-                        color="gray"
-                        onClick={handleModal}
-                        // onClick={() =>
-                        //   dispatch({
-                        //     type: 'REMOVE_PROPERTY_TYPE',
-                        //     id: property.id,
-                        //   })
-                        // }
-                        // disabled={!supportDelete && !isTempId(property.id)}
-                      />
-                    </IconButton>
+                    <SubjectIcon
+                      className={classes.mapping}
+                      onClick={handleModal}
+                      // onClick={() =>
+                      //   dispatch({
+                      //     type: 'REMOVE_PROPERTY_TYPE',
+                      //     id: property.id,
+                      //   })
+                      // }
+                      // disabled={!supportDelete && !isTempId(property.id)}
+                    />
                   </FormAction>
                 </TableCell>
                 {supportMandatory && (
