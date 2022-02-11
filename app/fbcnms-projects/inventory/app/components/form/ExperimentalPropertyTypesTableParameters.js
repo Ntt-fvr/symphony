@@ -278,7 +278,7 @@ const ExperimentalPropertyTypesTableParameters = ({
           <fbt desc="">Add Property</fbt>
         </Button>
       </FormAction>
-      {openModal && <DialogMapping name={'MAPPING'} onClose={handleModal} />}
+      {openModal && <DialogMapping name={'Mapping'} onClose={handleModal} />}
     </div>
   );
 };
