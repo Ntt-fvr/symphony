@@ -70,6 +70,7 @@ export type MultiSelectMenuProps<TValue> = $ReadOnly<{|
   onOptionsFetchRequested?: (searchTerm: string) => void,
   selectedValues: Array<MultiSelectOptionProps<TValue>>,
   size?: 'normal' | 'full',
+  isVisible?: (isVisible: boolean) => void,
 |}>;
 
 type MultiSelectMenuItemsProps<TValue> = $ReadOnly<{|

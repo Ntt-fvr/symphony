@@ -13,10 +13,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
-	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
-
 	"github.com/pkg/errors"
 )
 
@@ -123,6 +121,8 @@ func closeDateFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInp
 		return q.Where(workorder.CloseDateGTE(*filter.TimeValue)), nil
 	case enum.FilterOperatorIsNil:
 		return q.Where(workorder.CloseDateIsNil()), nil
+	case enum.FilterOperatorIsNilOrDateGreaterThan:
+		return q.Where(workorder.Or(workorder.CloseDateIsNil(), workorder.CloseDateGTE(*filter.TimeValue))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
