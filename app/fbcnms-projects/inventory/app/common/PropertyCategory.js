@@ -8,11 +8,14 @@
  * @format
  */
 
-import type {PropertyCategoryNodesQuery, PropertyCategoryNodesQueryVariables} from './__generated__/PropertyCategoryNodesQuery.graphql';
 import type {NamedNode, OptionalNamedNode} from './EntUtils';
-import {graphql, fetchQuery} from 'relay-runtime';
+import type {
+  PropertyCategoryNodesQuery,
+  PropertyCategoryNodesQueryVariables,
+} from './__generated__/PropertyCategoryNodesQuery.graphql';
+
+import {graphql} from './RelayUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import RelayEnvironment from './RelayEnvironment';
 
 export type PropertyCategory = {|
   ...NamedNode,
@@ -23,8 +26,8 @@ export type PropertyCategory = {|
 export const GENERAL_CATEGORY_LABEL = 'GENERAL';
 
 const propertyCategoryNodesQuery = graphql`
-  query PropertyCategoryNodesQuery ($orderBy: PropertyCategoryOrder) {
-    propertyCategories (orderBy: $orderBy) {
+  query PropertyCategoryNodesQuery($orderBy: PropertyCategoryOrder) {
+    propertyCategories(orderBy: $orderBy) {
       edges {
         node {
           id
@@ -37,13 +40,13 @@ const propertyCategoryNodesQuery = graphql`
 
 export type PropertyCategoryNode = $Exact<OptionalNamedNode>;
 
-export function usePropertyCategoryNodes(input: PropertyCategoryNodesQueryVariables): $ReadOnlyArray<PropertyCategoryNode> {
+export function usePropertyCategoryNodes(
+  input: PropertyCategoryNodesQueryVariables,
+): $ReadOnlyArray<PropertyCategoryNode> {
   const response = useLazyLoadQuery<PropertyCategoryNodesQuery>(
     propertyCategoryNodesQuery,
     input,
   );
   const propCategoryData = response.propertyCategories?.edges || [];
-  const propCategory = propCategoryData.map(p => p.node).filter(Boolean);
-  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
-  return propCategory;
+  return propCategoryData.map(p => p.node).filter(Boolean);
 }

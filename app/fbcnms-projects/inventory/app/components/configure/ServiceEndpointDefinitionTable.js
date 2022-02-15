@@ -34,7 +34,7 @@ import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import update from 'immutability-helper';
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
-import {fetchQuery, graphql} from 'react-relay';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 import {generateTempId, isTempId} from '../../common/EntUtils';
 import {removeItem, updateItem} from '@fbcnms/util/arrays';
 import {reorder} from '../draggable/DraggableUtils';
@@ -63,7 +63,7 @@ type EquipmentTypeOption = {
 
 graphql`
   fragment ServiceEndpointDefinitionTable_serviceEndpointDefinitions on ServiceEndpointDefinition
-    @relay(plural: true) {
+  @relay(plural: true) {
     id
     index
     role
@@ -297,7 +297,7 @@ class ServiceEndpointDefinitionTable extends React.Component<Props, State> {
   onEndpointEquipmentTypeChanged = (equipmentID, index) => {
     const {onServiceEndpointDefinitionsChanged} = this.props;
     const equipmentObj = this.state.equipmentTypes.find(
-      obj => obj.id == equipmentID,
+      obj => obj.id === equipmentID,
     );
 
     equipmentObj &&
