@@ -76,7 +76,7 @@ type Props = {|
   onPropertiesChanged: (newProperties: Array<DocumentCategoryType>) => void,
   supportDelete?: boolean,
 |} & WithAlert &
-  WithStyles<typeof styles>;
+    WithStyles<typeof styles>;
 
 class CategoryTypeTable extends React.Component<Props> {
   static contextType = AppContext;
@@ -86,89 +86,90 @@ class CategoryTypeTable extends React.Component<Props> {
     const propertyTypes = this.props.propertyTypes;
     const {supportMandatory = true} = this.props;
     return (
-      <div className={classes.container}>
-        <Table component="div" className={classes.root}>
-          <TableHead component="div">
-            <TableRow component="div">
-              <TableCell size="small" padding="none" component="div" />
-              <TableCell component="div" className={classes.cell}>
-                Name
-              </TableCell>
-              <TableCell component="div" />
-            </TableRow>
-          </TableHead>
-          <DroppableTableBody onDragEnd={this._onDragEnd}>
-            {propertyTypes.map((property, i) =>
-              property.isDeleted ? null : (
-                <DraggableTableRow id={property.id} index={i} key={property.id}>
-                  <TableCell
-                    className={classes.cell}
-                    component="div"
-                    scope="row">
-                    <FormField>
-                      <TextInput
-                        autoFocus={true}
-                        placeholder="Name"
-                        className={classes.nameInput}
-                        value={property.name}
-                        onChange={this._handleNameChange(i)}
-                        onBlur={() => this._handleNameBlur(i)}
-                      />
-                    </FormField>
-                  </TableCell>
+        <div className={classes.container}>
+          <Table component="div" className={classes.root}>
+            <TableHead component="div">
+              <TableRow component="div">
+                <TableCell size="small" padding="none" component="div" />
+                <TableCell component="div" className={classes.cell}>
+                  Name
+                </TableCell>
+                <TableCell component="div" />
+                <TableCell component="div" />
+              </TableRow>
+            </TableHead>
+            <DroppableTableBody onDragEnd={this._onDragEnd}>
+              {propertyTypes.map((property, i) =>
+                  property.isDeleted ? null : (
+                      <DraggableTableRow id={property.id} index={i} key={property.id}>
+                        <TableCell
+                            className={classes.cell}
+                            component="div"
+                            scope="row">
+                          <FormField>
+                            <TextInput
+                                autoFocus={true}
+                                placeholder="Name"
+                                className={classes.nameInput}
+                                value={property.name}
+                                onChange={this._handleNameChange(i)}
+                                onBlur={() => this._handleNameBlur(i)}
+                            />
+                          </FormField>
+                        </TableCell>
 
-                  <TableCell
-                    className={classes.actionsBar}
-                    align="right"
-                    component="div">
-                    <FormAction>
-                      <IconButton
-                        skin="primary"
-                        disabled={
-                          !!property.numberOfDocuments &&
-                          !property.id.includes('@tmp')
-                        }
-                        tooltip={
-                          !!property.numberOfDocuments
-                            ? 'it is already used'
-                            : ''
-                        }
-                        onClick={
-                          !this.props.supportDelete &&
-                          !property.id.includes('@tmp')
-                            ? this._onRemoveCategoryClicked(i, property)
-                            : this._onRemovePropertyClicked(i, property)
-                        }
-                        icon={DeleteIcon}
-                      />
-                    </FormAction>
-                  </TableCell>
-                </DraggableTableRow>
-              ),
-            )}
-          </DroppableTableBody>
-        </Table>
-        <FormAction>
-          <Button
-            variant="text"
-            onClick={this._onAddProperty}
-            leftIcon={PlusIcon}>
-            Add Category
-          </Button>
-        </FormAction>
-      </div>
+                        <TableCell
+                            className={classes.actionsBar}
+                            align="right"
+                            component="div">
+                          <FormAction>
+                            <IconButton
+                                skin="primary"
+                                disabled={
+                                  !!property.numberOfDocuments &&
+                                  !property.id.includes('@tmp')
+                                }
+                                tooltip={
+                                  !!property.numberOfDocuments
+                                      ? 'it is already used'
+                                      : ''
+                                }
+                                onClick={
+                                  !this.props.supportDelete &&
+                                  !property.id.includes('@tmp')
+                                      ? this._onRemoveCategoryClicked(i, property)
+                                      : this._onRemovePropertyClicked(i, property)
+                                }
+                                icon={DeleteIcon}
+                            />
+                          </FormAction>
+                        </TableCell>
+                      </DraggableTableRow>
+                  ),
+              )}
+            </DroppableTableBody>
+          </Table>
+          <FormAction>
+            <Button
+                variant="text"
+                onClick={this._onAddProperty}
+                leftIcon={PlusIcon}>
+              Add Category
+            </Button>
+          </FormAction>
+        </div>
     );
   }
 
   _handleNameChange = index => event => {
     this.props.onPropertiesChanged(
-      updateItem<DocumentCategoryType, 'name'>(
-        this.props.propertyTypes,
-        index,
-        'name',
+        updateItem<DocumentCategoryType, 'name'>(
+            this.props.propertyTypes,
+            index,
+            'name',
 
-        event.target.value,
-      ),
+            event.target.value,
+        ),
     );
   };
 
@@ -180,12 +181,12 @@ class CategoryTypeTable extends React.Component<Props> {
     }
 
     this.props.onPropertiesChanged(
-      updateItem<DocumentCategoryType, 'name'>(
-        this.props.propertyTypes,
-        index,
-        'name',
-        trimmedName,
-      ),
+        updateItem<DocumentCategoryType, 'name'>(
+            this.props.propertyTypes,
+            index,
+            'name',
+            trimmedName,
+        ),
     );
   };
 
@@ -202,56 +203,56 @@ class CategoryTypeTable extends React.Component<Props> {
     return newArray;
   }
   _onRemoveCategoryClicked = (
-    index,
-    property: DocumentCategoryType,
+      index,
+      property: DocumentCategoryType,
   ) => _event => {
     this.props
-      .confirm(`Are you sure you want to delete "${property.name}"?`)
-      .then(confirm => {
-        if (!confirm) {
-          return;
-        }
-        RemoveDocumentCategoryTypeMutation(
-          {id: property.id},
-          {
-            onError: (error: any) => {
-              this.props.alert('Error: ' + error.source?.errors[0]?.message);
-            },
-          },
-          store => {
-            const rootQuery = store.getRoot();
-            const locationTypes = ConnectionHandler.getConnection(
-              rootQuery,
-              'Catalog_locationTypes',
-            );
-            if (locationTypes != null) {
-              ConnectionHandler.deleteNode(locationTypes, property.id);
-            }
-            store.delete(property.id);
-          },
-        );
-        this.props.onPropertiesChanged(
-          removeItem(this.props.propertyTypes, index),
-        );
-      });
+        .confirm(`Are you sure you want to delete "${property.name}"?`)
+        .then(confirm => {
+          if (!confirm) {
+            return;
+          }
+          RemoveDocumentCategoryTypeMutation(
+              {id: property.id},
+              {
+                onError: (error: any) => {
+                  this.props.alert('Error: ' + error.source?.errors[0]?.message);
+                },
+              },
+              store => {
+                const rootQuery = store.getRoot();
+                const locationTypes = ConnectionHandler.getConnection(
+                    rootQuery,
+                    'Catalog_locationTypes',
+                );
+                if (locationTypes != null) {
+                  ConnectionHandler.deleteNode(locationTypes, property.id);
+                }
+                store.delete(property.id);
+              },
+          );
+          this.props.onPropertiesChanged(
+              removeItem(this.props.propertyTypes, index),
+          );
+        });
   };
 
   _onRemovePropertyClicked = (
-    index,
-    property: DocumentCategoryType,
+      index,
+      property: DocumentCategoryType,
   ) => _event => {
     if (property.id?.includes('@tmp')) {
       this.props.onPropertiesChanged(
-        removeItem(this.props.propertyTypes, index),
+          removeItem(this.props.propertyTypes, index),
       );
     } else {
       this.props.onPropertiesChanged(
-        updateItem<DocumentCategoryType, 'isDeleted'>(
-          this.props.propertyTypes,
-          index,
-          'isDeleted',
-          true,
-        ),
+          updateItem<DocumentCategoryType, 'isDeleted'>(
+              this.props.propertyTypes,
+              index,
+              'isDeleted',
+              true,
+          ),
       );
     }
   };
@@ -261,9 +262,9 @@ class CategoryTypeTable extends React.Component<Props> {
       return;
     }
     const items = reorder(
-      this.props.propertyTypes,
-      result.source.index,
-      result.destination.index,
+        this.props.propertyTypes,
+        result.source.index,
+        result.destination.index,
     );
     const newItems = items.map((property, i) => ({...property, index: i}));
     this.props.onPropertiesChanged(newItems);
