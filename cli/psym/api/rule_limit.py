@@ -110,7 +110,7 @@ def edit_rule_limit(
 
 
 
-def remove_rule_limit(client: SymphonyClient, id: str) -> None
+def remove_rule_limit(client: SymphonyClient, id: str) -> None:
     """This function delete Rule Limit.
 
     :param name: Rule Limit name

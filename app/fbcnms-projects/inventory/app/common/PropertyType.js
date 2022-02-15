@@ -38,6 +38,10 @@ export type PropertyType = {|
   isMandatory?: ?boolean,
   isListable?: ?boolean,
   isDeleted?: ?boolean,
+  propertyCategory?: ?{|
+    id: string,
+    name: ?string,
+  |},
 |};
 
 export const getPropertyDefaultValue = (propertyType: PropertyType) => {

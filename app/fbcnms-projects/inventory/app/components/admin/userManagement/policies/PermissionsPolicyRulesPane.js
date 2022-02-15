@@ -14,6 +14,7 @@ import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 import * as React from 'react';
 import Card from '@symphony/design-system/components/Card/Card';
 import PermissionsPolicyInventoryDocumentRulesTab from './PermissionsPolicyInventoryDocumentRulesTab';
+import PermissionsPolicyInventoryPropertiesRulesTab from './PermissionsPolicyInventoryPropertiesRulesTab';
 import PermissionsPolicyInventoryCatalogRulesTab from './PermissionsPolicyInventoryCatalogRulesTab';
 import PermissionsPolicyInventoryDataRulesTab from './PermissionsPolicyInventoryDataRulesTab';
 import PermissionsPolicyWorkforceDataRulesTab from './PermissionsPolicyWorkforceDataRulesTab';
@@ -52,20 +53,20 @@ export default function PermissionsPolicyRulesPane(props: Props) {
   const classes = useStyles();
   const [activeTab, setActiveTab] = useState(0);
   const callOnInventoryChange = useCallback(
-    inventoryRules =>
-      onChange({
-        ...policy,
-        inventoryRules,
-      }),
-    [onChange, policy],
+      inventoryRules =>
+          onChange({
+            ...policy,
+            inventoryRules,
+          }),
+      [onChange, policy],
   );
   const callOnWorkforceChange = useCallback(
-    workforceRules =>
-      onChange({
-        ...policy,
-        workforceRules,
-      }),
-    [onChange, policy],
+      workforceRules =>
+          onChange({
+            ...policy,
+            workforceRules,
+          }),
+      [onChange, policy],
   );
 
   const ruleTypes: Array<ViewTab> = useMemo(() => {
@@ -77,10 +78,10 @@ export default function PermissionsPolicyRulesPane(props: Props) {
               label: `${fbt('Inventory Data', '')}`,
             },
             view: (
-              <PermissionsPolicyInventoryDataRulesTab
-                policy={policy.inventoryRules}
-                onChange={callOnInventoryChange}
-              />
+                <PermissionsPolicyInventoryDataRulesTab
+                    policy={policy.inventoryRules}
+                    onChange={callOnInventoryChange}
+                />
             ),
           },
           {
@@ -88,10 +89,10 @@ export default function PermissionsPolicyRulesPane(props: Props) {
               label: `${fbt('Inventory Catalog', '')}`,
             },
             view: (
-              <PermissionsPolicyInventoryCatalogRulesTab
-                policy={policy.inventoryRules}
-                onChange={callOnInventoryChange}
-              />
+                <PermissionsPolicyInventoryCatalogRulesTab
+                    policy={policy.inventoryRules}
+                    onChange={callOnInventoryChange}
+                />
             ),
           },
           {
@@ -99,10 +100,21 @@ export default function PermissionsPolicyRulesPane(props: Props) {
               label: `${fbt('Documents', '')}`,
             },
             view: (
-              <PermissionsPolicyInventoryDocumentRulesTab
-                policy={policy.inventoryRules}
-                onChange={callOnInventoryChange}
-              />
+                <PermissionsPolicyInventoryDocumentRulesTab
+                    policy={policy.inventoryRules}
+                    onChange={callOnInventoryChange}
+                />
+            ),
+          },
+          {
+            tab: {
+              label: `${fbt('Properties', '')}`,
+            },
+            view: (
+                <PermissionsPolicyInventoryPropertiesRulesTab
+                    policy={policy.inventoryRules}
+                    onChange={callOnInventoryChange}
+                />
             ),
           },
         ];
@@ -113,10 +125,10 @@ export default function PermissionsPolicyRulesPane(props: Props) {
               label: `${fbt('Workforce Data', '')}`,
             },
             view: (
-              <PermissionsPolicyWorkforceDataRulesTab
-                policy={policy.workforceRules}
-                onChange={callOnWorkforceChange}
-              />
+                <PermissionsPolicyWorkforceDataRulesTab
+                    policy={policy.workforceRules}
+                    onChange={callOnWorkforceChange}
+                />
             ),
           },
           {
@@ -124,10 +136,10 @@ export default function PermissionsPolicyRulesPane(props: Props) {
               label: `${fbt('Workforce Templates', '')}`,
             },
             view: (
-              <PermissionsPolicyWorkforceTemplatesRulesTab
-                policy={policy.workforceRules}
-                onChange={callOnWorkforceChange}
-              />
+                <PermissionsPolicyWorkforceTemplatesRulesTab
+                    policy={policy.workforceRules}
+                    onChange={callOnWorkforceChange}
+                />
             ),
           },
         ];
@@ -143,15 +155,15 @@ export default function PermissionsPolicyRulesPane(props: Props) {
   ]);
 
   return (
-    <Card className={className} margins="none">
-      <TabsBar
-        className={classes.tabsContainer}
-        tabs={ruleTypes.map(type => type.tab)}
-        activeTabIndex={activeTab}
-        onChange={setActiveTab}
-        spread={false}
-      />
-      <div className={classes.viewContainer}>{ruleTypes[activeTab].view}</div>
-    </Card>
+      <Card className={className} margins="none">
+        <TabsBar
+            className={classes.tabsContainer}
+            tabs={ruleTypes.map(type => type.tab)}
+            activeTabIndex={activeTab}
+            onChange={setActiveTab}
+            spread={false}
+        />
+        <div className={classes.viewContainer}>{ruleTypes[activeTab].view}</div>
+      </Card>
   );
 }

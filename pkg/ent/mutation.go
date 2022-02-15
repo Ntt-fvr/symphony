@@ -68,12 +68,14 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
@@ -172,11 +174,13 @@ const (
 	TypeLocationType                = "LocationType"
 	TypeNetworkType                 = "NetworkType"
 	TypeOrganization                = "Organization"
+	TypeParameterCatalog            = "ParameterCatalog"
 	TypePermissionsPolicy           = "PermissionsPolicy"
 	TypeProject                     = "Project"
 	TypeProjectTemplate             = "ProjectTemplate"
 	TypeProjectType                 = "ProjectType"
 	TypeProperty                    = "Property"
+	TypePropertyCategory            = "PropertyCategory"
 	TypePropertyType                = "PropertyType"
 	TypeRecommendations             = "Recommendations"
 	TypeRecommendationsCategory     = "RecommendationsCategory"
@@ -42853,6 +42857,648 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Organization edge %s", name)
 }
 
+// ParameterCatalogMutation represents an operation that mutate the ParameterCatalogs
+// nodes in the graph.
+type ParameterCatalogMutation struct {
+	config
+	op                         Op
+	typ                        string
+	id                         *int
+	create_time                *time.Time
+	update_time                *time.Time
+	name                       *string
+	index                      *int
+	addindex                   *int
+	disabled                   *bool
+	clearedFields              map[string]struct{}
+	property_categories        map[int]struct{}
+	removedproperty_categories map[int]struct{}
+	clearedproperty_categories bool
+	done                       bool
+	oldValue                   func(context.Context) (*ParameterCatalog, error)
+	predicates                 []predicate.ParameterCatalog
+}
+
+var _ ent.Mutation = (*ParameterCatalogMutation)(nil)
+
+// parametercatalogOption allows to manage the mutation configuration using functional options.
+type parametercatalogOption func(*ParameterCatalogMutation)
+
+// newParameterCatalogMutation creates new mutation for ParameterCatalog.
+func newParameterCatalogMutation(c config, op Op, opts ...parametercatalogOption) *ParameterCatalogMutation {
+	m := &ParameterCatalogMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeParameterCatalog,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withParameterCatalogID sets the id field of the mutation.
+func withParameterCatalogID(id int) parametercatalogOption {
+	return func(m *ParameterCatalogMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ParameterCatalog
+		)
+		m.oldValue = func(ctx context.Context) (*ParameterCatalog, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ParameterCatalog.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withParameterCatalog sets the old ParameterCatalog of the mutation.
+func withParameterCatalog(node *ParameterCatalog) parametercatalogOption {
+	return func(m *ParameterCatalogMutation) {
+		m.oldValue = func(context.Context) (*ParameterCatalog, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ParameterCatalogMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ParameterCatalogMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ParameterCatalogMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ParameterCatalogMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ParameterCatalogMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ParameterCatalogMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ParameterCatalogMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ParameterCatalogMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ParameterCatalogMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *ParameterCatalogMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *ParameterCatalogMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *ParameterCatalogMutation) ResetName() {
+	m.name = nil
+}
+
+// SetIndex sets the index field.
+func (m *ParameterCatalogMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *ParameterCatalogMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *ParameterCatalogMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
+	}
+}
+
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *ParameterCatalogMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *ParameterCatalogMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+}
+
+// SetDisabled sets the disabled field.
+func (m *ParameterCatalogMutation) SetDisabled(b bool) {
+	m.disabled = &b
+}
+
+// Disabled returns the disabled value in the mutation.
+func (m *ParameterCatalogMutation) Disabled() (r bool, exists bool) {
+	v := m.disabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisabled returns the old disabled value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldDisabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDisabled is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDisabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisabled: %w", err)
+	}
+	return oldValue.Disabled, nil
+}
+
+// ResetDisabled reset all changes of the "disabled" field.
+func (m *ParameterCatalogMutation) ResetDisabled() {
+	m.disabled = nil
+}
+
+// AddPropertyCategoryIDs adds the property_categories edge to PropertyCategory by ids.
+func (m *ParameterCatalogMutation) AddPropertyCategoryIDs(ids ...int) {
+	if m.property_categories == nil {
+		m.property_categories = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.property_categories[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPropertyCategories clears the property_categories edge to PropertyCategory.
+func (m *ParameterCatalogMutation) ClearPropertyCategories() {
+	m.clearedproperty_categories = true
+}
+
+// PropertyCategoriesCleared returns if the edge property_categories was cleared.
+func (m *ParameterCatalogMutation) PropertyCategoriesCleared() bool {
+	return m.clearedproperty_categories
+}
+
+// RemovePropertyCategoryIDs removes the property_categories edge to PropertyCategory by ids.
+func (m *ParameterCatalogMutation) RemovePropertyCategoryIDs(ids ...int) {
+	if m.removedproperty_categories == nil {
+		m.removedproperty_categories = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperty_categories[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertyCategories returns the removed ids of property_categories.
+func (m *ParameterCatalogMutation) RemovedPropertyCategoriesIDs() (ids []int) {
+	for id := range m.removedproperty_categories {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertyCategoriesIDs returns the property_categories ids in the mutation.
+func (m *ParameterCatalogMutation) PropertyCategoriesIDs() (ids []int) {
+	for id := range m.property_categories {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertyCategories reset all changes of the "property_categories" edge.
+func (m *ParameterCatalogMutation) ResetPropertyCategories() {
+	m.property_categories = nil
+	m.clearedproperty_categories = false
+	m.removedproperty_categories = nil
+}
+
+// Op returns the operation name.
+func (m *ParameterCatalogMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (ParameterCatalog).
+func (m *ParameterCatalogMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ParameterCatalogMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, parametercatalog.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, parametercatalog.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, parametercatalog.FieldName)
+	}
+	if m.index != nil {
+		fields = append(fields, parametercatalog.FieldIndex)
+	}
+	if m.disabled != nil {
+		fields = append(fields, parametercatalog.FieldDisabled)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ParameterCatalogMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		return m.CreateTime()
+	case parametercatalog.FieldUpdateTime:
+		return m.UpdateTime()
+	case parametercatalog.FieldName:
+		return m.Name()
+	case parametercatalog.FieldIndex:
+		return m.Index()
+	case parametercatalog.FieldDisabled:
+		return m.Disabled()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ParameterCatalogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case parametercatalog.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case parametercatalog.FieldName:
+		return m.OldName(ctx)
+	case parametercatalog.FieldIndex:
+		return m.OldIndex(ctx)
+	case parametercatalog.FieldDisabled:
+		return m.OldDisabled(ctx)
+	}
+	return nil, fmt.Errorf("unknown ParameterCatalog field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ParameterCatalogMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case parametercatalog.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case parametercatalog.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case parametercatalog.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	case parametercatalog.FieldDisabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisabled(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ParameterCatalogMutation) AddedFields() []string {
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, parametercatalog.FieldIndex)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ParameterCatalogMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case parametercatalog.FieldIndex:
+		return m.AddedIndex()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ParameterCatalogMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case parametercatalog.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ParameterCatalogMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ParameterCatalogMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ParameterCatalogMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ParameterCatalog nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ParameterCatalogMutation) ResetField(name string) error {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case parametercatalog.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case parametercatalog.FieldName:
+		m.ResetName()
+		return nil
+	case parametercatalog.FieldIndex:
+		m.ResetIndex()
+		return nil
+	case parametercatalog.FieldDisabled:
+		m.ResetDisabled()
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ParameterCatalogMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.property_categories != nil {
+		edges = append(edges, parametercatalog.EdgePropertyCategories)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ParameterCatalogMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		ids := make([]ent.Value, 0, len(m.property_categories))
+		for id := range m.property_categories {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ParameterCatalogMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedproperty_categories != nil {
+		edges = append(edges, parametercatalog.EdgePropertyCategories)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ParameterCatalogMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		ids := make([]ent.Value, 0, len(m.removedproperty_categories))
+		for id := range m.removedproperty_categories {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ParameterCatalogMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedproperty_categories {
+		edges = append(edges, parametercatalog.EdgePropertyCategories)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ParameterCatalogMutation) EdgeCleared(name string) bool {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		return m.clearedproperty_categories
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ParameterCatalogMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ParameterCatalog unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ParameterCatalogMutation) ResetEdge(name string) error {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		m.ResetPropertyCategories()
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog edge %s", name)
+}
+
 // PermissionsPolicyMutation represents an operation that mutate the PermissionsPolicies
 // nodes in the graph.
 type PermissionsPolicyMutation struct {
@@ -48344,6 +48990,652 @@ func (m *PropertyMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Property edge %s", name)
 }
 
+// PropertyCategoryMutation represents an operation that mutate the PropertyCategories
+// nodes in the graph.
+type PropertyCategoryMutation struct {
+	config
+	op                       Op
+	typ                      string
+	id                       *int
+	create_time              *time.Time
+	update_time              *time.Time
+	name                     *string
+	index                    *int
+	addindex                 *int
+	clearedFields            map[string]struct{}
+	properties_type          map[int]struct{}
+	removedproperties_type   map[int]struct{}
+	clearedproperties_type   bool
+	parameter_catalog        *int
+	clearedparameter_catalog bool
+	done                     bool
+	oldValue                 func(context.Context) (*PropertyCategory, error)
+	predicates               []predicate.PropertyCategory
+}
+
+var _ ent.Mutation = (*PropertyCategoryMutation)(nil)
+
+// propertycategoryOption allows to manage the mutation configuration using functional options.
+type propertycategoryOption func(*PropertyCategoryMutation)
+
+// newPropertyCategoryMutation creates new mutation for PropertyCategory.
+func newPropertyCategoryMutation(c config, op Op, opts ...propertycategoryOption) *PropertyCategoryMutation {
+	m := &PropertyCategoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePropertyCategory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPropertyCategoryID sets the id field of the mutation.
+func withPropertyCategoryID(id int) propertycategoryOption {
+	return func(m *PropertyCategoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PropertyCategory
+		)
+		m.oldValue = func(ctx context.Context) (*PropertyCategory, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PropertyCategory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPropertyCategory sets the old PropertyCategory of the mutation.
+func withPropertyCategory(node *PropertyCategory) propertycategoryOption {
+	return func(m *PropertyCategoryMutation) {
+		m.oldValue = func(context.Context) (*PropertyCategory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PropertyCategoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PropertyCategoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *PropertyCategoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *PropertyCategoryMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *PropertyCategoryMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *PropertyCategoryMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *PropertyCategoryMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *PropertyCategoryMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *PropertyCategoryMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *PropertyCategoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *PropertyCategoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *PropertyCategoryMutation) ResetName() {
+	m.name = nil
+}
+
+// SetIndex sets the index field.
+func (m *PropertyCategoryMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *PropertyCategoryMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *PropertyCategoryMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
+	}
+}
+
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *PropertyCategoryMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *PropertyCategoryMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+}
+
+// AddPropertiesTypeIDs adds the properties_type edge to PropertyType by ids.
+func (m *PropertyCategoryMutation) AddPropertiesTypeIDs(ids ...int) {
+	if m.properties_type == nil {
+		m.properties_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.properties_type[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPropertiesType clears the properties_type edge to PropertyType.
+func (m *PropertyCategoryMutation) ClearPropertiesType() {
+	m.clearedproperties_type = true
+}
+
+// PropertiesTypeCleared returns if the edge properties_type was cleared.
+func (m *PropertyCategoryMutation) PropertiesTypeCleared() bool {
+	return m.clearedproperties_type
+}
+
+// RemovePropertiesTypeIDs removes the properties_type edge to PropertyType by ids.
+func (m *PropertyCategoryMutation) RemovePropertiesTypeIDs(ids ...int) {
+	if m.removedproperties_type == nil {
+		m.removedproperties_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperties_type[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertiesType returns the removed ids of properties_type.
+func (m *PropertyCategoryMutation) RemovedPropertiesTypeIDs() (ids []int) {
+	for id := range m.removedproperties_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertiesTypeIDs returns the properties_type ids in the mutation.
+func (m *PropertyCategoryMutation) PropertiesTypeIDs() (ids []int) {
+	for id := range m.properties_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertiesType reset all changes of the "properties_type" edge.
+func (m *PropertyCategoryMutation) ResetPropertiesType() {
+	m.properties_type = nil
+	m.clearedproperties_type = false
+	m.removedproperties_type = nil
+}
+
+// SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
+func (m *PropertyCategoryMutation) SetParameterCatalogID(id int) {
+	m.parameter_catalog = &id
+}
+
+// ClearParameterCatalog clears the parameter_catalog edge to ParameterCatalog.
+func (m *PropertyCategoryMutation) ClearParameterCatalog() {
+	m.clearedparameter_catalog = true
+}
+
+// ParameterCatalogCleared returns if the edge parameter_catalog was cleared.
+func (m *PropertyCategoryMutation) ParameterCatalogCleared() bool {
+	return m.clearedparameter_catalog
+}
+
+// ParameterCatalogID returns the parameter_catalog id in the mutation.
+func (m *PropertyCategoryMutation) ParameterCatalogID() (id int, exists bool) {
+	if m.parameter_catalog != nil {
+		return *m.parameter_catalog, true
+	}
+	return
+}
+
+// ParameterCatalogIDs returns the parameter_catalog ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ParameterCatalogID instead. It exists only for internal usage by the builders.
+func (m *PropertyCategoryMutation) ParameterCatalogIDs() (ids []int) {
+	if id := m.parameter_catalog; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParameterCatalog reset all changes of the "parameter_catalog" edge.
+func (m *PropertyCategoryMutation) ResetParameterCatalog() {
+	m.parameter_catalog = nil
+	m.clearedparameter_catalog = false
+}
+
+// Op returns the operation name.
+func (m *PropertyCategoryMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (PropertyCategory).
+func (m *PropertyCategoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *PropertyCategoryMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, propertycategory.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, propertycategory.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, propertycategory.FieldName)
+	}
+	if m.index != nil {
+		fields = append(fields, propertycategory.FieldIndex)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *PropertyCategoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		return m.CreateTime()
+	case propertycategory.FieldUpdateTime:
+		return m.UpdateTime()
+	case propertycategory.FieldName:
+		return m.Name()
+	case propertycategory.FieldIndex:
+		return m.Index()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *PropertyCategoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case propertycategory.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case propertycategory.FieldName:
+		return m.OldName(ctx)
+	case propertycategory.FieldIndex:
+		return m.OldIndex(ctx)
+	}
+	return nil, fmt.Errorf("unknown PropertyCategory field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *PropertyCategoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case propertycategory.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case propertycategory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case propertycategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *PropertyCategoryMutation) AddedFields() []string {
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, propertycategory.FieldIndex)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *PropertyCategoryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case propertycategory.FieldIndex:
+		return m.AddedIndex()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *PropertyCategoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case propertycategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *PropertyCategoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *PropertyCategoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PropertyCategoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown PropertyCategory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *PropertyCategoryMutation) ResetField(name string) error {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case propertycategory.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case propertycategory.FieldName:
+		m.ResetName()
+		return nil
+	case propertycategory.FieldIndex:
+		m.ResetIndex()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *PropertyCategoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.properties_type != nil {
+		edges = append(edges, propertycategory.EdgePropertiesType)
+	}
+	if m.parameter_catalog != nil {
+		edges = append(edges, propertycategory.EdgeParameterCatalog)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *PropertyCategoryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		ids := make([]ent.Value, 0, len(m.properties_type))
+		for id := range m.properties_type {
+			ids = append(ids, id)
+		}
+		return ids
+	case propertycategory.EdgeParameterCatalog:
+		if id := m.parameter_catalog; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *PropertyCategoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedproperties_type != nil {
+		edges = append(edges, propertycategory.EdgePropertiesType)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *PropertyCategoryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		ids := make([]ent.Value, 0, len(m.removedproperties_type))
+		for id := range m.removedproperties_type {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *PropertyCategoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedproperties_type {
+		edges = append(edges, propertycategory.EdgePropertiesType)
+	}
+	if m.clearedparameter_catalog {
+		edges = append(edges, propertycategory.EdgeParameterCatalog)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *PropertyCategoryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		return m.clearedproperties_type
+	case propertycategory.EdgeParameterCatalog:
+		return m.clearedparameter_catalog
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *PropertyCategoryMutation) ClearEdge(name string) error {
+	switch name {
+	case propertycategory.EdgeParameterCatalog:
+		m.ClearParameterCatalog()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *PropertyCategoryMutation) ResetEdge(name string) error {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		m.ResetPropertiesType()
+		return nil
+	case propertycategory.EdgeParameterCatalog:
+		m.ResetParameterCatalog()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory edge %s", name)
+}
+
 // PropertyTypeMutation represents an operation that mutate the PropertyTypes
 // nodes in the graph.
 type PropertyTypeMutation struct {
@@ -48403,6 +49695,8 @@ type PropertyTypeMutation struct {
 	clearedproject_template         bool
 	worker_type                     *int
 	clearedworker_type              bool
+	property_category               *int
+	clearedproperty_category        bool
 	done                            bool
 	oldValue                        func(context.Context) (*PropertyType, error)
 	predicates                      []predicate.PropertyType
@@ -50010,6 +51304,45 @@ func (m *PropertyTypeMutation) ResetWorkerType() {
 	m.clearedworker_type = false
 }
 
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (m *PropertyTypeMutation) SetPropertyCategoryID(id int) {
+	m.property_category = &id
+}
+
+// ClearPropertyCategory clears the property_category edge to PropertyCategory.
+func (m *PropertyTypeMutation) ClearPropertyCategory() {
+	m.clearedproperty_category = true
+}
+
+// PropertyCategoryCleared returns if the edge property_category was cleared.
+func (m *PropertyTypeMutation) PropertyCategoryCleared() bool {
+	return m.clearedproperty_category
+}
+
+// PropertyCategoryID returns the property_category id in the mutation.
+func (m *PropertyTypeMutation) PropertyCategoryID() (id int, exists bool) {
+	if m.property_category != nil {
+		return *m.property_category, true
+	}
+	return
+}
+
+// PropertyCategoryIDs returns the property_category ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// PropertyCategoryID instead. It exists only for internal usage by the builders.
+func (m *PropertyTypeMutation) PropertyCategoryIDs() (ids []int) {
+	if id := m.property_category; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPropertyCategory reset all changes of the "property_category" edge.
+func (m *PropertyTypeMutation) ResetPropertyCategory() {
+	m.property_category = nil
+	m.clearedproperty_category = false
+}
+
 // Op returns the operation name.
 func (m *PropertyTypeMutation) Op() Op {
 	return m.op
@@ -50627,7 +51960,7 @@ func (m *PropertyTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PropertyTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 11)
+	edges := make([]string, 0, 12)
 	if m.properties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -50660,6 +51993,9 @@ func (m *PropertyTypeMutation) AddedEdges() []string {
 	}
 	if m.worker_type != nil {
 		edges = append(edges, propertytype.EdgeWorkerType)
+	}
+	if m.property_category != nil {
+		edges = append(edges, propertytype.EdgePropertyCategory)
 	}
 	return edges
 }
@@ -50714,6 +52050,10 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 		if id := m.worker_type; id != nil {
 			return []ent.Value{*id}
 		}
+	case propertytype.EdgePropertyCategory:
+		if id := m.property_category; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -50721,7 +52061,7 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PropertyTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 11)
+	edges := make([]string, 0, 12)
 	if m.removedproperties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -50745,7 +52085,7 @@ func (m *PropertyTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PropertyTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 11)
+	edges := make([]string, 0, 12)
 	if m.clearedproperties {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -50779,6 +52119,9 @@ func (m *PropertyTypeMutation) ClearedEdges() []string {
 	if m.clearedworker_type {
 		edges = append(edges, propertytype.EdgeWorkerType)
 	}
+	if m.clearedproperty_category {
+		edges = append(edges, propertytype.EdgePropertyCategory)
+	}
 	return edges
 }
 
@@ -50808,6 +52151,8 @@ func (m *PropertyTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedproject_template
 	case propertytype.EdgeWorkerType:
 		return m.clearedworker_type
+	case propertytype.EdgePropertyCategory:
+		return m.clearedproperty_category
 	}
 	return false
 }
@@ -50845,6 +52190,9 @@ func (m *PropertyTypeMutation) ClearEdge(name string) error {
 		return nil
 	case propertytype.EdgeWorkerType:
 		m.ClearWorkerType()
+		return nil
+	case propertytype.EdgePropertyCategory:
+		m.ClearPropertyCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType unique edge %s", name)
@@ -50887,6 +52235,9 @@ func (m *PropertyTypeMutation) ResetEdge(name string) error {
 		return nil
 	case propertytype.EdgeWorkerType:
 		m.ResetWorkerType()
+		return nil
+	case propertytype.EdgePropertyCategory:
+		m.ResetPropertyCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType edge %s", name)

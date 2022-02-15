@@ -259,7 +259,7 @@ const EditRuleItemForm = (props: Props) => {
   const typeOfRule = useFormInput(rule.ruleType.id);
 
   const [slotStartDate, setSlotStartDate] = useState(
-    moment(rule.startDateTime),
+      moment(rule.startDateTime),
   );
   const [slotEndDate, setSlotEndDate] = useState(moment(rule.endDateTime));
 
@@ -280,15 +280,15 @@ const EditRuleItemForm = (props: Props) => {
   ];
   const inputFilter = () => {
     return (
-      namesRules?.filter(
-        item => item === nameRule.value.trim() && item !== rule.name.trim(),
-      ) || []
+        namesRules?.filter(
+            item => item === nameRule.value.trim() && item !== rule.name.trim(),
+        ) || []
     );
   };
   const handleDisable = useDisabledButtonEdit(
-    dataInputsObject,
-    11,
-    inputFilter,
+      dataInputsObject,
+      11,
+      inputFilter,
   );
 
   const validationName = useValidationEdit(inputFilter, 'Rule');
@@ -341,355 +341,355 @@ const EditRuleItemForm = (props: Props) => {
   };
 
   return (
-    <div className={classes.root}>
-      <Grid container>
-        <Grid
-          className={classes.header}
-          container
-          direction="row"
-          justifycontent="flex-end"
-          alignItems="center">
-          <Grid item xs>
-            <ConfigureTitleSubItem
-              title={fbt('Threshold Catalog/', 'Threshold Catalog')}
-              tag={` ${threshold.name}`}
-            />
-          </Grid>
-          <Grid style={{marginRight: '1rem'}}>
-            <IconButton
-              onClick={() => {
-                handleRemove(rule.id);
-                hideAddRuleForm();
-              }}>
-              <DeleteOutlinedIcon style={{color: symphony.palette.D300}} />
-            </IconButton>
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete
-              variant={'outlined'}
-              onClick={() => {
-                hideAddRuleForm();
-              }}>
-              Cancel
-            </ButtonSaveDelete>
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete
-              onClick={() => {
-                handleClick();
-                hideAddRuleForm();
-              }}
-              disabled={handleDisable}>
-              Save
-            </ButtonSaveDelete>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Card margins={'none'} className={classes.containerGlobal}>
-            <Grid
-              className={classes.headerCardEdit}
+      <div className={classes.root}>
+        <Grid container>
+          <Grid
+              className={classes.header}
               container
               direction="row"
-              justifycontent="space-evenly"
+              justifycontent="flex-end"
               alignItems="center">
-              <Grid item xs>
-                <Text
-                  weight={'bold'}
-                  variant={'h6'}
-                  className={classes.cardHeader}>
-                  Edit Rule
-                </Text>
-              </Grid>
-              <Grid>
-                <Switch
-                  className={classes.titleSwitch}
-                  title={'Enabled'}
-                  checked={checked}
-                  onChange={setChecked}
-                />
-              </Grid>
+            <Grid item xs>
+              <ConfigureTitleSubItem
+                  title={fbt('Threshold Catalog/', 'Threshold Catalog')}
+                  tag={` ${threshold.name}`}
+              />
             </Grid>
+            <Grid style={{marginRight: '1rem'}}>
+              <IconButton
+                  onClick={() => {
+                    handleRemove(rule.id);
+                    hideAddRuleForm();
+                  }}>
+                <DeleteOutlinedIcon style={{color: symphony.palette.D300}} />
+              </IconButton>
+            </Grid>
+            <Grid>
+              <ButtonSaveDelete
+                  variant={'outlined'}
+                  onClick={() => {
+                    hideAddRuleForm();
+                  }}>
+                Cancel
+              </ButtonSaveDelete>
+            </Grid>
+            <Grid>
+              <ButtonSaveDelete
+                  onClick={() => {
+                    handleClick();
+                    hideAddRuleForm();
+                  }}
+                  disabled={handleDisable}>
+                Save
+              </ButtonSaveDelete>
+            </Grid>
+          </Grid>
 
-            <Grid container item xs={12}>
-              <Grid container item xs={12} md={8}>
-                <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
+            <Card margins={'none'} className={classes.containerGlobal}>
+              <Grid
+                  className={classes.headerCardEdit}
+                  container
+                  direction="row"
+                  justifycontent="space-evenly"
+                  alignItems="center">
+                <Grid item xs>
+                  <Text
+                      weight={'bold'}
+                      variant={'h6'}
+                      className={classes.cardHeader}>
+                    Edit Rule
+                  </Text>
+                </Grid>
+                <Grid>
+                  <Switch
+                      className={classes.titleSwitch}
+                      title={'Enabled'}
+                      checked={checked}
+                      onChange={setChecked}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={12}>
+                <Grid container item xs={12} md={8}>
+                  <Grid item xs={12} md={6}>
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                          {...validationName}
+                          {...nameRule}
+                          required
+                          className={classes.textInput}
+                          label="Rule Name"
+                          type="string"
+                          variant="outlined"
+                          name="name"
+                      />
+                    </form>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={6}>
+                    <FormField className={classes.formField}>
+                      <TextField
+                          required
+                          disabled
+                          value={rule.id}
+                          className={classes.textInput}
+                          name="id"
+                          label="ID"
+                          variant="outlined"
+                      />
+                    </FormField>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={2}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
-                      {...validationName}
-                      {...nameRule}
-                      required
-                      className={classes.textInput}
-                      label="Rule Name"
-                      type="string"
-                      variant="outlined"
-                      name="name"
+                        required
+                        {...gracePeriodRule}
+                        className={classes.textInput}
+                        label="Grace period"
+                        type="number"
+                        name="gracePeriod"
+                        variant="outlined"
                     />
                   </form>
                 </Grid>
-                <Grid item xs={12} sm={12} md={6}>
+                <Grid item xs={12} md={2}>
                   <FormField className={classes.formField}>
                     <TextField
-                      required
-                      disabled
-                      value={rule.id}
-                      className={classes.textInput}
-                      name="id"
-                      label="ID"
-                      variant="outlined"
-                    />
+                        {...typeOfRule}
+                        required
+                        select
+                        label="Type Of Rule"
+                        name="TypeOfRule"
+                        variant="outlined"
+                        className={classes.textInput}>
+                      {data.ruleTypes.edges.map((item, index) => (
+                          <MenuItem key={index} value={item.node?.id}>
+                            {item.node?.name}
+                          </MenuItem>
+                      ))}
+                    </TextField>
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid item xs={12} md={2}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    {...gracePeriodRule}
-                    className={classes.textInput}
-                    label="Grace period"
-                    type="number"
-                    name="gracePeriod"
-                    variant="outlined"
+
+              <Grid container item xs={12} md={8}>
+                <Grid className={classes.checkDate} item xs={12}>
+                  <Checkbox
+                      checked={checkedCheckbox}
+                      title="Definite time period"
+                      onChange={selection =>
+                          setCheckedCheckbox(selection === 'checked')
+                      }
                   />
-                </form>
-              </Grid>
-              <Grid item xs={12} md={2}>
-                <FormField className={classes.formField}>
-                  <TextField
-                    {...typeOfRule}
-                    required
-                    select
-                    label="Type Of Rule"
-                    name="TypeOfRule"
-                    variant="outlined"
-                    className={classes.textInput}>
-                    {data.ruleTypes.edges.map((item, index) => (
-                      <MenuItem key={index} value={item.node?.id}>
-                        {item.node?.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </FormField>
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} md={8}>
-              <Grid className={classes.checkDate} item xs={12}>
-                <Checkbox
-                  checked={checkedCheckbox}
-                  title="Definite time period"
-                  onChange={selection =>
-                    setCheckedCheckbox(selection === 'checked')
-                  }
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <FormField className={classes.formField}>
-                  <MuiPickersUtilsProvider utils={MomentUtils}>
-                    <DateTimePicker
-                      disabled={!checkedCheckbox}
-                      label="Start"
-                      variant="inline"
-                      inputVariant="outlined"
-                      value={slotStartDate}
-                      onChange={setSlotStartDate}
-                      format="yyyy/MM/DD HH:mm a"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton>
-                              <Event style={{color: symphony.palette.D400}} />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </MuiPickersUtilsProvider>
-                </FormField>
-              </Grid>
-              <Grid item xs={6}>
-                <FormField className={classes.formField}>
-                  <MuiPickersUtilsProvider utils={MomentUtils}>
-                    <DateTimePicker
-                      disabled={!checkedCheckbox}
-                      label="End"
-                      variant="inline"
-                      inputVariant="outlined"
-                      value={slotEndDate}
-                      onChange={setSlotEndDate}
-                      format="yyyy/MM/DD HH:mm a"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton>
-                              <Event style={{color: symphony.palette.D400}} />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </MuiPickersUtilsProvider>
-                </FormField>
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} md={8}>
-              <Grid className={classes.titleLimit} item xs={12}>
-                <Text weight="bold" variant="h6">
-                  Limits Range
-                </Text>
-              </Grid>
-
-              <Grid container item xs={6}>
-                <Grid className={classes.titleLimit} item xs={12}>
-                  <Text weight="medium" variant="subtitle2">
-                    Upper target
-                  </Text>
                 </Grid>
-                <Grid item xs>
-                  <FormField className={classes.formFieldUpper}>
-                    <TextField
-                      {...comparatorUpper}
-                      select
-                      name="upperTarget"
-                      variant="outlined"
-                      className={classes.fieldSelectLimitUpper}>
-                      {data.comparators.edges.map((item, index) => (
-                        <MenuItem key={index} value={item.node?.id}>
-                          {item.node?.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </FormField>
-                </Grid>
-                <Grid item xs>
-                  <FormField className={classes.formFieldUpper}>
-                    <TextField
-                      {...upper}
-                      variant="outlined"
-                      type="number"
-                      placeholder="Number"
-                      className={`${classes.textInput}`}
-                      name="upperLimit"
-                    />
-                  </FormField>
-                </Grid>
-              </Grid>
-
-              <Grid container item xs={6}>
-                <Grid className={classes.titleLimit} item xs={12}>
-                  <Text weight="medium" variant="subtitle2">
-                    Lower limit
-                  </Text>
-                </Grid>
-                <Grid item xs>
-                  <FormField className={classes.formFieldLower}>
-                    <TextField
-                      {...comparatorLower}
-                      required
-                      select
-                      className={classes.fieldSelectLimitLower}
-                      variant="outlined"
-                      name="lowerTarget">
-                      {data.comparators.edges.map((item, index) => (
-                        <MenuItem key={index} value={item.node?.id}>
-                          {item.node?.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </FormField>
-                </Grid>
-                <Grid item xs>
-                  <FormField className={classes.formFieldLower}>
-                    <TextField
-                      {...lower}
-                      type="number"
-                      variant="outlined"
-                      placeholder="Number"
-                      className={`${classes.textInput}`}
-                      name="lowerLimit"
-                    />
-                  </FormField>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid className={classes.secondSection}>
-              <Grid
-                className={classes.sectionAlarm}
-                container
-                item
-                xs={12}
-                md={8}>
-                <Grid className={classes.titleLimit} item xs={12}>
-                  <Text weight="medium" variant="subtitle2">
-                    Alarm severity
-                  </Text>
-                </Grid>
-                <Grid item xs={6} className={classes.fieldAlarmSeverity}>
-                  <FormField className={classes.selectAlarm}>
-                    <TextField
-                      {...eventSeverityRules}
-                      required
-                      select
-                      variant="outlined"
-                      name="alarmSeverities">
-                      {data.eventSeverities.edges.map((item, index) => (
-                        <MenuItem key={index} value={item.node?.id}>
-                          {item.node?.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
+                <Grid item xs={6}>
+                  <FormField className={classes.formField}>
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <DateTimePicker
+                          disabled={!checkedCheckbox}
+                          label="Start"
+                          variant="inline"
+                          inputVariant="outlined"
+                          value={slotStartDate}
+                          onChange={setSlotStartDate}
+                          format="yyyy/MM/DD HH:mm a"
+                          InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton>
+                                    <Event style={{color: symphony.palette.D400}} />
+                                  </IconButton>
+                                </InputAdornment>
+                            ),
+                          }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
                 <Grid item xs={6}>
                   <FormField className={classes.formField}>
-                    <TextField
-                      {...eventTypeRule}
-                      required
-                      variant="outlined"
-                      label="Alarm type name"
-                      autoComplete="off"
-                      className={classes.textInput}
-                      name="alarmType"
-                    />
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <DateTimePicker
+                          disabled={!checkedCheckbox}
+                          label="End"
+                          variant="inline"
+                          inputVariant="outlined"
+                          value={slotEndDate}
+                          onChange={setSlotEndDate}
+                          format="yyyy/MM/DD HH:mm a"
+                          InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton>
+                                    <Event style={{color: symphony.palette.D400}} />
+                                  </IconButton>
+                                </InputAdornment>
+                            ),
+                          }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid>
-                <Grid>
-                  <form className={classes.formField}>
-                    <TextField
-                      {...specificProblemRule}
-                      variant="outlined"
-                      label="Specific problem"
-                      className={classes.textInput}
-                      multiline
-                      rows={3}
-                      name="specificProblem"
-                    />
-                  </form>
+
+              <Grid container item xs={12} md={8}>
+                <Grid className={classes.titleLimit} item xs={12}>
+                  <Text weight="bold" variant="h6">
+                    Limits Range
+                  </Text>
                 </Grid>
-                <Grid>
-                  <form className={classes.formField}>
-                    <TextField
-                      {...additionalInfoRule}
-                      variant="outlined"
-                      label="Additional info"
-                      className={classes.textInput}
-                      multiline
-                      rows={3}
-                      name="additionalInfo"
-                    />
-                  </form>
+
+                <Grid container item xs={6}>
+                  <Grid className={classes.titleLimit} item xs={12}>
+                    <Text weight="medium" variant="subtitle2">
+                      Upper target
+                    </Text>
+                  </Grid>
+                  <Grid item xs>
+                    <FormField className={classes.formFieldUpper}>
+                      <TextField
+                          {...comparatorUpper}
+                          select
+                          name="upperTarget"
+                          variant="outlined"
+                          className={classes.fieldSelectLimitUpper}>
+                        {data.comparators.edges.map((item, index) => (
+                            <MenuItem key={index} value={item.node?.id}>
+                              {item.node?.name}
+                            </MenuItem>
+                        ))}
+                      </TextField>
+                    </FormField>
+                  </Grid>
+                  <Grid item xs>
+                    <FormField className={classes.formFieldUpper}>
+                      <TextField
+                          {...upper}
+                          variant="outlined"
+                          type="number"
+                          placeholder="Number"
+                          className={`${classes.textInput}`}
+                          name="upperLimit"
+                      />
+                    </FormField>
+                  </Grid>
+                </Grid>
+
+                <Grid container item xs={6}>
+                  <Grid className={classes.titleLimit} item xs={12}>
+                    <Text weight="medium" variant="subtitle2">
+                      Lower limit
+                    </Text>
+                  </Grid>
+                  <Grid item xs>
+                    <FormField className={classes.formFieldLower}>
+                      <TextField
+                          {...comparatorLower}
+                          required
+                          select
+                          className={classes.fieldSelectLimitLower}
+                          variant="outlined"
+                          name="lowerTarget">
+                        {data.comparators.edges.map((item, index) => (
+                            <MenuItem key={index} value={item.node?.id}>
+                              {item.node?.name}
+                            </MenuItem>
+                        ))}
+                      </TextField>
+                    </FormField>
+                  </Grid>
+                  <Grid item xs>
+                    <FormField className={classes.formFieldLower}>
+                      <TextField
+                          {...lower}
+                          type="number"
+                          variant="outlined"
+                          placeholder="Number"
+                          className={`${classes.textInput}`}
+                          name="lowerLimit"
+                      />
+                    </FormField>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Card>
+
+              <Grid className={classes.secondSection}>
+                <Grid
+                    className={classes.sectionAlarm}
+                    container
+                    item
+                    xs={12}
+                    md={8}>
+                  <Grid className={classes.titleLimit} item xs={12}>
+                    <Text weight="medium" variant="subtitle2">
+                      Alarm severity
+                    </Text>
+                  </Grid>
+                  <Grid item xs={6} className={classes.fieldAlarmSeverity}>
+                    <FormField className={classes.selectAlarm}>
+                      <TextField
+                          {...eventSeverityRules}
+                          required
+                          select
+                          variant="outlined"
+                          name="alarmSeverities">
+                        {data.eventSeverities.edges.map((item, index) => (
+                            <MenuItem key={index} value={item.node?.id}>
+                              {item.node?.name}
+                            </MenuItem>
+                        ))}
+                      </TextField>
+                    </FormField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormField className={classes.formField}>
+                      <TextField
+                          {...eventTypeRule}
+                          required
+                          variant="outlined"
+                          label="Alarm type name"
+                          autoComplete="off"
+                          className={classes.textInput}
+                          name="alarmType"
+                      />
+                    </FormField>
+                  </Grid>
+                </Grid>
+                <Grid>
+                  <Grid>
+                    <form className={classes.formField}>
+                      <TextField
+                          {...specificProblemRule}
+                          variant="outlined"
+                          label="Specific problem"
+                          className={classes.textInput}
+                          multiline
+                          rows={3}
+                          name="specificProblem"
+                      />
+                    </form>
+                  </Grid>
+                  <Grid>
+                    <form className={classes.formField}>
+                      <TextField
+                          {...additionalInfoRule}
+                          variant="outlined"
+                          label="Additional info"
+                          className={classes.textInput}
+                          multiline
+                          rows={3}
+                          name="additionalInfo"
+                      />
+                    </form>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </div>
   );
 };
 
