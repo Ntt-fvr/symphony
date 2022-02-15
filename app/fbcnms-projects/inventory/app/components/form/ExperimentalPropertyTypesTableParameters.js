@@ -37,6 +37,7 @@ import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
 import {useContext} from 'react';
+import {useEffect, useState} from 'react';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -92,12 +93,38 @@ const ExperimentalPropertyTypesTableParameters = ({
   supportMandatory = true,
   supportDelete,
 }: Props) => {
-  const [openModal, setOpenModal] = React.useState(false);
+  // eslint-disable-next-line prefer-const
+  let dataFake = [];
+  const array = [{}];
+  const [parameters, setParameters] = useState(dataFake);
+  const [checked, setChecked] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
   const dispatch = useContext(PropertyTypesTableDispatcher);
+  useEffect(() => {
+    setParameters(parameters);
+    console.log('******');
+  });
+  console.log('check ', checked);
+  console.log('PARAMETERS', parameters);
+  // console.log(propertyTypes);
+  // const ale = parameters.push({id: Math.floor(Math.random() * 101).toString()});
 
+  // console.log('ALEATORIO', ale);
+  const handleChecked = () => {
+    setChecked(!checked);
+  };
+  const handleDelete = () => {
+    console.log('borrado');
+  };
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
+  };
+  const handleAddParameters = () => {
+    const id = Math.floor(Math.random() * 101);
+    parameters.push({id});
+    setParameters(parameters);
+    console.log('FAKE ', parameters);
   };
 
   return (
@@ -132,26 +159,23 @@ const ExperimentalPropertyTypesTableParameters = ({
           </TableRow>
         </TableHead>
         <DroppableTableBody
-          onDragEnd={({source, destination}) => {
+          onDragEnd={({destination}) => {
             if (destination != null) {
-              dispatch({
-                type: 'CHANGE_PROPERTY_TYPE_INDEX',
-                sourceIndex: source.index,
-                destinationIndex: destination.index,
-              });
+              // dispatch({
+              //   type: 'CHANGE_PROPERTY_TYPE_INDEX',
+              //   sourceIndex: source.index,
+              //   destinationIndex: destination.index,
+              // });
             }
           }}>
-          {propertyTypes
-            .filter(pt => !pt.isDeleted)
-            .sort(sortByIndex)
-            .map((property, i) => (
-              <DraggableTableRow
-                id={property.id}
-                index={i}
-                key={`${i}.${property.id}`}>
-                <TableCell style={{width: '20%'}} component="div" scope="row">
-                  <FormField>
-                    <TextInput
+          {parameters?.sort(sortByIndex)?.map((property, i) => (
+            <DraggableTableRow
+              id={property.id}
+              index={i}
+              key={`${i}.${property.id}`}>
+              <TableCell style={{width: '20%'}} component="div" scope="row">
+                <FormField>
+                  {/* <TextInput
                       autoFocus={true}
                       placeholder="Name"
                       autoComplete="off"
@@ -165,16 +189,16 @@ const ExperimentalPropertyTypesTableParameters = ({
                       //     name: property.name.trim(),
                       //   })
                       // }
-                    />
-                  </FormField>
-                </TableCell>
-                <TableCell style={{width: '20%'}} component="div" scope="row">
-                  <FormField className={classes.input}>
-                    <PropertyTypeSelect propertyType={property} />
-                  </FormField>
-                </TableCell>
-                <TableCell style={{width: '20%'}} component="div" scope="row">
-                  <PropertyValueInput
+                    /> */}
+                </FormField>
+              </TableCell>
+              <TableCell style={{width: '20%'}} component="div" scope="row">
+                <FormField className={classes.input}>
+                  {/* <PropertyTypeSelect propertyType={property} /> */}
+                </FormField>
+              </TableCell>
+              <TableCell style={{width: '20%'}} component="div" scope="row">
+                {/* <PropertyValueInput
                     label={null}
                     className={classes.input}
                     inputType="PropertyType"
@@ -185,11 +209,11 @@ const ExperimentalPropertyTypesTableParameters = ({
                         value,
                       })
                     }
-                  />
-                </TableCell>
-                <TableCell style={{width: '20%'}} component="div" scope="row">
-                  <FormField>
-                    <TextInput
+                  /> */}
+              </TableCell>
+              <TableCell style={{width: '20%'}} component="div" scope="row">
+                <FormField>
+                  {/* <TextInput
                       autoFocus={true}
                       placeholder="Tags"
                       autoComplete="off"
@@ -209,67 +233,71 @@ const ExperimentalPropertyTypesTableParameters = ({
                           name: property.name.trim(),
                         })
                       }
-                    />
-                  </FormField>
-                </TableCell>
-                <TableCell className={classes.checkbox} component="div">
-                  <FormAction>
-                    <SubjectIcon
-                      className={classes.mapping}
-                      onClick={handleModal}
+                    /> */}
+                </FormField>
+              </TableCell>
+              <TableCell className={classes.checkbox} component="div">
+                <FormAction>
+                  <SubjectIcon
+                    className={classes.mapping}
+                    onClick={handleModal}
+                    // onClick={() =>
+                    //   dispatch({
+                    //     type: 'REMOVE_PROPERTY_TYPE',
+                    //     id: property.id,
+                    //   })
+                    // }
+                    // disabled={!supportDelete && !isTempId(property.id)}
+                  />
+                </FormAction>
+              </TableCell>
+
+              <TableCell className={classes.checkbox} component="div">
+                <FormField>
+                  <Checkbox
+                    checked={checked}
+                    onClick={handleChecked}
+                    // checked={!!property.isMandatory}
+                    // onChange={checkedNewValue =>
+                    //   dispatch({
+                    //     type: 'UPDATE_PROPERTY_TYPE',
+                    //     value: {
+                    //       ...property,
+                    //       isMandatory: checkedNewValue === 'checked',
+                    //     },
+                    //   })
+                    // }
+                    title={null}
+                  />
+                </FormField>
+              </TableCell>
+
+              <TableCell className={classes.checkbox} component="div">
+                <FormAction>
+                  <IconButton aria-label="delete">
+                    <DeleteOutlinedIcon
+                      color="primary"
                       // onClick={() =>
                       //   dispatch({
                       //     type: 'REMOVE_PROPERTY_TYPE',
                       //     id: property.id,
                       //   })
                       // }
+                      onClick={handleDelete}
                       // disabled={!supportDelete && !isTempId(property.id)}
                     />
-                  </FormAction>
-                </TableCell>
-                {supportMandatory && (
-                  <TableCell className={classes.checkbox} component="div">
-                    <FormField>
-                      <Checkbox
-                        checked={!!property.isMandatory}
-                        onChange={checkedNewValue =>
-                          dispatch({
-                            type: 'UPDATE_PROPERTY_TYPE',
-                            value: {
-                              ...property,
-                              isMandatory: checkedNewValue === 'checked',
-                            },
-                          })
-                        }
-                        title={null}
-                      />
-                    </FormField>
-                  </TableCell>
-                )}
-                <TableCell className={classes.checkbox} component="div">
-                  <FormAction>
-                    <IconButton aria-label="delete">
-                      <DeleteOutlinedIcon
-                        color="primary"
-                        onClick={() =>
-                          dispatch({
-                            type: 'REMOVE_PROPERTY_TYPE',
-                            id: property.id,
-                          })
-                        }
-                        disabled={!supportDelete && !isTempId(property.id)}
-                      />
-                    </IconButton>
-                  </FormAction>
-                </TableCell>
-              </DraggableTableRow>
-            ))}
+                  </IconButton>
+                </FormAction>
+              </TableCell>
+            </DraggableTableRow>
+          ))}
         </DroppableTableBody>
       </Table>
       <FormAction>
         <Button
           variant="text"
-          onClick={() => dispatch({type: 'ADD_PROPERTY_TYPE'})}
+          // onClick={() => dispatch({type: 'ADD_PROPERTY_TYPE'})}
+          onClick={handleAddParameters}
           leftIcon={PlusIcon}>
           <fbt desc="">Add Property</fbt>
         </Button>
