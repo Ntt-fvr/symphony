@@ -128,9 +128,9 @@ const EditFormulaDialog = (props: Props) => {
   const {onClose, dataFormula, isCompleted} = props;
   const dataCounterFormula = dataFormula.data.counterformulaFk;
   const [checkedItems, setCheckedItems] = useState(
-    dataCounterFormula.map(item => {
-      return {...item, checked: item.mandatory};
-    }),
+      dataCounterFormula.map(item => {
+        return {...item, checked: item.mandatory};
+      }),
   );
 
   const [textFormulaSearch, setTextFormulaSearch] = useState<TextFormula>({});
@@ -145,12 +145,12 @@ const EditFormulaDialog = (props: Props) => {
   }
 
   const searchCountersFiltered = !textFormulaSearch.search
-    ? dataCounterFormula
-    : dataCounterFormula?.filter(item =>
-        item.counterFk?.name
-          .toString()
-          .toLowerCase()
-          .includes(textFormulaSearch.search.toLocaleLowerCase()),
+      ? dataCounterFormula
+      : dataCounterFormula?.filter(item =>
+          item.counterFk?.name
+              .toString()
+              .toLowerCase()
+              .includes(textFormulaSearch.search.toLocaleLowerCase()),
       );
 
   function onDragStart(e, v) {
@@ -183,136 +183,136 @@ const EditFormulaDialog = (props: Props) => {
     };
     EditCounterFormulaMutation(variables, {
       onCompleted: () =>
-        setCheckedItems([
-          ...checkedItems.filter(oldItem => item.id !== oldItem.id),
-          {...item, checked},
-        ]),
+          setCheckedItems([
+            ...checkedItems.filter(oldItem => item.id !== oldItem.id),
+            {...item, checked},
+          ]),
     });
   };
 
   return (
-    <Dialog
-      maxWidth="lg"
-      open={true}
-      onClose={onClose}
-      fullWidth={true}
-      className={classes.root}>
-      <DialogActions>
-        <Button onClick={onClose} skin="regular">
-          <CloseIcon fontSize="small" color="action" />
-        </Button>
-      </DialogActions>
-      <DialogTitle>
-        <Grid container>
-          <Grid item xs={5}>
-            <Text variant="h6">Edit Formula</Text>
-          </Grid>
-          <Grid item xs={7}>
-            <TextField
-              placeholder="Add counter"
-              color="primary"
-              type="text"
-              className={classes.textField}
-              variant="outlined"
-              name="search"
-              autoComplete="off"
-              onChange={handleChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-        </Grid>
-      </DialogTitle>
-      <DialogContent className={classes.dialogContent}>
-        <Grid container spacing={2}>
-          <Grid item xs={5} style={{height: '50vh'}}>
-            <Text variant="body2" weight="regular">
-              Press the counter to add it to the expression. You can use your
-              keyboard or the buttons on the screen to add math symbols and
-              numbers.
-            </Text>
-            <Grid
-              container
-              direction="row"
-              alignItems="flex-start"
-              style={{margin: '1rem auto'}}>
-              <Grid item xs={3} lg={2} style={{lineHeight: '0px'}}>
-                <Text variant="caption" color="lightBlue">
-                  Mandatory counter
-                </Text>
-              </Grid>
-              <Grid item xs style={{lineHeight: '0px'}}>
-                <Text variant="caption" color="lightBlue">
-                  Name counter
-                </Text>
-              </Grid>
+      <Dialog
+          maxWidth="lg"
+          open={true}
+          onClose={onClose}
+          fullWidth={true}
+          className={classes.root}>
+        <DialogActions>
+          <Button onClick={onClose} skin="regular">
+            <CloseIcon fontSize="small" color="action" />
+          </Button>
+        </DialogActions>
+        <DialogTitle>
+          <Grid container>
+            <Grid item xs={5}>
+              <Text variant="h6">Edit Formula</Text>
             </Grid>
-
-            <Grid className={classes.styleSearch}>
-              {searchCountersFiltered.map((item, index) => {
-                return (
-                  <Grid container spacing={2} key={index}>
-                    <Grid item xs={3} lg={2}>
-                      <Switch
-                        title={''}
-                        checked={
-                          checkedItems.find(
-                            itemChecked => item.id === itemChecked.id,
-                          ).checked
-                        }
-                        onChange={checked => handleChangeCheck(checked, item)}
-                      />
-                    </Grid>
-                    <Grid item xs={9} lg={10}>
-                      <Chip
-                        color="primary"
-                        key={index}
-                        label={item.counterFk?.name}
-                        style={{
-                          backgroundColor: item.color,
-                          color: symphony.palette.white,
-                          fontWeight: '500',
-                        }}
-                        draggable="true"
-                        onDragStart={e => onDragStart(e, item.counterFk?.name)}
-                      />
-                    </Grid>
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Grid>
-          <Grid item xs={7}>
-            <FormField>
+            <Grid item xs={7}>
               <TextField
-                {...textFormula}
-                className={classes.textArea}
-                name="formula"
-                variant="outlined"
-                multiline
+                  placeholder="Add counter"
+                  color="primary"
+                  type="text"
+                  className={classes.textField}
+                  variant="outlined"
+                  name="search"
+                  autoComplete="off"
+                  onChange={handleChange}
+                  InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                    ),
+                  }}
               />
-            </FormField>
+            </Grid>
           </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions style={{height: '100px', paddingRight: '26px'}}>
-        <Button
-          className={classes.option}
-          variant="outlined"
-          color="primary"
-          onClick={() => {
-            handleClick();
-            onClose();
-          }}>
-          Edit Formula
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <Grid container spacing={2}>
+            <Grid item xs={5} style={{height: '50vh'}}>
+              <Text variant="body2" weight="regular">
+                Press the counter to add it to the expression. You can use your
+                keyboard or the buttons on the screen to add math symbols and
+                numbers.
+              </Text>
+              <Grid
+                  container
+                  direction="row"
+                  alignItems="flex-start"
+                  style={{margin: '1rem auto'}}>
+                <Grid item xs={3} lg={2} style={{lineHeight: '0px'}}>
+                  <Text variant="caption" color="lightBlue">
+                    Mandatory counter
+                  </Text>
+                </Grid>
+                <Grid item xs style={{lineHeight: '0px'}}>
+                  <Text variant="caption" color="lightBlue">
+                    Name counter
+                  </Text>
+                </Grid>
+              </Grid>
+
+              <Grid className={classes.styleSearch}>
+                {searchCountersFiltered.map((item, index) => {
+                  return (
+                      <Grid container spacing={2} key={index}>
+                        <Grid item xs={3} lg={2}>
+                          <Switch
+                              title={''}
+                              checked={
+                                checkedItems.find(
+                                    itemChecked => item.id === itemChecked.id,
+                                ).checked
+                              }
+                              onChange={checked => handleChangeCheck(checked, item)}
+                          />
+                        </Grid>
+                        <Grid item xs={9} lg={10}>
+                          <Chip
+                              color="primary"
+                              key={index}
+                              label={item.counterFk?.name}
+                              style={{
+                                backgroundColor: item.color,
+                                color: symphony.palette.white,
+                                fontWeight: '500',
+                              }}
+                              draggable="true"
+                              onDragStart={e => onDragStart(e, item.counterFk?.name)}
+                          />
+                        </Grid>
+                      </Grid>
+                  );
+                })}
+              </Grid>
+            </Grid>
+            <Grid item xs={7}>
+              <FormField>
+                <TextField
+                    {...textFormula}
+                    className={classes.textArea}
+                    name="formula"
+                    variant="outlined"
+                    multiline
+                />
+              </FormField>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions style={{height: '100px', paddingRight: '26px'}}>
+          <Button
+              className={classes.option}
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                handleClick();
+                onClose();
+              }}>
+            Edit Formula
+          </Button>
+        </DialogActions>
+      </Dialog>
   );
 };
 

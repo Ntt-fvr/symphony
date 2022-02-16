@@ -19,6 +19,7 @@ import {useUserSearchByAppointment} from '../admin/userManagement/utils/search/U
 type Props = $ReadOnly<{|
   onUserSelection: (?ShortUser, Date) => void,
   slotStartDate: Date,
+
   slotEndDate: Date,
   duration: string,
   className?: string,

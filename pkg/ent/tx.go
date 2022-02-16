@@ -126,6 +126,8 @@ type Tx struct {
 	NetworkType *NetworkTypeClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// ParameterCatalog is the client for interacting with the ParameterCatalog builders.
+	ParameterCatalog *ParameterCatalogClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
 	// Project is the client for interacting with the Project builders.
@@ -136,6 +138,8 @@ type Tx struct {
 	ProjectType *ProjectTypeClient
 	// Property is the client for interacting with the Property builders.
 	Property *PropertyClient
+	// PropertyCategory is the client for interacting with the PropertyCategory builders.
+	PropertyCategory *PropertyCategoryClient
 	// PropertyType is the client for interacting with the PropertyType builders.
 	PropertyType *PropertyTypeClient
 	// Recommendations is the client for interacting with the Recommendations builders.
@@ -146,8 +150,6 @@ type Tx struct {
 	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
-	// ResourceRelationship is the client for interacting with the ResourceRelationship builders.
-	ResourceRelationship *ResourceRelationshipClient
 	// ResourceSRItems is the client for interacting with the ResourceSRItems builders.
 	ResourceSRItems *ResourceSRItemsClient
 	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
@@ -156,10 +158,8 @@ type Tx struct {
 	ResourceSpecificationRelationship *ResourceSpecificationRelationshipClient
 	// ResourceType is the client for interacting with the ResourceType builders.
 	ResourceType *ResourceTypeClient
-	// ResourceTypeBaseType is the client for interacting with the ResourceTypeBaseType builders.
-	ResourceTypeBaseType *ResourceTypeBaseTypeClient
-	// ResourceTypeClass is the client for interacting with the ResourceTypeClass builders.
-	ResourceTypeClass *ResourceTypeClassClient
+	// ResourceTypeRelationship is the client for interacting with the ResourceTypeRelationship builders.
+	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
@@ -396,23 +396,23 @@ func (tx *Tx) init() {
 	tx.LocationType = NewLocationTypeClient(tx.config)
 	tx.NetworkType = NewNetworkTypeClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
+	tx.ParameterCatalog = NewParameterCatalogClient(tx.config)
 	tx.PermissionsPolicy = NewPermissionsPolicyClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectTemplate = NewProjectTemplateClient(tx.config)
 	tx.ProjectType = NewProjectTypeClient(tx.config)
 	tx.Property = NewPropertyClient(tx.config)
+	tx.PropertyCategory = NewPropertyCategoryClient(tx.config)
 	tx.PropertyType = NewPropertyTypeClient(tx.config)
 	tx.Recommendations = NewRecommendationsClient(tx.config)
 	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
 	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
-	tx.ResourceRelationship = NewResourceRelationshipClient(tx.config)
 	tx.ResourceSRItems = NewResourceSRItemsClient(tx.config)
 	tx.ResourceSpecification = NewResourceSpecificationClient(tx.config)
 	tx.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(tx.config)
 	tx.ResourceType = NewResourceTypeClient(tx.config)
-	tx.ResourceTypeBaseType = NewResourceTypeBaseTypeClient(tx.config)
-	tx.ResourceTypeClass = NewResourceTypeClassClient(tx.config)
+	tx.ResourceTypeRelationship = NewResourceTypeRelationshipClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)
 	tx.RuleType = NewRuleTypeClient(tx.config)

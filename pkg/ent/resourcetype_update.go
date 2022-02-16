@@ -14,12 +14,10 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 )
 
 // ResourceTypeUpdate is the builder for updating ResourceType entities.
@@ -41,52 +39,26 @@ func (rtu *ResourceTypeUpdate) SetName(s string) *ResourceTypeUpdate {
 	return rtu
 }
 
-// SetResourcetypeclassID sets the resourcetypeclass edge to ResourceTypeClass by id.
-func (rtu *ResourceTypeUpdate) SetResourcetypeclassID(id int) *ResourceTypeUpdate {
-	rtu.mutation.SetResourcetypeclassID(id)
+// SetResourceTypeClass sets the ResourceTypeClass field.
+func (rtu *ResourceTypeUpdate) SetResourceTypeClass(rtc resourcetype.ResourceTypeClass) *ResourceTypeUpdate {
+	rtu.mutation.SetResourceTypeClass(rtc)
 	return rtu
 }
 
-// SetNillableResourcetypeclassID sets the resourcetypeclass edge to ResourceTypeClass by id if the given value is not nil.
-func (rtu *ResourceTypeUpdate) SetNillableResourcetypeclassID(id *int) *ResourceTypeUpdate {
-	if id != nil {
-		rtu = rtu.SetResourcetypeclassID(*id)
-	}
+// SetResourceTypeBaseType sets the ResourceTypeBaseType field.
+func (rtu *ResourceTypeUpdate) SetResourceTypeBaseType(rtbt resourcetype.ResourceTypeBaseType) *ResourceTypeUpdate {
+	rtu.mutation.SetResourceTypeBaseType(rtbt)
 	return rtu
 }
 
-// SetResourcetypeclass sets the resourcetypeclass edge to ResourceTypeClass.
-func (rtu *ResourceTypeUpdate) SetResourcetypeclass(r *ResourceTypeClass) *ResourceTypeUpdate {
-	return rtu.SetResourcetypeclassID(r.ID)
-}
-
-// SetResourcetypebasetypeID sets the resourcetypebasetype edge to ResourceTypeBaseType by id.
-func (rtu *ResourceTypeUpdate) SetResourcetypebasetypeID(id int) *ResourceTypeUpdate {
-	rtu.mutation.SetResourcetypebasetypeID(id)
-	return rtu
-}
-
-// SetNillableResourcetypebasetypeID sets the resourcetypebasetype edge to ResourceTypeBaseType by id if the given value is not nil.
-func (rtu *ResourceTypeUpdate) SetNillableResourcetypebasetypeID(id *int) *ResourceTypeUpdate {
-	if id != nil {
-		rtu = rtu.SetResourcetypebasetypeID(*id)
-	}
-	return rtu
-}
-
-// SetResourcetypebasetype sets the resourcetypebasetype edge to ResourceTypeBaseType.
-func (rtu *ResourceTypeUpdate) SetResourcetypebasetype(r *ResourceTypeBaseType) *ResourceTypeUpdate {
-	return rtu.SetResourcetypebasetypeID(r.ID)
-}
-
-// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (rtu *ResourceTypeUpdate) AddResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdate {
 	rtu.mutation.AddResourceRelationshipAIDs(ids...)
 	return rtu
 }
 
-// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) AddResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceTypeRelationship.
+func (rtu *ResourceTypeUpdate) AddResourceRelationshipA(r ...*ResourceTypeRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -94,14 +66,14 @@ func (rtu *ResourceTypeUpdate) AddResourceRelationshipA(r ...*ResourceRelationsh
 	return rtu.AddResourceRelationshipAIDs(ids...)
 }
 
-// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (rtu *ResourceTypeUpdate) AddResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdate {
 	rtu.mutation.AddResourceRelationshipBIDs(ids...)
 	return rtu
 }
 
-// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) AddResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceTypeRelationship.
+func (rtu *ResourceTypeUpdate) AddResourceRelationshipB(r ...*ResourceTypeRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -144,32 +116,20 @@ func (rtu *ResourceTypeUpdate) Mutation() *ResourceTypeMutation {
 	return rtu.mutation
 }
 
-// ClearResourcetypeclass clears the "resourcetypeclass" edge to type ResourceTypeClass.
-func (rtu *ResourceTypeUpdate) ClearResourcetypeclass() *ResourceTypeUpdate {
-	rtu.mutation.ClearResourcetypeclass()
-	return rtu
-}
-
-// ClearResourcetypebasetype clears the "resourcetypebasetype" edge to type ResourceTypeBaseType.
-func (rtu *ResourceTypeUpdate) ClearResourcetypebasetype() *ResourceTypeUpdate {
-	rtu.mutation.ClearResourcetypebasetype()
-	return rtu
-}
-
-// ClearResourceRelationshipA clears all "resource_relationship_a" edges to type ResourceRelationship.
+// ClearResourceRelationshipA clears all "resource_relationship_a" edges to type ResourceTypeRelationship.
 func (rtu *ResourceTypeUpdate) ClearResourceRelationshipA() *ResourceTypeUpdate {
 	rtu.mutation.ClearResourceRelationshipA()
 	return rtu
 }
 
-// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdate {
 	rtu.mutation.RemoveResourceRelationshipAIDs(ids...)
 	return rtu
 }
 
-// RemoveResourceRelationshipA removes resource_relationship_a edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// RemoveResourceRelationshipA removes resource_relationship_a edges to ResourceTypeRelationship.
+func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipA(r ...*ResourceTypeRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -177,20 +137,20 @@ func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipA(r ...*ResourceRelatio
 	return rtu.RemoveResourceRelationshipAIDs(ids...)
 }
 
-// ClearResourceRelationshipB clears all "resource_relationship_b" edges to type ResourceRelationship.
+// ClearResourceRelationshipB clears all "resource_relationship_b" edges to type ResourceTypeRelationship.
 func (rtu *ResourceTypeUpdate) ClearResourceRelationshipB() *ResourceTypeUpdate {
 	rtu.mutation.ClearResourceRelationshipB()
 	return rtu
 }
 
-// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdate {
 	rtu.mutation.RemoveResourceRelationshipBIDs(ids...)
 	return rtu
 }
 
-// RemoveResourceRelationshipB removes resource_relationship_b edges to ResourceRelationship.
-func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdate {
+// RemoveResourceRelationshipB removes resource_relationship_b edges to ResourceTypeRelationship.
+func (rtu *ResourceTypeUpdate) RemoveResourceRelationshipB(r ...*ResourceTypeRelationship) *ResourceTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -313,6 +273,16 @@ func (rtu *ResourceTypeUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := rtu.mutation.ResourceTypeClass(); ok {
+		if err := resourcetype.ResourceTypeClassValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceTypeClass", err: fmt.Errorf("ent: validator failed for field \"ResourceTypeClass\": %w", err)}
+		}
+	}
+	if v, ok := rtu.mutation.ResourceTypeBaseType(); ok {
+		if err := resourcetype.ResourceTypeBaseTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceTypeBaseType", err: fmt.Errorf("ent: validator failed for field \"ResourceTypeBaseType\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -348,75 +318,19 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: resourcetype.FieldName,
 		})
 	}
-	if rtu.mutation.ResourcetypeclassCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypeclassTable,
-			Columns: []string{resourcetype.ResourcetypeclassColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypeclass.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := rtu.mutation.ResourceTypeClass(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcetype.FieldResourceTypeClass,
+		})
 	}
-	if nodes := rtu.mutation.ResourcetypeclassIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypeclassTable,
-			Columns: []string{resourcetype.ResourcetypeclassColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypeclass.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rtu.mutation.ResourcetypebasetypeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypebasetypeTable,
-			Columns: []string{resourcetype.ResourcetypebasetypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypebasetype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtu.mutation.ResourcetypebasetypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypebasetypeTable,
-			Columns: []string{resourcetype.ResourcetypebasetypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypebasetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if value, ok := rtu.mutation.ResourceTypeBaseType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcetype.FieldResourceTypeBaseType,
+		})
 	}
 	if rtu.mutation.ResourceRelationshipACleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -428,7 +342,7 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -444,7 +358,7 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -463,7 +377,7 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -482,7 +396,7 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -498,7 +412,7 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -517,7 +431,7 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -658,52 +572,26 @@ func (rtuo *ResourceTypeUpdateOne) SetName(s string) *ResourceTypeUpdateOne {
 	return rtuo
 }
 
-// SetResourcetypeclassID sets the resourcetypeclass edge to ResourceTypeClass by id.
-func (rtuo *ResourceTypeUpdateOne) SetResourcetypeclassID(id int) *ResourceTypeUpdateOne {
-	rtuo.mutation.SetResourcetypeclassID(id)
+// SetResourceTypeClass sets the ResourceTypeClass field.
+func (rtuo *ResourceTypeUpdateOne) SetResourceTypeClass(rtc resourcetype.ResourceTypeClass) *ResourceTypeUpdateOne {
+	rtuo.mutation.SetResourceTypeClass(rtc)
 	return rtuo
 }
 
-// SetNillableResourcetypeclassID sets the resourcetypeclass edge to ResourceTypeClass by id if the given value is not nil.
-func (rtuo *ResourceTypeUpdateOne) SetNillableResourcetypeclassID(id *int) *ResourceTypeUpdateOne {
-	if id != nil {
-		rtuo = rtuo.SetResourcetypeclassID(*id)
-	}
+// SetResourceTypeBaseType sets the ResourceTypeBaseType field.
+func (rtuo *ResourceTypeUpdateOne) SetResourceTypeBaseType(rtbt resourcetype.ResourceTypeBaseType) *ResourceTypeUpdateOne {
+	rtuo.mutation.SetResourceTypeBaseType(rtbt)
 	return rtuo
 }
 
-// SetResourcetypeclass sets the resourcetypeclass edge to ResourceTypeClass.
-func (rtuo *ResourceTypeUpdateOne) SetResourcetypeclass(r *ResourceTypeClass) *ResourceTypeUpdateOne {
-	return rtuo.SetResourcetypeclassID(r.ID)
-}
-
-// SetResourcetypebasetypeID sets the resourcetypebasetype edge to ResourceTypeBaseType by id.
-func (rtuo *ResourceTypeUpdateOne) SetResourcetypebasetypeID(id int) *ResourceTypeUpdateOne {
-	rtuo.mutation.SetResourcetypebasetypeID(id)
-	return rtuo
-}
-
-// SetNillableResourcetypebasetypeID sets the resourcetypebasetype edge to ResourceTypeBaseType by id if the given value is not nil.
-func (rtuo *ResourceTypeUpdateOne) SetNillableResourcetypebasetypeID(id *int) *ResourceTypeUpdateOne {
-	if id != nil {
-		rtuo = rtuo.SetResourcetypebasetypeID(*id)
-	}
-	return rtuo
-}
-
-// SetResourcetypebasetype sets the resourcetypebasetype edge to ResourceTypeBaseType.
-func (rtuo *ResourceTypeUpdateOne) SetResourcetypebasetype(r *ResourceTypeBaseType) *ResourceTypeUpdateOne {
-	return rtuo.SetResourcetypebasetypeID(r.ID)
-}
-
-// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdateOne {
 	rtuo.mutation.AddResourceRelationshipAIDs(ids...)
 	return rtuo
 }
 
-// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceTypeRelationship.
+func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipA(r ...*ResourceTypeRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -711,14 +599,14 @@ func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipA(r ...*ResourceRelati
 	return rtuo.AddResourceRelationshipAIDs(ids...)
 }
 
-// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdateOne {
 	rtuo.mutation.AddResourceRelationshipBIDs(ids...)
 	return rtuo
 }
 
-// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceTypeRelationship.
+func (rtuo *ResourceTypeUpdateOne) AddResourceRelationshipB(r ...*ResourceTypeRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -761,32 +649,20 @@ func (rtuo *ResourceTypeUpdateOne) Mutation() *ResourceTypeMutation {
 	return rtuo.mutation
 }
 
-// ClearResourcetypeclass clears the "resourcetypeclass" edge to type ResourceTypeClass.
-func (rtuo *ResourceTypeUpdateOne) ClearResourcetypeclass() *ResourceTypeUpdateOne {
-	rtuo.mutation.ClearResourcetypeclass()
-	return rtuo
-}
-
-// ClearResourcetypebasetype clears the "resourcetypebasetype" edge to type ResourceTypeBaseType.
-func (rtuo *ResourceTypeUpdateOne) ClearResourcetypebasetype() *ResourceTypeUpdateOne {
-	rtuo.mutation.ClearResourcetypebasetype()
-	return rtuo
-}
-
-// ClearResourceRelationshipA clears all "resource_relationship_a" edges to type ResourceRelationship.
+// ClearResourceRelationshipA clears all "resource_relationship_a" edges to type ResourceTypeRelationship.
 func (rtuo *ResourceTypeUpdateOne) ClearResourceRelationshipA() *ResourceTypeUpdateOne {
 	rtuo.mutation.ClearResourceRelationshipA()
 	return rtuo
 }
 
-// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipAIDs removes the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipAIDs(ids ...int) *ResourceTypeUpdateOne {
 	rtuo.mutation.RemoveResourceRelationshipAIDs(ids...)
 	return rtuo
 }
 
-// RemoveResourceRelationshipA removes resource_relationship_a edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// RemoveResourceRelationshipA removes resource_relationship_a edges to ResourceTypeRelationship.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipA(r ...*ResourceTypeRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -794,20 +670,20 @@ func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipA(r ...*ResourceRel
 	return rtuo.RemoveResourceRelationshipAIDs(ids...)
 }
 
-// ClearResourceRelationshipB clears all "resource_relationship_b" edges to type ResourceRelationship.
+// ClearResourceRelationshipB clears all "resource_relationship_b" edges to type ResourceTypeRelationship.
 func (rtuo *ResourceTypeUpdateOne) ClearResourceRelationshipB() *ResourceTypeUpdateOne {
 	rtuo.mutation.ClearResourceRelationshipB()
 	return rtuo
 }
 
-// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipBIDs removes the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipBIDs(ids ...int) *ResourceTypeUpdateOne {
 	rtuo.mutation.RemoveResourceRelationshipBIDs(ids...)
 	return rtuo
 }
 
-// RemoveResourceRelationshipB removes resource_relationship_b edges to ResourceRelationship.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeUpdateOne {
+// RemoveResourceRelationshipB removes resource_relationship_b edges to ResourceTypeRelationship.
+func (rtuo *ResourceTypeUpdateOne) RemoveResourceRelationshipB(r ...*ResourceTypeRelationship) *ResourceTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -930,6 +806,16 @@ func (rtuo *ResourceTypeUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := rtuo.mutation.ResourceTypeClass(); ok {
+		if err := resourcetype.ResourceTypeClassValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceTypeClass", err: fmt.Errorf("ent: validator failed for field \"ResourceTypeClass\": %w", err)}
+		}
+	}
+	if v, ok := rtuo.mutation.ResourceTypeBaseType(); ok {
+		if err := resourcetype.ResourceTypeBaseTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceTypeBaseType", err: fmt.Errorf("ent: validator failed for field \"ResourceTypeBaseType\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -963,75 +849,19 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 			Column: resourcetype.FieldName,
 		})
 	}
-	if rtuo.mutation.ResourcetypeclassCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypeclassTable,
-			Columns: []string{resourcetype.ResourcetypeclassColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypeclass.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := rtuo.mutation.ResourceTypeClass(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcetype.FieldResourceTypeClass,
+		})
 	}
-	if nodes := rtuo.mutation.ResourcetypeclassIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypeclassTable,
-			Columns: []string{resourcetype.ResourcetypeclassColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypeclass.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rtuo.mutation.ResourcetypebasetypeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypebasetypeTable,
-			Columns: []string{resourcetype.ResourcetypebasetypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypebasetype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtuo.mutation.ResourcetypebasetypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypebasetypeTable,
-			Columns: []string{resourcetype.ResourcetypebasetypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypebasetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if value, ok := rtuo.mutation.ResourceTypeBaseType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcetype.FieldResourceTypeBaseType,
+		})
 	}
 	if rtuo.mutation.ResourceRelationshipACleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1043,7 +873,7 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -1059,7 +889,7 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -1078,7 +908,7 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -1097,7 +927,7 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -1113,7 +943,7 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -1132,7 +962,7 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}

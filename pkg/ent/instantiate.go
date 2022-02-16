@@ -337,6 +337,12 @@ func (c *OrganizationClient) Instantiate(o *Organization) *Organization {
 }
 
 // Instantiate entity configuration.
+func (c *ParameterCatalogClient) Instantiate(pc *ParameterCatalog) *ParameterCatalog {
+	pc.config = c.config
+	return pc
+}
+
+// Instantiate entity configuration.
 func (c *PermissionsPolicyClient) Instantiate(pp *PermissionsPolicy) *PermissionsPolicy {
 	pp.config = c.config
 	return pp
@@ -364,6 +370,12 @@ func (c *ProjectTypeClient) Instantiate(pt *ProjectType) *ProjectType {
 func (c *PropertyClient) Instantiate(pr *Property) *Property {
 	pr.config = c.config
 	return pr
+}
+
+// Instantiate entity configuration.
+func (c *PropertyCategoryClient) Instantiate(pc *PropertyCategory) *PropertyCategory {
+	pc.config = c.config
+	return pc
 }
 
 // Instantiate entity configuration.
@@ -397,12 +409,6 @@ func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 }
 
 // Instantiate entity configuration.
-func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *ResourceRelationship {
-	rr.config = c.config
-	return rr
-}
-
-// Instantiate entity configuration.
 func (c *ResourceSRItemsClient) Instantiate(rsi *ResourceSRItems) *ResourceSRItems {
 	rsi.config = c.config
 	return rsi
@@ -427,15 +433,9 @@ func (c *ResourceTypeClient) Instantiate(rt *ResourceType) *ResourceType {
 }
 
 // Instantiate entity configuration.
-func (c *ResourceTypeBaseTypeClient) Instantiate(rtbt *ResourceTypeBaseType) *ResourceTypeBaseType {
-	rtbt.config = c.config
-	return rtbt
-}
-
-// Instantiate entity configuration.
-func (c *ResourceTypeClassClient) Instantiate(rtc *ResourceTypeClass) *ResourceTypeClass {
-	rtc.config = c.config
-	return rtc
+func (c *ResourceTypeRelationshipClient) Instantiate(rtr *ResourceTypeRelationship) *ResourceTypeRelationship {
+	rtr.config = c.config
+	return rtr
 }
 
 // Instantiate entity configuration.

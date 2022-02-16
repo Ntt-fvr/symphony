@@ -7,16 +7,21 @@ package resolverutil
 import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/pkg/errors"
 )
 
 func handleResourceSpecificationRelationshipFilter(q *ent.ResourceSpecificationRelationshipQuery, filter *models.ResourceSpecificationRelationshipFilterInput) (*ent.ResourceSpecificationRelationshipQuery, error) {
-	if filter.FilterType == models.ResourceSpecificationRelationshipFilterTypeName {
+	switch filter.FilterType {
+	case models.ResourceSpecificationRelationshipFilterTypeName:
 		return resourceSpecificationRelationshipNameFilter(q, filter)
+	case models.ResourceSpecificationRelationshipFilterTypeResourceSpecification:
+		return resourceSpecificationFilterResourceSR(q, filter)
+	default:
+		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 	}
-	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
 func resourceSpecificationRelationshipNameFilter(q *ent.ResourceSpecificationRelationshipQuery, filter *models.ResourceSpecificationRelationshipFilterInput) (*ent.ResourceSpecificationRelationshipQuery, error) {
@@ -24,4 +29,16 @@ func resourceSpecificationRelationshipNameFilter(q *ent.ResourceSpecificationRel
 		return q.Where(resourcespecificationrelationship.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func resourceSpecificationFilterResourceSR(q *ent.ResourceSpecificationRelationshipQuery, filter *models.ResourceSpecificationRelationshipFilterInput) (*ent.ResourceSpecificationRelationshipQuery, error) {
+
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+
+		return q.Where(resourcespecificationrelationship.HasResourcespecificationWith(resourcespecification.IDIn(filter.IDSet...))), nil
+
+	}
+
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+
 }

@@ -18,7 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 )
 
@@ -168,14 +168,14 @@ func (ltu *LocationTypeUpdate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 	return ltu.AddSurveyTemplateCategoryIDs(ids...)
 }
 
-// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceRelationship by ids.
+// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceTypeRelationship by ids.
 func (ltu *LocationTypeUpdate) AddResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdate {
 	ltu.mutation.AddResourceRelationshipLocationIDs(ids...)
 	return ltu
 }
 
-// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceRelationship.
-func (ltu *LocationTypeUpdate) AddResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdate {
+// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceTypeRelationship.
+func (ltu *LocationTypeUpdate) AddResourceRelationshipLocation(r ...*ResourceTypeRelationship) *LocationTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -266,20 +266,20 @@ func (ltu *LocationTypeUpdate) RemoveSurveyTemplateCategories(s ...*SurveyTempla
 	return ltu.RemoveSurveyTemplateCategoryIDs(ids...)
 }
 
-// ClearResourceRelationshipLocation clears all "resource_relationship_location" edges to type ResourceRelationship.
+// ClearResourceRelationshipLocation clears all "resource_relationship_location" edges to type ResourceTypeRelationship.
 func (ltu *LocationTypeUpdate) ClearResourceRelationshipLocation() *LocationTypeUpdate {
 	ltu.mutation.ClearResourceRelationshipLocation()
 	return ltu
 }
 
-// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceTypeRelationship by ids.
 func (ltu *LocationTypeUpdate) RemoveResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdate {
 	ltu.mutation.RemoveResourceRelationshipLocationIDs(ids...)
 	return ltu
 }
 
-// RemoveResourceRelationshipLocation removes resource_relationship_location edges to ResourceRelationship.
-func (ltu *LocationTypeUpdate) RemoveResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdate {
+// RemoveResourceRelationshipLocation removes resource_relationship_location edges to ResourceTypeRelationship.
+func (ltu *LocationTypeUpdate) RemoveResourceRelationshipLocation(r ...*ResourceTypeRelationship) *LocationTypeUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -626,7 +626,7 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -642,7 +642,7 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -661,7 +661,7 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -875,14 +875,14 @@ func (ltuo *LocationTypeUpdateOne) AddSurveyTemplateCategories(s ...*SurveyTempl
 	return ltuo.AddSurveyTemplateCategoryIDs(ids...)
 }
 
-// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceRelationship by ids.
+// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceTypeRelationship by ids.
 func (ltuo *LocationTypeUpdateOne) AddResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdateOne {
 	ltuo.mutation.AddResourceRelationshipLocationIDs(ids...)
 	return ltuo
 }
 
-// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceRelationship.
-func (ltuo *LocationTypeUpdateOne) AddResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdateOne {
+// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceTypeRelationship.
+func (ltuo *LocationTypeUpdateOne) AddResourceRelationshipLocation(r ...*ResourceTypeRelationship) *LocationTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -973,20 +973,20 @@ func (ltuo *LocationTypeUpdateOne) RemoveSurveyTemplateCategories(s ...*SurveyTe
 	return ltuo.RemoveSurveyTemplateCategoryIDs(ids...)
 }
 
-// ClearResourceRelationshipLocation clears all "resource_relationship_location" edges to type ResourceRelationship.
+// ClearResourceRelationshipLocation clears all "resource_relationship_location" edges to type ResourceTypeRelationship.
 func (ltuo *LocationTypeUpdateOne) ClearResourceRelationshipLocation() *LocationTypeUpdateOne {
 	ltuo.mutation.ClearResourceRelationshipLocation()
 	return ltuo
 }
 
-// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceRelationship by ids.
+// RemoveResourceRelationshipLocationIDs removes the resource_relationship_location edge to ResourceTypeRelationship by ids.
 func (ltuo *LocationTypeUpdateOne) RemoveResourceRelationshipLocationIDs(ids ...int) *LocationTypeUpdateOne {
 	ltuo.mutation.RemoveResourceRelationshipLocationIDs(ids...)
 	return ltuo
 }
 
-// RemoveResourceRelationshipLocation removes resource_relationship_location edges to ResourceRelationship.
-func (ltuo *LocationTypeUpdateOne) RemoveResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeUpdateOne {
+// RemoveResourceRelationshipLocation removes resource_relationship_location edges to ResourceTypeRelationship.
+func (ltuo *LocationTypeUpdateOne) RemoveResourceRelationshipLocation(r ...*ResourceTypeRelationship) *LocationTypeUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -1331,7 +1331,7 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -1347,7 +1347,7 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -1366,7 +1366,7 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
