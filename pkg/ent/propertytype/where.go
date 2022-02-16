@@ -2084,6 +2084,34 @@ func HasWorkerTypeWith(preds ...predicate.WorkerType) predicate.PropertyType {
 	})
 }
 
+// HasResourcespecification applies the HasEdge predicate on the "resourcespecification" edge.
+func HasResourcespecification() predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourcespecificationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ResourcespecificationTable, ResourcespecificationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasResourcespecificationWith applies the HasEdge predicate on the "resourcespecification" edge with a given conditions (other predicates).
+func HasResourcespecificationWith(preds ...predicate.ResourceSpecification) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourcespecificationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ResourcespecificationTable, ResourcespecificationColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasPropertyCategory applies the HasEdge predicate on the "property_category" edge.
 func HasPropertyCategory() predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
