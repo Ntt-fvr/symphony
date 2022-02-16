@@ -15,9 +15,13 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import {DependentPropertyTypesReducerTypes} from './DependentPropertyTypesReducer';
 import {NextArrowIcon} from '@symphony/design-system/icons';
+import {PropertyTypeValues} from '../../../common/PropertyType';
 
 type Props = $ReadOnly<{|
-  propertyTypeValues: string[],
+  propertyTypeValues: PropertyTypeValues[],
+  classes: any,
+  dispatch: () => void,
+  disabled: boolean,
 |}>;
 
 const PropertyComboList = (props: Props) => {

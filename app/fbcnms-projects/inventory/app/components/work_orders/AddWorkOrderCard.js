@@ -37,7 +37,7 @@ import LocationTypeahead from '../typeahead/LocationTypeahead';
 import MomentUtils from '@date-io/moment';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
-import PropertyValueInput from '../form/PropertyValueInput';
+import PropertyTypeInput from './PropertyTypeInput';
 import React, {useCallback, useContext, useReducer, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import SelectAvailabilityAssignee, {
@@ -51,10 +51,7 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {convertChecklistCategoriesStateToInput} from '../checklist/ChecklistUtils';
 import {generateTempId, getGraphError} from '../../common/EntUtils';
-import {
-  getInitialPropertyFromType,
-  toMutablePropertyType,
-} from '../../common/PropertyType';
+import {getAllInitialProperties} from './property_combo/PropertyComboHelpers';
 import {
   getInitialStateFromChecklistDefinitions,
   reducer,
@@ -62,7 +59,7 @@ import {
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {priorityValues, useStatusValues} from '../../common/FilterTypes';
-import {sortPropertiesByIndex, toPropertyInput} from '../../common/Property';
+import {toPropertyInput} from '../../common/Property';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useHistory, useRouteMatch} from 'react-router';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -160,6 +157,34 @@ const workOrderTypeQuery = graphql`
           isInstanceProperty
           isDeleted
           category
+          dependencePropertyTypes {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isMandatory
+            isInstanceProperty
+            isDeleted
+            category
+            propertyTypeValues {
+              id
+              name
+              propertyTypeValues {
+                id
+                name
+              }
+            }
+          }
         }
         checkListCategoryDefinitions {
           id
@@ -188,7 +213,7 @@ type Props = $ReadOnly<{|
 const AddWorkOrderCard = (props: Props) => {
   const {workOrderTypeId} = props;
   const classes = useStyles();
-  const {statusValues, closedStatus} = useStatusValues();
+  const {statusValues} = useStatusValues();
 
   const {
     workOrderType,
@@ -215,14 +240,7 @@ const AddWorkOrderCard = (props: Props) => {
           description: workOrderType.description,
           locationId: null,
           location: null,
-          properties:
-            workOrderType.propertyTypes
-              ?.filter(Boolean)
-              .filter(propertyType => !propertyType.isDeleted)
-              .map(propType =>
-                getInitialPropertyFromType(toMutablePropertyType(propType)),
-              )
-              .sort(sortPropertiesByIndex) ?? [],
+          properties: getAllInitialProperties(workOrderType),
           workOrders: [],
           owner: {id: '', email: ''},
           creationDate: '',
@@ -516,31 +534,18 @@ const AddWorkOrderCard = (props: Props) => {
                       {workOrder.properties
                         .filter(property => !property.propertyType.isDeleted)
                         .map((property, index) => (
-                          <Grid
+                          <PropertyTypeInput
                             key={property.id}
-                            item
-                            xs={12}
-                            sm={6}
-                            lg={4}
-                            xl={4}>
-                            <PropertyValueInput
-                              required={
-                                !!property.propertyType.isMandatory &&
-                                (workOrder.status === closedStatus.value ||
-                                  !mandatoryPropertiesOnCloseEnabled)
-                              }
-                              disabled={
-                                !property.propertyType.isInstanceProperty
-                              }
-                              label={property.propertyType.name}
-                              className={classes.gridInput}
-                              inputType="Property"
-                              property={property}
-                              headlineVariant="form"
-                              fullWidth={true}
-                              onChange={_propertyChangedHandler(index)}
-                            />
-                          </Grid>
+                            workOrder={workOrder}
+                            property={property}
+                            mandatoryPropertiesOnCloseEnabled={
+                              mandatoryPropertiesOnCloseEnabled
+                            }
+                            classes={classes}
+                            index={index}
+                            _propertyChangedHandler={_propertyChangedHandler}
+                            nextProperty={workOrder.properties[index + 1]}
+                          />
                         ))}
                     </Grid>
                   </ExpandingPanel>

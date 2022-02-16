@@ -14,8 +14,7 @@ import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 
 type Props = $ReadOnly<{|
-  open: boolean,
-  onClose: () => void,
+  classes: any,
 |}>;
 
 const PropertyComboCompleted = (props: Props) => {

@@ -39,6 +39,15 @@ export type PropertyType = {|
   isListable?: ?boolean,
   isDeleted?: ?boolean,
   dependencePropertyTypes?: ?(PropertyType[]),
+  propertyTypeValues?: ?(PropertyTypeValues[]),
+|};
+
+export type PropertyTypeValues = {|
+  id: string,
+  name: string,
+  propertyType?: PropertyType,
+  propertyTypeValues?: ?(PropertyTypeValues[]),
+  propertyTypeValues?: PropertyTypeValues,
 |};
 
 export const getPropertyDefaultValue = (propertyType: PropertyType) => {
@@ -92,6 +101,8 @@ export const getInitialPropertyFromType = (
     rangeFromValue: propType.rangeFromValue,
     rangeToValue: propType.rangeToValue,
     nodeValue: null,
+    dependencePropertyTypes: propType.dependencePropertyTypes,
+    propertyTypeValues: propType.propertyTypeValues,
   };
 };
 
@@ -99,28 +110,35 @@ export const toMutablePropertyType = (
   immutablePropertyType: $ReadOnly<
     $ElementType<PropertyFormField_property, 'propertyType'>,
   >,
-): PropertyType => ({
-  id: immutablePropertyType.id,
-  type: immutablePropertyType.type,
-  nodeType: immutablePropertyType.nodeType,
-  name: immutablePropertyType.name,
-  index: immutablePropertyType.index,
-  category: immutablePropertyType.category,
-  booleanValue: immutablePropertyType.booleanValue,
-  stringValue: immutablePropertyType.stringValue,
-  intValue: immutablePropertyType.intValue,
-  floatValue: immutablePropertyType.floatValue,
-  latitudeValue: immutablePropertyType.latitudeValue,
-  longitudeValue: immutablePropertyType.longitudeValue,
-  rangeFromValue: immutablePropertyType.rangeFromValue,
-  rangeToValue: immutablePropertyType.rangeToValue,
-  isEditable: immutablePropertyType.isEditable,
-  isInstanceProperty: immutablePropertyType.isInstanceProperty,
-  isMandatory: immutablePropertyType.isMandatory,
-  isListable: immutablePropertyType.isListable,
-  isDeleted: immutablePropertyType.isDeleted,
-  dependencePropertyTypes: immutablePropertyType.dependencePropertyTypes,
-});
+  dependenceIndex: number = null,
+): PropertyType => {
+  const index = !!dependenceIndex
+    ? dependenceIndex + 0.5
+    : immutablePropertyType.index;
+  return {
+    id: immutablePropertyType.id,
+    type: immutablePropertyType.type,
+    nodeType: immutablePropertyType.nodeType,
+    name: immutablePropertyType.name,
+    index: index,
+    category: immutablePropertyType.category,
+    booleanValue: immutablePropertyType.booleanValue,
+    stringValue: immutablePropertyType.stringValue,
+    intValue: immutablePropertyType.intValue,
+    floatValue: immutablePropertyType.floatValue,
+    latitudeValue: immutablePropertyType.latitudeValue,
+    longitudeValue: immutablePropertyType.longitudeValue,
+    rangeFromValue: immutablePropertyType.rangeFromValue,
+    rangeToValue: immutablePropertyType.rangeToValue,
+    isEditable: immutablePropertyType.isEditable,
+    isInstanceProperty: immutablePropertyType.isInstanceProperty,
+    isMandatory: immutablePropertyType.isMandatory,
+    isListable: immutablePropertyType.isListable,
+    isDeleted: immutablePropertyType.isDeleted,
+    dependencePropertyTypes: immutablePropertyType.dependencePropertyTypes,
+    propertyTypeValues: immutablePropertyType.propertyTypeValues,
+  };
+};
 
 export const convertPropertyTypeToMutationInput = (
   propertyTypes: Array<PropertyType>,

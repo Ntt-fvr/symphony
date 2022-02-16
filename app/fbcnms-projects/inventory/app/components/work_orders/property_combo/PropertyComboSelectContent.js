@@ -27,7 +27,8 @@ import {
 import {PropertyType} from '../../../common/PropertyType';
 import {
   getDependencePropertyType,
-  getPorpertyTypeValuesToReducer,
+  getPropertiesWithoutActualProperty,
+  getPropertyTypeValuesToReducer,
 } from './PropertyComboHelpers';
 import {isTempId} from '../../../common/EntUtils';
 
@@ -41,14 +42,16 @@ type Props = $ReadOnly<{|
 
 const PropertyComboSelectContent = (props: Props) => {
   const {onClose, classes, property, setShowCompleteMessage, onSave} = props;
-  const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
+  const {propertyTypes, dispatch: propertyTypesDispatch} = useContext(
+    PropertyTypesTableDispatcher,
+  );
 
   const dependentPropertyInitial = getDependencePropertyType(property);
   const propertyTypesFinal = [...propertyTypes];
   dependentPropertyInitial && propertyTypesFinal.push(dependentPropertyInitial);
 
   const DependentPropertyTypesInitialState = {
-    propertyTypeValues: getPorpertyTypeValuesToReducer(property),
+    propertyTypeValues: getPropertyTypeValuesToReducer(property),
     dependentPropertyInitial,
   };
   const [state, dispatch] = useReducer(
@@ -67,6 +70,10 @@ const PropertyComboSelectContent = (props: Props) => {
 
   const saveButtonClicked = () => {
     setShowCompleteMessage(true);
+    propertyTypesDispatch({
+      type: 'REMOVE_PROPERTY_TYPE',
+      id: state.id,
+    });
     isTempId(state.id) && delete state.id;
     onSave([state]);
   };
@@ -113,7 +120,10 @@ const PropertyComboSelectContent = (props: Props) => {
           </Grid>
           <Grid item xs={5}>
             <Select
-              options={propertyTypesFinal.map(property => {
+              options={getPropertiesWithoutActualProperty(
+                property,
+                propertyTypesFinal,
+              ).map(property => {
                 return {
                   key: property.id,
                   label: property.name,

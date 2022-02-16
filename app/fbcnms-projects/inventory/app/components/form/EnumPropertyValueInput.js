@@ -12,7 +12,8 @@ import type {PropertyType} from '../../common/PropertyType';
 
 import IconButton from '@symphony/design-system/components/IconButton';
 import PropertyComboPrincipalDialog from '../work_orders/property_combo/PropertyComboPrincipalDialog';
-import React, {useState} from 'react';
+import PropertyTypesTableDispatcher from './context/property_types/PropertyTypesTableDispatcher';
+import React, {useContext, useState} from 'react';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import update from 'immutability-helper';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
@@ -57,6 +58,7 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
 
   const propertyComboFeatureFlag = useFeatureFlag('property_combo');
   const allowPropertyCombo = showPropertyCombo && propertyComboFeatureFlag;
+  const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
 
   const dependentPropertyValues = isDependentProperty
     ? getAllInputValuesDependentPropertyInString(property, isDependentProperty)
@@ -120,6 +122,9 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
             skin="primary"
             onClick={showDialog}
             icon={MultipleSelectionIcon}
+            disabled={
+              propertyTypes.length <= 1 || !!property.dependencePropertyTypes
+            }
           />
           <PropertyComboPrincipalDialog
             open={viewDialogProperty}

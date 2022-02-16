@@ -24,6 +24,7 @@ import {PropertyType} from '../../../common/PropertyType';
 type Props = $ReadOnly<{|
   dependentProperty: PropertyType,
   classes: any,
+  supportMandatory: boolean,
 |}>;
 
 const PropertyComboTableItem = (props: Props) => {

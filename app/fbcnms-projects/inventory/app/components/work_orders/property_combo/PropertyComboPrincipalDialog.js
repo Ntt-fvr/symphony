@@ -108,15 +108,20 @@ const PropertyComboPrincipalDialog = (props: Props) => {
   );
   const classes = useStyles();
 
+  const onCloseClicked = async () => {
+    await onClose();
+    setShowCompleteMessage(false);
+  };
+
   return (
     <Dialog
       maxWidth="sm"
       open={open}
-      onClose={onClose}
+      onClose={onCloseClicked}
       fullWidth={true}
       className={classes.root}>
       <DialogTitle className={classes.dialogTitle} onClose={true}>
-        <IconButton skin="primary" icon={CloseIcon} onClick={onClose} />
+        <IconButton skin="primary" icon={CloseIcon} onClick={onCloseClicked} />
       </DialogTitle>
       {showCompleteMessage ? (
         <PropertyComboCompleted classes={classes} />
