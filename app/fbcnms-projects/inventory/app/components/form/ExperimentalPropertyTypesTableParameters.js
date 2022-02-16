@@ -192,16 +192,16 @@ Props) => {
                 <FormField className={classes.input}>
                   <TextField
                     required
-                    id="outlined-select-status"
+                    id="outlined-select-option-native-simple"
                     select
                     // className={classes.selectField}
-                    label="Status"
+                    label="Option"
                     // onChange={handleChangeStatus}
                     defaultValue=""
                     name="status"
                     variant="outlined">
-                    <MenuItem value={true}>Enabled</MenuItem>
-                    <MenuItem value={false}>Disabled</MenuItem>
+                    <MenuItem>Multiple Choice</MenuItem>
+                    <MenuItem>Text</MenuItem>
                   </TextField>
                   {/* <PropertyTypeSelect propertyType={property} /> */}
                 </FormField>
