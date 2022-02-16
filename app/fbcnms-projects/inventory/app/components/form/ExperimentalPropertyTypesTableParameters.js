@@ -33,6 +33,7 @@ import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
+import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {isTempId} from '../../common/EntUtils';
@@ -53,6 +54,39 @@ const useStyles = makeStyles(() => ({
     ...inventoryTheme.textField,
     marginTop: '0px',
     marginBottom: '0px',
+    width: '100%',
+  },
+  formField: {
+    width: '100%',
+    padding: '0 12px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: symphony.palette.D200,
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: symphony.palette.B600,
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      // marginBottom: '36px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: symphony.palette.B600,
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
+  },
+  selectField: {
     width: '100%',
   },
   gridRight: {
@@ -98,6 +132,7 @@ Props) => {
   const [parameters, setParameters] = useState([]);
   const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [changeInput, setChangeInput] = useState('');
   const classes = useStyles();
   const dispatch = useContext(PropertyTypesTableDispatcher);
 
@@ -118,6 +153,11 @@ Props) => {
   };
   const nameChange = ({target}) => {
     console.log(target.value);
+  };
+  const handleOption = mc => {
+    console.log('Multiple Chopice', mc);
+    mc === 'MC' && setChangeInput('Multiple Choice');
+    mc === 'TXT' && setChangeInput('Text');
   };
 
   return (
@@ -165,7 +205,7 @@ Props) => {
               // });
             }
           }}>
-          {parameters?.sort(sortByIndex)?.map((property, i) => (
+          {parameters.sort(sortByIndex).map((property, i) => (
             <DraggableTableRow
               id={property.id}
               index={i}
@@ -189,22 +229,32 @@ Props) => {
                 </FormField>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
-                <FormField className={classes.input}>
+                {/* <FormField className={classes.input}> */}
+                <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
                     id="outlined-select-option-native-simple"
                     select
-                    // className={classes.selectField}
+                    className={classes.selectField}
                     label="Option"
                     // onChange={handleChangeStatus}
                     defaultValue=""
                     name="status"
                     variant="outlined">
-                    <MenuItem>Multiple Choice</MenuItem>
-                    <MenuItem>Text</MenuItem>
+                    <MenuItem
+                      onClick={() => handleOption('MC')}
+                      value={'Multiple Choice'}>
+                      Multiple Choice
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => handleOption('TXT')}
+                      value={'Text'}>
+                      Text
+                    </MenuItem>
                   </TextField>
                   {/* <PropertyTypeSelect propertyType={property} /> */}
-                </FormField>
+                  {/* </FormField> */}
+                </form>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 {/* <PropertyValueInput
@@ -219,9 +269,10 @@ Props) => {
                   //   })
                   // }
                 /> */}
+                {/* ***************************MULTIPLE CHOICE**************************** */}
                 <TextInput
                   autoFocus={true}
-                  placeholder="Default value"
+                  placeholder={changeInput}
                   autoComplete="off"
                   className={classes.input}
                   onChange={nameChange}
