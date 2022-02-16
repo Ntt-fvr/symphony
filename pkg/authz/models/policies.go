@@ -26,6 +26,11 @@ type DocumentCategoryPermissionRule struct {
 	DocumentCategoryIds []int           `json:"documentCategoryIds"`
 }
 
+type PropertyCategoryPermissionRule struct {
+	IsAllowed           PermissionValue `json:"isAllowed"`
+	PropertyCategoryIds []int           `json:"propertyCategoryIds"`
+}
+
 type Cud struct {
 	Create *BasicPermissionRule `json:"create"`
 	Update *BasicPermissionRule `json:"update"`
@@ -44,6 +49,13 @@ type DocumentCategoryCud struct {
 	Create         *DocumentCategoryPermissionRule `json:"create"`
 	Update         *DocumentCategoryPermissionRule `json:"update"`
 	Delete         *DocumentCategoryPermissionRule `json:"delete"`
+}
+
+type PropertyCategoryCud struct {
+	Read   *PropertyCategoryPermissionRule `json:"read"`
+	Create *PropertyCategoryPermissionRule `json:"create"`
+	Update *PropertyCategoryPermissionRule `json:"update"`
+	Delete *PropertyCategoryPermissionRule `json:"delete"`
 }
 
 type WorkforcePermissionRule struct {
@@ -69,6 +81,7 @@ type InventoryPolicy struct {
 	Read             *BasicPermissionRule `json:"read"`
 	Location         *LocationCud         `json:"location"`
 	DocumentCategory *DocumentCategoryCud `json:"documentCategory"`
+	PropertyCategory *PropertyCategoryCud `json:"propertyCategory"`
 	Equipment        *Cud                 `json:"equipment"`
 	EquipmentType    *Cud                 `json:"equipmentType"`
 	LocationType     *Cud                 `json:"locationType"`

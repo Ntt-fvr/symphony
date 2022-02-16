@@ -68,21 +68,18 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -227,6 +224,8 @@ type Client struct {
 	NetworkType *NetworkTypeClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// ParameterCatalog is the client for interacting with the ParameterCatalog builders.
+	ParameterCatalog *ParameterCatalogClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
 	// Project is the client for interacting with the Project builders.
@@ -237,6 +236,8 @@ type Client struct {
 	ProjectType *ProjectTypeClient
 	// Property is the client for interacting with the Property builders.
 	Property *PropertyClient
+	// PropertyCategory is the client for interacting with the PropertyCategory builders.
+	PropertyCategory *PropertyCategoryClient
 	// PropertyType is the client for interacting with the PropertyType builders.
 	PropertyType *PropertyTypeClient
 	// Recommendations is the client for interacting with the Recommendations builders.
@@ -247,16 +248,6 @@ type Client struct {
 	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
-	// ResourceSRItems is the client for interacting with the ResourceSRItems builders.
-	ResourceSRItems *ResourceSRItemsClient
-	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
-	ResourceSpecification *ResourceSpecificationClient
-	// ResourceSpecificationRelationship is the client for interacting with the ResourceSpecificationRelationship builders.
-	ResourceSpecificationRelationship *ResourceSpecificationRelationshipClient
-	// ResourceType is the client for interacting with the ResourceType builders.
-	ResourceType *ResourceTypeClient
-	// ResourceTypeRelationship is the client for interacting with the ResourceTypeRelationship builders.
-	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
@@ -373,21 +364,18 @@ func (c *Client) init() {
 	c.LocationType = NewLocationTypeClient(c.config)
 	c.NetworkType = NewNetworkTypeClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
+	c.ParameterCatalog = NewParameterCatalogClient(c.config)
 	c.PermissionsPolicy = NewPermissionsPolicyClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.ProjectTemplate = NewProjectTemplateClient(c.config)
 	c.ProjectType = NewProjectTypeClient(c.config)
 	c.Property = NewPropertyClient(c.config)
+	c.PropertyCategory = NewPropertyCategoryClient(c.config)
 	c.PropertyType = NewPropertyTypeClient(c.config)
 	c.Recommendations = NewRecommendationsClient(c.config)
 	c.RecommendationsCategory = NewRecommendationsCategoryClient(c.config)
 	c.RecommendationsSources = NewRecommendationsSourcesClient(c.config)
 	c.ReportFilter = NewReportFilterClient(c.config)
-	c.ResourceSRItems = NewResourceSRItemsClient(c.config)
-	c.ResourceSpecification = NewResourceSpecificationClient(c.config)
-	c.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(c.config)
-	c.ResourceType = NewResourceTypeClient(c.config)
-	c.ResourceTypeRelationship = NewResourceTypeRelationshipClient(c.config)
 	c.Rule = NewRuleClient(c.config)
 	c.RuleLimit = NewRuleLimitClient(c.config)
 	c.RuleType = NewRuleTypeClient(c.config)
@@ -441,101 +429,98 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	}
 	cfg := config{driver: tx, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
-		ctx:                               ctx,
-		config:                            cfg,
-		Activity:                          NewActivityClient(cfg),
-		AlarmFilter:                       NewAlarmFilterClient(cfg),
-		AlarmStatus:                       NewAlarmStatusClient(cfg),
-		Appointment:                       NewAppointmentClient(cfg),
-		Block:                             NewBlockClient(cfg),
-		BlockInstance:                     NewBlockInstanceClient(cfg),
-		CheckListCategory:                 NewCheckListCategoryClient(cfg),
-		CheckListCategoryDefinition:       NewCheckListCategoryDefinitionClient(cfg),
-		CheckListItem:                     NewCheckListItemClient(cfg),
-		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
-		Comment:                           NewCommentClient(cfg),
-		Comparator:                        NewComparatorClient(cfg),
-		Counter:                           NewCounterClient(cfg),
-		CounterFamily:                     NewCounterFamilyClient(cfg),
-		CounterFormula:                    NewCounterFormulaClient(cfg),
-		Customer:                          NewCustomerClient(cfg),
-		DocumentCategory:                  NewDocumentCategoryClient(cfg),
-		Domain:                            NewDomainClient(cfg),
-		EntryPoint:                        NewEntryPointClient(cfg),
-		Equipment:                         NewEquipmentClient(cfg),
-		EquipmentCategory:                 NewEquipmentCategoryClient(cfg),
-		EquipmentPort:                     NewEquipmentPortClient(cfg),
-		EquipmentPortDefinition:           NewEquipmentPortDefinitionClient(cfg),
-		EquipmentPortType:                 NewEquipmentPortTypeClient(cfg),
-		EquipmentPosition:                 NewEquipmentPositionClient(cfg),
-		EquipmentPositionDefinition:       NewEquipmentPositionDefinitionClient(cfg),
-		EquipmentType:                     NewEquipmentTypeClient(cfg),
-		EventSeverity:                     NewEventSeverityClient(cfg),
-		ExitPoint:                         NewExitPointClient(cfg),
-		ExportTask:                        NewExportTaskClient(cfg),
-		Feature:                           NewFeatureClient(cfg),
-		File:                              NewFileClient(cfg),
-		FloorPlan:                         NewFloorPlanClient(cfg),
-		FloorPlanReferencePoint:           NewFloorPlanReferencePointClient(cfg),
-		FloorPlanScale:                    NewFloorPlanScaleClient(cfg),
-		Flow:                              NewFlowClient(cfg),
-		FlowDraft:                         NewFlowDraftClient(cfg),
-		FlowExecutionTemplate:             NewFlowExecutionTemplateClient(cfg),
-		FlowInstance:                      NewFlowInstanceClient(cfg),
-		Formula:                           NewFormulaClient(cfg),
-		Hyperlink:                         NewHyperlinkClient(cfg),
-		Kpi:                               NewKpiClient(cfg),
-		KpiCategory:                       NewKpiCategoryClient(cfg),
-		Kqi:                               NewKqiClient(cfg),
-		KqiCategory:                       NewKqiCategoryClient(cfg),
-		KqiComparator:                     NewKqiComparatorClient(cfg),
-		KqiPerspective:                    NewKqiPerspectiveClient(cfg),
-		KqiSource:                         NewKqiSourceClient(cfg),
-		KqiTarget:                         NewKqiTargetClient(cfg),
-		KqiTemporalFrequency:              NewKqiTemporalFrequencyClient(cfg),
-		Link:                              NewLinkClient(cfg),
-		Location:                          NewLocationClient(cfg),
-		LocationType:                      NewLocationTypeClient(cfg),
-		NetworkType:                       NewNetworkTypeClient(cfg),
-		Organization:                      NewOrganizationClient(cfg),
-		PermissionsPolicy:                 NewPermissionsPolicyClient(cfg),
-		Project:                           NewProjectClient(cfg),
-		ProjectTemplate:                   NewProjectTemplateClient(cfg),
-		ProjectType:                       NewProjectTypeClient(cfg),
-		Property:                          NewPropertyClient(cfg),
-		PropertyType:                      NewPropertyTypeClient(cfg),
-		Recommendations:                   NewRecommendationsClient(cfg),
-		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
-		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
-		ReportFilter:                      NewReportFilterClient(cfg),
-		ResourceSRItems:                   NewResourceSRItemsClient(cfg),
-		ResourceSpecification:             NewResourceSpecificationClient(cfg),
-		ResourceSpecificationRelationship: NewResourceSpecificationRelationshipClient(cfg),
-		ResourceType:                      NewResourceTypeClient(cfg),
-		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
-		Rule:                              NewRuleClient(cfg),
-		RuleLimit:                         NewRuleLimitClient(cfg),
-		RuleType:                          NewRuleTypeClient(cfg),
-		Service:                           NewServiceClient(cfg),
-		ServiceEndpoint:                   NewServiceEndpointClient(cfg),
-		ServiceEndpointDefinition:         NewServiceEndpointDefinitionClient(cfg),
-		ServiceType:                       NewServiceTypeClient(cfg),
-		Survey:                            NewSurveyClient(cfg),
-		SurveyCellScan:                    NewSurveyCellScanClient(cfg),
-		SurveyQuestion:                    NewSurveyQuestionClient(cfg),
-		SurveyTemplateCategory:            NewSurveyTemplateCategoryClient(cfg),
-		SurveyTemplateQuestion:            NewSurveyTemplateQuestionClient(cfg),
-		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
-		Tech:                              NewTechClient(cfg),
-		Threshold:                         NewThresholdClient(cfg),
-		User:                              NewUserClient(cfg),
-		UsersGroup:                        NewUsersGroupClient(cfg),
-		Vendor:                            NewVendorClient(cfg),
-		WorkOrder:                         NewWorkOrderClient(cfg),
-		WorkOrderDefinition:               NewWorkOrderDefinitionClient(cfg),
-		WorkOrderTemplate:                 NewWorkOrderTemplateClient(cfg),
-		WorkOrderType:                     NewWorkOrderTypeClient(cfg),
-		WorkerType:                        NewWorkerTypeClient(cfg),
+		ctx:                         ctx,
+		config:                      cfg,
+		Activity:                    NewActivityClient(cfg),
+		AlarmFilter:                 NewAlarmFilterClient(cfg),
+		AlarmStatus:                 NewAlarmStatusClient(cfg),
+		Appointment:                 NewAppointmentClient(cfg),
+		Block:                       NewBlockClient(cfg),
+		BlockInstance:               NewBlockInstanceClient(cfg),
+		CheckListCategory:           NewCheckListCategoryClient(cfg),
+		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
+		CheckListItem:               NewCheckListItemClient(cfg),
+		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
+		Comment:                     NewCommentClient(cfg),
+		Comparator:                  NewComparatorClient(cfg),
+		Counter:                     NewCounterClient(cfg),
+		CounterFamily:               NewCounterFamilyClient(cfg),
+		CounterFormula:              NewCounterFormulaClient(cfg),
+		Customer:                    NewCustomerClient(cfg),
+		DocumentCategory:            NewDocumentCategoryClient(cfg),
+		Domain:                      NewDomainClient(cfg),
+		EntryPoint:                  NewEntryPointClient(cfg),
+		Equipment:                   NewEquipmentClient(cfg),
+		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
+		EquipmentPort:               NewEquipmentPortClient(cfg),
+		EquipmentPortDefinition:     NewEquipmentPortDefinitionClient(cfg),
+		EquipmentPortType:           NewEquipmentPortTypeClient(cfg),
+		EquipmentPosition:           NewEquipmentPositionClient(cfg),
+		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
+		EquipmentType:               NewEquipmentTypeClient(cfg),
+		EventSeverity:               NewEventSeverityClient(cfg),
+		ExitPoint:                   NewExitPointClient(cfg),
+		ExportTask:                  NewExportTaskClient(cfg),
+		Feature:                     NewFeatureClient(cfg),
+		File:                        NewFileClient(cfg),
+		FloorPlan:                   NewFloorPlanClient(cfg),
+		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
+		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
+		Flow:                        NewFlowClient(cfg),
+		FlowDraft:                   NewFlowDraftClient(cfg),
+		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
+		FlowInstance:                NewFlowInstanceClient(cfg),
+		Formula:                     NewFormulaClient(cfg),
+		Hyperlink:                   NewHyperlinkClient(cfg),
+		Kpi:                         NewKpiClient(cfg),
+		KpiCategory:                 NewKpiCategoryClient(cfg),
+		Kqi:                         NewKqiClient(cfg),
+		KqiCategory:                 NewKqiCategoryClient(cfg),
+		KqiComparator:               NewKqiComparatorClient(cfg),
+		KqiPerspective:              NewKqiPerspectiveClient(cfg),
+		KqiSource:                   NewKqiSourceClient(cfg),
+		KqiTarget:                   NewKqiTargetClient(cfg),
+		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
+		Link:                        NewLinkClient(cfg),
+		Location:                    NewLocationClient(cfg),
+		LocationType:                NewLocationTypeClient(cfg),
+		NetworkType:                 NewNetworkTypeClient(cfg),
+		Organization:                NewOrganizationClient(cfg),
+		ParameterCatalog:            NewParameterCatalogClient(cfg),
+		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
+		Project:                     NewProjectClient(cfg),
+		ProjectTemplate:             NewProjectTemplateClient(cfg),
+		ProjectType:                 NewProjectTypeClient(cfg),
+		Property:                    NewPropertyClient(cfg),
+		PropertyCategory:            NewPropertyCategoryClient(cfg),
+		PropertyType:                NewPropertyTypeClient(cfg),
+		Recommendations:             NewRecommendationsClient(cfg),
+		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
+		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
+		ReportFilter:                NewReportFilterClient(cfg),
+		Rule:                        NewRuleClient(cfg),
+		RuleLimit:                   NewRuleLimitClient(cfg),
+		RuleType:                    NewRuleTypeClient(cfg),
+		Service:                     NewServiceClient(cfg),
+		ServiceEndpoint:             NewServiceEndpointClient(cfg),
+		ServiceEndpointDefinition:   NewServiceEndpointDefinitionClient(cfg),
+		ServiceType:                 NewServiceTypeClient(cfg),
+		Survey:                      NewSurveyClient(cfg),
+		SurveyCellScan:              NewSurveyCellScanClient(cfg),
+		SurveyQuestion:              NewSurveyQuestionClient(cfg),
+		SurveyTemplateCategory:      NewSurveyTemplateCategoryClient(cfg),
+		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
+		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
+		Tech:                        NewTechClient(cfg),
+		Threshold:                   NewThresholdClient(cfg),
+		User:                        NewUserClient(cfg),
+		UsersGroup:                  NewUsersGroupClient(cfg),
+		Vendor:                      NewVendorClient(cfg),
+		WorkOrder:                   NewWorkOrderClient(cfg),
+		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
+		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
+		WorkOrderType:               NewWorkOrderTypeClient(cfg),
+		WorkerType:                  NewWorkerTypeClient(cfg),
 	}, nil
 }
 
@@ -550,100 +535,97 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	}
 	cfg := config{driver: &txDriver{tx: tx, drv: c.driver}, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
-		config:                            cfg,
-		Activity:                          NewActivityClient(cfg),
-		AlarmFilter:                       NewAlarmFilterClient(cfg),
-		AlarmStatus:                       NewAlarmStatusClient(cfg),
-		Appointment:                       NewAppointmentClient(cfg),
-		Block:                             NewBlockClient(cfg),
-		BlockInstance:                     NewBlockInstanceClient(cfg),
-		CheckListCategory:                 NewCheckListCategoryClient(cfg),
-		CheckListCategoryDefinition:       NewCheckListCategoryDefinitionClient(cfg),
-		CheckListItem:                     NewCheckListItemClient(cfg),
-		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
-		Comment:                           NewCommentClient(cfg),
-		Comparator:                        NewComparatorClient(cfg),
-		Counter:                           NewCounterClient(cfg),
-		CounterFamily:                     NewCounterFamilyClient(cfg),
-		CounterFormula:                    NewCounterFormulaClient(cfg),
-		Customer:                          NewCustomerClient(cfg),
-		DocumentCategory:                  NewDocumentCategoryClient(cfg),
-		Domain:                            NewDomainClient(cfg),
-		EntryPoint:                        NewEntryPointClient(cfg),
-		Equipment:                         NewEquipmentClient(cfg),
-		EquipmentCategory:                 NewEquipmentCategoryClient(cfg),
-		EquipmentPort:                     NewEquipmentPortClient(cfg),
-		EquipmentPortDefinition:           NewEquipmentPortDefinitionClient(cfg),
-		EquipmentPortType:                 NewEquipmentPortTypeClient(cfg),
-		EquipmentPosition:                 NewEquipmentPositionClient(cfg),
-		EquipmentPositionDefinition:       NewEquipmentPositionDefinitionClient(cfg),
-		EquipmentType:                     NewEquipmentTypeClient(cfg),
-		EventSeverity:                     NewEventSeverityClient(cfg),
-		ExitPoint:                         NewExitPointClient(cfg),
-		ExportTask:                        NewExportTaskClient(cfg),
-		Feature:                           NewFeatureClient(cfg),
-		File:                              NewFileClient(cfg),
-		FloorPlan:                         NewFloorPlanClient(cfg),
-		FloorPlanReferencePoint:           NewFloorPlanReferencePointClient(cfg),
-		FloorPlanScale:                    NewFloorPlanScaleClient(cfg),
-		Flow:                              NewFlowClient(cfg),
-		FlowDraft:                         NewFlowDraftClient(cfg),
-		FlowExecutionTemplate:             NewFlowExecutionTemplateClient(cfg),
-		FlowInstance:                      NewFlowInstanceClient(cfg),
-		Formula:                           NewFormulaClient(cfg),
-		Hyperlink:                         NewHyperlinkClient(cfg),
-		Kpi:                               NewKpiClient(cfg),
-		KpiCategory:                       NewKpiCategoryClient(cfg),
-		Kqi:                               NewKqiClient(cfg),
-		KqiCategory:                       NewKqiCategoryClient(cfg),
-		KqiComparator:                     NewKqiComparatorClient(cfg),
-		KqiPerspective:                    NewKqiPerspectiveClient(cfg),
-		KqiSource:                         NewKqiSourceClient(cfg),
-		KqiTarget:                         NewKqiTargetClient(cfg),
-		KqiTemporalFrequency:              NewKqiTemporalFrequencyClient(cfg),
-		Link:                              NewLinkClient(cfg),
-		Location:                          NewLocationClient(cfg),
-		LocationType:                      NewLocationTypeClient(cfg),
-		NetworkType:                       NewNetworkTypeClient(cfg),
-		Organization:                      NewOrganizationClient(cfg),
-		PermissionsPolicy:                 NewPermissionsPolicyClient(cfg),
-		Project:                           NewProjectClient(cfg),
-		ProjectTemplate:                   NewProjectTemplateClient(cfg),
-		ProjectType:                       NewProjectTypeClient(cfg),
-		Property:                          NewPropertyClient(cfg),
-		PropertyType:                      NewPropertyTypeClient(cfg),
-		Recommendations:                   NewRecommendationsClient(cfg),
-		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
-		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
-		ReportFilter:                      NewReportFilterClient(cfg),
-		ResourceSRItems:                   NewResourceSRItemsClient(cfg),
-		ResourceSpecification:             NewResourceSpecificationClient(cfg),
-		ResourceSpecificationRelationship: NewResourceSpecificationRelationshipClient(cfg),
-		ResourceType:                      NewResourceTypeClient(cfg),
-		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
-		Rule:                              NewRuleClient(cfg),
-		RuleLimit:                         NewRuleLimitClient(cfg),
-		RuleType:                          NewRuleTypeClient(cfg),
-		Service:                           NewServiceClient(cfg),
-		ServiceEndpoint:                   NewServiceEndpointClient(cfg),
-		ServiceEndpointDefinition:         NewServiceEndpointDefinitionClient(cfg),
-		ServiceType:                       NewServiceTypeClient(cfg),
-		Survey:                            NewSurveyClient(cfg),
-		SurveyCellScan:                    NewSurveyCellScanClient(cfg),
-		SurveyQuestion:                    NewSurveyQuestionClient(cfg),
-		SurveyTemplateCategory:            NewSurveyTemplateCategoryClient(cfg),
-		SurveyTemplateQuestion:            NewSurveyTemplateQuestionClient(cfg),
-		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
-		Tech:                              NewTechClient(cfg),
-		Threshold:                         NewThresholdClient(cfg),
-		User:                              NewUserClient(cfg),
-		UsersGroup:                        NewUsersGroupClient(cfg),
-		Vendor:                            NewVendorClient(cfg),
-		WorkOrder:                         NewWorkOrderClient(cfg),
-		WorkOrderDefinition:               NewWorkOrderDefinitionClient(cfg),
-		WorkOrderTemplate:                 NewWorkOrderTemplateClient(cfg),
-		WorkOrderType:                     NewWorkOrderTypeClient(cfg),
-		WorkerType:                        NewWorkerTypeClient(cfg),
+		config:                      cfg,
+		Activity:                    NewActivityClient(cfg),
+		AlarmFilter:                 NewAlarmFilterClient(cfg),
+		AlarmStatus:                 NewAlarmStatusClient(cfg),
+		Appointment:                 NewAppointmentClient(cfg),
+		Block:                       NewBlockClient(cfg),
+		BlockInstance:               NewBlockInstanceClient(cfg),
+		CheckListCategory:           NewCheckListCategoryClient(cfg),
+		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
+		CheckListItem:               NewCheckListItemClient(cfg),
+		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
+		Comment:                     NewCommentClient(cfg),
+		Comparator:                  NewComparatorClient(cfg),
+		Counter:                     NewCounterClient(cfg),
+		CounterFamily:               NewCounterFamilyClient(cfg),
+		CounterFormula:              NewCounterFormulaClient(cfg),
+		Customer:                    NewCustomerClient(cfg),
+		DocumentCategory:            NewDocumentCategoryClient(cfg),
+		Domain:                      NewDomainClient(cfg),
+		EntryPoint:                  NewEntryPointClient(cfg),
+		Equipment:                   NewEquipmentClient(cfg),
+		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
+		EquipmentPort:               NewEquipmentPortClient(cfg),
+		EquipmentPortDefinition:     NewEquipmentPortDefinitionClient(cfg),
+		EquipmentPortType:           NewEquipmentPortTypeClient(cfg),
+		EquipmentPosition:           NewEquipmentPositionClient(cfg),
+		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
+		EquipmentType:               NewEquipmentTypeClient(cfg),
+		EventSeverity:               NewEventSeverityClient(cfg),
+		ExitPoint:                   NewExitPointClient(cfg),
+		ExportTask:                  NewExportTaskClient(cfg),
+		Feature:                     NewFeatureClient(cfg),
+		File:                        NewFileClient(cfg),
+		FloorPlan:                   NewFloorPlanClient(cfg),
+		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
+		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
+		Flow:                        NewFlowClient(cfg),
+		FlowDraft:                   NewFlowDraftClient(cfg),
+		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
+		FlowInstance:                NewFlowInstanceClient(cfg),
+		Formula:                     NewFormulaClient(cfg),
+		Hyperlink:                   NewHyperlinkClient(cfg),
+		Kpi:                         NewKpiClient(cfg),
+		KpiCategory:                 NewKpiCategoryClient(cfg),
+		Kqi:                         NewKqiClient(cfg),
+		KqiCategory:                 NewKqiCategoryClient(cfg),
+		KqiComparator:               NewKqiComparatorClient(cfg),
+		KqiPerspective:              NewKqiPerspectiveClient(cfg),
+		KqiSource:                   NewKqiSourceClient(cfg),
+		KqiTarget:                   NewKqiTargetClient(cfg),
+		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
+		Link:                        NewLinkClient(cfg),
+		Location:                    NewLocationClient(cfg),
+		LocationType:                NewLocationTypeClient(cfg),
+		NetworkType:                 NewNetworkTypeClient(cfg),
+		Organization:                NewOrganizationClient(cfg),
+		ParameterCatalog:            NewParameterCatalogClient(cfg),
+		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
+		Project:                     NewProjectClient(cfg),
+		ProjectTemplate:             NewProjectTemplateClient(cfg),
+		ProjectType:                 NewProjectTypeClient(cfg),
+		Property:                    NewPropertyClient(cfg),
+		PropertyCategory:            NewPropertyCategoryClient(cfg),
+		PropertyType:                NewPropertyTypeClient(cfg),
+		Recommendations:             NewRecommendationsClient(cfg),
+		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
+		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
+		ReportFilter:                NewReportFilterClient(cfg),
+		Rule:                        NewRuleClient(cfg),
+		RuleLimit:                   NewRuleLimitClient(cfg),
+		RuleType:                    NewRuleTypeClient(cfg),
+		Service:                     NewServiceClient(cfg),
+		ServiceEndpoint:             NewServiceEndpointClient(cfg),
+		ServiceEndpointDefinition:   NewServiceEndpointDefinitionClient(cfg),
+		ServiceType:                 NewServiceTypeClient(cfg),
+		Survey:                      NewSurveyClient(cfg),
+		SurveyCellScan:              NewSurveyCellScanClient(cfg),
+		SurveyQuestion:              NewSurveyQuestionClient(cfg),
+		SurveyTemplateCategory:      NewSurveyTemplateCategoryClient(cfg),
+		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
+		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
+		Tech:                        NewTechClient(cfg),
+		Threshold:                   NewThresholdClient(cfg),
+		User:                        NewUserClient(cfg),
+		UsersGroup:                  NewUsersGroupClient(cfg),
+		Vendor:                      NewVendorClient(cfg),
+		WorkOrder:                   NewWorkOrderClient(cfg),
+		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
+		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
+		WorkOrderType:               NewWorkOrderTypeClient(cfg),
+		WorkerType:                  NewWorkerTypeClient(cfg),
 	}, nil
 }
 
@@ -727,21 +709,18 @@ func (c *Client) Use(hooks ...Hook) {
 	c.LocationType.Use(hooks...)
 	c.NetworkType.Use(hooks...)
 	c.Organization.Use(hooks...)
+	c.ParameterCatalog.Use(hooks...)
 	c.PermissionsPolicy.Use(hooks...)
 	c.Project.Use(hooks...)
 	c.ProjectTemplate.Use(hooks...)
 	c.ProjectType.Use(hooks...)
 	c.Property.Use(hooks...)
+	c.PropertyCategory.Use(hooks...)
 	c.PropertyType.Use(hooks...)
 	c.Recommendations.Use(hooks...)
 	c.RecommendationsCategory.Use(hooks...)
 	c.RecommendationsSources.Use(hooks...)
 	c.ReportFilter.Use(hooks...)
-	c.ResourceSRItems.Use(hooks...)
-	c.ResourceSpecification.Use(hooks...)
-	c.ResourceSpecificationRelationship.Use(hooks...)
-	c.ResourceType.Use(hooks...)
-	c.ResourceTypeRelationship.Use(hooks...)
 	c.Rule.Use(hooks...)
 	c.RuleLimit.Use(hooks...)
 	c.RuleType.Use(hooks...)
@@ -7958,22 +7937,6 @@ func (c *LocationTypeClient) QuerySurveyTemplateCategories(lt *LocationType) *Su
 	return query
 }
 
-// QueryResourceRelationshipLocation queries the resource_relationship_location edge of a LocationType.
-func (c *LocationTypeClient) QueryResourceRelationshipLocation(lt *LocationType) *ResourceTypeRelationshipQuery {
-	query := &ResourceTypeRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := lt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
-			sqlgraph.To(resourcetyperelationship.Table, resourcetyperelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.ResourceRelationshipLocationTable, locationtype.ResourceRelationshipLocationColumn),
-		)
-		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryDocumentCategory queries the document_category edge of a LocationType.
 func (c *LocationTypeClient) QueryDocumentCategory(lt *LocationType) *DocumentCategoryQuery {
 	query := &DocumentCategoryQuery{config: c.config}
@@ -8236,6 +8199,111 @@ func (c *OrganizationClient) QueryPolicies(o *Organization) *PermissionsPolicyQu
 func (c *OrganizationClient) Hooks() []Hook {
 	hooks := c.hooks.Organization
 	return append(hooks[:len(hooks):len(hooks)], organization.Hooks[:]...)
+}
+
+// ParameterCatalogClient is a client for the ParameterCatalog schema.
+type ParameterCatalogClient struct {
+	config
+}
+
+// NewParameterCatalogClient returns a client for the ParameterCatalog from the given config.
+func NewParameterCatalogClient(c config) *ParameterCatalogClient {
+	return &ParameterCatalogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `parametercatalog.Hooks(f(g(h())))`.
+func (c *ParameterCatalogClient) Use(hooks ...Hook) {
+	c.hooks.ParameterCatalog = append(c.hooks.ParameterCatalog, hooks...)
+}
+
+// Create returns a create builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Create() *ParameterCatalogCreate {
+	mutation := newParameterCatalogMutation(c.config, OpCreate)
+	return &ParameterCatalogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ParameterCatalog entities.
+func (c *ParameterCatalogClient) CreateBulk(builders ...*ParameterCatalogCreate) *ParameterCatalogCreateBulk {
+	return &ParameterCatalogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Update() *ParameterCatalogUpdate {
+	mutation := newParameterCatalogMutation(c.config, OpUpdate)
+	return &ParameterCatalogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ParameterCatalogClient) UpdateOne(pc *ParameterCatalog) *ParameterCatalogUpdateOne {
+	mutation := newParameterCatalogMutation(c.config, OpUpdateOne, withParameterCatalog(pc))
+	return &ParameterCatalogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ParameterCatalogClient) UpdateOneID(id int) *ParameterCatalogUpdateOne {
+	mutation := newParameterCatalogMutation(c.config, OpUpdateOne, withParameterCatalogID(id))
+	return &ParameterCatalogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Delete() *ParameterCatalogDelete {
+	mutation := newParameterCatalogMutation(c.config, OpDelete)
+	return &ParameterCatalogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ParameterCatalogClient) DeleteOne(pc *ParameterCatalog) *ParameterCatalogDeleteOne {
+	return c.DeleteOneID(pc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ParameterCatalogClient) DeleteOneID(id int) *ParameterCatalogDeleteOne {
+	builder := c.Delete().Where(parametercatalog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ParameterCatalogDeleteOne{builder}
+}
+
+// Query returns a query builder for ParameterCatalog.
+func (c *ParameterCatalogClient) Query() *ParameterCatalogQuery {
+	return &ParameterCatalogQuery{config: c.config}
+}
+
+// Get returns a ParameterCatalog entity by its id.
+func (c *ParameterCatalogClient) Get(ctx context.Context, id int) (*ParameterCatalog, error) {
+	return c.Query().Where(parametercatalog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ParameterCatalogClient) GetX(ctx context.Context, id int) *ParameterCatalog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPropertyCategories queries the property_categories edge of a ParameterCatalog.
+func (c *ParameterCatalogClient) QueryPropertyCategories(pc *ParameterCatalog) *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(parametercatalog.Table, parametercatalog.FieldID, id),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, parametercatalog.PropertyCategoriesTable, parametercatalog.PropertyCategoriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ParameterCatalogClient) Hooks() []Hook {
+	hooks := c.hooks.ParameterCatalog
+	return append(hooks[:len(hooks):len(hooks)], parametercatalog.Hooks[:]...)
 }
 
 // PermissionsPolicyClient is a client for the PermissionsPolicy schema.
@@ -9147,6 +9215,127 @@ func (c *PropertyClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], property.Hooks[:]...)
 }
 
+// PropertyCategoryClient is a client for the PropertyCategory schema.
+type PropertyCategoryClient struct {
+	config
+}
+
+// NewPropertyCategoryClient returns a client for the PropertyCategory from the given config.
+func NewPropertyCategoryClient(c config) *PropertyCategoryClient {
+	return &PropertyCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `propertycategory.Hooks(f(g(h())))`.
+func (c *PropertyCategoryClient) Use(hooks ...Hook) {
+	c.hooks.PropertyCategory = append(c.hooks.PropertyCategory, hooks...)
+}
+
+// Create returns a create builder for PropertyCategory.
+func (c *PropertyCategoryClient) Create() *PropertyCategoryCreate {
+	mutation := newPropertyCategoryMutation(c.config, OpCreate)
+	return &PropertyCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PropertyCategory entities.
+func (c *PropertyCategoryClient) CreateBulk(builders ...*PropertyCategoryCreate) *PropertyCategoryCreateBulk {
+	return &PropertyCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PropertyCategory.
+func (c *PropertyCategoryClient) Update() *PropertyCategoryUpdate {
+	mutation := newPropertyCategoryMutation(c.config, OpUpdate)
+	return &PropertyCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PropertyCategoryClient) UpdateOne(pc *PropertyCategory) *PropertyCategoryUpdateOne {
+	mutation := newPropertyCategoryMutation(c.config, OpUpdateOne, withPropertyCategory(pc))
+	return &PropertyCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PropertyCategoryClient) UpdateOneID(id int) *PropertyCategoryUpdateOne {
+	mutation := newPropertyCategoryMutation(c.config, OpUpdateOne, withPropertyCategoryID(id))
+	return &PropertyCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PropertyCategory.
+func (c *PropertyCategoryClient) Delete() *PropertyCategoryDelete {
+	mutation := newPropertyCategoryMutation(c.config, OpDelete)
+	return &PropertyCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *PropertyCategoryClient) DeleteOne(pc *PropertyCategory) *PropertyCategoryDeleteOne {
+	return c.DeleteOneID(pc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *PropertyCategoryClient) DeleteOneID(id int) *PropertyCategoryDeleteOne {
+	builder := c.Delete().Where(propertycategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PropertyCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for PropertyCategory.
+func (c *PropertyCategoryClient) Query() *PropertyCategoryQuery {
+	return &PropertyCategoryQuery{config: c.config}
+}
+
+// Get returns a PropertyCategory entity by its id.
+func (c *PropertyCategoryClient) Get(ctx context.Context, id int) (*PropertyCategory, error) {
+	return c.Query().Where(propertycategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PropertyCategoryClient) GetX(ctx context.Context, id int) *PropertyCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPropertiesType queries the properties_type edge of a PropertyCategory.
+func (c *PropertyCategoryClient) QueryPropertiesType(pc *PropertyCategory) *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, id),
+			sqlgraph.To(propertytype.Table, propertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTypeTable, propertycategory.PropertiesTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryParameterCatalog queries the parameter_catalog edge of a PropertyCategory.
+func (c *PropertyCategoryClient) QueryParameterCatalog(pc *PropertyCategory) *ParameterCatalogQuery {
+	query := &ParameterCatalogQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, id),
+			sqlgraph.To(parametercatalog.Table, parametercatalog.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertycategory.ParameterCatalogTable, propertycategory.ParameterCatalogColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PropertyCategoryClient) Hooks() []Hook {
+	hooks := c.hooks.PropertyCategory
+	return append(hooks[:len(hooks):len(hooks)], propertycategory.Hooks[:]...)
+}
+
 // PropertyTypeClient is a client for the PropertyType schema.
 type PropertyTypeClient struct {
 	config
@@ -9406,15 +9595,15 @@ func (c *PropertyTypeClient) QueryWorkerType(pt *PropertyType) *WorkerTypeQuery 
 	return query
 }
 
-// QueryResourcespecification queries the resourcespecification edge of a PropertyType.
-func (c *PropertyTypeClient) QueryResourcespecification(pt *PropertyType) *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: c.config}
+// QueryPropertyCategory queries the property_category edge of a PropertyType.
+func (c *PropertyTypeClient) QueryPropertyCategory(pt *PropertyType) *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := pt.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ResourcespecificationTable, propertytype.ResourcespecificationColumn),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.PropertyCategoryTable, propertytype.PropertyCategoryColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil
@@ -9894,675 +10083,6 @@ func (c *ReportFilterClient) GetX(ctx context.Context, id int) *ReportFilter {
 func (c *ReportFilterClient) Hooks() []Hook {
 	hooks := c.hooks.ReportFilter
 	return append(hooks[:len(hooks):len(hooks)], reportfilter.Hooks[:]...)
-}
-
-// ResourceSRItemsClient is a client for the ResourceSRItems schema.
-type ResourceSRItemsClient struct {
-	config
-}
-
-// NewResourceSRItemsClient returns a client for the ResourceSRItems from the given config.
-func NewResourceSRItemsClient(c config) *ResourceSRItemsClient {
-	return &ResourceSRItemsClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `resourcesritems.Hooks(f(g(h())))`.
-func (c *ResourceSRItemsClient) Use(hooks ...Hook) {
-	c.hooks.ResourceSRItems = append(c.hooks.ResourceSRItems, hooks...)
-}
-
-// Create returns a create builder for ResourceSRItems.
-func (c *ResourceSRItemsClient) Create() *ResourceSRItemsCreate {
-	mutation := newResourceSRItemsMutation(c.config, OpCreate)
-	return &ResourceSRItemsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ResourceSRItems entities.
-func (c *ResourceSRItemsClient) CreateBulk(builders ...*ResourceSRItemsCreate) *ResourceSRItemsCreateBulk {
-	return &ResourceSRItemsCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ResourceSRItems.
-func (c *ResourceSRItemsClient) Update() *ResourceSRItemsUpdate {
-	mutation := newResourceSRItemsMutation(c.config, OpUpdate)
-	return &ResourceSRItemsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ResourceSRItemsClient) UpdateOne(rsi *ResourceSRItems) *ResourceSRItemsUpdateOne {
-	mutation := newResourceSRItemsMutation(c.config, OpUpdateOne, withResourceSRItems(rsi))
-	return &ResourceSRItemsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ResourceSRItemsClient) UpdateOneID(id int) *ResourceSRItemsUpdateOne {
-	mutation := newResourceSRItemsMutation(c.config, OpUpdateOne, withResourceSRItemsID(id))
-	return &ResourceSRItemsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ResourceSRItems.
-func (c *ResourceSRItemsClient) Delete() *ResourceSRItemsDelete {
-	mutation := newResourceSRItemsMutation(c.config, OpDelete)
-	return &ResourceSRItemsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ResourceSRItemsClient) DeleteOne(rsi *ResourceSRItems) *ResourceSRItemsDeleteOne {
-	return c.DeleteOneID(rsi.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ResourceSRItemsClient) DeleteOneID(id int) *ResourceSRItemsDeleteOne {
-	builder := c.Delete().Where(resourcesritems.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ResourceSRItemsDeleteOne{builder}
-}
-
-// Query returns a query builder for ResourceSRItems.
-func (c *ResourceSRItemsClient) Query() *ResourceSRItemsQuery {
-	return &ResourceSRItemsQuery{config: c.config}
-}
-
-// Get returns a ResourceSRItems entity by its id.
-func (c *ResourceSRItemsClient) Get(ctx context.Context, id int) (*ResourceSRItems, error) {
-	return c.Query().Where(resourcesritems.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ResourceSRItemsClient) GetX(ctx context.Context, id int) *ResourceSRItems {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryResourcesr queries the resourcesr edge of a ResourceSRItems.
-func (c *ResourceSRItemsClient) QueryResourcesr(rsi *ResourceSRItems) *ResourceSpecificationRelationshipQuery {
-	query := &ResourceSpecificationRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rsi.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcesritems.Table, resourcesritems.FieldID, id),
-			sqlgraph.To(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcesritems.ResourcesrTable, resourcesritems.ResourcesrColumn),
-		)
-		fromV = sqlgraph.Neighbors(rsi.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourcetype queries the resourcetype edge of a ResourceSRItems.
-func (c *ResourceSRItemsClient) QueryResourcetype(rsi *ResourceSRItems) *ResourceTypeQuery {
-	query := &ResourceTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rsi.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcesritems.Table, resourcesritems.FieldID, id),
-			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcesritems.ResourcetypeTable, resourcesritems.ResourcetypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(rsi.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ResourceSRItemsClient) Hooks() []Hook {
-	hooks := c.hooks.ResourceSRItems
-	return append(hooks[:len(hooks):len(hooks)], resourcesritems.Hooks[:]...)
-}
-
-// ResourceSpecificationClient is a client for the ResourceSpecification schema.
-type ResourceSpecificationClient struct {
-	config
-}
-
-// NewResourceSpecificationClient returns a client for the ResourceSpecification from the given config.
-func NewResourceSpecificationClient(c config) *ResourceSpecificationClient {
-	return &ResourceSpecificationClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `resourcespecification.Hooks(f(g(h())))`.
-func (c *ResourceSpecificationClient) Use(hooks ...Hook) {
-	c.hooks.ResourceSpecification = append(c.hooks.ResourceSpecification, hooks...)
-}
-
-// Create returns a create builder for ResourceSpecification.
-func (c *ResourceSpecificationClient) Create() *ResourceSpecificationCreate {
-	mutation := newResourceSpecificationMutation(c.config, OpCreate)
-	return &ResourceSpecificationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ResourceSpecification entities.
-func (c *ResourceSpecificationClient) CreateBulk(builders ...*ResourceSpecificationCreate) *ResourceSpecificationCreateBulk {
-	return &ResourceSpecificationCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ResourceSpecification.
-func (c *ResourceSpecificationClient) Update() *ResourceSpecificationUpdate {
-	mutation := newResourceSpecificationMutation(c.config, OpUpdate)
-	return &ResourceSpecificationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ResourceSpecificationClient) UpdateOne(rs *ResourceSpecification) *ResourceSpecificationUpdateOne {
-	mutation := newResourceSpecificationMutation(c.config, OpUpdateOne, withResourceSpecification(rs))
-	return &ResourceSpecificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ResourceSpecificationClient) UpdateOneID(id int) *ResourceSpecificationUpdateOne {
-	mutation := newResourceSpecificationMutation(c.config, OpUpdateOne, withResourceSpecificationID(id))
-	return &ResourceSpecificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ResourceSpecification.
-func (c *ResourceSpecificationClient) Delete() *ResourceSpecificationDelete {
-	mutation := newResourceSpecificationMutation(c.config, OpDelete)
-	return &ResourceSpecificationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ResourceSpecificationClient) DeleteOne(rs *ResourceSpecification) *ResourceSpecificationDeleteOne {
-	return c.DeleteOneID(rs.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ResourceSpecificationClient) DeleteOneID(id int) *ResourceSpecificationDeleteOne {
-	builder := c.Delete().Where(resourcespecification.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ResourceSpecificationDeleteOne{builder}
-}
-
-// Query returns a query builder for ResourceSpecification.
-func (c *ResourceSpecificationClient) Query() *ResourceSpecificationQuery {
-	return &ResourceSpecificationQuery{config: c.config}
-}
-
-// Get returns a ResourceSpecification entity by its id.
-func (c *ResourceSpecificationClient) Get(ctx context.Context, id int) (*ResourceSpecification, error) {
-	return c.Query().Where(resourcespecification.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ResourceSpecificationClient) GetX(ctx context.Context, id int) *ResourceSpecification {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryResourcetype queries the resourcetype edge of a ResourceSpecification.
-func (c *ResourceSpecificationClient) QueryResourcetype(rs *ResourceSpecification) *ResourceTypeQuery {
-	query := &ResourceTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rs.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
-			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.ResourcetypeTable, resourcespecification.ResourcetypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryPropertyType queries the property_type edge of a ResourceSpecification.
-func (c *ResourceSpecificationClient) QueryPropertyType(rs *ResourceSpecification) *PropertyTypeQuery {
-	query := &PropertyTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rs.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
-			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.PropertyTypeTable, resourcespecification.PropertyTypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceSpecification queries the resource_specification edge of a ResourceSpecification.
-func (c *ResourceSpecificationClient) QueryResourceSpecification(rs *ResourceSpecification) *ResourceSpecificationRelationshipQuery {
-	query := &ResourceSpecificationRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rs.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
-			sqlgraph.To(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourceSpecificationTable, resourcespecification.ResourceSpecificationColumn),
-		)
-		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ResourceSpecificationClient) Hooks() []Hook {
-	hooks := c.hooks.ResourceSpecification
-	return append(hooks[:len(hooks):len(hooks)], resourcespecification.Hooks[:]...)
-}
-
-// ResourceSpecificationRelationshipClient is a client for the ResourceSpecificationRelationship schema.
-type ResourceSpecificationRelationshipClient struct {
-	config
-}
-
-// NewResourceSpecificationRelationshipClient returns a client for the ResourceSpecificationRelationship from the given config.
-func NewResourceSpecificationRelationshipClient(c config) *ResourceSpecificationRelationshipClient {
-	return &ResourceSpecificationRelationshipClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `resourcespecificationrelationship.Hooks(f(g(h())))`.
-func (c *ResourceSpecificationRelationshipClient) Use(hooks ...Hook) {
-	c.hooks.ResourceSpecificationRelationship = append(c.hooks.ResourceSpecificationRelationship, hooks...)
-}
-
-// Create returns a create builder for ResourceSpecificationRelationship.
-func (c *ResourceSpecificationRelationshipClient) Create() *ResourceSpecificationRelationshipCreate {
-	mutation := newResourceSpecificationRelationshipMutation(c.config, OpCreate)
-	return &ResourceSpecificationRelationshipCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ResourceSpecificationRelationship entities.
-func (c *ResourceSpecificationRelationshipClient) CreateBulk(builders ...*ResourceSpecificationRelationshipCreate) *ResourceSpecificationRelationshipCreateBulk {
-	return &ResourceSpecificationRelationshipCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ResourceSpecificationRelationship.
-func (c *ResourceSpecificationRelationshipClient) Update() *ResourceSpecificationRelationshipUpdate {
-	mutation := newResourceSpecificationRelationshipMutation(c.config, OpUpdate)
-	return &ResourceSpecificationRelationshipUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ResourceSpecificationRelationshipClient) UpdateOne(rsr *ResourceSpecificationRelationship) *ResourceSpecificationRelationshipUpdateOne {
-	mutation := newResourceSpecificationRelationshipMutation(c.config, OpUpdateOne, withResourceSpecificationRelationship(rsr))
-	return &ResourceSpecificationRelationshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ResourceSpecificationRelationshipClient) UpdateOneID(id int) *ResourceSpecificationRelationshipUpdateOne {
-	mutation := newResourceSpecificationRelationshipMutation(c.config, OpUpdateOne, withResourceSpecificationRelationshipID(id))
-	return &ResourceSpecificationRelationshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ResourceSpecificationRelationship.
-func (c *ResourceSpecificationRelationshipClient) Delete() *ResourceSpecificationRelationshipDelete {
-	mutation := newResourceSpecificationRelationshipMutation(c.config, OpDelete)
-	return &ResourceSpecificationRelationshipDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ResourceSpecificationRelationshipClient) DeleteOne(rsr *ResourceSpecificationRelationship) *ResourceSpecificationRelationshipDeleteOne {
-	return c.DeleteOneID(rsr.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ResourceSpecificationRelationshipClient) DeleteOneID(id int) *ResourceSpecificationRelationshipDeleteOne {
-	builder := c.Delete().Where(resourcespecificationrelationship.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ResourceSpecificationRelationshipDeleteOne{builder}
-}
-
-// Query returns a query builder for ResourceSpecificationRelationship.
-func (c *ResourceSpecificationRelationshipClient) Query() *ResourceSpecificationRelationshipQuery {
-	return &ResourceSpecificationRelationshipQuery{config: c.config}
-}
-
-// Get returns a ResourceSpecificationRelationship entity by its id.
-func (c *ResourceSpecificationRelationshipClient) Get(ctx context.Context, id int) (*ResourceSpecificationRelationship, error) {
-	return c.Query().Where(resourcespecificationrelationship.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ResourceSpecificationRelationshipClient) GetX(ctx context.Context, id int) *ResourceSpecificationRelationship {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryResourcespecification queries the resourcespecification edge of a ResourceSpecificationRelationship.
-func (c *ResourceSpecificationRelationshipClient) QueryResourcespecification(rsr *ResourceSpecificationRelationship) *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rsr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID, id),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecificationrelationship.ResourcespecificationTable, resourcespecificationrelationship.ResourcespecificationColumn),
-		)
-		fromV = sqlgraph.Neighbors(rsr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceSr queries the resource_sr edge of a ResourceSpecificationRelationship.
-func (c *ResourceSpecificationRelationshipClient) QueryResourceSr(rsr *ResourceSpecificationRelationship) *ResourceSRItemsQuery {
-	query := &ResourceSRItemsQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rsr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID, id),
-			sqlgraph.To(resourcesritems.Table, resourcesritems.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecificationrelationship.ResourceSrTable, resourcespecificationrelationship.ResourceSrColumn),
-		)
-		fromV = sqlgraph.Neighbors(rsr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ResourceSpecificationRelationshipClient) Hooks() []Hook {
-	hooks := c.hooks.ResourceSpecificationRelationship
-	return append(hooks[:len(hooks):len(hooks)], resourcespecificationrelationship.Hooks[:]...)
-}
-
-// ResourceTypeClient is a client for the ResourceType schema.
-type ResourceTypeClient struct {
-	config
-}
-
-// NewResourceTypeClient returns a client for the ResourceType from the given config.
-func NewResourceTypeClient(c config) *ResourceTypeClient {
-	return &ResourceTypeClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `resourcetype.Hooks(f(g(h())))`.
-func (c *ResourceTypeClient) Use(hooks ...Hook) {
-	c.hooks.ResourceType = append(c.hooks.ResourceType, hooks...)
-}
-
-// Create returns a create builder for ResourceType.
-func (c *ResourceTypeClient) Create() *ResourceTypeCreate {
-	mutation := newResourceTypeMutation(c.config, OpCreate)
-	return &ResourceTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ResourceType entities.
-func (c *ResourceTypeClient) CreateBulk(builders ...*ResourceTypeCreate) *ResourceTypeCreateBulk {
-	return &ResourceTypeCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ResourceType.
-func (c *ResourceTypeClient) Update() *ResourceTypeUpdate {
-	mutation := newResourceTypeMutation(c.config, OpUpdate)
-	return &ResourceTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ResourceTypeClient) UpdateOne(rt *ResourceType) *ResourceTypeUpdateOne {
-	mutation := newResourceTypeMutation(c.config, OpUpdateOne, withResourceType(rt))
-	return &ResourceTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ResourceTypeClient) UpdateOneID(id int) *ResourceTypeUpdateOne {
-	mutation := newResourceTypeMutation(c.config, OpUpdateOne, withResourceTypeID(id))
-	return &ResourceTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ResourceType.
-func (c *ResourceTypeClient) Delete() *ResourceTypeDelete {
-	mutation := newResourceTypeMutation(c.config, OpDelete)
-	return &ResourceTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ResourceTypeClient) DeleteOne(rt *ResourceType) *ResourceTypeDeleteOne {
-	return c.DeleteOneID(rt.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ResourceTypeClient) DeleteOneID(id int) *ResourceTypeDeleteOne {
-	builder := c.Delete().Where(resourcetype.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ResourceTypeDeleteOne{builder}
-}
-
-// Query returns a query builder for ResourceType.
-func (c *ResourceTypeClient) Query() *ResourceTypeQuery {
-	return &ResourceTypeQuery{config: c.config}
-}
-
-// Get returns a ResourceType entity by its id.
-func (c *ResourceTypeClient) Get(ctx context.Context, id int) (*ResourceType, error) {
-	return c.Query().Where(resourcetype.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ResourceTypeClient) GetX(ctx context.Context, id int) *ResourceType {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryResourceRelationshipA queries the resource_relationship_a edge of a ResourceType.
-func (c *ResourceTypeClient) QueryResourceRelationshipA(rt *ResourceType) *ResourceTypeRelationshipQuery {
-	query := &ResourceTypeRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, id),
-			sqlgraph.To(resourcetyperelationship.Table, resourcetyperelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceRelationshipATable, resourcetype.ResourceRelationshipAColumn),
-		)
-		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceRelationshipB queries the resource_relationship_b edge of a ResourceType.
-func (c *ResourceTypeClient) QueryResourceRelationshipB(rt *ResourceType) *ResourceTypeRelationshipQuery {
-	query := &ResourceTypeRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, id),
-			sqlgraph.To(resourcetyperelationship.Table, resourcetyperelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceRelationshipBTable, resourcetype.ResourceRelationshipBColumn),
-		)
-		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceSpecification queries the resource_specification edge of a ResourceType.
-func (c *ResourceTypeClient) QueryResourceSpecification(rt *ResourceType) *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, id),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceSpecificationTable, resourcetype.ResourceSpecificationColumn),
-		)
-		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourcetypeItems queries the resourcetype_items edge of a ResourceType.
-func (c *ResourceTypeClient) QueryResourcetypeItems(rt *ResourceType) *ResourceSRItemsQuery {
-	query := &ResourceSRItemsQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, id),
-			sqlgraph.To(resourcesritems.Table, resourcesritems.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourcetypeItemsTable, resourcetype.ResourcetypeItemsColumn),
-		)
-		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ResourceTypeClient) Hooks() []Hook {
-	hooks := c.hooks.ResourceType
-	return append(hooks[:len(hooks):len(hooks)], resourcetype.Hooks[:]...)
-}
-
-// ResourceTypeRelationshipClient is a client for the ResourceTypeRelationship schema.
-type ResourceTypeRelationshipClient struct {
-	config
-}
-
-// NewResourceTypeRelationshipClient returns a client for the ResourceTypeRelationship from the given config.
-func NewResourceTypeRelationshipClient(c config) *ResourceTypeRelationshipClient {
-	return &ResourceTypeRelationshipClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `resourcetyperelationship.Hooks(f(g(h())))`.
-func (c *ResourceTypeRelationshipClient) Use(hooks ...Hook) {
-	c.hooks.ResourceTypeRelationship = append(c.hooks.ResourceTypeRelationship, hooks...)
-}
-
-// Create returns a create builder for ResourceTypeRelationship.
-func (c *ResourceTypeRelationshipClient) Create() *ResourceTypeRelationshipCreate {
-	mutation := newResourceTypeRelationshipMutation(c.config, OpCreate)
-	return &ResourceTypeRelationshipCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ResourceTypeRelationship entities.
-func (c *ResourceTypeRelationshipClient) CreateBulk(builders ...*ResourceTypeRelationshipCreate) *ResourceTypeRelationshipCreateBulk {
-	return &ResourceTypeRelationshipCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ResourceTypeRelationship.
-func (c *ResourceTypeRelationshipClient) Update() *ResourceTypeRelationshipUpdate {
-	mutation := newResourceTypeRelationshipMutation(c.config, OpUpdate)
-	return &ResourceTypeRelationshipUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ResourceTypeRelationshipClient) UpdateOne(rtr *ResourceTypeRelationship) *ResourceTypeRelationshipUpdateOne {
-	mutation := newResourceTypeRelationshipMutation(c.config, OpUpdateOne, withResourceTypeRelationship(rtr))
-	return &ResourceTypeRelationshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ResourceTypeRelationshipClient) UpdateOneID(id int) *ResourceTypeRelationshipUpdateOne {
-	mutation := newResourceTypeRelationshipMutation(c.config, OpUpdateOne, withResourceTypeRelationshipID(id))
-	return &ResourceTypeRelationshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ResourceTypeRelationship.
-func (c *ResourceTypeRelationshipClient) Delete() *ResourceTypeRelationshipDelete {
-	mutation := newResourceTypeRelationshipMutation(c.config, OpDelete)
-	return &ResourceTypeRelationshipDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ResourceTypeRelationshipClient) DeleteOne(rtr *ResourceTypeRelationship) *ResourceTypeRelationshipDeleteOne {
-	return c.DeleteOneID(rtr.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ResourceTypeRelationshipClient) DeleteOneID(id int) *ResourceTypeRelationshipDeleteOne {
-	builder := c.Delete().Where(resourcetyperelationship.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ResourceTypeRelationshipDeleteOne{builder}
-}
-
-// Query returns a query builder for ResourceTypeRelationship.
-func (c *ResourceTypeRelationshipClient) Query() *ResourceTypeRelationshipQuery {
-	return &ResourceTypeRelationshipQuery{config: c.config}
-}
-
-// Get returns a ResourceTypeRelationship entity by its id.
-func (c *ResourceTypeRelationshipClient) Get(ctx context.Context, id int) (*ResourceTypeRelationship, error) {
-	return c.Query().Where(resourcetyperelationship.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ResourceTypeRelationshipClient) GetX(ctx context.Context, id int) *ResourceTypeRelationship {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryResourcetypea queries the resourcetypea edge of a ResourceTypeRelationship.
-func (c *ResourceTypeRelationshipClient) QueryResourcetypea(rtr *ResourceTypeRelationship) *ResourceTypeQuery {
-	query := &ResourceTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rtr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetyperelationship.Table, resourcetyperelationship.FieldID, id),
-			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcetyperelationship.ResourcetypeaTable, resourcetyperelationship.ResourcetypeaColumn),
-		)
-		fromV = sqlgraph.Neighbors(rtr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourcetypeb queries the resourcetypeb edge of a ResourceTypeRelationship.
-func (c *ResourceTypeRelationshipClient) QueryResourcetypeb(rtr *ResourceTypeRelationship) *ResourceTypeQuery {
-	query := &ResourceTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rtr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetyperelationship.Table, resourcetyperelationship.FieldID, id),
-			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcetyperelationship.ResourcetypebTable, resourcetyperelationship.ResourcetypebColumn),
-		)
-		fromV = sqlgraph.Neighbors(rtr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryLocationType queries the locationType edge of a ResourceTypeRelationship.
-func (c *ResourceTypeRelationshipClient) QueryLocationType(rtr *ResourceTypeRelationship) *LocationTypeQuery {
-	query := &LocationTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rtr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetyperelationship.Table, resourcetyperelationship.FieldID, id),
-			sqlgraph.To(locationtype.Table, locationtype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcetyperelationship.LocationTypeTable, resourcetyperelationship.LocationTypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(rtr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ResourceTypeRelationshipClient) Hooks() []Hook {
-	hooks := c.hooks.ResourceTypeRelationship
-	return append(hooks[:len(hooks):len(hooks)], resourcetyperelationship.Hooks[:]...)
 }
 
 // RuleClient is a client for the Rule schema.

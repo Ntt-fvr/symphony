@@ -20,8 +20,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -617,23 +617,23 @@ func (ptu *PropertyTypeUpdate) SetWorkerType(w *WorkerType) *PropertyTypeUpdate 
 	return ptu.SetWorkerTypeID(w.ID)
 }
 
-// SetResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id.
-func (ptu *PropertyTypeUpdate) SetResourcespecificationID(id int) *PropertyTypeUpdate {
-	ptu.mutation.SetResourcespecificationID(id)
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptu *PropertyTypeUpdate) SetPropertyCategoryID(id int) *PropertyTypeUpdate {
+	ptu.mutation.SetPropertyCategoryID(id)
 	return ptu
 }
 
-// SetNillableResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id if the given value is not nil.
-func (ptu *PropertyTypeUpdate) SetNillableResourcespecificationID(id *int) *PropertyTypeUpdate {
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillablePropertyCategoryID(id *int) *PropertyTypeUpdate {
 	if id != nil {
-		ptu = ptu.SetResourcespecificationID(*id)
+		ptu = ptu.SetPropertyCategoryID(*id)
 	}
 	return ptu
 }
 
-// SetResourcespecification sets the resourcespecification edge to ResourceSpecification.
-func (ptu *PropertyTypeUpdate) SetResourcespecification(r *ResourceSpecification) *PropertyTypeUpdate {
-	return ptu.SetResourcespecificationID(r.ID)
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptu *PropertyTypeUpdate) SetPropertyCategory(p *PropertyCategory) *PropertyTypeUpdate {
+	return ptu.SetPropertyCategoryID(p.ID)
 }
 
 // Mutation returns the PropertyTypeMutation object of the builder.
@@ -722,9 +722,9 @@ func (ptu *PropertyTypeUpdate) ClearWorkerType() *PropertyTypeUpdate {
 	return ptu
 }
 
-// ClearResourcespecification clears the "resourcespecification" edge to type ResourceSpecification.
-func (ptu *PropertyTypeUpdate) ClearResourcespecification() *PropertyTypeUpdate {
-	ptu.mutation.ClearResourcespecification()
+// ClearPropertyCategory clears the "property_category" edge to type PropertyCategory.
+func (ptu *PropertyTypeUpdate) ClearPropertyCategory() *PropertyTypeUpdate {
+	ptu.mutation.ClearPropertyCategory()
 	return ptu
 }
 
@@ -1487,33 +1487,33 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ptu.mutation.ResourcespecificationCleared() {
+	if ptu.mutation.PropertyCategoryCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   propertytype.ResourcespecificationTable,
-			Columns: []string{propertytype.ResourcespecificationColumn},
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ptu.mutation.ResourcespecificationIDs(); len(nodes) > 0 {
+	if nodes := ptu.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   propertytype.ResourcespecificationTable,
-			Columns: []string{propertytype.ResourcespecificationColumn},
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}
@@ -2116,23 +2116,23 @@ func (ptuo *PropertyTypeUpdateOne) SetWorkerType(w *WorkerType) *PropertyTypeUpd
 	return ptuo.SetWorkerTypeID(w.ID)
 }
 
-// SetResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id.
-func (ptuo *PropertyTypeUpdateOne) SetResourcespecificationID(id int) *PropertyTypeUpdateOne {
-	ptuo.mutation.SetResourcespecificationID(id)
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyCategoryID(id int) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetPropertyCategoryID(id)
 	return ptuo
 }
 
-// SetNillableResourcespecificationID sets the resourcespecification edge to ResourceSpecification by id if the given value is not nil.
-func (ptuo *PropertyTypeUpdateOne) SetNillableResourcespecificationID(id *int) *PropertyTypeUpdateOne {
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillablePropertyCategoryID(id *int) *PropertyTypeUpdateOne {
 	if id != nil {
-		ptuo = ptuo.SetResourcespecificationID(*id)
+		ptuo = ptuo.SetPropertyCategoryID(*id)
 	}
 	return ptuo
 }
 
-// SetResourcespecification sets the resourcespecification edge to ResourceSpecification.
-func (ptuo *PropertyTypeUpdateOne) SetResourcespecification(r *ResourceSpecification) *PropertyTypeUpdateOne {
-	return ptuo.SetResourcespecificationID(r.ID)
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyCategory(p *PropertyCategory) *PropertyTypeUpdateOne {
+	return ptuo.SetPropertyCategoryID(p.ID)
 }
 
 // Mutation returns the PropertyTypeMutation object of the builder.
@@ -2221,9 +2221,9 @@ func (ptuo *PropertyTypeUpdateOne) ClearWorkerType() *PropertyTypeUpdateOne {
 	return ptuo
 }
 
-// ClearResourcespecification clears the "resourcespecification" edge to type ResourceSpecification.
-func (ptuo *PropertyTypeUpdateOne) ClearResourcespecification() *PropertyTypeUpdateOne {
-	ptuo.mutation.ClearResourcespecification()
+// ClearPropertyCategory clears the "property_category" edge to type PropertyCategory.
+func (ptuo *PropertyTypeUpdateOne) ClearPropertyCategory() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearPropertyCategory()
 	return ptuo
 }
 
@@ -2984,33 +2984,33 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ptuo.mutation.ResourcespecificationCleared() {
+	if ptuo.mutation.PropertyCategoryCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   propertytype.ResourcespecificationTable,
-			Columns: []string{propertytype.ResourcespecificationColumn},
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ptuo.mutation.ResourcespecificationIDs(); len(nodes) > 0 {
+	if nodes := ptuo.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   propertytype.ResourcespecificationTable,
-			Columns: []string{propertytype.ResourcespecificationColumn},
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}

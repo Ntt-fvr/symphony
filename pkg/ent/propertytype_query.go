@@ -23,8 +23,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -51,7 +51,7 @@ type PropertyTypeQuery struct {
 	withProjectType           *ProjectTypeQuery
 	withProjectTemplate       *ProjectTemplateQuery
 	withWorkerType            *WorkerTypeQuery
-	withResourcespecification *ResourceSpecificationQuery
+	withPropertyCategory      *PropertyCategoryQuery
 	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -324,9 +324,9 @@ func (ptq *PropertyTypeQuery) QueryWorkerType() *WorkerTypeQuery {
 	return query
 }
 
-// QueryResourcespecification chains the current query on the resourcespecification edge.
-func (ptq *PropertyTypeQuery) QueryResourcespecification() *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: ptq.config}
+// QueryPropertyCategory chains the current query on the property_category edge.
+func (ptq *PropertyTypeQuery) QueryPropertyCategory() *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: ptq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ptq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -337,8 +337,8 @@ func (ptq *PropertyTypeQuery) QueryResourcespecification() *ResourceSpecificatio
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, selector),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ResourcespecificationTable, propertytype.ResourcespecificationColumn),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.PropertyCategoryTable, propertytype.PropertyCategoryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
 		return fromU, nil
@@ -533,7 +533,7 @@ func (ptq *PropertyTypeQuery) Clone() *PropertyTypeQuery {
 		withProjectType:           ptq.withProjectType.Clone(),
 		withProjectTemplate:       ptq.withProjectTemplate.Clone(),
 		withWorkerType:            ptq.withWorkerType.Clone(),
-		withResourcespecification: ptq.withResourcespecification.Clone(),
+		withPropertyCategory:      ptq.withPropertyCategory.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,
@@ -661,14 +661,14 @@ func (ptq *PropertyTypeQuery) WithWorkerType(opts ...func(*WorkerTypeQuery)) *Pr
 	return ptq
 }
 
-//  WithResourcespecification tells the query-builder to eager-loads the nodes that are connected to
-// the "resourcespecification" edge. The optional arguments used to configure the query builder of the edge.
-func (ptq *PropertyTypeQuery) WithResourcespecification(opts ...func(*ResourceSpecificationQuery)) *PropertyTypeQuery {
-	query := &ResourceSpecificationQuery{config: ptq.config}
+//  WithPropertyCategory tells the query-builder to eager-loads the nodes that are connected to
+// the "property_category" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithPropertyCategory(opts ...func(*PropertyCategoryQuery)) *PropertyTypeQuery {
+	query := &PropertyCategoryQuery{config: ptq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	ptq.withResourcespecification = query
+	ptq.withPropertyCategory = query
 	return ptq
 }
 
@@ -754,10 +754,10 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			ptq.withProjectType != nil,
 			ptq.withProjectTemplate != nil,
 			ptq.withWorkerType != nil,
-			ptq.withResourcespecification != nil,
+			ptq.withPropertyCategory != nil,
 		}
 	)
-	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withResourcespecification != nil {
+	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withPropertyCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -1066,16 +1066,16 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		}
 	}
 
-	if query := ptq.withResourcespecification; query != nil {
+	if query := ptq.withPropertyCategory; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PropertyType)
 		for i := range nodes {
-			if fk := nodes[i].resource_specification_property_type; fk != nil {
+			if fk := nodes[i].property_category_properties_type; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
 		}
-		query.Where(resourcespecification.IDIn(ids...))
+		query.Where(propertycategory.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -1083,10 +1083,10 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_property_type" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "property_category_properties_type" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Resourcespecification = n
+				nodes[i].Edges.PropertyCategory = n
 			}
 		}
 	}
