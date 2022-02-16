@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<d87375a9d2aa97f985e7eaef2cae40ee>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type AddEditWorkerTypeCard_workerType$ref = any;
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type AddEditWorkerTypeCard_workerType$fragmentType = any;
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type EditWorkerTypeInput = {|
   id: string,
   name: string,
@@ -45,62 +42,25 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type EditWorkerTypeMutationVariables = {|
-  input: EditWorkerTypeInput
+export type EditWorkerTypeMutation$variables = {|
+  input: EditWorkerTypeInput,
 |};
-export type EditWorkerTypeMutationResponse = {|
+export type EditWorkerTypeMutationVariables = EditWorkerTypeMutation$variables;
+export type EditWorkerTypeMutation$data = {|
   +editWorkerType: {|
     +id: string,
     +name: string,
-    +$fragmentRefs: AddEditWorkerTypeCard_workerType$ref,
-  |}
+    +$fragmentSpreads: AddEditWorkerTypeCard_workerType$fragmentType,
+  |},
 |};
+export type EditWorkerTypeMutationResponse = EditWorkerTypeMutation$data;
 export type EditWorkerTypeMutation = {|
   variables: EditWorkerTypeMutationVariables,
-  response: EditWorkerTypeMutationResponse,
+  response: EditWorkerTypeMutation$data,
 |};
 */
 
-
-/*
-mutation EditWorkerTypeMutation(
-  $input: EditWorkerTypeInput!
-) {
-  editWorkerType(input: $input) {
-    id
-    name
-    ...AddEditWorkerTypeCard_workerType
-  }
-}
-
-fragment AddEditWorkerTypeCard_workerType on WorkerType {
-  id
-  name
-  description
-  propertyTypes {
-    id
-    name
-    type
-    nodeType
-    index
-    stringValue
-    intValue
-    booleanValue
-    floatValue
-    latitudeValue
-    longitudeValue
-    rangeFromValue
-    rangeToValue
-    isEditable
-    isMandatory
-    isInstanceProperty
-    isDeleted
-    category
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -321,7 +281,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'e063d7bb2fb4970f212522affb26dfd8';
 
-module.exports = node;
+(node/*: any*/).hash = "e063d7bb2fb4970f212522affb26dfd8";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditWorkerTypeMutation$variables,
+  EditWorkerTypeMutation$data,
+>*/);

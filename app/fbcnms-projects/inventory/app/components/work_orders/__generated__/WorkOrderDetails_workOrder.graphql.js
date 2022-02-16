@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<fe1270e70bede7676533f551fa72a1ca>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,25 +10,25 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type CommentsActivitiesBox_activities$ref = any;
-type CommentsActivitiesBox_comments$ref = any;
-type EntityDocumentsTable_files$ref = any;
-type EntityDocumentsTable_hyperlinks$ref = any;
-type LocationBreadcrumbsTitle_locationDetails$ref = any;
-type WorkOrderDetailsPane_workOrder$ref = any;
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type CommentsActivitiesBox_activities$fragmentType = any;
+type CommentsActivitiesBox_comments$fragmentType = any;
+type EntityDocumentsTable_files$fragmentType = any;
+type EntityDocumentsTable_hyperlinks$fragmentType = any;
+type LocationBreadcrumbsTitle_locationDetails$fragmentType = any;
+type WorkOrderDetailsPane_workOrder$fragmentType = any;
 export type CellularNetworkType = "CDMA" | "GSM" | "LTE" | "WCDMA" | "%future added value";
-export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
-export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
-export type FileType = "FILE" | "IMAGE" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
-export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
-export type YesNoResponse = "NO" | "YES" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type WorkOrderDetails_workOrder$ref: FragmentReference;
-declare export opaque type WorkOrderDetails_workOrder$fragmentType: WorkOrderDetails_workOrder$ref;
-export type WorkOrderDetails_workOrder = {|
+export type CheckListItemEnumSelectionMode = "single" | "multiple" | "%future added value";
+export type CheckListItemType = "simple" | "string" | "enum" | "files" | "yes_no" | "cell_scan" | "wifi_scan" | "%future added value";
+export type FileType = "IMAGE" | "FILE" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type WorkOrderPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
+export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+export type YesNoResponse = "YES" | "NO" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type WorkOrderDetails_workOrder$fragmentType: FragmentType;
+export type WorkOrderDetails_workOrder$ref = WorkOrderDetails_workOrder$fragmentType;
+export type WorkOrderDetails_workOrder$data = {|
   +id: string,
   +name: string,
   +description: ?string,
@@ -46,7 +43,7 @@ export type WorkOrderDetails_workOrder = {|
     +id: string,
   |},
   +workOrderTemplate: ?{|
-    +assigneeCanCompleteWorkOrder: ?boolean
+    +assigneeCanCompleteWorkOrder: ?boolean,
   |},
   +location: ?{|
     +name: string,
@@ -58,7 +55,7 @@ export type WorkOrderDetails_workOrder = {|
       +mapType: ?string,
       +mapZoomLevel: ?number,
     |},
-    +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref,
+    +$fragmentSpreads: LocationBreadcrumbsTitle_locationDetails$fragmentType,
   |},
   +owner: {|
     +id: string,
@@ -108,19 +105,19 @@ export type WorkOrderDetails_workOrder = {|
     |},
   |}>,
   +images: $ReadOnlyArray<?{|
-    +$fragmentRefs: EntityDocumentsTable_files$ref
+    +$fragmentSpreads: EntityDocumentsTable_files$fragmentType,
   |}>,
   +files: $ReadOnlyArray<?{|
-    +$fragmentRefs: EntityDocumentsTable_files$ref
+    +$fragmentSpreads: EntityDocumentsTable_files$fragmentType,
   |}>,
   +hyperlinks: $ReadOnlyArray<{|
-    +$fragmentRefs: EntityDocumentsTable_hyperlinks$ref
+    +$fragmentSpreads: EntityDocumentsTable_hyperlinks$fragmentType,
   |}>,
   +comments: $ReadOnlyArray<?{|
-    +$fragmentRefs: CommentsActivitiesBox_comments$ref
+    +$fragmentSpreads: CommentsActivitiesBox_comments$fragmentType,
   |}>,
   +activities: $ReadOnlyArray<{|
-    +$fragmentRefs: CommentsActivitiesBox_activities$ref
+    +$fragmentSpreads: CommentsActivitiesBox_activities$fragmentType,
   |}>,
   +project: ?{|
     +name: string,
@@ -197,19 +194,18 @@ export type WorkOrderDetails_workOrder = {|
       |}>,
     |}>,
   |}>,
-  +$fragmentRefs: WorkOrderDetailsPane_workOrder$ref,
-  +$refType: WorkOrderDetails_workOrder$ref,
+  +$fragmentSpreads: WorkOrderDetailsPane_workOrder$fragmentType,
+  +$fragmentType: WorkOrderDetails_workOrder$fragmentType,
 |};
-export type WorkOrderDetails_workOrder$data = WorkOrderDetails_workOrder;
+export type WorkOrderDetails_workOrder = WorkOrderDetails_workOrder$data;
 export type WorkOrderDetails_workOrder$key = {
   +$data?: WorkOrderDetails_workOrder$data,
-  +$fragmentRefs: WorkOrderDetails_workOrder$ref,
+  +$fragmentSpreads: WorkOrderDetails_workOrder$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -518,6 +514,11 @@ return {
       "kind": "ScalarField",
       "name": "priority",
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "WorkOrderDetailsPane_workOrder"
     },
     {
       "alias": null,
@@ -1032,18 +1033,16 @@ return {
         }
       ],
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "WorkOrderDetailsPane_workOrder"
     }
   ],
   "type": "WorkOrder",
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '05eebced3564947e9c1dbe9b5b9dcd0a';
 
-module.exports = node;
+(node/*: any*/).hash = "05eebced3564947e9c1dbe9b5b9dcd0a";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  WorkOrderDetails_workOrder$fragmentType,
+  WorkOrderDetails_workOrder$data,
+>*/);

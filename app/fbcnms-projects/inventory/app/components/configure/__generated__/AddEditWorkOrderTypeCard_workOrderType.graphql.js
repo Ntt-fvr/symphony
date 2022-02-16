@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<a910cf0715897d9b58c80209dd60a3fa>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,14 +10,14 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
-export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type AddEditWorkOrderTypeCard_workOrderType$ref: FragmentReference;
-declare export opaque type AddEditWorkOrderTypeCard_workOrderType$fragmentType: AddEditWorkOrderTypeCard_workOrderType$ref;
-export type AddEditWorkOrderTypeCard_workOrderType = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type CheckListItemEnumSelectionMode = "single" | "multiple" | "%future added value";
+export type CheckListItemType = "simple" | "string" | "enum" | "files" | "yes_no" | "cell_scan" | "wifi_scan" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type AddEditWorkOrderTypeCard_workOrderType$fragmentType: FragmentType;
+export type AddEditWorkOrderTypeCard_workOrderType$ref = AddEditWorkOrderTypeCard_workOrderType$fragmentType;
+export type AddEditWorkOrderTypeCard_workOrderType$data = {|
   +id: string,
   +name: string,
   +description: ?string,
@@ -61,18 +58,17 @@ export type AddEditWorkOrderTypeCard_workOrderType = {|
       +helpText: ?string,
     |}>,
   |}>,
-  +$refType: AddEditWorkOrderTypeCard_workOrderType$ref,
+  +$fragmentType: AddEditWorkOrderTypeCard_workOrderType$fragmentType,
 |};
-export type AddEditWorkOrderTypeCard_workOrderType$data = AddEditWorkOrderTypeCard_workOrderType;
+export type AddEditWorkOrderTypeCard_workOrderType = AddEditWorkOrderTypeCard_workOrderType$data;
 export type AddEditWorkOrderTypeCard_workOrderType$key = {
   +$data?: AddEditWorkOrderTypeCard_workOrderType$data,
-  +$fragmentRefs: AddEditWorkOrderTypeCard_workOrderType$ref,
+  +$fragmentSpreads: AddEditWorkOrderTypeCard_workOrderType$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -308,7 +304,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'aa28c279488d86771992c34cfcae9373';
 
-module.exports = node;
+(node/*: any*/).hash = "aa28c279488d86771992c34cfcae9373";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  AddEditWorkOrderTypeCard_workOrderType$fragmentType,
+  AddEditWorkOrderTypeCard_workOrderType$data,
+>*/);

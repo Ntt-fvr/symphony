@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ce13f9273f3946144ec946f18c1aede9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,25 +10,24 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type CommentsActivitiesLog_activities$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type CommentsActivitiesBox_activities$ref: FragmentReference;
-declare export opaque type CommentsActivitiesBox_activities$fragmentType: CommentsActivitiesBox_activities$ref;
-export type CommentsActivitiesBox_activities = $ReadOnlyArray<{|
-  +$fragmentRefs: CommentsActivitiesLog_activities$ref,
-  +$refType: CommentsActivitiesBox_activities$ref,
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type CommentsActivitiesLog_activities$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type CommentsActivitiesBox_activities$fragmentType: FragmentType;
+export type CommentsActivitiesBox_activities$ref = CommentsActivitiesBox_activities$fragmentType;
+export type CommentsActivitiesBox_activities$data = $ReadOnlyArray<{|
+  +$fragmentSpreads: CommentsActivitiesLog_activities$fragmentType,
+  +$fragmentType: CommentsActivitiesBox_activities$fragmentType,
 |}>;
-export type CommentsActivitiesBox_activities$data = CommentsActivitiesBox_activities;
+export type CommentsActivitiesBox_activities = CommentsActivitiesBox_activities$data;
 export type CommentsActivitiesBox_activities$key = $ReadOnlyArray<{
   +$data?: CommentsActivitiesBox_activities$data,
-  +$fragmentRefs: CommentsActivitiesBox_activities$ref,
+  +$fragmentSpreads: CommentsActivitiesBox_activities$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -48,7 +44,10 @@ const node/*: ReaderFragment*/ = {
   "type": "Activity",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'c4d3824e4498526273d2db703b8d85d6';
 
-module.exports = node;
+(node/*: any*/).hash = "c4d3824e4498526273d2db703b8d85d6";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  CommentsActivitiesBox_activities$fragmentType,
+  CommentsActivitiesBox_activities$data,
+>*/);

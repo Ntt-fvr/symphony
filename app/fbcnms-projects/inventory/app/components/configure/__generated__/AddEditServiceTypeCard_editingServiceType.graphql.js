@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<fdacb4ab53ffa41deb5f86a20e0a9cd7>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,13 +10,13 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type AddEditServiceTypeCard_editingServiceType$ref: FragmentReference;
-declare export opaque type AddEditServiceTypeCard_editingServiceType$fragmentType: AddEditServiceTypeCard_editingServiceType$ref;
-export type AddEditServiceTypeCard_editingServiceType = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type DiscoveryMethod = "MANUAL" | "INVENTORY" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type AddEditServiceTypeCard_editingServiceType$fragmentType: FragmentType;
+export type AddEditServiceTypeCard_editingServiceType$ref = AddEditServiceTypeCard_editingServiceType$fragmentType;
+export type AddEditServiceTypeCard_editingServiceType$data = {|
   +id: string,
   +name: string,
   +numberOfServices: number,
@@ -52,18 +49,17 @@ export type AddEditServiceTypeCard_editingServiceType = {|
       +id: string,
     |},
   |}>,
-  +$refType: AddEditServiceTypeCard_editingServiceType$ref,
+  +$fragmentType: AddEditServiceTypeCard_editingServiceType$fragmentType,
 |};
-export type AddEditServiceTypeCard_editingServiceType$data = AddEditServiceTypeCard_editingServiceType;
+export type AddEditServiceTypeCard_editingServiceType = AddEditServiceTypeCard_editingServiceType$data;
 export type AddEditServiceTypeCard_editingServiceType$key = {
   +$data?: AddEditServiceTypeCard_editingServiceType$data,
-  +$fragmentRefs: AddEditServiceTypeCard_editingServiceType$ref,
+  +$fragmentSpreads: AddEditServiceTypeCard_editingServiceType$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -251,7 +247,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'a30bbf291d8bcee70f5da0491ec834a7';
 
-module.exports = node;
+(node/*: any*/).hash = "a30bbf291d8bcee70f5da0491ec834a7";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  AddEditServiceTypeCard_editingServiceType$fragmentType,
+  AddEditServiceTypeCard_editingServiceType$data,
+>*/);

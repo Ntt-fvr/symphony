@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<9f4f5394711b6fe10fcd4ec025fb723d>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,29 +10,22 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type RemovePropertyCategoryTypeMutationVariables = {|
-  id: string
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type RemovePropertyCategoryTypeMutation$variables = {|
+  id: string,
 |};
-export type RemovePropertyCategoryTypeMutationResponse = {|
-  +removePropertyCategory: string
+export type RemovePropertyCategoryTypeMutationVariables = RemovePropertyCategoryTypeMutation$variables;
+export type RemovePropertyCategoryTypeMutation$data = {|
+  +removePropertyCategory: string,
 |};
+export type RemovePropertyCategoryTypeMutationResponse = RemovePropertyCategoryTypeMutation$data;
 export type RemovePropertyCategoryTypeMutation = {|
   variables: RemovePropertyCategoryTypeMutationVariables,
-  response: RemovePropertyCategoryTypeMutationResponse,
+  response: RemovePropertyCategoryTypeMutation$data,
 |};
 */
 
-
-/*
-mutation RemovePropertyCategoryTypeMutation(
-  $id: ID!
-) {
-  removePropertyCategory(id: $id)
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -85,7 +75,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'ec4aeac576c00627f01cf128ea07cc26';
 
-module.exports = node;
+(node/*: any*/).hash = "ec4aeac576c00627f01cf128ea07cc26";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  RemovePropertyCategoryTypeMutation$variables,
+  RemovePropertyCategoryTypeMutation$data,
+>*/);

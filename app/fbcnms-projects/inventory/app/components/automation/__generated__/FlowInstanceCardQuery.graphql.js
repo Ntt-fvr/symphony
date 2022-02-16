@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<35b9d6c0399d21e869f3a57a38e3288d>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,14 +10,15 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
-export type BlockInstanceStatus = "COMPLETED" | "FAILED" | "IN_PROGRESS" | "PENDING" | "WAITING" | "%future added value";
-export type FlowInstanceStatus = "CANCELED" | "COMPLETED" | "FAILED" | "IN_PROGRESS" | "%future added value";
-export type FlowInstanceCardQueryVariables = {|
-  flowInstanceId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type ActionTypeId = "work_order" | "update_inventory" | "update_workforce" | "worker" | "%future added value";
+export type BlockInstanceStatus = "PENDING" | "IN_PROGRESS" | "FAILED" | "COMPLETED" | "WAITING" | "%future added value";
+export type FlowInstanceStatus = "IN_PROGRESS" | "FAILED" | "COMPLETED" | "CANCELED" | "%future added value";
+export type FlowInstanceCardQuery$variables = {|
+  flowInstanceId: string,
 |};
-export type FlowInstanceCardQueryResponse = {|
+export type FlowInstanceCardQueryVariables = FlowInstanceCardQuery$variables;
+export type FlowInstanceCardQuery$data = {|
   +flowInstance: ?{|
     +id?: string,
     +status?: FlowInstanceStatus,
@@ -41,88 +39,36 @@ export type FlowInstanceCardQueryResponse = {|
         +id: string,
         +cid: string,
         +uiRepresentation: ?{|
-          +name: string
+          +name: string,
         |},
         +details: {|
           +__typename: "ActionBlock",
           +actionType: {|
-            +id: ActionTypeId
+            +id: ActionTypeId,
           |},
           +workerType: ?{|
-            +name: string
+            +name: string,
           |},
           +workOrderType: ?{|
-            +name: string
+            +name: string,
           |},
         |} | {|
           // This will never be '%other', but we need some
           // value in case none of the concrete values match.
-          +__typename: "%other"
+          +__typename: "%other",
         |},
       |},
     |}>,
-  |}
+  |},
 |};
+export type FlowInstanceCardQueryResponse = FlowInstanceCardQuery$data;
 export type FlowInstanceCardQuery = {|
   variables: FlowInstanceCardQueryVariables,
-  response: FlowInstanceCardQueryResponse,
+  response: FlowInstanceCardQuery$data,
 |};
 */
 
-
-/*
-query FlowInstanceCardQuery(
-  $flowInstanceId: ID!
-) {
-  flowInstance: node(id: $flowInstanceId) {
-    __typename
-    ... on FlowInstance {
-      id
-      status
-      startDate
-      endDate
-      bssCode
-      serviceInstanceCode
-      template {
-        id
-        name
-      }
-      blocks {
-        id
-        status
-        startDate
-        endDate
-        block {
-          id
-          cid
-          uiRepresentation {
-            name
-          }
-          details {
-            __typename
-            ... on ActionBlock {
-              actionType {
-                id
-              }
-              workerType {
-                name
-                id
-              }
-              workOrderType {
-                name
-                id
-              }
-            }
-          }
-        }
-      }
-    }
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -460,7 +406,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '18539c14a6c155e6a1b864fca8ee4eb2';
 
-module.exports = node;
+(node/*: any*/).hash = "18539c14a6c155e6a1b864fca8ee4eb2";
+
+module.exports = ((node/*: any*/)/*: Query<
+  FlowInstanceCardQuery$variables,
+  FlowInstanceCardQuery$data,
+>*/);

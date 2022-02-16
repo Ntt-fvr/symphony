@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<92e2a261f747ce38b3203b9a00ec5ce9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,25 +10,24 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type DocumentTable_files$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type EntityDocumentsTable_files$ref: FragmentReference;
-declare export opaque type EntityDocumentsTable_files$fragmentType: EntityDocumentsTable_files$ref;
-export type EntityDocumentsTable_files = $ReadOnlyArray<{|
-  +$fragmentRefs: DocumentTable_files$ref,
-  +$refType: EntityDocumentsTable_files$ref,
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type DocumentTable_files$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type EntityDocumentsTable_files$fragmentType: FragmentType;
+export type EntityDocumentsTable_files$ref = EntityDocumentsTable_files$fragmentType;
+export type EntityDocumentsTable_files$data = $ReadOnlyArray<{|
+  +$fragmentSpreads: DocumentTable_files$fragmentType,
+  +$fragmentType: EntityDocumentsTable_files$fragmentType,
 |}>;
-export type EntityDocumentsTable_files$data = EntityDocumentsTable_files;
+export type EntityDocumentsTable_files = EntityDocumentsTable_files$data;
 export type EntityDocumentsTable_files$key = $ReadOnlyArray<{
   +$data?: EntityDocumentsTable_files$data,
-  +$fragmentRefs: EntityDocumentsTable_files$ref,
+  +$fragmentSpreads: EntityDocumentsTable_files$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -48,7 +44,10 @@ const node/*: ReaderFragment*/ = {
   "type": "File",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'bf947c22e479b0150cc5e2861374aa18';
 
-module.exports = node;
+(node/*: any*/).hash = "bf947c22e479b0150cc5e2861374aa18";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  EntityDocumentsTable_files$fragmentType,
+  EntityDocumentsTable_files$data,
+>*/);

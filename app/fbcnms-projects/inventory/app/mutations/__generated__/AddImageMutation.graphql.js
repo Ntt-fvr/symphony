@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<3bebefe4a57d12ab091c489cf6245303>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type FileAttachment_file$ref = any;
-export type ImageEntity = "CHECKLIST_ITEM" | "EQUIPMENT" | "LOCATION" | "SITE_SURVEY" | "USER" | "WORK_ORDER" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type FileAttachment_file$fragmentType = any;
+export type ImageEntity = "LOCATION" | "WORK_ORDER" | "SITE_SURVEY" | "EQUIPMENT" | "USER" | "CHECKLIST_ITEM" | "%future added value";
 export type AddImageInput = {|
   entityType: ImageEntity,
   entityId: string,
@@ -28,54 +25,23 @@ export type AddImageInput = {|
   annotation?: ?string,
   documentCategoryId?: ?string,
 |};
-export type AddImageMutationVariables = {|
-  input: AddImageInput
+export type AddImageMutation$variables = {|
+  input: AddImageInput,
 |};
-export type AddImageMutationResponse = {|
+export type AddImageMutationVariables = AddImageMutation$variables;
+export type AddImageMutation$data = {|
   +addImage: {|
-    +$fragmentRefs: FileAttachment_file$ref
-  |}
+    +$fragmentSpreads: FileAttachment_file$fragmentType,
+  |},
 |};
+export type AddImageMutationResponse = AddImageMutation$data;
 export type AddImageMutation = {|
   variables: AddImageMutationVariables,
-  response: AddImageMutationResponse,
+  response: AddImageMutation$data,
 |};
 */
 
-
-/*
-mutation AddImageMutation(
-  $input: AddImageInput!
-) {
-  addImage(input: $input) {
-    ...FileAttachment_file
-    id
-  }
-}
-
-fragment FileAttachment_file on File {
-  id
-  fileName
-  sizeInBytes
-  uploaded
-  fileType
-  storeKey
-  category
-  annotation
-  documentCategory {
-    id
-    name
-  }
-  ...ImageDialog_img
-}
-
-fragment ImageDialog_img on File {
-  storeKey
-  fileName
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -222,7 +188,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'cfb8687a3be6e209c5d3c9a6f94c249e';
 
-module.exports = node;
+(node/*: any*/).hash = "cfb8687a3be6e209c5d3c9a6f94c249e";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddImageMutation$variables,
+  AddImageMutation$data,
+>*/);

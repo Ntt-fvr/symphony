@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<775019fdfe746b54361327a8ad5e7515>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,37 +10,24 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type CSVFileExportKeyQueryVariables = {|
-  taskId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type CSVFileExportKeyQuery$variables = {|
+  taskId: string,
 |};
-export type CSVFileExportKeyQueryResponse = {|
+export type CSVFileExportKeyQueryVariables = CSVFileExportKeyQuery$variables;
+export type CSVFileExportKeyQuery$data = {|
   +task: ?{|
-    +storeKey?: string
-  |}
+    +storeKey?: string,
+  |},
 |};
+export type CSVFileExportKeyQueryResponse = CSVFileExportKeyQuery$data;
 export type CSVFileExportKeyQuery = {|
   variables: CSVFileExportKeyQueryVariables,
-  response: CSVFileExportKeyQueryResponse,
+  response: CSVFileExportKeyQuery$data,
 |};
 */
 
-
-/*
-query CSVFileExportKeyQuery(
-  $taskId: ID!
-) {
-  task: node(id: $taskId) {
-    __typename
-    ... on ExportTask {
-      storeKey
-    }
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -116,14 +100,14 @@ return {
             "name": "__typename",
             "storageKey": null
           },
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
             "name": "id",
             "storageKey": null
-          },
-          (v2/*: any*/)
+          }
         ],
         "storageKey": null
       }
@@ -139,7 +123,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '791a7ac59b00b79408ba2d34a184914f';
 
-module.exports = node;
+(node/*: any*/).hash = "791a7ac59b00b79408ba2d34a184914f";
+
+module.exports = ((node/*: any*/)/*: Query<
+  CSVFileExportKeyQuery$variables,
+  CSVFileExportKeyQuery$data,
+>*/);

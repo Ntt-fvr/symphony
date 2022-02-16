@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<691f1259eb4de4f5082d9e599c2b711f>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,12 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type UserManagementUtils_policies_base$ref: FragmentReference;
-declare export opaque type UserManagementUtils_policies_base$fragmentType: UserManagementUtils_policies_base$ref;
-export type UserManagementUtils_policies_base = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type PermissionValue = "YES" | "NO" | "BY_CONDITION" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type UserManagementUtils_policies_base$fragmentType: FragmentType;
+export type UserManagementUtils_policies_base$ref = UserManagementUtils_policies_base$fragmentType;
+export type UserManagementUtils_policies_base$data = {|
   +id: string,
   +name: string,
   +description: ?string,
@@ -26,7 +23,7 @@ export type UserManagementUtils_policies_base = {|
   +policy: {|
     +__typename: "InventoryPolicy",
     +read: {|
-      +isAllowed: PermissionValue
+      +isAllowed: PermissionValue,
     |},
     +propertyCategory: {|
       +read: ?{|
@@ -67,69 +64,69 @@ export type UserManagementUtils_policies_base = {|
     |},
     +location: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
         +isAllowed: PermissionValue,
         +locationTypeIds: ?$ReadOnlyArray<string>,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
     +equipment: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
     +equipmentType: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
     +locationType: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
     +portType: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
     +serviceType: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
   |} | {|
@@ -142,49 +139,48 @@ export type UserManagementUtils_policies_base = {|
     |},
     +templates: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
     +data: {|
       +create: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +update: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +delete: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +assign: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
       +transferOwnership: {|
-        +isAllowed: PermissionValue
+        +isAllowed: PermissionValue,
       |},
     |},
   |} | {|
     // This will never be '%other', but we need some
     // value in case none of the concrete values match.
-    +__typename: "%other"
+    +__typename: "%other",
   |},
-  +$refType: UserManagementUtils_policies_base$ref,
+  +$fragmentType: UserManagementUtils_policies_base$fragmentType,
 |};
-export type UserManagementUtils_policies_base$data = UserManagementUtils_policies_base;
+export type UserManagementUtils_policies_base = UserManagementUtils_policies_base$data;
 export type UserManagementUtils_policies_base$key = {
   +$data?: UserManagementUtils_policies_base$data,
-  +$fragmentRefs: UserManagementUtils_policies_base$ref,
+  +$fragmentSpreads: UserManagementUtils_policies_base$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -641,7 +637,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '7a02ff1e3fdafba9f4043d5321fb0ff4';
 
-module.exports = node;
+(node/*: any*/).hash = "7a02ff1e3fdafba9f4043d5321fb0ff4";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  UserManagementUtils_policies_base$fragmentType,
+  UserManagementUtils_policies_base$data,
+>*/);

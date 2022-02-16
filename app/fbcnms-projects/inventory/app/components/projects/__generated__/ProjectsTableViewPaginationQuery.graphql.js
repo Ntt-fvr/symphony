@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<48a25ab57e3c8cb57737a245faa38448>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,13 +10,14 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type ProjectsTableView_query$ref = any;
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+type ProjectsTableView_query$fragmentType = any;
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "PROPERTY" | "%future added value";
-export type ProjectOrderField = "CREATED_AT" | "NAME" | "PRIORITY" | "PROPERTY" | "UPDATED_AT" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type ProjectFilterType = "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_TYPE" | "LOCATION_INST" | "PROJECT_PRIORITY" | "PROPERTY" | "%future added value";
+export type ProjectOrderField = "NAME" | "CREATED_AT" | "UPDATED_AT" | "PRIORITY" | "PROPERTY" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
   operator: FilterOperator,
@@ -56,7 +54,7 @@ export type ProjectOrder = {|
   direction: OrderDirection,
   field?: ?ProjectOrderField,
 |};
-export type ProjectsTableViewPaginationQueryVariables = {|
+export type ProjectsTableViewPaginationQuery$variables = {|
   cursor?: ?any,
   filterBy?: ?$ReadOnlyArray<ProjectFilterInput>,
   first?: ?number,
@@ -64,96 +62,18 @@ export type ProjectsTableViewPaginationQueryVariables = {|
   propertyOrder?: ?string,
   propertyValue?: ?string,
 |};
-export type ProjectsTableViewPaginationQueryResponse = {|
-  +$fragmentRefs: ProjectsTableView_query$ref
+export type ProjectsTableViewPaginationQueryVariables = ProjectsTableViewPaginationQuery$variables;
+export type ProjectsTableViewPaginationQuery$data = {|
+  +$fragmentSpreads: ProjectsTableView_query$fragmentType,
 |};
+export type ProjectsTableViewPaginationQueryResponse = ProjectsTableViewPaginationQuery$data;
 export type ProjectsTableViewPaginationQuery = {|
   variables: ProjectsTableViewPaginationQueryVariables,
-  response: ProjectsTableViewPaginationQueryResponse,
+  response: ProjectsTableViewPaginationQuery$data,
 |};
 */
 
-
-/*
-query ProjectsTableViewPaginationQuery(
-  $cursor: Cursor
-  $filterBy: [ProjectFilterInput!]
-  $first: Int
-  $orderBy: ProjectOrder
-  $propertyOrder: String
-  $propertyValue: String
-) {
-  ...ProjectsTableView_query_dTUb0
-}
-
-fragment ProjectsTableView_query_dTUb0 on Query {
-  projects(after: $cursor, first: $first, orderBy: $orderBy, propertyValue: $propertyValue, propertyOrder: $propertyOrder, filterBy: $filterBy) {
-    totalCount
-    edges {
-      node {
-        id
-        createTime
-        name
-        createdBy {
-          email
-          id
-        }
-        location {
-          id
-          name
-        }
-        type {
-          id
-          name
-        }
-        priority
-        properties {
-          id
-          stringValue
-          intValue
-          floatValue
-          booleanValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
-          nodeValue {
-            __typename
-            id
-            name
-          }
-          propertyType {
-            id
-            name
-            type
-            nodeType
-            isEditable
-            isMandatory
-            isInstanceProperty
-            stringValue
-            intValue
-            floatValue
-            booleanValue
-            latitudeValue
-            longitudeValue
-            rangeFromValue
-            rangeToValue
-          }
-        }
-        numberOfWorkOrders
-        __typename
-      }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -588,7 +508,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'a367392d6a8fed0ca337cc8f4ad0d464';
 
-module.exports = node;
+(node/*: any*/).hash = "9af73a2dab4860b72aabdb10cc0f17ad";
+
+module.exports = ((node/*: any*/)/*: Query<
+  ProjectsTableViewPaginationQuery$variables,
+  ProjectsTableViewPaginationQuery$data,
+>*/);

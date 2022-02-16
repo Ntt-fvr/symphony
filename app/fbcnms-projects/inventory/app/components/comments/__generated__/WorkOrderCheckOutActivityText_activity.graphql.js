@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<4a2d050575869e242a69a456527e6e5f>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,31 +10,30 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
-export type ClockOutReason = "BLOCKED" | "PAUSE" | "SUBMIT" | "SUBMIT_INCOMPLETE" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type WorkOrderCheckOutActivityText_activity$ref: FragmentReference;
-declare export opaque type WorkOrderCheckOutActivityText_activity$fragmentType: WorkOrderCheckOutActivityText_activity$ref;
-export type WorkOrderCheckOutActivityText_activity = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type ActivityField = "STATUS" | "PRIORITY" | "ASSIGNEE" | "CREATION_DATE" | "OWNER" | "NAME" | "DESCRIPTION" | "CLOCK_IN" | "CLOCK_OUT" | "%future added value";
+export type ClockOutReason = "PAUSE" | "SUBMIT" | "SUBMIT_INCOMPLETE" | "BLOCKED" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type WorkOrderCheckOutActivityText_activity$fragmentType: FragmentType;
+export type WorkOrderCheckOutActivityText_activity$ref = WorkOrderCheckOutActivityText_activity$fragmentType;
+export type WorkOrderCheckOutActivityText_activity$data = {|
   +activityType: ActivityField,
   +clockDetails: ?{|
     +clockOutReason: ?ClockOutReason,
     +distanceMeters: ?number,
     +comment: ?string,
   |},
-  +$refType: WorkOrderCheckOutActivityText_activity$ref,
+  +$fragmentType: WorkOrderCheckOutActivityText_activity$fragmentType,
 |};
-export type WorkOrderCheckOutActivityText_activity$data = WorkOrderCheckOutActivityText_activity;
+export type WorkOrderCheckOutActivityText_activity = WorkOrderCheckOutActivityText_activity$data;
 export type WorkOrderCheckOutActivityText_activity$key = {
   +$data?: WorkOrderCheckOutActivityText_activity$data,
-  +$fragmentRefs: WorkOrderCheckOutActivityText_activity$ref,
+  +$fragmentSpreads: WorkOrderCheckOutActivityText_activity$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -86,7 +82,10 @@ const node/*: ReaderFragment*/ = {
   "type": "Activity",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'ea0c20cd871d4c81310e5154f20e08c6';
 
-module.exports = node;
+(node/*: any*/).hash = "ea0c20cd871d4c81310e5154f20e08c6";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  WorkOrderCheckOutActivityText_activity$fragmentType,
+  WorkOrderCheckOutActivityText_activity$data,
+>*/);

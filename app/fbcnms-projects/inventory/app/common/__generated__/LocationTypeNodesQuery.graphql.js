@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<6dd7367e6a91171560c6a01f256de62b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationTypeNodesQueryVariables = {||};
-export type LocationTypeNodesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationTypeNodesQuery$variables = {||};
+export type LocationTypeNodesQueryVariables = LocationTypeNodesQuery$variables;
+export type LocationTypeNodesQuery$data = {|
   +locationTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type LocationTypeNodesQueryResponse = LocationTypeNodesQuery$data;
 export type LocationTypeNodesQuery = {|
   variables: LocationTypeNodesQueryVariables,
-  response: LocationTypeNodesQueryResponse,
+  response: LocationTypeNodesQuery$data,
 |};
 */
 
-
-/*
-query LocationTypeNodesQuery {
-  locationTypes {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -122,7 +107,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '5e92355037c4ff4b34043dec7ef50287';
 
-module.exports = node;
+(node/*: any*/).hash = "5e92355037c4ff4b34043dec7ef50287";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationTypeNodesQuery$variables,
+  LocationTypeNodesQuery$data,
+>*/);

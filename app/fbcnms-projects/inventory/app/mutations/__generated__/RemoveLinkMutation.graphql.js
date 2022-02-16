@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<6fca37bbdcc1e91d987ae0b3b96e1409>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,16 +10,17 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$ref = any;
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$fragmentType = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
-export type RemoveLinkMutationVariables = {|
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+export type RemoveLinkMutation$variables = {|
   id: string,
   workOrderId?: ?string,
 |};
-export type RemoveLinkMutationResponse = {|
+export type RemoveLinkMutationVariables = RemoveLinkMutation$variables;
+export type RemoveLinkMutation$data = {|
   +removeLink: {|
     +id: string,
     +futureState: ?FutureState,
@@ -52,7 +50,7 @@ export type RemoveLinkMutationResponse = {|
             +isMandatory: ?boolean,
             +category: ?string,
             +isDeleted: ?boolean,
-          |}>
+          |}>,
         |},
       |},
       +parentEquipment: {|
@@ -63,14 +61,14 @@ export type RemoveLinkMutationResponse = {|
           +id: string,
           +name: string,
         |},
-        +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+        +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
       |},
       +serviceEndpoints: $ReadOnlyArray<{|
         +definition: {|
-          +role: ?string
+          +role: ?string,
         |},
         +service: {|
-          +name: string
+          +name: string,
         |},
       |}>,
     |}>,
@@ -117,157 +115,16 @@ export type RemoveLinkMutationResponse = {|
       +id: string,
       +name: string,
     |}>,
-  |}
+  |},
 |};
+export type RemoveLinkMutationResponse = RemoveLinkMutation$data;
 export type RemoveLinkMutation = {|
   variables: RemoveLinkMutationVariables,
-  response: RemoveLinkMutationResponse,
+  response: RemoveLinkMutation$data,
 |};
 */
 
-
-/*
-mutation RemoveLinkMutation(
-  $id: ID!
-  $workOrderId: ID
-) {
-  removeLink(id: $id, workOrderId: $workOrderId) {
-    id
-    futureState
-    ports {
-      id
-      definition {
-        id
-        name
-        visibleLabel
-        portType {
-          linkPropertyTypes {
-            id
-            name
-            type
-            nodeType
-            index
-            stringValue
-            intValue
-            booleanValue
-            floatValue
-            latitudeValue
-            longitudeValue
-            rangeFromValue
-            rangeToValue
-            isEditable
-            isInstanceProperty
-            isMandatory
-            category
-            isDeleted
-          }
-          id
-        }
-      }
-      parentEquipment {
-        id
-        name
-        futureState
-        equipmentType {
-          id
-          name
-        }
-        ...EquipmentBreadcrumbs_equipment
-      }
-      serviceEndpoints {
-        definition {
-          role
-          id
-        }
-        service {
-          name
-          id
-        }
-        id
-      }
-    }
-    workOrder {
-      id
-      status
-    }
-    properties {
-      id
-      propertyType {
-        id
-        name
-        type
-        nodeType
-        index
-        stringValue
-        intValue
-        booleanValue
-        floatValue
-        latitudeValue
-        longitudeValue
-        rangeFromValue
-        rangeToValue
-        isEditable
-        isInstanceProperty
-        isMandatory
-        category
-        isDeleted
-      }
-      stringValue
-      intValue
-      floatValue
-      booleanValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      nodeValue {
-        __typename
-        id
-        name
-      }
-    }
-    services {
-      id
-      name
-    }
-  }
-}
-
-fragment EquipmentBreadcrumbs_equipment on Equipment {
-  id
-  name
-  equipmentType {
-    id
-    name
-  }
-  locationHierarchy {
-    id
-    name
-    locationType {
-      name
-      id
-    }
-  }
-  positionHierarchy {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-    }
-    parentEquipment {
-      id
-      name
-      equipmentType {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -894,7 +751,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '779f6813617bbf5b040592f2e8c2c3e3';
 
-module.exports = node;
+(node/*: any*/).hash = "779f6813617bbf5b040592f2e8c2c3e3";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  RemoveLinkMutation$variables,
+  RemoveLinkMutation$data,
+>*/);

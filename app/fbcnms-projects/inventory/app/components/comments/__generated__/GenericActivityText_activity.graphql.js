@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<79583738a4a77efc83a871ae501e1df2>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,12 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type GenericActivityText_activity$ref: FragmentReference;
-declare export opaque type GenericActivityText_activity$fragmentType: GenericActivityText_activity$ref;
-export type GenericActivityText_activity = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type ActivityField = "STATUS" | "PRIORITY" | "ASSIGNEE" | "CREATION_DATE" | "OWNER" | "NAME" | "DESCRIPTION" | "CLOCK_IN" | "CLOCK_OUT" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type GenericActivityText_activity$fragmentType: FragmentType;
+export type GenericActivityText_activity$ref = GenericActivityText_activity$fragmentType;
+export type GenericActivityText_activity$data = {|
   +activityType: ActivityField,
   +newRelatedNode: ?({|
     +__typename: "User",
@@ -26,7 +23,7 @@ export type GenericActivityText_activity = {|
   |} | {|
     // This will never be '%other', but we need some
     // value in case none of the concrete values match.
-    +__typename: "%other"
+    +__typename: "%other",
   |}),
   +oldRelatedNode: ?({|
     +__typename: "User",
@@ -34,22 +31,21 @@ export type GenericActivityText_activity = {|
   |} | {|
     // This will never be '%other', but we need some
     // value in case none of the concrete values match.
-    +__typename: "%other"
+    +__typename: "%other",
   |}),
   +oldValue: ?string,
   +newValue: ?string,
-  +$refType: GenericActivityText_activity$ref,
+  +$fragmentType: GenericActivityText_activity$fragmentType,
 |};
-export type GenericActivityText_activity$data = GenericActivityText_activity;
+export type GenericActivityText_activity = GenericActivityText_activity$data;
 export type GenericActivityText_activity$key = {
   +$data?: GenericActivityText_activity$data,
-  +$fragmentRefs: GenericActivityText_activity$ref,
+  +$fragmentSpreads: GenericActivityText_activity$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -125,7 +121,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '736c776d7a9e4e936f031f4dd2f373e1';
 
-module.exports = node;
+(node/*: any*/).hash = "736c776d7a9e4e936f031f4dd2f373e1";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  GenericActivityText_activity$fragmentType,
+  GenericActivityText_activity$data,
+>*/);

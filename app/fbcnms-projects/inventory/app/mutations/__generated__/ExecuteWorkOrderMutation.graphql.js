@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<5910c99c37fc8eac1256ac664388e800>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,203 +10,33 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type EquipmentPortsTable_link$ref = any;
-type EquipmentTable_equipments$ref = any;
-export type ExecuteWorkOrderMutationVariables = {|
-  id: string
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type EquipmentPortsTable_link$fragmentType = any;
+type EquipmentTable_equipments$fragmentType = any;
+export type ExecuteWorkOrderMutation$variables = {|
+  id: string,
 |};
-export type ExecuteWorkOrderMutationResponse = {|
+export type ExecuteWorkOrderMutationVariables = ExecuteWorkOrderMutation$variables;
+export type ExecuteWorkOrderMutation$data = {|
   +executeWorkOrder: {|
     +equipmentAdded: $ReadOnlyArray<{|
-      +$fragmentRefs: EquipmentTable_equipments$ref
+      +$fragmentSpreads: EquipmentTable_equipments$fragmentType,
     |}>,
     +equipmentRemoved: $ReadOnlyArray<string>,
     +linkAdded: $ReadOnlyArray<{|
-      +$fragmentRefs: EquipmentPortsTable_link$ref
+      +$fragmentSpreads: EquipmentPortsTable_link$fragmentType,
     |}>,
     +linkRemoved: $ReadOnlyArray<string>,
-  |}
+  |},
 |};
+export type ExecuteWorkOrderMutationResponse = ExecuteWorkOrderMutation$data;
 export type ExecuteWorkOrderMutation = {|
   variables: ExecuteWorkOrderMutationVariables,
-  response: ExecuteWorkOrderMutationResponse,
+  response: ExecuteWorkOrderMutation$data,
 |};
 */
 
-
-/*
-mutation ExecuteWorkOrderMutation(
-  $id: ID!
-) {
-  executeWorkOrder(id: $id) {
-    equipmentAdded {
-      ...EquipmentTable_equipments
-      id
-    }
-    equipmentRemoved
-    linkAdded {
-      ...EquipmentPortsTable_link
-      id
-    }
-    linkRemoved
-    id
-  }
-}
-
-fragment EquipmentBreadcrumbs_equipment on Equipment {
-  id
-  name
-  equipmentType {
-    id
-    name
-  }
-  locationHierarchy {
-    id
-    name
-    locationType {
-      name
-      id
-    }
-  }
-  positionHierarchy {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-    }
-    parentEquipment {
-      id
-      name
-      equipmentType {
-        id
-        name
-      }
-    }
-  }
-}
-
-fragment EquipmentPortsTable_link on Link {
-  id
-  futureState
-  ports {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-      portType {
-        linkPropertyTypes {
-          id
-          name
-          type
-          nodeType
-          index
-          stringValue
-          intValue
-          booleanValue
-          floatValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
-          isEditable
-          isInstanceProperty
-          isMandatory
-          category
-          isDeleted
-        }
-        id
-      }
-    }
-    parentEquipment {
-      id
-      name
-      futureState
-      equipmentType {
-        id
-        name
-      }
-      ...EquipmentBreadcrumbs_equipment
-    }
-    serviceEndpoints {
-      definition {
-        role
-        id
-      }
-      service {
-        name
-        id
-      }
-      id
-    }
-  }
-  workOrder {
-    id
-    status
-  }
-  properties {
-    id
-    propertyType {
-      id
-      name
-      type
-      nodeType
-      index
-      stringValue
-      intValue
-      booleanValue
-      floatValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      isEditable
-      isInstanceProperty
-      isMandatory
-      category
-      isDeleted
-    }
-    stringValue
-    intValue
-    floatValue
-    booleanValue
-    latitudeValue
-    longitudeValue
-    rangeFromValue
-    rangeToValue
-    nodeValue {
-      __typename
-      id
-      name
-    }
-  }
-  services {
-    id
-    name
-  }
-}
-
-fragment EquipmentTable_equipments on Equipment {
-  id
-  name
-  futureState
-  equipmentType {
-    id
-    name
-  }
-  workOrder {
-    id
-    status
-  }
-  services {
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -784,7 +611,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'baceb3423c9e4339aa29e54bbd80b61b';
 
-module.exports = node;
+(node/*: any*/).hash = "baceb3423c9e4339aa29e54bbd80b61b";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  ExecuteWorkOrderMutation$variables,
+  ExecuteWorkOrderMutation$data,
+>*/);

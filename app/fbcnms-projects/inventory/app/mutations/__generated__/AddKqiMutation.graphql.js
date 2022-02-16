@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<30f9b012441d027713365806a78b6396>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type AddKqiInput = {|
   name: string,
   description: string,
@@ -25,10 +22,11 @@ export type AddKqiInput = {|
   kqiSource: string,
   kqiTemporalFrequency: string,
 |};
-export type AddKqiMutationVariables = {|
-  input: AddKqiInput
+export type AddKqiMutation$variables = {|
+  input: AddKqiInput,
 |};
-export type AddKqiMutationResponse = {|
+export type AddKqiMutationVariables = AddKqiMutation$variables;
+export type AddKqiMutation$data = {|
   +addKqi: {|
     +id: string,
     +name: string,
@@ -52,47 +50,16 @@ export type AddKqiMutationResponse = {|
       +id: string,
       +name: string,
     |},
-  |}
+  |},
 |};
+export type AddKqiMutationResponse = AddKqiMutation$data;
 export type AddKqiMutation = {|
   variables: AddKqiMutationVariables,
-  response: AddKqiMutationResponse,
+  response: AddKqiMutation$data,
 |};
 */
 
-
-/*
-mutation AddKqiMutation(
-  $input: AddKqiInput!
-) {
-  addKqi(input: $input) {
-    id
-    name
-    description
-    formula
-    startDateTime
-    endDateTime
-    kqiCategory {
-      id
-      name
-    }
-    kqiPerspective {
-      id
-      name
-    }
-    kqiSource {
-      id
-      name
-    }
-    kqiTemporalFrequency {
-      id
-      name
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -234,7 +201,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'dfe35e7005d4f927b8395b95ab15ae57';
 
-module.exports = node;
+(node/*: any*/).hash = "dfe35e7005d4f927b8395b95ab15ae57";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddKqiMutation$variables,
+  AddKqiMutation$data,
+>*/);

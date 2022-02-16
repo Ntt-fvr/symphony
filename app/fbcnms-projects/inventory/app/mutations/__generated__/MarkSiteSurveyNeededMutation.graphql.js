@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<17eeece5f95f1690393b3ccc0d7f20e2>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type MarkSiteSurveyNeededMutationVariables = {|
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type MarkSiteSurveyNeededMutation$variables = {|
   locationId: string,
   needed: boolean,
 |};
-export type MarkSiteSurveyNeededMutationResponse = {|
+export type MarkSiteSurveyNeededMutationVariables = MarkSiteSurveyNeededMutation$variables;
+export type MarkSiteSurveyNeededMutation$data = {|
   +markSiteSurveyNeeded: {|
     +id: string,
     +externalId: ?string,
@@ -29,35 +27,16 @@ export type MarkSiteSurveyNeededMutationResponse = {|
     |},
     +numChildren: number,
     +siteSurveyNeeded: boolean,
-  |}
+  |},
 |};
+export type MarkSiteSurveyNeededMutationResponse = MarkSiteSurveyNeededMutation$data;
 export type MarkSiteSurveyNeededMutation = {|
   variables: MarkSiteSurveyNeededMutationVariables,
-  response: MarkSiteSurveyNeededMutationResponse,
+  response: MarkSiteSurveyNeededMutation$data,
 |};
 */
 
-
-/*
-mutation MarkSiteSurveyNeededMutation(
-  $locationId: ID!
-  $needed: Boolean!
-) {
-  markSiteSurveyNeeded(locationId: $locationId, needed: $needed) {
-    id
-    externalId
-    name
-    locationType {
-      id
-      name
-    }
-    numChildren
-    siteSurveyNeeded
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -171,7 +150,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'a5c70fb90bb9de415d3c763e0d8617a8';
 
-module.exports = node;
+(node/*: any*/).hash = "a5c70fb90bb9de415d3c763e0d8617a8";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  MarkSiteSurveyNeededMutation$variables,
+  MarkSiteSurveyNeededMutation$data,
+>*/);

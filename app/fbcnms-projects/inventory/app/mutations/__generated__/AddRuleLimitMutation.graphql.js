@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<47d3d3fe90cee7f4b09d1df740742108>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,41 +10,31 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type AddRuleLimitInput = {|
   number: number,
   limitType: string,
   comparator: string,
   rule: string,
 |};
-export type AddRuleLimitMutationVariables = {|
-  input: AddRuleLimitInput
+export type AddRuleLimitMutation$variables = {|
+  input: AddRuleLimitInput,
 |};
-export type AddRuleLimitMutationResponse = {|
+export type AddRuleLimitMutationVariables = AddRuleLimitMutation$variables;
+export type AddRuleLimitMutation$data = {|
   +addRuleLimit: {|
     +id: string,
     +number: number,
-  |}
+  |},
 |};
+export type AddRuleLimitMutationResponse = AddRuleLimitMutation$data;
 export type AddRuleLimitMutation = {|
   variables: AddRuleLimitMutationVariables,
-  response: AddRuleLimitMutationResponse,
+  response: AddRuleLimitMutation$data,
 |};
 */
 
-
-/*
-mutation AddRuleLimitMutation(
-  $input: AddRuleLimitInput!
-) {
-  addRuleLimit(input: $input) {
-    id
-    number
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -115,7 +102,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '5a9b1f468709be5c2eb18ed461498d5e';
 
-module.exports = node;
+(node/*: any*/).hash = "5a9b1f468709be5c2eb18ed461498d5e";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddRuleLimitMutation$variables,
+  AddRuleLimitMutation$data,
+>*/);

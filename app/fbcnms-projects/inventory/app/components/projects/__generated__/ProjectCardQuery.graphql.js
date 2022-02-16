@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<1ff4268b52c771ed552216b7387f84ea>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,173 +10,26 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type ProjectDetails_project$ref = any;
-type ProjectMoreActionsButton_project$ref = any;
-export type ProjectCardQueryVariables = {|
-  projectId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type ProjectDetails_project$fragmentType = any;
+type ProjectMoreActionsButton_project$fragmentType = any;
+export type ProjectCardQuery$variables = {|
+  projectId: string,
 |};
-export type ProjectCardQueryResponse = {|
+export type ProjectCardQueryVariables = ProjectCardQuery$variables;
+export type ProjectCardQuery$data = {|
   +project: ?{|
-    +$fragmentRefs: ProjectMoreActionsButton_project$ref & ProjectDetails_project$ref
-  |}
+    +$fragmentSpreads: ProjectMoreActionsButton_project$fragmentType & ProjectDetails_project$fragmentType,
+  |},
 |};
+export type ProjectCardQueryResponse = ProjectCardQuery$data;
 export type ProjectCardQuery = {|
   variables: ProjectCardQueryVariables,
-  response: ProjectCardQueryResponse,
+  response: ProjectCardQuery$data,
 |};
 */
 
-
-/*
-query ProjectCardQuery(
-  $projectId: ID!
-) {
-  project: node(id: $projectId) {
-    __typename
-    ... on Project {
-      ...ProjectMoreActionsButton_project
-      ...ProjectDetails_project
-    }
-    id
-  }
-}
-
-fragment CommentsActivitiesBox_comments on Comment {
-  ...CommentsActivitiesLog_comments
-}
-
-fragment CommentsActivitiesLog_comments on Comment {
-  id
-  createTime
-  ...TextCommentPost_comment
-}
-
-fragment LocationBreadcrumbsTitle_locationDetails on Location {
-  id
-  name
-  locationType {
-    name
-    id
-  }
-  locationHierarchy {
-    id
-    name
-    locationType {
-      name
-      id
-    }
-  }
-}
-
-fragment ProjectDetails_project on Project {
-  id
-  name
-  description
-  createdBy {
-    id
-    email
-  }
-  type {
-    name
-    id
-  }
-  location {
-    id
-    name
-    latitude
-    longitude
-    locationType {
-      mapType
-      mapZoomLevel
-      id
-    }
-    ...LocationBreadcrumbsTitle_locationDetails
-  }
-  priority
-  properties {
-    id
-    stringValue
-    intValue
-    floatValue
-    booleanValue
-    latitudeValue
-    longitudeValue
-    rangeFromValue
-    rangeToValue
-    nodeValue {
-      __typename
-      id
-      name
-    }
-    propertyType {
-      id
-      name
-      type
-      nodeType
-      isEditable
-      isMandatory
-      isInstanceProperty
-      stringValue
-      intValue
-      floatValue
-      booleanValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-    }
-  }
-  workOrders {
-    ...ProjectWorkOrdersList_workOrders
-    id
-  }
-  comments {
-    ...CommentsActivitiesBox_comments
-    id
-  }
-  ...ProjectMoreActionsButton_project
-}
-
-fragment ProjectMoreActionsButton_project on Project {
-  id
-  name
-  numberOfWorkOrders
-  type {
-    id
-  }
-}
-
-fragment ProjectWorkOrdersList_workOrders on WorkOrder {
-  id
-  workOrderType {
-    name
-    id
-  }
-  name
-  description
-  owner {
-    id
-    email
-  }
-  creationDate
-  installDate
-  status
-  priority
-}
-
-fragment TextCommentPost_comment on Comment {
-  id
-  author {
-    email
-    id
-  }
-  text
-  createTime
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -672,7 +522,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '4e882cb1745fd90983186a7b66242bfa';
 
-module.exports = node;
+(node/*: any*/).hash = "4e882cb1745fd90983186a7b66242bfa";
+
+module.exports = ((node/*: any*/)/*: Query<
+  ProjectCardQuery$variables,
+  ProjectCardQuery$data,
+>*/);

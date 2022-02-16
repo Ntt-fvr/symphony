@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<c9e6099b5938df07f8cf651480769680>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationTypeNodesOnDocumentQueryVariables = {||};
-export type LocationTypeNodesOnDocumentQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationTypeNodesOnDocumentQuery$variables = {||};
+export type LocationTypeNodesOnDocumentQueryVariables = LocationTypeNodesOnDocumentQuery$variables;
+export type LocationTypeNodesOnDocumentQuery$data = {|
   +locationTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type LocationTypeNodesOnDocumentQueryResponse = LocationTypeNodesOnDocumentQuery$data;
 export type LocationTypeNodesOnDocumentQuery = {|
   variables: LocationTypeNodesOnDocumentQueryVariables,
-  response: LocationTypeNodesOnDocumentQueryResponse,
+  response: LocationTypeNodesOnDocumentQuery$data,
 |};
 */
 
-
-/*
-query LocationTypeNodesOnDocumentQuery {
-  locationTypes {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -122,7 +107,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'f497bfe184cf51ac72c5dbdf06c4c24b';
 
-module.exports = node;
+(node/*: any*/).hash = "f497bfe184cf51ac72c5dbdf06c4c24b";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationTypeNodesOnDocumentQuery$variables,
+  LocationTypeNodesOnDocumentQuery$data,
+>*/);

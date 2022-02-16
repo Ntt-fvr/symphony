@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<fb21eb0883879b5e545cf006484cc1b5>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type KqiSourcesTypesQueryVariables = {||};
-export type KqiSourcesTypesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type KqiSourcesTypesQuery$variables = {||};
+export type KqiSourcesTypesQueryVariables = KqiSourcesTypesQuery$variables;
+export type KqiSourcesTypesQuery$data = {|
   +kqiSources: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type KqiSourcesTypesQueryResponse = KqiSourcesTypesQuery$data;
 export type KqiSourcesTypesQuery = {|
   variables: KqiSourcesTypesQueryVariables,
-  response: KqiSourcesTypesQueryResponse,
+  response: KqiSourcesTypesQuery$data,
 |};
 */
 
-
-/*
-query KqiSourcesTypesQuery {
-  kqiSources {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -122,7 +107,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '1b9274f6e21b3ebaf03930a2ee417716';
 
-module.exports = node;
+(node/*: any*/).hash = "1b9274f6e21b3ebaf03930a2ee417716";
+
+module.exports = ((node/*: any*/)/*: Query<
+  KqiSourcesTypesQuery$variables,
+  KqiSourcesTypesQuery$data,
+>*/);

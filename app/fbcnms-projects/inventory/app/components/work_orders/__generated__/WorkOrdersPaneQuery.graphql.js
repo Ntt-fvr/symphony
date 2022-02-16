@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<9afd2b3295fdb02d0141a2731c2fc1b7>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,45 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type WorkOrdersPaneQueryVariables = {||};
-export type WorkOrdersPaneQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type WorkOrdersPaneQuery$variables = {||};
+export type WorkOrdersPaneQueryVariables = WorkOrdersPaneQuery$variables;
+export type WorkOrdersPaneQuery$data = {|
   +workOrders: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type WorkOrdersPaneQueryResponse = WorkOrdersPaneQuery$data;
 export type WorkOrdersPaneQuery = {|
   variables: WorkOrdersPaneQueryVariables,
-  response: WorkOrdersPaneQueryResponse,
+  response: WorkOrdersPaneQuery$data,
 |};
 */
 
-
-/*
-query WorkOrdersPaneQuery {
-  workOrders(first: 500) {
-    edges {
-      node {
-        id
-        name
-        __typename
-      }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -205,7 +184,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0e030cf6ac3d385f5de8a99532eb512a';
 
-module.exports = node;
+(node/*: any*/).hash = "0e030cf6ac3d385f5de8a99532eb512a";
+
+module.exports = ((node/*: any*/)/*: Query<
+  WorkOrdersPaneQuery$variables,
+  WorkOrdersPaneQuery$data,
+>*/);

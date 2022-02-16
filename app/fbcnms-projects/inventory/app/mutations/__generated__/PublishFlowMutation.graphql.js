@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<162296c13bfb540faad3507a62e8bc7b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,40 +10,30 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type FlowNewInstancesPolicy = "DISABLED" | "ENABLED" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type FlowNewInstancesPolicy = "ENABLED" | "DISABLED" | "%future added value";
 export type PublishFlowInput = {|
   flowDraftID: string,
   flowInstancesPolicy: FlowNewInstancesPolicy,
 |};
-export type PublishFlowMutationVariables = {|
-  input: PublishFlowInput
+export type PublishFlowMutation$variables = {|
+  input: PublishFlowInput,
 |};
-export type PublishFlowMutationResponse = {|
+export type PublishFlowMutationVariables = PublishFlowMutation$variables;
+export type PublishFlowMutation$data = {|
   +publishFlow: {|
     +id: string,
     +name: string,
-  |}
+  |},
 |};
+export type PublishFlowMutationResponse = PublishFlowMutation$data;
 export type PublishFlowMutation = {|
   variables: PublishFlowMutationVariables,
-  response: PublishFlowMutationResponse,
+  response: PublishFlowMutation$data,
 |};
 */
 
-
-/*
-mutation PublishFlowMutation(
-  $input: PublishFlowInput!
-) {
-  publishFlow(input: $input) {
-    id
-    name
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -114,7 +101,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '531e331e0c960ecf64fbf8c429a9c686';
 
-module.exports = node;
+(node/*: any*/).hash = "531e331e0c960ecf64fbf8c429a9c686";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  PublishFlowMutation$variables,
+  PublishFlowMutation$data,
+>*/);

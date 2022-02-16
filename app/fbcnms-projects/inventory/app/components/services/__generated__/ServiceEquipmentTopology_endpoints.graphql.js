@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<224eeded4c2ba2b7f54a352ce79126ef>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,34 +10,33 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type ServiceEquipmentTopology_endpoints$ref: FragmentReference;
-declare export opaque type ServiceEquipmentTopology_endpoints$fragmentType: ServiceEquipmentTopology_endpoints$ref;
-export type ServiceEquipmentTopology_endpoints = $ReadOnlyArray<{|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type ServiceEquipmentTopology_endpoints$fragmentType: FragmentType;
+export type ServiceEquipmentTopology_endpoints$ref = ServiceEquipmentTopology_endpoints$fragmentType;
+export type ServiceEquipmentTopology_endpoints$data = $ReadOnlyArray<{|
   +definition: {|
-    +role: ?string
+    +role: ?string,
   |},
   +equipment: {|
     +id: string,
     +positionHierarchy: $ReadOnlyArray<{|
       +parentEquipment: {|
-        +id: string
-      |}
+        +id: string,
+      |},
     |}>,
   |},
-  +$refType: ServiceEquipmentTopology_endpoints$ref,
+  +$fragmentType: ServiceEquipmentTopology_endpoints$fragmentType,
 |}>;
-export type ServiceEquipmentTopology_endpoints$data = ServiceEquipmentTopology_endpoints;
+export type ServiceEquipmentTopology_endpoints = ServiceEquipmentTopology_endpoints$data;
 export type ServiceEquipmentTopology_endpoints$key = $ReadOnlyArray<{
   +$data?: ServiceEquipmentTopology_endpoints$data,
-  +$fragmentRefs: ServiceEquipmentTopology_endpoints$ref,
+  +$fragmentSpreads: ServiceEquipmentTopology_endpoints$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -114,7 +110,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '085a9519bd88793b015ab955f716fb5f';
 
-module.exports = node;
+(node/*: any*/).hash = "085a9519bd88793b015ab955f716fb5f";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  ServiceEquipmentTopology_endpoints$fragmentType,
+  ServiceEquipmentTopology_endpoints$data,
+>*/);

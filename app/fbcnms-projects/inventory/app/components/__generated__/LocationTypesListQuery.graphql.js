@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<fbb61c29f3c1c88e82fe6063e815a678>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationTypesListQueryVariables = {||};
-export type LocationTypesListQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationTypesListQuery$variables = {||};
+export type LocationTypesListQueryVariables = LocationTypesListQuery$variables;
+export type LocationTypesListQuery$data = {|
   +locationTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type LocationTypesListQueryResponse = LocationTypesListQuery$data;
 export type LocationTypesListQuery = {|
   variables: LocationTypesListQueryVariables,
-  response: LocationTypesListQueryResponse,
+  response: LocationTypesListQuery$data,
 |};
 */
 
-
-/*
-query LocationTypesListQuery {
-  locationTypes(first: 500) {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -128,7 +113,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '2042d6b5d603cd1eb8b3148cd320d629';
 
-module.exports = node;
+(node/*: any*/).hash = "2042d6b5d603cd1eb8b3148cd320d629";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationTypesListQuery$variables,
+  LocationTypesListQuery$data,
+>*/);

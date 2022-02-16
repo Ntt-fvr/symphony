@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<02f22669cefbf578b815eee33a01dd5a>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type PowerSearchEquipmentResultsTable_equipment$ref = any;
-export type EquipmentFilterType = "EQUIPMENT_TYPE" | "EQUIP_INST_EXTERNAL_ID" | "EQUIP_INST_NAME" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "%future added value";
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type PowerSearchEquipmentResultsTable_equipment$fragmentType = any;
+export type EquipmentFilterType = "EQUIP_INST_NAME" | "EQUIP_INST_EXTERNAL_ID" | "PROPERTY" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "EQUIPMENT_TYPE" | "%future added value";
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type EquipmentFilterInput = {|
   filterType: EquipmentFilterType,
   operator: FilterOperator,
@@ -50,94 +47,29 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type EquipmentViewQueryRendererSearchQueryVariables = {|
+export type EquipmentViewQueryRendererSearchQuery$variables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<EquipmentFilterInput>,
 |};
-export type EquipmentViewQueryRendererSearchQueryResponse = {|
+export type EquipmentViewQueryRendererSearchQueryVariables = EquipmentViewQueryRendererSearchQuery$variables;
+export type EquipmentViewQueryRendererSearchQuery$data = {|
   +equipments: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentRefs: PowerSearchEquipmentResultsTable_equipment$ref
-      |}
+        +$fragmentSpreads: PowerSearchEquipmentResultsTable_equipment$fragmentType,
+      |},
     |}>,
     +totalCount: number,
-  |}
+  |},
 |};
+export type EquipmentViewQueryRendererSearchQueryResponse = EquipmentViewQueryRendererSearchQuery$data;
 export type EquipmentViewQueryRendererSearchQuery = {|
   variables: EquipmentViewQueryRendererSearchQueryVariables,
-  response: EquipmentViewQueryRendererSearchQueryResponse,
+  response: EquipmentViewQueryRendererSearchQuery$data,
 |};
 */
 
-
-/*
-query EquipmentViewQueryRendererSearchQuery(
-  $limit: Int
-  $filters: [EquipmentFilterInput!]!
-) {
-  equipments(first: $limit, filterBy: $filters) {
-    edges {
-      node {
-        ...PowerSearchEquipmentResultsTable_equipment
-        id
-      }
-    }
-    totalCount
-  }
-}
-
-fragment EquipmentBreadcrumbs_equipment on Equipment {
-  id
-  name
-  equipmentType {
-    id
-    name
-  }
-  locationHierarchy {
-    id
-    name
-    locationType {
-      name
-      id
-    }
-  }
-  positionHierarchy {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-    }
-    parentEquipment {
-      id
-      name
-      equipmentType {
-        id
-        name
-      }
-    }
-  }
-}
-
-fragment PowerSearchEquipmentResultsTable_equipment on Equipment {
-  id
-  name
-  futureState
-  externalId
-  equipmentType {
-    id
-    name
-  }
-  workOrder {
-    id
-    status
-  }
-  ...EquipmentBreadcrumbs_equipment
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -410,7 +342,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '3aa4b524d011bbbcdd87a524011822e6';
 
-module.exports = node;
+(node/*: any*/).hash = "3aa4b524d011bbbcdd87a524011822e6";
+
+module.exports = ((node/*: any*/)/*: Query<
+  EquipmentViewQueryRendererSearchQuery$variables,
+  EquipmentViewQueryRendererSearchQuery$data,
+>*/);

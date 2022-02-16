@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<1df974498e348b198c6836ebd189cc69>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,74 +10,31 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type LocationCellScanCoverageMap_cellData$ref = any;
-type LocationWiFiScanCoverageMap_wifiData$ref = any;
-export type LocationCoverageMapTabQueryVariables = {|
-  locationId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type LocationCellScanCoverageMap_cellData$fragmentType = any;
+type LocationWiFiScanCoverageMap_wifiData$fragmentType = any;
+export type LocationCoverageMapTabQuery$variables = {|
+  locationId: string,
 |};
-export type LocationCoverageMapTabQueryResponse = {|
+export type LocationCoverageMapTabQueryVariables = LocationCoverageMapTabQuery$variables;
+export type LocationCoverageMapTabQuery$data = {|
   +location: ?{|
     +cellData?: $ReadOnlyArray<?{|
-      +$fragmentRefs: LocationCellScanCoverageMap_cellData$ref
+      +$fragmentSpreads: LocationCellScanCoverageMap_cellData$fragmentType,
     |}>,
     +wifiData?: $ReadOnlyArray<?{|
-      +$fragmentRefs: LocationWiFiScanCoverageMap_wifiData$ref
+      +$fragmentSpreads: LocationWiFiScanCoverageMap_wifiData$fragmentType,
     |}>,
-  |}
+  |},
 |};
+export type LocationCoverageMapTabQueryResponse = LocationCoverageMapTabQuery$data;
 export type LocationCoverageMapTabQuery = {|
   variables: LocationCoverageMapTabQueryVariables,
-  response: LocationCoverageMapTabQueryResponse,
+  response: LocationCoverageMapTabQuery$data,
 |};
 */
 
-
-/*
-query LocationCoverageMapTabQuery(
-  $locationId: ID!
-) {
-  location: node(id: $locationId) {
-    __typename
-    ... on Location {
-      cellData {
-        ...LocationCellScanCoverageMap_cellData
-        id
-      }
-      wifiData {
-        ...LocationWiFiScanCoverageMap_wifiData
-        id
-      }
-    }
-    id
-  }
-}
-
-fragment LocationCellScanCoverageMap_cellData on SurveyCellScan {
-  id
-  latitude
-  longitude
-  networkType
-  signalStrength
-  mobileCountryCode
-  mobileNetworkCode
-  operator
-}
-
-fragment LocationWiFiScanCoverageMap_wifiData on SurveyWiFiScan {
-  id
-  latitude
-  longitude
-  frequency
-  channel
-  bssid
-  ssid
-  strength
-  band
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -198,7 +152,6 @@ return {
             "name": "__typename",
             "storageKey": null
           },
-          (v2/*: any*/),
           {
             "kind": "InlineFragment",
             "selections": [
@@ -310,7 +263,8 @@ return {
             ],
             "type": "Location",
             "abstractKey": null
-          }
+          },
+          (v2/*: any*/)
         ],
         "storageKey": null
       }
@@ -326,7 +280,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '16ca9fb7b04e14fdb62144f24b5ab0e5';
 
-module.exports = node;
+(node/*: any*/).hash = "16ca9fb7b04e14fdb62144f24b5ab0e5";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationCoverageMapTabQuery$variables,
+  LocationCoverageMapTabQuery$data,
+>*/);

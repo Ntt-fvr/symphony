@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<b681fc4da8a21a2d5f9bc7351b2c2fec>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,45 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type PortDefinitionsAddEditTable__equipmentPortTypesQueryVariables = {||};
-export type PortDefinitionsAddEditTable__equipmentPortTypesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type PortDefinitionsAddEditTable__equipmentPortTypesQuery$variables = {||};
+export type PortDefinitionsAddEditTable__equipmentPortTypesQueryVariables = PortDefinitionsAddEditTable__equipmentPortTypesQuery$variables;
+export type PortDefinitionsAddEditTable__equipmentPortTypesQuery$data = {|
   +equipmentPortTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type PortDefinitionsAddEditTable__equipmentPortTypesQueryResponse = PortDefinitionsAddEditTable__equipmentPortTypesQuery$data;
 export type PortDefinitionsAddEditTable__equipmentPortTypesQuery = {|
   variables: PortDefinitionsAddEditTable__equipmentPortTypesQueryVariables,
-  response: PortDefinitionsAddEditTable__equipmentPortTypesQueryResponse,
+  response: PortDefinitionsAddEditTable__equipmentPortTypesQuery$data,
 |};
 */
 
-
-/*
-query PortDefinitionsAddEditTable__equipmentPortTypesQuery {
-  equipmentPortTypes(first: 500) {
-    edges {
-      node {
-        id
-        name
-        __typename
-      }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -205,7 +184,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '8387908919eda242a725beb795eb547a';
 
-module.exports = node;
+(node/*: any*/).hash = "8387908919eda242a725beb795eb547a";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PortDefinitionsAddEditTable__equipmentPortTypesQuery$variables,
+  PortDefinitionsAddEditTable__equipmentPortTypesQuery$data,
+>*/);

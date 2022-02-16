@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<51c21270d470c9eb860f37096dc46e80>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,10 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref = any;
-type EquipmentPortTypeItem_equipmentPortType$ref = any;
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType = any;
+type EquipmentPortTypeItem_equipmentPortType$fragmentType = any;
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type EditEquipmentPortTypeInput = {|
   id: string,
   name: string,
@@ -46,114 +43,25 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type EditEquipmentPortTypeMutationVariables = {|
-  input: EditEquipmentPortTypeInput
+export type EditEquipmentPortTypeMutation$variables = {|
+  input: EditEquipmentPortTypeInput,
 |};
-export type EditEquipmentPortTypeMutationResponse = {|
+export type EditEquipmentPortTypeMutationVariables = EditEquipmentPortTypeMutation$variables;
+export type EditEquipmentPortTypeMutation$data = {|
   +editEquipmentPortType: {|
     +id: string,
     +name: string,
-    +$fragmentRefs: EquipmentPortTypeItem_equipmentPortType$ref & AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref,
-  |}
+    +$fragmentSpreads: EquipmentPortTypeItem_equipmentPortType$fragmentType & AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType,
+  |},
 |};
+export type EditEquipmentPortTypeMutationResponse = EditEquipmentPortTypeMutation$data;
 export type EditEquipmentPortTypeMutation = {|
   variables: EditEquipmentPortTypeMutationVariables,
-  response: EditEquipmentPortTypeMutationResponse,
+  response: EditEquipmentPortTypeMutation$data,
 |};
 */
 
-
-/*
-mutation EditEquipmentPortTypeMutation(
-  $input: EditEquipmentPortTypeInput!
-) {
-  editEquipmentPortType(input: $input) {
-    id
-    name
-    ...EquipmentPortTypeItem_equipmentPortType
-    ...AddEditEquipmentPortTypeCard_editingEquipmentPortType
-  }
-}
-
-fragment AddEditEquipmentPortTypeCard_editingEquipmentPortType on EquipmentPortType {
-  id
-  name
-  numberOfPortDefinitions
-  propertyTypes {
-    id
-    name
-    type
-    nodeType
-    index
-    stringValue
-    intValue
-    booleanValue
-    floatValue
-    latitudeValue
-    longitudeValue
-    isEditable
-    isInstanceProperty
-  }
-  linkPropertyTypes {
-    id
-    name
-    type
-    nodeType
-    index
-    stringValue
-    intValue
-    booleanValue
-    floatValue
-    latitudeValue
-    longitudeValue
-    isEditable
-    isInstanceProperty
-  }
-}
-
-fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
-  ...PropertyTypeFormField_propertyType
-  id
-  index
-}
-
-fragment EquipmentPortTypeItem_equipmentPortType on EquipmentPortType {
-  id
-  name
-  numberOfPortDefinitions
-  propertyTypes {
-    ...DynamicPropertyTypesGrid_propertyTypes
-    id
-  }
-  linkPropertyTypes {
-    ...DynamicPropertyTypesGrid_propertyTypes
-    id
-  }
-}
-
-fragment PropertyTypeFormField_propertyType on PropertyType {
-  id
-  name
-  type
-  nodeType
-  index
-  stringValue
-  intValue
-  booleanValue
-  floatValue
-  latitudeValue
-  longitudeValue
-  rangeFromValue
-  rangeToValue
-  isEditable
-  isInstanceProperty
-  isMandatory
-  category
-  isDeleted
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -390,7 +298,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '30f0a21de0af9f642d1d36e4fd0cc913';
 
-module.exports = node;
+(node/*: any*/).hash = "30f0a21de0af9f642d1d36e4fd0cc913";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditEquipmentPortTypeMutation$variables,
+  EditEquipmentPortTypeMutation$data,
+>*/);

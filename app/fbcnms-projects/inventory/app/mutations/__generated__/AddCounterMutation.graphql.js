@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<e63c2f0ce28837c22a57525c0a5419fb>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type AddCounterInput = {|
   name: string,
   externalID: string,
@@ -21,34 +18,24 @@ export type AddCounterInput = {|
   counterFamily: string,
   vendorFk: string,
 |};
-export type AddCounterMutationVariables = {|
-  input: AddCounterInput
+export type AddCounterMutation$variables = {|
+  input: AddCounterInput,
 |};
-export type AddCounterMutationResponse = {|
+export type AddCounterMutationVariables = AddCounterMutation$variables;
+export type AddCounterMutation$data = {|
   +addCounter: {|
     +id: string,
     +name: string,
-  |}
+  |},
 |};
+export type AddCounterMutationResponse = AddCounterMutation$data;
 export type AddCounterMutation = {|
   variables: AddCounterMutationVariables,
-  response: AddCounterMutationResponse,
+  response: AddCounterMutation$data,
 |};
 */
 
-
-/*
-mutation AddCounterMutation(
-  $input: AddCounterInput!
-) {
-  addCounter(input: $input) {
-    id
-    name
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -116,7 +103,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'ea55240b40f19c7038f41b1ca59c0abc';
 
-module.exports = node;
+(node/*: any*/).hash = "ea55240b40f19c7038f41b1ca59c0abc";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddCounterMutation$variables,
+  AddCounterMutation$data,
+>*/);

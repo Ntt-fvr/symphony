@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<25ae08a4401da16af30819a13a7474d1>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type AddKpiInput = {|
   name: string,
   description: string,
@@ -21,10 +18,11 @@ export type AddKpiInput = {|
   kpiCategoryFK: string,
   status: boolean,
 |};
-export type AddKpiMutationVariables = {|
-  input: AddKpiInput
+export type AddKpiMutation$variables = {|
+  input: AddKpiInput,
 |};
-export type AddKpiMutationResponse = {|
+export type AddKpiMutationVariables = AddKpiMutation$variables;
+export type AddKpiMutation$data = {|
   +addKpi: {|
     +id: string,
     +name: string,
@@ -32,31 +30,16 @@ export type AddKpiMutationResponse = {|
       +id: string,
       +name: string,
     |},
-  |}
+  |},
 |};
+export type AddKpiMutationResponse = AddKpiMutation$data;
 export type AddKpiMutation = {|
   variables: AddKpiMutationVariables,
-  response: AddKpiMutationResponse,
+  response: AddKpiMutation$data,
 |};
 */
 
-
-/*
-mutation AddKpiMutation(
-  $input: AddKpiInput!
-) {
-  addKpi(input: $input) {
-    id
-    name
-    domainFk {
-      id
-      name
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -139,7 +122,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '39120ac831cd6ab077113890017970cb';
 
-module.exports = node;
+(node/*: any*/).hash = "39120ac831cd6ab077113890017970cb";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddKpiMutation$variables,
+  AddKpiMutation$data,
+>*/);
