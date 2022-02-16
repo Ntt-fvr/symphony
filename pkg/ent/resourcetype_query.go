@@ -17,12 +17,10 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 )
 
 // ResourceTypeQuery is the builder for querying ResourceType entities.
@@ -34,13 +32,10 @@ type ResourceTypeQuery struct {
 	unique     []string
 	predicates []predicate.ResourceType
 	// eager-loading edges.
-	withResourcetypeclass     *ResourceTypeClassQuery
-	withResourcetypebasetype  *ResourceTypeBaseTypeQuery
-	withResourceRelationshipA *ResourceRelationshipQuery
-	withResourceRelationshipB *ResourceRelationshipQuery
+	withResourceRelationshipA *ResourceTypeRelationshipQuery
+	withResourceRelationshipB *ResourceTypeRelationshipQuery
 	withResourceSpecification *ResourceSpecificationQuery
 	withResourcetypeItems     *ResourceSRItemsQuery
-	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -70,53 +65,9 @@ func (rtq *ResourceTypeQuery) Order(o ...OrderFunc) *ResourceTypeQuery {
 	return rtq
 }
 
-// QueryResourcetypeclass chains the current query on the resourcetypeclass edge.
-func (rtq *ResourceTypeQuery) QueryResourcetypeclass() *ResourceTypeClassQuery {
-	query := &ResourceTypeClassQuery{config: rtq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := rtq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := rtq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, selector),
-			sqlgraph.To(resourcetypeclass.Table, resourcetypeclass.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcetype.ResourcetypeclassTable, resourcetype.ResourcetypeclassColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryResourcetypebasetype chains the current query on the resourcetypebasetype edge.
-func (rtq *ResourceTypeQuery) QueryResourcetypebasetype() *ResourceTypeBaseTypeQuery {
-	query := &ResourceTypeBaseTypeQuery{config: rtq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := rtq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := rtq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, selector),
-			sqlgraph.To(resourcetypebasetype.Table, resourcetypebasetype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcetype.ResourcetypebasetypeTable, resourcetype.ResourcetypebasetypeColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // QueryResourceRelationshipA chains the current query on the resource_relationship_a edge.
-func (rtq *ResourceTypeQuery) QueryResourceRelationshipA() *ResourceRelationshipQuery {
-	query := &ResourceRelationshipQuery{config: rtq.config}
+func (rtq *ResourceTypeQuery) QueryResourceRelationshipA() *ResourceTypeRelationshipQuery {
+	query := &ResourceTypeRelationshipQuery{config: rtq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rtq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -127,7 +78,7 @@ func (rtq *ResourceTypeQuery) QueryResourceRelationshipA() *ResourceRelationship
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, selector),
-			sqlgraph.To(resourcerelationship.Table, resourcerelationship.FieldID),
+			sqlgraph.To(resourcetyperelationship.Table, resourcetyperelationship.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceRelationshipATable, resourcetype.ResourceRelationshipAColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
@@ -137,8 +88,8 @@ func (rtq *ResourceTypeQuery) QueryResourceRelationshipA() *ResourceRelationship
 }
 
 // QueryResourceRelationshipB chains the current query on the resource_relationship_b edge.
-func (rtq *ResourceTypeQuery) QueryResourceRelationshipB() *ResourceRelationshipQuery {
-	query := &ResourceRelationshipQuery{config: rtq.config}
+func (rtq *ResourceTypeQuery) QueryResourceRelationshipB() *ResourceTypeRelationshipQuery {
+	query := &ResourceTypeRelationshipQuery{config: rtq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rtq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -149,7 +100,7 @@ func (rtq *ResourceTypeQuery) QueryResourceRelationshipB() *ResourceRelationship
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, selector),
-			sqlgraph.To(resourcerelationship.Table, resourcerelationship.FieldID),
+			sqlgraph.To(resourcetyperelationship.Table, resourcetyperelationship.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceRelationshipBTable, resourcetype.ResourceRelationshipBColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
@@ -378,8 +329,6 @@ func (rtq *ResourceTypeQuery) Clone() *ResourceTypeQuery {
 		order:                     append([]OrderFunc{}, rtq.order...),
 		unique:                    append([]string{}, rtq.unique...),
 		predicates:                append([]predicate.ResourceType{}, rtq.predicates...),
-		withResourcetypeclass:     rtq.withResourcetypeclass.Clone(),
-		withResourcetypebasetype:  rtq.withResourcetypebasetype.Clone(),
 		withResourceRelationshipA: rtq.withResourceRelationshipA.Clone(),
 		withResourceRelationshipB: rtq.withResourceRelationshipB.Clone(),
 		withResourceSpecification: rtq.withResourceSpecification.Clone(),
@@ -390,32 +339,10 @@ func (rtq *ResourceTypeQuery) Clone() *ResourceTypeQuery {
 	}
 }
 
-//  WithResourcetypeclass tells the query-builder to eager-loads the nodes that are connected to
-// the "resourcetypeclass" edge. The optional arguments used to configure the query builder of the edge.
-func (rtq *ResourceTypeQuery) WithResourcetypeclass(opts ...func(*ResourceTypeClassQuery)) *ResourceTypeQuery {
-	query := &ResourceTypeClassQuery{config: rtq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	rtq.withResourcetypeclass = query
-	return rtq
-}
-
-//  WithResourcetypebasetype tells the query-builder to eager-loads the nodes that are connected to
-// the "resourcetypebasetype" edge. The optional arguments used to configure the query builder of the edge.
-func (rtq *ResourceTypeQuery) WithResourcetypebasetype(opts ...func(*ResourceTypeBaseTypeQuery)) *ResourceTypeQuery {
-	query := &ResourceTypeBaseTypeQuery{config: rtq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	rtq.withResourcetypebasetype = query
-	return rtq
-}
-
 //  WithResourceRelationshipA tells the query-builder to eager-loads the nodes that are connected to
 // the "resource_relationship_a" edge. The optional arguments used to configure the query builder of the edge.
-func (rtq *ResourceTypeQuery) WithResourceRelationshipA(opts ...func(*ResourceRelationshipQuery)) *ResourceTypeQuery {
-	query := &ResourceRelationshipQuery{config: rtq.config}
+func (rtq *ResourceTypeQuery) WithResourceRelationshipA(opts ...func(*ResourceTypeRelationshipQuery)) *ResourceTypeQuery {
+	query := &ResourceTypeRelationshipQuery{config: rtq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -425,8 +352,8 @@ func (rtq *ResourceTypeQuery) WithResourceRelationshipA(opts ...func(*ResourceRe
 
 //  WithResourceRelationshipB tells the query-builder to eager-loads the nodes that are connected to
 // the "resource_relationship_b" edge. The optional arguments used to configure the query builder of the edge.
-func (rtq *ResourceTypeQuery) WithResourceRelationshipB(opts ...func(*ResourceRelationshipQuery)) *ResourceTypeQuery {
-	query := &ResourceRelationshipQuery{config: rtq.config}
+func (rtq *ResourceTypeQuery) WithResourceRelationshipB(opts ...func(*ResourceTypeRelationshipQuery)) *ResourceTypeQuery {
+	query := &ResourceTypeRelationshipQuery{config: rtq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -524,30 +451,18 @@ func (rtq *ResourceTypeQuery) prepareQuery(ctx context.Context) error {
 func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, error) {
 	var (
 		nodes       = []*ResourceType{}
-		withFKs     = rtq.withFKs
 		_spec       = rtq.querySpec()
-		loadedTypes = [6]bool{
-			rtq.withResourcetypeclass != nil,
-			rtq.withResourcetypebasetype != nil,
+		loadedTypes = [4]bool{
 			rtq.withResourceRelationshipA != nil,
 			rtq.withResourceRelationshipB != nil,
 			rtq.withResourceSpecification != nil,
 			rtq.withResourcetypeItems != nil,
 		}
 	)
-	if rtq.withResourcetypeclass != nil || rtq.withResourcetypebasetype != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, resourcetype.ForeignKeys...)
-	}
 	_spec.ScanValues = func() []interface{} {
 		node := &ResourceType{config: rtq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
-		if withFKs {
-			values = append(values, node.fkValues()...)
-		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -565,66 +480,16 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 		return nodes, nil
 	}
 
-	if query := rtq.withResourcetypeclass; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*ResourceType)
-		for i := range nodes {
-			if fk := nodes[i].resource_type_class_resource_type_class; fk != nil {
-				ids = append(ids, *fk)
-				nodeids[*fk] = append(nodeids[*fk], nodes[i])
-			}
-		}
-		query.Where(resourcetypeclass.IDIn(ids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_class_resource_type_class" returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.Resourcetypeclass = n
-			}
-		}
-	}
-
-	if query := rtq.withResourcetypebasetype; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*ResourceType)
-		for i := range nodes {
-			if fk := nodes[i].resource_type_base_type_resource_base_type; fk != nil {
-				ids = append(ids, *fk)
-				nodeids[*fk] = append(nodeids[*fk], nodes[i])
-			}
-		}
-		query.Where(resourcetypebasetype.IDIn(ids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_base_type_resource_base_type" returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.Resourcetypebasetype = n
-			}
-		}
-	}
-
 	if query := rtq.withResourceRelationshipA; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*ResourceType)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceRelationshipA = []*ResourceRelationship{}
+			nodes[i].Edges.ResourceRelationshipA = []*ResourceTypeRelationship{}
 		}
 		query.withFKs = true
-		query.Where(predicate.ResourceRelationship(func(s *sql.Selector) {
+		query.Where(predicate.ResourceTypeRelationship(func(s *sql.Selector) {
 			s.Where(sql.InValues(resourcetype.ResourceRelationshipAColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
@@ -650,10 +515,10 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceRelationshipB = []*ResourceRelationship{}
+			nodes[i].Edges.ResourceRelationshipB = []*ResourceTypeRelationship{}
 		}
 		query.withFKs = true
-		query.Where(predicate.ResourceRelationship(func(s *sql.Selector) {
+		query.Where(predicate.ResourceTypeRelationship(func(s *sql.Selector) {
 			s.Where(sql.InValues(resourcetype.ResourceRelationshipBColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)

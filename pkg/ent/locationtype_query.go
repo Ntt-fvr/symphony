@@ -21,7 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 )
 
@@ -37,7 +37,7 @@ type LocationTypeQuery struct {
 	withLocations                    *LocationQuery
 	withPropertyTypes                *PropertyTypeQuery
 	withSurveyTemplateCategories     *SurveyTemplateCategoryQuery
-	withResourceRelationshipLocation *ResourceRelationshipQuery
+	withResourceRelationshipLocation *ResourceTypeRelationshipQuery
 	withDocumentCategory             *DocumentCategoryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -135,8 +135,8 @@ func (ltq *LocationTypeQuery) QuerySurveyTemplateCategories() *SurveyTemplateCat
 }
 
 // QueryResourceRelationshipLocation chains the current query on the resource_relationship_location edge.
-func (ltq *LocationTypeQuery) QueryResourceRelationshipLocation() *ResourceRelationshipQuery {
-	query := &ResourceRelationshipQuery{config: ltq.config}
+func (ltq *LocationTypeQuery) QueryResourceRelationshipLocation() *ResourceTypeRelationshipQuery {
+	query := &ResourceTypeRelationshipQuery{config: ltq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ltq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -147,7 +147,7 @@ func (ltq *LocationTypeQuery) QueryResourceRelationshipLocation() *ResourceRelat
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
-			sqlgraph.To(resourcerelationship.Table, resourcerelationship.FieldID),
+			sqlgraph.To(resourcetyperelationship.Table, resourcetyperelationship.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.ResourceRelationshipLocationTable, locationtype.ResourceRelationshipLocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ltq.driver.Dialect(), step)
@@ -400,8 +400,8 @@ func (ltq *LocationTypeQuery) WithSurveyTemplateCategories(opts ...func(*SurveyT
 
 //  WithResourceRelationshipLocation tells the query-builder to eager-loads the nodes that are connected to
 // the "resource_relationship_location" edge. The optional arguments used to configure the query builder of the edge.
-func (ltq *LocationTypeQuery) WithResourceRelationshipLocation(opts ...func(*ResourceRelationshipQuery)) *LocationTypeQuery {
-	query := &ResourceRelationshipQuery{config: ltq.config}
+func (ltq *LocationTypeQuery) WithResourceRelationshipLocation(opts ...func(*ResourceTypeRelationshipQuery)) *LocationTypeQuery {
+	query := &ResourceTypeRelationshipQuery{config: ltq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -611,10 +611,10 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceRelationshipLocation = []*ResourceRelationship{}
+			nodes[i].Edges.ResourceRelationshipLocation = []*ResourceTypeRelationship{}
 		}
 		query.withFKs = true
-		query.Where(predicate.ResourceRelationship(func(s *sql.Selector) {
+		query.Where(predicate.ResourceTypeRelationship(func(s *sql.Selector) {
 			s.Where(sql.InValues(locationtype.ResourceRelationshipLocationColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)

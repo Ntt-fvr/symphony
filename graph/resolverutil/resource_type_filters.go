@@ -8,8 +8,6 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/pkg/errors"
 )
@@ -37,16 +35,16 @@ func resourceTypeNameFilter(q *ent.ResourceTypeQuery, filter *models.ResourceTyp
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func resourceTypeFilterTypeResourceTypeBaseType(q *ent.ResourceTypeQuery, filter *models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
-	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
-		return q.Where(resourcetype.HasResourcetypebasetypeWith(resourcetypebasetype.IDIn(filter.IDSet...))), nil
+func resourceTypeFilterTypeResourceTypeClass(q *ent.ResourceTypeQuery, filter *models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
+	if filter.Operator == enum.FilterOperatorIs && filter.TypeClassValue != nil {
+		return q.Where(resourcetype.ResourceTypeClassEQ(*filter.TypeClassValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func resourceTypeFilterTypeResourceTypeClass(q *ent.ResourceTypeQuery, filter *models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
-	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
-		return q.Where(resourcetype.HasResourcetypeclassWith(resourcetypeclass.IDIn(filter.IDSet...))), nil
+func resourceTypeFilterTypeResourceTypeBaseType(q *ent.ResourceTypeQuery, filter *models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
+	if filter.Operator == enum.FilterOperatorIs && filter.TypeBaseTypeValue != nil {
+		return q.Where(resourcetype.ResourceTypeBaseTypeEQ(*filter.TypeBaseTypeValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

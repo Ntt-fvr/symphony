@@ -18,7 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 )
 
@@ -164,14 +164,14 @@ func (ltc *LocationTypeCreate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 	return ltc.AddSurveyTemplateCategoryIDs(ids...)
 }
 
-// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceRelationship by ids.
+// AddResourceRelationshipLocationIDs adds the resource_relationship_location edge to ResourceTypeRelationship by ids.
 func (ltc *LocationTypeCreate) AddResourceRelationshipLocationIDs(ids ...int) *LocationTypeCreate {
 	ltc.mutation.AddResourceRelationshipLocationIDs(ids...)
 	return ltc
 }
 
-// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceRelationship.
-func (ltc *LocationTypeCreate) AddResourceRelationshipLocation(r ...*ResourceRelationship) *LocationTypeCreate {
+// AddResourceRelationshipLocation adds the resource_relationship_location edges to ResourceTypeRelationship.
+func (ltc *LocationTypeCreate) AddResourceRelationshipLocation(r ...*ResourceTypeRelationship) *LocationTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -435,7 +435,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}

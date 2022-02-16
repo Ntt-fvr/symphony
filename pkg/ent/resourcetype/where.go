@@ -381,59 +381,99 @@ func NameContainsFold(v string) predicate.ResourceType {
 	})
 }
 
-// HasResourcetypeclass applies the HasEdge predicate on the "resourcetypeclass" edge.
-func HasResourcetypeclass() predicate.ResourceType {
+// ResourceTypeClassEQ applies the EQ predicate on the "ResourceTypeClass" field.
+func ResourceTypeClassEQ(v ResourceTypeClass) predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcetypeclassTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourcetypeclassTable, ResourcetypeclassColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
+		s.Where(sql.EQ(s.C(FieldResourceTypeClass), v))
 	})
 }
 
-// HasResourcetypeclassWith applies the HasEdge predicate on the "resourcetypeclass" edge with a given conditions (other predicates).
-func HasResourcetypeclassWith(preds ...predicate.ResourceTypeClass) predicate.ResourceType {
+// ResourceTypeClassNEQ applies the NEQ predicate on the "ResourceTypeClass" field.
+func ResourceTypeClassNEQ(v ResourceTypeClass) predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcetypeclassInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourcetypeclassTable, ResourcetypeclassColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
+		s.Where(sql.NEQ(s.C(FieldResourceTypeClass), v))
 	})
 }
 
-// HasResourcetypebasetype applies the HasEdge predicate on the "resourcetypebasetype" edge.
-func HasResourcetypebasetype() predicate.ResourceType {
+// ResourceTypeClassIn applies the In predicate on the "ResourceTypeClass" field.
+func ResourceTypeClassIn(vs ...ResourceTypeClass) predicate.ResourceType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.ResourceType(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcetypebasetypeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourcetypebasetypeTable, ResourcetypebasetypeColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldResourceTypeClass), v...))
 	})
 }
 
-// HasResourcetypebasetypeWith applies the HasEdge predicate on the "resourcetypebasetype" edge with a given conditions (other predicates).
-func HasResourcetypebasetypeWith(preds ...predicate.ResourceTypeBaseType) predicate.ResourceType {
+// ResourceTypeClassNotIn applies the NotIn predicate on the "ResourceTypeClass" field.
+func ResourceTypeClassNotIn(vs ...ResourceTypeClass) predicate.ResourceType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.ResourceType(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcetypebasetypeInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ResourcetypebasetypeTable, ResourcetypebasetypeColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldResourceTypeClass), v...))
+	})
+}
+
+// ResourceTypeBaseTypeEQ applies the EQ predicate on the "ResourceTypeBaseType" field.
+func ResourceTypeBaseTypeEQ(v ResourceTypeBaseType) predicate.ResourceType {
+	return predicate.ResourceType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldResourceTypeBaseType), v))
+	})
+}
+
+// ResourceTypeBaseTypeNEQ applies the NEQ predicate on the "ResourceTypeBaseType" field.
+func ResourceTypeBaseTypeNEQ(v ResourceTypeBaseType) predicate.ResourceType {
+	return predicate.ResourceType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldResourceTypeBaseType), v))
+	})
+}
+
+// ResourceTypeBaseTypeIn applies the In predicate on the "ResourceTypeBaseType" field.
+func ResourceTypeBaseTypeIn(vs ...ResourceTypeBaseType) predicate.ResourceType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldResourceTypeBaseType), v...))
+	})
+}
+
+// ResourceTypeBaseTypeNotIn applies the NotIn predicate on the "ResourceTypeBaseType" field.
+func ResourceTypeBaseTypeNotIn(vs ...ResourceTypeBaseType) predicate.ResourceType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldResourceTypeBaseType), v...))
 	})
 }
 
@@ -450,7 +490,7 @@ func HasResourceRelationshipA() predicate.ResourceType {
 }
 
 // HasResourceRelationshipAWith applies the HasEdge predicate on the "resource_relationship_a" edge with a given conditions (other predicates).
-func HasResourceRelationshipAWith(preds ...predicate.ResourceRelationship) predicate.ResourceType {
+func HasResourceRelationshipAWith(preds ...predicate.ResourceTypeRelationship) predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
@@ -478,7 +518,7 @@ func HasResourceRelationshipB() predicate.ResourceType {
 }
 
 // HasResourceRelationshipBWith applies the HasEdge predicate on the "resource_relationship_b" edge with a given conditions (other predicates).
-func HasResourceRelationshipBWith(preds ...predicate.ResourceRelationship) predicate.ResourceType {
+func HasResourceRelationshipBWith(preds ...predicate.ResourceTypeRelationship) predicate.ResourceType {
 	return predicate.ResourceType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

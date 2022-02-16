@@ -117,8 +117,8 @@ const EditCounterItemForm = (props: Props) => {
   const vendor = useFormInput(formValues.vendorFk.id);
 
   const data = useLazyLoadQuery<EditCounterItemFormQuery>(
-    EditCountersQuery,
-    {},
+      EditCountersQuery,
+      {},
   );
 
   const dataInputsObject = [
@@ -131,9 +131,9 @@ const EditCounterItemForm = (props: Props) => {
 
   const inputFilter = () => {
     return (
-      counterNames?.filter(
-        item => item === name.value.trim() && item !== formValues.name.trim(),
-      ) || []
+        counterNames?.filter(
+            item => item === name.value.trim() && item !== formValues.name.trim(),
+        ) || []
     );
   };
 
@@ -160,120 +160,120 @@ const EditCounterItemForm = (props: Props) => {
   };
 
   return (
-    <div className={classes.root}>
-      <Grid container>
-        <Grid
-          className={classes.header}
-          container
-          direction="row"
-          justifycontent="flex-end"
-          alignItems="center">
-          <Grid item xs>
-            <ConfigureTitleSubItem
-              title={fbt('Counters Catalog/', 'Counters Catalog')}
-              tag={` ${formValues.name}`}
-            />
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete
-              variant={'outlined'}
-              onClick={() => {
-                hideEditCounterForm();
-              }}>
-              {'Cancel'}
-            </ButtonSaveDelete>
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete
-              onClick={() => {
-                handleClick();
-              }}
-              disabled={handleDisable}>
-              {'Save'}
-            </ButtonSaveDelete>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card margins={'none'}>
-            <CardHeader className={classes.cardHeader}>
-              Edit container detail
-            </CardHeader>
-            <Grid container>
-              <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    id="counter-name"
-                    label="Name"
-                    variant="outlined"
-                    name="name"
-                    fullWidth
-                    {...name}
-                    {...validationName}
-                  />
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    id="outlined-select-vendor"
-                    select
-                    label="Vendor name*"
-                    fullWidth
-                    name="vendor"
-                    variant="outlined"
-                    {...vendor}>
-                    {data.vendors.edges.map((item, index) => (
-                      <MenuItem key={index} value={item.node?.id}>
-                        {item.node?.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    id="counter-name"
-                    label="Network Manager System"
-                    variant="outlined"
-                    name="NetworkManagerSystem"
-                    fullWidth
-                    {...networkManagerSystem}
-                  />
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    label="Counter ID"
-                    variant="outlined"
-                    name="CounterID"
-                    fullWidth
-                    {...counterID}
-                  />
-                </form>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    disabled
-                    id="counter-name"
-                    label="Counter Family"
-                    variant="outlined"
-                    name="counterFamily"
-                    fullWidth
-                    {...counterFamily}
-                  />
-                </form>
-              </Grid>
+      <div className={classes.root}>
+        <Grid container>
+          <Grid
+              className={classes.header}
+              container
+              direction="row"
+              justifycontent="flex-end"
+              alignItems="center">
+            <Grid item xs>
+              <ConfigureTitleSubItem
+                  title={fbt('Counters Catalog/', 'Counters Catalog')}
+                  tag={` ${formValues.name}`}
+              />
             </Grid>
-          </Card>
+            <Grid>
+              <ButtonSaveDelete
+                  variant={'outlined'}
+                  onClick={() => {
+                    hideEditCounterForm();
+                  }}>
+                {'Cancel'}
+              </ButtonSaveDelete>
+            </Grid>
+            <Grid>
+              <ButtonSaveDelete
+                  onClick={() => {
+                    handleClick();
+                  }}
+                  disabled={handleDisable}>
+                {'Save'}
+              </ButtonSaveDelete>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={12} lg={12} xl={12}>
+            <Card margins={'none'}>
+              <CardHeader className={classes.cardHeader}>
+                Edit container detail
+              </CardHeader>
+              <Grid container>
+                <Grid item xs={12} sm={12} lg={4} xl={4}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                        required
+                        id="counter-name"
+                        label="Name"
+                        variant="outlined"
+                        name="name"
+                        fullWidth
+                        {...name}
+                        {...validationName}
+                    />
+                  </form>
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4} xl={4}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                        id="outlined-select-vendor"
+                        select
+                        label="Vendor name*"
+                        fullWidth
+                        name="vendor"
+                        variant="outlined"
+                        {...vendor}>
+                      {data.vendors.edges.map((item, index) => (
+                          <MenuItem key={index} value={item.node?.id}>
+                            {item.node?.name}
+                          </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4} xl={4}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                        required
+                        id="counter-name"
+                        label="Network Manager System"
+                        variant="outlined"
+                        name="NetworkManagerSystem"
+                        fullWidth
+                        {...networkManagerSystem}
+                    />
+                  </form>
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4} xl={4}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                        required
+                        label="Counter ID"
+                        variant="outlined"
+                        name="CounterID"
+                        fullWidth
+                        {...counterID}
+                    />
+                  </form>
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4} xl={4}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                        disabled
+                        id="counter-name"
+                        label="Counter Family"
+                        variant="outlined"
+                        name="counterFamily"
+                        fullWidth
+                        {...counterFamily}
+                    />
+                  </form>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </div>
   );
 };
 
