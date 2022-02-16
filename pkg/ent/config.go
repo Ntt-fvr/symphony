@@ -83,23 +83,23 @@ type hooks struct {
 	LocationType                      []ent.Hook
 	NetworkType                       []ent.Hook
 	Organization                      []ent.Hook
+	ParameterCatalog                  []ent.Hook
 	PermissionsPolicy                 []ent.Hook
 	Project                           []ent.Hook
 	ProjectTemplate                   []ent.Hook
 	ProjectType                       []ent.Hook
 	Property                          []ent.Hook
+	PropertyCategory                  []ent.Hook
 	PropertyType                      []ent.Hook
 	Recommendations                   []ent.Hook
 	RecommendationsCategory           []ent.Hook
 	RecommendationsSources            []ent.Hook
 	ReportFilter                      []ent.Hook
-	ResourceRelationship              []ent.Hook
 	ResourceSRItems                   []ent.Hook
 	ResourceSpecification             []ent.Hook
 	ResourceSpecificationRelationship []ent.Hook
 	ResourceType                      []ent.Hook
-	ResourceTypeBaseType              []ent.Hook
-	ResourceTypeClass                 []ent.Hook
+	ResourceTypeRelationship          []ent.Hook
 	Rule                              []ent.Hook
 	RuleLimit                         []ent.Hook
 	RuleType                          []ent.Hook

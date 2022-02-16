@@ -173,7 +173,7 @@ class SubscriptionClient:
     def _start(
         self, payload: Dict[str, Any], callback: Optional[CallbackType] = None
     ) -> str:
-        """ pass a callback function only if this is a subscription """
+        """pass a callback function only if this is a subscription"""
         op_id = uuid.uuid4().hex
         frame = {"id": op_id, "type": GQL_START, "payload": payload}
         self._create_operation_queue(op_id)
@@ -258,7 +258,7 @@ class SubscriptionClient:
         self._recevier_thread.join()
 
     def __enter__(self) -> "SubscriptionClient":
-        """ enter method for context manager """
+        """enter method for context manager"""
         return self
 
     def __exit__(
@@ -267,5 +267,5 @@ class SubscriptionClient:
         exc_value: Optional[BaseException],
         exc_traceback: Optional[TracebackType],
     ) -> None:
-        """ exit method for context manager """
+        """exit method for context manager"""
         self.close()

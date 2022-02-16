@@ -13,8 +13,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
 )
 
 // ResourceType is the model entity for the ResourceType schema.
@@ -28,64 +26,34 @@ type ResourceType struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// ResourceTypeClass holds the value of the "ResourceTypeClass" field.
+	ResourceTypeClass resourcetype.ResourceTypeClass `json:"ResourceTypeClass,omitempty"`
+	// ResourceTypeBaseType holds the value of the "ResourceTypeBaseType" field.
+	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"ResourceTypeBaseType,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceTypeQuery when eager-loading is set.
-	Edges                                      ResourceTypeEdges `json:"edges"`
-	resource_type_base_type_resource_base_type *int
-	resource_type_class_resource_type_class    *int
+	Edges ResourceTypeEdges `json:"edges"`
 }
 
 // ResourceTypeEdges holds the relations/edges for other nodes in the graph.
 type ResourceTypeEdges struct {
-	// Resourcetypeclass holds the value of the resourcetypeclass edge.
-	Resourcetypeclass *ResourceTypeClass
-	// Resourcetypebasetype holds the value of the resourcetypebasetype edge.
-	Resourcetypebasetype *ResourceTypeBaseType
 	// ResourceRelationshipA holds the value of the resource_relationship_a edge.
-	ResourceRelationshipA []*ResourceRelationship
+	ResourceRelationshipA []*ResourceTypeRelationship
 	// ResourceRelationshipB holds the value of the resource_relationship_b edge.
-	ResourceRelationshipB []*ResourceRelationship
+	ResourceRelationshipB []*ResourceTypeRelationship
 	// ResourceSpecification holds the value of the resource_specification edge.
 	ResourceSpecification []*ResourceSpecification
 	// ResourcetypeItems holds the value of the resourcetype_items edge.
 	ResourcetypeItems []*ResourceSRItems
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
-}
-
-// ResourcetypeclassOrErr returns the Resourcetypeclass value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ResourceTypeEdges) ResourcetypeclassOrErr() (*ResourceTypeClass, error) {
-	if e.loadedTypes[0] {
-		if e.Resourcetypeclass == nil {
-			// The edge resourcetypeclass was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: resourcetypeclass.Label}
-		}
-		return e.Resourcetypeclass, nil
-	}
-	return nil, &NotLoadedError{edge: "resourcetypeclass"}
-}
-
-// ResourcetypebasetypeOrErr returns the Resourcetypebasetype value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ResourceTypeEdges) ResourcetypebasetypeOrErr() (*ResourceTypeBaseType, error) {
-	if e.loadedTypes[1] {
-		if e.Resourcetypebasetype == nil {
-			// The edge resourcetypebasetype was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: resourcetypebasetype.Label}
-		}
-		return e.Resourcetypebasetype, nil
-	}
-	return nil, &NotLoadedError{edge: "resourcetypebasetype"}
+	loadedTypes [4]bool
 }
 
 // ResourceRelationshipAOrErr returns the ResourceRelationshipA value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceRelationship, error) {
-	if e.loadedTypes[2] {
+func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceTypeRelationship, error) {
+	if e.loadedTypes[0] {
 		return e.ResourceRelationshipA, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_relationship_a"}
@@ -93,8 +61,8 @@ func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceRelationship
 
 // ResourceRelationshipBOrErr returns the ResourceRelationshipB value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceRelationship, error) {
-	if e.loadedTypes[3] {
+func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceTypeRelationship, error) {
+	if e.loadedTypes[1] {
 		return e.ResourceRelationshipB, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_relationship_b"}
@@ -103,7 +71,7 @@ func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceRelationship
 // ResourceSpecificationOrErr returns the ResourceSpecification value or an error if the edge
 // was not loaded in eager-loading.
 func (e ResourceTypeEdges) ResourceSpecificationOrErr() ([]*ResourceSpecification, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[2] {
 		return e.ResourceSpecification, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_specification"}
@@ -112,7 +80,7 @@ func (e ResourceTypeEdges) ResourceSpecificationOrErr() ([]*ResourceSpecificatio
 // ResourcetypeItemsOrErr returns the ResourcetypeItems value or an error if the edge
 // was not loaded in eager-loading.
 func (e ResourceTypeEdges) ResourcetypeItemsOrErr() ([]*ResourceSRItems, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[3] {
 		return e.ResourcetypeItems, nil
 	}
 	return nil, &NotLoadedError{edge: "resourcetype_items"}
@@ -125,14 +93,8 @@ func (*ResourceType) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
-	}
-}
-
-// fkValues returns the types for scanning foreign-keys values from sql.Rows.
-func (*ResourceType) fkValues() []interface{} {
-	return []interface{}{
-		&sql.NullInt64{}, // resource_type_base_type_resource_base_type
-		&sql.NullInt64{}, // resource_type_class_resource_type_class
+		&sql.NullString{}, // ResourceTypeClass
+		&sql.NullString{}, // ResourceTypeBaseType
 	}
 }
 
@@ -163,41 +125,26 @@ func (rt *ResourceType) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rt.Name = value.String
 	}
-	values = values[3:]
-	if len(values) == len(resourcetype.ForeignKeys) {
-		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_type_base_type_resource_base_type", value)
-		} else if value.Valid {
-			rt.resource_type_base_type_resource_base_type = new(int)
-			*rt.resource_type_base_type_resource_base_type = int(value.Int64)
-		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_type_class_resource_type_class", value)
-		} else if value.Valid {
-			rt.resource_type_class_resource_type_class = new(int)
-			*rt.resource_type_class_resource_type_class = int(value.Int64)
-		}
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field ResourceTypeClass", values[3])
+	} else if value.Valid {
+		rt.ResourceTypeClass = resourcetype.ResourceTypeClass(value.String)
+	}
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field ResourceTypeBaseType", values[4])
+	} else if value.Valid {
+		rt.ResourceTypeBaseType = resourcetype.ResourceTypeBaseType(value.String)
 	}
 	return nil
 }
 
-// QueryResourcetypeclass queries the resourcetypeclass edge of the ResourceType.
-func (rt *ResourceType) QueryResourcetypeclass() *ResourceTypeClassQuery {
-	return (&ResourceTypeClient{config: rt.config}).QueryResourcetypeclass(rt)
-}
-
-// QueryResourcetypebasetype queries the resourcetypebasetype edge of the ResourceType.
-func (rt *ResourceType) QueryResourcetypebasetype() *ResourceTypeBaseTypeQuery {
-	return (&ResourceTypeClient{config: rt.config}).QueryResourcetypebasetype(rt)
-}
-
 // QueryResourceRelationshipA queries the resource_relationship_a edge of the ResourceType.
-func (rt *ResourceType) QueryResourceRelationshipA() *ResourceRelationshipQuery {
+func (rt *ResourceType) QueryResourceRelationshipA() *ResourceTypeRelationshipQuery {
 	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipA(rt)
 }
 
 // QueryResourceRelationshipB queries the resource_relationship_b edge of the ResourceType.
-func (rt *ResourceType) QueryResourceRelationshipB() *ResourceRelationshipQuery {
+func (rt *ResourceType) QueryResourceRelationshipB() *ResourceTypeRelationshipQuery {
 	return (&ResourceTypeClient{config: rt.config}).QueryResourceRelationshipB(rt)
 }
 
@@ -240,6 +187,10 @@ func (rt *ResourceType) String() string {
 	builder.WriteString(rt.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(rt.Name)
+	builder.WriteString(", ResourceTypeClass=")
+	builder.WriteString(fmt.Sprintf("%v", rt.ResourceTypeClass))
+	builder.WriteString(", ResourceTypeBaseType=")
+	builder.WriteString(fmt.Sprintf("%v", rt.ResourceTypeBaseType))
 	builder.WriteByte(')')
 	return builder.String()
 }

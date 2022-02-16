@@ -14,12 +14,10 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypebasetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetypeclass"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 )
 
 // ResourceTypeCreate is the builder for creating a ResourceType entity.
@@ -63,52 +61,26 @@ func (rtc *ResourceTypeCreate) SetName(s string) *ResourceTypeCreate {
 	return rtc
 }
 
-// SetResourcetypeclassID sets the resourcetypeclass edge to ResourceTypeClass by id.
-func (rtc *ResourceTypeCreate) SetResourcetypeclassID(id int) *ResourceTypeCreate {
-	rtc.mutation.SetResourcetypeclassID(id)
+// SetResourceTypeClass sets the ResourceTypeClass field.
+func (rtc *ResourceTypeCreate) SetResourceTypeClass(value resourcetype.ResourceTypeClass) *ResourceTypeCreate {
+	rtc.mutation.SetResourceTypeClass(value)
 	return rtc
 }
 
-// SetNillableResourcetypeclassID sets the resourcetypeclass edge to ResourceTypeClass by id if the given value is not nil.
-func (rtc *ResourceTypeCreate) SetNillableResourcetypeclassID(id *int) *ResourceTypeCreate {
-	if id != nil {
-		rtc = rtc.SetResourcetypeclassID(*id)
-	}
+// SetResourceTypeBaseType sets the ResourceTypeBaseType field.
+func (rtc *ResourceTypeCreate) SetResourceTypeBaseType(rtbt resourcetype.ResourceTypeBaseType) *ResourceTypeCreate {
+	rtc.mutation.SetResourceTypeBaseType(rtbt)
 	return rtc
 }
 
-// SetResourcetypeclass sets the resourcetypeclass edge to ResourceTypeClass.
-func (rtc *ResourceTypeCreate) SetResourcetypeclass(r *ResourceTypeClass) *ResourceTypeCreate {
-	return rtc.SetResourcetypeclassID(r.ID)
-}
-
-// SetResourcetypebasetypeID sets the resourcetypebasetype edge to ResourceTypeBaseType by id.
-func (rtc *ResourceTypeCreate) SetResourcetypebasetypeID(id int) *ResourceTypeCreate {
-	rtc.mutation.SetResourcetypebasetypeID(id)
-	return rtc
-}
-
-// SetNillableResourcetypebasetypeID sets the resourcetypebasetype edge to ResourceTypeBaseType by id if the given value is not nil.
-func (rtc *ResourceTypeCreate) SetNillableResourcetypebasetypeID(id *int) *ResourceTypeCreate {
-	if id != nil {
-		rtc = rtc.SetResourcetypebasetypeID(*id)
-	}
-	return rtc
-}
-
-// SetResourcetypebasetype sets the resourcetypebasetype edge to ResourceTypeBaseType.
-func (rtc *ResourceTypeCreate) SetResourcetypebasetype(r *ResourceTypeBaseType) *ResourceTypeCreate {
-	return rtc.SetResourcetypebasetypeID(r.ID)
-}
-
-// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceRelationship by ids.
+// AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
 func (rtc *ResourceTypeCreate) AddResourceRelationshipAIDs(ids ...int) *ResourceTypeCreate {
 	rtc.mutation.AddResourceRelationshipAIDs(ids...)
 	return rtc
 }
 
-// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceRelationship.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipA(r ...*ResourceRelationship) *ResourceTypeCreate {
+// AddResourceRelationshipA adds the resource_relationship_a edges to ResourceTypeRelationship.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipA(r ...*ResourceTypeRelationship) *ResourceTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -116,14 +88,14 @@ func (rtc *ResourceTypeCreate) AddResourceRelationshipA(r ...*ResourceRelationsh
 	return rtc.AddResourceRelationshipAIDs(ids...)
 }
 
-// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceRelationship by ids.
+// AddResourceRelationshipBIDs adds the resource_relationship_b edge to ResourceTypeRelationship by ids.
 func (rtc *ResourceTypeCreate) AddResourceRelationshipBIDs(ids ...int) *ResourceTypeCreate {
 	rtc.mutation.AddResourceRelationshipBIDs(ids...)
 	return rtc
 }
 
-// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceRelationship.
-func (rtc *ResourceTypeCreate) AddResourceRelationshipB(r ...*ResourceRelationship) *ResourceTypeCreate {
+// AddResourceRelationshipB adds the resource_relationship_b edges to ResourceTypeRelationship.
+func (rtc *ResourceTypeCreate) AddResourceRelationshipB(r ...*ResourceTypeRelationship) *ResourceTypeCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -239,6 +211,22 @@ func (rtc *ResourceTypeCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := rtc.mutation.ResourceTypeClass(); !ok {
+		return &ValidationError{Name: "ResourceTypeClass", err: errors.New("ent: missing required field \"ResourceTypeClass\"")}
+	}
+	if v, ok := rtc.mutation.ResourceTypeClass(); ok {
+		if err := resourcetype.ResourceTypeClassValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceTypeClass", err: fmt.Errorf("ent: validator failed for field \"ResourceTypeClass\": %w", err)}
+		}
+	}
+	if _, ok := rtc.mutation.ResourceTypeBaseType(); !ok {
+		return &ValidationError{Name: "ResourceTypeBaseType", err: errors.New("ent: missing required field \"ResourceTypeBaseType\"")}
+	}
+	if v, ok := rtc.mutation.ResourceTypeBaseType(); ok {
+		if err := resourcetype.ResourceTypeBaseTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ResourceTypeBaseType", err: fmt.Errorf("ent: validator failed for field \"ResourceTypeBaseType\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -290,43 +278,21 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 		})
 		_node.Name = value
 	}
-	if nodes := rtc.mutation.ResourcetypeclassIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypeclassTable,
-			Columns: []string{resourcetype.ResourcetypeclassColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypeclass.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := rtc.mutation.ResourceTypeClass(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcetype.FieldResourceTypeClass,
+		})
+		_node.ResourceTypeClass = value
 	}
-	if nodes := rtc.mutation.ResourcetypebasetypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ResourcetypebasetypeTable,
-			Columns: []string{resourcetype.ResourcetypebasetypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcetypebasetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := rtc.mutation.ResourceTypeBaseType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: resourcetype.FieldResourceTypeBaseType,
+		})
+		_node.ResourceTypeBaseType = value
 	}
 	if nodes := rtc.mutation.ResourceRelationshipAIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -338,7 +304,7 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
@@ -357,7 +323,7 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
+					Column: resourcetyperelationship.FieldID,
 				},
 			},
 		}
