@@ -29,9 +29,11 @@ import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
+import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
@@ -83,48 +85,39 @@ export type PropertyTypeInfo = $ReadOnly<{|
 |}>;
 
 type Props = $ReadOnly<{|
-  propertyTypes: Array<PropertyType>,
-  supportMandatory?: boolean,
-  supportDelete?: boolean,
+  // propertyTypes: Array<PropertyType>,
+  // supportMandatory?: boolean,
+  // supportDelete?: boolean,
 |}>;
 
 const ExperimentalPropertyTypesTableParameters = ({
-  propertyTypes,
+  // propertyTypes,
   supportMandatory = true,
-  supportDelete,
-}: Props) => {
-  // eslint-disable-next-line prefer-const
-  let dataFake = [];
-  const array = [{}];
-  const [parameters, setParameters] = useState(dataFake);
+}: // supportDelete,
+Props) => {
+  const [parameters, setParameters] = useState([]);
   const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
   const dispatch = useContext(PropertyTypesTableDispatcher);
-  useEffect(() => {
-    setParameters(parameters);
-    console.log('******');
-  });
-  console.log('check ', checked);
-  console.log('PARAMETERS', parameters);
-  // console.log(propertyTypes);
-  // const ale = parameters.push({id: Math.floor(Math.random() * 101).toString()});
 
-  // console.log('ALEATORIO', ale);
   const handleChecked = () => {
     setChecked(!checked);
   };
-  const handleDelete = () => {
-    console.log('borrado');
+  const handleDelete = (i, ID) => {
+    console.log('borrado   ');
+    console.log('indice -> ', i);
+    console.log('ID -> ', ID);
   };
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
   };
   const handleAddParameters = () => {
     const id = Math.floor(Math.random() * 101);
-    parameters.push({id});
-    setParameters(parameters);
-    console.log('FAKE ', parameters);
+    setParameters([...parameters, {id}]);
+  };
+  const nameChange = ({target}) => {
+    console.log(target.value);
   };
 
   return (
@@ -159,8 +152,12 @@ const ExperimentalPropertyTypesTableParameters = ({
           </TableRow>
         </TableHead>
         <DroppableTableBody
-          onDragEnd={({destination}) => {
+          onDragEnd={({source, destination}) => {
             if (destination != null) {
+              ({
+                sourceIndex: source.index,
+                destinationIndex: destination.index,
+              });
               // dispatch({
               //   type: 'CHANGE_PROPERTY_TYPE_INDEX',
               //   sourceIndex: source.index,
@@ -175,65 +172,91 @@ const ExperimentalPropertyTypesTableParameters = ({
               key={`${i}.${property.id}`}>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
-                  {/* <TextInput
-                      autoFocus={true}
-                      placeholder="Name"
-                      autoComplete="off"
-                      className={classes.input}
-                      value={''}
-                      onChange={({target}) => {}}
-                      // onBlur={() =>
-                      //   dispatch({
-                      //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                      //     id: property.id,
-                      //     name: property.name.trim(),
-                      //   })
-                      // }
-                    /> */}
+                  <TextInput
+                    autoFocus={true}
+                    placeholder="Name"
+                    autoComplete="off"
+                    className={classes.input}
+                    onChange={nameChange}
+                    // onBlur={() =>
+                    //   dispatch({
+                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                    //     id: property.id,
+                    //     name: property.name.trim(),
+                    //   })
+                    // }
+                  />
                 </FormField>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField className={classes.input}>
+                  <TextField
+                    required
+                    id="outlined-select-status"
+                    select
+                    // className={classes.selectField}
+                    label="Status"
+                    // onChange={handleChangeStatus}
+                    defaultValue=""
+                    name="status"
+                    variant="outlined">
+                    <MenuItem value={true}>Enabled</MenuItem>
+                    <MenuItem value={false}>Disabled</MenuItem>
+                  </TextField>
                   {/* <PropertyTypeSelect propertyType={property} /> */}
                 </FormField>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 {/* <PropertyValueInput
-                    label={null}
-                    className={classes.input}
-                    inputType="PropertyType"
-                    property={property}
-                    onChange={value =>
-                      dispatch({
-                        type: 'UPDATE_PROPERTY_TYPE',
-                        value,
-                      })
-                    }
-                  /> */}
+                  label={null}
+                  className={classes.input}
+                  inputType="PropertyType"
+                  property={property}
+                  // onChange={value =>
+                  //   dispatch({
+                  //     type: 'UPDATE_PROPERTY_TYPE',
+                  //     value,
+                  //   })
+                  // }
+                /> */}
+                <TextInput
+                  autoFocus={true}
+                  placeholder="Default value"
+                  autoComplete="off"
+                  className={classes.input}
+                  onChange={nameChange}
+                  // onBlur={() =>
+                  //   dispatch({
+                  //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                  //     id: property.id,
+                  //     name: property.name.trim(),
+                  //   })
+                  // }
+                />
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
-                  {/* <TextInput
-                      autoFocus={true}
-                      placeholder="Tags"
-                      autoComplete="off"
-                      className={classes.input}
-                      value={property.name}
-                      onChange={({target}) =>
-                        dispatch({
-                          type: 'UPDATE_PROPERTY_TYPE_NAME',
-                          id: property.id,
-                          name: target.value,
-                        })
-                      }
-                      onBlur={() =>
-                        dispatch({
-                          type: 'UPDATE_PROPERTY_TYPE_NAME',
-                          id: property.id,
-                          name: property.name.trim(),
-                        })
-                      }
-                    /> */}
+                  <TextInput
+                    autoFocus={true}
+                    placeholder="Tags"
+                    autoComplete="off"
+                    className={classes.input}
+                    // value={property.name}
+                    // onChange={({target}) =>
+                    //   dispatch({
+                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                    //     id: property.id,
+                    //     name: target.value,
+                    //   })
+                    // }
+                    // onBlur={() =>
+                    //   dispatch({
+                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                    //     id: property.id,
+                    //     name: property.name.trim(),
+                    //   })
+                    // }
+                  />
                 </FormField>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">
@@ -283,7 +306,7 @@ const ExperimentalPropertyTypesTableParameters = ({
                       //     id: property.id,
                       //   })
                       // }
-                      onClick={handleDelete}
+                      onClick={handleDelete(i, property.id)}
                       // disabled={!supportDelete && !isTempId(property.id)}
                     />
                   </IconButton>

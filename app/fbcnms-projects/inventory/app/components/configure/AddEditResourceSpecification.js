@@ -283,13 +283,13 @@ export const AddEditResourceSpecification = (props: Props) => {
       </Card>
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
-          <PropertyTypesTableDispatcher.Provider
-            value={propertyTypesDispatcher}>
-            <ExperimentalPropertyTypesTableParameters
-              supportDelete={true}
-              propertyTypes={propertyTypes}
-            />
-          </PropertyTypesTableDispatcher.Provider>
+          {/* <PropertyTypesTableDispatcher.Provider
+            value={propertyTypesDispatcher}> */}
+          <ExperimentalPropertyTypesTableParameters
+          // supportDelete={true}
+          // propertyTypes={propertyTypes}
+          />
+          {/* </PropertyTypesTableDispatcher.Provider> */}
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (
