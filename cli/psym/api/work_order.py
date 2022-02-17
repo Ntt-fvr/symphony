@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
+from datetime import datetime
 from typing import Dict, Iterator, Optional
 
 from psym._utils import get_graphql_property_inputs
@@ -122,11 +123,12 @@ def add_work_order(
             priority=WorkOrderPriority(priority) if priority else None,
             checkList=[],
             checkListCategories=[],
-            organizationFk=organization
+            organizationFk=organization,
+
 
         ),
     )
-    return format_to_work_order(work_order_fragment=result)
+    return format_to_work_order(work_order_fragment=result), 
 
 
 def get_work_orders(client: SymphonyClient) -> Iterator[WorkOrder]:
@@ -309,6 +311,8 @@ def edit_work_order(
         checkList=[],
         checkListCategories=[],
         organizationFk=new_organization,
+        
+
     )
     result = EditWorkOrderMutation.execute(client, edit_work_order_input)
     return format_to_work_order(work_order_fragment=result)

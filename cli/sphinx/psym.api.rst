@@ -52,6 +52,14 @@ psym.api.customer module
    :undoc-members:
    :show-inheritance:
 
+psym.api.document\_category module
+----------------------------------
+
+.. automodule:: psym.api.document_category
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 psym.api.domain module
 ----------------------
 

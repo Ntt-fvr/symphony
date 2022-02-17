@@ -28,7 +28,6 @@ def add_tech(
     :type name: str
     :param domain: domain Object
     :type domain: psym.common.data_class.domain
-
     :return: Tech object
     :rtype: :class:`~psym.common.data_class.Tech`
 
@@ -36,7 +35,15 @@ def add_tech(
 
     .. code-block:: python
 
-        new_Tech = client.add_Tech(name="new_Tech", domain=domain.id)
+        domain = client.add_domain(
+            name="domain",
+        )
+        
+        new_Tech = client.add_Tech(
+            name="new_Tech", 
+            domain=domain.id
+            )
+        print(new_Tech)
     """
     tech_input = AddTechInput(name=name, domainFk=domain)
     result = addTech.execute(client, input=tech_input)
@@ -63,7 +70,11 @@ def edit_tech(
 
     .. code-block:: python
 
-        Tech_edited = client.edit_Tech(Tech=Tech ,new_name="new_Tech")
+
+        Tech_edited = client.edit_Tech(
+            Tech=Tech ,
+            new_name="new_Tech",
+            domain=domain.id)
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -116,7 +127,7 @@ def remove_tech(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_Tech(Tech)
+        client.remove_tech(id=123456789)
     """
     removeTech.execute(client, id=id)
 
