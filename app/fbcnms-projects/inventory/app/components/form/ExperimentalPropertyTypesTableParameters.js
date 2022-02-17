@@ -111,6 +111,13 @@ export type PropertyTypeInfo = $ReadOnly<{|
 |}>;
 
 type Props = $ReadOnly<{||}>;
+const reorder = (list, startIndex, endIndex) => {
+  const result = [...list];
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const {supportMandatory = true} = props;
@@ -174,19 +181,24 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
           </TableRow>
         </TableHead>
         <DroppableTableBody
-          onDragEnd={({source, destination}) => {
-            if (destination != null) {
-              ({
-                sourceIndex: source.index,
-                destinationIndex: destination.index,
-              });
+          onDragEnd={result => {
+            const {source, destination} = result;
+            if (!destination) {
+              return;
             }
+            if (
+              source.index === destination.index &&
+              source.droppableId === destination.droppableId
+            ) {
+              return;
+            }
+
+            setParameters(prevTasks =>
+              reorder(prevTasks, source.index, destination.index),
+            );
           }}>
-          {parameters.sort(sortByIndex).map((property, i) => (
-            <DraggableTableRow
-              id={property.id}
-              index={i}
-              key={`${i}.${property.id}`}>
+          {parameters.map((property, i) => (
+            <DraggableTableRow id={property.id} index={i} key={property.id}>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
                   <TextInput
@@ -195,13 +207,6 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                     autoComplete="off"
                     className={classes.input}
                     onChange={nameChange}
-                    // onBlur={() =>
-                    //   dispatch({
-                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                    //     id: property.id,
-                    //     name: property.name.trim(),
-                    //   })
-                    // }
                   />
                 </FormField>
               </TableCell>
