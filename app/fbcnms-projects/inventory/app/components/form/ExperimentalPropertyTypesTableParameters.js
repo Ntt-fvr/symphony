@@ -8,8 +8,6 @@
  * @format
  */
 
-import type {FeatureID} from '@fbcnms/types/features';
-
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
@@ -65,7 +63,6 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
-      // marginBottom: '36px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: symphony.palette.B600,
       },
@@ -110,7 +107,6 @@ const useStyles = makeStyles(() => ({
 
 export type PropertyTypeInfo = $ReadOnly<{|
   label: string,
-  featureFlag?: FeatureID,
   isNode?: boolean,
 |}>;
 
@@ -140,9 +136,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const nameChange = ({target}) => {
     target.value;
   };
-  const chip = ({target}) => {
-    target.value;
-  };
+  const chip = () => {};
   const handleOption = mc => {
     mc === 'MC' && setChangeInput('MC');
     mc === 'TXT' && setChangeInput('TXT');
@@ -237,7 +231,10 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 {changeInput === 'MC' && (
-                  <EnumPropertyValueInput onChange={chip} property={property} />
+                  <EnumPropertyValueInput
+                    onChange={() => chip()}
+                    property={property}
+                  />
                 )}
                 {changeInput === 'TXT' && (
                   <TextInput
