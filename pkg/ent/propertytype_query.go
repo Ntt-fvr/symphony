@@ -23,6 +23,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -54,6 +55,7 @@ type PropertyTypeQuery struct {
 	withPropType              *PropertyTypeValueQuery
 	withPropertyTy            *PropertyTypeQuery
 	withProperType            *PropertyTypeQuery
+	withPropertyCategory      *PropertyCategoryQuery
 	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -392,6 +394,28 @@ func (ptq *PropertyTypeQuery) QueryProperType() *PropertyTypeQuery {
 	return query
 }
 
+// QueryPropertyCategory chains the current query on the property_category edge.
+func (ptq *PropertyTypeQuery) QueryPropertyCategory() *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: ptq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, selector),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.PropertyCategoryTable, propertytype.PropertyCategoryColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first PropertyType entity in the query. Returns *NotFoundError when no propertytype was found.
 func (ptq *PropertyTypeQuery) First(ctx context.Context) (*PropertyType, error) {
 	nodes, err := ptq.Limit(1).All(ctx)
@@ -582,6 +606,7 @@ func (ptq *PropertyTypeQuery) Clone() *PropertyTypeQuery {
 		withPropType:              ptq.withPropType.Clone(),
 		withPropertyTy:            ptq.withPropertyTy.Clone(),
 		withProperType:            ptq.withProperType.Clone(),
+		withPropertyCategory:      ptq.withPropertyCategory.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,
@@ -742,6 +767,17 @@ func (ptq *PropertyTypeQuery) WithProperType(opts ...func(*PropertyTypeQuery)) *
 	return ptq
 }
 
+//  WithPropertyCategory tells the query-builder to eager-loads the nodes that are connected to
+// the "property_category" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithPropertyCategory(opts ...func(*PropertyCategoryQuery)) *PropertyTypeQuery {
+	query := &PropertyCategoryQuery{config: ptq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withPropertyCategory = query
+	return ptq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -812,7 +848,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		nodes       = []*PropertyType{}
 		withFKs     = ptq.withFKs
 		_spec       = ptq.querySpec()
-		loadedTypes = [14]bool{
+		loadedTypes = [15]bool{
 			ptq.withProperties != nil,
 			ptq.withLocationType != nil,
 			ptq.withEquipmentPortType != nil,
@@ -827,9 +863,10 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			ptq.withPropType != nil,
 			ptq.withPropertyTy != nil,
 			ptq.withProperType != nil,
+			ptq.withPropertyCategory != nil,
 		}
 	)
-	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withPropertyTy != nil {
+	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withPropertyTy != nil || ptq.withPropertyCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -1218,6 +1255,31 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 				return nil, fmt.Errorf(`unexpected foreign-key "property_type_proper_type" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.ProperType = append(node.Edges.ProperType, n)
+		}
+	}
+
+	if query := ptq.withPropertyCategory; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*PropertyType)
+		for i := range nodes {
+			if fk := nodes[i].property_category_properties_type; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(propertycategory.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "property_category_properties_type" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.PropertyCategory = n
+			}
 		}
 	}
 

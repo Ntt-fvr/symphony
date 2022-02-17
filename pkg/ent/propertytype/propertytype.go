@@ -91,6 +91,8 @@ const (
 	EdgePropertyTy = "property_ty"
 	// EdgeProperType holds the string denoting the proper_type edge name in mutations.
 	EdgeProperType = "proper_type"
+	// EdgePropertyCategory holds the string denoting the property_category edge name in mutations.
+	EdgePropertyCategory = "property_category"
 
 	// Table holds the table name of the propertytype in the database.
 	Table = "property_types"
@@ -186,6 +188,13 @@ const (
 	ProperTypeTable = "property_types"
 	// ProperTypeColumn is the table column denoting the proper_type relation/edge.
 	ProperTypeColumn = "property_type_proper_type"
+	// PropertyCategoryTable is the table the holds the property_category relation/edge.
+	PropertyCategoryTable = "property_types"
+	// PropertyCategoryInverseTable is the table name for the PropertyCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "propertycategory" package.
+	PropertyCategoryInverseTable = "property_categories"
+	// PropertyCategoryColumn is the table column denoting the property_category relation/edge.
+	PropertyCategoryColumn = "property_category_properties_type"
 )
 
 // Columns holds all SQL columns for propertytype fields.
@@ -222,6 +231,7 @@ var ForeignKeys = []string{
 	"location_type_property_types",
 	"project_template_properties",
 	"project_type_properties",
+	"property_category_properties_type",
 	"property_type_proper_type",
 	"service_type_property_types",
 	"work_order_template_property_types",

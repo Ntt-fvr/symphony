@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -666,6 +667,25 @@ func (ptu *PropertyTypeUpdate) AddProperType(p ...*PropertyType) *PropertyTypeUp
 	return ptu.AddProperTypeIDs(ids...)
 }
 
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptu *PropertyTypeUpdate) SetPropertyCategoryID(id int) *PropertyTypeUpdate {
+	ptu.mutation.SetPropertyCategoryID(id)
+	return ptu
+}
+
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillablePropertyCategoryID(id *int) *PropertyTypeUpdate {
+	if id != nil {
+		ptu = ptu.SetPropertyCategoryID(*id)
+	}
+	return ptu
+}
+
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptu *PropertyTypeUpdate) SetPropertyCategory(p *PropertyCategory) *PropertyTypeUpdate {
+	return ptu.SetPropertyCategoryID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptu *PropertyTypeUpdate) Mutation() *PropertyTypeMutation {
 	return ptu.mutation
@@ -798,6 +818,12 @@ func (ptu *PropertyTypeUpdate) RemoveProperType(p ...*PropertyType) *PropertyTyp
 		ids[i] = p[i].ID
 	}
 	return ptu.RemoveProperTypeIDs(ids...)
+}
+
+// ClearPropertyCategory clears the "property_category" edge to type PropertyCategory.
+func (ptu *PropertyTypeUpdate) ClearPropertyCategory() *PropertyTypeUpdate {
+	ptu.mutation.ClearPropertyCategory()
+	return ptu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1702,6 +1728,41 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ptu.mutation.PropertyCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertytype.Label}
@@ -2345,6 +2406,25 @@ func (ptuo *PropertyTypeUpdateOne) AddProperType(p ...*PropertyType) *PropertyTy
 	return ptuo.AddProperTypeIDs(ids...)
 }
 
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyCategoryID(id int) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetPropertyCategoryID(id)
+	return ptuo
+}
+
+// SetNillablePropertyCategoryID sets the property_category edge to PropertyCategory by id if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillablePropertyCategoryID(id *int) *PropertyTypeUpdateOne {
+	if id != nil {
+		ptuo = ptuo.SetPropertyCategoryID(*id)
+	}
+	return ptuo
+}
+
+// SetPropertyCategory sets the property_category edge to PropertyCategory.
+func (ptuo *PropertyTypeUpdateOne) SetPropertyCategory(p *PropertyCategory) *PropertyTypeUpdateOne {
+	return ptuo.SetPropertyCategoryID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptuo *PropertyTypeUpdateOne) Mutation() *PropertyTypeMutation {
 	return ptuo.mutation
@@ -2477,6 +2557,12 @@ func (ptuo *PropertyTypeUpdateOne) RemoveProperType(p ...*PropertyType) *Propert
 		ids[i] = p[i].ID
 	}
 	return ptuo.RemoveProperTypeIDs(ids...)
+}
+
+// ClearPropertyCategory clears the "property_category" edge to type PropertyCategory.
+func (ptuo *PropertyTypeUpdateOne) ClearPropertyCategory() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearPropertyCategory()
+	return ptuo
 }
 
 // Save executes the query and returns the updated entity.
@@ -3371,6 +3457,41 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.PropertyCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.PropertyCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.PropertyCategoryTable,
+			Columns: []string{propertytype.PropertyCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertycategory.FieldID,
 				},
 			},
 		}

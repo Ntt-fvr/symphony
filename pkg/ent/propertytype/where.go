@@ -2168,6 +2168,34 @@ func HasProperTypeWith(preds ...predicate.PropertyType) predicate.PropertyType {
 	})
 }
 
+// HasPropertyCategory applies the HasEdge predicate on the "property_category" edge.
+func HasPropertyCategory() predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyCategoryTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyCategoryTable, PropertyCategoryColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPropertyCategoryWith applies the HasEdge predicate on the "property_category" edge with a given conditions (other predicates).
+func HasPropertyCategoryWith(preds ...predicate.PropertyCategory) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyCategoryInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyCategoryTable, PropertyCategoryColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.PropertyType) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {

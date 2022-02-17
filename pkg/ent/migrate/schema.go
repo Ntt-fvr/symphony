@@ -2004,6 +2004,7 @@ var (
 		{Name: "project_template_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "project_type_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "property_category_properties_type", Type: field.TypeInt, Nullable: true},
+		{Name: "property_type_proper_type", Type: field.TypeInt, Nullable: true},
 		{Name: "service_type_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type_property_types", Type: field.TypeInt, Nullable: true},
@@ -2065,29 +2066,36 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "property_types_service_types_property_types",
+				Symbol:  "property_types_property_types_proper_type",
 				Columns: []*schema.Column{PropertyTypesColumns[29]},
+
+				RefColumns: []*schema.Column{PropertyTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "property_types_service_types_property_types",
+				Columns: []*schema.Column{PropertyTypesColumns[30]},
 
 				RefColumns: []*schema.Column{ServiceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_templates_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[30]},
+				Columns: []*schema.Column{PropertyTypesColumns[31]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[31]},
+				Columns: []*schema.Column{PropertyTypesColumns[32]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_worker_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[32]},
+				Columns: []*schema.Column{PropertyTypesColumns[33]},
 
 				RefColumns: []*schema.Column{WorkerTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2117,17 +2125,48 @@ var (
 			{
 				Name:    "propertytype_name_work_order_type_property_types",
 				Unique:  true,
-				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[31]},
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[32]},
 			},
 			{
 				Name:    "propertytype_name_worker_type_property_types",
 				Unique:  true,
-				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[32]},
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[33]},
 			},
 			{
 				Name:    "propertytype_name_property_category_properties_type",
 				Unique:  false,
 				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[28]},
+			},
+		},
+	}
+	// PropertyTypeValuesColumns holds the columns for the "property_type_values" table.
+	PropertyTypeValuesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "property_type_prop_type", Type: field.TypeInt, Nullable: true},
+		{Name: "property_type_value_prop_type_value", Type: field.TypeInt, Nullable: true},
+	}
+	// PropertyTypeValuesTable holds the schema information for the "property_type_values" table.
+	PropertyTypeValuesTable = &schema.Table{
+		Name:       "property_type_values",
+		Columns:    PropertyTypeValuesColumns,
+		PrimaryKey: []*schema.Column{PropertyTypeValuesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "property_type_values_property_types_prop_type",
+				Columns: []*schema.Column{PropertyTypeValuesColumns[4]},
+
+				RefColumns: []*schema.Column{PropertyTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "property_type_values_property_type_values_prop_type_value",
+				Columns: []*schema.Column{PropertyTypeValuesColumns[5]},
+
+				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -3383,6 +3422,7 @@ var (
 		PropertiesTable,
 		PropertyCategoriesTable,
 		PropertyTypesTable,
+		PropertyTypeValuesTable,
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
 		RecommendationsSourcesTable,
@@ -3528,10 +3568,13 @@ func init() {
 	PropertyTypesTable.ForeignKeys[4].RefTable = ProjectTemplatesTable
 	PropertyTypesTable.ForeignKeys[5].RefTable = ProjectTypesTable
 	PropertyTypesTable.ForeignKeys[6].RefTable = PropertyCategoriesTable
-	PropertyTypesTable.ForeignKeys[7].RefTable = ServiceTypesTable
-	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTemplatesTable
-	PropertyTypesTable.ForeignKeys[9].RefTable = WorkOrderTypesTable
-	PropertyTypesTable.ForeignKeys[10].RefTable = WorkerTypesTable
+	PropertyTypesTable.ForeignKeys[7].RefTable = PropertyTypesTable
+	PropertyTypesTable.ForeignKeys[8].RefTable = ServiceTypesTable
+	PropertyTypesTable.ForeignKeys[9].RefTable = WorkOrderTemplatesTable
+	PropertyTypesTable.ForeignKeys[10].RefTable = WorkOrderTypesTable
+	PropertyTypesTable.ForeignKeys[11].RefTable = WorkerTypesTable
+	PropertyTypeValuesTable.ForeignKeys[0].RefTable = PropertyTypesTable
+	PropertyTypeValuesTable.ForeignKeys[1].RefTable = PropertyTypeValuesTable
 	RecommendationsTable.ForeignKeys[0].RefTable = RecommendationsCategoriesTable
 	RecommendationsTable.ForeignKeys[1].RefTable = RecommendationsSourcesTable
 	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable
