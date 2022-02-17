@@ -37,6 +37,76 @@ def add_recommendations(
     userCreated: int,
     userApproved: int,
 ) -> recommendations:
+    """This function adds recommendations.
+
+    :param externalID: externalID
+    :type externalID: str
+    :param resource: resource
+    :type resource: str
+    :param shortDescription: shortDescription
+    :type shortDescription: str
+    :param LongDescription: LongDescription
+    :type LongDescription: str
+    :param command: command
+    :type command: str
+    :param runbook: runbook
+    :type runbook: str
+    :param priority: priority
+    :type priority: str
+    :param status: status
+    :type status: bool
+    :param used: used
+    :type used: int
+    :param vendor: vendor
+    :type vendor: str
+    :param RecomendationSources: RecomendationSources
+    :type RecomendationSources::`~psym.graphql.enum.RecomendationSources
+    :param RecomendationsCategory: RecomendationsCategory
+    :type RecomendationsCategory: `~psym.graphql.enum.RecomendationsCategory
+    :param userCreated: userCreated
+    :type userCreated:`~psym.graphql.enum.user`
+    :param userApproved: userApproved
+    :type userApproved:`~psym.graphql.enum.user`
+
+    :return: recommendations object
+    :rtype: :class:`~psym.common.data_class.recommendations`
+
+
+    **Example 1**
+
+    .. code-block:: python
+
+        recommendations_sources = client.add_recommendations_sources(
+            name="recommendations_sources",
+        )
+        recommendations_category = client.add_recommendations_category(
+            name="recommendations_category",
+        )
+        vendor = client.add_vendor(
+            name="vendor",
+        )
+
+        user_created=client.get_user_by_email(email="user@nttdata.com")
+
+        new_recommendations = client.add_recommendations(
+            externalID="new_externalID",
+            resource="resoruce",
+            alarmType="alarmType",
+            LongDescription="LongDescription",
+            shortDescription="shortDescription",
+            command="command",
+            runbook="runbook",
+            priority=2,
+            status=False,
+            used=2,
+            vendor=vendor.id,
+            RecomendationSources=recommendation_sources.id,
+            RecomendationsCategory=recommendation_category.id,
+            userCreated=user_created.id,
+            userApproved=user_created.id
+        )
+        print(new_recommendations)
+    """
     recommendations_input = AddRecommendationsInput(
     externalID=externalID,
     resource=resource,
@@ -92,6 +162,40 @@ def edit_recommendations(
     RecomendationsCategory:str=None,
     userApproved:str=None
 ) ->None:
+    """This function edits recommendations.
+
+    :param recommendations: recommendations entity
+    :type name: str
+    :param new_name: recommendations name
+    :type name: str
+
+    :return: none object
+    :rtype: :class:`~psym.common.data_class.recommendations`
+
+    **Example 1**
+
+    .. code-block:: python
+
+        recommendations_edited = client.edit_recommendations(
+            recommendations=recommendations 
+            new_externalID=new_externalID,
+            resource="resoruce_2",
+            alarmType="alarmType_2",
+            LongDescription="LongDescription_2",
+            shortDescription="shortDescription_2",
+            command="command_2",
+            runbook="runbook_2",
+            priority=2,
+            status=False,
+            used=2,
+            vendor=vendor.id,
+            RecomendationSources=recommendation_sources.id,
+            RecomendationsCategory=recommendation_category.id,
+            userCreated=user_created.id,
+            userApproved=user_created.id
+            
+            )
+    """
     params: Dict[str, Any] = {}
     if new_externalID is not None:
         params.update({"_name_": new_externalID})
@@ -114,16 +218,16 @@ def edit_recommendations(
             userApprobed=userApproved))
 
 def get_recommendations(client: SymphonyClient) -> Iterator[recommendations]:
-    """Get the list of Recommendations)
+    """Get the list of Recommendations
     :raises:
         FailedOperationException: Internal symphony error
     :return: Users Iterator
     :rtype: Iterator[ :class:`~psym.common.data_class.recommendations` ]
     **Example**
     .. code-block:: python
-        users = client.get_recommendations()
-        for user in users:
-            print(user.name)
+        recommendations_ = recommendations.get_recommendations()
+        for recommendation in recommendations:
+            print(recommendations.name)
     """
     result = Recommendations.execute(client)
     if result is None:
@@ -152,4 +256,16 @@ def get_recommendations(client: SymphonyClient) -> Iterator[recommendations]:
             )
 
 def remove_recommendations(client: SymphonyClient, id: str) -> None:
+    """This function delete recommendations.
+
+    :param name: recommendations name
+    :type name: :class:`~psym.common.data_class.recommendations`
+    :rtype: None
+
+    **Example**
+
+    .. code-block:: python
+
+        client.remove_recommendations(id=123456789)
+    """	
     removeRecommendations.execute(client, id=id)

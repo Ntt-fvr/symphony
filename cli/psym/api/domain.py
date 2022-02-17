@@ -34,16 +34,10 @@ def add_domain(
 
     .. code-block:: python
 
-        new_domaines = client.add_domain(name="new_domain")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_domain = client.add_domain(
             name="domain",
-
         )
+        print(new_domain)
     """
     domain_input = AddDomainInput(name=name)
     result = addDomain.execute(client, input=domain_input)
@@ -74,11 +68,11 @@ def edit_domain(
 
     .. code-block:: python
 
-        new_domain = client.edit_domain(
-            domain=domain,
-            new_name="domain",
-
+        domain_edited = client.edit_domain(
+            domain=new_domain,
+            new_name="domain_edited",
         )
+        print(domain_edited)
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -97,7 +91,7 @@ def get_domains(client: SymphonyClient) -> Iterator[domain]:
 
     .. code-block:: python
 
-        domaines = client.get_domains()
+        domains = client.get_domains()
         for domain in domains:
             print(domain.name)
     """
@@ -130,6 +124,6 @@ def remove_domain(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_domain(domain)
+        client.remove_domain(id=12345679)
     """
     removeDomain.execute(client, id=id)
