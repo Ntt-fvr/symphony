@@ -120,6 +120,14 @@ type DocumentCategoryPermissionRule
   documentCategoryIds: [ID!]
 }
 
+type PropertyCategoryPermissionRule
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryPermissionRule"
+) {
+  isAllowed: PermissionValue!
+  propertyCategoryIds: [ID!]
+}
+
 type WorkforcePermissionRule
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.WorkforcePermissionRule"
@@ -151,6 +159,14 @@ input DocumentCategoryPermissionRuleInput
 ) {
   isAllowed: PermissionValue!
   documentCategoryIds: [ID!]
+}
+
+input PropertyCategoryPermissionRuleInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryPermissionRuleInput"
+) {
+  isAllowed: PermissionValue!
+  propertyCategoryIds: [ID!]
 }
 
 input WorkforcePermissionRuleInput
@@ -192,6 +208,16 @@ type DocumentCategoryCUD
   delete: DocumentCategoryPermissionRule
 }
 
+type PropertyCategoryCUD
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryCud"
+) {
+  read  : PropertyCategoryPermissionRule
+  create: PropertyCategoryPermissionRule
+  update: PropertyCategoryPermissionRule
+  delete: PropertyCategoryPermissionRule
+}
+
 input BasicCUDInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.BasicCUDInput"
@@ -219,6 +245,16 @@ input DocumentCategoryCUDInput
   create: DocumentCategoryPermissionRuleInput
   update: DocumentCategoryPermissionRuleInput
   delete: DocumentCategoryPermissionRuleInput
+}
+
+input PropertyCategoryCUDInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.PropertyCategoryCUDInput"
+) {
+  read  : PropertyCategoryPermissionRuleInput
+  create: PropertyCategoryPermissionRuleInput
+  update: PropertyCategoryPermissionRuleInput
+  delete: PropertyCategoryPermissionRuleInput
 }
 
 type AdministrativePolicy
@@ -267,6 +303,7 @@ type InventoryPolicy
   read: BasicPermissionRule!
   location: LocationCUD!
   documentCategory: DocumentCategoryCUD!
+  propertyCategory: PropertyCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
@@ -281,6 +318,7 @@ input InventoryPolicyInput
   read: BasicPermissionRuleInput
   location: LocationCUDInput
   documentCategory: DocumentCategoryCUDInput
+  propertyCategory: PropertyCategoryCUDInput
   equipment: BasicCUDInput
   equipmentType: BasicCUDInput
   locationType: BasicCUDInput
@@ -1416,6 +1454,20 @@ enum LocationOrderField {
 }
 
 """
+Properties by which property categories connections can be ordered.
+"""
+enum PropertyCategoryOrderField {
+  """
+  Order Property Category by name.
+  """
+  NAME
+  """
+  Order Property Category by index.
+  """
+  INDEX
+}
+
+"""
 Ordering options for location connections.
 """
 input LocationOrder {
@@ -1428,6 +1480,20 @@ input LocationOrder {
   The field to order locations by.
   """
   field: LocationOrderField
+}
+
+"""
+Ordering options for property category connections.
+"""
+input PropertyCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+  """
+  The field to order property category by.
+  """
+  field: PropertyCategoryOrderField
 }
 
 """
@@ -1595,6 +1661,7 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  propertyCategory: PropertyCategory
   isListable: Boolean
 }
 
@@ -1608,6 +1675,22 @@ type DocumentCategory implements Node {
   filesByEntity(entity: ImageEntity!, entityID: ID): [File]!
   hyperlinksByEntity(entity: ImageEntity!, entityID: ID): [Hyperlink]!
 }
+
+type PropertyCategory implements Node {
+  id: ID!
+  name: String
+  index: Int
+  numberOfProperties: Int
+}
+
+type ParameterCatalog implements Node {
+  id: ID!
+  name: String
+  index: Int
+  isDisabled: Boolean
+  propertyCategories: [PropertyCategory]!
+}
+
 
 input PropertyTypeInput
   @goModel(
@@ -1632,6 +1715,7 @@ input PropertyTypeInput
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+  propertyCategoryID: ID
   isListable: Boolean
 }
 
@@ -1750,6 +1834,13 @@ enum PropertyEntity
   LOCATION
   WORK_ORDER
   PROJECT
+}
+
+enum ParameterCatalogEntity
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ParameterCatalogEntity"
+) {
+  PROPERTY_CATEGORY
 }
 
 enum CommentEntity {
@@ -2227,6 +2318,70 @@ type WorkOrderConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+}
+
+"""
+A connection to a list of Property Category.
+"""
+type PropertyCategoryConnection {
+  """
+  Total count of Property Category in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Property Category edges.
+  """
+  edges: [PropertyCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Property Category edge in a connection.
+"""
+type PropertyCategoryEdge {
+  """
+  The Property Category at the end of the edge.
+  """
+  node: PropertyCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of Parameter Catalog
+"""
+type ParameterCatalogConnection {
+  """
+  Total count of Parameter Catalog in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Parameter Catalog edges.
+  """
+  edges: [ParameterCatalogEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Parameter Catalog edge in a connection.
+"""
+type ParameterCatalogEdge {
+  """
+  The Parameter Catalog at the end of the edge.
+  """
+  node: ParameterCatalog
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 
 """
@@ -4676,6 +4831,7 @@ enum FilterOperator
   ) {
   IS
   IS_NIL
+  IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN
   CONTAINS
   IS_ONE_OF
   IS_NOT_ONE_OF
@@ -4957,6 +5113,18 @@ enum WorkOrderFilterType
   WORK_ORDER_ORGANIZATION
 }
 
+"""
+what type of properties category we filter about
+"""
+enum PropertiesByCategoryFilterType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertiesByCategoryFilterType"
+) {
+  PROPERTY_CATEGORY_ID
+  LOCATION_ID
+  PROPERTY_CATEGORY_IS_NIL
+}
+
 input WorkOrderFilterInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
@@ -4969,6 +5137,18 @@ input WorkOrderFilterInput
   propertyValue: PropertyTypeInput
   timeValue: Time
   maxDepth: Int = 5
+}
+
+input PropertiesByCategoryFilterInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertiesByCategoryFilterInput"
+  ) {
+  filterType: PropertiesByCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  intValue: Int
+  idSet: [ID!]
+  stringSet: [String!]
 }
 
 enum ProjectFilterType {
@@ -5097,6 +5277,17 @@ type ServiceEndpoint implements Node {
   equipment: Equipment!
   service: Service!
   definition: ServiceEndpointDefinition!
+}
+
+"""
+Model for properties group by property categories
+"""
+type PropertiesByCategories
+{
+  id: ID
+  name: String
+  properties: [Property]
+  propertyType: [PropertyType]
 }
 
 """
@@ -7524,6 +7715,52 @@ type Query {
     duration: Float!
     regularHours: RegularHoursInput!
   ): [UserAvailability!]
+  
+  propertyCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    orderBy: PropertyCategoryOrder
+  ): PropertyCategoryConnection!
+  parametersCatalog(
+  """
+  Returns the elements in the list that come after the specified cursor.
+  """
+  after: Cursor
+
+  """
+  Returns the first _n_ elements from the list.
+  """
+  first: Int @numberValue(min: 0)
+
+  """
+  Returns the elements in the list that come before the specified cursor.
+  """
+  before: Cursor
+
+  """
+  Returns the last _n_ elements from the list.
+  """
+  last: Int @numberValue(min: 0)
+  ): ParameterCatalogConnection!
+  propertiesByCategories(filterBy: [PropertiesByCategoryFilterInput!]): [PropertiesByCategories]!
 }
 
 type Mutation {
@@ -7845,6 +8082,10 @@ type Mutation {
   addAppointment(input: AddAppointmentInput!): Appointment!
   editAppointment(input: EditAppointmentInput!): Appointment!
   removeAppointment(id: ID!): ID!
+  editPropertyCategories(propertyCategories: [EditPropertyCategoryInput]): [PropertyCategory!]
+  removePropertyCategory(id: ID!): ID!
+  editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
+  removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
   addResourceSpecificationRelationShipList(input: AddResourceSpecificationRelationShipListInput!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
@@ -9084,6 +9325,20 @@ input RegularHoursInput {
   workdayEndHour: Int!
   workdayEndMinute: Int!
   timezone: String
+}
+
+input EditPropertyCategoryInput {
+  id: ID
+  name: String!
+  index: Int!
+  parameterCatalogId: ID!
+}
+
+input EditParameterCatalogInput {
+  id: ID
+  name: String!
+  index: Int!
+  disabled: Boolean
 }
 
 """

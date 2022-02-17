@@ -87,6 +87,8 @@ const (
 	EdgeWorkerType = "worker_type"
 	// EdgeResourcespecification holds the string denoting the resourcespecification edge name in mutations.
 	EdgeResourcespecification = "resourcespecification"
+	// EdgePropertyCategory holds the string denoting the property_category edge name in mutations.
+	EdgePropertyCategory = "property_category"
 
 	// Table holds the table name of the propertytype in the database.
 	Table = "property_types"
@@ -174,6 +176,13 @@ const (
 	ResourcespecificationInverseTable = "resource_specifications"
 	// ResourcespecificationColumn is the table column denoting the resourcespecification relation/edge.
 	ResourcespecificationColumn = "resource_specification_property_type"
+	// PropertyCategoryTable is the table the holds the property_category relation/edge.
+	PropertyCategoryTable = "property_types"
+	// PropertyCategoryInverseTable is the table name for the PropertyCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "propertycategory" package.
+	PropertyCategoryInverseTable = "property_categories"
+	// PropertyCategoryColumn is the table column denoting the property_category relation/edge.
+	PropertyCategoryColumn = "property_category_properties_type"
 )
 
 // Columns holds all SQL columns for propertytype fields.
@@ -210,6 +219,7 @@ var ForeignKeys = []string{
 	"location_type_property_types",
 	"project_template_properties",
 	"project_type_properties",
+	"property_category_properties_type",
 	"resource_specification_property_type",
 	"service_type_property_types",
 	"work_order_template_property_types",

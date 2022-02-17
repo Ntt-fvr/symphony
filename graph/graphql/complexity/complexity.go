@@ -166,6 +166,15 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.DocumentCategory.HyperlinksByEntity = func(childComplexity int, _ models.ImageEntity, _ *int) int {
 		return SearchComplexity(childComplexity, nil)
 	}
+	complexity.Query.ParametersCatalog = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {
+		return SearchComplexity(childComplexity, nil)
+	}
+	complexity.Query.PropertiesByCategories = func(childComplexity int, input []*pkgmodels.PropertiesByCategoryFilterInput) int {
+		return SearchComplexity(childComplexity, nil)
+	}
+	complexity.Query.PropertyCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyCategoryOrder) int {
+		return SearchComplexity(childComplexity, nil)
+	}
 	complexity.Query.ResourceSpecificationRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationRelationshipOrder, _ []*models.ResourceSpecificationRelationshipFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}

@@ -28,6 +28,24 @@ export type UserManagementUtils_policies_base = {|
     +read: {|
       +isAllowed: PermissionValue
     |},
+    +propertyCategory: {|
+      +read: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +create: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +update: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +delete: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+    |},
     +documentCategory: {|
       +locationTypeID: ?number,
       +read: ?{|
@@ -183,11 +201,21 @@ v2 = [
     "alias": null,
     "args": null,
     "kind": "ScalarField",
-    "name": "documentCategoryIds",
+    "name": "propertyCategoryIds",
     "storageKey": null
   }
 ],
 v3 = [
+  (v0/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "documentCategoryIds",
+    "storageKey": null
+  }
+],
+v4 = [
   {
     "alias": null,
     "args": null,
@@ -284,6 +312,57 @@ return {
             {
               "alias": null,
               "args": null,
+              "concreteType": "PropertyCategoryCUD",
+              "kind": "LinkedField",
+              "name": "propertyCategory",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PropertyCategoryPermissionRule",
+                  "kind": "LinkedField",
+                  "name": "read",
+                  "plural": false,
+                  "selections": (v2/*: any*/),
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PropertyCategoryPermissionRule",
+                  "kind": "LinkedField",
+                  "name": "create",
+                  "plural": false,
+                  "selections": (v2/*: any*/),
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PropertyCategoryPermissionRule",
+                  "kind": "LinkedField",
+                  "name": "update",
+                  "plural": false,
+                  "selections": (v2/*: any*/),
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PropertyCategoryPermissionRule",
+                  "kind": "LinkedField",
+                  "name": "delete",
+                  "plural": false,
+                  "selections": (v2/*: any*/),
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
               "concreteType": "DocumentCategoryCUD",
               "kind": "LinkedField",
               "name": "documentCategory",
@@ -303,7 +382,7 @@ return {
                   "kind": "LinkedField",
                   "name": "read",
                   "plural": false,
-                  "selections": (v2/*: any*/),
+                  "selections": (v3/*: any*/),
                   "storageKey": null
                 },
                 {
@@ -313,7 +392,7 @@ return {
                   "kind": "LinkedField",
                   "name": "create",
                   "plural": false,
-                  "selections": (v2/*: any*/),
+                  "selections": (v3/*: any*/),
                   "storageKey": null
                 },
                 {
@@ -323,7 +402,7 @@ return {
                   "kind": "LinkedField",
                   "name": "update",
                   "plural": false,
-                  "selections": (v2/*: any*/),
+                  "selections": (v3/*: any*/),
                   "storageKey": null
                 },
                 {
@@ -333,7 +412,7 @@ return {
                   "kind": "LinkedField",
                   "name": "delete",
                   "plural": false,
-                  "selections": (v2/*: any*/),
+                  "selections": (v3/*: any*/),
                   "storageKey": null
                 }
               ],
@@ -396,7 +475,7 @@ return {
               "kind": "LinkedField",
               "name": "equipment",
               "plural": false,
-              "selections": (v3/*: any*/),
+              "selections": (v4/*: any*/),
               "storageKey": null
             },
             {
@@ -406,7 +485,7 @@ return {
               "kind": "LinkedField",
               "name": "equipmentType",
               "plural": false,
-              "selections": (v3/*: any*/),
+              "selections": (v4/*: any*/),
               "storageKey": null
             },
             {
@@ -416,7 +495,7 @@ return {
               "kind": "LinkedField",
               "name": "locationType",
               "plural": false,
-              "selections": (v3/*: any*/),
+              "selections": (v4/*: any*/),
               "storageKey": null
             },
             {
@@ -426,7 +505,7 @@ return {
               "kind": "LinkedField",
               "name": "portType",
               "plural": false,
-              "selections": (v3/*: any*/),
+              "selections": (v4/*: any*/),
               "storageKey": null
             },
             {
@@ -436,7 +515,7 @@ return {
               "kind": "LinkedField",
               "name": "serviceType",
               "plural": false,
-              "selections": (v3/*: any*/),
+              "selections": (v4/*: any*/),
               "storageKey": null
             }
           ],
@@ -486,7 +565,7 @@ return {
               "kind": "LinkedField",
               "name": "templates",
               "plural": false,
-              "selections": (v3/*: any*/),
+              "selections": (v4/*: any*/),
               "storageKey": null
             },
             {

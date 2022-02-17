@@ -37,6 +37,11 @@ type DocumentCategoryPermissionRuleInput struct {
 	DocumentCategoryIds []int           `json:"documentCategoryIds"`
 }
 
+type PropertyCategoryPermissionRuleInput struct {
+	IsAllowed           PermissionValue `json:"isAllowed"`
+	PropertyCategoryIds []int           `json:"propertyCategoryIds"`
+}
+
 type WorkforceCUDInput struct {
 	Create            *BasicPermissionRuleInput `json:"create"`
 	Update            *BasicPermissionRuleInput `json:"update"`
@@ -53,10 +58,18 @@ type DocumentCategoryCUDInput struct {
 	Delete         *DocumentCategoryPermissionRuleInput `json:"delete"`
 }
 
+type PropertyCategoryCUDInput struct {
+	Read   *PropertyCategoryPermissionRuleInput `json:"read"`
+	Create *PropertyCategoryPermissionRuleInput `json:"create"`
+	Update *PropertyCategoryPermissionRuleInput `json:"update"`
+	Delete *PropertyCategoryPermissionRuleInput `json:"delete"`
+}
+
 type InventoryPolicyInput struct {
 	Read             *BasicPermissionRuleInput `json:"read"`
 	Location         *LocationCUDInput         `json:"location"`
 	DocumentCategory *DocumentCategoryCUDInput `json:"documentCategory"`
+	PropertyCategory *PropertyCategoryCUDInput `json:"propertyCategory"`
 	Equipment        *BasicCUDInput            `json:"equipment"`
 	EquipmentType    *BasicCUDInput            `json:"equipmentType"`
 	LocationType     *BasicCUDInput            `json:"locationType"`

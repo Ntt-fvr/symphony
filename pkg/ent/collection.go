@@ -1089,6 +1089,26 @@ func (o *OrganizationQuery) collectField(ctx *graphql.OperationContext, field gr
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pc *ParameterCatalogQuery) CollectFields(ctx context.Context, satisfies ...string) *ParameterCatalogQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pc
+}
+
+func (pc *ParameterCatalogQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ParameterCatalogQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "propertyCategories":
+			pc = pc.WithPropertyCategories(func(query *PropertyCategoryQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return pc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (pp *PermissionsPolicyQuery) CollectFields(ctx context.Context, satisfies ...string) *PermissionsPolicyQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		pp = pp.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1229,6 +1249,18 @@ func (pr *PropertyQuery) collectField(ctx *graphql.OperationContext, field graph
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pc *PropertyCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *PropertyCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pc
+}
+
+func (pc *PropertyCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyCategoryQuery {
+	return pc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (pt *PropertyTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *PropertyTypeQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		pt = pt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1237,6 +1269,14 @@ func (pt *PropertyTypeQuery) CollectFields(ctx context.Context, satisfies ...str
 }
 
 func (pt *PropertyTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "propertyCategory":
+			pt = pt.WithPropertyCategory(func(query *PropertyCategoryQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return pt
 }
 

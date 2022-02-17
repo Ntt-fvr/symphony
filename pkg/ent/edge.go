@@ -1296,6 +1296,14 @@ func (o *Organization) Policies(ctx context.Context) ([]*PermissionsPolicy, erro
 	return result, err
 }
 
+func (pc *ParameterCatalog) PropertyCategories(ctx context.Context) ([]*PropertyCategory, error) {
+	result, err := pc.Edges.PropertyCategoriesOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryPropertyCategories().All(ctx)
+	}
+	return result, err
+}
+
 func (pp *PermissionsPolicy) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := pp.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
@@ -1528,6 +1536,22 @@ func (pr *Property) ProjectValue(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
+func (pc *PropertyCategory) PropertiesType(ctx context.Context) ([]*PropertyType, error) {
+	result, err := pc.Edges.PropertiesTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryPropertiesType().All(ctx)
+	}
+	return result, err
+}
+
+func (pc *PropertyCategory) ParameterCatalog(ctx context.Context) (*ParameterCatalog, error) {
+	result, err := pc.Edges.ParameterCatalogOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryParameterCatalog().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (pt *PropertyType) Properties(ctx context.Context) ([]*Property, error) {
 	result, err := pt.Edges.PropertiesOrErr()
 	if IsNotLoaded(err) {
@@ -1620,6 +1644,14 @@ func (pt *PropertyType) Resourcespecification(ctx context.Context) (*ResourceSpe
 	result, err := pt.Edges.ResourcespecificationOrErr()
 	if IsNotLoaded(err) {
 		result, err = pt.QueryResourcespecification().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (pt *PropertyType) PropertyCategory(ctx context.Context) (*PropertyCategory, error) {
+	result, err := pt.Edges.PropertyCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = pt.QueryPropertyCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
