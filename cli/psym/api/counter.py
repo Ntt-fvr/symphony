@@ -60,6 +60,7 @@ def add_counter(
             counterFamily=counter_family.id,
             vendor= vendor.id
         )
+        print(counter)
     """
     domain_input = AddCounterInput(name=name, 
     externalID=externalID,
@@ -175,7 +176,7 @@ def remove_counter(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.remove_counter(counter)
+        client.remove_counter(id=123456789)
     """
     removeCounter.execute(client, id=id)
 

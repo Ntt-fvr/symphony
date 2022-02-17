@@ -32,12 +32,6 @@ def add_kqi_temporal_frecuency(
     :return: kqiTemporalFrecuency object
     :rtype: :class:`~psym.common.data_class.kqiTemporalFrecuency`
 
-    **Example 1**
-
-    .. code-block:: python
-
-        new_kqi_temporal_frecuencyes = client.add_kqi_temporal_frecuency(name="new_kqi_temporal_frecuency")
-
     **Example 2**
 
     .. code-block:: python
@@ -71,15 +65,9 @@ def edit_kqi_temporal_frecuency(
 
     .. code-block:: python
 
-        kqi_temporal_frecuency_edited = client.edit_kqi_temporal_frecuency(kqi_temporal_frecuency=kqiTemporalFrecuency ,new_name="new_kqi_temporal_frecuency")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_kqi_temporal_frecuency = client.edit_kqi_temporal_frecuency(
+        new_kqi_temporal_frecuency_edited = client.edit_kqi_temporal_frecuency(
             kqi_temporal_frecuency=kqiTemporalFrecuency,
-            new_name="kqi_temporal_frecuency",
+            new_name="kqi_temporal_frecuency_edited",
 
         )
     """
@@ -134,7 +122,7 @@ def delete_kqi_temporal_frecuency(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_kqi_temporal_frecuency(kqiTemporalFrecuency)
+        client.delete_kqi_temporal_frecuency(id=123456789)
     """
     removeKqiTemporalFrequency.execute(client, id=id)
 

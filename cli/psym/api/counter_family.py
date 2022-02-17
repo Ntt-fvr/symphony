@@ -34,16 +34,10 @@ def add_counter_family(
 
     .. code-block:: python
 
-        new_counter_family = client.add_counter_family(name="new_counter_family")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_counter_family = client.add_counter_family(
             name="counter_family",
-
         )
+        print(new_counter_family)
     """
     counter_family_input = AddCounterFamilyInput(name=name)
     result = addCounterFamily.execute(client, input=counter_family_input)
@@ -68,17 +62,11 @@ def edit_counter_family(
 
     .. code-block:: python
 
-        counter_family_edited = client.edit_counter_family(counter_family=counterFamily ,new_name="new_counter_family")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_counter_family = client.edit_counter_family(
-            counter_family=counterFamily,
-            new_name="counter_family",
-
+        counter_family_edited = client.edit_counter_family(
+            counter_family=new_counter_family,
+            new_name="counter_family_edited",
         )
+        print(counter_family_edited)
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -98,7 +86,7 @@ def get_counter_families(client: SymphonyClient) -> Iterator[CounterFamily]:
 
     .. code-block:: python
 
-        get_counter_familiies = client.get_counter_familiies()
+        get_counter_familiies = client.get_counter_families()
         for get_counter_family in get_counter_familiies:
             print(get_counter_familiy.name)
     """
@@ -132,7 +120,7 @@ def remove_counter_family(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_counter_familiy(counterFamily)
+        remove_counterFamilyclient.remove_counter_family(id=123456789)
     """
     removeCounterFamily.execute(client, id=id)
     

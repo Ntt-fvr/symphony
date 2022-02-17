@@ -40,6 +40,21 @@ def add_threshold(
 
     .. code-block:: python
 
+        domain = client.add_domain(
+            name="domain",
+        )
+        kpi_category = client.add_kpi_category(
+            name="kpi_category",
+        )
+
+        Kpi = client.add_Kpi(
+            name="Kpi_2",
+            description="new kpi",
+            status=True,
+            domain=domain.id,
+            kpiCategory=kpi_category.id
+        )
+
         new_Threshold = client.add_Threshold(
             name="Threshold",
             description="threshold",
@@ -73,7 +88,12 @@ def edit_threshold(
 
     .. code-block:: python
 
-        Threshold_edited = client.edit_Threshold(Threshold=Threshold ,new_name="new_Threshold")
+        Threshold_edited = client.edit_threshold(
+            threshold=Threshold,
+            new_name=new_name,
+            description="threshold",
+            status=True
+            )
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -132,7 +152,7 @@ def remove_threshold(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_Threshold(Threshold)
+        client.remove_threshold(id=123456789)
     """
     removeThreshold.execute(client, id=id)
 
