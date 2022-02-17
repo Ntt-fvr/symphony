@@ -17,8 +17,8 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type AddRuleInput = {|
   name: string,
   gracePeriod: number,
-  startDateTime: any,
-  endDateTime: any,
+  startDateTime?: ?any,
+  endDateTime?: ?any,
   ruleType: string,
   eventTypeName?: ?string,
   specificProblem?: ?string,

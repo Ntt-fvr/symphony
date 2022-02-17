@@ -17,6 +17,11 @@ This is template for release notes
 
 
 ***
+## 3.4.14 - release date 02.02.2022
+### Changes
+- Document category:
+    -`get_document_category_by_names`.
+
 ## 3.1.1 - release date 17.8.2020
 ### Features
 - PropertyType

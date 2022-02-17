@@ -36,12 +36,6 @@ def add_kqi_category(
 
     .. code-block:: python
 
-        new_kqi_categoryes = client.add_kqi_category(name="new_kqi_category")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_kqi_category = client.add_kqi_category(
             name="kqi_category",
 
@@ -71,17 +65,12 @@ def edit_kqi_category(
 
     .. code-block:: python
 
-        alarm_statu_edited = client.edit_kqi_category(kqi_category=kqiCategory ,new_name="new_kqi_category")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_kqi_category = client.edit_kqi_category(
+        new_kqi_category_edited = client.edit_kqi_category(
             kqi_category=kqiCategory,
-            new_name="kqi_category",
+            new_name="kqi_category_edited",
 
         )
+        print(new_kqi_category_edited)
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -134,7 +123,7 @@ def delete_kqi_category(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_kqi_category(kqiCategory)
+        client.delete_kqi_category(id=123456789)
     """
 	
     removeKqiCategory.execute(client, id=id)

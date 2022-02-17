@@ -45,6 +45,7 @@ import SelectAvailabilityAssignee, {
 } from './SelectAvailabilityAssignee';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextField from '@material-ui/core/TextField';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
@@ -510,6 +511,14 @@ const AddWorkOrderCard = (props: Props) => {
                                 location?.id ?? null,
                               )
                             }
+                          />
+                        </FormField>
+                      </Grid>
+                      <Grid item xs={12} sm={6} lg={4} xl={4}>
+                        <FormField label="Scheduled at">
+                          <TextInput
+                            type="date"
+                            className={classes.gridInput}
                           />
                         </FormField>
                       </Grid>

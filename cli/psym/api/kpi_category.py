@@ -36,16 +36,10 @@ def add_kpi_category(
 
     .. code-block:: python
 
-        new_kpi_categoryes = client.add_kpi_category(name="new_kpi_category")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_kpi_category = client.add_kpi_category(
             name="kpi_category",
-
         )
+        print(new_kpi_category)
     """
     kpi_category_input = AddKpiCategoryInput(name=name)
     result = AddKpiCategory.execute(client, input=kpi_category_input)
@@ -71,17 +65,13 @@ def edit_kpi_category(
 
     .. code-block:: python
 
-        kpi_category_edited = client.edit_kpi_category(kpi_category=kpiCategory ,new_name="new_kpi_category")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_kpi_category = client.edit_kpi_category(
+        new_kpi_category_edited = client.edit_kpi_category(
             kpi_category=kpiCategory,
-            new_name="kpi_category",
+            new_name="kpi_category_edited",
 
         )
+        print(new_kpi_category_edited)
+
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -134,7 +124,7 @@ def delete_kpi_category(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_kpi_category(kpiCategory)
+        client.delete_kpi_category(id=123456789)
     """
     removeKpiCategory.execute(client, id=id)
 

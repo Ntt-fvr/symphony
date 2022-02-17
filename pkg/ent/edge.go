@@ -1288,6 +1288,14 @@ func (o *Organization) Policies(ctx context.Context) ([]*PermissionsPolicy, erro
 	return result, err
 }
 
+func (pc *ParameterCatalog) PropertyCategories(ctx context.Context) ([]*PropertyCategory, error) {
+	result, err := pc.Edges.PropertyCategoriesOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryPropertyCategories().All(ctx)
+	}
+	return result, err
+}
+
 func (pp *PermissionsPolicy) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := pp.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
@@ -1520,6 +1528,22 @@ func (pr *Property) ProjectValue(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
+func (pc *PropertyCategory) PropertiesType(ctx context.Context) ([]*PropertyType, error) {
+	result, err := pc.Edges.PropertiesTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryPropertiesType().All(ctx)
+	}
+	return result, err
+}
+
+func (pc *PropertyCategory) ParameterCatalog(ctx context.Context) (*ParameterCatalog, error) {
+	result, err := pc.Edges.ParameterCatalogOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryParameterCatalog().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (pt *PropertyType) Properties(ctx context.Context) ([]*Property, error) {
 	result, err := pt.Edges.PropertiesOrErr()
 	if IsNotLoaded(err) {
@@ -1608,52 +1632,12 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	return result, MaskNotFound(err)
 }
 
-func (pt *PropertyType) PropType(ctx context.Context) ([]*PropertyTypeValue, error) {
-	result, err := pt.Edges.PropTypeOrErr()
+func (pt *PropertyType) PropertyCategory(ctx context.Context) (*PropertyCategory, error) {
+	result, err := pt.Edges.PropertyCategoryOrErr()
 	if IsNotLoaded(err) {
-		result, err = pt.QueryPropType().All(ctx)
-	}
-	return result, err
-}
-
-func (pt *PropertyType) PropertyTy(ctx context.Context) (*PropertyType, error) {
-	result, err := pt.Edges.PropertyTyOrErr()
-	if IsNotLoaded(err) {
-		result, err = pt.QueryPropertyTy().Only(ctx)
+		result, err = pt.QueryPropertyCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
-}
-
-func (pt *PropertyType) ProperType(ctx context.Context) ([]*PropertyType, error) {
-	result, err := pt.Edges.ProperTypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = pt.QueryProperType().All(ctx)
-	}
-	return result, err
-}
-
-func (ptv *PropertyTypeValue) PropertyType(ctx context.Context) (*PropertyType, error) {
-	result, err := ptv.Edges.PropertyTypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = ptv.QueryPropertyType().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (ptv *PropertyTypeValue) ProTypVal(ctx context.Context) (*PropertyTypeValue, error) {
-	result, err := ptv.Edges.ProTypValOrErr()
-	if IsNotLoaded(err) {
-		result, err = ptv.QueryProTypVal().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (ptv *PropertyTypeValue) PropTypeValue(ctx context.Context) ([]*PropertyTypeValue, error) {
-	result, err := ptv.Edges.PropTypeValueOrErr()
-	if IsNotLoaded(err) {
-		result, err = ptv.QueryPropTypeValue().All(ctx)
-	}
-	return result, err
 }
 
 func (r *Recommendations) RecomendationSources(ctx context.Context) (*RecommendationsSources, error) {

@@ -102,6 +102,23 @@ def edit_user(
     new_status: Optional[UserRole] = None,
 
 ) -> User: 
+    """Lists a specific user according to email address
+    :param user: User object
+    :type user: :class:`~psym.common.data_class.User`
+    :raises:
+        FailedOperationException: Internal symphony error
+    :rtype: None
+    **Example**
+    .. code-block:: python
+        user_email = client.get_user_by_email(email="user@test.com")
+        user_Edited= client.edit_user(
+            id=user_email.id,
+            firstName="firstName",
+            lastName="lastName",
+
+        )
+
+    """
 
     user_ = get_user_by_id(client=client, id=user_id)
     firstName = user_.firstName if firstName is None else firstName
@@ -239,6 +256,18 @@ def get_users(client: SymphonyClient) -> Iterator[User]:
             )
 
 def get_user_by_email(client: SymphonyClient, email: str) -> User:
+    """Lists a specific user according to email address
+    :param user: User object
+    :type user: :class:`~psym.common.data_class.User`
+    :raises:
+        FailedOperationException: Internal symphony error
+    :rtype: None
+    **Example**
+    .. code-block:: python
+        user_email = client.get_user_by_email(email="user@test.com")
+        print(user_email)
+
+    """
     user_email = get_users(client=client)
     for user_ in user_email:
         if user_.email == email:
@@ -246,6 +275,18 @@ def get_user_by_email(client: SymphonyClient, email: str) -> User:
     raise EntityNotFoundError(entity=Entity.User, entity_email=email)
 
 def get_user_by_id(client: SymphonyClient, id: str) -> User:
+    """Lists a specific user according to id
+    :param user: User object
+    :type user: :class:`~psym.common.data_class.User`
+    :raises:
+        FailedOperationException: Internal symphony error
+    :rtype: None
+    **Example**
+    .. code-block:: python
+        user = client.get_user_by_email(id=123456789)
+        print(user)
+
+    """
     user_id = get_users(client=client)
     for user_ in user_id:
         if user_.id == id:

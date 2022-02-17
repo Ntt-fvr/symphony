@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-__version__ = "2.3.14"
+__version__ = "2.5.17"
 
 SCHEMA_FILE_NAME = "survey_schema.json"
 SIMPLE_QUESTION_TYPE_TO_REQUIRED_PROPERTY_NAME = {

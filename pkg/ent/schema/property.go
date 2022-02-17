@@ -134,6 +134,10 @@ func (PropertyType) Edges() []ent.Edge {
 		edge.To("proper_type", PropertyType.Type).
 			Annotations(entgql.Bind()).From("property_ty").
 			Unique().Annotations(entgql.MapsTo("proper_types")),
+		edge.From("property_category", PropertyCategory.Type).
+			Ref("properties_type").
+			Unique().
+			Annotations(entgql.MapsTo("propertyCategory")),
 	}
 }
 
@@ -158,12 +162,17 @@ func (PropertyType) Indexes() []ent.Index {
 		index.Fields("name").
 			Edges("worker_type").
 			Unique(),
+		index.Fields("name").
+			Edges("property_category"),
 	}
 }
 
 // Policy returns property type policy.
 func (PropertyType) Policy() ent.Policy {
 	return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.PropertyTypeReadPolicyRule(),
+		),
 		authz.WithMutationRules(
 			authz.PropertyTypeWritePolicyRule(),
 			authz.PropertyTypeCreatePolicyRule(),
