@@ -9,7 +9,6 @@
  */
 
 import type {FeatureID} from '@fbcnms/types/features';
-import type {PropertyType} from '../../common/PropertyType';
 
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
@@ -21,9 +20,6 @@ import DroppableTableBody from '../draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
-import PropertyTypeSelect from './PropertyTypeSelect';
-import PropertyTypesTableDispatcher from './context/property_types/PropertyTypesTableDispatcher';
-import PropertyValueInput from './PropertyValueInput';
 import SubjectIcon from '@material-ui/icons/Subject';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -36,11 +32,9 @@ import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
-import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
-import {useContext} from 'react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 
 import EnumPropertyValueInput from './EnumPropertyValueInput';
 
@@ -120,31 +114,21 @@ export type PropertyTypeInfo = $ReadOnly<{|
   isNode?: boolean,
 |}>;
 
-type Props = $ReadOnly<{|
-  // propertyTypes: Array<PropertyType>,
-  // supportMandatory?: boolean,
-  // supportDelete?: boolean,
-|}>;
+type Props = $ReadOnly<{||}>;
 
-const ExperimentalPropertyTypesTableParameters = ({
-  // propertyTypes,
-  supportMandatory = true,
-}: // supportDelete,
-Props) => {
+const ExperimentalPropertyTypesTableParameters = (props: Props) => {
+  const {supportMandatory = true} = props;
   const [parameters, setParameters] = useState([]);
   const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [changeInput, setChangeInput] = useState('TXT');
   const classes = useStyles();
-  // const dispatch = useContext(PropertyTypesTableDispatcher);
-  console.log('xxx  ', changeInput);
+
   const handleChecked = () => {
     setChecked(!checked);
   };
   const handleDelete = (i, ID) => {
-    console.log('borrado   ');
-    console.log('indice -> ', i);
-    console.log('ID -> ', ID);
+    i, ID;
   };
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
@@ -154,13 +138,12 @@ Props) => {
     setParameters([...parameters, {id}]);
   };
   const nameChange = ({target}) => {
-    console.log(target.value);
+    target.value;
   };
   const chip = ({target}) => {
-    console.log(target.value);
+    target.value;
   };
   const handleOption = mc => {
-    console.log('Multiple Chopice', mc);
     mc === 'MC' && setChangeInput('MC');
     mc === 'TXT' && setChangeInput('TXT');
   };
@@ -203,11 +186,6 @@ Props) => {
                 sourceIndex: source.index,
                 destinationIndex: destination.index,
               });
-              // dispatch({
-              //   type: 'CHANGE_PROPERTY_TYPE_INDEX',
-              //   sourceIndex: source.index,
-              //   destinationIndex: destination.index,
-              // });
             }
           }}>
           {parameters.sort(sortByIndex).map((property, i) => (
@@ -234,7 +212,6 @@ Props) => {
                 </FormField>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
-                {/* <FormField className={classes.input}> */}
                 <form className={classes.formField} autoComplete="off">
                   <TextField
                     required
@@ -242,7 +219,6 @@ Props) => {
                     select
                     className={classes.selectField}
                     label="Option"
-                    // onChange={handleChangeStatus}
                     defaultValue="Text"
                     name="status"
                     variant="outlined">
@@ -257,24 +233,9 @@ Props) => {
                       Text
                     </MenuItem>
                   </TextField>
-                  {/* <PropertyTypeSelect propertyType={property} /> */}
-                  {/* </FormField> */}
                 </form>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
-                {/* <PropertyValueInput
-                  label={null}
-                  className={classes.input}
-                  inputType="PropertyType"
-                  property={property}
-                  // onChange={value =>
-                  //   dispatch({
-                  //     type: 'UPDATE_PROPERTY_TYPE',
-                  //     value,
-                  //   })
-                  // }
-                /> */}
-                {/* ***************************MULTIPLE CHOICE**************************** */}
                 {changeInput === 'MC' && (
                   <EnumPropertyValueInput onChange={chip} property={property} />
                 )}
@@ -285,39 +246,11 @@ Props) => {
                     autoComplete="off"
                     className={classes.input}
                     onChange={nameChange}
-                    // onBlur={() =>
-                    //   dispatch({
-                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                    //     id: property.id,
-                    //     name: property.name.trim(),
-                    //   })
-                    // }
                   />
                 )}
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
-                  {/* <TextInput
-                    autoFocus={true}
-                    placeholder="Tags"
-                    autoComplete="off"
-                    className={classes.input}
-                    // value={property.name}
-                    // onChange={({target}) =>
-                    //   dispatch({
-                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                    //     id: property.id,
-                    //     name: target.value,
-                    //   })
-                    // }
-                    // onBlur={() =>
-                    //   dispatch({
-                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                    //     id: property.id,
-                    //     name: property.name.trim(),
-                    //   })
-                    // }
-                  /> */}
                   <EnumPropertyValueInput onChange={chip} property={property} />
                 </FormField>
               </TableCell>
@@ -326,13 +259,6 @@ Props) => {
                   <SubjectIcon
                     className={classes.mapping}
                     onClick={handleModal}
-                    // onClick={() =>
-                    //   dispatch({
-                    //     type: 'REMOVE_PROPERTY_TYPE',
-                    //     id: property.id,
-                    //   })
-                    // }
-                    // disabled={!supportDelete && !isTempId(property.id)}
                   />
                 </FormAction>
               </TableCell>
@@ -342,16 +268,6 @@ Props) => {
                   <Checkbox
                     checked={checked}
                     onClick={handleChecked}
-                    // checked={!!property.isMandatory}
-                    // onChange={checkedNewValue =>
-                    //   dispatch({
-                    //     type: 'UPDATE_PROPERTY_TYPE',
-                    //     value: {
-                    //       ...property,
-                    //       isMandatory: checkedNewValue === 'checked',
-                    //     },
-                    //   })
-                    // }
                     title={null}
                   />
                 </FormField>
@@ -362,14 +278,7 @@ Props) => {
                   <IconButton aria-label="delete">
                     <DeleteOutlinedIcon
                       color="primary"
-                      // onClick={() =>
-                      //   dispatch({
-                      //     type: 'REMOVE_PROPERTY_TYPE',
-                      //     id: property.id,
-                      //   })
-                      // }
-                      onClick={handleDelete(i, property.id)}
-                      // disabled={!supportDelete && !isTempId(property.id)}
+                      onClick={() => handleDelete(i, property.id)}
                     />
                   </IconButton>
                 </FormAction>
@@ -381,7 +290,6 @@ Props) => {
       <FormAction>
         <Button
           variant="text"
-          // onClick={() => dispatch({type: 'ADD_PROPERTY_TYPE'})}
           onClick={handleAddParameters}
           leftIcon={PlusIcon}>
           <fbt desc="">Add Property</fbt>
