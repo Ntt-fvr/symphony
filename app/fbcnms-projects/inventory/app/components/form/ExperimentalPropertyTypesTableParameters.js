@@ -42,6 +42,8 @@ import {sortByIndex} from '../draggable/DraggableUtils';
 import {useContext} from 'react';
 import {useEffect, useState} from 'react';
 
+import EnumPropertyValueInput from './EnumPropertyValueInput';
+
 const useStyles = makeStyles(() => ({
   container: {
     overflowX: 'auto',
@@ -132,10 +134,10 @@ Props) => {
   const [parameters, setParameters] = useState([]);
   const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [changeInput, setChangeInput] = useState('');
+  const [changeInput, setChangeInput] = useState('TXT');
   const classes = useStyles();
-  const dispatch = useContext(PropertyTypesTableDispatcher);
-
+  // const dispatch = useContext(PropertyTypesTableDispatcher);
+  console.log('xxx  ', changeInput);
   const handleChecked = () => {
     setChecked(!checked);
   };
@@ -154,10 +156,13 @@ Props) => {
   const nameChange = ({target}) => {
     console.log(target.value);
   };
+  const chip = ({target}) => {
+    console.log(target.value);
+  };
   const handleOption = mc => {
     console.log('Multiple Chopice', mc);
-    mc === 'MC' && setChangeInput('Multiple Choice');
-    mc === 'TXT' && setChangeInput('Text');
+    mc === 'MC' && setChangeInput('MC');
+    mc === 'TXT' && setChangeInput('TXT');
   };
 
   return (
@@ -238,7 +243,7 @@ Props) => {
                     className={classes.selectField}
                     label="Option"
                     // onChange={handleChangeStatus}
-                    defaultValue=""
+                    defaultValue="Text"
                     name="status"
                     variant="outlined">
                     <MenuItem
@@ -270,24 +275,29 @@ Props) => {
                   // }
                 /> */}
                 {/* ***************************MULTIPLE CHOICE**************************** */}
-                <TextInput
-                  autoFocus={true}
-                  placeholder={changeInput}
-                  autoComplete="off"
-                  className={classes.input}
-                  onChange={nameChange}
-                  // onBlur={() =>
-                  //   dispatch({
-                  //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                  //     id: property.id,
-                  //     name: property.name.trim(),
-                  //   })
-                  // }
-                />
+                {changeInput === 'MC' && (
+                  <EnumPropertyValueInput onChange={chip} property={property} />
+                )}
+                {changeInput === 'TXT' && (
+                  <TextInput
+                    autoFocus={true}
+                    placeholder={'Text'}
+                    autoComplete="off"
+                    className={classes.input}
+                    onChange={nameChange}
+                    // onBlur={() =>
+                    //   dispatch({
+                    //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                    //     id: property.id,
+                    //     name: property.name.trim(),
+                    //   })
+                    // }
+                  />
+                )}
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
-                  <TextInput
+                  {/* <TextInput
                     autoFocus={true}
                     placeholder="Tags"
                     autoComplete="off"
@@ -307,7 +317,8 @@ Props) => {
                     //     name: property.name.trim(),
                     //   })
                     // }
-                  />
+                  /> */}
+                  <EnumPropertyValueInput onChange={chip} property={property} />
                 </FormField>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">
