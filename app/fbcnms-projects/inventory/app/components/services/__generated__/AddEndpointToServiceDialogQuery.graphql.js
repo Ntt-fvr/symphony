@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<300aecfebbac8b4b379a81d9f1ce1504>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type AvailablePortsTable_ports$ref = any;
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type PortFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PORT_DEF" | "PORT_INST_EQUIPMENT" | "PORT_INST_HAS_LINK" | "PROPERTY" | "SERVICE_INST" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type AvailablePortsTable_ports$fragmentType = any;
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+export type PortFilterType = "PORT_DEF" | "PORT_INST_HAS_LINK" | "PORT_INST_EQUIPMENT" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type PortFilterInput = {|
   filterType: PortFilterType,
   operator: FilterOperator,
@@ -51,10 +48,11 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type AddEndpointToServiceDialogQueryVariables = {|
-  filters: $ReadOnlyArray<PortFilterInput>
+export type AddEndpointToServiceDialogQuery$variables = {|
+  filters: $ReadOnlyArray<PortFilterInput>,
 |};
-export type AddEndpointToServiceDialogQueryResponse = {|
+export type AddEndpointToServiceDialogQueryVariables = AddEndpointToServiceDialogQuery$variables;
+export type AddEndpointToServiceDialogQuery$data = {|
   +equipmentPorts: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -63,89 +61,19 @@ export type AddEndpointToServiceDialogQueryResponse = {|
           +id: string,
           +name: string,
         |},
-        +$fragmentRefs: AvailablePortsTable_ports$ref,
-      |}
-    |}>
-  |}
+        +$fragmentSpreads: AvailablePortsTable_ports$fragmentType,
+      |},
+    |}>,
+  |},
 |};
+export type AddEndpointToServiceDialogQueryResponse = AddEndpointToServiceDialogQuery$data;
 export type AddEndpointToServiceDialogQuery = {|
   variables: AddEndpointToServiceDialogQueryVariables,
-  response: AddEndpointToServiceDialogQueryResponse,
+  response: AddEndpointToServiceDialogQuery$data,
 |};
 */
 
-
-/*
-query AddEndpointToServiceDialogQuery(
-  $filters: [PortFilterInput!]!
-) {
-  equipmentPorts(filterBy: $filters, first: 50) {
-    edges {
-      node {
-        id
-        definition {
-          id
-          name
-        }
-        ...AvailablePortsTable_ports
-      }
-    }
-  }
-}
-
-fragment AvailablePortsTable_ports on EquipmentPort {
-  id
-  parentEquipment {
-    id
-    name
-    ...EquipmentBreadcrumbs_equipment
-  }
-  definition {
-    id
-    name
-    portType {
-      name
-      id
-    }
-    visibleLabel
-  }
-}
-
-fragment EquipmentBreadcrumbs_equipment on Equipment {
-  id
-  name
-  equipmentType {
-    id
-    name
-  }
-  locationHierarchy {
-    id
-    name
-    locationType {
-      name
-      id
-    }
-  }
-  positionHierarchy {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-    }
-    parentEquipment {
-      id
-      name
-      equipmentType {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -417,7 +345,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'eacafc370d24cc7d5fef93f4c2aa8f6b';
 
-module.exports = node;
+(node/*: any*/).hash = "eacafc370d24cc7d5fef93f4c2aa8f6b";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AddEndpointToServiceDialogQuery$variables,
+  AddEndpointToServiceDialogQuery$data,
+>*/);

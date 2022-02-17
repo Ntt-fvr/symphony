@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<65bfcc8e054855c95b49143d28a46324>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,132 +10,33 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type AddEditLocationTypeCard_editingLocationType$ref = any;
-type LocationTypeItem_locationType$ref = any;
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type AddEditLocationTypeCard_editingLocationType$fragmentType = any;
+type LocationTypeItem_locationType$fragmentType = any;
 export type LocationTypeIndex = {|
   locationTypeID: string,
   index: number,
 |};
-export type EditLocationTypesIndexMutationVariables = {|
-  locationTypeIndex: $ReadOnlyArray<?LocationTypeIndex>
+export type EditLocationTypesIndexMutation$variables = {|
+  locationTypeIndex: $ReadOnlyArray<?LocationTypeIndex>,
 |};
-export type EditLocationTypesIndexMutationResponse = {|
+export type EditLocationTypesIndexMutationVariables = EditLocationTypesIndexMutation$variables;
+export type EditLocationTypesIndexMutation$data = {|
   +editLocationTypesIndex: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
     +index: ?number,
-    +$fragmentRefs: LocationTypeItem_locationType$ref & AddEditLocationTypeCard_editingLocationType$ref,
-  |}>
+    +$fragmentSpreads: LocationTypeItem_locationType$fragmentType & AddEditLocationTypeCard_editingLocationType$fragmentType,
+  |}>,
 |};
+export type EditLocationTypesIndexMutationResponse = EditLocationTypesIndexMutation$data;
 export type EditLocationTypesIndexMutation = {|
   variables: EditLocationTypesIndexMutationVariables,
-  response: EditLocationTypesIndexMutationResponse,
+  response: EditLocationTypesIndexMutation$data,
 |};
 */
 
-
-/*
-mutation EditLocationTypesIndexMutation(
-  $locationTypeIndex: [LocationTypeIndex]!
-) {
-  editLocationTypesIndex(locationTypesIndex: $locationTypeIndex) {
-    id
-    name
-    index
-    ...LocationTypeItem_locationType
-    ...AddEditLocationTypeCard_editingLocationType
-  }
-}
-
-fragment AddEditLocationTypeCard_editingLocationType on LocationType {
-  id
-  name
-  mapType
-  mapZoomLevel
-  numberOfLocations
-  propertyTypes {
-    id
-    name
-    type
-    nodeType
-    index
-    stringValue
-    intValue
-    booleanValue
-    floatValue
-    latitudeValue
-    longitudeValue
-    rangeFromValue
-    rangeToValue
-    isEditable
-    isMandatory
-    isInstanceProperty
-    propertyCategory {
-      id
-      name
-    }
-  }
-  documentCategories {
-    id
-    name
-    index
-    numberOfDocuments
-  }
-  surveyTemplateCategories {
-    id
-    categoryTitle
-    categoryDescription
-    surveyTemplateQuestions {
-      id
-      questionTitle
-      questionDescription
-      questionType
-      index
-    }
-  }
-}
-
-fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
-  ...PropertyTypeFormField_propertyType
-  id
-  index
-}
-
-fragment LocationTypeItem_locationType on LocationType {
-  id
-  name
-  index
-  propertyTypes {
-    ...DynamicPropertyTypesGrid_propertyTypes
-    id
-  }
-  numberOfLocations
-}
-
-fragment PropertyTypeFormField_propertyType on PropertyType {
-  id
-  name
-  type
-  nodeType
-  index
-  stringValue
-  intValue
-  booleanValue
-  floatValue
-  latitudeValue
-  longitudeValue
-  rangeFromValue
-  rangeToValue
-  isEditable
-  isInstanceProperty
-  isMandatory
-  category
-  isDeleted
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -475,7 +373,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'd13ff8b06c6e7e3fc759ce9212aacb70';
 
-module.exports = node;
+(node/*: any*/).hash = "d13ff8b06c6e7e3fc759ce9212aacb70";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditLocationTypesIndexMutation$variables,
+  EditLocationTypesIndexMutation$data,
+>*/);

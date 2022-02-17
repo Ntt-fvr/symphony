@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<01450266ceb8160c34241b2b1600e721>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationsMapTypesQueryVariables = {||};
-export type LocationsMapTypesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationsMapTypesQuery$variables = {||};
+export type LocationsMapTypesQueryVariables = LocationsMapTypesQuery$variables;
+export type LocationsMapTypesQuery$data = {|
   +locationTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -28,44 +26,21 @@ export type LocationsMapTypesQueryResponse = {|
               +name: string,
               +latitude: number,
               +longitude: number,
-            |}
-          |}>
+            |},
+          |}>,
         |},
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type LocationsMapTypesQueryResponse = LocationsMapTypesQuery$data;
 export type LocationsMapTypesQuery = {|
   variables: LocationsMapTypesQueryVariables,
-  response: LocationsMapTypesQueryResponse,
+  response: LocationsMapTypesQuery$data,
 |};
 */
 
-
-/*
-query LocationsMapTypesQuery {
-  locationTypes {
-    edges {
-      node {
-        id
-        name
-        locations(enforceHasLatLong: true) {
-          edges {
-            node {
-              id
-              name
-              latitude
-              longitude
-            }
-          }
-        }
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -199,7 +174,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'fc689b6b48f62c12d1c96d10d3f80c7c';
 
-module.exports = node;
+(node/*: any*/).hash = "fc689b6b48f62c12d1c96d10d3f80c7c";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationsMapTypesQuery$variables,
+  LocationsMapTypesQuery$data,
+>*/);

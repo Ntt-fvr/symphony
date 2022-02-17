@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ed339cab9f106cf30001d752af99c57f>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,51 +10,31 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type TextCommentPost_comment$ref = any;
-export type CommentEntity = "PROJECT" | "WORK_ORDER" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type TextCommentPost_comment$fragmentType = any;
+export type CommentEntity = "WORK_ORDER" | "PROJECT" | "%future added value";
 export type CommentInput = {|
   entityType: CommentEntity,
   id: string,
   text: string,
 |};
-export type AddCommentMutationVariables = {|
-  input: CommentInput
+export type AddCommentMutation$variables = {|
+  input: CommentInput,
 |};
-export type AddCommentMutationResponse = {|
+export type AddCommentMutationVariables = AddCommentMutation$variables;
+export type AddCommentMutation$data = {|
   +addComment: {|
-    +$fragmentRefs: TextCommentPost_comment$ref
-  |}
+    +$fragmentSpreads: TextCommentPost_comment$fragmentType,
+  |},
 |};
+export type AddCommentMutationResponse = AddCommentMutation$data;
 export type AddCommentMutation = {|
   variables: AddCommentMutationVariables,
-  response: AddCommentMutationResponse,
+  response: AddCommentMutation$data,
 |};
 */
 
-
-/*
-mutation AddCommentMutation(
-  $input: CommentInput!
-) {
-  addComment(input: $input) {
-    ...TextCommentPost_comment
-    id
-  }
-}
-
-fragment TextCommentPost_comment on Comment {
-  id
-  author {
-    email
-    id
-  }
-  text
-  createTime
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -169,7 +146,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '18acd250d64b7a14e2d84071967d7cb9';
 
-module.exports = node;
+(node/*: any*/).hash = "18acd250d64b7a14e2d84071967d7cb9";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddCommentMutation$variables,
+  AddCommentMutation$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<6fc1041e99b7c41ebe5917c4d058ec47>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,54 +10,25 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type HyperlinkTableRow_hyperlink$ref = any;
-export type DeleteHyperlinkMutationVariables = {|
-  id: string
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type HyperlinkTableRow_hyperlink$fragmentType = any;
+export type DeleteHyperlinkMutation$variables = {|
+  id: string,
 |};
-export type DeleteHyperlinkMutationResponse = {|
+export type DeleteHyperlinkMutationVariables = DeleteHyperlinkMutation$variables;
+export type DeleteHyperlinkMutation$data = {|
   +deleteHyperlink: {|
-    +$fragmentRefs: HyperlinkTableRow_hyperlink$ref
-  |}
+    +$fragmentSpreads: HyperlinkTableRow_hyperlink$fragmentType,
+  |},
 |};
+export type DeleteHyperlinkMutationResponse = DeleteHyperlinkMutation$data;
 export type DeleteHyperlinkMutation = {|
   variables: DeleteHyperlinkMutationVariables,
-  response: DeleteHyperlinkMutationResponse,
+  response: DeleteHyperlinkMutation$data,
 |};
 */
 
-
-/*
-mutation DeleteHyperlinkMutation(
-  $id: ID!
-) {
-  deleteHyperlink(id: $id) {
-    ...HyperlinkTableRow_hyperlink
-    id
-  }
-}
-
-fragment HyperlinkTableMenu_hyperlink on Hyperlink {
-  id
-  displayName
-  url
-}
-
-fragment HyperlinkTableRow_hyperlink on Hyperlink {
-  id
-  category
-  url
-  displayName
-  createTime
-  documentCategory {
-    id
-    name
-  }
-  ...HyperlinkTableMenu_hyperlink
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -186,7 +154,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'eea56538c03c8ce55b62e4e48331a303';
 
-module.exports = node;
+(node/*: any*/).hash = "eea56538c03c8ce55b62e4e48331a303";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  DeleteHyperlinkMutation$variables,
+  DeleteHyperlinkMutation$data,
+>*/);

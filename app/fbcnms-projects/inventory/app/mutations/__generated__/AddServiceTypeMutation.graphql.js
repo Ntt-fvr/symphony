@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<735475d1d46b8c232b7c71b2090663d6>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type DiscoveryMethod = "MANUAL" | "INVENTORY" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type ServiceTypeCreateData = {|
   name: string,
   hasCustomer: boolean,
@@ -53,10 +50,11 @@ export type ServiceEndpointDefinitionInput = {|
   index: number,
   equipmentTypeID: string,
 |};
-export type AddServiceTypeMutationVariables = {|
-  data: ServiceTypeCreateData
+export type AddServiceTypeMutation$variables = {|
+  data: ServiceTypeCreateData,
 |};
-export type AddServiceTypeMutationResponse = {|
+export type AddServiceTypeMutationVariables = AddServiceTypeMutation$variables;
+export type AddServiceTypeMutation$data = {|
   +addServiceType: {|
     +id: string,
     +name: string,
@@ -92,59 +90,16 @@ export type AddServiceTypeMutationResponse = {|
       |},
     |}>,
     +numberOfServices: number,
-  |}
+  |},
 |};
+export type AddServiceTypeMutationResponse = AddServiceTypeMutation$data;
 export type AddServiceTypeMutation = {|
   variables: AddServiceTypeMutationVariables,
-  response: AddServiceTypeMutationResponse,
+  response: AddServiceTypeMutation$data,
 |};
 */
 
-
-/*
-mutation AddServiceTypeMutation(
-  $data: ServiceTypeCreateData!
-) {
-  addServiceType(data: $data) {
-    id
-    name
-    discoveryMethod
-    propertyTypes {
-      id
-      name
-      type
-      nodeType
-      index
-      stringValue
-      intValue
-      booleanValue
-      floatValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      isEditable
-      isInstanceProperty
-      isMandatory
-      category
-      isDeleted
-    }
-    endpointDefinitions {
-      id
-      index
-      role
-      name
-      equipmentType {
-        id
-        name
-      }
-    }
-    numberOfServices
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -388,7 +343,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '2da5f23bba8fbfa795de89f4661ed755';
 
-module.exports = node;
+(node/*: any*/).hash = "2da5f23bba8fbfa795de89f4661ed755";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddServiceTypeMutation$variables,
+  AddServiceTypeMutation$data,
+>*/);

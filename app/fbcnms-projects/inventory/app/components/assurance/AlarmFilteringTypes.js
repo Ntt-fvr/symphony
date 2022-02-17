@@ -18,8 +18,7 @@ import {makeStyles} from '@material-ui/styles';
 import ConfigureTitle from './common/ConfigureTitle';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
-import {fetchQuery} from 'relay-runtime';
-import {graphql} from 'react-relay';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 
 const useStyles = makeStyles(() => ({
   root: {

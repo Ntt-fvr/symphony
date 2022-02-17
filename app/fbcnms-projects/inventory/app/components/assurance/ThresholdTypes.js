@@ -21,8 +21,7 @@ import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {Grid, List} from '@material-ui/core';
-import {fetchQuery} from 'relay-runtime';
-import {graphql} from 'react-relay';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 import {makeStyles} from '@material-ui/styles';
 
 import AddRuleItemForm from './AddRuleItemForm';

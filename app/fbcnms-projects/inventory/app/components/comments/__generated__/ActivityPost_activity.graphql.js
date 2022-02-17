@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<feac115ed7b2279a1ef0391c3b471640>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,35 +10,34 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type GenericActivityText_activity$ref = any;
-type WorkOrderCheckInActivityText_activity$ref = any;
-type WorkOrderCheckOutActivityText_activity$ref = any;
-export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type ActivityPost_activity$ref: FragmentReference;
-declare export opaque type ActivityPost_activity$fragmentType: ActivityPost_activity$ref;
-export type ActivityPost_activity = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type GenericActivityText_activity$fragmentType = any;
+type WorkOrderCheckInActivityText_activity$fragmentType = any;
+type WorkOrderCheckOutActivityText_activity$fragmentType = any;
+export type ActivityField = "STATUS" | "PRIORITY" | "ASSIGNEE" | "CREATION_DATE" | "OWNER" | "NAME" | "DESCRIPTION" | "CLOCK_IN" | "CLOCK_OUT" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type ActivityPost_activity$fragmentType: FragmentType;
+export type ActivityPost_activity$ref = ActivityPost_activity$fragmentType;
+export type ActivityPost_activity$data = {|
   +id: string,
   +author: ?{|
-    +email: string
+    +email: string,
   |},
   +newValue: ?string,
   +activityType: ActivityField,
   +createTime: any,
-  +$fragmentRefs: GenericActivityText_activity$ref & WorkOrderCheckInActivityText_activity$ref & WorkOrderCheckOutActivityText_activity$ref,
-  +$refType: ActivityPost_activity$ref,
+  +$fragmentSpreads: GenericActivityText_activity$fragmentType & WorkOrderCheckInActivityText_activity$fragmentType & WorkOrderCheckOutActivityText_activity$fragmentType,
+  +$fragmentType: ActivityPost_activity$fragmentType,
 |};
-export type ActivityPost_activity$data = ActivityPost_activity;
+export type ActivityPost_activity = ActivityPost_activity$data;
 export type ActivityPost_activity$key = {
   +$data?: ActivityPost_activity$data,
-  +$fragmentRefs: ActivityPost_activity$ref,
+  +$fragmentSpreads: ActivityPost_activity$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -112,7 +108,10 @@ const node/*: ReaderFragment*/ = {
   "type": "Activity",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'e905cb523dfbfd117ac5a40644a06bd7';
 
-module.exports = node;
+(node/*: any*/).hash = "e905cb523dfbfd117ac5a40644a06bd7";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  ActivityPost_activity$fragmentType,
+  ActivityPost_activity$data,
+>*/);

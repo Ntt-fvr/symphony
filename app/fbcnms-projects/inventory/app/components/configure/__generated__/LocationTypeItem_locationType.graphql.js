@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<c46314245c1d0ab040436e60e439eea5>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,31 +10,30 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type DynamicPropertyTypesGrid_propertyTypes$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type LocationTypeItem_locationType$ref: FragmentReference;
-declare export opaque type LocationTypeItem_locationType$fragmentType: LocationTypeItem_locationType$ref;
-export type LocationTypeItem_locationType = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type DynamicPropertyTypesGrid_propertyTypes$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type LocationTypeItem_locationType$fragmentType: FragmentType;
+export type LocationTypeItem_locationType$ref = LocationTypeItem_locationType$fragmentType;
+export type LocationTypeItem_locationType$data = {|
   +id: string,
   +name: string,
   +index: ?number,
   +propertyTypes: $ReadOnlyArray<?{|
-    +$fragmentRefs: DynamicPropertyTypesGrid_propertyTypes$ref
+    +$fragmentSpreads: DynamicPropertyTypesGrid_propertyTypes$fragmentType,
   |}>,
   +numberOfLocations: number,
-  +$refType: LocationTypeItem_locationType$ref,
+  +$fragmentType: LocationTypeItem_locationType$fragmentType,
 |};
-export type LocationTypeItem_locationType$data = LocationTypeItem_locationType;
+export type LocationTypeItem_locationType = LocationTypeItem_locationType$data;
 export type LocationTypeItem_locationType$key = {
   +$data?: LocationTypeItem_locationType$data,
-  +$fragmentRefs: LocationTypeItem_locationType$ref,
+  +$fragmentSpreads: LocationTypeItem_locationType$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -91,7 +87,10 @@ const node/*: ReaderFragment*/ = {
   "type": "LocationType",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'dbc429726327dcfb05c2a80d49cfa429';
 
-module.exports = node;
+(node/*: any*/).hash = "dbc429726327dcfb05c2a80d49cfa429";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  LocationTypeItem_locationType$fragmentType,
+  LocationTypeItem_locationType$data,
+>*/);

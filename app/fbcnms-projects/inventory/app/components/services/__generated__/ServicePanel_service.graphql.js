@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<5338841f1cd454f6ba18c5807cc98c84>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,22 +10,22 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type ServiceEndpointsView_endpoints$ref = any;
-type ServiceLinksAndPortsView_links$ref = any;
-type ServiceLinksAndPortsView_ports$ref = any;
-export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
-export type ServiceStatus = "DISCONNECTED" | "IN_SERVICE" | "MAINTENANCE" | "PENDING" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type ServicePanel_service$ref: FragmentReference;
-declare export opaque type ServicePanel_service$fragmentType: ServicePanel_service$ref;
-export type ServicePanel_service = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type ServiceEndpointsView_endpoints$fragmentType = any;
+type ServiceLinksAndPortsView_links$fragmentType = any;
+type ServiceLinksAndPortsView_ports$fragmentType = any;
+export type DiscoveryMethod = "MANUAL" | "INVENTORY" | "%future added value";
+export type ServiceStatus = "PENDING" | "IN_SERVICE" | "MAINTENANCE" | "DISCONNECTED" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type ServicePanel_service$fragmentType: FragmentType;
+export type ServicePanel_service$ref = ServicePanel_service$fragmentType;
+export type ServicePanel_service$data = {|
   +id: string,
   +name: string,
   +externalId: ?string,
   +status: ServiceStatus,
   +customer: ?{|
-    +name: string
+    +name: string,
   |},
   +serviceType: {|
     +name: string,
@@ -45,11 +42,11 @@ export type ServicePanel_service = {|
   |},
   +links: $ReadOnlyArray<?{|
     +id: string,
-    +$fragmentRefs: ServiceLinksAndPortsView_links$ref,
+    +$fragmentSpreads: ServiceLinksAndPortsView_links$fragmentType,
   |}>,
   +ports: $ReadOnlyArray<?{|
     +id: string,
-    +$fragmentRefs: ServiceLinksAndPortsView_ports$ref,
+    +$fragmentSpreads: ServiceLinksAndPortsView_ports$fragmentType,
   |}>,
   +endpoints: $ReadOnlyArray<?{|
     +id: string,
@@ -57,20 +54,19 @@ export type ServicePanel_service = {|
       +id: string,
       +name: string,
     |},
-    +$fragmentRefs: ServiceEndpointsView_endpoints$ref,
+    +$fragmentSpreads: ServiceEndpointsView_endpoints$fragmentType,
   |}>,
-  +$refType: ServicePanel_service$ref,
+  +$fragmentType: ServicePanel_service$fragmentType,
 |};
-export type ServicePanel_service$data = ServicePanel_service;
+export type ServicePanel_service = ServicePanel_service$data;
 export type ServicePanel_service$key = {
   +$data?: ServicePanel_service$data,
-  +$fragmentRefs: ServicePanel_service$ref,
+  +$fragmentSpreads: ServicePanel_service$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -238,7 +234,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '462ddda2544779eb7db1b972279683c5';
 
-module.exports = node;
+(node/*: any*/).hash = "462ddda2544779eb7db1b972279683c5";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  ServicePanel_service$fragmentType,
+  ServicePanel_service$data,
+>*/);

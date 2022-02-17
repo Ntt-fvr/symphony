@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<21f9b2352f1eab33a5868ecf770a5730>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,222 +10,25 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type WorkOrderDetailsPane_workOrder$ref = any;
-export type WorkOrderDetailsPaneQueryRendererQueryVariables = {|
-  workOrderId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type WorkOrderDetailsPane_workOrder$fragmentType = any;
+export type WorkOrderDetailsPaneQueryRendererQuery$variables = {|
+  workOrderId: string,
 |};
-export type WorkOrderDetailsPaneQueryRendererQueryResponse = {|
+export type WorkOrderDetailsPaneQueryRendererQueryVariables = WorkOrderDetailsPaneQueryRendererQuery$variables;
+export type WorkOrderDetailsPaneQueryRendererQuery$data = {|
   +workOrder: ?{|
-    +$fragmentRefs: WorkOrderDetailsPane_workOrder$ref
-  |}
+    +$fragmentSpreads: WorkOrderDetailsPane_workOrder$fragmentType,
+  |},
 |};
+export type WorkOrderDetailsPaneQueryRendererQueryResponse = WorkOrderDetailsPaneQueryRendererQuery$data;
 export type WorkOrderDetailsPaneQueryRendererQuery = {|
   variables: WorkOrderDetailsPaneQueryRendererQueryVariables,
-  response: WorkOrderDetailsPaneQueryRendererQueryResponse,
+  response: WorkOrderDetailsPaneQueryRendererQuery$data,
 |};
 */
 
-
-/*
-query WorkOrderDetailsPaneQueryRendererQuery(
-  $workOrderId: ID!
-) {
-  workOrder: node(id: $workOrderId) {
-    __typename
-    ... on WorkOrder {
-      ...WorkOrderDetailsPane_workOrder
-    }
-    id
-  }
-}
-
-fragment EquipmentBreadcrumbs_equipment on Equipment {
-  id
-  name
-  equipmentType {
-    id
-    name
-  }
-  locationHierarchy {
-    id
-    name
-    locationType {
-      name
-      id
-    }
-  }
-  positionHierarchy {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-    }
-    parentEquipment {
-      id
-      name
-      equipmentType {
-        id
-        name
-      }
-    }
-  }
-}
-
-fragment WorkOrderDetailsPaneEquipmentItem_equipment on Equipment {
-  id
-  name
-  equipmentType {
-    id
-    name
-  }
-  parentLocation {
-    id
-    name
-    locationType {
-      id
-      name
-    }
-  }
-  parentPosition {
-    id
-    definition {
-      name
-      visibleLabel
-      id
-    }
-    parentEquipment {
-      id
-      name
-    }
-  }
-}
-
-fragment WorkOrderDetailsPaneLinkItem_link on Link {
-  id
-  futureState
-  ports {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-      portType {
-        linkPropertyTypes {
-          id
-          name
-          type
-          nodeType
-          index
-          stringValue
-          intValue
-          booleanValue
-          floatValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
-          isEditable
-          isInstanceProperty
-          isMandatory
-          category
-          isDeleted
-        }
-        id
-      }
-    }
-    parentEquipment {
-      id
-      name
-      futureState
-      equipmentType {
-        id
-        name
-      }
-      ...EquipmentBreadcrumbs_equipment
-    }
-    serviceEndpoints {
-      definition {
-        role
-        id
-      }
-      service {
-        name
-        id
-      }
-      id
-    }
-  }
-  workOrder {
-    id
-    status
-  }
-  properties {
-    id
-    propertyType {
-      id
-      name
-      type
-      nodeType
-      index
-      stringValue
-      intValue
-      booleanValue
-      floatValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      isEditable
-      isInstanceProperty
-      isMandatory
-      category
-      isDeleted
-    }
-    stringValue
-    intValue
-    floatValue
-    booleanValue
-    latitudeValue
-    longitudeValue
-    rangeFromValue
-    rangeToValue
-    nodeValue {
-      __typename
-      id
-      name
-    }
-  }
-  services {
-    id
-    name
-  }
-}
-
-fragment WorkOrderDetailsPane_workOrder on WorkOrder {
-  id
-  name
-  equipmentToAdd {
-    id
-    ...WorkOrderDetailsPaneEquipmentItem_equipment
-  }
-  equipmentToRemove {
-    id
-    ...WorkOrderDetailsPaneEquipmentItem_equipment
-  }
-  linksToAdd {
-    id
-    ...WorkOrderDetailsPaneLinkItem_link
-  }
-  linksToRemove {
-    id
-    ...WorkOrderDetailsPaneLinkItem_link
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -841,7 +641,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'cc9a79bc9155445e523632a0125fb0fc';
 
-module.exports = node;
+(node/*: any*/).hash = "cc9a79bc9155445e523632a0125fb0fc";
+
+module.exports = ((node/*: any*/)/*: Query<
+  WorkOrderDetailsPaneQueryRendererQuery$variables,
+  WorkOrderDetailsPaneQueryRendererQuery$data,
+>*/);

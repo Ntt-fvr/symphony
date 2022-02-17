@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<3d3b6f19b12345ffcafb84d5a8aafb7b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,38 +10,28 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type AddKqiSourceInput = {|
-  name: string
+  name: string,
 |};
-export type AddKqiSourceMutationVariables = {|
-  input: AddKqiSourceInput
+export type AddKqiSourceMutation$variables = {|
+  input: AddKqiSourceInput,
 |};
-export type AddKqiSourceMutationResponse = {|
+export type AddKqiSourceMutationVariables = AddKqiSourceMutation$variables;
+export type AddKqiSourceMutation$data = {|
   +addKqiSource: {|
     +id: string,
     +name: string,
-  |}
+  |},
 |};
+export type AddKqiSourceMutationResponse = AddKqiSourceMutation$data;
 export type AddKqiSourceMutation = {|
   variables: AddKqiSourceMutationVariables,
-  response: AddKqiSourceMutationResponse,
+  response: AddKqiSourceMutation$data,
 |};
 */
 
-
-/*
-mutation AddKqiSourceMutation(
-  $input: AddKqiSourceInput!
-) {
-  addKqiSource(input: $input) {
-    id
-    name
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -112,7 +99,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'ce84629b1478bdc909a1dca32b6e3871';
 
-module.exports = node;
+(node/*: any*/).hash = "ce84629b1478bdc909a1dca32b6e3871";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddKqiSourceMutation$variables,
+  AddKqiSourceMutation$data,
+>*/);

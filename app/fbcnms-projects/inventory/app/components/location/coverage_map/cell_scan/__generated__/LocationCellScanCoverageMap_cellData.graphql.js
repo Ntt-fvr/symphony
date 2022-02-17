@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<67c66c8d943170a2384339fe6a0b2892>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,12 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
+import type { Fragment, ReaderFragment } from 'relay-runtime';
 export type CellularNetworkType = "CDMA" | "GSM" | "LTE" | "WCDMA" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type LocationCellScanCoverageMap_cellData$ref: FragmentReference;
-declare export opaque type LocationCellScanCoverageMap_cellData$fragmentType: LocationCellScanCoverageMap_cellData$ref;
-export type LocationCellScanCoverageMap_cellData = $ReadOnlyArray<{|
+import type { FragmentType } from "relay-runtime";
+declare export opaque type LocationCellScanCoverageMap_cellData$fragmentType: FragmentType;
+export type LocationCellScanCoverageMap_cellData$ref = LocationCellScanCoverageMap_cellData$fragmentType;
+export type LocationCellScanCoverageMap_cellData$data = $ReadOnlyArray<{|
   +id: string,
   +latitude: ?number,
   +longitude: ?number,
@@ -27,18 +24,17 @@ export type LocationCellScanCoverageMap_cellData = $ReadOnlyArray<{|
   +mobileCountryCode: ?string,
   +mobileNetworkCode: ?string,
   +operator: ?string,
-  +$refType: LocationCellScanCoverageMap_cellData$ref,
+  +$fragmentType: LocationCellScanCoverageMap_cellData$fragmentType,
 |}>;
-export type LocationCellScanCoverageMap_cellData$data = LocationCellScanCoverageMap_cellData;
+export type LocationCellScanCoverageMap_cellData = LocationCellScanCoverageMap_cellData$data;
 export type LocationCellScanCoverageMap_cellData$key = $ReadOnlyArray<{
   +$data?: LocationCellScanCoverageMap_cellData$data,
-  +$fragmentRefs: LocationCellScanCoverageMap_cellData$ref,
+  +$fragmentSpreads: LocationCellScanCoverageMap_cellData$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -106,7 +102,10 @@ const node/*: ReaderFragment*/ = {
   "type": "SurveyCellScan",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'd94c9d40f7baef9bcd50963bcb149e0e';
 
-module.exports = node;
+(node/*: any*/).hash = "d94c9d40f7baef9bcd50963bcb149e0e";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  LocationCellScanCoverageMap_cellData$fragmentType,
+  LocationCellScanCoverageMap_cellData$data,
+>*/);

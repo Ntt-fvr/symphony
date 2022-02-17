@@ -14,7 +14,7 @@ import PowerSearchFilter from './PowerSearchFilter';
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 
 const equipmentTypesQuery = graphql`
   query PowerSearchEquipmentTypeFilterQuery {

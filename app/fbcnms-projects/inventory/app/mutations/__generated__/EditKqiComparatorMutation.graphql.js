@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<f04706fb1c59c6a5c48db32d4beac7f3>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type EditKqiComparatorInput = {|
   id: string,
   kqiTargetFk: string,
@@ -21,10 +18,11 @@ export type EditKqiComparatorInput = {|
   number: number,
   comparatorType: string,
 |};
-export type EditKqiComparatorMutationVariables = {|
-  input: EditKqiComparatorInput
+export type EditKqiComparatorMutation$variables = {|
+  input: EditKqiComparatorInput,
 |};
-export type EditKqiComparatorMutationResponse = {|
+export type EditKqiComparatorMutationVariables = EditKqiComparatorMutation$variables;
+export type EditKqiComparatorMutation$data = {|
   +editKqiComparator: {|
     +id: string,
     +number: number,
@@ -37,36 +35,16 @@ export type EditKqiComparatorMutationResponse = {|
       +id: string,
       +name: string,
     |},
-  |}
+  |},
 |};
+export type EditKqiComparatorMutationResponse = EditKqiComparatorMutation$data;
 export type EditKqiComparatorMutation = {|
   variables: EditKqiComparatorMutationVariables,
-  response: EditKqiComparatorMutationResponse,
+  response: EditKqiComparatorMutation$data,
 |};
 */
 
-
-/*
-mutation EditKqiComparatorMutation(
-  $input: EditKqiComparatorInput!
-) {
-  editKqiComparator(input: $input) {
-    id
-    number
-    comparatorType
-    kqiTargetFk {
-      id
-      name
-    }
-    comparatorFk {
-      id
-      name
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -172,7 +150,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'affbcb89127c8475543a82845c17da89';
 
-module.exports = node;
+(node/*: any*/).hash = "affbcb89127c8475543a82845c17da89";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditKqiComparatorMutation$variables,
+  EditKqiComparatorMutation$data,
+>*/);

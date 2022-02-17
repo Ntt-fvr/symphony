@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<374c8cf689e57bbf88581b29ddf99412>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type OrganizationFilterType = "DESCRIPTION" | "ID" | "NAME" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+export type OrganizationFilterType = "ID" | "NAME" | "DESCRIPTION" | "%future added value";
 export type OrganizationFilterInput = {|
   filterType: OrganizationFilterType,
   operator: FilterOperator,
@@ -24,46 +21,30 @@ export type OrganizationFilterInput = {|
   maxDepth?: ?number,
   stringSet?: ?$ReadOnlyArray<string>,
 |};
-export type OrganizationTypeaheadQueryVariables = {|
+export type OrganizationTypeaheadQuery$variables = {|
   filters: $ReadOnlyArray<OrganizationFilterInput>,
   limit?: ?number,
 |};
-export type OrganizationTypeaheadQueryResponse = {|
+export type OrganizationTypeaheadQueryVariables = OrganizationTypeaheadQuery$variables;
+export type OrganizationTypeaheadQuery$data = {|
   +organizations: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +description: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type OrganizationTypeaheadQueryResponse = OrganizationTypeaheadQuery$data;
 export type OrganizationTypeaheadQuery = {|
   variables: OrganizationTypeaheadQueryVariables,
-  response: OrganizationTypeaheadQueryResponse,
+  response: OrganizationTypeaheadQuery$data,
 |};
 */
 
-
-/*
-query OrganizationTypeaheadQuery(
-  $filters: [OrganizationFilterInput!]!
-  $limit: Int
-) {
-  organizations(filterBy: $filters, first: $limit) {
-    edges {
-      node {
-        id
-        name
-        description
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -170,7 +151,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '436b67cd01bac0f3051e5f3edb4ce21f';
 
-module.exports = node;
+(node/*: any*/).hash = "436b67cd01bac0f3051e5f3edb4ce21f";
+
+module.exports = ((node/*: any*/)/*: Query<
+  OrganizationTypeaheadQuery$variables,
+  OrganizationTypeaheadQuery$data,
+>*/);

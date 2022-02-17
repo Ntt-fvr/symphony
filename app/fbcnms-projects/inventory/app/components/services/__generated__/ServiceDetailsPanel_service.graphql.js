@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ba1d2cdb8c2cf7d3c1e87823831877a8>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,17 +10,17 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type ServiceDetailsPanel_service$ref: FragmentReference;
-declare export opaque type ServiceDetailsPanel_service$fragmentType: ServiceDetailsPanel_service$ref;
-export type ServiceDetailsPanel_service = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type ServiceDetailsPanel_service$fragmentType: FragmentType;
+export type ServiceDetailsPanel_service$ref = ServiceDetailsPanel_service$fragmentType;
+export type ServiceDetailsPanel_service$data = {|
   +id: string,
   +name: string,
   +externalId: ?string,
   +customer: ?{|
-    +name: string
+    +name: string,
   |},
   +serviceType: {|
     +id: string,
@@ -71,18 +68,17 @@ export type ServiceDetailsPanel_service = {|
       +name: string,
     |},
   |}>,
-  +$refType: ServiceDetailsPanel_service$ref,
+  +$fragmentType: ServiceDetailsPanel_service$fragmentType,
 |};
-export type ServiceDetailsPanel_service$data = ServiceDetailsPanel_service;
+export type ServiceDetailsPanel_service = ServiceDetailsPanel_service$data;
 export type ServiceDetailsPanel_service$key = {
   +$data?: ServiceDetailsPanel_service$data,
-  +$fragmentRefs: ServiceDetailsPanel_service$ref,
+  +$fragmentSpreads: ServiceDetailsPanel_service$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -316,7 +312,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '39439285ff6128595bf98f4f3032fcd2';
 
-module.exports = node;
+(node/*: any*/).hash = "39439285ff6128595bf98f4f3032fcd2";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  ServiceDetailsPanel_service$fragmentType,
+  ServiceDetailsPanel_service$data,
+>*/);

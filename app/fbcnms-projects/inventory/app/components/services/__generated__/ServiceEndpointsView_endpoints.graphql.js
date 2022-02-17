@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<b3c7d0abcb5c5714d0fa8a06daf0318f>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,17 +10,17 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type ServiceEndpointsView_endpoints$ref: FragmentReference;
-declare export opaque type ServiceEndpointsView_endpoints$fragmentType: ServiceEndpointsView_endpoints$ref;
-export type ServiceEndpointsView_endpoints = $ReadOnlyArray<{|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type ServiceEndpointsView_endpoints$fragmentType: FragmentType;
+export type ServiceEndpointsView_endpoints$ref = ServiceEndpointsView_endpoints$fragmentType;
+export type ServiceEndpointsView_endpoints$data = $ReadOnlyArray<{|
   +id: string,
   +port: ?{|
     +parentEquipment: {|
       +name: string,
-      +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+      +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
     |},
     +definition: {|
       +id: string,
@@ -32,24 +29,23 @@ export type ServiceEndpointsView_endpoints = $ReadOnlyArray<{|
   |},
   +equipment: {|
     +name: string,
-    +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+    +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
   |},
   +definition: {|
     +name: string,
     +role: ?string,
   |},
-  +$refType: ServiceEndpointsView_endpoints$ref,
+  +$fragmentType: ServiceEndpointsView_endpoints$fragmentType,
 |}>;
-export type ServiceEndpointsView_endpoints$data = ServiceEndpointsView_endpoints;
+export type ServiceEndpointsView_endpoints = ServiceEndpointsView_endpoints$data;
 export type ServiceEndpointsView_endpoints$key = $ReadOnlyArray<{
   +$data?: ServiceEndpointsView_endpoints$data,
-  +$fragmentRefs: ServiceEndpointsView_endpoints$ref,
+  +$fragmentSpreads: ServiceEndpointsView_endpoints$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -149,7 +145,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'c9bdfa0f5793f7884b71103e23e3c420';
 
-module.exports = node;
+(node/*: any*/).hash = "c9bdfa0f5793f7884b71103e23e3c420";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  ServiceEndpointsView_endpoints$fragmentType,
+  ServiceEndpointsView_endpoints$data,
+>*/);

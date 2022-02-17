@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<2992febdec1025495b70cc44c2f543b9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type UserFilterType = "USER_NAME" | "USER_ORGANIZATION" | "USER_STATUS" | "%future added value";
-export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+export type PermissionValue = "YES" | "NO" | "BY_CONDITION" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type UserFilterType = "USER_NAME" | "USER_STATUS" | "USER_ORGANIZATION" | "%future added value";
+export type UserRole = "USER" | "ADMIN" | "OWNER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UserFilterInput = {|
@@ -54,10 +51,11 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type UsersByOrganizationQueryVariables = {|
-  filterBy?: ?$ReadOnlyArray<UserFilterInput>
+export type UsersByOrganizationQuery$variables = {|
+  filterBy?: ?$ReadOnlyArray<UserFilterInput>,
 |};
-export type UsersByOrganizationQueryResponse = {|
+export type UsersByOrganizationQueryVariables = UsersByOrganizationQuery$variables;
+export type UsersByOrganizationQuery$data = {|
   +users: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -100,7 +98,7 @@ export type UsersByOrganizationQueryResponse = {|
             +policy: {|
               +__typename: "InventoryPolicy",
               +read: {|
-                +isAllowed: PermissionValue
+                +isAllowed: PermissionValue,
               |},
               +propertyCategory: {|
                 +read: ?{|
@@ -141,69 +139,69 @@ export type UsersByOrganizationQueryResponse = {|
               |},
               +location: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
                   +isAllowed: PermissionValue,
                   +locationTypeIds: ?$ReadOnlyArray<string>,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
               +equipment: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
               +equipmentType: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
               +locationType: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
               +portType: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
               +serviceType: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
             |} | {|
@@ -216,250 +214,51 @@ export type UsersByOrganizationQueryResponse = {|
               |},
               +templates: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
               +data: {|
                 +create: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +update: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +delete: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +assign: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
                 +transferOwnership: {|
-                  +isAllowed: PermissionValue
+                  +isAllowed: PermissionValue,
                 |},
               |},
             |} | {|
               // This will never be '%other', but we need some
               // value in case none of the concrete values match.
-              +__typename: "%other"
+              +__typename: "%other",
             |},
           |}>,
         |}>,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type UsersByOrganizationQueryResponse = UsersByOrganizationQuery$data;
 export type UsersByOrganizationQuery = {|
   variables: UsersByOrganizationQueryVariables,
-  response: UsersByOrganizationQueryResponse,
+  response: UsersByOrganizationQuery$data,
 |};
 */
 
-
-/*
-query UsersByOrganizationQuery(
-  $filterBy: [UserFilterInput!]
-) {
-  users(filterBy: $filterBy) {
-    edges {
-      node {
-        id
-        authID
-        firstName
-        lastName
-        email
-        status
-        role
-        organizationFk {
-          id
-          name
-          description
-        }
-        groups {
-          id
-          name
-          description
-          status
-          members {
-            id
-            authID
-            firstName
-            lastName
-            email
-            status
-            role
-            organizationFk {
-              id
-              name
-              description
-            }
-          }
-          policies {
-            id
-            name
-            description
-            isGlobal
-            policy {
-              __typename
-              ... on InventoryPolicy {
-                read {
-                  isAllowed
-                }
-                propertyCategory {
-                  read {
-                    isAllowed
-                    propertyCategoryIds
-                  }
-                  create {
-                    isAllowed
-                    propertyCategoryIds
-                  }
-                  update {
-                    isAllowed
-                    propertyCategoryIds
-                  }
-                  delete {
-                    isAllowed
-                    propertyCategoryIds
-                  }
-                }
-                documentCategory {
-                  locationTypeID
-                  read {
-                    isAllowed
-                    documentCategoryIds
-                  }
-                  create {
-                    isAllowed
-                    documentCategoryIds
-                  }
-                  update {
-                    isAllowed
-                    documentCategoryIds
-                  }
-                  delete {
-                    isAllowed
-                    documentCategoryIds
-                  }
-                }
-                location {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                    locationTypeIds
-                  }
-                  delete {
-                    isAllowed
-                  }
-                }
-                equipment {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                  }
-                  delete {
-                    isAllowed
-                  }
-                }
-                equipmentType {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                  }
-                  delete {
-                    isAllowed
-                  }
-                }
-                locationType {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                  }
-                  delete {
-                    isAllowed
-                  }
-                }
-                portType {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                  }
-                  delete {
-                    isAllowed
-                  }
-                }
-                serviceType {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                  }
-                  delete {
-                    isAllowed
-                  }
-                }
-              }
-              ... on WorkforcePolicy {
-                read {
-                  isAllowed
-                  projectTypeIds
-                  workOrderTypeIds
-                  organizationIds
-                }
-                templates {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                  }
-                  delete {
-                    isAllowed
-                  }
-                }
-                data {
-                  create {
-                    isAllowed
-                  }
-                  update {
-                    isAllowed
-                  }
-                  delete {
-                    isAllowed
-                  }
-                  assign {
-                    isAllowed
-                  }
-                  transferOwnership {
-                    isAllowed
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -1092,7 +891,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0ba1e57e092127651cffe4bc5dfe8e4a';
 
-module.exports = node;
+(node/*: any*/).hash = "0ba1e57e092127651cffe4bc5dfe8e4a";
+
+module.exports = ((node/*: any*/)/*: Query<
+  UsersByOrganizationQuery$variables,
+  UsersByOrganizationQuery$data,
+>*/);

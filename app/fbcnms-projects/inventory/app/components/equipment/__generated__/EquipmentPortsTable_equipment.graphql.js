@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<6e728a4193e85ea9c98fd7e32dc5174a>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,15 +10,15 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$ref = any;
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$fragmentType = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type EquipmentPortsTable_equipment$ref: FragmentReference;
-declare export opaque type EquipmentPortsTable_equipment$fragmentType: EquipmentPortsTable_equipment$ref;
-export type EquipmentPortsTable_equipment = {|
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type EquipmentPortsTable_equipment$fragmentType: FragmentType;
+export type EquipmentPortsTable_equipment$ref = EquipmentPortsTable_equipment$fragmentType;
+export type EquipmentPortsTable_equipment$data = {|
   +id: string,
   +name: string,
   +equipmentType: {|
@@ -167,7 +164,7 @@ export type EquipmentPortsTable_equipment = {|
               +isMandatory: ?boolean,
               +category: ?string,
               +isDeleted: ?boolean,
-            |}>
+            |}>,
           |},
         |},
         +parentEquipment: {|
@@ -178,14 +175,14 @@ export type EquipmentPortsTable_equipment = {|
             +id: string,
             +name: string,
           |},
-          +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+          +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
         |},
         +serviceEndpoints: $ReadOnlyArray<{|
           +definition: {|
-            +role: ?string
+            +role: ?string,
           |},
           +service: {|
-            +name: string
+            +name: string,
           |},
         |}>,
       |}>,
@@ -270,10 +267,10 @@ export type EquipmentPortsTable_equipment = {|
     |}>,
     +serviceEndpoints: $ReadOnlyArray<{|
       +definition: {|
-        +role: ?string
+        +role: ?string,
       |},
       +service: {|
-        +name: string
+        +name: string,
       |},
     |}>,
   |}>,
@@ -370,7 +367,7 @@ export type EquipmentPortsTable_equipment = {|
                   +isMandatory: ?boolean,
                   +category: ?string,
                   +isDeleted: ?boolean,
-                |}>
+                |}>,
               |},
             |},
             +parentEquipment: {|
@@ -381,14 +378,14 @@ export type EquipmentPortsTable_equipment = {|
                 +id: string,
                 +name: string,
               |},
-              +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+              +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
             |},
             +serviceEndpoints: $ReadOnlyArray<{|
               +definition: {|
-                +role: ?string
+                +role: ?string,
               |},
               +service: {|
-                +name: string
+                +name: string,
               |},
             |}>,
           |}>,
@@ -473,10 +470,10 @@ export type EquipmentPortsTable_equipment = {|
         |}>,
         +serviceEndpoints: $ReadOnlyArray<{|
           +definition: {|
-            +role: ?string
+            +role: ?string,
           |},
           +service: {|
-            +name: string
+            +name: string,
           |},
         |}>,
       |}>,
@@ -486,7 +483,7 @@ export type EquipmentPortsTable_equipment = {|
           +name: string,
           +visibleLabel: ?string,
           +bandwidth: ?string,
-        |}>
+        |}>,
       |},
       +positions: $ReadOnlyArray<?{|
         +attachedEquipment: ?{|
@@ -581,7 +578,7 @@ export type EquipmentPortsTable_equipment = {|
                       +isMandatory: ?boolean,
                       +category: ?string,
                       +isDeleted: ?boolean,
-                    |}>
+                    |}>,
                   |},
                 |},
                 +parentEquipment: {|
@@ -592,14 +589,14 @@ export type EquipmentPortsTable_equipment = {|
                     +id: string,
                     +name: string,
                   |},
-                  +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+                  +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
                 |},
                 +serviceEndpoints: $ReadOnlyArray<{|
                   +definition: {|
-                    +role: ?string
+                    +role: ?string,
                   |},
                   +service: {|
-                    +name: string
+                    +name: string,
                   |},
                 |}>,
               |}>,
@@ -684,10 +681,10 @@ export type EquipmentPortsTable_equipment = {|
             |}>,
             +serviceEndpoints: $ReadOnlyArray<{|
               +definition: {|
-                +role: ?string
+                +role: ?string,
               |},
               +service: {|
-                +name: string
+                +name: string,
               |},
             |}>,
           |}>,
@@ -697,7 +694,7 @@ export type EquipmentPortsTable_equipment = {|
               +name: string,
               +visibleLabel: ?string,
               +bandwidth: ?string,
-            |}>
+            |}>,
           |},
           +positions: $ReadOnlyArray<?{|
             +attachedEquipment: ?{|
@@ -792,7 +789,7 @@ export type EquipmentPortsTable_equipment = {|
                           +isMandatory: ?boolean,
                           +category: ?string,
                           +isDeleted: ?boolean,
-                        |}>
+                        |}>,
                       |},
                     |},
                     +parentEquipment: {|
@@ -803,14 +800,14 @@ export type EquipmentPortsTable_equipment = {|
                         +id: string,
                         +name: string,
                       |},
-                      +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+                      +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
                     |},
                     +serviceEndpoints: $ReadOnlyArray<{|
                       +definition: {|
-                        +role: ?string
+                        +role: ?string,
                       |},
                       +service: {|
-                        +name: string
+                        +name: string,
                       |},
                     |}>,
                   |}>,
@@ -895,10 +892,10 @@ export type EquipmentPortsTable_equipment = {|
                 |}>,
                 +serviceEndpoints: $ReadOnlyArray<{|
                   +definition: {|
-                    +role: ?string
+                    +role: ?string,
                   |},
                   +service: {|
-                    +name: string
+                    +name: string,
                   |},
                 |}>,
               |}>,
@@ -908,7 +905,7 @@ export type EquipmentPortsTable_equipment = {|
                   +name: string,
                   +visibleLabel: ?string,
                   +bandwidth: ?string,
-                |}>
+                |}>,
               |},
               +positions: $ReadOnlyArray<?{|
                 +attachedEquipment: ?{|
@@ -1003,7 +1000,7 @@ export type EquipmentPortsTable_equipment = {|
                               +isMandatory: ?boolean,
                               +category: ?string,
                               +isDeleted: ?boolean,
-                            |}>
+                            |}>,
                           |},
                         |},
                         +parentEquipment: {|
@@ -1014,14 +1011,14 @@ export type EquipmentPortsTable_equipment = {|
                             +id: string,
                             +name: string,
                           |},
-                          +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+                          +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
                         |},
                         +serviceEndpoints: $ReadOnlyArray<{|
                           +definition: {|
-                            +role: ?string
+                            +role: ?string,
                           |},
                           +service: {|
-                            +name: string
+                            +name: string,
                           |},
                         |}>,
                       |}>,
@@ -1106,10 +1103,10 @@ export type EquipmentPortsTable_equipment = {|
                     |}>,
                     +serviceEndpoints: $ReadOnlyArray<{|
                       +definition: {|
-                        +role: ?string
+                        +role: ?string,
                       |},
                       +service: {|
-                        +name: string
+                        +name: string,
                       |},
                     |}>,
                   |}>,
@@ -1119,28 +1116,27 @@ export type EquipmentPortsTable_equipment = {|
                       +name: string,
                       +visibleLabel: ?string,
                       +bandwidth: ?string,
-                    |}>
+                    |}>,
                   |},
-                |}
+                |},
               |}>,
-            |}
+            |},
           |}>,
-        |}
+        |},
       |}>,
-    |}
+    |},
   |}>,
-  +$refType: EquipmentPortsTable_equipment$ref,
+  +$fragmentType: EquipmentPortsTable_equipment$fragmentType,
 |};
-export type EquipmentPortsTable_equipment$data = EquipmentPortsTable_equipment;
+export type EquipmentPortsTable_equipment = EquipmentPortsTable_equipment$data;
 export type EquipmentPortsTable_equipment$key = {
   +$data?: EquipmentPortsTable_equipment$data,
-  +$fragmentRefs: EquipmentPortsTable_equipment$ref,
+  +$fragmentSpreads: EquipmentPortsTable_equipment$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -1742,7 +1738,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '3f850609f4f8209cb2e0623956b8386b';
 
-module.exports = node;
+(node/*: any*/).hash = "3f850609f4f8209cb2e0623956b8386b";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  EquipmentPortsTable_equipment$fragmentType,
+  EquipmentPortsTable_equipment$data,
+>*/);

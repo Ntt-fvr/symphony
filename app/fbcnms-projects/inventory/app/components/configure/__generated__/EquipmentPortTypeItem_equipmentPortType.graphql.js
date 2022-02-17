@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ef879d28a640cbdd2f843e028bec96be>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,33 +10,32 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type DynamicPropertyTypesGrid_propertyTypes$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type EquipmentPortTypeItem_equipmentPortType$ref: FragmentReference;
-declare export opaque type EquipmentPortTypeItem_equipmentPortType$fragmentType: EquipmentPortTypeItem_equipmentPortType$ref;
-export type EquipmentPortTypeItem_equipmentPortType = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type DynamicPropertyTypesGrid_propertyTypes$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type EquipmentPortTypeItem_equipmentPortType$fragmentType: FragmentType;
+export type EquipmentPortTypeItem_equipmentPortType$ref = EquipmentPortTypeItem_equipmentPortType$fragmentType;
+export type EquipmentPortTypeItem_equipmentPortType$data = {|
   +id: string,
   +name: string,
   +numberOfPortDefinitions: number,
   +propertyTypes: $ReadOnlyArray<?{|
-    +$fragmentRefs: DynamicPropertyTypesGrid_propertyTypes$ref
+    +$fragmentSpreads: DynamicPropertyTypesGrid_propertyTypes$fragmentType,
   |}>,
   +linkPropertyTypes: $ReadOnlyArray<?{|
-    +$fragmentRefs: DynamicPropertyTypesGrid_propertyTypes$ref
+    +$fragmentSpreads: DynamicPropertyTypesGrid_propertyTypes$fragmentType,
   |}>,
-  +$refType: EquipmentPortTypeItem_equipmentPortType$ref,
+  +$fragmentType: EquipmentPortTypeItem_equipmentPortType$fragmentType,
 |};
-export type EquipmentPortTypeItem_equipmentPortType$data = EquipmentPortTypeItem_equipmentPortType;
+export type EquipmentPortTypeItem_equipmentPortType = EquipmentPortTypeItem_equipmentPortType$data;
 export type EquipmentPortTypeItem_equipmentPortType$key = {
   +$data?: EquipmentPortTypeItem_equipmentPortType$data,
-  +$fragmentRefs: EquipmentPortTypeItem_equipmentPortType$ref,
+  +$fragmentSpreads: EquipmentPortTypeItem_equipmentPortType$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = [
   {
     "args": null,
@@ -99,7 +95,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '64680fb091846a1ed120759b8199a89c';
 
-module.exports = node;
+(node/*: any*/).hash = "64680fb091846a1ed120759b8199a89c";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  EquipmentPortTypeItem_equipmentPortType$fragmentType,
+  EquipmentPortTypeItem_equipmentPortType$data,
+>*/);

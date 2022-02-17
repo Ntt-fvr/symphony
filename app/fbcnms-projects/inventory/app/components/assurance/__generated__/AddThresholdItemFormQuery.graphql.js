@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<7fdcc9ed729495fd06e24071a3c00da9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type AddThresholdItemFormQueryVariables = {||};
-export type AddThresholdItemFormQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type AddThresholdItemFormQuery$variables = {||};
+export type AddThresholdItemFormQueryVariables = AddThresholdItemFormQuery$variables;
+export type AddThresholdItemFormQuery$data = {|
   +kpis: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type AddThresholdItemFormQueryResponse = AddThresholdItemFormQuery$data;
 export type AddThresholdItemFormQuery = {|
   variables: AddThresholdItemFormQueryVariables,
-  response: AddThresholdItemFormQueryResponse,
+  response: AddThresholdItemFormQuery$data,
 |};
 */
 
-
-/*
-query AddThresholdItemFormQuery {
-  kpis {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -122,7 +107,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'ddec98e7f7695cb7526c0b586fe52e17';
 
-module.exports = node;
+(node/*: any*/).hash = "ddec98e7f7695cb7526c0b586fe52e17";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AddThresholdItemFormQuery$variables,
+  AddThresholdItemFormQuery$data,
+>*/);

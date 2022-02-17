@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<61ae72e93f2976a105a0b3662e76ff83>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,55 +10,35 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type AddCounterItemFormQueryVariables = {||};
-export type AddCounterItemFormQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type AddCounterItemFormQuery$variables = {||};
+export type AddCounterItemFormQueryVariables = AddCounterItemFormQuery$variables;
+export type AddCounterItemFormQuery$data = {|
   +counterFamilies: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +vendors: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
 |};
+export type AddCounterItemFormQueryResponse = AddCounterItemFormQuery$data;
 export type AddCounterItemFormQuery = {|
   variables: AddCounterItemFormQueryVariables,
-  response: AddCounterItemFormQueryResponse,
+  response: AddCounterItemFormQuery$data,
 |};
 */
 
-
-/*
-query AddCounterItemFormQuery {
-  counterFamilies {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-  vendors {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -171,7 +148,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '604a6fea0a9c6a72f33a8301c60b3fb4';
 
-module.exports = node;
+(node/*: any*/).hash = "604a6fea0a9c6a72f33a8301c60b3fb4";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AddCounterItemFormQuery$variables,
+  AddCounterItemFormQuery$data,
+>*/);

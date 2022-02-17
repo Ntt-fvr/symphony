@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<699f9673a9ffc8c521a53fd3a84340b9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,14 +10,14 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type SiteSurveyQuestionReplyCellData_data$ref = any;
-type SiteSurveyQuestionReplyWifiData_data$ref = any;
-export type SurveyQuestionType = "BOOL" | "CELLULAR" | "COORDS" | "DATE" | "EMAIL" | "FLOAT" | "INTEGER" | "PHONE" | "PHOTO" | "TEXT" | "TEXTAREA" | "WIFI" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type SiteSurveyQuestionReply_question$ref: FragmentReference;
-declare export opaque type SiteSurveyQuestionReply_question$fragmentType: SiteSurveyQuestionReply_question$ref;
-export type SiteSurveyQuestionReply_question = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type SiteSurveyQuestionReplyCellData_data$fragmentType = any;
+type SiteSurveyQuestionReplyWifiData_data$fragmentType = any;
+export type SurveyQuestionType = "BOOL" | "EMAIL" | "COORDS" | "PHONE" | "TEXT" | "TEXTAREA" | "PHOTO" | "WIFI" | "CELLULAR" | "FLOAT" | "INTEGER" | "DATE" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type SiteSurveyQuestionReply_question$fragmentType: FragmentType;
+export type SiteSurveyQuestionReply_question$ref = SiteSurveyQuestionReply_question$fragmentType;
+export type SiteSurveyQuestionReply_question$data = {|
   +questionFormat: ?SurveyQuestionType,
   +longitude: ?number,
   +latitude: ?number,
@@ -32,21 +29,20 @@ export type SiteSurveyQuestionReply_question = {|
   +intData: ?number,
   +dateData: ?number,
   +photoData: ?{|
-    +storeKey: ?string
+    +storeKey: ?string,
   |},
-  +$fragmentRefs: SiteSurveyQuestionReplyWifiData_data$ref & SiteSurveyQuestionReplyCellData_data$ref,
-  +$refType: SiteSurveyQuestionReply_question$ref,
+  +$fragmentSpreads: SiteSurveyQuestionReplyWifiData_data$fragmentType & SiteSurveyQuestionReplyCellData_data$fragmentType,
+  +$fragmentType: SiteSurveyQuestionReply_question$fragmentType,
 |};
-export type SiteSurveyQuestionReply_question$data = SiteSurveyQuestionReply_question;
+export type SiteSurveyQuestionReply_question = SiteSurveyQuestionReply_question$data;
 export type SiteSurveyQuestionReply_question$key = {
   +$data?: SiteSurveyQuestionReply_question$data,
-  +$fragmentRefs: SiteSurveyQuestionReply_question$ref,
+  +$fragmentSpreads: SiteSurveyQuestionReply_question$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -154,7 +150,10 @@ const node/*: ReaderFragment*/ = {
   "type": "SurveyQuestion",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = '4d9d45828bc4b9296fdd9b8347017e18';
 
-module.exports = node;
+(node/*: any*/).hash = "4d9d45828bc4b9296fdd9b8347017e18";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  SiteSurveyQuestionReply_question$fragmentType,
+  SiteSurveyQuestionReply_question$data,
+>*/);

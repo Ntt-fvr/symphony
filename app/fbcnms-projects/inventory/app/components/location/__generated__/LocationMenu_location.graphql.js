@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<4ed497173a3153dd18c8257645333497>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,46 +10,45 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type LocationMenu_location$ref: FragmentReference;
-declare export opaque type LocationMenu_location$fragmentType: LocationMenu_location$ref;
-export type LocationMenu_location = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type LocationMenu_location$fragmentType: FragmentType;
+export type LocationMenu_location$ref = LocationMenu_location$fragmentType;
+export type LocationMenu_location$data = {|
   +id: string,
   +name: string,
   +locationType: {|
-    +id: string
+    +id: string,
   |},
   +parentLocation: ?{|
-    +id: string
+    +id: string,
   |},
   +children: $ReadOnlyArray<?{|
-    +id: string
+    +id: string,
   |}>,
   +equipments: $ReadOnlyArray<?{|
-    +id: string
+    +id: string,
   |}>,
   +images: $ReadOnlyArray<?{|
-    +id: string
+    +id: string,
   |}>,
   +files: $ReadOnlyArray<?{|
-    +id: string
+    +id: string,
   |}>,
   +surveys: $ReadOnlyArray<?{|
-    +id: string
+    +id: string,
   |}>,
-  +$refType: LocationMenu_location$ref,
+  +$fragmentType: LocationMenu_location$fragmentType,
 |};
-export type LocationMenu_location$data = LocationMenu_location;
+export type LocationMenu_location = LocationMenu_location$data;
 export type LocationMenu_location$key = {
   +$data?: LocationMenu_location$data,
-  +$fragmentRefs: LocationMenu_location$ref,
+  +$fragmentSpreads: LocationMenu_location$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -152,7 +148,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '4155d2d7cef7ceef7b79a4639755fec9';
 
-module.exports = node;
+(node/*: any*/).hash = "4155d2d7cef7ceef7b79a4639755fec9";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  LocationMenu_location$fragmentType,
+  LocationMenu_location$data,
+>*/);

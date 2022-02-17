@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<41131ccd328f9b30c8be7f15782d44c8>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,55 +10,35 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type AddKpiItemFormQueryVariables = {||};
-export type AddKpiItemFormQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type AddKpiItemFormQuery$variables = {||};
+export type AddKpiItemFormQueryVariables = AddKpiItemFormQuery$variables;
+export type AddKpiItemFormQuery$data = {|
   +domains: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +kpiCategories: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
 |};
+export type AddKpiItemFormQueryResponse = AddKpiItemFormQuery$data;
 export type AddKpiItemFormQuery = {|
   variables: AddKpiItemFormQueryVariables,
-  response: AddKpiItemFormQueryResponse,
+  response: AddKpiItemFormQuery$data,
 |};
 */
 
-
-/*
-query AddKpiItemFormQuery {
-  domains {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-  kpiCategories {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -171,7 +148,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'd2a79148942321c79becab0350370027';
 
-module.exports = node;
+(node/*: any*/).hash = "d2a79148942321c79becab0350370027";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AddKpiItemFormQuery$variables,
+  AddKpiItemFormQuery$data,
+>*/);

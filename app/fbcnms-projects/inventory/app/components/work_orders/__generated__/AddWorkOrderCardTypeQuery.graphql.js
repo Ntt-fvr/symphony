@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<c876aa9b32f432858ee07eda9940ec83>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,14 +10,15 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
-export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type AddWorkOrderCardTypeQueryVariables = {|
-  workOrderTypeId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type CheckListItemEnumSelectionMode = "single" | "multiple" | "%future added value";
+export type CheckListItemType = "simple" | "string" | "enum" | "files" | "yes_no" | "cell_scan" | "wifi_scan" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type AddWorkOrderCardTypeQuery$variables = {|
+  workOrderTypeId: string,
 |};
-export type AddWorkOrderCardTypeQueryResponse = {|
+export type AddWorkOrderCardTypeQueryVariables = AddWorkOrderCardTypeQuery$variables;
+export type AddWorkOrderCardTypeQuery$data = {|
   +workOrderType: ?({|
     +__typename: "WorkOrderType",
     +id: string,
@@ -64,68 +62,17 @@ export type AddWorkOrderCardTypeQueryResponse = {|
   |} | {|
     // This will never be '%other', but we need some
     // value in case none of the concrete values match.
-    +__typename: "%other"
-  |})
+    +__typename: "%other",
+  |}),
 |};
+export type AddWorkOrderCardTypeQueryResponse = AddWorkOrderCardTypeQuery$data;
 export type AddWorkOrderCardTypeQuery = {|
   variables: AddWorkOrderCardTypeQueryVariables,
-  response: AddWorkOrderCardTypeQueryResponse,
+  response: AddWorkOrderCardTypeQuery$data,
 |};
 */
 
-
-/*
-query AddWorkOrderCardTypeQuery(
-  $workOrderTypeId: ID!
-) {
-  workOrderType: node(id: $workOrderTypeId) {
-    __typename
-    ... on WorkOrderType {
-      id
-      name
-      description
-      propertyTypes {
-        id
-        name
-        type
-        nodeType
-        index
-        stringValue
-        intValue
-        booleanValue
-        floatValue
-        latitudeValue
-        longitudeValue
-        rangeFromValue
-        rangeToValue
-        isEditable
-        isMandatory
-        isInstanceProperty
-        isDeleted
-        category
-      }
-      checkListCategoryDefinitions {
-        id
-        title
-        description
-        checklistItemDefinitions {
-          id
-          title
-          type
-          index
-          isMandatory
-          enumValues
-          enumSelectionMode
-          helpText
-        }
-      }
-    }
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -431,7 +378,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '71720ce40481c01032b4209507a3c1bf';
 
-module.exports = node;
+(node/*: any*/).hash = "71720ce40481c01032b4209507a3c1bf";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AddWorkOrderCardTypeQuery$variables,
+  AddWorkOrderCardTypeQuery$data,
+>*/);

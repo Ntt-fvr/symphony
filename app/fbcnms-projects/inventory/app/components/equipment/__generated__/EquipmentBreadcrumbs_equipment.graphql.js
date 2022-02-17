@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<215521bf1a002058e7313d2da0973c12>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,11 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type EquipmentBreadcrumbs_equipment$ref: FragmentReference;
-declare export opaque type EquipmentBreadcrumbs_equipment$fragmentType: EquipmentBreadcrumbs_equipment$ref;
-export type EquipmentBreadcrumbs_equipment = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type EquipmentBreadcrumbs_equipment$fragmentType: FragmentType;
+export type EquipmentBreadcrumbs_equipment$ref = EquipmentBreadcrumbs_equipment$fragmentType;
+export type EquipmentBreadcrumbs_equipment$data = {|
   +id: string,
   +name: string,
   +equipmentType: {|
@@ -28,7 +25,7 @@ export type EquipmentBreadcrumbs_equipment = {|
     +id: string,
     +name: string,
     +locationType: {|
-      +name: string
+      +name: string,
     |},
   |}>,
   +positionHierarchy: $ReadOnlyArray<{|
@@ -47,18 +44,17 @@ export type EquipmentBreadcrumbs_equipment = {|
       |},
     |},
   |}>,
-  +$refType: EquipmentBreadcrumbs_equipment$ref,
+  +$fragmentType: EquipmentBreadcrumbs_equipment$fragmentType,
 |};
-export type EquipmentBreadcrumbs_equipment$data = EquipmentBreadcrumbs_equipment;
+export type EquipmentBreadcrumbs_equipment = EquipmentBreadcrumbs_equipment$data;
 export type EquipmentBreadcrumbs_equipment$key = {
   +$data?: EquipmentBreadcrumbs_equipment$data,
-  +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+  +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -171,7 +167,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '16aecc58a50e73e65b4a6094e719a457';
 
-module.exports = node;
+(node/*: any*/).hash = "16aecc58a50e73e65b4a6094e719a457";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  EquipmentBreadcrumbs_equipment$fragmentType,
+  EquipmentBreadcrumbs_equipment$data,
+>*/);

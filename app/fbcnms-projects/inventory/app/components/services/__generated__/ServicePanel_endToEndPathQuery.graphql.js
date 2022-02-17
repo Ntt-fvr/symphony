@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<2a0b365bce8ed4ebd8852c288b4206d0>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,45 +10,30 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type ServicePanel_endToEndPathQueryVariables = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type ServicePanel_endToEndPathQuery$variables = {|
   linkId?: ?string,
   portId?: ?string,
 |};
-export type ServicePanel_endToEndPathQueryResponse = {|
+export type ServicePanel_endToEndPathQueryVariables = ServicePanel_endToEndPathQuery$variables;
+export type ServicePanel_endToEndPathQuery$data = {|
   +endToEndPath: ?{|
     +links: ?$ReadOnlyArray<?{|
-      +id: string
+      +id: string,
     |}>,
     +ports: ?$ReadOnlyArray<?{|
-      +id: string
+      +id: string,
     |}>,
-  |}
+  |},
 |};
+export type ServicePanel_endToEndPathQueryResponse = ServicePanel_endToEndPathQuery$data;
 export type ServicePanel_endToEndPathQuery = {|
   variables: ServicePanel_endToEndPathQueryVariables,
-  response: ServicePanel_endToEndPathQueryResponse,
+  response: ServicePanel_endToEndPathQuery$data,
 |};
 */
 
-
-/*
-query ServicePanel_endToEndPathQuery(
-  $linkId: ID
-  $portId: ID
-) {
-  endToEndPath(portId: $portId, linkId: $linkId) {
-    links {
-      id
-    }
-    ports {
-      id
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -144,7 +126,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '1cf02ecc40f77f71d02dc6f829acb5c5';
 
-module.exports = node;
+(node/*: any*/).hash = "1cf02ecc40f77f71d02dc6f829acb5c5";
+
+module.exports = ((node/*: any*/)/*: Query<
+  ServicePanel_endToEndPathQuery$variables,
+  ServicePanel_endToEndPathQuery$data,
+>*/);

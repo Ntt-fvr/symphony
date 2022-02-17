@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<dabc92175304792f348de22c0d411c69>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type EditAlarmFilterInput = {|
   id: string,
   name: string,
@@ -24,10 +21,11 @@ export type EditAlarmFilterInput = {|
   reason: string,
   alarmStatus?: ?string,
 |};
-export type EditAlarmFilterMutationVariables = {|
-  input: EditAlarmFilterInput
+export type EditAlarmFilterMutation$variables = {|
+  input: EditAlarmFilterInput,
 |};
-export type EditAlarmFilterMutationResponse = {|
+export type EditAlarmFilterMutationVariables = EditAlarmFilterMutation$variables;
+export type EditAlarmFilterMutation$data = {|
   +editAlarmFilter: {|
     +id: string,
     +name: string,
@@ -42,38 +40,16 @@ export type EditAlarmFilterMutationResponse = {|
       +id: string,
       +name: string,
     |},
-  |}
+  |},
 |};
+export type EditAlarmFilterMutationResponse = EditAlarmFilterMutation$data;
 export type EditAlarmFilterMutation = {|
   variables: EditAlarmFilterMutationVariables,
-  response: EditAlarmFilterMutationResponse,
+  response: EditAlarmFilterMutation$data,
 |};
 */
 
-
-/*
-mutation EditAlarmFilterMutation(
-  $input: EditAlarmFilterInput!
-) {
-  editAlarmFilter(input: $input) {
-    id
-    name
-    networkResource
-    enable
-    beginTime
-    endTime
-    reason
-    user
-    creationTime
-    alarmStatus {
-      id
-      name
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -205,7 +181,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0a20c588592154748afe26dc27d5edcf';
 
-module.exports = node;
+(node/*: any*/).hash = "0a20c588592154748afe26dc27d5edcf";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditAlarmFilterMutation$variables,
+  EditAlarmFilterMutation$data,
+>*/);
