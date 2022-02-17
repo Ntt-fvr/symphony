@@ -93,26 +93,26 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const EditResourceTypeQuery = graphql`
-  query EditResourceTypeItemQuery {
-    resourceTypeClasses {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-    resourceTypeBaseTypes {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
+// const EditResourceTypeQuery = graphql`
+//   query EditResourceTypeItemQuery {
+//     resourceTypeClass {
+//       edges {
+//         node {
+//           id
+//           name
+//         }
+//       }
+//     }
+//     resourceTypeBaseTypes {
+//       edges {
+//         node {
+//           id
+//           name
+//         }
+//       }
+//     }
+//   }
+// `;
 
 type Resource = {
   name: string,
@@ -326,7 +326,7 @@ export const EditResourceTypeItem = (props: Props) => {
                   type="string"
                   fullWidth
                   {...resourceTypeClass}>
-                  {data.resourceTypeClasses.edges.map((item, index) => (
+                  {data.resourceTypeClass.edges.map((item, index) => (
                     <MenuItem key={index} value={item.node?.id}>
                       {item.node?.name}
                     </MenuItem>

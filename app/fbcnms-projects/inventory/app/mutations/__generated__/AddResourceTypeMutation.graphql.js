@@ -14,10 +14,12 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ResourceTypeBaseTypeKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "%future added value";
+export type ResourceTypeClassKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
 export type AddResourceTypeInput = {|
   name: string,
-  resourceTypeBaseType: string,
-  resourceTypeClass: string,
+  resourceTypeBaseType: ResourceTypeBaseTypeKind,
+  resourceTypeClass: ResourceTypeClassKind,
 |};
 export type AddResourceTypeMutationVariables = {|
   input: AddResourceTypeInput

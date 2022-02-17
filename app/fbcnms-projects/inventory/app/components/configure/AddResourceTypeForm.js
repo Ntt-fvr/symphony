@@ -13,9 +13,6 @@ import React, {useMemo, useState} from 'react';
 // COMPONENTS //
 import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMessage';
 
-// MUTATIONS //
-import type {AddResourceTypeFormQuery} from './__generated__/AddResourceTypeFormQuery.graphql';
-
 import type {AddResourceTypeMutationVariables} from '../../mutations/__generated__/AddResourceTypeMutation.graphql';
 
 // DESIGN SYSTEM //
@@ -26,34 +23,14 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
-import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 import AddResourceTypeMutation from '../../mutations/AddResourceTypeMutation';
 
-import {useDisabledButton} from './../assurance/common/useDisabledButton';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
+import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 
-const AddResourcesQuery = graphql`
-  query AddResourceTypeFormQuery {
-    resourceTypeClasses {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-    resourceTypeBaseTypes {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
+import {useDisabledButton} from './../assurance/common/useDisabledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -115,26 +92,22 @@ type Node = {
 type Props = $ReadOnly<{|
   isCompleted: void => void,
   resourceNames?: Array<Node>,
+  dataSelector: any,
 |}>;
 
 type Resources = {
   data: {
     name: string,
-    class: string,
-    resourceTypeClass: string,
+    resourceTypeclass: ResourceTypeClassKind,
+    resourceTypeBaseType: ResourceTypeBaseTypeKind,
   },
 };
 
 export default function AddResourceTypeForm(props: Props) {
-  const {isCompleted, resourceNames} = props;
+  const {isCompleted, resourceNames, dataSelector} = props;
   const classes = useStyles();
   const [resources, setResources] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
-
-  const data = useLazyLoadQuery<AddResourceTypeFormQuery>(
-    AddResourcesQuery,
-    {},
-  );
 
   const names = resourceNames?.map(item => item.node.name);
 
@@ -149,7 +122,7 @@ export default function AddResourceTypeForm(props: Props) {
     setResources({
       data: {
         ...resources.data,
-        [target.name]: target.value.trim(),
+        [target.name]: target.value,
       },
     });
   }
@@ -158,8 +131,8 @@ export default function AddResourceTypeForm(props: Props) {
     const variables: AddResourceTypeMutationVariables = {
       input: {
         name: resources.data.name,
-        resourceTypeClass: resources.data.class,
-        resourceTypeBaseType: resources.data.resourceTypeClass,
+        resourceTypeClass: resources.data.resourceTypeclass,
+        resourceTypeBaseType: resources.data.resourceTypeBaseType,
       },
     };
     setShowChecking(true);
@@ -212,12 +185,12 @@ export default function AddResourceTypeForm(props: Props) {
           className={classes.select}
           label="Class"
           onChange={handleChange}
-          name="class"
+          name="resourceTypeclass"
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeClasses.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+          {dataSelector.resourceTypeClassList.map((item, index) => (
+            <MenuItem key={index} value={item.name}>
+              {item.name}
             </MenuItem>
           ))}
         </TextField>
@@ -228,12 +201,12 @@ export default function AddResourceTypeForm(props: Props) {
           className={classes.select}
           label="Resource type base type"
           onChange={handleChange}
-          name="resourceTypeClass"
+          name="resourceTypeBaseType"
           variant="outlined"
           defaultValue="">
-          {data.resourceTypeBaseTypes.edges.map((item, index) => (
-            <MenuItem key={index} value={item.node?.id}>
-              {item.node?.name}
+          {dataSelector.resourceTypeBaseTypeList.map((item, index) => (
+            <MenuItem key={index} value={item.name}>
+              {item.name}
             </MenuItem>
           ))}
         </TextField>

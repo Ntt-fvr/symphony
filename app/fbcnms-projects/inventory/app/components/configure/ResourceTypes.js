@@ -20,6 +20,8 @@ import {fetchQuery, graphql} from 'relay-runtime';
 // MUTATIONS //
 import type {PropertyType} from '../../common/PropertyType';
 import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
+import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
+import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 
 import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
 
@@ -40,14 +42,8 @@ const ResourceTypesQuery = graphql`
         node {
           id
           name
-          resourceTypeBaseType {
-            id
-            name
-          }
-          resourceTypeClass {
-            id
-            name
-          }
+          resourceTypeBaseType
+          resourceTypeClass
         }
       }
     }
@@ -85,6 +81,40 @@ const ResourceTypesQuery = graphql`
   }
 `;
 
+const objectSelectors = {
+  data: {
+    resourceTypeBaseTypeList: [
+      {
+        name: 'EQUIPMENT',
+      },
+      {
+        name: 'SLOT',
+      },
+      {
+        name: 'RACK',
+      },
+      {
+        name: 'PORT',
+      },
+      {
+        name: 'CARD',
+      },
+    ],
+
+    resourceTypeClassList: [
+      {
+        name: 'LOGICAL_RESOURCE',
+      },
+      {
+        name: 'PHYSICAL_RESOURCE',
+      },
+      {
+        name: 'VIRTUAL_RESOURCE',
+      },
+    ],
+  },
+};
+
 type Resources = {
   item: {
     node: {
@@ -93,14 +123,8 @@ type Resources = {
       resourceType: {
         id: string,
       },
-      resourceTypeBaseType: {
-        id: string,
-        name: string,
-      },
-      resourceTypeClass: {
-        id: string,
-        name: string,
-      },
+      resourceTypeBaseType: ResourceTypeBaseTypeKind,
+      resourceTypeClass: ResourceTypeClassKind,
       propertyTypes: Array<PropertyType>,
     },
   },
@@ -184,6 +208,7 @@ const ResourceTypes = () => {
         <AddResourceTypeForm
           isCompleted={isCompleted}
           resourceNames={resourceTypes.resourceTypes?.edges}
+          dataSelector={objectSelectors.data}
         />
       </Grid>
     </Grid>
