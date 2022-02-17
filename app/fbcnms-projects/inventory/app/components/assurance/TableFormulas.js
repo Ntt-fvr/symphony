@@ -95,83 +95,83 @@ const DenseTable = (props: Props) => {
   }
 
   return (
-    <Paper variant="outlined">
-      <TableContainer>
-        <Table stickyHeader className={classes.table} size="small">
-          <TableHead>
-            <TableRow className={classes.headerTitle}>
-              <StyledTableCell>Enable</StyledTableCell>
-              <StyledTableCell>Id</StyledTableCell>
-              <StyledTableCell>Technology</StyledTableCell>
-              <StyledTableCell>Network</StyledTableCell>
-              <StyledTableCell>Delete</StyledTableCell>
-              <StyledTableCell>Edit</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {formulas?.map(row => (
-              <StyledTableRow key={row.id}>
-                <TableCell component="th" scope="row">
-                  <Switch
-                    title={''}
-                    checked={row.status}
-                    onChange={setChecked}
-                    onClick={() => {
-                      const variables: EditFormulaMutationVariables = {
-                        input: {
-                          id: row.id,
-                          textFormula: row.textFormula,
-                          status: checked,
-                          techFk: row.techFk.id,
-                          kpiFk: row.kpiFk.id,
-                          networkTypeFk: row.networkTypeFk.id,
-                        },
-                      };
-                      EditFormulaMutation(variables, {
-                        onCompleted: () => isCompleted(),
-                      });
-                    }}
-                  />
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell>
-                <TableCell>{row.techFk.name}</TableCell>
-                <TableCell>{row.networkTypeFk.name}</TableCell>
-                <TableCell>
-                  <Button>
-                    <DeleteOutlinedIcon
-                      style={{color: symphony.palette.D300}}
-                      onClick={() => {
-                        handleRemove(row.id);
-                      }}
-                    />
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    icon={EditIcon}
-                    onClick={() => {
-                      handleEditCallback({
-                        formula: row.id,
-                        status: row.status,
-                        textFormula: row.textFormula,
-                        tech: row.techFk.id,
-                        kpiId: row.kpiFk.id,
-                        kpiFk: row.kpiFk.name,
-                        networkTypes: row.networkTypeFk.id,
-                        counterformulaFk: row.counterformulaFk,
-                      });
-                      handleEditFormulaClick();
-                    }}
-                  />
-                </TableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+      <Paper variant="outlined">
+        <TableContainer>
+          <Table stickyHeader className={classes.table} size="small">
+            <TableHead>
+              <TableRow className={classes.headerTitle}>
+                <StyledTableCell>Enable</StyledTableCell>
+                <StyledTableCell>Id</StyledTableCell>
+                <StyledTableCell>Technology</StyledTableCell>
+                <StyledTableCell>Network</StyledTableCell>
+                <StyledTableCell>Delete</StyledTableCell>
+                <StyledTableCell>Edit</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {formulas?.map(row => (
+                  <StyledTableRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                      <Switch
+                          title={''}
+                          checked={row.status}
+                          onChange={setChecked}
+                          onClick={() => {
+                            const variables: EditFormulaMutationVariables = {
+                              input: {
+                                id: row.id,
+                                textFormula: row.textFormula,
+                                status: checked,
+                                techFk: row.techFk.id,
+                                kpiFk: row.kpiFk.id,
+                                networkTypeFk: row.networkTypeFk.id,
+                              },
+                            };
+                            EditFormulaMutation(variables, {
+                              onCompleted: () => isCompleted(),
+                            });
+                          }}
+                      />
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {row.id}
+                    </TableCell>
+                    <TableCell>{row.techFk.name}</TableCell>
+                    <TableCell>{row.networkTypeFk.name}</TableCell>
+                    <TableCell>
+                      <Button>
+                        <DeleteOutlinedIcon
+                            style={{color: symphony.palette.D300}}
+                            onClick={() => {
+                              handleRemove(row.id);
+                            }}
+                        />
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                          icon={EditIcon}
+                          onClick={() => {
+                            handleEditCallback({
+                              formula: row.id,
+                              status: row.status,
+                              textFormula: row.textFormula,
+                              tech: row.techFk.id,
+                              kpiId: row.kpiFk.id,
+                              kpiFk: row.kpiFk.name,
+                              networkTypes: row.networkTypeFk.id,
+                              counterformulaFk: row.counterformulaFk,
+                            });
+                            handleEditFormulaClick();
+                          }}
+                      />
+                    </TableCell>
+                  </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
   );
 };
 export default DenseTable;

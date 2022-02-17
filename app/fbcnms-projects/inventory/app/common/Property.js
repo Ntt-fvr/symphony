@@ -14,6 +14,15 @@ import type {PropertyType} from './PropertyType';
 
 import DateTimeFormat from './DateTimeFormat.js';
 import {toMutablePropertyType} from './PropertyType';
+import {graphql, fetchQuery} from 'relay-runtime';
+import type {
+  PropertyByCategoriesQuery,
+  PropertiesByCategoryFilterInput,
+  PropertyByCategoriesQueryVariables,
+  PropertyByCategoriesQueryResponse,
+} from './__generated__/PropertyByCategoriesQuery.graphql';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import RelayEnvironment from './RelayEnvironment';
 
 export type Property = {|
   id?: ?string,
@@ -138,3 +147,101 @@ export const toMutableProperty = (
         }
       : null,
 });
+
+const propertyByCategoriesQuery = graphql`
+  query PropertyByCategoriesQuery(
+    $filters: [PropertiesByCategoryFilterInput!]!
+  ) {
+    propertiesByCategories(filterBy: $filters) {
+      __typename
+      id
+      name
+      properties {
+        id
+        stringValue
+        intValue
+        floatValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        nodeValue {
+          __typename
+          id
+          name
+        }
+        propertyType {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+          propertyCategory {
+            id
+            name
+            index
+          }
+        }
+      }
+      propertyType {
+        id
+        name
+        type
+        nodeType
+        index
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        isEditable
+        isInstanceProperty
+        isMandatory
+        category
+        isDeleted
+        propertyCategory {
+          id
+          name
+          index
+        }
+      }
+    }
+  }
+`;
+
+export function usePropertyByCategoriesNodes(
+  input: PropertyByCategoriesQueryVariables,
+): PropertyByCategoriesQueryResponse {
+  const response = useLazyLoadQuery<PropertyByCategoriesQuery>(
+    propertyByCategoriesQuery,
+    input,
+  );
+  return response;
+}
+
+export function fetchPropertyByCategories(
+  input: PropertyByCategoriesQueryVariables,
+) {
+  return fetchQuery<PropertyByCategoriesQuery>(
+    RelayEnvironment,
+    propertyByCategoriesQuery,
+    input,
+  )
+}

@@ -17,6 +17,7 @@ import type {
   InventoryPolicyInput,
   LocationCUDInput,
   DocumentCategoryCUDInput,
+  PropertyCategoryCUDInput,
   WorkforceCUDInput,
   WorkforcePermissionRuleInput,
   WorkforcePolicyInput,
@@ -101,6 +102,11 @@ type DocumentCRUDPermissionRule = $ReadOnly<{|
   documentCategoryIds: ?$ReadOnlyArray<string>,
 |}>;
 
+type PropertyCategoryCRUDPermissionRule = $ReadOnly<{|
+  ...BasicPermissionRule,
+  propertyCategoryIds: ?$ReadOnlyArray<string>,
+|}>;
+
 export type LocationCUDPermissions = $ReadOnly<{|
   ...BasicCUDPermissions,
   update: LocationUpdatePermissionRule,
@@ -114,9 +120,16 @@ export type DocumentCRUDPermissions = $ReadOnly<{|
   read: ?DocumentCRUDPermissionRule,
 |}>;
 
+export type PropertyCategoryCRUDPermissions = $ReadOnly<{|
+  create: ?PropertyCategoryCRUDPermissionRule,
+  delete: ?PropertyCategoryCRUDPermissionRule,
+  update: ?PropertyCategoryCRUDPermissionRule,
+  read: ?PropertyCategoryCRUDPermissionRule,
+|}>;
 export type InventoryEntsPolicy = $ReadOnly<{|
   location: LocationCUDPermissions,
   documentCategory: DocumentCRUDPermissions,
+  propertyCategory: PropertyCategoryCRUDPermissions,
   equipment: CUDPermissions,
   ...InventoryCatalogPolicy,
 |}>;
@@ -160,6 +173,7 @@ function tryGettingInventoryPolicy(
     policyRules.read &&
     policyRules.location &&
     policyRules.documentCategory &&
+    policyRules.propertyCategory &&
     policyRules.equipment &&
     policyRules.equipmentType &&
     policyRules.locationType &&
@@ -223,6 +237,14 @@ function parsePermissionValue(
   return permissionValue ?? PERMISSION_RULE_VALUES.NO;
 }
 
+function parsePropCategoryPermissionRule(
+  permissionRule?: ?PropertyCategoryCRUDPermissionRule,
+): ?$ReadOnlyArray<string> {
+  return permissionRule?.isAllowed === PERMISSION_RULE_VALUES.BY_CONDITION
+    ? permissionRule?.propertyCategoryIds
+    : null;
+}
+
 export const permissionPolicyCUDRule2PermissionPolicyCUDRuleInput = (
   rule: ?CUDPermissions,
 ) => {
@@ -274,6 +296,9 @@ export const initInventoryRulesInput: (
     documentCategory: documentCategoryPolicyCRUDRule2DocumentCategoryPolicyCRUDRuleInput(
       policyRules?.documentCategory,
     ),
+    propertyCategory: locationPolicyCUDRulePropertyCategoryInput(
+      policyRules?.propertyCategory,
+    ),
     equipment: permissionPolicyCUDRule2PermissionPolicyCUDRuleInput(
       policyRules?.equipment,
     ),
@@ -291,6 +316,34 @@ export const initInventoryRulesInput: (
     ),
   };
 };
+
+export function locationPolicyCUDRulePropertyCategoryInput(
+  rule: ?PropertyCategoryCRUDPermissions,
+): PropertyCategoryCUDInput {
+  const readIsAllowedValue = parsePermissionValue(rule?.read?.isAllowed);
+  const createIsAllowedValue = parsePermissionValue(rule?.create?.isAllowed);
+  const updateIsAllowedValue = parsePermissionValue(rule?.update?.isAllowed);
+  const deleteIsAllowedValue = parsePermissionValue(rule?.delete?.isAllowed);
+
+  return {
+    read: {
+      isAllowed: readIsAllowedValue,
+      propertyCategoryIds: parsePropCategoryPermissionRule(rule?.read),
+    },
+    create: {
+      isAllowed: createIsAllowedValue,
+      propertyCategoryIds: parsePropCategoryPermissionRule(rule?.create),
+    },
+    update: {
+      isAllowed: updateIsAllowedValue,
+      propertyCategoryIds: parsePropCategoryPermissionRule(rule?.update),
+    },
+    delete: {
+      isAllowed: deleteIsAllowedValue,
+      propertyCategoryIds: parsePropCategoryPermissionRule(rule?.delete),
+    },
+  };
+}
 
 export function locationPolicyCUDRule2LocationPolicyCUDRuleInput(
   rule: ?LocationCUDPermissions,
