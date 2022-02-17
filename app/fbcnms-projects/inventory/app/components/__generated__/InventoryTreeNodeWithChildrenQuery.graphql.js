@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ee1198a0737bb652fda141cab755c174>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type InventoryTreeNodeWithChildrenQueryVariables = {|
-  id: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type InventoryTreeNodeWithChildrenQuery$variables = {|
+  id: string,
 |};
-export type InventoryTreeNodeWithChildrenQueryResponse = {|
+export type InventoryTreeNodeWithChildrenQueryVariables = InventoryTreeNodeWithChildrenQuery$variables;
+export type InventoryTreeNodeWithChildrenQuery$data = {|
   +location: ?{|
     +id?: string,
     +externalId?: ?string,
@@ -39,49 +37,16 @@ export type InventoryTreeNodeWithChildrenQueryResponse = {|
       +numChildren: number,
       +siteSurveyNeeded: boolean,
     |}>,
-  |}
+  |},
 |};
+export type InventoryTreeNodeWithChildrenQueryResponse = InventoryTreeNodeWithChildrenQuery$data;
 export type InventoryTreeNodeWithChildrenQuery = {|
   variables: InventoryTreeNodeWithChildrenQueryVariables,
-  response: InventoryTreeNodeWithChildrenQueryResponse,
+  response: InventoryTreeNodeWithChildrenQuery$data,
 |};
 */
 
-
-/*
-query InventoryTreeNodeWithChildrenQuery(
-  $id: ID!
-) {
-  location: node(id: $id) {
-    __typename
-    ... on Location {
-      id
-      externalId
-      name
-      locationType {
-        id
-        name
-      }
-      numChildren
-      siteSurveyNeeded
-      children {
-        id
-        externalId
-        name
-        locationType {
-          id
-          name
-        }
-        numChildren
-        siteSurveyNeeded
-      }
-    }
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -247,7 +212,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '76a5d4ca2dafaf7f713fd3916fc4420a';
 
-module.exports = node;
+(node/*: any*/).hash = "76a5d4ca2dafaf7f713fd3916fc4420a";
+
+module.exports = ((node/*: any*/)/*: Query<
+  InventoryTreeNodeWithChildrenQuery$variables,
+  InventoryTreeNodeWithChildrenQuery$data,
+>*/);

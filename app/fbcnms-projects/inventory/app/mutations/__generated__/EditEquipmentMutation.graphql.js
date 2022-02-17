@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<58d4025f7b694a588759076d99acd6ea>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,8 +10,8 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type EquipmentTable_equipments$ref = any;
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type EquipmentTable_equipments$fragmentType = any;
 export type EditEquipmentInput = {|
   id: string,
   name: string,
@@ -37,50 +34,23 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type EditEquipmentMutationVariables = {|
-  input: EditEquipmentInput
+export type EditEquipmentMutation$variables = {|
+  input: EditEquipmentInput,
 |};
-export type EditEquipmentMutationResponse = {|
+export type EditEquipmentMutationVariables = EditEquipmentMutation$variables;
+export type EditEquipmentMutation$data = {|
   +editEquipment: {|
-    +$fragmentRefs: EquipmentTable_equipments$ref
-  |}
+    +$fragmentSpreads: EquipmentTable_equipments$fragmentType,
+  |},
 |};
+export type EditEquipmentMutationResponse = EditEquipmentMutation$data;
 export type EditEquipmentMutation = {|
   variables: EditEquipmentMutationVariables,
-  response: EditEquipmentMutationResponse,
+  response: EditEquipmentMutation$data,
 |};
 */
 
-
-/*
-mutation EditEquipmentMutation(
-  $input: EditEquipmentInput!
-) {
-  editEquipment(input: $input) {
-    ...EquipmentTable_equipments
-    id
-  }
-}
-
-fragment EquipmentTable_equipments on Equipment {
-  id
-  name
-  futureState
-  equipmentType {
-    id
-    name
-  }
-  workOrder {
-    id
-    status
-  }
-  services {
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -218,7 +188,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'ada7d8e59770e9396458e1647916ae79';
 
-module.exports = node;
+(node/*: any*/).hash = "ada7d8e59770e9396458e1647916ae79";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditEquipmentMutation$variables,
+  EditEquipmentMutation$data,
+>*/);

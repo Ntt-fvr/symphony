@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<28bf5e93a2c73c58158de7658cf431aa>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,11 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type LocationWiFiScanCoverageMap_wifiData$ref: FragmentReference;
-declare export opaque type LocationWiFiScanCoverageMap_wifiData$fragmentType: LocationWiFiScanCoverageMap_wifiData$ref;
-export type LocationWiFiScanCoverageMap_wifiData = $ReadOnlyArray<{|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type LocationWiFiScanCoverageMap_wifiData$fragmentType: FragmentType;
+export type LocationWiFiScanCoverageMap_wifiData$ref = LocationWiFiScanCoverageMap_wifiData$fragmentType;
+export type LocationWiFiScanCoverageMap_wifiData$data = $ReadOnlyArray<{|
   +id: string,
   +latitude: ?number,
   +longitude: ?number,
@@ -27,18 +24,17 @@ export type LocationWiFiScanCoverageMap_wifiData = $ReadOnlyArray<{|
   +ssid: ?string,
   +strength: number,
   +band: ?string,
-  +$refType: LocationWiFiScanCoverageMap_wifiData$ref,
+  +$fragmentType: LocationWiFiScanCoverageMap_wifiData$fragmentType,
 |}>;
-export type LocationWiFiScanCoverageMap_wifiData$data = LocationWiFiScanCoverageMap_wifiData;
+export type LocationWiFiScanCoverageMap_wifiData = LocationWiFiScanCoverageMap_wifiData$data;
 export type LocationWiFiScanCoverageMap_wifiData$key = $ReadOnlyArray<{
   +$data?: LocationWiFiScanCoverageMap_wifiData$data,
-  +$fragmentRefs: LocationWiFiScanCoverageMap_wifiData$ref,
+  +$fragmentSpreads: LocationWiFiScanCoverageMap_wifiData$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -113,7 +109,10 @@ const node/*: ReaderFragment*/ = {
   "type": "SurveyWiFiScan",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'c19f1446b6147fde7dff384c07c86b60';
 
-module.exports = node;
+(node/*: any*/).hash = "c19f1446b6147fde7dff384c07c86b60";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  LocationWiFiScanCoverageMap_wifiData$fragmentType,
+  LocationWiFiScanCoverageMap_wifiData$data,
+>*/);

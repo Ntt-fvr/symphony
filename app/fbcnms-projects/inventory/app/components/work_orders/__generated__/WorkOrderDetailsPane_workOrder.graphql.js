@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<b981caa887e1fe3a87168178cc2e8adc>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,43 +10,42 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type WorkOrderDetailsPaneEquipmentItem_equipment$ref = any;
-type WorkOrderDetailsPaneLinkItem_link$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type WorkOrderDetailsPane_workOrder$ref: FragmentReference;
-declare export opaque type WorkOrderDetailsPane_workOrder$fragmentType: WorkOrderDetailsPane_workOrder$ref;
-export type WorkOrderDetailsPane_workOrder = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType = any;
+type WorkOrderDetailsPaneLinkItem_link$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type WorkOrderDetailsPane_workOrder$fragmentType: FragmentType;
+export type WorkOrderDetailsPane_workOrder$ref = WorkOrderDetailsPane_workOrder$fragmentType;
+export type WorkOrderDetailsPane_workOrder$data = {|
   +id: string,
   +name: string,
   +equipmentToAdd: $ReadOnlyArray<?{|
     +id: string,
-    +$fragmentRefs: WorkOrderDetailsPaneEquipmentItem_equipment$ref,
+    +$fragmentSpreads: WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType,
   |}>,
   +equipmentToRemove: $ReadOnlyArray<?{|
     +id: string,
-    +$fragmentRefs: WorkOrderDetailsPaneEquipmentItem_equipment$ref,
+    +$fragmentSpreads: WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType,
   |}>,
   +linksToAdd: $ReadOnlyArray<?{|
     +id: string,
-    +$fragmentRefs: WorkOrderDetailsPaneLinkItem_link$ref,
+    +$fragmentSpreads: WorkOrderDetailsPaneLinkItem_link$fragmentType,
   |}>,
   +linksToRemove: $ReadOnlyArray<?{|
     +id: string,
-    +$fragmentRefs: WorkOrderDetailsPaneLinkItem_link$ref,
+    +$fragmentSpreads: WorkOrderDetailsPaneLinkItem_link$fragmentType,
   |}>,
-  +$refType: WorkOrderDetailsPane_workOrder$ref,
+  +$fragmentType: WorkOrderDetailsPane_workOrder$fragmentType,
 |};
-export type WorkOrderDetailsPane_workOrder$data = WorkOrderDetailsPane_workOrder;
+export type WorkOrderDetailsPane_workOrder = WorkOrderDetailsPane_workOrder$data;
 export type WorkOrderDetailsPane_workOrder$key = {
   +$data?: WorkOrderDetailsPane_workOrder$data,
-  +$fragmentRefs: WorkOrderDetailsPane_workOrder$ref,
+  +$fragmentSpreads: WorkOrderDetailsPane_workOrder$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -132,7 +128,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '4c85915884fc2d9d9f8c4fbee32cc2a4';
 
-module.exports = node;
+(node/*: any*/).hash = "4c85915884fc2d9d9f8c4fbee32cc2a4";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  WorkOrderDetailsPane_workOrder$fragmentType,
+  WorkOrderDetailsPane_workOrder$data,
+>*/);

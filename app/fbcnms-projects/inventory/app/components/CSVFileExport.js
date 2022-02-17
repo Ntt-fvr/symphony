@@ -22,7 +22,7 @@ import axios from 'axios';
 import classNames from 'classnames';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {DocumentAPIUrls} from '../common/DocumentAPI';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../common/RelayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = {

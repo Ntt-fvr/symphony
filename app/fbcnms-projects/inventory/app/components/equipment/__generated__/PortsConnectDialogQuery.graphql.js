@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ca5e6154cbc85e9bf66a8b2d6f49eef0>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type AvailablePortsTable_ports$ref = any;
-export type PortsConnectDialogQueryVariables = {|
-  equipmentId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type AvailablePortsTable_ports$fragmentType = any;
+export type PortsConnectDialogQuery$variables = {|
+  equipmentId: string,
 |};
-export type PortsConnectDialogQueryResponse = {|
+export type PortsConnectDialogQueryVariables = PortsConnectDialogQuery$variables;
+export type PortsConnectDialogQuery$data = {|
   +equipment: ?{|
     +id?: string,
     +name?: string,
@@ -35,102 +33,19 @@ export type PortsConnectDialogQueryResponse = {|
     +descendentsIncludingSelf?: $ReadOnlyArray<?{|
       +ports: $ReadOnlyArray<?{|
         +id: string,
-        +$fragmentRefs: AvailablePortsTable_ports$ref,
-      |}>
+        +$fragmentSpreads: AvailablePortsTable_ports$fragmentType,
+      |}>,
     |}>,
-  |}
+  |},
 |};
+export type PortsConnectDialogQueryResponse = PortsConnectDialogQuery$data;
 export type PortsConnectDialogQuery = {|
   variables: PortsConnectDialogQueryVariables,
-  response: PortsConnectDialogQueryResponse,
+  response: PortsConnectDialogQuery$data,
 |};
 */
 
-
-/*
-query PortsConnectDialogQuery(
-  $equipmentId: ID!
-) {
-  equipment: node(id: $equipmentId) {
-    __typename
-    ... on Equipment {
-      id
-      name
-      equipmentType {
-        id
-        name
-        portDefinitions {
-          id
-          name
-          visibleLabel
-          bandwidth
-        }
-      }
-      descendentsIncludingSelf {
-        ports(availableOnly: true) {
-          id
-          ...AvailablePortsTable_ports
-        }
-        id
-      }
-    }
-    id
-  }
-}
-
-fragment AvailablePortsTable_ports on EquipmentPort {
-  id
-  parentEquipment {
-    id
-    name
-    ...EquipmentBreadcrumbs_equipment
-  }
-  definition {
-    id
-    name
-    portType {
-      name
-      id
-    }
-    visibleLabel
-  }
-}
-
-fragment EquipmentBreadcrumbs_equipment on Equipment {
-  id
-  name
-  equipmentType {
-    id
-    name
-  }
-  locationHierarchy {
-    id
-    name
-    locationType {
-      name
-      id
-    }
-  }
-  positionHierarchy {
-    id
-    definition {
-      id
-      name
-      visibleLabel
-    }
-    parentEquipment {
-      id
-      name
-      equipmentType {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -455,7 +370,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'c2720725715bdc302478913f6e21b303';
 
-module.exports = node;
+(node/*: any*/).hash = "c2720725715bdc302478913f6e21b303";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PortsConnectDialogQuery$variables,
+  PortsConnectDialogQuery$data,
+>*/);

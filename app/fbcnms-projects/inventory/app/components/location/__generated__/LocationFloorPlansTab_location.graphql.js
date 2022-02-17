@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<684bacf7c8a3f244a1f94d826c5ddb41>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,32 +10,31 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type FileAttachment_file$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type LocationFloorPlansTab_location$ref: FragmentReference;
-declare export opaque type LocationFloorPlansTab_location$fragmentType: LocationFloorPlansTab_location$ref;
-export type LocationFloorPlansTab_location = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type FileAttachment_file$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type LocationFloorPlansTab_location$fragmentType: FragmentType;
+export type LocationFloorPlansTab_location$ref = LocationFloorPlansTab_location$fragmentType;
+export type LocationFloorPlansTab_location$data = {|
   +id: string,
   +floorPlans: $ReadOnlyArray<?{|
     +id: string,
     +name: string,
     +image: {|
-      +$fragmentRefs: FileAttachment_file$ref
+      +$fragmentSpreads: FileAttachment_file$fragmentType,
     |},
   |}>,
-  +$refType: LocationFloorPlansTab_location$ref,
+  +$fragmentType: LocationFloorPlansTab_location$fragmentType,
 |};
-export type LocationFloorPlansTab_location$data = LocationFloorPlansTab_location;
+export type LocationFloorPlansTab_location = LocationFloorPlansTab_location$data;
 export type LocationFloorPlansTab_location$key = {
   +$data?: LocationFloorPlansTab_location$data,
-  +$fragmentRefs: LocationFloorPlansTab_location$ref,
+  +$fragmentSpreads: LocationFloorPlansTab_location$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -93,7 +89,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '33ba200160169ecb72ef20fca4c58fe5';
 
-module.exports = node;
+(node/*: any*/).hash = "33ba200160169ecb72ef20fca4c58fe5";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  LocationFloorPlansTab_location$fragmentType,
+  LocationFloorPlansTab_location$data,
+>*/);

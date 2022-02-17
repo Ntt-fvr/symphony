@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<b37b4b11bb9b26068eb1a99ddf0ad907>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,27 +10,26 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type ActivityPost_activity$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type CommentsActivitiesLog_activities$ref: FragmentReference;
-declare export opaque type CommentsActivitiesLog_activities$fragmentType: CommentsActivitiesLog_activities$ref;
-export type CommentsActivitiesLog_activities = $ReadOnlyArray<{|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type ActivityPost_activity$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type CommentsActivitiesLog_activities$fragmentType: FragmentType;
+export type CommentsActivitiesLog_activities$ref = CommentsActivitiesLog_activities$fragmentType;
+export type CommentsActivitiesLog_activities$data = $ReadOnlyArray<{|
   +id: string,
   +createTime: any,
-  +$fragmentRefs: ActivityPost_activity$ref,
-  +$refType: CommentsActivitiesLog_activities$ref,
+  +$fragmentSpreads: ActivityPost_activity$fragmentType,
+  +$fragmentType: CommentsActivitiesLog_activities$fragmentType,
 |}>;
-export type CommentsActivitiesLog_activities$data = CommentsActivitiesLog_activities;
+export type CommentsActivitiesLog_activities = CommentsActivitiesLog_activities$data;
 export type CommentsActivitiesLog_activities$key = $ReadOnlyArray<{
   +$data?: CommentsActivitiesLog_activities$data,
-  +$fragmentRefs: CommentsActivitiesLog_activities$ref,
+  +$fragmentSpreads: CommentsActivitiesLog_activities$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -64,7 +60,10 @@ const node/*: ReaderFragment*/ = {
   "type": "Activity",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'dd73667e5b82cd9bacd860e1b733531e';
 
-module.exports = node;
+(node/*: any*/).hash = "dd73667e5b82cd9bacd860e1b733531e";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  CommentsActivitiesLog_activities$fragmentType,
+  CommentsActivitiesLog_activities$data,
+>*/);

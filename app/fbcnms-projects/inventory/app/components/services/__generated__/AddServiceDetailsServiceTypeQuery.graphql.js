@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<57dfb2ddfba2bec878dee42f0d4abdc9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type AddServiceDetailsServiceTypeQueryVariables = {|
-  serviceTypeId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type AddServiceDetailsServiceTypeQuery$variables = {|
+  serviceTypeId: string,
 |};
-export type AddServiceDetailsServiceTypeQueryResponse = {|
+export type AddServiceDetailsServiceTypeQueryVariables = AddServiceDetailsServiceTypeQuery$variables;
+export type AddServiceDetailsServiceTypeQuery$data = {|
   +node: ?{|
     +id?: string,
     +name?: string,
@@ -40,49 +38,16 @@ export type AddServiceDetailsServiceTypeQueryResponse = {|
       +isInstanceProperty: ?boolean,
       +isMandatory: ?boolean,
     |}>,
-  |}
+  |},
 |};
+export type AddServiceDetailsServiceTypeQueryResponse = AddServiceDetailsServiceTypeQuery$data;
 export type AddServiceDetailsServiceTypeQuery = {|
   variables: AddServiceDetailsServiceTypeQueryVariables,
-  response: AddServiceDetailsServiceTypeQueryResponse,
+  response: AddServiceDetailsServiceTypeQuery$data,
 |};
 */
 
-
-/*
-query AddServiceDetailsServiceTypeQuery(
-  $serviceTypeId: ID!
-) {
-  node(id: $serviceTypeId) {
-    __typename
-    ... on ServiceType {
-      id
-      name
-      propertyTypes {
-        id
-        name
-        type
-        nodeType
-        index
-        stringValue
-        intValue
-        booleanValue
-        floatValue
-        latitudeValue
-        longitudeValue
-        rangeFromValue
-        rangeToValue
-        isEditable
-        isInstanceProperty
-        isMandatory
-      }
-    }
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -300,7 +265,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '394a573b37cc88928d7340fa4df5af42';
 
-module.exports = node;
+(node/*: any*/).hash = "394a573b37cc88928d7340fa4df5af42";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AddServiceDetailsServiceTypeQuery$variables,
+  AddServiceDetailsServiceTypeQuery$data,
+>*/);

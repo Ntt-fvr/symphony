@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<a62a888e55957cd57a53f18f65ec92cf>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type KpiTypesQueryVariables = {||};
-export type KpiTypesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type KpiTypesQuery$variables = {||};
+export type KpiTypesQueryVariables = KpiTypesQuery$variables;
+export type KpiTypesQuery$data = {|
   +kpis: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -48,34 +46,34 @@ export type KpiTypesQueryResponse = {|
           +id: string,
           +name: string,
         |},
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +thresholds: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +name: string,
         +kpi: ?{|
-          +name: string
+          +name: string,
         |},
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +networkTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +counters: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +formulas: {|
     +edges: $ReadOnlyArray<{|
@@ -103,121 +101,21 @@ export type KpiTypesQueryResponse = {|
             +name: string,
           |},
           +formulaFk: {|
-            +id: string
+            +id: string,
           |},
         |}>,
-      |}
-    |}>
+      |},
+    |}>,
   |},
 |};
+export type KpiTypesQueryResponse = KpiTypesQuery$data;
 export type KpiTypesQuery = {|
   variables: KpiTypesQueryVariables,
-  response: KpiTypesQueryResponse,
+  response: KpiTypesQuery$data,
 |};
 */
 
-
-/*
-query KpiTypesQuery {
-  kpis {
-    edges {
-      node {
-        id
-        name
-        status
-        description
-        domainFk {
-          id
-          name
-        }
-        formulaFk {
-          id
-          textFormula
-          status
-          kpiFk {
-            id
-            name
-          }
-          techFk {
-            id
-            name
-          }
-          networkTypeFk {
-            id
-            name
-          }
-        }
-        kpiCategoryFK {
-          id
-          name
-        }
-      }
-    }
-  }
-  thresholds {
-    edges {
-      node {
-        name
-        kpi {
-          name
-          id
-        }
-        id
-      }
-    }
-  }
-  networkTypes {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-  counters {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-  formulas {
-    edges {
-      node {
-        id
-        networkTypeFk {
-          id
-          name
-        }
-        textFormula
-        status
-        techFk {
-          id
-          name
-        }
-        kpiFk {
-          id
-          name
-        }
-        counterformulaFk {
-          id
-          mandatory
-          counterFk {
-            id
-            name
-          }
-          formulaFk {
-            id
-          }
-        }
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -635,7 +533,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'd0a3c82ebaa5325f9e30f25766a5db1c';
 
-module.exports = node;
+(node/*: any*/).hash = "d0a3c82ebaa5325f9e30f25766a5db1c";
+
+module.exports = ((node/*: any*/)/*: Query<
+  KpiTypesQuery$variables,
+  KpiTypesQuery$data,
+>*/);

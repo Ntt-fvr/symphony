@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<26383348762b33922361567297ddce98>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,14 +10,14 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$ref = any;
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$fragmentType = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type PowerSearchEquipmentResultsTable_equipment$ref: FragmentReference;
-declare export opaque type PowerSearchEquipmentResultsTable_equipment$fragmentType: PowerSearchEquipmentResultsTable_equipment$ref;
-export type PowerSearchEquipmentResultsTable_equipment = $ReadOnlyArray<{|
+export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type PowerSearchEquipmentResultsTable_equipment$fragmentType: FragmentType;
+export type PowerSearchEquipmentResultsTable_equipment$ref = PowerSearchEquipmentResultsTable_equipment$fragmentType;
+export type PowerSearchEquipmentResultsTable_equipment$data = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +futureState: ?FutureState,
@@ -33,19 +30,18 @@ export type PowerSearchEquipmentResultsTable_equipment = $ReadOnlyArray<{|
     +id: string,
     +status: WorkOrderStatus,
   |},
-  +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
-  +$refType: PowerSearchEquipmentResultsTable_equipment$ref,
+  +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
+  +$fragmentType: PowerSearchEquipmentResultsTable_equipment$fragmentType,
 |}>;
-export type PowerSearchEquipmentResultsTable_equipment$data = PowerSearchEquipmentResultsTable_equipment;
+export type PowerSearchEquipmentResultsTable_equipment = PowerSearchEquipmentResultsTable_equipment$data;
 export type PowerSearchEquipmentResultsTable_equipment$key = $ReadOnlyArray<{
   +$data?: PowerSearchEquipmentResultsTable_equipment$data,
-  +$fragmentRefs: PowerSearchEquipmentResultsTable_equipment$ref,
+  +$fragmentSpreads: PowerSearchEquipmentResultsTable_equipment$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -126,7 +122,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'dbd45296395196af507b9270ca136663';
 
-module.exports = node;
+(node/*: any*/).hash = "dbd45296395196af507b9270ca136663";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  PowerSearchEquipmentResultsTable_equipment$fragmentType,
+  PowerSearchEquipmentResultsTable_equipment$data,
+>*/);

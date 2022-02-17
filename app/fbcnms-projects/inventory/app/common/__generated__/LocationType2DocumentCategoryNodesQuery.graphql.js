@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ee0e4980018e92b9c5a58947ee68999b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,45 +10,30 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationType2DocumentCategoryNodesQueryVariables = {|
-  ltID?: ?string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationType2DocumentCategoryNodesQuery$variables = {|
+  ltID?: ?string,
 |};
-export type LocationType2DocumentCategoryNodesQueryResponse = {|
+export type LocationType2DocumentCategoryNodesQueryVariables = LocationType2DocumentCategoryNodesQuery$variables;
+export type LocationType2DocumentCategoryNodesQuery$data = {|
   +documentCategories: ?{|
     +totalCount: number,
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: ?string,
-      |}
+      |},
     |}>,
-  |}
+  |},
 |};
+export type LocationType2DocumentCategoryNodesQueryResponse = LocationType2DocumentCategoryNodesQuery$data;
 export type LocationType2DocumentCategoryNodesQuery = {|
   variables: LocationType2DocumentCategoryNodesQueryVariables,
-  response: LocationType2DocumentCategoryNodesQueryResponse,
+  response: LocationType2DocumentCategoryNodesQuery$data,
 |};
 */
 
-
-/*
-query LocationType2DocumentCategoryNodesQuery(
-  $ltID: ID
-) {
-  documentCategories(locationTypeID: $ltID) {
-    totalCount
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -148,7 +130,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0525eaabd8426d0297d331351b4ef4c1';
 
-module.exports = node;
+(node/*: any*/).hash = "0525eaabd8426d0297d331351b4ef4c1";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationType2DocumentCategoryNodesQuery$variables,
+  LocationType2DocumentCategoryNodesQuery$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<51045151a7ef62110bb82bcb6e04ebcc>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,36 +10,35 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type PropertyTypeFormField_propertyType$ref = any;
-type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$ref = any;
-export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type ServiceTypeItem_serviceType$ref: FragmentReference;
-declare export opaque type ServiceTypeItem_serviceType$fragmentType: ServiceTypeItem_serviceType$ref;
-export type ServiceTypeItem_serviceType = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type PropertyTypeFormField_propertyType$fragmentType = any;
+type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType = any;
+export type DiscoveryMethod = "MANUAL" | "INVENTORY" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type ServiceTypeItem_serviceType$fragmentType: FragmentType;
+export type ServiceTypeItem_serviceType$ref = ServiceTypeItem_serviceType$fragmentType;
+export type ServiceTypeItem_serviceType$data = {|
   +id: string,
   +name: string,
   +discoveryMethod: DiscoveryMethod,
   +propertyTypes: $ReadOnlyArray<?{|
-    +$fragmentRefs: PropertyTypeFormField_propertyType$ref
+    +$fragmentSpreads: PropertyTypeFormField_propertyType$fragmentType,
   |}>,
   +endpointDefinitions: $ReadOnlyArray<{|
-    +$fragmentRefs: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$ref
+    +$fragmentSpreads: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType,
   |}>,
   +numberOfServices: number,
-  +$refType: ServiceTypeItem_serviceType$ref,
+  +$fragmentType: ServiceTypeItem_serviceType$fragmentType,
 |};
-export type ServiceTypeItem_serviceType$data = ServiceTypeItem_serviceType;
+export type ServiceTypeItem_serviceType = ServiceTypeItem_serviceType$data;
 export type ServiceTypeItem_serviceType$key = {
   +$data?: ServiceTypeItem_serviceType$data,
-  +$fragmentRefs: ServiceTypeItem_serviceType$ref,
+  +$fragmentSpreads: ServiceTypeItem_serviceType$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -112,7 +108,10 @@ const node/*: ReaderFragment*/ = {
   "type": "ServiceType",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'bdd10c4d5e7ee31784df58baac76728d';
 
-module.exports = node;
+(node/*: any*/).hash = "bdd10c4d5e7ee31784df58baac76728d";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  ServiceTypeItem_serviceType$fragmentType,
+  ServiceTypeItem_serviceType$data,
+>*/);

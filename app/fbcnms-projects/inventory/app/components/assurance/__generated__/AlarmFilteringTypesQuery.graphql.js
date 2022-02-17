@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<97456e184ef066d2a0321897f877455a>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type AlarmFilteringTypesQueryVariables = {||};
-export type AlarmFilteringTypesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type AlarmFilteringTypesQuery$variables = {||};
+export type AlarmFilteringTypesQueryVariables = AlarmFilteringTypesQuery$variables;
+export type AlarmFilteringTypesQuery$data = {|
   +alarmFilters: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -32,42 +30,18 @@ export type AlarmFilteringTypesQueryResponse = {|
           +id: string,
           +name: string,
         |},
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type AlarmFilteringTypesQueryResponse = AlarmFilteringTypesQuery$data;
 export type AlarmFilteringTypesQuery = {|
   variables: AlarmFilteringTypesQueryVariables,
-  response: AlarmFilteringTypesQueryResponse,
+  response: AlarmFilteringTypesQuery$data,
 |};
 */
 
-
-/*
-query AlarmFilteringTypesQuery {
-  alarmFilters {
-    edges {
-      node {
-        id
-        name
-        networkResource
-        enable
-        beginTime
-        endTime
-        reason
-        user
-        creationTime
-        alarmStatus {
-          id
-          name
-        }
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -208,7 +182,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'eaf1aca142a63831ff2d5e4f18e35885';
 
-module.exports = node;
+(node/*: any*/).hash = "eaf1aca142a63831ff2d5e4f18e35885";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AlarmFilteringTypesQuery$variables,
+  AlarmFilteringTypesQuery$data,
+>*/);

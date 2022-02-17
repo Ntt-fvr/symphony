@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<19f16a32cbb0d741aa6bd3be346ae546>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,27 +10,26 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type PositionDefinitionsTable_positionDefinitions$ref: FragmentReference;
-declare export opaque type PositionDefinitionsTable_positionDefinitions$fragmentType: PositionDefinitionsTable_positionDefinitions$ref;
-export type PositionDefinitionsTable_positionDefinitions = $ReadOnlyArray<{|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type PositionDefinitionsTable_positionDefinitions$fragmentType: FragmentType;
+export type PositionDefinitionsTable_positionDefinitions$ref = PositionDefinitionsTable_positionDefinitions$fragmentType;
+export type PositionDefinitionsTable_positionDefinitions$data = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +index: ?number,
   +visibleLabel: ?string,
-  +$refType: PositionDefinitionsTable_positionDefinitions$ref,
+  +$fragmentType: PositionDefinitionsTable_positionDefinitions$fragmentType,
 |}>;
-export type PositionDefinitionsTable_positionDefinitions$data = PositionDefinitionsTable_positionDefinitions;
+export type PositionDefinitionsTable_positionDefinitions = PositionDefinitionsTable_positionDefinitions$data;
 export type PositionDefinitionsTable_positionDefinitions$key = $ReadOnlyArray<{
   +$data?: PositionDefinitionsTable_positionDefinitions$data,
-  +$fragmentRefs: PositionDefinitionsTable_positionDefinitions$ref,
+  +$fragmentSpreads: PositionDefinitionsTable_positionDefinitions$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -73,7 +69,10 @@ const node/*: ReaderFragment*/ = {
   "type": "EquipmentPositionDefinition",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'e380bf28ed2fa9bb1090ea936f6e7b25';
 
-module.exports = node;
+(node/*: any*/).hash = "e380bf28ed2fa9bb1090ea936f6e7b25";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  PositionDefinitionsTable_positionDefinitions$fragmentType,
+  PositionDefinitionsTable_positionDefinitions$data,
+>*/);

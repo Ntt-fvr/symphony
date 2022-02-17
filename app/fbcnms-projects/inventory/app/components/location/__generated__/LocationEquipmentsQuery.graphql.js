@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<a5719c3cdaa6b7032cdb1885e8d52778>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationEquipmentsQueryVariables = {|
-  locationId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationEquipmentsQuery$variables = {|
+  locationId: string,
 |};
-export type LocationEquipmentsQueryResponse = {|
+export type LocationEquipmentsQueryVariables = LocationEquipmentsQuery$variables;
+export type LocationEquipmentsQuery$data = {|
   +location: ?{|
     +id?: string,
     +equipments?: $ReadOnlyArray<?{|
@@ -28,38 +26,16 @@ export type LocationEquipmentsQueryResponse = {|
         +name: string,
       |},
     |}>,
-  |}
+  |},
 |};
+export type LocationEquipmentsQueryResponse = LocationEquipmentsQuery$data;
 export type LocationEquipmentsQuery = {|
   variables: LocationEquipmentsQueryVariables,
-  response: LocationEquipmentsQueryResponse,
+  response: LocationEquipmentsQuery$data,
 |};
 */
 
-
-/*
-query LocationEquipmentsQuery(
-  $locationId: ID!
-) {
-  location: node(id: $locationId) {
-    __typename
-    ... on Location {
-      id
-      equipments {
-        id
-        name
-        equipmentType {
-          id
-          name
-        }
-      }
-    }
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -190,7 +166,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '5f0c36d5934e9aa57f2cd342d1c26d20';
 
-module.exports = node;
+(node/*: any*/).hash = "5f0c36d5934e9aa57f2cd342d1c26d20";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationEquipmentsQuery$variables,
+  LocationEquipmentsQuery$data,
+>*/);

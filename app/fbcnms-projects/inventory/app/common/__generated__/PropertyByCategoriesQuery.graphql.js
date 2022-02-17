@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<b48909f231480aa012e72da3713fdb76>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,10 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type PropertiesByCategoryFilterType = "LOCATION_ID" | "PROPERTY_CATEGORY_ID" | "PROPERTY_CATEGORY_IS_NIL" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+export type PropertiesByCategoryFilterType = "PROPERTY_CATEGORY_ID" | "LOCATION_ID" | "PROPERTY_CATEGORY_IS_NIL" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type PropertiesByCategoryFilterInput = {|
   filterType: PropertiesByCategoryFilterType,
   operator: FilterOperator,
@@ -25,10 +22,11 @@ export type PropertiesByCategoryFilterInput = {|
   idSet?: ?$ReadOnlyArray<string>,
   stringSet?: ?$ReadOnlyArray<string>,
 |};
-export type PropertyByCategoriesQueryVariables = {|
-  filters: $ReadOnlyArray<PropertiesByCategoryFilterInput>
+export type PropertyByCategoriesQuery$variables = {|
+  filters: $ReadOnlyArray<PropertiesByCategoryFilterInput>,
 |};
-export type PropertyByCategoriesQueryResponse = {|
+export type PropertyByCategoriesQueryVariables = PropertyByCategoriesQuery$variables;
+export type PropertyByCategoriesQuery$data = {|
   +propertiesByCategories: $ReadOnlyArray<?{|
     +__typename: string,
     +id: ?string,
@@ -99,94 +97,16 @@ export type PropertyByCategoriesQueryResponse = {|
         +index: ?number,
       |},
     |}>,
-  |}>
+  |}>,
 |};
+export type PropertyByCategoriesQueryResponse = PropertyByCategoriesQuery$data;
 export type PropertyByCategoriesQuery = {|
   variables: PropertyByCategoriesQueryVariables,
-  response: PropertyByCategoriesQueryResponse,
+  response: PropertyByCategoriesQuery$data,
 |};
 */
 
-
-/*
-query PropertyByCategoriesQuery(
-  $filters: [PropertiesByCategoryFilterInput!]!
-) {
-  propertiesByCategories(filterBy: $filters) {
-    __typename
-    id
-    name
-    properties {
-      id
-      stringValue
-      intValue
-      floatValue
-      booleanValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      nodeValue {
-        __typename
-        id
-        name
-      }
-      propertyType {
-        id
-        name
-        type
-        nodeType
-        index
-        stringValue
-        intValue
-        booleanValue
-        floatValue
-        latitudeValue
-        longitudeValue
-        rangeFromValue
-        rangeToValue
-        isEditable
-        isInstanceProperty
-        isMandatory
-        category
-        isDeleted
-        propertyCategory {
-          id
-          name
-          index
-        }
-      }
-    }
-    propertyType {
-      id
-      name
-      type
-      nodeType
-      index
-      stringValue
-      intValue
-      booleanValue
-      floatValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      isEditable
-      isInstanceProperty
-      isMandatory
-      category
-      isDeleted
-      propertyCategory {
-        id
-        name
-        index
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -457,7 +377,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'feac8056da63a250227e101944131a80';
 
-module.exports = node;
+(node/*: any*/).hash = "feac8056da63a250227e101944131a80";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PropertyByCategoriesQuery$variables,
+  PropertyByCategoriesQuery$data,
+>*/);

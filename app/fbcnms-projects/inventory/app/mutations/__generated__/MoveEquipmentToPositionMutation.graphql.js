@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<c776f0c17265eb33c740ea28cc871333>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,58 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type EquipmentPropertiesCard_position$ref = any;
-export type MoveEquipmentToPositionMutationVariables = {|
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type EquipmentPropertiesCard_position$fragmentType = any;
+export type MoveEquipmentToPositionMutation$variables = {|
   parent_equipment_id: string,
   position_definition_id: string,
   equipment_id: string,
 |};
-export type MoveEquipmentToPositionMutationResponse = {|
+export type MoveEquipmentToPositionMutationVariables = MoveEquipmentToPositionMutation$variables;
+export type MoveEquipmentToPositionMutation$data = {|
   +moveEquipmentToPosition: {|
-    +$fragmentRefs: EquipmentPropertiesCard_position$ref
-  |}
+    +$fragmentSpreads: EquipmentPropertiesCard_position$fragmentType,
+  |},
 |};
+export type MoveEquipmentToPositionMutationResponse = MoveEquipmentToPositionMutation$data;
 export type MoveEquipmentToPositionMutation = {|
   variables: MoveEquipmentToPositionMutationVariables,
-  response: MoveEquipmentToPositionMutationResponse,
+  response: MoveEquipmentToPositionMutation$data,
 |};
 */
 
-
-/*
-mutation MoveEquipmentToPositionMutation(
-  $parent_equipment_id: ID!
-  $position_definition_id: ID!
-  $equipment_id: ID!
-) {
-  moveEquipmentToPosition(parentEquipmentId: $parent_equipment_id, positionDefinitionId: $position_definition_id, equipmentId: $equipment_id) {
-    ...EquipmentPropertiesCard_position
-    id
-  }
-}
-
-fragment EquipmentPropertiesCard_position on EquipmentPosition {
-  id
-  definition {
-    id
-    name
-    index
-    visibleLabel
-  }
-  attachedEquipment {
-    id
-    name
-    futureState
-    workOrder {
-      id
-      status
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -242,7 +208,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '430126764e1619e37493a5a6ed0caba8';
 
-module.exports = node;
+(node/*: any*/).hash = "56b02f3e8af0b38080dd01ef75b4e682";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  MoveEquipmentToPositionMutation$variables,
+  MoveEquipmentToPositionMutation$data,
+>*/);

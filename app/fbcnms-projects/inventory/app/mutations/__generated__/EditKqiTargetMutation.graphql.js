@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<ba8de054d45d006bde9ad943356a0dc5>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type EditKqiTargetInput = {|
   id: string,
   name: string,
@@ -25,10 +22,11 @@ export type EditKqiTargetInput = {|
   status: boolean,
   kqi: string,
 |};
-export type EditKqiTargetMutationVariables = {|
-  input: EditKqiTargetInput
+export type EditKqiTargetMutation$variables = {|
+  input: EditKqiTargetInput,
 |};
-export type EditKqiTargetMutationResponse = {|
+export type EditKqiTargetMutationVariables = EditKqiTargetMutation$variables;
+export type EditKqiTargetMutation$data = {|
   +editKqiTarget: {|
     +id: string,
     +name: string,
@@ -37,32 +35,16 @@ export type EditKqiTargetMutationResponse = {|
     +initTime: any,
     +endTime: any,
     +status: boolean,
-  |}
+  |},
 |};
+export type EditKqiTargetMutationResponse = EditKqiTargetMutation$data;
 export type EditKqiTargetMutation = {|
   variables: EditKqiTargetMutationVariables,
-  response: EditKqiTargetMutationResponse,
+  response: EditKqiTargetMutation$data,
 |};
 */
 
-
-/*
-mutation EditKqiTargetMutation(
-  $input: EditKqiTargetInput!
-) {
-  editKqiTarget(input: $input) {
-    id
-    name
-    impact
-    allowedVariation
-    initTime
-    endTime
-    status
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -165,7 +147,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0a12f000a570cffe541dc5e7e2a0d1b1';
 
-module.exports = node;
+(node/*: any*/).hash = "0a12f000a570cffe541dc5e7e2a0d1b1";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditKqiTargetMutation$variables,
+  EditKqiTargetMutation$data,
+>*/);

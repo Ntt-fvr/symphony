@@ -13,7 +13,7 @@ import type {Suggestion} from '@fbcnms/ui/components/Typeahead';
 import * as React from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Typeahead from '@fbcnms/ui/components/Typeahead';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 
 type Props = $ReadOnly<{|
   className?: string,

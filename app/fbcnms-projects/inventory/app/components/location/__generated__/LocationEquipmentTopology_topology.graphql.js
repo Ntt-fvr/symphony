@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<dc4ba82d94d36946dee0e62d7c3890fb>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,29 +10,28 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type ForceNetworkTopology_topology$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type LocationEquipmentTopology_topology$ref: FragmentReference;
-declare export opaque type LocationEquipmentTopology_topology$fragmentType: LocationEquipmentTopology_topology$ref;
-export type LocationEquipmentTopology_topology = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type ForceNetworkTopology_topology$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type LocationEquipmentTopology_topology$fragmentType: FragmentType;
+export type LocationEquipmentTopology_topology$ref = LocationEquipmentTopology_topology$fragmentType;
+export type LocationEquipmentTopology_topology$data = {|
   +nodes: $ReadOnlyArray<{|
     +id?: string,
     +name?: string,
   |}>,
-  +$fragmentRefs: ForceNetworkTopology_topology$ref,
-  +$refType: LocationEquipmentTopology_topology$ref,
+  +$fragmentSpreads: ForceNetworkTopology_topology$fragmentType,
+  +$fragmentType: LocationEquipmentTopology_topology$fragmentType,
 |};
-export type LocationEquipmentTopology_topology$data = LocationEquipmentTopology_topology;
+export type LocationEquipmentTopology_topology = LocationEquipmentTopology_topology$data;
 export type LocationEquipmentTopology_topology$key = {
   +$data?: LocationEquipmentTopology_topology$data,
-  +$fragmentRefs: LocationEquipmentTopology_topology$ref,
+  +$fragmentSpreads: LocationEquipmentTopology_topology$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -82,7 +78,10 @@ const node/*: ReaderFragment*/ = {
   "type": "NetworkTopology",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = '85e688a255ed451854dcd0a64bd6cded';
 
-module.exports = node;
+(node/*: any*/).hash = "85e688a255ed451854dcd0a64bd6cded";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  LocationEquipmentTopology_topology$fragmentType,
+  LocationEquipmentTopology_topology$data,
+>*/);

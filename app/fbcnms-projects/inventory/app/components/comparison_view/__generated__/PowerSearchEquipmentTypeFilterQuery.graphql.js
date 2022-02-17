@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<93fff9631dbe983d162944789ed79b53>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type PowerSearchEquipmentTypeFilterQueryVariables = {||};
-export type PowerSearchEquipmentTypeFilterQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type PowerSearchEquipmentTypeFilterQuery$variables = {||};
+export type PowerSearchEquipmentTypeFilterQueryVariables = PowerSearchEquipmentTypeFilterQuery$variables;
+export type PowerSearchEquipmentTypeFilterQuery$data = {|
   +equipmentTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type PowerSearchEquipmentTypeFilterQueryResponse = PowerSearchEquipmentTypeFilterQuery$data;
 export type PowerSearchEquipmentTypeFilterQuery = {|
   variables: PowerSearchEquipmentTypeFilterQueryVariables,
-  response: PowerSearchEquipmentTypeFilterQueryResponse,
+  response: PowerSearchEquipmentTypeFilterQuery$data,
 |};
 */
 
-
-/*
-query PowerSearchEquipmentTypeFilterQuery {
-  equipmentTypes {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -122,7 +107,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '2123f0ba223961bafad83607daf49a3e';
 
-module.exports = node;
+(node/*: any*/).hash = "2123f0ba223961bafad83607daf49a3e";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PowerSearchEquipmentTypeFilterQuery$variables,
+  PowerSearchEquipmentTypeFilterQuery$data,
+>*/);

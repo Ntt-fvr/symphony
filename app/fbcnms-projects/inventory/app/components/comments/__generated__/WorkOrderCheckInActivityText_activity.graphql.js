@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<fa8d8a18aeb0c90ff907d7cc23b984ee>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,28 +10,27 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type WorkOrderCheckInActivityText_activity$ref: FragmentReference;
-declare export opaque type WorkOrderCheckInActivityText_activity$fragmentType: WorkOrderCheckInActivityText_activity$ref;
-export type WorkOrderCheckInActivityText_activity = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type ActivityField = "STATUS" | "PRIORITY" | "ASSIGNEE" | "CREATION_DATE" | "OWNER" | "NAME" | "DESCRIPTION" | "CLOCK_IN" | "CLOCK_OUT" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type WorkOrderCheckInActivityText_activity$fragmentType: FragmentType;
+export type WorkOrderCheckInActivityText_activity$ref = WorkOrderCheckInActivityText_activity$fragmentType;
+export type WorkOrderCheckInActivityText_activity$data = {|
   +activityType: ActivityField,
   +clockDetails: ?{|
-    +distanceMeters: ?number
+    +distanceMeters: ?number,
   |},
-  +$refType: WorkOrderCheckInActivityText_activity$ref,
+  +$fragmentType: WorkOrderCheckInActivityText_activity$fragmentType,
 |};
-export type WorkOrderCheckInActivityText_activity$data = WorkOrderCheckInActivityText_activity;
+export type WorkOrderCheckInActivityText_activity = WorkOrderCheckInActivityText_activity$data;
 export type WorkOrderCheckInActivityText_activity$key = {
   +$data?: WorkOrderCheckInActivityText_activity$data,
-  +$fragmentRefs: WorkOrderCheckInActivityText_activity$ref,
+  +$fragmentSpreads: WorkOrderCheckInActivityText_activity$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -69,7 +65,10 @@ const node/*: ReaderFragment*/ = {
   "type": "Activity",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = '513a2d60c4ab7db83b792dcc5c328f75';
 
-module.exports = node;
+(node/*: any*/).hash = "513a2d60c4ab7db83b792dcc5c328f75";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  WorkOrderCheckInActivityText_activity$fragmentType,
+  WorkOrderCheckInActivityText_activity$data,
+>*/);

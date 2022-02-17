@@ -31,7 +31,7 @@ import inventoryTheme from '../../common/theme';
 import update from 'immutability-helper';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
-import {fetchQuery, graphql} from 'react-relay';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 import {makeStyles} from '@material-ui/styles';
 import {reorder} from '../draggable/DraggableUtils';
 import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
@@ -54,7 +54,7 @@ const useStyles = makeStyles(_theme => ({
 
 graphql`
   fragment PortDefinitionsAddEditTable_portDefinitions on EquipmentPortDefinition
-    @relay(plural: true) {
+  @relay(plural: true) {
     id
     name
     index

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<52c57736d82e5bf3eb011f40b20d47e8>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,25 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type PowerSearchWorkOrderGeneralUserFilterIDsQueryVariables = {|
-  id: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type PowerSearchWorkOrderGeneralUserFilterIDsQuery$variables = {|
+  id: string,
 |};
-export type PowerSearchWorkOrderGeneralUserFilterIDsQueryResponse = {|
+export type PowerSearchWorkOrderGeneralUserFilterIDsQueryVariables = PowerSearchWorkOrderGeneralUserFilterIDsQuery$variables;
+export type PowerSearchWorkOrderGeneralUserFilterIDsQuery$data = {|
   +node: ?{|
     +id?: string,
     +email?: string,
-  |}
+  |},
 |};
+export type PowerSearchWorkOrderGeneralUserFilterIDsQueryResponse = PowerSearchWorkOrderGeneralUserFilterIDsQuery$data;
 export type PowerSearchWorkOrderGeneralUserFilterIDsQuery = {|
   variables: PowerSearchWorkOrderGeneralUserFilterIDsQueryVariables,
-  response: PowerSearchWorkOrderGeneralUserFilterIDsQueryResponse,
+  response: PowerSearchWorkOrderGeneralUserFilterIDsQuery$data,
 |};
 */
 
-
-/*
-query PowerSearchWorkOrderGeneralUserFilterIDsQuery(
-  $id: ID!
-) {
-  node(id: $id) {
-    __typename
-    ... on User {
-      id
-      email
-    }
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -150,7 +133,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '46680cb3247e4632e08a63153e09df71';
 
-module.exports = node;
+(node/*: any*/).hash = "46680cb3247e4632e08a63153e09df71";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PowerSearchWorkOrderGeneralUserFilterIDsQuery$variables,
+  PowerSearchWorkOrderGeneralUserFilterIDsQuery$data,
+>*/);

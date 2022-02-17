@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<c42e604bc11044d0a2fa842e8844acf9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationsTreeQueryVariables = {||};
-export type LocationsTreeQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationsTreeQuery$variables = {||};
+export type LocationsTreeQueryVariables = LocationsTreeQuery$variables;
+export type LocationsTreeQuery$data = {|
   +locations: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -28,44 +26,18 @@ export type LocationsTreeQueryResponse = {|
         |},
         +numChildren: number,
         +siteSurveyNeeded: boolean,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type LocationsTreeQueryResponse = LocationsTreeQuery$data;
 export type LocationsTreeQuery = {|
   variables: LocationsTreeQueryVariables,
-  response: LocationsTreeQueryResponse,
+  response: LocationsTreeQuery$data,
 |};
 */
 
-
-/*
-query LocationsTreeQuery {
-  locations(first: 500, onlyTopLevel: true) {
-    edges {
-      node {
-        id
-        externalId
-        name
-        locationType {
-          id
-          name
-        }
-        numChildren
-        siteSurveyNeeded
-        __typename
-      }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "kind": "Literal",
   "name": "onlyTopLevel",
@@ -265,7 +237,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '2517b7f9d3b38afe85f3ccd710326689';
 
-module.exports = node;
+(node/*: any*/).hash = "2517b7f9d3b38afe85f3ccd710326689";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationsTreeQuery$variables,
+  LocationsTreeQuery$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<d26c68577bc61d7db9233339eccff1fa>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,83 +10,31 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type LocationEquipmentTopology_equipment$ref = any;
-type LocationEquipmentTopology_topology$ref = any;
-export type LocationNetworkMapTabQueryVariables = {|
-  locationId: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type LocationEquipmentTopology_equipment$fragmentType = any;
+type LocationEquipmentTopology_topology$fragmentType = any;
+export type LocationNetworkMapTabQuery$variables = {|
+  locationId: string,
 |};
-export type LocationNetworkMapTabQueryResponse = {|
+export type LocationNetworkMapTabQueryVariables = LocationNetworkMapTabQuery$variables;
+export type LocationNetworkMapTabQuery$data = {|
   +location: ?{|
     +equipments?: $ReadOnlyArray<?{|
-      +$fragmentRefs: LocationEquipmentTopology_equipment$ref
+      +$fragmentSpreads: LocationEquipmentTopology_equipment$fragmentType,
     |}>,
     +topology?: {|
-      +$fragmentRefs: LocationEquipmentTopology_topology$ref
+      +$fragmentSpreads: LocationEquipmentTopology_topology$fragmentType,
     |},
-  |}
+  |},
 |};
+export type LocationNetworkMapTabQueryResponse = LocationNetworkMapTabQuery$data;
 export type LocationNetworkMapTabQuery = {|
   variables: LocationNetworkMapTabQueryVariables,
-  response: LocationNetworkMapTabQueryResponse,
+  response: LocationNetworkMapTabQuery$data,
 |};
 */
 
-
-/*
-query LocationNetworkMapTabQuery(
-  $locationId: ID!
-) {
-  location: node(id: $locationId) {
-    __typename
-    ... on Location {
-      equipments {
-        ...LocationEquipmentTopology_equipment
-        id
-      }
-      topology {
-        ...LocationEquipmentTopology_topology
-      }
-    }
-    id
-  }
-}
-
-fragment ForceNetworkTopology_topology on NetworkTopology {
-  nodes {
-    __typename
-    id
-  }
-  links {
-    source {
-      __typename
-      id
-    }
-    target {
-      __typename
-      id
-    }
-  }
-}
-
-fragment LocationEquipmentTopology_equipment on Equipment {
-  id
-}
-
-fragment LocationEquipmentTopology_topology on NetworkTopology {
-  nodes {
-    __typename
-    ... on Equipment {
-      id
-      name
-    }
-    id
-  }
-  ...ForceNetworkTopology_topology
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -302,7 +247,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'f90e103b70337af4c1df59192964fdb0';
 
-module.exports = node;
+(node/*: any*/).hash = "f90e103b70337af4c1df59192964fdb0";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationNetworkMapTabQuery$variables,
+  LocationNetworkMapTabQuery$data,
+>*/);

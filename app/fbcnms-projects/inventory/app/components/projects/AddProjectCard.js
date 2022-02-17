@@ -38,7 +38,7 @@ import nullthrows from '@fbcnms/util/nullthrows';
 import update from 'immutability-helper';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
-import {fetchQuery, graphql} from 'relay-runtime';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 import {getGraphError} from '../../common/EntUtils';
 import {getInitialPropertyFromType} from '../../common/PropertyType';
 import {priorityValues} from '../../common/FilterTypes';

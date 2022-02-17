@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<d3a820b7d0d7ebfb7a914a58f28185b9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type ParametersCatalogPageQueryVariables = {||};
-export type ParametersCatalogPageQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type ParametersCatalogPageQuery$variables = {||};
+export type ParametersCatalogPageQueryVariables = ParametersCatalogPageQuery$variables;
+export type ParametersCatalogPageQuery$data = {|
   +parametersCatalog: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -29,39 +27,18 @@ export type ParametersCatalogPageQueryResponse = {|
           +index: ?number,
           +numberOfProperties: ?number,
         |}>,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type ParametersCatalogPageQueryResponse = ParametersCatalogPageQuery$data;
 export type ParametersCatalogPageQuery = {|
   variables: ParametersCatalogPageQueryVariables,
-  response: ParametersCatalogPageQueryResponse,
+  response: ParametersCatalogPageQuery$data,
 |};
 */
 
-
-/*
-query ParametersCatalogPageQuery {
-  parametersCatalog {
-    edges {
-      node {
-        id
-        name
-        index
-        isDisabled
-        propertyCategories {
-          id
-          name
-          index
-          numberOfProperties
-        }
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -176,7 +153,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0a905553b9591d4c71e0e1254184c29f';
 
-module.exports = node;
+(node/*: any*/).hash = "0a905553b9591d4c71e0e1254184c29f";
+
+module.exports = ((node/*: any*/)/*: Query<
+  ParametersCatalogPageQuery$variables,
+  ParametersCatalogPageQuery$data,
+>*/);

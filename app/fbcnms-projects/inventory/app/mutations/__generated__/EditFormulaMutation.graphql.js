@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<93b93349ae138caab021464e089d9ea5>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type EditFormulaInput = {|
   id: string,
   textFormula: string,
@@ -22,34 +19,24 @@ export type EditFormulaInput = {|
   networkTypeFk: string,
   kpiFk: string,
 |};
-export type EditFormulaMutationVariables = {|
-  input: EditFormulaInput
+export type EditFormulaMutation$variables = {|
+  input: EditFormulaInput,
 |};
-export type EditFormulaMutationResponse = {|
+export type EditFormulaMutationVariables = EditFormulaMutation$variables;
+export type EditFormulaMutation$data = {|
   +editFormula: {|
     +id: string,
     +textFormula: string,
-  |}
+  |},
 |};
+export type EditFormulaMutationResponse = EditFormulaMutation$data;
 export type EditFormulaMutation = {|
   variables: EditFormulaMutationVariables,
-  response: EditFormulaMutationResponse,
+  response: EditFormulaMutation$data,
 |};
 */
 
-
-/*
-mutation EditFormulaMutation(
-  $input: EditFormulaInput!
-) {
-  editFormula(input: $input) {
-    id
-    textFormula
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -117,7 +104,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'f3cd9a9abb238ffdeb68bf5aef6a6457';
 
-module.exports = node;
+(node/*: any*/).hash = "f3cd9a9abb238ffdeb68bf5aef6a6457";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditFormulaMutation$variables,
+  EditFormulaMutation$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<5def7dc81074714f4f607c5f183f6d52>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,13 +10,14 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
-export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type WorkOrdersView_query$ref: FragmentReference;
-declare export opaque type WorkOrdersView_query$fragmentType: WorkOrdersView_query$ref;
-export type WorkOrdersView_query = {|
+import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
+export type WorkOrderPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
+export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type WorkOrdersView_query$fragmentType: FragmentType;
+export type WorkOrdersView_query$ref = WorkOrdersView_query$fragmentType;
+type WorkOrdersViewPaginationQuery$variables = any;
+export type WorkOrdersView_query$data = {|
   +workOrders: {|
     +totalCount: number,
     +edges: $ReadOnlyArray<{|
@@ -52,21 +50,20 @@ export type WorkOrdersView_query = {|
         |},
         +closeDate: ?any,
         +priority: WorkOrderPriority,
-      |}
+      |},
     |}>,
   |},
-  +$refType: WorkOrdersView_query$ref,
+  +$fragmentType: WorkOrdersView_query$fragmentType,
 |};
-export type WorkOrdersView_query$data = WorkOrdersView_query;
+export type WorkOrdersView_query = WorkOrdersView_query$data;
 export type WorkOrdersView_query$key = {
   +$data?: WorkOrdersView_query$data,
-  +$fragmentRefs: WorkOrdersView_query$ref,
+  +$fragmentSpreads: WorkOrdersView_query$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = [
   "workOrders"
 ],
@@ -141,7 +138,7 @@ return {
         "path": (v0/*: any*/)
       },
       "fragmentPathInResult": [],
-      "operation": require('./WorkOrdersViewPaginationQuery.graphql.js')
+      "operation": require('./WorkOrdersViewPaginationQuery.graphql')
     }
   },
   "name": "WorkOrdersView_query",
@@ -335,7 +332,11 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '1f848fa22dd842b69652dfbeecc55645';
 
-module.exports = node;
+(node/*: any*/).hash = "89581ca397a5f1c5e6ab657b0a4f7217";
+
+module.exports = ((node/*: any*/)/*: RefetchableFragment<
+  WorkOrdersView_query$fragmentType,
+  WorkOrdersView_query$data,
+  WorkOrdersViewPaginationQuery$variables,
+>*/);
