@@ -16,54 +16,54 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 )
 
-// ResourceSRItemsQuery is the builder for querying ResourceSRItems entities.
-type ResourceSRItemsQuery struct {
+// ResourceSpecificationItemsQuery is the builder for querying ResourceSpecificationItems entities.
+type ResourceSpecificationItemsQuery struct {
 	config
 	limit      *int
 	offset     *int
 	order      []OrderFunc
 	unique     []string
-	predicates []predicate.ResourceSRItems
+	predicates []predicate.ResourceSpecificationItems
 	// eager-loading edges.
-	withResourcesr   *ResourceSpecificationRelationshipQuery
-	withResourcetype *ResourceTypeQuery
-	withFKs          bool
+	withResourcespecificationrelationship *ResourceSpecificationRelationshipQuery
+	withResourcespecificationitems        *ResourceSpecificationQuery
+	withFKs                               bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
 // Where adds a new predicate for the builder.
-func (rsiq *ResourceSRItemsQuery) Where(ps ...predicate.ResourceSRItems) *ResourceSRItemsQuery {
+func (rsiq *ResourceSpecificationItemsQuery) Where(ps ...predicate.ResourceSpecificationItems) *ResourceSpecificationItemsQuery {
 	rsiq.predicates = append(rsiq.predicates, ps...)
 	return rsiq
 }
 
 // Limit adds a limit step to the query.
-func (rsiq *ResourceSRItemsQuery) Limit(limit int) *ResourceSRItemsQuery {
+func (rsiq *ResourceSpecificationItemsQuery) Limit(limit int) *ResourceSpecificationItemsQuery {
 	rsiq.limit = &limit
 	return rsiq
 }
 
 // Offset adds an offset step to the query.
-func (rsiq *ResourceSRItemsQuery) Offset(offset int) *ResourceSRItemsQuery {
+func (rsiq *ResourceSpecificationItemsQuery) Offset(offset int) *ResourceSpecificationItemsQuery {
 	rsiq.offset = &offset
 	return rsiq
 }
 
 // Order adds an order step to the query.
-func (rsiq *ResourceSRItemsQuery) Order(o ...OrderFunc) *ResourceSRItemsQuery {
+func (rsiq *ResourceSpecificationItemsQuery) Order(o ...OrderFunc) *ResourceSpecificationItemsQuery {
 	rsiq.order = append(rsiq.order, o...)
 	return rsiq
 }
 
-// QueryResourcesr chains the current query on the resourcesr edge.
-func (rsiq *ResourceSRItemsQuery) QueryResourcesr() *ResourceSpecificationRelationshipQuery {
+// QueryResourcespecificationrelationship chains the current query on the resourcespecificationrelationship edge.
+func (rsiq *ResourceSpecificationItemsQuery) QueryResourcespecificationrelationship() *ResourceSpecificationRelationshipQuery {
 	query := &ResourceSpecificationRelationshipQuery{config: rsiq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rsiq.prepareQuery(ctx); err != nil {
@@ -74,9 +74,9 @@ func (rsiq *ResourceSRItemsQuery) QueryResourcesr() *ResourceSpecificationRelati
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcesritems.Table, resourcesritems.FieldID, selector),
+			sqlgraph.From(resourcespecificationitems.Table, resourcespecificationitems.FieldID, selector),
 			sqlgraph.To(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcesritems.ResourcesrTable, resourcesritems.ResourcesrColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecificationitems.ResourcespecificationrelationshipTable, resourcespecificationitems.ResourcespecificationrelationshipColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsiq.driver.Dialect(), step)
 		return fromU, nil
@@ -84,9 +84,9 @@ func (rsiq *ResourceSRItemsQuery) QueryResourcesr() *ResourceSpecificationRelati
 	return query
 }
 
-// QueryResourcetype chains the current query on the resourcetype edge.
-func (rsiq *ResourceSRItemsQuery) QueryResourcetype() *ResourceTypeQuery {
-	query := &ResourceTypeQuery{config: rsiq.config}
+// QueryResourcespecificationitems chains the current query on the resourcespecificationitems edge.
+func (rsiq *ResourceSpecificationItemsQuery) QueryResourcespecificationitems() *ResourceSpecificationQuery {
+	query := &ResourceSpecificationQuery{config: rsiq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rsiq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -96,9 +96,9 @@ func (rsiq *ResourceSRItemsQuery) QueryResourcetype() *ResourceTypeQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcesritems.Table, resourcesritems.FieldID, selector),
-			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcesritems.ResourcetypeTable, resourcesritems.ResourcetypeColumn),
+			sqlgraph.From(resourcespecificationitems.Table, resourcespecificationitems.FieldID, selector),
+			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecificationitems.ResourcespecificationitemsTable, resourcespecificationitems.ResourcespecificationitemsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsiq.driver.Dialect(), step)
 		return fromU, nil
@@ -106,20 +106,20 @@ func (rsiq *ResourceSRItemsQuery) QueryResourcetype() *ResourceTypeQuery {
 	return query
 }
 
-// First returns the first ResourceSRItems entity in the query. Returns *NotFoundError when no resourcesritems was found.
-func (rsiq *ResourceSRItemsQuery) First(ctx context.Context) (*ResourceSRItems, error) {
+// First returns the first ResourceSpecificationItems entity in the query. Returns *NotFoundError when no resourcespecificationitems was found.
+func (rsiq *ResourceSpecificationItemsQuery) First(ctx context.Context) (*ResourceSpecificationItems, error) {
 	nodes, err := rsiq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{resourcesritems.Label}
+		return nil, &NotFoundError{resourcespecificationitems.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) FirstX(ctx context.Context) *ResourceSRItems {
+func (rsiq *ResourceSpecificationItemsQuery) FirstX(ctx context.Context) *ResourceSpecificationItems {
 	node, err := rsiq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -127,21 +127,21 @@ func (rsiq *ResourceSRItemsQuery) FirstX(ctx context.Context) *ResourceSRItems {
 	return node
 }
 
-// FirstID returns the first ResourceSRItems id in the query. Returns *NotFoundError when no id was found.
-func (rsiq *ResourceSRItemsQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first ResourceSpecificationItems id in the query. Returns *NotFoundError when no id was found.
+func (rsiq *ResourceSpecificationItemsQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = rsiq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) FirstIDX(ctx context.Context) int {
+func (rsiq *ResourceSpecificationItemsQuery) FirstIDX(ctx context.Context) int {
 	id, err := rsiq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -149,8 +149,8 @@ func (rsiq *ResourceSRItemsQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns the only ResourceSRItems entity in the query, returns an error if not exactly one entity was returned.
-func (rsiq *ResourceSRItemsQuery) Only(ctx context.Context) (*ResourceSRItems, error) {
+// Only returns the only ResourceSpecificationItems entity in the query, returns an error if not exactly one entity was returned.
+func (rsiq *ResourceSpecificationItemsQuery) Only(ctx context.Context) (*ResourceSpecificationItems, error) {
 	nodes, err := rsiq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
@@ -159,14 +159,14 @@ func (rsiq *ResourceSRItemsQuery) Only(ctx context.Context) (*ResourceSRItems, e
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{resourcesritems.Label}
+		return nil, &NotFoundError{resourcespecificationitems.Label}
 	default:
-		return nil, &NotSingularError{resourcesritems.Label}
+		return nil, &NotSingularError{resourcespecificationitems.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) OnlyX(ctx context.Context) *ResourceSRItems {
+func (rsiq *ResourceSpecificationItemsQuery) OnlyX(ctx context.Context) *ResourceSpecificationItems {
 	node, err := rsiq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -174,8 +174,8 @@ func (rsiq *ResourceSRItemsQuery) OnlyX(ctx context.Context) *ResourceSRItems {
 	return node
 }
 
-// OnlyID returns the only ResourceSRItems id in the query, returns an error if not exactly one id was returned.
-func (rsiq *ResourceSRItemsQuery) OnlyID(ctx context.Context) (id int, err error) {
+// OnlyID returns the only ResourceSpecificationItems id in the query, returns an error if not exactly one id was returned.
+func (rsiq *ResourceSpecificationItemsQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = rsiq.Limit(2).IDs(ctx); err != nil {
 		return
@@ -184,15 +184,15 @@ func (rsiq *ResourceSRItemsQuery) OnlyID(ctx context.Context) (id int, err error
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = &NotSingularError{resourcesritems.Label}
+		err = &NotSingularError{resourcespecificationitems.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) OnlyIDX(ctx context.Context) int {
+func (rsiq *ResourceSpecificationItemsQuery) OnlyIDX(ctx context.Context) int {
 	id, err := rsiq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -200,8 +200,8 @@ func (rsiq *ResourceSRItemsQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of ResourceSRItemsSlice.
-func (rsiq *ResourceSRItemsQuery) All(ctx context.Context) ([]*ResourceSRItems, error) {
+// All executes the query and returns a list of ResourceSpecificationItemsSlice.
+func (rsiq *ResourceSpecificationItemsQuery) All(ctx context.Context) ([]*ResourceSpecificationItems, error) {
 	if err := rsiq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -209,7 +209,7 @@ func (rsiq *ResourceSRItemsQuery) All(ctx context.Context) ([]*ResourceSRItems, 
 }
 
 // AllX is like All, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) AllX(ctx context.Context) []*ResourceSRItems {
+func (rsiq *ResourceSpecificationItemsQuery) AllX(ctx context.Context) []*ResourceSpecificationItems {
 	nodes, err := rsiq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -217,17 +217,17 @@ func (rsiq *ResourceSRItemsQuery) AllX(ctx context.Context) []*ResourceSRItems {
 	return nodes
 }
 
-// IDs executes the query and returns a list of ResourceSRItems ids.
-func (rsiq *ResourceSRItemsQuery) IDs(ctx context.Context) ([]int, error) {
+// IDs executes the query and returns a list of ResourceSpecificationItems ids.
+func (rsiq *ResourceSpecificationItemsQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
-	if err := rsiq.Select(resourcesritems.FieldID).Scan(ctx, &ids); err != nil {
+	if err := rsiq.Select(resourcespecificationitems.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) IDsX(ctx context.Context) []int {
+func (rsiq *ResourceSpecificationItemsQuery) IDsX(ctx context.Context) []int {
 	ids, err := rsiq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -236,7 +236,7 @@ func (rsiq *ResourceSRItemsQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (rsiq *ResourceSRItemsQuery) Count(ctx context.Context) (int, error) {
+func (rsiq *ResourceSpecificationItemsQuery) Count(ctx context.Context) (int, error) {
 	if err := rsiq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -244,7 +244,7 @@ func (rsiq *ResourceSRItemsQuery) Count(ctx context.Context) (int, error) {
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) CountX(ctx context.Context) int {
+func (rsiq *ResourceSpecificationItemsQuery) CountX(ctx context.Context) int {
 	count, err := rsiq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -253,7 +253,7 @@ func (rsiq *ResourceSRItemsQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (rsiq *ResourceSRItemsQuery) Exist(ctx context.Context) (bool, error) {
+func (rsiq *ResourceSpecificationItemsQuery) Exist(ctx context.Context) (bool, error) {
 	if err := rsiq.prepareQuery(ctx); err != nil {
 		return false, err
 	}
@@ -261,7 +261,7 @@ func (rsiq *ResourceSRItemsQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (rsiq *ResourceSRItemsQuery) ExistX(ctx context.Context) bool {
+func (rsiq *ResourceSpecificationItemsQuery) ExistX(ctx context.Context) bool {
 	exist, err := rsiq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -271,44 +271,44 @@ func (rsiq *ResourceSRItemsQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (rsiq *ResourceSRItemsQuery) Clone() *ResourceSRItemsQuery {
+func (rsiq *ResourceSpecificationItemsQuery) Clone() *ResourceSpecificationItemsQuery {
 	if rsiq == nil {
 		return nil
 	}
-	return &ResourceSRItemsQuery{
-		config:           rsiq.config,
-		limit:            rsiq.limit,
-		offset:           rsiq.offset,
-		order:            append([]OrderFunc{}, rsiq.order...),
-		unique:           append([]string{}, rsiq.unique...),
-		predicates:       append([]predicate.ResourceSRItems{}, rsiq.predicates...),
-		withResourcesr:   rsiq.withResourcesr.Clone(),
-		withResourcetype: rsiq.withResourcetype.Clone(),
+	return &ResourceSpecificationItemsQuery{
+		config:                                rsiq.config,
+		limit:                                 rsiq.limit,
+		offset:                                rsiq.offset,
+		order:                                 append([]OrderFunc{}, rsiq.order...),
+		unique:                                append([]string{}, rsiq.unique...),
+		predicates:                            append([]predicate.ResourceSpecificationItems{}, rsiq.predicates...),
+		withResourcespecificationrelationship: rsiq.withResourcespecificationrelationship.Clone(),
+		withResourcespecificationitems:        rsiq.withResourcespecificationitems.Clone(),
 		// clone intermediate query.
 		sql:  rsiq.sql.Clone(),
 		path: rsiq.path,
 	}
 }
 
-//  WithResourcesr tells the query-builder to eager-loads the nodes that are connected to
-// the "resourcesr" edge. The optional arguments used to configure the query builder of the edge.
-func (rsiq *ResourceSRItemsQuery) WithResourcesr(opts ...func(*ResourceSpecificationRelationshipQuery)) *ResourceSRItemsQuery {
+//  WithResourcespecificationrelationship tells the query-builder to eager-loads the nodes that are connected to
+// the "resourcespecificationrelationship" edge. The optional arguments used to configure the query builder of the edge.
+func (rsiq *ResourceSpecificationItemsQuery) WithResourcespecificationrelationship(opts ...func(*ResourceSpecificationRelationshipQuery)) *ResourceSpecificationItemsQuery {
 	query := &ResourceSpecificationRelationshipQuery{config: rsiq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rsiq.withResourcesr = query
+	rsiq.withResourcespecificationrelationship = query
 	return rsiq
 }
 
-//  WithResourcetype tells the query-builder to eager-loads the nodes that are connected to
-// the "resourcetype" edge. The optional arguments used to configure the query builder of the edge.
-func (rsiq *ResourceSRItemsQuery) WithResourcetype(opts ...func(*ResourceTypeQuery)) *ResourceSRItemsQuery {
-	query := &ResourceTypeQuery{config: rsiq.config}
+//  WithResourcespecificationitems tells the query-builder to eager-loads the nodes that are connected to
+// the "resourcespecificationitems" edge. The optional arguments used to configure the query builder of the edge.
+func (rsiq *ResourceSpecificationItemsQuery) WithResourcespecificationitems(opts ...func(*ResourceSpecificationQuery)) *ResourceSpecificationItemsQuery {
+	query := &ResourceSpecificationQuery{config: rsiq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rsiq.withResourcetype = query
+	rsiq.withResourcespecificationitems = query
 	return rsiq
 }
 
@@ -322,13 +322,13 @@ func (rsiq *ResourceSRItemsQuery) WithResourcetype(opts ...func(*ResourceTypeQue
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.ResourceSRItems.Query().
-//		GroupBy(resourcesritems.FieldCreateTime).
+//	client.ResourceSpecificationItems.Query().
+//		GroupBy(resourcespecificationitems.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
-func (rsiq *ResourceSRItemsQuery) GroupBy(field string, fields ...string) *ResourceSRItemsGroupBy {
-	group := &ResourceSRItemsGroupBy{config: rsiq.config}
+func (rsiq *ResourceSpecificationItemsQuery) GroupBy(field string, fields ...string) *ResourceSpecificationItemsGroupBy {
+	group := &ResourceSpecificationItemsGroupBy{config: rsiq.config}
 	group.fields = append([]string{field}, fields...)
 	group.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := rsiq.prepareQuery(ctx); err != nil {
@@ -347,12 +347,12 @@ func (rsiq *ResourceSRItemsQuery) GroupBy(field string, fields ...string) *Resou
 //		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
-//	client.ResourceSRItems.Query().
-//		Select(resourcesritems.FieldCreateTime).
+//	client.ResourceSpecificationItems.Query().
+//		Select(resourcespecificationitems.FieldCreateTime).
 //		Scan(ctx, &v)
 //
-func (rsiq *ResourceSRItemsQuery) Select(field string, fields ...string) *ResourceSRItemsSelect {
-	selector := &ResourceSRItemsSelect{config: rsiq.config}
+func (rsiq *ResourceSpecificationItemsQuery) Select(field string, fields ...string) *ResourceSpecificationItemsSelect {
+	selector := &ResourceSpecificationItemsSelect{config: rsiq.config}
 	selector.fields = append([]string{field}, fields...)
 	selector.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := rsiq.prepareQuery(ctx); err != nil {
@@ -363,7 +363,7 @@ func (rsiq *ResourceSRItemsQuery) Select(field string, fields ...string) *Resour
 	return selector
 }
 
-func (rsiq *ResourceSRItemsQuery) prepareQuery(ctx context.Context) error {
+func (rsiq *ResourceSpecificationItemsQuery) prepareQuery(ctx context.Context) error {
 	if rsiq.path != nil {
 		prev, err := rsiq.path(ctx)
 		if err != nil {
@@ -371,30 +371,30 @@ func (rsiq *ResourceSRItemsQuery) prepareQuery(ctx context.Context) error {
 		}
 		rsiq.sql = prev
 	}
-	if err := resourcesritems.Policy.EvalQuery(ctx, rsiq); err != nil {
+	if err := resourcespecificationitems.Policy.EvalQuery(ctx, rsiq); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (rsiq *ResourceSRItemsQuery) sqlAll(ctx context.Context) ([]*ResourceSRItems, error) {
+func (rsiq *ResourceSpecificationItemsQuery) sqlAll(ctx context.Context) ([]*ResourceSpecificationItems, error) {
 	var (
-		nodes       = []*ResourceSRItems{}
+		nodes       = []*ResourceSpecificationItems{}
 		withFKs     = rsiq.withFKs
 		_spec       = rsiq.querySpec()
 		loadedTypes = [2]bool{
-			rsiq.withResourcesr != nil,
-			rsiq.withResourcetype != nil,
+			rsiq.withResourcespecificationrelationship != nil,
+			rsiq.withResourcespecificationitems != nil,
 		}
 	)
-	if rsiq.withResourcesr != nil || rsiq.withResourcetype != nil {
+	if rsiq.withResourcespecificationrelationship != nil || rsiq.withResourcespecificationitems != nil {
 		withFKs = true
 	}
 	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, resourcesritems.ForeignKeys...)
+		_spec.Node.Columns = append(_spec.Node.Columns, resourcespecificationitems.ForeignKeys...)
 	}
 	_spec.ScanValues = func() []interface{} {
-		node := &ResourceSRItems{config: rsiq.config}
+		node := &ResourceSpecificationItems{config: rsiq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
 		if withFKs {
@@ -417,11 +417,11 @@ func (rsiq *ResourceSRItemsQuery) sqlAll(ctx context.Context) ([]*ResourceSRItem
 		return nodes, nil
 	}
 
-	if query := rsiq.withResourcesr; query != nil {
+	if query := rsiq.withResourcespecificationrelationship; query != nil {
 		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*ResourceSRItems)
+		nodeids := make(map[int][]*ResourceSpecificationItems)
 		for i := range nodes {
-			if fk := nodes[i].resource_specification_relationship_resource_sr; fk != nil {
+			if fk := nodes[i].resource_specification_relationship_resource_specification_relationship; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -434,24 +434,24 @@ func (rsiq *ResourceSRItemsQuery) sqlAll(ctx context.Context) ([]*ResourceSRItem
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_relationship_resource_sr" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_relationship_resource_specification_relationship" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Resourcesr = n
+				nodes[i].Edges.Resourcespecificationrelationship = n
 			}
 		}
 	}
 
-	if query := rsiq.withResourcetype; query != nil {
+	if query := rsiq.withResourcespecificationitems; query != nil {
 		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*ResourceSRItems)
+		nodeids := make(map[int][]*ResourceSpecificationItems)
 		for i := range nodes {
-			if fk := nodes[i].resource_type_resourcetype_items; fk != nil {
+			if fk := nodes[i].resource_specification_resource_specification_items; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
 		}
-		query.Where(resourcetype.IDIn(ids...))
+		query.Where(resourcespecification.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -459,10 +459,10 @@ func (rsiq *ResourceSRItemsQuery) sqlAll(ctx context.Context) ([]*ResourceSRItem
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resourcetype_items" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_resource_specification_items" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Resourcetype = n
+				nodes[i].Edges.Resourcespecificationitems = n
 			}
 		}
 	}
@@ -470,12 +470,12 @@ func (rsiq *ResourceSRItemsQuery) sqlAll(ctx context.Context) ([]*ResourceSRItem
 	return nodes, nil
 }
 
-func (rsiq *ResourceSRItemsQuery) sqlCount(ctx context.Context) (int, error) {
+func (rsiq *ResourceSpecificationItemsQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := rsiq.querySpec()
 	return sqlgraph.CountNodes(ctx, rsiq.driver, _spec)
 }
 
-func (rsiq *ResourceSRItemsQuery) sqlExist(ctx context.Context) (bool, error) {
+func (rsiq *ResourceSpecificationItemsQuery) sqlExist(ctx context.Context) (bool, error) {
 	n, err := rsiq.sqlCount(ctx)
 	if err != nil {
 		return false, fmt.Errorf("ent: check existence: %v", err)
@@ -483,14 +483,14 @@ func (rsiq *ResourceSRItemsQuery) sqlExist(ctx context.Context) (bool, error) {
 	return n > 0, nil
 }
 
-func (rsiq *ResourceSRItemsQuery) querySpec() *sqlgraph.QuerySpec {
+func (rsiq *ResourceSpecificationItemsQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   resourcesritems.Table,
-			Columns: resourcesritems.Columns,
+			Table:   resourcespecificationitems.Table,
+			Columns: resourcespecificationitems.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: resourcesritems.FieldID,
+				Column: resourcespecificationitems.FieldID,
 			},
 		},
 		From:   rsiq.sql,
@@ -512,26 +512,26 @@ func (rsiq *ResourceSRItemsQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := rsiq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector, resourcesritems.ValidColumn)
+				ps[i](selector, resourcespecificationitems.ValidColumn)
 			}
 		}
 	}
 	return _spec
 }
 
-func (rsiq *ResourceSRItemsQuery) sqlQuery() *sql.Selector {
+func (rsiq *ResourceSpecificationItemsQuery) sqlQuery() *sql.Selector {
 	builder := sql.Dialect(rsiq.driver.Dialect())
-	t1 := builder.Table(resourcesritems.Table)
-	selector := builder.Select(t1.Columns(resourcesritems.Columns...)...).From(t1)
+	t1 := builder.Table(resourcespecificationitems.Table)
+	selector := builder.Select(t1.Columns(resourcespecificationitems.Columns...)...).From(t1)
 	if rsiq.sql != nil {
 		selector = rsiq.sql
-		selector.Select(selector.Columns(resourcesritems.Columns...)...)
+		selector.Select(selector.Columns(resourcespecificationitems.Columns...)...)
 	}
 	for _, p := range rsiq.predicates {
 		p(selector)
 	}
 	for _, p := range rsiq.order {
-		p(selector, resourcesritems.ValidColumn)
+		p(selector, resourcespecificationitems.ValidColumn)
 	}
 	if offset := rsiq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -544,8 +544,8 @@ func (rsiq *ResourceSRItemsQuery) sqlQuery() *sql.Selector {
 	return selector
 }
 
-// ResourceSRItemsGroupBy is the builder for group-by ResourceSRItems entities.
-type ResourceSRItemsGroupBy struct {
+// ResourceSpecificationItemsGroupBy is the builder for group-by ResourceSpecificationItems entities.
+type ResourceSpecificationItemsGroupBy struct {
 	config
 	fields []string
 	fns    []AggregateFunc
@@ -555,13 +555,13 @@ type ResourceSRItemsGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (rsigb *ResourceSRItemsGroupBy) Aggregate(fns ...AggregateFunc) *ResourceSRItemsGroupBy {
+func (rsigb *ResourceSpecificationItemsGroupBy) Aggregate(fns ...AggregateFunc) *ResourceSpecificationItemsGroupBy {
 	rsigb.fns = append(rsigb.fns, fns...)
 	return rsigb
 }
 
 // Scan applies the group-by query and scan the result into the given value.
-func (rsigb *ResourceSRItemsGroupBy) Scan(ctx context.Context, v interface{}) error {
+func (rsigb *ResourceSpecificationItemsGroupBy) Scan(ctx context.Context, v interface{}) error {
 	query, err := rsigb.path(ctx)
 	if err != nil {
 		return err
@@ -571,16 +571,16 @@ func (rsigb *ResourceSRItemsGroupBy) Scan(ctx context.Context, v interface{}) er
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) ScanX(ctx context.Context, v interface{}) {
+func (rsigb *ResourceSpecificationItemsGroupBy) ScanX(ctx context.Context, v interface{}) {
 	if err := rsigb.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) Strings(ctx context.Context) ([]string, error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) Strings(ctx context.Context) ([]string, error) {
 	if len(rsigb.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsGroupBy.Strings is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsGroupBy.Strings is not achievable when grouping more than 1 field")
 	}
 	var v []string
 	if err := rsigb.Scan(ctx, &v); err != nil {
@@ -590,7 +590,7 @@ func (rsigb *ResourceSRItemsGroupBy) Strings(ctx context.Context) ([]string, err
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) StringsX(ctx context.Context) []string {
+func (rsigb *ResourceSpecificationItemsGroupBy) StringsX(ctx context.Context) []string {
 	v, err := rsigb.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -599,7 +599,7 @@ func (rsigb *ResourceSRItemsGroupBy) StringsX(ctx context.Context) []string {
 }
 
 // String returns a single string from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) String(ctx context.Context) (_ string, err error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = rsigb.Strings(ctx); err != nil {
 		return
@@ -608,15 +608,15 @@ func (rsigb *ResourceSRItemsGroupBy) String(ctx context.Context) (_ string, err 
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsGroupBy.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsGroupBy.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) StringX(ctx context.Context) string {
+func (rsigb *ResourceSpecificationItemsGroupBy) StringX(ctx context.Context) string {
 	v, err := rsigb.String(ctx)
 	if err != nil {
 		panic(err)
@@ -625,9 +625,9 @@ func (rsigb *ResourceSRItemsGroupBy) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) Ints(ctx context.Context) ([]int, error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) Ints(ctx context.Context) ([]int, error) {
 	if len(rsigb.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsGroupBy.Ints is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsGroupBy.Ints is not achievable when grouping more than 1 field")
 	}
 	var v []int
 	if err := rsigb.Scan(ctx, &v); err != nil {
@@ -637,7 +637,7 @@ func (rsigb *ResourceSRItemsGroupBy) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) IntsX(ctx context.Context) []int {
+func (rsigb *ResourceSpecificationItemsGroupBy) IntsX(ctx context.Context) []int {
 	v, err := rsigb.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -646,7 +646,7 @@ func (rsigb *ResourceSRItemsGroupBy) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) Int(ctx context.Context) (_ int, err error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = rsigb.Ints(ctx); err != nil {
 		return
@@ -655,15 +655,15 @@ func (rsigb *ResourceSRItemsGroupBy) Int(ctx context.Context) (_ int, err error)
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsGroupBy.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsGroupBy.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) IntX(ctx context.Context) int {
+func (rsigb *ResourceSpecificationItemsGroupBy) IntX(ctx context.Context) int {
 	v, err := rsigb.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -672,9 +672,9 @@ func (rsigb *ResourceSRItemsGroupBy) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) Float64s(ctx context.Context) ([]float64, error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) Float64s(ctx context.Context) ([]float64, error) {
 	if len(rsigb.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsGroupBy.Float64s is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsGroupBy.Float64s is not achievable when grouping more than 1 field")
 	}
 	var v []float64
 	if err := rsigb.Scan(ctx, &v); err != nil {
@@ -684,7 +684,7 @@ func (rsigb *ResourceSRItemsGroupBy) Float64s(ctx context.Context) ([]float64, e
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) Float64sX(ctx context.Context) []float64 {
+func (rsigb *ResourceSpecificationItemsGroupBy) Float64sX(ctx context.Context) []float64 {
 	v, err := rsigb.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -693,7 +693,7 @@ func (rsigb *ResourceSRItemsGroupBy) Float64sX(ctx context.Context) []float64 {
 }
 
 // Float64 returns a single float64 from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) Float64(ctx context.Context) (_ float64, err error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = rsigb.Float64s(ctx); err != nil {
 		return
@@ -702,15 +702,15 @@ func (rsigb *ResourceSRItemsGroupBy) Float64(ctx context.Context) (_ float64, er
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsGroupBy.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsGroupBy.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) Float64X(ctx context.Context) float64 {
+func (rsigb *ResourceSpecificationItemsGroupBy) Float64X(ctx context.Context) float64 {
 	v, err := rsigb.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -719,9 +719,9 @@ func (rsigb *ResourceSRItemsGroupBy) Float64X(ctx context.Context) float64 {
 }
 
 // Bools returns list of bools from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) Bools(ctx context.Context) ([]bool, error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) Bools(ctx context.Context) ([]bool, error) {
 	if len(rsigb.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsGroupBy.Bools is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsGroupBy.Bools is not achievable when grouping more than 1 field")
 	}
 	var v []bool
 	if err := rsigb.Scan(ctx, &v); err != nil {
@@ -731,7 +731,7 @@ func (rsigb *ResourceSRItemsGroupBy) Bools(ctx context.Context) ([]bool, error) 
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) BoolsX(ctx context.Context) []bool {
+func (rsigb *ResourceSpecificationItemsGroupBy) BoolsX(ctx context.Context) []bool {
 	v, err := rsigb.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -740,7 +740,7 @@ func (rsigb *ResourceSRItemsGroupBy) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from group-by. It is only allowed when querying group-by with one field.
-func (rsigb *ResourceSRItemsGroupBy) Bool(ctx context.Context) (_ bool, err error) {
+func (rsigb *ResourceSpecificationItemsGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = rsigb.Bools(ctx); err != nil {
 		return
@@ -749,15 +749,15 @@ func (rsigb *ResourceSRItemsGroupBy) Bool(ctx context.Context) (_ bool, err erro
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsGroupBy.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsGroupBy.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (rsigb *ResourceSRItemsGroupBy) BoolX(ctx context.Context) bool {
+func (rsigb *ResourceSpecificationItemsGroupBy) BoolX(ctx context.Context) bool {
 	v, err := rsigb.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -765,9 +765,9 @@ func (rsigb *ResourceSRItemsGroupBy) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (rsigb *ResourceSRItemsGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+func (rsigb *ResourceSpecificationItemsGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	for _, f := range rsigb.fields {
-		if !resourcesritems.ValidColumn(f) {
+		if !resourcespecificationitems.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
 		}
 	}
@@ -784,18 +784,18 @@ func (rsigb *ResourceSRItemsGroupBy) sqlScan(ctx context.Context, v interface{})
 	return sql.ScanSlice(rows, v)
 }
 
-func (rsigb *ResourceSRItemsGroupBy) sqlQuery() *sql.Selector {
+func (rsigb *ResourceSpecificationItemsGroupBy) sqlQuery() *sql.Selector {
 	selector := rsigb.sql
 	columns := make([]string, 0, len(rsigb.fields)+len(rsigb.fns))
 	columns = append(columns, rsigb.fields...)
 	for _, fn := range rsigb.fns {
-		columns = append(columns, fn(selector, resourcesritems.ValidColumn))
+		columns = append(columns, fn(selector, resourcespecificationitems.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(rsigb.fields...)
 }
 
-// ResourceSRItemsSelect is the builder for select fields of ResourceSRItems entities.
-type ResourceSRItemsSelect struct {
+// ResourceSpecificationItemsSelect is the builder for select fields of ResourceSpecificationItems entities.
+type ResourceSpecificationItemsSelect struct {
 	config
 	fields []string
 	// intermediate query (i.e. traversal path).
@@ -804,7 +804,7 @@ type ResourceSRItemsSelect struct {
 }
 
 // Scan applies the selector query and scan the result into the given value.
-func (rsis *ResourceSRItemsSelect) Scan(ctx context.Context, v interface{}) error {
+func (rsis *ResourceSpecificationItemsSelect) Scan(ctx context.Context, v interface{}) error {
 	query, err := rsis.path(ctx)
 	if err != nil {
 		return err
@@ -814,16 +814,16 @@ func (rsis *ResourceSRItemsSelect) Scan(ctx context.Context, v interface{}) erro
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) ScanX(ctx context.Context, v interface{}) {
+func (rsis *ResourceSpecificationItemsSelect) ScanX(ctx context.Context, v interface{}) {
 	if err := rsis.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) Strings(ctx context.Context) ([]string, error) {
+func (rsis *ResourceSpecificationItemsSelect) Strings(ctx context.Context) ([]string, error) {
 	if len(rsis.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsSelect.Strings is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsSelect.Strings is not achievable when selecting more than 1 field")
 	}
 	var v []string
 	if err := rsis.Scan(ctx, &v); err != nil {
@@ -833,7 +833,7 @@ func (rsis *ResourceSRItemsSelect) Strings(ctx context.Context) ([]string, error
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) StringsX(ctx context.Context) []string {
+func (rsis *ResourceSpecificationItemsSelect) StringsX(ctx context.Context) []string {
 	v, err := rsis.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -842,7 +842,7 @@ func (rsis *ResourceSRItemsSelect) StringsX(ctx context.Context) []string {
 }
 
 // String returns a single string from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) String(ctx context.Context) (_ string, err error) {
+func (rsis *ResourceSpecificationItemsSelect) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = rsis.Strings(ctx); err != nil {
 		return
@@ -851,15 +851,15 @@ func (rsis *ResourceSRItemsSelect) String(ctx context.Context) (_ string, err er
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsSelect.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsSelect.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) StringX(ctx context.Context) string {
+func (rsis *ResourceSpecificationItemsSelect) StringX(ctx context.Context) string {
 	v, err := rsis.String(ctx)
 	if err != nil {
 		panic(err)
@@ -868,9 +868,9 @@ func (rsis *ResourceSRItemsSelect) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) Ints(ctx context.Context) ([]int, error) {
+func (rsis *ResourceSpecificationItemsSelect) Ints(ctx context.Context) ([]int, error) {
 	if len(rsis.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsSelect.Ints is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsSelect.Ints is not achievable when selecting more than 1 field")
 	}
 	var v []int
 	if err := rsis.Scan(ctx, &v); err != nil {
@@ -880,7 +880,7 @@ func (rsis *ResourceSRItemsSelect) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) IntsX(ctx context.Context) []int {
+func (rsis *ResourceSpecificationItemsSelect) IntsX(ctx context.Context) []int {
 	v, err := rsis.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -889,7 +889,7 @@ func (rsis *ResourceSRItemsSelect) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) Int(ctx context.Context) (_ int, err error) {
+func (rsis *ResourceSpecificationItemsSelect) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = rsis.Ints(ctx); err != nil {
 		return
@@ -898,15 +898,15 @@ func (rsis *ResourceSRItemsSelect) Int(ctx context.Context) (_ int, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsSelect.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsSelect.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) IntX(ctx context.Context) int {
+func (rsis *ResourceSpecificationItemsSelect) IntX(ctx context.Context) int {
 	v, err := rsis.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -915,9 +915,9 @@ func (rsis *ResourceSRItemsSelect) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) Float64s(ctx context.Context) ([]float64, error) {
+func (rsis *ResourceSpecificationItemsSelect) Float64s(ctx context.Context) ([]float64, error) {
 	if len(rsis.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsSelect.Float64s is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsSelect.Float64s is not achievable when selecting more than 1 field")
 	}
 	var v []float64
 	if err := rsis.Scan(ctx, &v); err != nil {
@@ -927,7 +927,7 @@ func (rsis *ResourceSRItemsSelect) Float64s(ctx context.Context) ([]float64, err
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) Float64sX(ctx context.Context) []float64 {
+func (rsis *ResourceSpecificationItemsSelect) Float64sX(ctx context.Context) []float64 {
 	v, err := rsis.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -936,7 +936,7 @@ func (rsis *ResourceSRItemsSelect) Float64sX(ctx context.Context) []float64 {
 }
 
 // Float64 returns a single float64 from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) Float64(ctx context.Context) (_ float64, err error) {
+func (rsis *ResourceSpecificationItemsSelect) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = rsis.Float64s(ctx); err != nil {
 		return
@@ -945,15 +945,15 @@ func (rsis *ResourceSRItemsSelect) Float64(ctx context.Context) (_ float64, err 
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsSelect.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsSelect.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) Float64X(ctx context.Context) float64 {
+func (rsis *ResourceSpecificationItemsSelect) Float64X(ctx context.Context) float64 {
 	v, err := rsis.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -962,9 +962,9 @@ func (rsis *ResourceSRItemsSelect) Float64X(ctx context.Context) float64 {
 }
 
 // Bools returns list of bools from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) Bools(ctx context.Context) ([]bool, error) {
+func (rsis *ResourceSpecificationItemsSelect) Bools(ctx context.Context) ([]bool, error) {
 	if len(rsis.fields) > 1 {
-		return nil, errors.New("ent: ResourceSRItemsSelect.Bools is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ResourceSpecificationItemsSelect.Bools is not achievable when selecting more than 1 field")
 	}
 	var v []bool
 	if err := rsis.Scan(ctx, &v); err != nil {
@@ -974,7 +974,7 @@ func (rsis *ResourceSRItemsSelect) Bools(ctx context.Context) ([]bool, error) {
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) BoolsX(ctx context.Context) []bool {
+func (rsis *ResourceSpecificationItemsSelect) BoolsX(ctx context.Context) []bool {
 	v, err := rsis.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -983,7 +983,7 @@ func (rsis *ResourceSRItemsSelect) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from selector. It is only allowed when selecting one field.
-func (rsis *ResourceSRItemsSelect) Bool(ctx context.Context) (_ bool, err error) {
+func (rsis *ResourceSpecificationItemsSelect) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = rsis.Bools(ctx); err != nil {
 		return
@@ -992,15 +992,15 @@ func (rsis *ResourceSRItemsSelect) Bool(ctx context.Context) (_ bool, err error)
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{resourcesritems.Label}
+		err = &NotFoundError{resourcespecificationitems.Label}
 	default:
-		err = fmt.Errorf("ent: ResourceSRItemsSelect.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ResourceSpecificationItemsSelect.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (rsis *ResourceSRItemsSelect) BoolX(ctx context.Context) bool {
+func (rsis *ResourceSpecificationItemsSelect) BoolX(ctx context.Context) bool {
 	v, err := rsis.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -1008,9 +1008,9 @@ func (rsis *ResourceSRItemsSelect) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (rsis *ResourceSRItemsSelect) sqlScan(ctx context.Context, v interface{}) error {
+func (rsis *ResourceSpecificationItemsSelect) sqlScan(ctx context.Context, v interface{}) error {
 	for _, f := range rsis.fields {
-		if !resourcesritems.ValidColumn(f) {
+		if !resourcespecificationitems.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
 		}
 	}
@@ -1023,7 +1023,7 @@ func (rsis *ResourceSRItemsSelect) sqlScan(ctx context.Context, v interface{}) e
 	return sql.ScanSlice(rows, v)
 }
 
-func (rsis *ResourceSRItemsSelect) sqlQuery() sql.Querier {
+func (rsis *ResourceSpecificationItemsSelect) sqlQuery() sql.Querier {
 	selector := rsis.sql
 	selector.Select(selector.Columns(rsis.fields...)...)
 	return selector

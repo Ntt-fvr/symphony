@@ -31,8 +31,8 @@ func (ResourceSpecificationRelationship) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("resourcespecification", ResourceSpecification.Type).
 			Ref("resource_specification").Unique(),
-		edge.To("resource_sr", ResourceSRItems.Type).
-			Annotations(entgql.MapsTo("resourcesr")),
+		edge.To("resource_specification_relationship", ResourceSpecificationItems.Type).
+			Annotations(entgql.MapsTo("resourcespecificationrelationship")),
 	}
 }
 

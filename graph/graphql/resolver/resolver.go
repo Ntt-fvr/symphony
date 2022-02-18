@@ -305,8 +305,8 @@ func (r resolver) ResourceSpecification() generated.ResourceSpecificationResolve
 	return resourceSpecificationRelationshipResolver{}
 }*/
 
-func (r resolver) ResourceSRItems() generated.ResourceSRItemsResolver {
-	return resourceSpecificationRelationshipItemsResolver{}
+func (r resolver) ResourceSpecificationItems() generated.ResourceSpecificationItemsResolver {
+	return resourceSpecificationItemsResolver{}
 }
 
 func (r resolver) PropertyCategory() generated.PropertyCategoryResolver {

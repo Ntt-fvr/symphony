@@ -43,11 +43,9 @@ type ResourceTypeEdges struct {
 	ResourceRelationshipB []*ResourceTypeRelationship
 	// ResourceSpecification holds the value of the resource_specification edge.
 	ResourceSpecification []*ResourceSpecification
-	// ResourcetypeItems holds the value of the resourcetype_items edge.
-	ResourcetypeItems []*ResourceSRItems
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [3]bool
 }
 
 // ResourceRelationshipAOrErr returns the ResourceRelationshipA value or an error if the edge
@@ -75,15 +73,6 @@ func (e ResourceTypeEdges) ResourceSpecificationOrErr() ([]*ResourceSpecificatio
 		return e.ResourceSpecification, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_specification"}
-}
-
-// ResourcetypeItemsOrErr returns the ResourcetypeItems value or an error if the edge
-// was not loaded in eager-loading.
-func (e ResourceTypeEdges) ResourcetypeItemsOrErr() ([]*ResourceSRItems, error) {
-	if e.loadedTypes[3] {
-		return e.ResourcetypeItems, nil
-	}
-	return nil, &NotLoadedError{edge: "resourcetype_items"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -151,11 +140,6 @@ func (rt *ResourceType) QueryResourceRelationshipB() *ResourceTypeRelationshipQu
 // QueryResourceSpecification queries the resource_specification edge of the ResourceType.
 func (rt *ResourceType) QueryResourceSpecification() *ResourceSpecificationQuery {
 	return (&ResourceTypeClient{config: rt.config}).QueryResourceSpecification(rt)
-}
-
-// QueryResourcetypeItems queries the resourcetype_items edge of the ResourceType.
-func (rt *ResourceType) QueryResourcetypeItems() *ResourceSRItemsQuery {
-	return (&ResourceTypeClient{config: rt.config}).QueryResourcetypeItems(rt)
 }
 
 // Update returns a builder for updating this ResourceType.

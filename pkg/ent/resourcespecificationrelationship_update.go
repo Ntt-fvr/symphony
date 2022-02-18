@@ -15,8 +15,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 )
 
 // ResourceSpecificationRelationshipUpdate is the builder for updating ResourceSpecificationRelationship entities.
@@ -57,19 +57,19 @@ func (rsru *ResourceSpecificationRelationshipUpdate) SetResourcespecification(r 
 	return rsru.SetResourcespecificationID(r.ID)
 }
 
-// AddResourceSrIDs adds the resource_sr edge to ResourceSRItems by ids.
-func (rsru *ResourceSpecificationRelationshipUpdate) AddResourceSrIDs(ids ...int) *ResourceSpecificationRelationshipUpdate {
-	rsru.mutation.AddResourceSrIDs(ids...)
+// AddResourceSpecificationRelationshipIDs adds the resource_specification_relationship edge to ResourceSpecificationItems by ids.
+func (rsru *ResourceSpecificationRelationshipUpdate) AddResourceSpecificationRelationshipIDs(ids ...int) *ResourceSpecificationRelationshipUpdate {
+	rsru.mutation.AddResourceSpecificationRelationshipIDs(ids...)
 	return rsru
 }
 
-// AddResourceSr adds the resource_sr edges to ResourceSRItems.
-func (rsru *ResourceSpecificationRelationshipUpdate) AddResourceSr(r ...*ResourceSRItems) *ResourceSpecificationRelationshipUpdate {
+// AddResourceSpecificationRelationship adds the resource_specification_relationship edges to ResourceSpecificationItems.
+func (rsru *ResourceSpecificationRelationshipUpdate) AddResourceSpecificationRelationship(r ...*ResourceSpecificationItems) *ResourceSpecificationRelationshipUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rsru.AddResourceSrIDs(ids...)
+	return rsru.AddResourceSpecificationRelationshipIDs(ids...)
 }
 
 // Mutation returns the ResourceSpecificationRelationshipMutation object of the builder.
@@ -83,25 +83,25 @@ func (rsru *ResourceSpecificationRelationshipUpdate) ClearResourcespecification(
 	return rsru
 }
 
-// ClearResourceSr clears all "resource_sr" edges to type ResourceSRItems.
-func (rsru *ResourceSpecificationRelationshipUpdate) ClearResourceSr() *ResourceSpecificationRelationshipUpdate {
-	rsru.mutation.ClearResourceSr()
+// ClearResourceSpecificationRelationship clears all "resource_specification_relationship" edges to type ResourceSpecificationItems.
+func (rsru *ResourceSpecificationRelationshipUpdate) ClearResourceSpecificationRelationship() *ResourceSpecificationRelationshipUpdate {
+	rsru.mutation.ClearResourceSpecificationRelationship()
 	return rsru
 }
 
-// RemoveResourceSrIDs removes the resource_sr edge to ResourceSRItems by ids.
-func (rsru *ResourceSpecificationRelationshipUpdate) RemoveResourceSrIDs(ids ...int) *ResourceSpecificationRelationshipUpdate {
-	rsru.mutation.RemoveResourceSrIDs(ids...)
+// RemoveResourceSpecificationRelationshipIDs removes the resource_specification_relationship edge to ResourceSpecificationItems by ids.
+func (rsru *ResourceSpecificationRelationshipUpdate) RemoveResourceSpecificationRelationshipIDs(ids ...int) *ResourceSpecificationRelationshipUpdate {
+	rsru.mutation.RemoveResourceSpecificationRelationshipIDs(ids...)
 	return rsru
 }
 
-// RemoveResourceSr removes resource_sr edges to ResourceSRItems.
-func (rsru *ResourceSpecificationRelationshipUpdate) RemoveResourceSr(r ...*ResourceSRItems) *ResourceSpecificationRelationshipUpdate {
+// RemoveResourceSpecificationRelationship removes resource_specification_relationship edges to ResourceSpecificationItems.
+func (rsru *ResourceSpecificationRelationshipUpdate) RemoveResourceSpecificationRelationship(r ...*ResourceSpecificationItems) *ResourceSpecificationRelationshipUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rsru.RemoveResourceSrIDs(ids...)
+	return rsru.RemoveResourceSpecificationRelationshipIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -247,33 +247,33 @@ func (rsru *ResourceSpecificationRelationshipUpdate) sqlSave(ctx context.Context
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rsru.mutation.ResourceSrCleared() {
+	if rsru.mutation.ResourceSpecificationRelationshipCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecificationrelationship.ResourceSrTable,
-			Columns: []string{resourcespecificationrelationship.ResourceSrColumn},
+			Table:   resourcespecificationrelationship.ResourceSpecificationRelationshipTable,
+			Columns: []string{resourcespecificationrelationship.ResourceSpecificationRelationshipColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
+					Column: resourcespecificationitems.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsru.mutation.RemovedResourceSrIDs(); len(nodes) > 0 && !rsru.mutation.ResourceSrCleared() {
+	if nodes := rsru.mutation.RemovedResourceSpecificationRelationshipIDs(); len(nodes) > 0 && !rsru.mutation.ResourceSpecificationRelationshipCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecificationrelationship.ResourceSrTable,
-			Columns: []string{resourcespecificationrelationship.ResourceSrColumn},
+			Table:   resourcespecificationrelationship.ResourceSpecificationRelationshipTable,
+			Columns: []string{resourcespecificationrelationship.ResourceSpecificationRelationshipColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
+					Column: resourcespecificationitems.FieldID,
 				},
 			},
 		}
@@ -282,17 +282,17 @@ func (rsru *ResourceSpecificationRelationshipUpdate) sqlSave(ctx context.Context
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsru.mutation.ResourceSrIDs(); len(nodes) > 0 {
+	if nodes := rsru.mutation.ResourceSpecificationRelationshipIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecificationrelationship.ResourceSrTable,
-			Columns: []string{resourcespecificationrelationship.ResourceSrColumn},
+			Table:   resourcespecificationrelationship.ResourceSpecificationRelationshipTable,
+			Columns: []string{resourcespecificationrelationship.ResourceSpecificationRelationshipColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
+					Column: resourcespecificationitems.FieldID,
 				},
 			},
 		}
@@ -344,19 +344,19 @@ func (rsruo *ResourceSpecificationRelationshipUpdateOne) SetResourcespecificatio
 	return rsruo.SetResourcespecificationID(r.ID)
 }
 
-// AddResourceSrIDs adds the resource_sr edge to ResourceSRItems by ids.
-func (rsruo *ResourceSpecificationRelationshipUpdateOne) AddResourceSrIDs(ids ...int) *ResourceSpecificationRelationshipUpdateOne {
-	rsruo.mutation.AddResourceSrIDs(ids...)
+// AddResourceSpecificationRelationshipIDs adds the resource_specification_relationship edge to ResourceSpecificationItems by ids.
+func (rsruo *ResourceSpecificationRelationshipUpdateOne) AddResourceSpecificationRelationshipIDs(ids ...int) *ResourceSpecificationRelationshipUpdateOne {
+	rsruo.mutation.AddResourceSpecificationRelationshipIDs(ids...)
 	return rsruo
 }
 
-// AddResourceSr adds the resource_sr edges to ResourceSRItems.
-func (rsruo *ResourceSpecificationRelationshipUpdateOne) AddResourceSr(r ...*ResourceSRItems) *ResourceSpecificationRelationshipUpdateOne {
+// AddResourceSpecificationRelationship adds the resource_specification_relationship edges to ResourceSpecificationItems.
+func (rsruo *ResourceSpecificationRelationshipUpdateOne) AddResourceSpecificationRelationship(r ...*ResourceSpecificationItems) *ResourceSpecificationRelationshipUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rsruo.AddResourceSrIDs(ids...)
+	return rsruo.AddResourceSpecificationRelationshipIDs(ids...)
 }
 
 // Mutation returns the ResourceSpecificationRelationshipMutation object of the builder.
@@ -370,25 +370,25 @@ func (rsruo *ResourceSpecificationRelationshipUpdateOne) ClearResourcespecificat
 	return rsruo
 }
 
-// ClearResourceSr clears all "resource_sr" edges to type ResourceSRItems.
-func (rsruo *ResourceSpecificationRelationshipUpdateOne) ClearResourceSr() *ResourceSpecificationRelationshipUpdateOne {
-	rsruo.mutation.ClearResourceSr()
+// ClearResourceSpecificationRelationship clears all "resource_specification_relationship" edges to type ResourceSpecificationItems.
+func (rsruo *ResourceSpecificationRelationshipUpdateOne) ClearResourceSpecificationRelationship() *ResourceSpecificationRelationshipUpdateOne {
+	rsruo.mutation.ClearResourceSpecificationRelationship()
 	return rsruo
 }
 
-// RemoveResourceSrIDs removes the resource_sr edge to ResourceSRItems by ids.
-func (rsruo *ResourceSpecificationRelationshipUpdateOne) RemoveResourceSrIDs(ids ...int) *ResourceSpecificationRelationshipUpdateOne {
-	rsruo.mutation.RemoveResourceSrIDs(ids...)
+// RemoveResourceSpecificationRelationshipIDs removes the resource_specification_relationship edge to ResourceSpecificationItems by ids.
+func (rsruo *ResourceSpecificationRelationshipUpdateOne) RemoveResourceSpecificationRelationshipIDs(ids ...int) *ResourceSpecificationRelationshipUpdateOne {
+	rsruo.mutation.RemoveResourceSpecificationRelationshipIDs(ids...)
 	return rsruo
 }
 
-// RemoveResourceSr removes resource_sr edges to ResourceSRItems.
-func (rsruo *ResourceSpecificationRelationshipUpdateOne) RemoveResourceSr(r ...*ResourceSRItems) *ResourceSpecificationRelationshipUpdateOne {
+// RemoveResourceSpecificationRelationship removes resource_specification_relationship edges to ResourceSpecificationItems.
+func (rsruo *ResourceSpecificationRelationshipUpdateOne) RemoveResourceSpecificationRelationship(r ...*ResourceSpecificationItems) *ResourceSpecificationRelationshipUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rsruo.RemoveResourceSrIDs(ids...)
+	return rsruo.RemoveResourceSpecificationRelationshipIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -532,33 +532,33 @@ func (rsruo *ResourceSpecificationRelationshipUpdateOne) sqlSave(ctx context.Con
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rsruo.mutation.ResourceSrCleared() {
+	if rsruo.mutation.ResourceSpecificationRelationshipCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecificationrelationship.ResourceSrTable,
-			Columns: []string{resourcespecificationrelationship.ResourceSrColumn},
+			Table:   resourcespecificationrelationship.ResourceSpecificationRelationshipTable,
+			Columns: []string{resourcespecificationrelationship.ResourceSpecificationRelationshipColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
+					Column: resourcespecificationitems.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsruo.mutation.RemovedResourceSrIDs(); len(nodes) > 0 && !rsruo.mutation.ResourceSrCleared() {
+	if nodes := rsruo.mutation.RemovedResourceSpecificationRelationshipIDs(); len(nodes) > 0 && !rsruo.mutation.ResourceSpecificationRelationshipCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecificationrelationship.ResourceSrTable,
-			Columns: []string{resourcespecificationrelationship.ResourceSrColumn},
+			Table:   resourcespecificationrelationship.ResourceSpecificationRelationshipTable,
+			Columns: []string{resourcespecificationrelationship.ResourceSpecificationRelationshipColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
+					Column: resourcespecificationitems.FieldID,
 				},
 			},
 		}
@@ -567,17 +567,17 @@ func (rsruo *ResourceSpecificationRelationshipUpdateOne) sqlSave(ctx context.Con
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsruo.mutation.ResourceSrIDs(); len(nodes) > 0 {
+	if nodes := rsruo.mutation.ResourceSpecificationRelationshipIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecificationrelationship.ResourceSrTable,
-			Columns: []string{resourcespecificationrelationship.ResourceSrColumn},
+			Table:   resourcespecificationrelationship.ResourceSpecificationRelationshipTable,
+			Columns: []string{resourcespecificationrelationship.ResourceSpecificationRelationshipColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
+					Column: resourcespecificationitems.FieldID,
 				},
 			},
 		}

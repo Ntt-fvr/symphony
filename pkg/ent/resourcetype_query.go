@@ -18,7 +18,6 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 )
@@ -35,7 +34,6 @@ type ResourceTypeQuery struct {
 	withResourceRelationshipA *ResourceTypeRelationshipQuery
 	withResourceRelationshipB *ResourceTypeRelationshipQuery
 	withResourceSpecification *ResourceSpecificationQuery
-	withResourcetypeItems     *ResourceSRItemsQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -124,28 +122,6 @@ func (rtq *ResourceTypeQuery) QueryResourceSpecification() *ResourceSpecificatio
 			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, selector),
 			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourceSpecificationTable, resourcetype.ResourceSpecificationColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryResourcetypeItems chains the current query on the resourcetype_items edge.
-func (rtq *ResourceTypeQuery) QueryResourcetypeItems() *ResourceSRItemsQuery {
-	query := &ResourceSRItemsQuery{config: rtq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := rtq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := rtq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, selector),
-			sqlgraph.To(resourcesritems.Table, resourcesritems.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcetype.ResourcetypeItemsTable, resourcetype.ResourcetypeItemsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
 		return fromU, nil
@@ -332,7 +308,6 @@ func (rtq *ResourceTypeQuery) Clone() *ResourceTypeQuery {
 		withResourceRelationshipA: rtq.withResourceRelationshipA.Clone(),
 		withResourceRelationshipB: rtq.withResourceRelationshipB.Clone(),
 		withResourceSpecification: rtq.withResourceSpecification.Clone(),
-		withResourcetypeItems:     rtq.withResourcetypeItems.Clone(),
 		// clone intermediate query.
 		sql:  rtq.sql.Clone(),
 		path: rtq.path,
@@ -369,17 +344,6 @@ func (rtq *ResourceTypeQuery) WithResourceSpecification(opts ...func(*ResourceSp
 		opt(query)
 	}
 	rtq.withResourceSpecification = query
-	return rtq
-}
-
-//  WithResourcetypeItems tells the query-builder to eager-loads the nodes that are connected to
-// the "resourcetype_items" edge. The optional arguments used to configure the query builder of the edge.
-func (rtq *ResourceTypeQuery) WithResourcetypeItems(opts ...func(*ResourceSRItemsQuery)) *ResourceTypeQuery {
-	query := &ResourceSRItemsQuery{config: rtq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	rtq.withResourcetypeItems = query
 	return rtq
 }
 
@@ -452,11 +416,10 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 	var (
 		nodes       = []*ResourceType{}
 		_spec       = rtq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [3]bool{
 			rtq.withResourceRelationshipA != nil,
 			rtq.withResourceRelationshipB != nil,
 			rtq.withResourceSpecification != nil,
-			rtq.withResourcetypeItems != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -564,35 +527,6 @@ func (rtq *ResourceTypeQuery) sqlAll(ctx context.Context) ([]*ResourceType, erro
 				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resource_specification" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.ResourceSpecification = append(node.Edges.ResourceSpecification, n)
-		}
-	}
-
-	if query := rtq.withResourcetypeItems; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ResourceType)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourcetypeItems = []*ResourceSRItems{}
-		}
-		query.withFKs = true
-		query.Where(predicate.ResourceSRItems(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcetype.ResourcetypeItemsColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.resource_type_resourcetype_items
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_type_resourcetype_items" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_type_resourcetype_items" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.ResourcetypeItems = append(node.Edges.ResourcetypeItems, n)
 		}
 	}
 

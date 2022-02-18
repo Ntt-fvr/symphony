@@ -409,25 +409,25 @@ func HasResourcespecificationWith(preds ...predicate.ResourceSpecification) pred
 	})
 }
 
-// HasResourceSr applies the HasEdge predicate on the "resource_sr" edge.
-func HasResourceSr() predicate.ResourceSpecificationRelationship {
+// HasResourceSpecificationRelationship applies the HasEdge predicate on the "resource_specification_relationship" edge.
+func HasResourceSpecificationRelationship() predicate.ResourceSpecificationRelationship {
 	return predicate.ResourceSpecificationRelationship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceSrTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSrTable, ResourceSrColumn),
+			sqlgraph.To(ResourceSpecificationRelationshipTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationRelationshipTable, ResourceSpecificationRelationshipColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasResourceSrWith applies the HasEdge predicate on the "resource_sr" edge with a given conditions (other predicates).
-func HasResourceSrWith(preds ...predicate.ResourceSRItems) predicate.ResourceSpecificationRelationship {
+// HasResourceSpecificationRelationshipWith applies the HasEdge predicate on the "resource_specification_relationship" edge with a given conditions (other predicates).
+func HasResourceSpecificationRelationshipWith(preds ...predicate.ResourceSpecificationItems) predicate.ResourceSpecificationRelationship {
 	return predicate.ResourceSpecificationRelationship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceSrInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSrTable, ResourceSrColumn),
+			sqlgraph.To(ResourceSpecificationRelationshipInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationRelationshipTable, ResourceSpecificationRelationshipColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

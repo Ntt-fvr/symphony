@@ -211,11 +211,11 @@ type RecommendationsSources func(*sql.Selector)
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
 
-// ResourceSRItems is the predicate function for resourcesritems builders.
-type ResourceSRItems func(*sql.Selector)
-
 // ResourceSpecification is the predicate function for resourcespecification builders.
 type ResourceSpecification func(*sql.Selector)
+
+// ResourceSpecificationItems is the predicate function for resourcespecificationitems builders.
+type ResourceSpecificationItems func(*sql.Selector)
 
 // ResourceSpecificationRelationship is the predicate function for resourcespecificationrelationship builders.
 type ResourceSpecificationRelationship func(*sql.Selector)

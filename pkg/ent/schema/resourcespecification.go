@@ -35,6 +35,8 @@ func (ResourceSpecification) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("propertytype")),
 		edge.To("resource_specification", ResourceSpecificationRelationship.Type).
 			Annotations(entgql.MapsTo("resourcespecification")),
+		edge.To("resource_specification_items", ResourceSpecificationItems.Type).
+			Annotations(entgql.MapsTo("resourcespecificationitems")),
 	}
 }
 

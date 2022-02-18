@@ -30,6 +30,8 @@ const (
 	EdgePropertyType = "property_type"
 	// EdgeResourceSpecification holds the string denoting the resource_specification edge name in mutations.
 	EdgeResourceSpecification = "resource_specification"
+	// EdgeResourceSpecificationItems holds the string denoting the resource_specification_items edge name in mutations.
+	EdgeResourceSpecificationItems = "resource_specification_items"
 
 	// Table holds the table name of the resourcespecification in the database.
 	Table = "resource_specifications"
@@ -54,6 +56,13 @@ const (
 	ResourceSpecificationInverseTable = "resource_specification_relationships"
 	// ResourceSpecificationColumn is the table column denoting the resource_specification relation/edge.
 	ResourceSpecificationColumn = "resource_specification_resource_specification"
+	// ResourceSpecificationItemsTable is the table the holds the resource_specification_items relation/edge.
+	ResourceSpecificationItemsTable = "resource_specification_items"
+	// ResourceSpecificationItemsInverseTable is the table name for the ResourceSpecificationItems entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcespecificationitems" package.
+	ResourceSpecificationItemsInverseTable = "resource_specification_items"
+	// ResourceSpecificationItemsColumn is the table column denoting the resource_specification_items relation/edge.
+	ResourceSpecificationItemsColumn = "resource_specification_resource_specification_items"
 )
 
 // Columns holds all SQL columns for resourcespecification fields.

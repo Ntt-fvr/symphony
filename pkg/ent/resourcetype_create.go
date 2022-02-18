@@ -15,7 +15,6 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 )
@@ -116,21 +115,6 @@ func (rtc *ResourceTypeCreate) AddResourceSpecification(r ...*ResourceSpecificat
 		ids[i] = r[i].ID
 	}
 	return rtc.AddResourceSpecificationIDs(ids...)
-}
-
-// AddResourcetypeItemIDs adds the resourcetype_items edge to ResourceSRItems by ids.
-func (rtc *ResourceTypeCreate) AddResourcetypeItemIDs(ids ...int) *ResourceTypeCreate {
-	rtc.mutation.AddResourcetypeItemIDs(ids...)
-	return rtc
-}
-
-// AddResourcetypeItems adds the resourcetype_items edges to ResourceSRItems.
-func (rtc *ResourceTypeCreate) AddResourcetypeItems(r ...*ResourceSRItems) *ResourceTypeCreate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return rtc.AddResourcetypeItemIDs(ids...)
 }
 
 // Mutation returns the ResourceTypeMutation object of the builder.
@@ -343,25 +327,6 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := rtc.mutation.ResourcetypeItemsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetype.ResourcetypeItemsTable,
-			Columns: []string{resourcetype.ResourcetypeItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
 				},
 			},
 		}

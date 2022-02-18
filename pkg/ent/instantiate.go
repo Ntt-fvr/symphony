@@ -409,15 +409,15 @@ func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 }
 
 // Instantiate entity configuration.
-func (c *ResourceSRItemsClient) Instantiate(rsi *ResourceSRItems) *ResourceSRItems {
-	rsi.config = c.config
-	return rsi
-}
-
-// Instantiate entity configuration.
 func (c *ResourceSpecificationClient) Instantiate(rs *ResourceSpecification) *ResourceSpecification {
 	rs.config = c.config
 	return rs
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationItemsClient) Instantiate(rsi *ResourceSpecificationItems) *ResourceSpecificationItems {
+	rsi.config = c.config
+	return rsi
 }
 
 // Instantiate entity configuration.

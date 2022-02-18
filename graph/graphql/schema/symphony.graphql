@@ -2864,73 +2864,6 @@ type ResourceSpecificationRelationshipEdge {
 }
 
 """
-Properties by which ResourceSRItems connections can be ordered.
-"""
-enum ResourceSRItemsOrderField {
-  """
-  Order ResourceSRItems by name.
-  """
-  NAME
-
-  """
-  Order ResourceSRItems by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceSRItems by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceSRItems connections.
-"""
-input ResourceSRItemsOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceSRItems by.
-  """
-  field: ResourceSRItemsOrderField
-}
-
-"""
-A connection to a list of ResourceSRItems.
-"""
-type ResourceSRItemsConnection {
-  """
-  Total ResourceSRItems of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceSRItems edges.
-  """
-  edges: [ResourceSRItemsEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceSRItems edge in a connection.
-"""
-type ResourceSRItemsEdge {
-  """
-  The ResourceSRItems at the end of the edge.
-  """
-  node: ResourceSRItems
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
 Properties by which kpi's connections can be ordered.
 """
 enum KpiOrderField {
@@ -4768,6 +4701,38 @@ type ResourceSpecificationEdge {
   The ResourceSpecification at the end of the edge.
   """
   node: ResourceSpecification
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of ResourceSpecificationItems.
+"""
+type ResourceSpecificationItemsConnection {
+  """
+  Total ResourceSpecificationItems of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ResourceSpecificationItems edges.
+  """
+  edges: [ResourceSpecificationItemsEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ResourceSpecificationItems edge in a connection.
+"""
+type ResourceSpecificationItemsEdge {
+  """
+  The ResourceSpecificationItems at the end of the edge.
+  """
+  node: ResourceSpecificationItems
   """
   A cursor for use in pagination.
   """
@@ -6723,41 +6688,6 @@ type Query {
   ): ResourceSpecificationRelationshipConnection!
 
   """
-  A list of resourceSpecificationRelationshipItems.
-  """
-  resourceSRItems(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceSpecificationRelationshipItems.
-    """
-    orderBy: ResourceSRItemsOrder
-
-    
-    #Filtering options for the returned resourceSpecificationRelationshipItems.
-    
-    filterBy: [ResourceSRItemsFilterInput!]
-  ): ResourceSRItemsConnection!
-
-  """
   A list of kpis.
   """
   kpis(
@@ -7761,7 +7691,38 @@ type Query {
   last: Int @numberValue(min: 0)
   ): ParameterCatalogConnection!
   propertiesByCategories(filterBy: [PropertiesByCategoryFilterInput!]): [PropertiesByCategories]!
+
+
+  """
+  A list of resourceSpecificationItems.
+  """
+  resourceSpecificationItems(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    #Filtering options for the returned ResourceSpecificationItems.
+    
+    filterBy: [ResourceSpecificationItemsFilterInput!]
+  ): ResourceSpecificationItemsConnection!
 }
+
 
 type Mutation {
   editUser(input: EditUserInput!): User!
@@ -8091,9 +8052,9 @@ type Mutation {
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   removeResourceSpecificationRelationship(id: ID!): ID!
-  addResourceSRItems(input: AddResourceSRItemsInput!): ResourceSRItems!
-  editResourceSRItems(input: EditResourceSRItemsInput!): ResourceSRItems!
-  removeResourceSRItems(id: ID!): ID!
+  addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems!
+  editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems!
+  removeResourceSpecificationItems(id: ID!): ID!
 }
 
 """
@@ -9416,35 +9377,31 @@ input ResourceSpecificationRelationshipFilterInput {
   stringSet: [String!]
 }
 
-type ResourceSRItems implements Node {
+type ResourceSpecificationItems implements Node {
   id: ID!
-  name: String
   resourceSpecificationRelationship: ResourceSpecificationRelationship!
-  resourceType: ResourceType!
+  resourceSpecification: ResourceSpecification!
 }
 
-input AddResourceSRItemsInput {  
-  name: String
+input AddResourceSpecificationItemsInput {  
   resourceSpecificationRelationship: ID!
-  resourceType: ID!
+  resourceSpecification: ID!
 }
 
-input EditResourceSRItemsInput {
+input EditResourceSpecificationItemsInput {
   id: ID!
-  name: String
   resourceSpecificationRelationship: ID
-  resourceType: ID
+  resourceSpecification: ID
 }
 
-enum ResourceSRItemsFilterType {
-  NAME
+enum ResourceSpecificationItemsFilterType {
+  RESOURCE_SPECIFICATION_RELATIONSHIP
+  RESOURCE_SPECIFICATION
 }
 
-input ResourceSRItemsFilterInput {
-  filterType: ResourceSRItemsFilterType!
+input ResourceSpecificationItemsFilterInput {
+  filterType: ResourceSpecificationItemsFilterType!
   operator: FilterOperator!
-  stringValue: String
   idSet: [ID!]
   maxDepth: Int = 5
-  stringSet: [String!]
 }
