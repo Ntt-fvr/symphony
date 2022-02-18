@@ -7,7 +7,6 @@ package schema
 import (
 	"github.com/facebook/ent"
 	"github.com/facebook/ent/schema/edge"
-	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
@@ -21,11 +20,9 @@ type ResourceSpecificationItems struct {
 func (ResourceSpecificationItems) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("resourcespecificationrelationship", ResourceSpecificationRelationship.Type).
-			Ref("resource_specification_relationship").Unique().
-			Annotations(entgql.OrderField("RESOURCE_SPECIFICATION_RELATIONSHIP")),
+			Ref("resource_specification_relationship").Unique(),
 		edge.From("resourcespecificationitems", ResourceSpecification.Type).
-			Ref("resource_specification_items").Unique().
-			Annotations(entgql.OrderField("RESOURCE_SPECIFICATION")),
+			Ref("resource_specification_items").Unique(),
 	}
 }
 

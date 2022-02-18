@@ -351,14 +351,12 @@ func (r queryResolver) ResourceSpecificationItems(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceSpecificationItemsOrder,
 	filterBy []*models.ResourceSpecificationItemsFilterInput,
 ) (*ent.ResourceSpecificationItemsConnection, error) {
 	return r.ClientFrom(ctx).
 		ResourceSpecificationItems.
 		Query().
 		Paginate(ctx, after, first, before, last,
-			ent.WithResourceSpecificationItemsOrder(orderBy),
 			ent.WithResourceSpecificationItemsFilter(
 				func(query *ent.ResourceSpecificationItemsQuery) (*ent.ResourceSpecificationItemsQuery, error) {
 					return resolverutil.ResourceSpecificationItemsFilter(query, filterBy)

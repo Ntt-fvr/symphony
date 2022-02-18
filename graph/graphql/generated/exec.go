@@ -22371,7 +22371,6 @@ type Query {
   ): ParameterCatalogConnection!
   propertiesByCategories(filterBy: [PropertiesByCategoryFilterInput!]): [PropertiesByCategories]!
 
-
   """
   A list of resourceSpecificationItems.
   """
@@ -22397,7 +22396,6 @@ type Query {
     last: Int @numberValue(min: 0)
 
     #Filtering options for the returned ResourceSpecificationItems.
-    
     filterBy: [ResourceSpecificationItemsFilterInput!]
   ): ResourceSpecificationItemsConnection!
 }
