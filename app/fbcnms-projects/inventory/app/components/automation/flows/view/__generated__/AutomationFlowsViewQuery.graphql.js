@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<4b0bfe098b4ecb38205d66d330345a94>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,27 +13,62 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AutomationFlowsList_flows$fragmentType = any;
-export type AutomationFlowsViewQuery$variables = {||};
-export type AutomationFlowsViewQueryVariables = AutomationFlowsViewQuery$variables;
-export type AutomationFlowsViewQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AutomationFlowsList_flows$ref = any;
+export type AutomationFlowsViewQueryVariables = {||};
+export type AutomationFlowsViewQueryResponse = {|
   +flows: {|
     +edges: ?$ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentSpreads: AutomationFlowsList_flows$fragmentType,
-      |},
-    |}>,
-  |},
+        +$fragmentRefs: AutomationFlowsList_flows$ref
+      |}
+    |}>
+  |}
 |};
-export type AutomationFlowsViewQueryResponse = AutomationFlowsViewQuery$data;
 export type AutomationFlowsViewQuery = {|
   variables: AutomationFlowsViewQueryVariables,
-  response: AutomationFlowsViewQuery$data,
+  response: AutomationFlowsViewQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query AutomationFlowsViewQuery {
+  flows(first: 500) {
+    edges {
+      node {
+        ...AutomationFlowsList_flows
+        id
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+fragment AutomationFlowCard_flow on Flow {
+  id
+  name
+  description
+  status
+  newInstancesPolicy
+  draft {
+    id
+    sameAsFlow
+  }
+}
+
+fragment AutomationFlowsList_flows on Flow {
+  id
+  ...AutomationFlowCard_flow
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -115,12 +153,12 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v0/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AutomationFlowsList_flows"
-                  },
-                  (v0/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -258,10 +296,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '3df60d6c8a5b5100e28110cb39f3354c';
 
-(node/*: any*/).hash = "3df60d6c8a5b5100e28110cb39f3354c";
-
-module.exports = ((node/*: any*/)/*: Query<
-  AutomationFlowsViewQuery$variables,
-  AutomationFlowsViewQuery$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<ade752d35fd0c050aa2ce6d477541f4b>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,29 +13,70 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type DocumentTable_files$fragmentType = any;
-type FileAttachment_file$fragmentType = any;
-export type ImageEntity = "LOCATION" | "WORK_ORDER" | "SITE_SURVEY" | "EQUIPMENT" | "USER" | "CHECKLIST_ITEM" | "%future added value";
-export type DeleteImageMutation$variables = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type DocumentTable_files$ref = any;
+type FileAttachment_file$ref = any;
+export type ImageEntity = "CHECKLIST_ITEM" | "EQUIPMENT" | "LOCATION" | "SITE_SURVEY" | "USER" | "WORK_ORDER" | "%future added value";
+export type DeleteImageMutationVariables = {|
   entityType: ImageEntity,
   entityId: string,
   id: string,
 |};
-export type DeleteImageMutationVariables = DeleteImageMutation$variables;
-export type DeleteImageMutation$data = {|
+export type DeleteImageMutationResponse = {|
   +deleteImage: {|
-    +$fragmentSpreads: DocumentTable_files$fragmentType & FileAttachment_file$fragmentType,
-  |},
+    +$fragmentRefs: DocumentTable_files$ref & FileAttachment_file$ref
+  |}
 |};
-export type DeleteImageMutationResponse = DeleteImageMutation$data;
 export type DeleteImageMutation = {|
   variables: DeleteImageMutationVariables,
-  response: DeleteImageMutation$data,
+  response: DeleteImageMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation DeleteImageMutation(
+  $entityType: ImageEntity!
+  $entityId: ID!
+  $id: ID!
+) {
+  deleteImage(entityType: $entityType, entityId: $entityId, id: $id) {
+    ...DocumentTable_files
+    ...FileAttachment_file
+    id
+  }
+}
+
+fragment DocumentTable_files on File {
+  id
+  fileName
+  category
+  ...FileAttachment_file
+}
+
+fragment FileAttachment_file on File {
+  id
+  fileName
+  sizeInBytes
+  uploaded
+  fileType
+  storeKey
+  category
+  annotation
+  documentCategory {
+    id
+    name
+  }
+  ...ImageDialog_img
+}
+
+fragment ImageDialog_img on File {
+  storeKey
+  fileName
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -210,10 +254,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e35a3c256648c1f9c986d51a8d7b77bb';
 
-(node/*: any*/).hash = "e35a3c256648c1f9c986d51a8d7b77bb";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  DeleteImageMutation$variables,
-  DeleteImageMutation$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<43e145e44b19e4ec78864045d4e7fcf4>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,27 +13,45 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type ServiceEndpointDefinitionTable_equipmentTypesQuery$variables = {||};
-export type ServiceEndpointDefinitionTable_equipmentTypesQueryVariables = ServiceEndpointDefinitionTable_equipmentTypesQuery$variables;
-export type ServiceEndpointDefinitionTable_equipmentTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type ServiceEndpointDefinitionTable_equipmentTypesQueryVariables = {||};
+export type ServiceEndpointDefinitionTable_equipmentTypesQueryResponse = {|
   +equipmentTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type ServiceEndpointDefinitionTable_equipmentTypesQueryResponse = ServiceEndpointDefinitionTable_equipmentTypesQuery$data;
 export type ServiceEndpointDefinitionTable_equipmentTypesQuery = {|
   variables: ServiceEndpointDefinitionTable_equipmentTypesQueryVariables,
-  response: ServiceEndpointDefinitionTable_equipmentTypesQuery$data,
+  response: ServiceEndpointDefinitionTable_equipmentTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ServiceEndpointDefinitionTable_equipmentTypesQuery {
+  equipmentTypes(first: 500) {
+    edges {
+      node {
+        id
+        name
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -184,10 +205,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '88a844a623c430a24a1944839e78684d';
 
-(node/*: any*/).hash = "88a844a623c430a24a1944839e78684d";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ServiceEndpointDefinitionTable_equipmentTypesQuery$variables,
-  ServiceEndpointDefinitionTable_equipmentTypesQuery$data,
->*/);
+module.exports = node;

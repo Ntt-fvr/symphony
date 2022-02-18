@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<f5424734df9e99bea01a34965d6861d8>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,29 +13,39 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditKqiSourceInput = {|
   id: string,
   name: string,
 |};
-export type EditKqiSourceMutation$variables = {|
-  input: EditKqiSourceInput,
+export type EditKqiSourceMutationVariables = {|
+  input: EditKqiSourceInput
 |};
-export type EditKqiSourceMutationVariables = EditKqiSourceMutation$variables;
-export type EditKqiSourceMutation$data = {|
+export type EditKqiSourceMutationResponse = {|
   +editKqiSource: {|
     +id: string,
     +name: string,
-  |},
+  |}
 |};
-export type EditKqiSourceMutationResponse = EditKqiSourceMutation$data;
 export type EditKqiSourceMutation = {|
   variables: EditKqiSourceMutationVariables,
-  response: EditKqiSourceMutation$data,
+  response: EditKqiSourceMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditKqiSourceMutation(
+  $input: EditKqiSourceInput!
+) {
+  editKqiSource(input: $input) {
+    id
+    name
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -100,10 +113,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'cf13959449f11f868382b73d5b7e22c9';
 
-(node/*: any*/).hash = "cf13959449f11f868382b73d5b7e22c9";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditKqiSourceMutation$variables,
-  EditKqiSourceMutation$data,
->*/);
+module.exports = node;

@@ -27,7 +27,7 @@ import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';

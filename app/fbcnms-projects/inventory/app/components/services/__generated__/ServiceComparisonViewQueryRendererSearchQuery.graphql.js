@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<93681d2ff29ad8d17c204fe2669d22c9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type ServicesView_service$fragmentType = any;
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type ServiceFilterType = "SERVICE_INST_NAME" | "SERVICE_STATUS" | "SERVICE_DISCOVERY_METHOD" | "SERVICE_TYPE" | "SERVICE_INST_EXTERNAL_ID" | "SERVICE_INST_CUSTOMER_NAME" | "PROPERTY" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "EQUIPMENT_IN_SERVICE" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type ServicesView_service$ref = any;
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type ServiceFilterType = "EQUIPMENT_IN_SERVICE" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_DISCOVERY_METHOD" | "SERVICE_INST_CUSTOMER_NAME" | "SERVICE_INST_EXTERNAL_ID" | "SERVICE_INST_NAME" | "SERVICE_STATUS" | "SERVICE_TYPE" | "%future added value";
 export type ServiceFilterInput = {|
   filterType: ServiceFilterType,
   operator: FilterOperator,
@@ -47,29 +50,154 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type ServiceComparisonViewQueryRendererSearchQuery$variables = {|
+export type ServiceComparisonViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<ServiceFilterInput>,
 |};
-export type ServiceComparisonViewQueryRendererSearchQueryVariables = ServiceComparisonViewQueryRendererSearchQuery$variables;
-export type ServiceComparisonViewQueryRendererSearchQuery$data = {|
+export type ServiceComparisonViewQueryRendererSearchQueryResponse = {|
   +services: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentSpreads: ServicesView_service$fragmentType,
-      |},
+        +$fragmentRefs: ServicesView_service$ref
+      |}
     |}>,
     +totalCount: number,
-  |},
+  |}
 |};
-export type ServiceComparisonViewQueryRendererSearchQueryResponse = ServiceComparisonViewQueryRendererSearchQuery$data;
 export type ServiceComparisonViewQueryRendererSearchQuery = {|
   variables: ServiceComparisonViewQueryRendererSearchQueryVariables,
-  response: ServiceComparisonViewQueryRendererSearchQuery$data,
+  response: ServiceComparisonViewQueryRendererSearchQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ServiceComparisonViewQueryRendererSearchQuery(
+  $limit: Int
+  $filters: [ServiceFilterInput!]!
+) {
+  services(first: $limit, filterBy: $filters) {
+    edges {
+      node {
+        ...ServicesView_service
+        id
+      }
+    }
+    totalCount
+  }
+}
+
+fragment DynamicPropertiesGrid_properties on Property {
+  ...PropertyFormField_property
+  propertyType {
+    id
+    index
+  }
+}
+
+fragment DynamicPropertiesGrid_propertyTypes on PropertyType {
+  id
+  name
+  index
+  isInstanceProperty
+  type
+  nodeType
+  stringValue
+  intValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  floatValue
+}
+
+fragment PropertyFormField_property on Property {
+  id
+  propertyType {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isInstanceProperty
+    isMandatory
+    category
+    isDeleted
+  }
+  stringValue
+  intValue
+  floatValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  nodeValue {
+    __typename
+    id
+    name
+  }
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+
+fragment ServicesView_service on Service {
+  id
+  name
+  externalId
+  status
+  customer {
+    id
+    name
+  }
+  serviceType {
+    id
+    name
+    discoveryMethod
+    propertyTypes {
+      ...PropertyTypeFormField_propertyType
+      ...DynamicPropertiesGrid_propertyTypes
+      id
+    }
+  }
+  properties {
+    ...PropertyFormField_property
+    ...DynamicPropertiesGrid_properties
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -454,10 +582,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '8045c18bb9bb4d07d66151a829bde59b';
 
-(node/*: any*/).hash = "8045c18bb9bb4d07d66151a829bde59b";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ServiceComparisonViewQueryRendererSearchQuery$variables,
-  ServiceComparisonViewQueryRendererSearchQuery$data,
->*/);
+module.exports = node;

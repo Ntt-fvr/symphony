@@ -12,18 +12,17 @@ import type {FragmentReference} from 'relay-runtime';
 import type {PropertyFormField_property} from '../components/form/__generated__/PropertyFormField_property.graphql';
 import type {PropertyType} from './PropertyType';
 
+import DateTimeFormat from './DateTimeFormat.js';
 import {toMutablePropertyType} from './PropertyType';
-
+import {graphql, fetchQuery} from 'relay-runtime';
 import type {
   PropertyByCategoriesQuery,
-  PropertyByCategoriesQueryResponse,
+  PropertiesByCategoryFilterInput,
   PropertyByCategoriesQueryVariables,
+  PropertyByCategoriesQueryResponse,
 } from './__generated__/PropertyByCategoriesQuery.graphql';
-
-import DateTimeFormat from './DateTimeFormat.js';
-import RelayEnvironment from './RelayEnvironment';
-import {fetchQuery, graphql} from './RelayUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import RelayEnvironment from './RelayEnvironment';
 
 export type Property = {|
   id?: ?string,
@@ -69,7 +68,7 @@ export const getPropertyValue = (property: Property | PropertyType) => {
       case 'datetime_local':
         return DateTimeFormat.dateTime(property.stringValue);
       case 'bool':
-        return property.booleanValue !== undefined
+        return property.booleanValue != undefined
           ? property.booleanValue.toString()
           : '';
       case 'int':
@@ -230,10 +229,11 @@ const propertyByCategoriesQuery = graphql`
 export function usePropertyByCategoriesNodes(
   input: PropertyByCategoriesQueryVariables,
 ): PropertyByCategoriesQueryResponse {
-  return useLazyLoadQuery<PropertyByCategoriesQuery>(
+  const response = useLazyLoadQuery<PropertyByCategoriesQuery>(
     propertyByCategoriesQuery,
     input,
   );
+  return response;
 }
 
 export function fetchPropertyByCategories(
@@ -243,5 +243,5 @@ export function fetchPropertyByCategories(
     RelayEnvironment,
     propertyByCategoriesQuery,
     input,
-  );
+  )
 }

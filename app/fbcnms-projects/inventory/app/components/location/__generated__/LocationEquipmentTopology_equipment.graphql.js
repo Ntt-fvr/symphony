@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<b60557114c86af53476349cc4b195ab1>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,23 +13,24 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type LocationEquipmentTopology_equipment$fragmentType: FragmentType;
-export type LocationEquipmentTopology_equipment$ref = LocationEquipmentTopology_equipment$fragmentType;
-export type LocationEquipmentTopology_equipment$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type LocationEquipmentTopology_equipment$ref: FragmentReference;
+declare export opaque type LocationEquipmentTopology_equipment$fragmentType: LocationEquipmentTopology_equipment$ref;
+export type LocationEquipmentTopology_equipment = $ReadOnlyArray<{|
   +id: string,
-  +$fragmentType: LocationEquipmentTopology_equipment$fragmentType,
+  +$refType: LocationEquipmentTopology_equipment$ref,
 |}>;
-export type LocationEquipmentTopology_equipment = LocationEquipmentTopology_equipment$data;
+export type LocationEquipmentTopology_equipment$data = LocationEquipmentTopology_equipment;
 export type LocationEquipmentTopology_equipment$key = $ReadOnlyArray<{
   +$data?: LocationEquipmentTopology_equipment$data,
-  +$fragmentSpreads: LocationEquipmentTopology_equipment$fragmentType,
+  +$fragmentRefs: LocationEquipmentTopology_equipment$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -45,10 +49,7 @@ var node/*: ReaderFragment*/ = {
   "type": "Equipment",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '8d782dfc3b488a1005aaeef451b77d56';
 
-(node/*: any*/).hash = "8d782dfc3b488a1005aaeef451b77d56";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  LocationEquipmentTopology_equipment$fragmentType,
-  LocationEquipmentTopology_equipment$data,
->*/);
+module.exports = node;

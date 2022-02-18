@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<4e5d3b1b9ac384c4a57a9444400b16a9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,15 +13,15 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$fragmentType = any;
+import type { ReaderFragment } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$ref = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type PowerSearchLinksResultsTable_links$fragmentType: FragmentType;
-export type PowerSearchLinksResultsTable_links$ref = PowerSearchLinksResultsTable_links$fragmentType;
-export type PowerSearchLinksResultsTable_links$data = $ReadOnlyArray<{|
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type PowerSearchLinksResultsTable_links$ref: FragmentReference;
+declare export opaque type PowerSearchLinksResultsTable_links$fragmentType: PowerSearchLinksResultsTable_links$ref;
+export type PowerSearchLinksResultsTable_links = $ReadOnlyArray<{|
   +id: string,
   +futureState: ?FutureState,
   +ports: $ReadOnlyArray<?{|
@@ -47,7 +50,7 @@ export type PowerSearchLinksResultsTable_links$data = $ReadOnlyArray<{|
           +isMandatory: ?boolean,
           +category: ?string,
           +isDeleted: ?boolean,
-        |}>,
+        |}>
       |},
     |},
     +parentEquipment: {|
@@ -68,7 +71,7 @@ export type PowerSearchLinksResultsTable_links$data = $ReadOnlyArray<{|
           |},
         |}>,
       |},
-      +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
+      +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
     |},
   |}>,
   +properties: $ReadOnlyArray<?{|
@@ -106,17 +109,18 @@ export type PowerSearchLinksResultsTable_links$data = $ReadOnlyArray<{|
     +id: string,
     +name: string,
   |}>,
-  +$fragmentType: PowerSearchLinksResultsTable_links$fragmentType,
+  +$refType: PowerSearchLinksResultsTable_links$ref,
 |}>;
-export type PowerSearchLinksResultsTable_links = PowerSearchLinksResultsTable_links$data;
+export type PowerSearchLinksResultsTable_links$data = PowerSearchLinksResultsTable_links;
 export type PowerSearchLinksResultsTable_links$key = $ReadOnlyArray<{
   +$data?: PowerSearchLinksResultsTable_links$data,
-  +$fragmentSpreads: PowerSearchLinksResultsTable_links$fragmentType,
+  +$fragmentRefs: PowerSearchLinksResultsTable_links$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -475,10 +479,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'a8e04e91f3b3dad4b69b5fc1ded6abce';
 
-(node/*: any*/).hash = "a8e04e91f3b3dad4b69b5fc1ded6abce";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  PowerSearchLinksResultsTable_links$fragmentType,
-  PowerSearchLinksResultsTable_links$data,
->*/);
+module.exports = node;

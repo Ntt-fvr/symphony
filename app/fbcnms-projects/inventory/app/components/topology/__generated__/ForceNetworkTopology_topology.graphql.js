@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<aaa6cf385c6c9f2ad4a9b61cd20ebcc4>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,33 +13,34 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ForceNetworkTopology_topology$fragmentType: FragmentType;
-export type ForceNetworkTopology_topology$ref = ForceNetworkTopology_topology$fragmentType;
-export type ForceNetworkTopology_topology$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ForceNetworkTopology_topology$ref: FragmentReference;
+declare export opaque type ForceNetworkTopology_topology$fragmentType: ForceNetworkTopology_topology$ref;
+export type ForceNetworkTopology_topology = {|
   +nodes: $ReadOnlyArray<{|
-    +id: string,
+    +id: string
   |}>,
   +links: $ReadOnlyArray<{|
     +source: {|
-      +id: string,
+      +id: string
     |},
     +target: {|
-      +id: string,
+      +id: string
     |},
   |}>,
-  +$fragmentType: ForceNetworkTopology_topology$fragmentType,
+  +$refType: ForceNetworkTopology_topology$ref,
 |};
-export type ForceNetworkTopology_topology = ForceNetworkTopology_topology$data;
+export type ForceNetworkTopology_topology$data = ForceNetworkTopology_topology;
 export type ForceNetworkTopology_topology$key = {
   +$data?: ForceNetworkTopology_topology$data,
-  +$fragmentSpreads: ForceNetworkTopology_topology$fragmentType,
+  +$fragmentRefs: ForceNetworkTopology_topology$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -98,10 +102,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '63b721aff87697366221cbc6250df26e';
 
-(node/*: any*/).hash = "63b721aff87697366221cbc6250df26e";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ForceNetworkTopology_topology$fragmentType,
-  ForceNetworkTopology_topology$data,
->*/);
+module.exports = node;

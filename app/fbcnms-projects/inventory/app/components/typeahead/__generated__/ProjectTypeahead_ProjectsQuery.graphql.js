@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<7dc6571a4977ee288f012f08575752fd>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type ProjectFilterType = "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_TYPE" | "LOCATION_INST" | "PROJECT_PRIORITY" | "PROPERTY" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "PROPERTY" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
   operator: FilterOperator,
@@ -46,32 +49,51 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type ProjectTypeahead_ProjectsQuery$variables = {|
+export type ProjectTypeahead_ProjectsQueryVariables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<ProjectFilterInput>,
 |};
-export type ProjectTypeahead_ProjectsQueryVariables = ProjectTypeahead_ProjectsQuery$variables;
-export type ProjectTypeahead_ProjectsQuery$data = {|
+export type ProjectTypeahead_ProjectsQueryResponse = {|
   +projects: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +type: {|
-          +name: string,
+          +name: string
         |},
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type ProjectTypeahead_ProjectsQueryResponse = ProjectTypeahead_ProjectsQuery$data;
 export type ProjectTypeahead_ProjectsQuery = {|
   variables: ProjectTypeahead_ProjectsQueryVariables,
-  response: ProjectTypeahead_ProjectsQuery$data,
+  response: ProjectTypeahead_ProjectsQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ProjectTypeahead_ProjectsQuery(
+  $limit: Int
+  $filters: [ProjectFilterInput!]!
+) {
+  projects(first: $limit, filterBy: $filters) {
+    edges {
+      node {
+        id
+        name
+        type {
+          name
+          id
+        }
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -238,10 +260,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '4f9669091bda026ea27aab7f07fd1b0b';
 
-(node/*: any*/).hash = "4f9669091bda026ea27aab7f07fd1b0b";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ProjectTypeahead_ProjectsQuery$variables,
-  ProjectTypeahead_ProjectsQuery$data,
->*/);
+module.exports = node;

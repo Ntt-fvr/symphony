@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<8fcb4652a78fbd128f8051de2ea95b8c>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,29 +13,30 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ProjectTypeCard_projectType$fragmentType: FragmentType;
-export type ProjectTypeCard_projectType$ref = ProjectTypeCard_projectType$fragmentType;
-export type ProjectTypeCard_projectType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ProjectTypeCard_projectType$ref: FragmentReference;
+declare export opaque type ProjectTypeCard_projectType$fragmentType: ProjectTypeCard_projectType$ref;
+export type ProjectTypeCard_projectType = {|
   +id: string,
   +name: string,
   +description: ?string,
   +numberOfProjects: number,
   +workOrders: $ReadOnlyArray<?{|
-    +id: string,
+    +id: string
   |}>,
-  +$fragmentType: ProjectTypeCard_projectType$fragmentType,
+  +$refType: ProjectTypeCard_projectType$ref,
 |};
-export type ProjectTypeCard_projectType = ProjectTypeCard_projectType$data;
+export type ProjectTypeCard_projectType$data = ProjectTypeCard_projectType;
 export type ProjectTypeCard_projectType$key = {
   +$data?: ProjectTypeCard_projectType$data,
-  +$fragmentSpreads: ProjectTypeCard_projectType$fragmentType,
+  +$fragmentRefs: ProjectTypeCard_projectType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -85,10 +89,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'a0ed06d279a9e96ad0fbb45c505ad5e8';
 
-(node/*: any*/).hash = "a0ed06d279a9e96ad0fbb45c505ad5e8";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ProjectTypeCard_projectType$fragmentType,
-  ProjectTypeCard_projectType$data,
->*/);
+module.exports = node;

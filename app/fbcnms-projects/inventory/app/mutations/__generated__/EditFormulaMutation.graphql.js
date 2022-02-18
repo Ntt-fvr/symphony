@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<93b93349ae138caab021464e089d9ea5>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditFormulaInput = {|
   id: string,
   textFormula: string,
@@ -19,24 +22,34 @@ export type EditFormulaInput = {|
   networkTypeFk: string,
   kpiFk: string,
 |};
-export type EditFormulaMutation$variables = {|
-  input: EditFormulaInput,
+export type EditFormulaMutationVariables = {|
+  input: EditFormulaInput
 |};
-export type EditFormulaMutationVariables = EditFormulaMutation$variables;
-export type EditFormulaMutation$data = {|
+export type EditFormulaMutationResponse = {|
   +editFormula: {|
     +id: string,
     +textFormula: string,
-  |},
+  |}
 |};
-export type EditFormulaMutationResponse = EditFormulaMutation$data;
 export type EditFormulaMutation = {|
   variables: EditFormulaMutationVariables,
-  response: EditFormulaMutation$data,
+  response: EditFormulaMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditFormulaMutation(
+  $input: EditFormulaInput!
+) {
+  editFormula(input: $input) {
+    id
+    textFormula
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -104,10 +117,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'f3cd9a9abb238ffdeb68bf5aef6a6457';
 
-(node/*: any*/).hash = "f3cd9a9abb238ffdeb68bf5aef6a6457";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditFormulaMutation$variables,
-  EditFormulaMutation$data,
->*/);
+module.exports = node;

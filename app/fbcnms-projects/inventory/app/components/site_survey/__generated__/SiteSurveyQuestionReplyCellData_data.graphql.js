@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<7a0660770aa58675f2a7950b973f10a7>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { ReaderFragment } from 'relay-runtime';
 export type CellularNetworkType = "CDMA" | "GSM" | "LTE" | "WCDMA" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type SiteSurveyQuestionReplyCellData_data$fragmentType: FragmentType;
-export type SiteSurveyQuestionReplyCellData_data$ref = SiteSurveyQuestionReplyCellData_data$fragmentType;
-export type SiteSurveyQuestionReplyCellData_data$data = {|
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type SiteSurveyQuestionReplyCellData_data$ref: FragmentReference;
+declare export opaque type SiteSurveyQuestionReplyCellData_data$fragmentType: SiteSurveyQuestionReplyCellData_data$ref;
+export type SiteSurveyQuestionReplyCellData_data = {|
   +cellData: ?$ReadOnlyArray<?{|
     +networkType: CellularNetworkType,
     +signalStrength: number,
@@ -25,17 +28,18 @@ export type SiteSurveyQuestionReplyCellData_data$data = {|
     +mobileCountryCode: ?string,
     +mobileNetworkCode: ?string,
   |}>,
-  +$fragmentType: SiteSurveyQuestionReplyCellData_data$fragmentType,
+  +$refType: SiteSurveyQuestionReplyCellData_data$ref,
 |};
-export type SiteSurveyQuestionReplyCellData_data = SiteSurveyQuestionReplyCellData_data$data;
+export type SiteSurveyQuestionReplyCellData_data$data = SiteSurveyQuestionReplyCellData_data;
 export type SiteSurveyQuestionReplyCellData_data$key = {
   +$data?: SiteSurveyQuestionReplyCellData_data$data,
-  +$fragmentSpreads: SiteSurveyQuestionReplyCellData_data$fragmentType,
+  +$fragmentRefs: SiteSurveyQuestionReplyCellData_data$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -105,10 +109,7 @@ var node/*: ReaderFragment*/ = {
   "type": "SurveyQuestion",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '586ccb85b3fc3c5e37ce3014c2a26c0b';
 
-(node/*: any*/).hash = "586ccb85b3fc3c5e37ce3014c2a26c0b";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  SiteSurveyQuestionReplyCellData_data$fragmentType,
-  SiteSurveyQuestionReplyCellData_data$data,
->*/);
+module.exports = node;

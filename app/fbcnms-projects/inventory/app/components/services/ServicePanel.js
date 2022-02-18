@@ -53,9 +53,8 @@ import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
-import {createFragmentContainer} from 'react-relay';
+import {createFragmentContainer, fetchQuery, graphql} from 'react-relay';
 import {fbt} from 'fbt';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
@@ -141,6 +140,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+/* $FlowFixMe - Flow doesn't support typing when using forwardRef on a
+ * funcional component
+ */
 const ServicePanel = React.forwardRef((props: Props, ref) => {
   const classes = useStyles();
   const {service, onOpenDetailsPanel, selectedWorkOrderId} = props;
@@ -150,7 +152,7 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
   const [selectedPort, setSelectedPort] = useState(null);
   const enqueueSnackbar = useEnqueueSnackbar();
 
-  const hideEditButtons = service.serviceType?.discoveryMethod !== 'MANUAL';
+  const hideEditButtons = service.serviceType?.discoveryMethod != 'MANUAL';
 
   const addPortToServiceEnabled = useFeatureFlag('add_port_to_service');
   const backplaneConnectionsEnabled = useFeatureFlag(
@@ -204,7 +206,6 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
           portIds: portIds,
         },
       };
-      // eslint-disable-next-line max-len
       const callbacks: MutationCallbacks<AddBulkServiceLinksAndPortsMutationResponse> = {
         onCompleted: (_: AddBulkServiceLinksAndPortsMutationResponse) => {
           setLinksExpanded(true);

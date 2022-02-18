@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<439848f54bd5ac9657bb897ee8c70516>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type SiteSurveyQuestionReplyWifiData_data$fragmentType: FragmentType;
-export type SiteSurveyQuestionReplyWifiData_data$ref = SiteSurveyQuestionReplyWifiData_data$fragmentType;
-export type SiteSurveyQuestionReplyWifiData_data$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type SiteSurveyQuestionReplyWifiData_data$ref: FragmentReference;
+declare export opaque type SiteSurveyQuestionReplyWifiData_data$fragmentType: SiteSurveyQuestionReplyWifiData_data$ref;
+export type SiteSurveyQuestionReplyWifiData_data = {|
   +wifiData: ?$ReadOnlyArray<?{|
     +band: ?string,
     +bssid: string,
@@ -23,17 +26,18 @@ export type SiteSurveyQuestionReplyWifiData_data$data = {|
     +strength: number,
     +ssid: ?string,
   |}>,
-  +$fragmentType: SiteSurveyQuestionReplyWifiData_data$fragmentType,
+  +$refType: SiteSurveyQuestionReplyWifiData_data$ref,
 |};
-export type SiteSurveyQuestionReplyWifiData_data = SiteSurveyQuestionReplyWifiData_data$data;
+export type SiteSurveyQuestionReplyWifiData_data$data = SiteSurveyQuestionReplyWifiData_data;
 export type SiteSurveyQuestionReplyWifiData_data$key = {
   +$data?: SiteSurveyQuestionReplyWifiData_data$data,
-  +$fragmentSpreads: SiteSurveyQuestionReplyWifiData_data$fragmentType,
+  +$fragmentRefs: SiteSurveyQuestionReplyWifiData_data$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -96,10 +100,7 @@ var node/*: ReaderFragment*/ = {
   "type": "SurveyQuestion",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '2d96d30d887d78992884a1de2ceca46c';
 
-(node/*: any*/).hash = "2d96d30d887d78992884a1de2ceca46c";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  SiteSurveyQuestionReplyWifiData_data$fragmentType,
-  SiteSurveyQuestionReplyWifiData_data$data,
->*/);
+module.exports = node;

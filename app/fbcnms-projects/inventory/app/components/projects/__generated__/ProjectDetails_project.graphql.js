@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<445a29c47ce19280953b97c884820630>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,17 +13,17 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type CommentsActivitiesBox_comments$fragmentType = any;
-type LocationBreadcrumbsTitle_locationDetails$fragmentType = any;
-type ProjectMoreActionsButton_project$fragmentType = any;
-type ProjectWorkOrdersList_workOrders$fragmentType = any;
-export type ProjectPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ProjectDetails_project$fragmentType: FragmentType;
-export type ProjectDetails_project$ref = ProjectDetails_project$fragmentType;
-export type ProjectDetails_project$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type CommentsActivitiesBox_comments$ref = any;
+type LocationBreadcrumbsTitle_locationDetails$ref = any;
+type ProjectMoreActionsButton_project$ref = any;
+type ProjectWorkOrdersList_workOrders$ref = any;
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ProjectDetails_project$ref: FragmentReference;
+declare export opaque type ProjectDetails_project$fragmentType: ProjectDetails_project$ref;
+export type ProjectDetails_project = {|
   +id: string,
   +name: string,
   +description: ?string,
@@ -41,7 +44,7 @@ export type ProjectDetails_project$data = {|
       +mapType: ?string,
       +mapZoomLevel: ?number,
     |},
-    +$fragmentSpreads: LocationBreadcrumbsTitle_locationDetails$fragmentType,
+    +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref,
   |},
   +priority: ProjectPriority,
   +properties: $ReadOnlyArray<{|
@@ -77,23 +80,24 @@ export type ProjectDetails_project$data = {|
     |},
   |}>,
   +workOrders: $ReadOnlyArray<{|
-    +$fragmentSpreads: ProjectWorkOrdersList_workOrders$fragmentType,
+    +$fragmentRefs: ProjectWorkOrdersList_workOrders$ref
   |}>,
   +comments: $ReadOnlyArray<?{|
-    +$fragmentSpreads: CommentsActivitiesBox_comments$fragmentType,
+    +$fragmentRefs: CommentsActivitiesBox_comments$ref
   |}>,
-  +$fragmentSpreads: ProjectMoreActionsButton_project$fragmentType,
-  +$fragmentType: ProjectDetails_project$fragmentType,
+  +$fragmentRefs: ProjectMoreActionsButton_project$ref,
+  +$refType: ProjectDetails_project$ref,
 |};
-export type ProjectDetails_project = ProjectDetails_project$data;
+export type ProjectDetails_project$data = ProjectDetails_project;
 export type ProjectDetails_project$key = {
   +$data?: ProjectDetails_project$data,
-  +$fragmentSpreads: ProjectDetails_project$fragmentType,
+  +$fragmentRefs: ProjectDetails_project$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -406,10 +410,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '0179af8cca9961f93220280185dd1236';
 
-(node/*: any*/).hash = "0179af8cca9961f93220280185dd1236";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ProjectDetails_project$fragmentType,
-  ProjectDetails_project$data,
->*/);
+module.exports = node;

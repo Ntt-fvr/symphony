@@ -20,7 +20,7 @@ import Text from '@symphony/design-system/components/Text';
 import Typeahead from '@fbcnms/ui/components/Typeahead';
 import {NAVIGATION_OPTIONS} from './location/LocationBreadcrumbsTitle';
 import {debounce} from 'lodash';
-import {fetchQuery, graphql} from '../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {withStyles} from '@material-ui/core/styles';
 
 const inventoryEntitiesTypeaheadQuery = graphql`

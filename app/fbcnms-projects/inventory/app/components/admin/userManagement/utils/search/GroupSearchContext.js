@@ -14,7 +14,7 @@ import type {UsersGroup} from '../../data/UsersGroups';
 
 import RelayEnvironment from '../../../../../common/RelayEnvironment';
 import createSearchContext from './SearchContext';
-import {fetchQuery, graphql} from '../../../../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 const groupSearchQuery = graphql`
   query GroupSearchContextQuery($filters: [UsersGroupFilterInput!]!) {

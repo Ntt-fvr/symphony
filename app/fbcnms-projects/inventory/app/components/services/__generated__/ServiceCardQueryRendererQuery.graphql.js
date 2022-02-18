@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<3ce07cf4a709c3efad29339686427d3a>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,25 +13,285 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type ServiceCard_service$fragmentType = any;
-export type ServiceCardQueryRendererQuery$variables = {|
-  serviceId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+type ServiceCard_service$ref = any;
+export type ServiceCardQueryRendererQueryVariables = {|
+  serviceId: string
 |};
-export type ServiceCardQueryRendererQueryVariables = ServiceCardQueryRendererQuery$variables;
-export type ServiceCardQueryRendererQuery$data = {|
+export type ServiceCardQueryRendererQueryResponse = {|
   +node: ?{|
-    +$fragmentSpreads: ServiceCard_service$fragmentType,
-  |},
+    +$fragmentRefs: ServiceCard_service$ref
+  |}
 |};
-export type ServiceCardQueryRendererQueryResponse = ServiceCardQueryRendererQuery$data;
 export type ServiceCardQueryRendererQuery = {|
   variables: ServiceCardQueryRendererQueryVariables,
-  response: ServiceCardQueryRendererQuery$data,
+  response: ServiceCardQueryRendererQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ServiceCardQueryRendererQuery(
+  $serviceId: ID!
+) {
+  node(id: $serviceId) {
+    __typename
+    ... on Service {
+      ...ServiceCard_service
+    }
+    id
+  }
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment ForceNetworkTopology_topology on NetworkTopology {
+  nodes {
+    __typename
+    id
+  }
+  links {
+    source {
+      __typename
+      id
+    }
+    target {
+      __typename
+      id
+    }
+  }
+}
+
+fragment ServiceCard_service on Service {
+  id
+  name
+  ...ServiceDetailsPanel_service
+  ...ServicePanel_service
+  topology {
+    ...ServiceEquipmentTopology_topology
+  }
+  endpoints {
+    ...ServiceEquipmentTopology_endpoints
+    id
+  }
+}
+
+fragment ServiceDetailsPanel_service on Service {
+  id
+  name
+  externalId
+  customer {
+    name
+    id
+  }
+  serviceType {
+    id
+    name
+    propertyTypes {
+      id
+      name
+      index
+      isInstanceProperty
+      type
+      nodeType
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isMandatory
+    }
+  }
+  properties {
+    id
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      isEditable
+      isInstanceProperty
+      isMandatory
+      stringValue
+    }
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    nodeValue {
+      __typename
+      id
+      name
+    }
+  }
+}
+
+fragment ServiceEndpointsView_endpoints on ServiceEndpoint {
+  id
+  port {
+    parentEquipment {
+      name
+      ...EquipmentBreadcrumbs_equipment
+      id
+    }
+    definition {
+      id
+      name
+    }
+    id
+  }
+  equipment {
+    name
+    ...EquipmentBreadcrumbs_equipment
+    id
+  }
+  definition {
+    name
+    role
+    id
+  }
+}
+
+fragment ServiceEquipmentTopology_endpoints on ServiceEndpoint {
+  definition {
+    role
+    id
+  }
+  equipment {
+    id
+    positionHierarchy {
+      parentEquipment {
+        id
+      }
+      id
+    }
+  }
+}
+
+fragment ServiceEquipmentTopology_topology on NetworkTopology {
+  nodes {
+    __typename
+    ... on Equipment {
+      id
+      name
+    }
+    id
+  }
+  ...ForceNetworkTopology_topology
+}
+
+fragment ServiceLinksAndPortsView_links on Link {
+  id
+  ports {
+    parentEquipment {
+      id
+      name
+    }
+    definition {
+      id
+      name
+    }
+    id
+  }
+}
+
+fragment ServiceLinksAndPortsView_ports on EquipmentPort {
+  id
+  parentEquipment {
+    id
+    name
+    equipmentType {
+      name
+      id
+    }
+  }
+  definition {
+    id
+    name
+  }
+}
+
+fragment ServicePanel_service on Service {
+  id
+  name
+  externalId
+  status
+  customer {
+    name
+    id
+  }
+  serviceType {
+    name
+    discoveryMethod
+    endpointDefinitions {
+      id
+      name
+      role
+      equipmentType {
+        id
+        name
+      }
+    }
+    id
+  }
+  links {
+    id
+    ...ServiceLinksAndPortsView_links
+  }
+  ports {
+    id
+    ...ServiceLinksAndPortsView_ports
+  }
+  endpoints {
+    id
+    definition {
+      id
+      name
+    }
+    ...ServiceEndpointsView_endpoints
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -677,10 +940,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '1e22f915cadb348b35242dfdfad45ec9';
 
-(node/*: any*/).hash = "1e22f915cadb348b35242dfdfad45ec9";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ServiceCardQueryRendererQuery$variables,
-  ServiceCardQueryRendererQuery$data,
->*/);
+module.exports = node;

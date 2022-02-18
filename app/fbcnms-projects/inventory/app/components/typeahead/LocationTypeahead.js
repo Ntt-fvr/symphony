@@ -16,7 +16,7 @@ import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Typeahead from '@fbcnms/ui/components/Typeahead';
 import {debounce} from 'lodash';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 const inventoryEntitiesTypeaheadQuery = graphql`
   query LocationTypeahead_LocationsQuery($name: String!) {

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<28edcc09484eff3b5191f4a10971e373>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,14 +13,14 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type ActivityField = "STATUS" | "PRIORITY" | "ASSIGNEE" | "CREATION_DATE" | "OWNER" | "NAME" | "DESCRIPTION" | "CLOCK_IN" | "CLOCK_OUT" | "%future added value";
-export type WorkOrderPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type WorkOrdersMap_workOrders$fragmentType: FragmentType;
-export type WorkOrdersMap_workOrders$ref = WorkOrdersMap_workOrders$fragmentType;
-export type WorkOrdersMap_workOrders$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
+export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type WorkOrdersMap_workOrders$ref: FragmentReference;
+declare export opaque type WorkOrdersMap_workOrders$fragmentType: WorkOrdersMap_workOrders$ref;
+export type WorkOrdersMap_workOrders = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +description: ?string,
@@ -46,27 +49,28 @@ export type WorkOrdersMap_workOrders$data = $ReadOnlyArray<{|
     +activityType: ActivityField,
     +createTime: any,
     +clockDetails: ?{|
-      +distanceMeters: ?number,
+      +distanceMeters: ?number
     |},
   |}>,
   +lastCheckOutActivity: $ReadOnlyArray<{|
     +activityType: ActivityField,
     +createTime: any,
     +clockDetails: ?{|
-      +distanceMeters: ?number,
+      +distanceMeters: ?number
     |},
   |}>,
-  +$fragmentType: WorkOrdersMap_workOrders$fragmentType,
+  +$refType: WorkOrdersMap_workOrders$ref,
 |}>;
-export type WorkOrdersMap_workOrders = WorkOrdersMap_workOrders$data;
+export type WorkOrdersMap_workOrders$data = WorkOrdersMap_workOrders;
 export type WorkOrdersMap_workOrders$key = $ReadOnlyArray<{
   +$data?: WorkOrdersMap_workOrders$data,
-  +$fragmentSpreads: WorkOrdersMap_workOrders$fragmentType,
+  +$fragmentRefs: WorkOrdersMap_workOrders$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -268,10 +272,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'a0aabd59902a85da4283e589db8af469';
 
-(node/*: any*/).hash = "55d7dfba17b995f7614297a6463c678a";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  WorkOrdersMap_workOrders$fragmentType,
-  WorkOrdersMap_workOrders$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<de91fbbc53ad39f4eefac79a98224c2f>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,28 +13,29 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type HyperlinkTableRow_hyperlink$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type DocumentTable_hyperlinks$fragmentType: FragmentType;
-export type DocumentTable_hyperlinks$ref = DocumentTable_hyperlinks$fragmentType;
-export type DocumentTable_hyperlinks$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+type HyperlinkTableRow_hyperlink$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type DocumentTable_hyperlinks$ref: FragmentReference;
+declare export opaque type DocumentTable_hyperlinks$fragmentType: DocumentTable_hyperlinks$ref;
+export type DocumentTable_hyperlinks = $ReadOnlyArray<{|
   +id: string,
   +category: ?string,
   +url: string,
   +displayName: ?string,
-  +$fragmentSpreads: HyperlinkTableRow_hyperlink$fragmentType,
-  +$fragmentType: DocumentTable_hyperlinks$fragmentType,
+  +$fragmentRefs: HyperlinkTableRow_hyperlink$ref,
+  +$refType: DocumentTable_hyperlinks$ref,
 |}>;
-export type DocumentTable_hyperlinks = DocumentTable_hyperlinks$data;
+export type DocumentTable_hyperlinks$data = DocumentTable_hyperlinks;
 export type DocumentTable_hyperlinks$key = $ReadOnlyArray<{
   +$data?: DocumentTable_hyperlinks$data,
-  +$fragmentSpreads: DocumentTable_hyperlinks$fragmentType,
+  +$fragmentRefs: DocumentTable_hyperlinks$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -76,10 +80,7 @@ var node/*: ReaderFragment*/ = {
   "type": "Hyperlink",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = 'c9ea5f1896114cd428384654f0979a5e';
 
-(node/*: any*/).hash = "c9ea5f1896114cd428384654f0979a5e";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  DocumentTable_hyperlinks$fragmentType,
-  DocumentTable_hyperlinks$data,
->*/);
+module.exports = node;

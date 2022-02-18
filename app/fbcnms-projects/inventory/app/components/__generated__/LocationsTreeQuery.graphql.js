@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<c42e604bc11044d0a2fa842e8844acf9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type LocationsTreeQuery$variables = {||};
-export type LocationsTreeQueryVariables = LocationsTreeQuery$variables;
-export type LocationsTreeQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type LocationsTreeQueryVariables = {||};
+export type LocationsTreeQueryResponse = {|
   +locations: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -26,18 +28,44 @@ export type LocationsTreeQuery$data = {|
         |},
         +numChildren: number,
         +siteSurveyNeeded: boolean,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type LocationsTreeQueryResponse = LocationsTreeQuery$data;
 export type LocationsTreeQuery = {|
   variables: LocationsTreeQueryVariables,
-  response: LocationsTreeQuery$data,
+  response: LocationsTreeQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationsTreeQuery {
+  locations(first: 500, onlyTopLevel: true) {
+    edges {
+      node {
+        id
+        externalId
+        name
+        locationType {
+          id
+          name
+        }
+        numChildren
+        siteSurveyNeeded
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "kind": "Literal",
   "name": "onlyTopLevel",
@@ -237,10 +265,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '2517b7f9d3b38afe85f3ccd710326689';
 
-(node/*: any*/).hash = "2517b7f9d3b38afe85f3ccd710326689";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationsTreeQuery$variables,
-  LocationsTreeQuery$data,
->*/);
+module.exports = node;

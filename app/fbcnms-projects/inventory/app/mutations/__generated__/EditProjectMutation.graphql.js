@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<15ac4aa30c5417f08320f66be2081b81>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,9 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type ProjectPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditProjectInput = {|
   id: string,
   name: string,
@@ -38,11 +41,10 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type EditProjectMutation$variables = {|
-  input: EditProjectInput,
+export type EditProjectMutationVariables = {|
+  input: EditProjectInput
 |};
-export type EditProjectMutationVariables = EditProjectMutation$variables;
-export type EditProjectMutation$data = {|
+export type EditProjectMutationResponse = {|
   +editProject: {|
     +id: string,
     +name: string,
@@ -77,16 +79,59 @@ export type EditProjectMutation$data = {|
         +rangeToValue: ?number,
       |},
     |}>,
-  |},
+  |}
 |};
-export type EditProjectMutationResponse = EditProjectMutation$data;
 export type EditProjectMutation = {|
   variables: EditProjectMutationVariables,
-  response: EditProjectMutation$data,
+  response: EditProjectMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditProjectMutation(
+  $input: EditProjectInput!
+) {
+  editProject(input: $input) {
+    id
+    name
+    description
+    createdBy {
+      id
+      email
+    }
+    properties {
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      propertyType {
+        id
+        name
+        type
+        nodeType
+        isEditable
+        isInstanceProperty
+        stringValue
+        intValue
+        floatValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+      }
+      id
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -346,10 +391,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '6b4753d606678a44a4cedd45175cf301';
 
-(node/*: any*/).hash = "6b4753d606678a44a4cedd45175cf301";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditProjectMutation$variables,
-  EditProjectMutation$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<df0c80991059679a1060a972fe477d6e>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,15 +13,14 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type FilterEntity = "WORK_ORDER" | "PORT" | "EQUIPMENT" | "LINK" | "LOCATION" | "SERVICE" | "%future added value";
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type filterBookmarksHookReportFiltersQuery$variables = {|
-  entity: FilterEntity,
+import type { ConcreteRequest } from 'relay-runtime';
+export type FilterEntity = "EQUIPMENT" | "LINK" | "LOCATION" | "PORT" | "SERVICE" | "WORK_ORDER" | "%future added value";
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type filterBookmarksHookReportFiltersQueryVariables = {|
+  entity: FilterEntity
 |};
-export type filterBookmarksHookReportFiltersQueryVariables = filterBookmarksHookReportFiltersQuery$variables;
-export type filterBookmarksHookReportFiltersQuery$data = {|
+export type filterBookmarksHookReportFiltersQueryResponse = {|
   +reportFilters: $ReadOnlyArray<{|
     +id: string,
     +name: string,
@@ -46,16 +48,52 @@ export type filterBookmarksHookReportFiltersQuery$data = {|
         +isDeleted: ?boolean,
       |},
     |}>,
-  |}>,
+  |}>
 |};
-export type filterBookmarksHookReportFiltersQueryResponse = filterBookmarksHookReportFiltersQuery$data;
 export type filterBookmarksHookReportFiltersQuery = {|
   variables: filterBookmarksHookReportFiltersQueryVariables,
-  response: filterBookmarksHookReportFiltersQuery$data,
+  response: filterBookmarksHookReportFiltersQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query filterBookmarksHookReportFiltersQuery(
+  $entity: FilterEntity!
+) {
+  reportFilters(entity: $entity) {
+    id
+    name
+    entity
+    filters {
+      operator
+      key
+      filterType
+      stringValue
+      idSet
+      stringSet
+      boolValue
+      propertyValue {
+        index
+        name
+        type
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        isDeleted
+        id
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -350,10 +388,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '19ea160f56380b4a7d93b2b0df38b959';
 
-(node/*: any*/).hash = "19ea160f56380b4a7d93b2b0df38b959";
-
-module.exports = ((node/*: any*/)/*: Query<
-  filterBookmarksHookReportFiltersQuery$variables,
-  filterBookmarksHookReportFiltersQuery$data,
->*/);
+module.exports = node;

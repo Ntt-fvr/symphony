@@ -48,7 +48,7 @@ import update from 'immutability-helper';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {FormContextProvider} from '../../common/FormContext';
 import {addLocationToStore} from './LocationStoreUtils';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {getInitialPropertyFromType} from '../../common/PropertyType';
 import {
   getNonInstancePropertyTypes,

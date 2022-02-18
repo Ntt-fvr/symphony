@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<4f6d216187120354e01f2c9fbae383c2>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,8 +13,8 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type SurveyQuestionType = "BOOL" | "EMAIL" | "COORDS" | "PHONE" | "TEXT" | "TEXTAREA" | "PHOTO" | "WIFI" | "CELLULAR" | "FLOAT" | "INTEGER" | "DATE" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type SurveyQuestionType = "BOOL" | "CELLULAR" | "COORDS" | "DATE" | "EMAIL" | "FLOAT" | "INTEGER" | "PHONE" | "PHOTO" | "TEXT" | "TEXTAREA" | "WIFI" | "%future added value";
 export type SurveyTemplateCategoryInput = {|
   id?: ?string,
   categoryTitle: string,
@@ -25,24 +28,34 @@ export type SurveyTemplateQuestionInput = {|
   questionType: SurveyQuestionType,
   index: number,
 |};
-export type EditLocationTypeSurveyTemplateCategoriesMutation$variables = {|
+export type EditLocationTypeSurveyTemplateCategoriesMutationVariables = {|
   id: string,
   surveyTemplateCategories: $ReadOnlyArray<SurveyTemplateCategoryInput>,
 |};
-export type EditLocationTypeSurveyTemplateCategoriesMutationVariables = EditLocationTypeSurveyTemplateCategoriesMutation$variables;
-export type EditLocationTypeSurveyTemplateCategoriesMutation$data = {|
+export type EditLocationTypeSurveyTemplateCategoriesMutationResponse = {|
   +editLocationTypeSurveyTemplateCategories: ?$ReadOnlyArray<{|
-    +id: string,
-  |}>,
+    +id: string
+  |}>
 |};
-export type EditLocationTypeSurveyTemplateCategoriesMutationResponse = EditLocationTypeSurveyTemplateCategoriesMutation$data;
 export type EditLocationTypeSurveyTemplateCategoriesMutation = {|
   variables: EditLocationTypeSurveyTemplateCategoriesMutationVariables,
-  response: EditLocationTypeSurveyTemplateCategoriesMutation$data,
+  response: EditLocationTypeSurveyTemplateCategoriesMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditLocationTypeSurveyTemplateCategoriesMutation(
+  $id: ID!
+  $surveyTemplateCategories: [SurveyTemplateCategoryInput!]!
+) {
+  editLocationTypeSurveyTemplateCategories(id: $id, surveyTemplateCategories: $surveyTemplateCategories) {
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -113,10 +126,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'f78d5f49864462b54118081587c24ac0';
 
-(node/*: any*/).hash = "85792e6b61c311d8ce3645703deb69b6";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditLocationTypeSurveyTemplateCategoriesMutation$variables,
-  EditLocationTypeSurveyTemplateCategoriesMutation$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<9198347bab8b80b553410a6d7348b819>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$fragmentType = any;
+import type { ConcreteRequest } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$ref = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
 export type AddLinkInput = {|
   sides: $ReadOnlyArray<LinkSide>,
   workOrder?: ?string,
@@ -40,11 +43,10 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type AddLinkMutation$variables = {|
-  input: AddLinkInput,
+export type AddLinkMutationVariables = {|
+  input: AddLinkInput
 |};
-export type AddLinkMutationVariables = AddLinkMutation$variables;
-export type AddLinkMutation$data = {|
+export type AddLinkMutationResponse = {|
   +addLink: {|
     +id: string,
     +futureState: ?FutureState,
@@ -74,7 +76,7 @@ export type AddLinkMutation$data = {|
             +isMandatory: ?boolean,
             +category: ?string,
             +isDeleted: ?boolean,
-          |}>,
+          |}>
         |},
       |},
       +parentEquipment: {|
@@ -85,14 +87,14 @@ export type AddLinkMutation$data = {|
           +id: string,
           +name: string,
         |},
-        +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
+        +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
       |},
       +serviceEndpoints: $ReadOnlyArray<{|
         +definition: {|
-          +role: ?string,
+          +role: ?string
         |},
         +service: {|
-          +name: string,
+          +name: string
         |},
       |}>,
     |}>,
@@ -139,16 +141,156 @@ export type AddLinkMutation$data = {|
       +id: string,
       +name: string,
     |}>,
-  |},
+  |}
 |};
-export type AddLinkMutationResponse = AddLinkMutation$data;
 export type AddLinkMutation = {|
   variables: AddLinkMutationVariables,
-  response: AddLinkMutation$data,
+  response: AddLinkMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddLinkMutation(
+  $input: AddLinkInput!
+) {
+  addLink(input: $input) {
+    id
+    futureState
+    ports {
+      id
+      definition {
+        id
+        name
+        visibleLabel
+        portType {
+          linkPropertyTypes {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isInstanceProperty
+            isMandatory
+            category
+            isDeleted
+          }
+          id
+        }
+      }
+      parentEquipment {
+        id
+        name
+        futureState
+        equipmentType {
+          id
+          name
+        }
+        ...EquipmentBreadcrumbs_equipment
+      }
+      serviceEndpoints {
+        definition {
+          role
+          id
+        }
+        service {
+          name
+          id
+        }
+        id
+      }
+    }
+    workOrder {
+      id
+      status
+    }
+    properties {
+      id
+      propertyType {
+        id
+        name
+        type
+        nodeType
+        index
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        isEditable
+        isInstanceProperty
+        isMandatory
+        category
+        isDeleted
+      }
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      nodeValue {
+        __typename
+        id
+        name
+      }
+    }
+    services {
+      id
+      name
+    }
+  }
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -765,10 +907,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e08640b022f726ee358ac578bf517bc8';
 
-(node/*: any*/).hash = "e08640b022f726ee358ac578bf517bc8";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddLinkMutation$variables,
-  AddLinkMutation$data,
->*/);
+module.exports = node;

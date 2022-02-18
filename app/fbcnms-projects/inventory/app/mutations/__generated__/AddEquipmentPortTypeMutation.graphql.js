@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<800d724713027da59fe5b8b661a06185>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,9 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type EquipmentPortTypeItem_equipmentPortType$fragmentType = any;
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type EquipmentPortTypeItem_equipmentPortType$ref = any;
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type AddEquipmentPortTypeInput = {|
   name: string,
   properties?: ?$ReadOnlyArray<PropertyTypeInput>,
@@ -41,25 +44,77 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type AddEquipmentPortTypeMutation$variables = {|
-  input: AddEquipmentPortTypeInput,
+export type AddEquipmentPortTypeMutationVariables = {|
+  input: AddEquipmentPortTypeInput
 |};
-export type AddEquipmentPortTypeMutationVariables = AddEquipmentPortTypeMutation$variables;
-export type AddEquipmentPortTypeMutation$data = {|
+export type AddEquipmentPortTypeMutationResponse = {|
   +addEquipmentPortType: {|
     +id: string,
     +name: string,
-    +$fragmentSpreads: EquipmentPortTypeItem_equipmentPortType$fragmentType,
-  |},
+    +$fragmentRefs: EquipmentPortTypeItem_equipmentPortType$ref,
+  |}
 |};
-export type AddEquipmentPortTypeMutationResponse = AddEquipmentPortTypeMutation$data;
 export type AddEquipmentPortTypeMutation = {|
   variables: AddEquipmentPortTypeMutationVariables,
-  response: AddEquipmentPortTypeMutation$data,
+  response: AddEquipmentPortTypeMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddEquipmentPortTypeMutation(
+  $input: AddEquipmentPortTypeInput!
+) {
+  addEquipmentPortType(input: $input) {
+    id
+    name
+    ...EquipmentPortTypeItem_equipmentPortType
+  }
+}
+
+fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
+  ...PropertyTypeFormField_propertyType
+  id
+  index
+}
+
+fragment EquipmentPortTypeItem_equipmentPortType on EquipmentPortType {
+  id
+  name
+  numberOfPortDefinitions
+  propertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+  linkPropertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -291,10 +346,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '454f79d6f06b34bbd5fe4c8aae3f4743';
 
-(node/*: any*/).hash = "454f79d6f06b34bbd5fe4c8aae3f4743";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddEquipmentPortTypeMutation$variables,
-  AddEquipmentPortTypeMutation$data,
->*/);
+module.exports = node;

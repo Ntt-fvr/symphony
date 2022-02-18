@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<403f26837c21c1814802624491bea168>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,9 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type EquipmentTypeItem_equipmentType$fragmentType = any;
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type EquipmentTypeItem_equipmentType$ref = any;
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type AddEquipmentTypeInput = {|
   name: string,
   category?: ?string,
@@ -62,25 +65,103 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type AddEquipmentTypeMutation$variables = {|
-  input: AddEquipmentTypeInput,
+export type AddEquipmentTypeMutationVariables = {|
+  input: AddEquipmentTypeInput
 |};
-export type AddEquipmentTypeMutationVariables = AddEquipmentTypeMutation$variables;
-export type AddEquipmentTypeMutation$data = {|
+export type AddEquipmentTypeMutationResponse = {|
   +addEquipmentType: {|
     +id: string,
     +name: string,
-    +$fragmentSpreads: EquipmentTypeItem_equipmentType$fragmentType,
-  |},
+    +$fragmentRefs: EquipmentTypeItem_equipmentType$ref,
+  |}
 |};
-export type AddEquipmentTypeMutationResponse = AddEquipmentTypeMutation$data;
 export type AddEquipmentTypeMutation = {|
   variables: AddEquipmentTypeMutationVariables,
-  response: AddEquipmentTypeMutation$data,
+  response: AddEquipmentTypeMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddEquipmentTypeMutation(
+  $input: AddEquipmentTypeInput!
+) {
+  addEquipmentType(input: $input) {
+    id
+    name
+    ...EquipmentTypeItem_equipmentType
+  }
+}
+
+fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
+  ...PropertyTypeFormField_propertyType
+  id
+  index
+}
+
+fragment EquipmentTypeItem_equipmentType on EquipmentType {
+  id
+  name
+  propertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+  positionDefinitions {
+    ...PositionDefinitionsTable_positionDefinitions
+    id
+  }
+  portDefinitions {
+    ...PortDefinitionsTable_portDefinitions
+    id
+  }
+  numberOfEquipment
+}
+
+fragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {
+  id
+  name
+  index
+  visibleLabel
+  portType {
+    id
+    name
+  }
+  connectedPorts {
+    id
+    name
+  }
+}
+
+fragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {
+  id
+  name
+  index
+  visibleLabel
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -363,10 +444,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e3d9a9637e5a71aa50d1e5cc61468670';
 
-(node/*: any*/).hash = "e3d9a9637e5a71aa50d1e5cc61468670";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddEquipmentTypeMutation$variables,
-  AddEquipmentTypeMutation$data,
->*/);
+module.exports = node;

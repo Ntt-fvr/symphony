@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<1cf4ee84c2fa91da33443a6bc67af721>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,15 +13,15 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type WorkOrderDetails_workOrder$fragmentType = any;
+import type { ConcreteRequest } from 'relay-runtime';
+type WorkOrderDetails_workOrder$ref = any;
 export type CellularNetworkType = "CDMA" | "GSM" | "LTE" | "WCDMA" | "%future added value";
-export type CheckListItemEnumSelectionMode = "single" | "multiple" | "%future added value";
-export type CheckListItemType = "simple" | "string" | "enum" | "files" | "yes_no" | "cell_scan" | "wifi_scan" | "%future added value";
-export type FileType = "IMAGE" | "FILE" | "%future added value";
-export type WorkOrderPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
-export type YesNoResponse = "YES" | "NO" | "%future added value";
+export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
+export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
+export type FileType = "FILE" | "IMAGE" | "%future added value";
+export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
+export type YesNoResponse = "NO" | "YES" | "%future added value";
 export type EditWorkOrderInput = {|
   id: string,
   name: string,
@@ -129,11 +132,10 @@ export type CheckListCategoryInput = {|
   description?: ?string,
   checkList?: ?$ReadOnlyArray<CheckListItemInput>,
 |};
-export type EditWorkOrderMutation$variables = {|
-  input: EditWorkOrderInput,
+export type EditWorkOrderMutationVariables = {|
+  input: EditWorkOrderInput
 |};
-export type EditWorkOrderMutationVariables = EditWorkOrderMutation$variables;
-export type EditWorkOrderMutation$data = {|
+export type EditWorkOrderMutationResponse = {|
   +editWorkOrder: {|
     +id: string,
     +name: string,
@@ -155,17 +157,566 @@ export type EditWorkOrderMutation$data = {|
       +id: string,
       +email: string,
     |},
-    +$fragmentSpreads: WorkOrderDetails_workOrder$fragmentType,
-  |},
+    +$fragmentRefs: WorkOrderDetails_workOrder$ref,
+  |}
 |};
-export type EditWorkOrderMutationResponse = EditWorkOrderMutation$data;
 export type EditWorkOrderMutation = {|
   variables: EditWorkOrderMutationVariables,
-  response: EditWorkOrderMutation$data,
+  response: EditWorkOrderMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditWorkOrderMutation(
+  $input: EditWorkOrderInput!
+) {
+  editWorkOrder(input: $input) {
+    id
+    name
+    description
+    organizationFk {
+      id
+      name
+      description
+    }
+    owner {
+      id
+      email
+    }
+    creationDate
+    installDate
+    status
+    priority
+    assignedTo {
+      id
+      email
+    }
+    ...WorkOrderDetails_workOrder
+  }
+}
+
+fragment ActivityPost_activity on Activity {
+  id
+  author {
+    email
+    id
+  }
+  newValue
+  activityType
+  createTime
+  ...GenericActivityText_activity
+  ...WorkOrderCheckInActivityText_activity
+  ...WorkOrderCheckOutActivityText_activity
+}
+
+fragment CommentsActivitiesBox_activities on Activity {
+  ...CommentsActivitiesLog_activities
+}
+
+fragment CommentsActivitiesBox_comments on Comment {
+  ...CommentsActivitiesLog_comments
+}
+
+fragment CommentsActivitiesLog_activities on Activity {
+  id
+  createTime
+  ...ActivityPost_activity
+}
+
+fragment CommentsActivitiesLog_comments on Comment {
+  id
+  createTime
+  ...TextCommentPost_comment
+}
+
+fragment DocumentTable_files on File {
+  id
+  fileName
+  category
+  ...FileAttachment_file
+}
+
+fragment DocumentTable_hyperlinks on Hyperlink {
+  id
+  category
+  url
+  displayName
+  ...HyperlinkTableRow_hyperlink
+}
+
+fragment EntityDocumentsTable_files on File {
+  ...DocumentTable_files
+}
+
+fragment EntityDocumentsTable_hyperlinks on Hyperlink {
+  ...DocumentTable_hyperlinks
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment FileAttachment_file on File {
+  id
+  fileName
+  sizeInBytes
+  uploaded
+  fileType
+  storeKey
+  category
+  annotation
+  documentCategory {
+    id
+    name
+  }
+  ...ImageDialog_img
+}
+
+fragment GenericActivityText_activity on Activity {
+  activityType
+  newRelatedNode {
+    __typename
+    ... on User {
+      email
+    }
+    id
+  }
+  oldRelatedNode {
+    __typename
+    ... on User {
+      email
+    }
+    id
+  }
+  oldValue
+  newValue
+}
+
+fragment HyperlinkTableMenu_hyperlink on Hyperlink {
+  id
+  displayName
+  url
+}
+
+fragment HyperlinkTableRow_hyperlink on Hyperlink {
+  id
+  category
+  url
+  displayName
+  createTime
+  documentCategory {
+    id
+    name
+  }
+  ...HyperlinkTableMenu_hyperlink
+}
+
+fragment ImageDialog_img on File {
+  storeKey
+  fileName
+}
+
+fragment LocationBreadcrumbsTitle_locationDetails on Location {
+  id
+  name
+  locationType {
+    name
+    id
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+}
+
+fragment TextCommentPost_comment on Comment {
+  id
+  author {
+    email
+    id
+  }
+  text
+  createTime
+}
+
+fragment WorkOrderCheckInActivityText_activity on Activity {
+  activityType
+  clockDetails {
+    distanceMeters
+  }
+}
+
+fragment WorkOrderCheckOutActivityText_activity on Activity {
+  activityType
+  clockDetails {
+    clockOutReason
+    distanceMeters
+    comment
+  }
+}
+
+fragment WorkOrderDetailsPaneEquipmentItem_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  parentLocation {
+    id
+    name
+    locationType {
+      id
+      name
+    }
+  }
+  parentPosition {
+    id
+    definition {
+      name
+      visibleLabel
+      id
+    }
+    parentEquipment {
+      id
+      name
+    }
+  }
+}
+
+fragment WorkOrderDetailsPaneLinkItem_link on Link {
+  id
+  futureState
+  ports {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+      portType {
+        linkPropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        id
+      }
+    }
+    parentEquipment {
+      id
+      name
+      futureState
+      equipmentType {
+        id
+        name
+      }
+      ...EquipmentBreadcrumbs_equipment
+    }
+    serviceEndpoints {
+      definition {
+        role
+        id
+      }
+      service {
+        name
+        id
+      }
+      id
+    }
+  }
+  workOrder {
+    id
+    status
+  }
+  properties {
+    id
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      index
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isEditable
+      isInstanceProperty
+      isMandatory
+      category
+      isDeleted
+    }
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    nodeValue {
+      __typename
+      id
+      name
+    }
+  }
+  services {
+    id
+    name
+  }
+}
+
+fragment WorkOrderDetailsPane_workOrder on WorkOrder {
+  id
+  name
+  equipmentToAdd {
+    id
+    ...WorkOrderDetailsPaneEquipmentItem_equipment
+  }
+  equipmentToRemove {
+    id
+    ...WorkOrderDetailsPaneEquipmentItem_equipment
+  }
+  linksToAdd {
+    id
+    ...WorkOrderDetailsPaneLinkItem_link
+  }
+  linksToRemove {
+    id
+    ...WorkOrderDetailsPaneLinkItem_link
+  }
+}
+
+fragment WorkOrderDetails_workOrder on WorkOrder {
+  id
+  name
+  description
+  scheduledAt
+  organizationFk {
+    id
+    name
+    description
+  }
+  workOrderType {
+    name
+    id
+  }
+  workOrderTemplate {
+    assigneeCanCompleteWorkOrder
+  }
+  location {
+    name
+    id
+    latitude
+    longitude
+    locationType {
+      id
+      mapType
+      mapZoomLevel
+    }
+    ...LocationBreadcrumbsTitle_locationDetails
+  }
+  owner {
+    id
+    email
+  }
+  assignedTo {
+    id
+    email
+  }
+  creationDate
+  installDate
+  status
+  priority
+  ...WorkOrderDetailsPane_workOrder
+  properties {
+    id
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      index
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isEditable
+      isInstanceProperty
+      isMandatory
+      category
+      isDeleted
+    }
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    nodeValue {
+      __typename
+      id
+      name
+    }
+  }
+  images {
+    ...EntityDocumentsTable_files
+    id
+  }
+  files {
+    ...EntityDocumentsTable_files
+    id
+  }
+  hyperlinks {
+    ...EntityDocumentsTable_hyperlinks
+    id
+  }
+  comments {
+    ...CommentsActivitiesBox_comments
+    id
+  }
+  activities {
+    ...CommentsActivitiesBox_activities
+    id
+  }
+  project {
+    name
+    id
+    type {
+      id
+      name
+    }
+  }
+  checkListCategories {
+    id
+    title
+    description
+    checkList {
+      id
+      index
+      isMandatory
+      type
+      title
+      helpText
+      checked
+      enumValues
+      stringValue
+      enumSelectionMode
+      selectedEnumValues
+      yesNoResponse
+      files {
+        id
+        fileName
+        sizeInBytes
+        modified
+        uploaded
+        fileType
+        storeKey
+        category
+        annotation
+      }
+      cellData {
+        id
+        networkType
+        signalStrength
+        timestamp
+        baseStationID
+        networkID
+        systemID
+        cellID
+        locationAreaCode
+        mobileCountryCode
+        mobileNetworkCode
+        primaryScramblingCode
+        operator
+        arfcn
+        physicalCellID
+        trackingAreaCode
+        timingAdvance
+        earfcn
+        uarfcn
+        latitude
+        longitude
+      }
+      wifiData {
+        id
+        timestamp
+        frequency
+        channel
+        bssid
+        strength
+        ssid
+        band
+        channelWidth
+        capabilities
+        latitude
+        longitude
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -844,6 +1395,7 @@ v48 = {
 },
 v49 = [
   (v36/*: any*/),
+  (v2/*: any*/),
   {
     "kind": "InlineFragment",
     "selections": [
@@ -851,8 +1403,7 @@ v49 = [
     ],
     "type": "User",
     "abstractKey": null
-  },
-  (v2/*: any*/)
+  }
 ],
 v50 = {
   "alias": null,
@@ -1547,10 +2098,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'd7258f0b0aa11f53c0f2c855cb1166f3';
 
-(node/*: any*/).hash = "d7258f0b0aa11f53c0f2c855cb1166f3";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditWorkOrderMutation$variables,
-  EditWorkOrderMutation$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<cedcc9ac5879e0e6d24ba42e36449b06>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,21 +13,20 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type DynamicPropertiesGrid_properties$fragmentType = any;
-type DynamicPropertiesGrid_propertyTypes$fragmentType = any;
-type EquipmentTable_equipments$fragmentType = any;
-type LocationBreadcrumbsTitle_locationDetails$fragmentType = any;
-type LocationDocumentsCard_location$fragmentType = any;
-type LocationFloorPlansTab_location$fragmentType = any;
-type LocationMenu_location$fragmentType = any;
-type PropertyFormField_property$fragmentType = any;
-type PropertyTypeFormField_propertyType$fragmentType = any;
-export type LocationPropertiesCardQuery$variables = {|
-  locationId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+type DynamicPropertiesGrid_properties$ref = any;
+type DynamicPropertiesGrid_propertyTypes$ref = any;
+type EquipmentTable_equipments$ref = any;
+type LocationBreadcrumbsTitle_locationDetails$ref = any;
+type LocationDocumentsCard_location$ref = any;
+type LocationFloorPlansTab_location$ref = any;
+type LocationMenu_location$ref = any;
+type PropertyFormField_property$ref = any;
+type PropertyTypeFormField_propertyType$ref = any;
+export type LocationPropertiesCardQueryVariables = {|
+  locationId: string
 |};
-export type LocationPropertiesCardQueryVariables = LocationPropertiesCardQuery$variables;
-export type LocationPropertiesCardQuery$data = {|
+export type LocationPropertiesCardQueryResponse = {|
   +location: ?{|
     +id?: string,
     +name?: string,
@@ -37,45 +39,347 @@ export type LocationPropertiesCardQuery$data = {|
       +mapType: ?string,
       +mapZoomLevel: ?number,
       +propertyTypes: $ReadOnlyArray<?{|
-        +$fragmentSpreads: PropertyTypeFormField_propertyType$fragmentType & DynamicPropertiesGrid_propertyTypes$fragmentType,
+        +$fragmentRefs: PropertyTypeFormField_propertyType$ref & DynamicPropertiesGrid_propertyTypes$ref
       |}>,
     |},
     +parentLocation?: ?{|
-      +id: string,
+      +id: string
     |},
     +children?: $ReadOnlyArray<?{|
-      +id: string,
+      +id: string
     |}>,
     +equipments?: $ReadOnlyArray<?{|
-      +$fragmentSpreads: EquipmentTable_equipments$fragmentType,
+      +$fragmentRefs: EquipmentTable_equipments$ref
     |}>,
     +properties?: $ReadOnlyArray<?{|
-      +$fragmentSpreads: PropertyFormField_property$fragmentType & DynamicPropertiesGrid_properties$fragmentType,
+      +$fragmentRefs: PropertyFormField_property$ref & DynamicPropertiesGrid_properties$ref
     |}>,
     +images?: $ReadOnlyArray<?{|
-      +id: string,
+      +id: string
     |}>,
     +files?: $ReadOnlyArray<?{|
-      +id: string,
+      +id: string
     |}>,
     +hyperlinks?: $ReadOnlyArray<{|
-      +id: string,
+      +id: string
     |}>,
     +parentCoords?: ?{|
       +latitude: number,
       +longitude: number,
     |},
-    +$fragmentSpreads: LocationBreadcrumbsTitle_locationDetails$fragmentType & LocationDocumentsCard_location$fragmentType & LocationFloorPlansTab_location$fragmentType & LocationMenu_location$fragmentType,
-  |},
+    +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref & LocationDocumentsCard_location$ref & LocationFloorPlansTab_location$ref & LocationMenu_location$ref,
+  |}
 |};
-export type LocationPropertiesCardQueryResponse = LocationPropertiesCardQuery$data;
 export type LocationPropertiesCardQuery = {|
   variables: LocationPropertiesCardQueryVariables,
-  response: LocationPropertiesCardQuery$data,
+  response: LocationPropertiesCardQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationPropertiesCardQuery(
+  $locationId: ID!
+) {
+  location: node(id: $locationId) {
+    __typename
+    ... on Location {
+      id
+      name
+      latitude
+      longitude
+      externalId
+      locationType {
+        id
+        name
+        mapType
+        mapZoomLevel
+        propertyTypes {
+          ...PropertyTypeFormField_propertyType
+          ...DynamicPropertiesGrid_propertyTypes
+          id
+        }
+      }
+      ...LocationBreadcrumbsTitle_locationDetails
+      parentLocation {
+        id
+      }
+      children {
+        id
+      }
+      equipments {
+        ...EquipmentTable_equipments
+        id
+      }
+      properties {
+        ...PropertyFormField_property
+        ...DynamicPropertiesGrid_properties
+        id
+      }
+      images {
+        id
+      }
+      files {
+        id
+      }
+      hyperlinks {
+        id
+      }
+      parentCoords {
+        latitude
+        longitude
+      }
+      ...LocationDocumentsCard_location
+      ...LocationFloorPlansTab_location
+      ...LocationMenu_location
+    }
+    id
+  }
+}
+
+fragment DocumentTable_files on File {
+  id
+  fileName
+  category
+  ...FileAttachment_file
+}
+
+fragment DocumentTable_hyperlinks on Hyperlink {
+  id
+  category
+  url
+  displayName
+  ...HyperlinkTableRow_hyperlink
+}
+
+fragment DynamicPropertiesGrid_properties on Property {
+  ...PropertyFormField_property
+  propertyType {
+    id
+    index
+  }
+}
+
+fragment DynamicPropertiesGrid_propertyTypes on PropertyType {
+  id
+  name
+  index
+  isInstanceProperty
+  type
+  nodeType
+  stringValue
+  intValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  floatValue
+}
+
+fragment EntityDocumentsTable_files on File {
+  ...DocumentTable_files
+}
+
+fragment EntityDocumentsTable_hyperlinks on Hyperlink {
+  ...DocumentTable_hyperlinks
+}
+
+fragment EquipmentTable_equipments on Equipment {
+  id
+  name
+  futureState
+  equipmentType {
+    id
+    name
+  }
+  workOrder {
+    id
+    status
+  }
+  services {
+    id
+  }
+}
+
+fragment FileAttachment_file on File {
+  id
+  fileName
+  sizeInBytes
+  uploaded
+  fileType
+  storeKey
+  category
+  annotation
+  documentCategory {
+    id
+    name
+  }
+  ...ImageDialog_img
+}
+
+fragment HyperlinkTableMenu_hyperlink on Hyperlink {
+  id
+  displayName
+  url
+}
+
+fragment HyperlinkTableRow_hyperlink on Hyperlink {
+  id
+  category
+  url
+  displayName
+  createTime
+  documentCategory {
+    id
+    name
+  }
+  ...HyperlinkTableMenu_hyperlink
+}
+
+fragment ImageDialog_img on File {
+  storeKey
+  fileName
+}
+
+fragment LocationBreadcrumbsTitle_locationDetails on Location {
+  id
+  name
+  locationType {
+    name
+    id
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+}
+
+fragment LocationDocumentsCard_location on Location {
+  id
+  images {
+    ...EntityDocumentsTable_files
+    id
+  }
+  files {
+    ...EntityDocumentsTable_files
+    id
+  }
+  hyperlinks {
+    ...EntityDocumentsTable_hyperlinks
+    id
+  }
+  locationType {
+    documentCategories {
+      id
+      name
+    }
+    id
+  }
+}
+
+fragment LocationFloorPlansTab_location on Location {
+  id
+  floorPlans {
+    id
+    name
+    image {
+      ...FileAttachment_file
+      id
+    }
+  }
+}
+
+fragment LocationMenu_location on Location {
+  id
+  name
+  locationType {
+    id
+  }
+  parentLocation {
+    id
+  }
+  children {
+    id
+  }
+  equipments {
+    id
+  }
+  images {
+    id
+  }
+  files {
+    id
+  }
+  surveys {
+    id
+  }
+}
+
+fragment PropertyFormField_property on Property {
+  id
+  propertyType {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isInstanceProperty
+    isMandatory
+    category
+    isDeleted
+  }
+  stringValue
+  intValue
+  floatValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  nodeValue {
+    __typename
+    id
+    name
+  }
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -433,11 +737,6 @@ return {
                 ],
                 "storageKey": null
               },
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "LocationBreadcrumbsTitle_locationDetails"
-              },
               (v10/*: any*/),
               (v11/*: any*/),
               {
@@ -508,6 +807,11 @@ return {
                 "storageKey": null
               },
               (v12/*: any*/),
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "LocationBreadcrumbsTitle_locationDetails"
+              },
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -841,10 +1145,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '818f05007658e119e68bf5d1569c3801';
 
-(node/*: any*/).hash = "818f05007658e119e68bf5d1569c3801";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationPropertiesCardQuery$variables,
-  LocationPropertiesCardQuery$data,
->*/);
+module.exports = node;

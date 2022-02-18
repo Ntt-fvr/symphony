@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<ba8de054d45d006bde9ad943356a0dc5>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditKqiTargetInput = {|
   id: string,
   name: string,
@@ -22,11 +25,10 @@ export type EditKqiTargetInput = {|
   status: boolean,
   kqi: string,
 |};
-export type EditKqiTargetMutation$variables = {|
-  input: EditKqiTargetInput,
+export type EditKqiTargetMutationVariables = {|
+  input: EditKqiTargetInput
 |};
-export type EditKqiTargetMutationVariables = EditKqiTargetMutation$variables;
-export type EditKqiTargetMutation$data = {|
+export type EditKqiTargetMutationResponse = {|
   +editKqiTarget: {|
     +id: string,
     +name: string,
@@ -35,16 +37,32 @@ export type EditKqiTargetMutation$data = {|
     +initTime: any,
     +endTime: any,
     +status: boolean,
-  |},
+  |}
 |};
-export type EditKqiTargetMutationResponse = EditKqiTargetMutation$data;
 export type EditKqiTargetMutation = {|
   variables: EditKqiTargetMutationVariables,
-  response: EditKqiTargetMutation$data,
+  response: EditKqiTargetMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditKqiTargetMutation(
+  $input: EditKqiTargetInput!
+) {
+  editKqiTarget(input: $input) {
+    id
+    name
+    impact
+    allowedVariation
+    initTime
+    endTime
+    status
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -147,10 +165,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '0a12f000a570cffe541dc5e7e2a0d1b1';
 
-(node/*: any*/).hash = "0a12f000a570cffe541dc5e7e2a0d1b1";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditKqiTargetMutation$variables,
-  EditKqiTargetMutation$data,
->*/);
+module.exports = node;

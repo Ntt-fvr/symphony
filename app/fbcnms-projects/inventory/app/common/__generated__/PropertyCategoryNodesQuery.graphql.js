@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<b9b3a7179bedb2ae3ef9470b45a1a464>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,35 +13,49 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type PropertyCategoryOrderField = "NAME" | "INDEX" | "%future added value";
+export type PropertyCategoryOrderField = "INDEX" | "NAME" | "%future added value";
 export type PropertyCategoryOrder = {|
   direction: OrderDirection,
   field?: ?PropertyCategoryOrderField,
 |};
-export type PropertyCategoryNodesQuery$variables = {|
-  orderBy?: ?PropertyCategoryOrder,
+export type PropertyCategoryNodesQueryVariables = {|
+  orderBy?: ?PropertyCategoryOrder
 |};
-export type PropertyCategoryNodesQueryVariables = PropertyCategoryNodesQuery$variables;
-export type PropertyCategoryNodesQuery$data = {|
+export type PropertyCategoryNodesQueryResponse = {|
   +propertyCategories: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: ?string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type PropertyCategoryNodesQueryResponse = PropertyCategoryNodesQuery$data;
 export type PropertyCategoryNodesQuery = {|
   variables: PropertyCategoryNodesQueryVariables,
-  response: PropertyCategoryNodesQuery$data,
+  response: PropertyCategoryNodesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query PropertyCategoryNodesQuery(
+  $orderBy: PropertyCategoryOrder
+) {
+  propertyCategories(orderBy: $orderBy) {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -128,10 +145,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '1182fd52b2477ae0f30223efeadd8943';
 
-(node/*: any*/).hash = "1182fd52b2477ae0f30223efeadd8943";
-
-module.exports = ((node/*: any*/)/*: Query<
-  PropertyCategoryNodesQuery$variables,
-  PropertyCategoryNodesQuery$data,
->*/);
+module.exports = node;

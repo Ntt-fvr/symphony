@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<d04776630abe2f22639be1cd648e3eb1>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,37 +13,38 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type DynamicPropertyTypesGrid_propertyTypes$fragmentType = any;
-type PortDefinitionsTable_portDefinitions$fragmentType = any;
-type PositionDefinitionsTable_positionDefinitions$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type EquipmentTypeItem_equipmentType$fragmentType: FragmentType;
-export type EquipmentTypeItem_equipmentType$ref = EquipmentTypeItem_equipmentType$fragmentType;
-export type EquipmentTypeItem_equipmentType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type DynamicPropertyTypesGrid_propertyTypes$ref = any;
+type PortDefinitionsTable_portDefinitions$ref = any;
+type PositionDefinitionsTable_positionDefinitions$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type EquipmentTypeItem_equipmentType$ref: FragmentReference;
+declare export opaque type EquipmentTypeItem_equipmentType$fragmentType: EquipmentTypeItem_equipmentType$ref;
+export type EquipmentTypeItem_equipmentType = {|
   +id: string,
   +name: string,
   +propertyTypes: $ReadOnlyArray<?{|
-    +$fragmentSpreads: DynamicPropertyTypesGrid_propertyTypes$fragmentType,
+    +$fragmentRefs: DynamicPropertyTypesGrid_propertyTypes$ref
   |}>,
   +positionDefinitions: $ReadOnlyArray<?{|
-    +$fragmentSpreads: PositionDefinitionsTable_positionDefinitions$fragmentType,
+    +$fragmentRefs: PositionDefinitionsTable_positionDefinitions$ref
   |}>,
   +portDefinitions: $ReadOnlyArray<?{|
-    +$fragmentSpreads: PortDefinitionsTable_portDefinitions$fragmentType,
+    +$fragmentRefs: PortDefinitionsTable_portDefinitions$ref
   |}>,
   +numberOfEquipment: number,
-  +$fragmentType: EquipmentTypeItem_equipmentType$fragmentType,
+  +$refType: EquipmentTypeItem_equipmentType$ref,
 |};
-export type EquipmentTypeItem_equipmentType = EquipmentTypeItem_equipmentType$data;
+export type EquipmentTypeItem_equipmentType$data = EquipmentTypeItem_equipmentType;
 export type EquipmentTypeItem_equipmentType$key = {
   +$data?: EquipmentTypeItem_equipmentType$data,
-  +$fragmentSpreads: EquipmentTypeItem_equipmentType$fragmentType,
+  +$fragmentRefs: EquipmentTypeItem_equipmentType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -119,10 +123,7 @@ var node/*: ReaderFragment*/ = {
   "type": "EquipmentType",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = 'c31a356dc2022425956e57facd0ae246';
 
-(node/*: any*/).hash = "c31a356dc2022425956e57facd0ae246";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  EquipmentTypeItem_equipmentType$fragmentType,
-  EquipmentTypeItem_equipmentType$data,
->*/);
+module.exports = node;
