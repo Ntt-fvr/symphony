@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<e680a4f0f15c2cea4205bf48307c5075>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,14 +10,14 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$ref = any;
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$fragmentType = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type EquipmentPortsTable_link_port$ref: FragmentReference;
-declare export opaque type EquipmentPortsTable_link_port$fragmentType: EquipmentPortsTable_link_port$ref;
-export type EquipmentPortsTable_link_port = {|
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type EquipmentPortsTable_link_port$fragmentType: FragmentType;
+export type EquipmentPortsTable_link_port$ref = EquipmentPortsTable_link_port$fragmentType;
+export type EquipmentPortsTable_link_port$data = {|
   +id: string,
   +definition: {|
     +id: string,
@@ -46,7 +43,7 @@ export type EquipmentPortsTable_link_port = {|
         +isMandatory: ?boolean,
         +category: ?string,
         +isDeleted: ?boolean,
-      |}>
+      |}>,
     |},
   |},
   +parentEquipment: {|
@@ -57,28 +54,27 @@ export type EquipmentPortsTable_link_port = {|
       +id: string,
       +name: string,
     |},
-    +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
+    +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
   |},
   +serviceEndpoints: $ReadOnlyArray<{|
     +definition: {|
-      +role: ?string
+      +role: ?string,
     |},
     +service: {|
-      +name: string
+      +name: string,
     |},
   |}>,
-  +$refType: EquipmentPortsTable_link_port$ref,
+  +$fragmentType: EquipmentPortsTable_link_port$fragmentType,
 |};
-export type EquipmentPortsTable_link_port$data = EquipmentPortsTable_link_port;
+export type EquipmentPortsTable_link_port = EquipmentPortsTable_link_port$data;
 export type EquipmentPortsTable_link_port$key = {
   +$data?: EquipmentPortsTable_link_port$data,
-  +$fragmentRefs: EquipmentPortsTable_link_port$ref,
+  +$fragmentSpreads: EquipmentPortsTable_link_port$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -340,7 +336,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '7862fde7be9146274a4a5678aea147a8';
 
-module.exports = node;
+(node/*: any*/).hash = "7862fde7be9146274a4a5678aea147a8";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  EquipmentPortsTable_link_port$fragmentType,
+  EquipmentPortsTable_link_port$data,
+>*/);

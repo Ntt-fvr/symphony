@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<9650f04029388f41ed90d88b0364c75b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,25 +10,24 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type WorkOrdersPane_workOrder$ref: FragmentReference;
-declare export opaque type WorkOrdersPane_workOrder$fragmentType: WorkOrdersPane_workOrder$ref;
-export type WorkOrdersPane_workOrder = {
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type WorkOrdersPane_workOrder$fragmentType: FragmentType;
+export type WorkOrdersPane_workOrder$ref = WorkOrdersPane_workOrder$fragmentType;
+export type WorkOrdersPane_workOrder$data = {
   +id: string,
   +name: string,
   ...
 };
-export type WorkOrdersPane_workOrder$data = WorkOrdersPane_workOrder;
+export type WorkOrdersPane_workOrder = WorkOrdersPane_workOrder$data;
 export type WorkOrdersPane_workOrder$key = {
   +$data?: WorkOrdersPane_workOrder$data,
-  +$fragmentRefs: WorkOrdersPane_workOrder$ref,
+  +$fragmentSpreads: WorkOrdersPane_workOrder$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -57,7 +53,10 @@ const node/*: ReaderFragment*/ = {
   "type": "WorkOrder",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = '944b8648852d096f3bf6f11462155af6';
 
-module.exports = node;
+(node/*: any*/).hash = "944b8648852d096f3bf6f11462155af6";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  WorkOrdersPane_workOrder$fragmentType,
+  WorkOrdersPane_workOrder$data,
+>*/);

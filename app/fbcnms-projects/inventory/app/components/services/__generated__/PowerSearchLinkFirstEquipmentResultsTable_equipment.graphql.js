@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<b3cdde7bab17ce4eab14c363f7ca3fb3>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,13 +10,13 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$ref = any;
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$fragmentType = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type PowerSearchLinkFirstEquipmentResultsTable_equipment$ref: FragmentReference;
-declare export opaque type PowerSearchLinkFirstEquipmentResultsTable_equipment$fragmentType: PowerSearchLinkFirstEquipmentResultsTable_equipment$ref;
-export type PowerSearchLinkFirstEquipmentResultsTable_equipment = $ReadOnlyArray<{|
+import type { FragmentType } from "relay-runtime";
+declare export opaque type PowerSearchLinkFirstEquipmentResultsTable_equipment$fragmentType: FragmentType;
+export type PowerSearchLinkFirstEquipmentResultsTable_equipment$ref = PowerSearchLinkFirstEquipmentResultsTable_equipment$fragmentType;
+export type PowerSearchLinkFirstEquipmentResultsTable_equipment$data = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +futureState: ?FutureState,
@@ -27,19 +24,18 @@ export type PowerSearchLinkFirstEquipmentResultsTable_equipment = $ReadOnlyArray
     +id: string,
     +name: string,
   |},
-  +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
-  +$refType: PowerSearchLinkFirstEquipmentResultsTable_equipment$ref,
+  +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
+  +$fragmentType: PowerSearchLinkFirstEquipmentResultsTable_equipment$fragmentType,
 |}>;
-export type PowerSearchLinkFirstEquipmentResultsTable_equipment$data = PowerSearchLinkFirstEquipmentResultsTable_equipment;
+export type PowerSearchLinkFirstEquipmentResultsTable_equipment = PowerSearchLinkFirstEquipmentResultsTable_equipment$data;
 export type PowerSearchLinkFirstEquipmentResultsTable_equipment$key = $ReadOnlyArray<{
   +$data?: PowerSearchLinkFirstEquipmentResultsTable_equipment$data,
-  +$fragmentRefs: PowerSearchLinkFirstEquipmentResultsTable_equipment$ref,
+  +$fragmentSpreads: PowerSearchLinkFirstEquipmentResultsTable_equipment$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -94,7 +90,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '1716ce00a6510aae7310a382182ce067';
 
-module.exports = node;
+(node/*: any*/).hash = "1716ce00a6510aae7310a382182ce067";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  PowerSearchLinkFirstEquipmentResultsTable_equipment$fragmentType,
+  PowerSearchLinkFirstEquipmentResultsTable_equipment$data,
+>*/);

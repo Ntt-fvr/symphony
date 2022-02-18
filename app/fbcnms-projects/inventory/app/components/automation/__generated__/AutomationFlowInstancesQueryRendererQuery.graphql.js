@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<d657136f51388465037e77d7c644cac0>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,13 +10,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type FlowInstancesView_query$ref = any;
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type FlowInstanceFilterType = "FLOW_INSTANCE_BSS_CODE" | "FLOW_INSTANCE_SERVICE_INSTANCE_CODE" | "FLOW_INSTANCE_STATUS" | "FLOW_INSTANCE_TYPE" | "%future added value";
-export type FlowInstanceOrderField = "END_AT" | "START_AT" | "UPDATED_AT" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+type FlowInstancesView_query$fragmentType = any;
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+export type FlowInstanceFilterType = "FLOW_INSTANCE_STATUS" | "FLOW_INSTANCE_TYPE" | "FLOW_INSTANCE_BSS_CODE" | "FLOW_INSTANCE_SERVICE_INSTANCE_CODE" | "%future added value";
+export type FlowInstanceOrderField = "START_AT" | "END_AT" | "UPDATED_AT" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type FlowInstanceOrder = {|
   direction: OrderDirection,
   field?: ?FlowInstanceOrderField,
@@ -57,58 +54,23 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type AutomationFlowInstancesQueryRendererQueryVariables = {|
+export type AutomationFlowInstancesQueryRendererQuery$variables = {|
   limit?: ?number,
   orderBy?: ?FlowInstanceOrder,
   filters: $ReadOnlyArray<FlowInstanceFilterInput>,
 |};
-export type AutomationFlowInstancesQueryRendererQueryResponse = {|
-  +$fragmentRefs: FlowInstancesView_query$ref
+export type AutomationFlowInstancesQueryRendererQueryVariables = AutomationFlowInstancesQueryRendererQuery$variables;
+export type AutomationFlowInstancesQueryRendererQuery$data = {|
+  +$fragmentSpreads: FlowInstancesView_query$fragmentType,
 |};
+export type AutomationFlowInstancesQueryRendererQueryResponse = AutomationFlowInstancesQueryRendererQuery$data;
 export type AutomationFlowInstancesQueryRendererQuery = {|
   variables: AutomationFlowInstancesQueryRendererQueryVariables,
-  response: AutomationFlowInstancesQueryRendererQueryResponse,
+  response: AutomationFlowInstancesQueryRendererQuery$data,
 |};
 */
 
-
-/*
-query AutomationFlowInstancesQueryRendererQuery(
-  $limit: Int
-  $orderBy: FlowInstanceOrder
-  $filters: [FlowInstanceFilterInput!]!
-) {
-  ...FlowInstancesView_query_10glCF
-}
-
-fragment FlowInstancesView_query_10glCF on Query {
-  flowInstances(first: $limit, orderBy: $orderBy, filterBy: $filters) {
-    totalCount
-    edges {
-      node {
-        id
-        status
-        startDate
-        endDate
-        bssCode
-        serviceInstanceCode
-        template {
-          id
-          name
-        }
-        __typename
-      }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -336,7 +298,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'e8b76cea84728d97406b955f09ee5526';
 
-module.exports = node;
+(node/*: any*/).hash = "e8b76cea84728d97406b955f09ee5526";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AutomationFlowInstancesQueryRendererQuery$variables,
+  AutomationFlowInstancesQueryRendererQuery$data,
+>*/);

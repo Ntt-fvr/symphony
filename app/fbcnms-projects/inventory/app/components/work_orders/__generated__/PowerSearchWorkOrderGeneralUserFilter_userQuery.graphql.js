@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<80e70c8273b3cc78239af51273c91506>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,10 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type UserFilterType = "USER_NAME" | "USER_ORGANIZATION" | "USER_STATUS" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type UserFilterType = "USER_NAME" | "USER_STATUS" | "USER_ORGANIZATION" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UserFilterInput = {|
   filterType: UserFilterType,
@@ -51,42 +48,28 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type PowerSearchWorkOrderGeneralUserFilter_userQueryVariables = {|
-  filters: $ReadOnlyArray<UserFilterInput>
+export type PowerSearchWorkOrderGeneralUserFilter_userQuery$variables = {|
+  filters: $ReadOnlyArray<UserFilterInput>,
 |};
-export type PowerSearchWorkOrderGeneralUserFilter_userQueryResponse = {|
+export type PowerSearchWorkOrderGeneralUserFilter_userQueryVariables = PowerSearchWorkOrderGeneralUserFilter_userQuery$variables;
+export type PowerSearchWorkOrderGeneralUserFilter_userQuery$data = {|
   +users: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +email: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type PowerSearchWorkOrderGeneralUserFilter_userQueryResponse = PowerSearchWorkOrderGeneralUserFilter_userQuery$data;
 export type PowerSearchWorkOrderGeneralUserFilter_userQuery = {|
   variables: PowerSearchWorkOrderGeneralUserFilter_userQueryVariables,
-  response: PowerSearchWorkOrderGeneralUserFilter_userQueryResponse,
+  response: PowerSearchWorkOrderGeneralUserFilter_userQuery$data,
 |};
 */
 
-
-/*
-query PowerSearchWorkOrderGeneralUserFilter_userQuery(
-  $filters: [UserFilterInput!]!
-) {
-  users(first: 10, filterBy: $filters) {
-    edges {
-      node {
-        id
-        email
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -181,7 +164,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '32481b562d44f21de3acd5b2b9325a8a';
 
-module.exports = node;
+(node/*: any*/).hash = "32481b562d44f21de3acd5b2b9325a8a";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PowerSearchWorkOrderGeneralUserFilter_userQuery$variables,
+  PowerSearchWorkOrderGeneralUserFilter_userQuery$data,
+>*/);

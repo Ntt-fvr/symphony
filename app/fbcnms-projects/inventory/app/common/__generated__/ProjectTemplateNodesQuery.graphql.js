@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<556ac621bf1bcdd0f04f811007ace4d4>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,39 +10,27 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type ProjectTemplateNodesQueryVariables = {||};
-export type ProjectTemplateNodesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type ProjectTemplateNodesQuery$variables = {||};
+export type ProjectTemplateNodesQueryVariables = ProjectTemplateNodesQuery$variables;
+export type ProjectTemplateNodesQuery$data = {|
   +projectTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type ProjectTemplateNodesQueryResponse = ProjectTemplateNodesQuery$data;
 export type ProjectTemplateNodesQuery = {|
   variables: ProjectTemplateNodesQueryVariables,
-  response: ProjectTemplateNodesQueryResponse,
+  response: ProjectTemplateNodesQuery$data,
 |};
 */
 
-
-/*
-query ProjectTemplateNodesQuery {
-  projectTypes {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -122,7 +107,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '1557fbf5ef8503ec41726b5e089eb2f5';
 
-module.exports = node;
+(node/*: any*/).hash = "1557fbf5ef8503ec41726b5e089eb2f5";
+
+module.exports = ((node/*: any*/)/*: Query<
+  ProjectTemplateNodesQuery$variables,
+  ProjectTemplateNodesQuery$data,
+>*/);

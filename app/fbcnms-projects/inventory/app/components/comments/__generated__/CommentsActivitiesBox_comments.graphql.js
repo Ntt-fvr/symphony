@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<3caaaa848c8a5ee4a5c3303d2d53a18a>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,25 +10,24 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-type CommentsActivitiesLog_comments$ref = any;
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type CommentsActivitiesBox_comments$ref: FragmentReference;
-declare export opaque type CommentsActivitiesBox_comments$fragmentType: CommentsActivitiesBox_comments$ref;
-export type CommentsActivitiesBox_comments = $ReadOnlyArray<{|
-  +$fragmentRefs: CommentsActivitiesLog_comments$ref,
-  +$refType: CommentsActivitiesBox_comments$ref,
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+type CommentsActivitiesLog_comments$fragmentType = any;
+import type { FragmentType } from "relay-runtime";
+declare export opaque type CommentsActivitiesBox_comments$fragmentType: FragmentType;
+export type CommentsActivitiesBox_comments$ref = CommentsActivitiesBox_comments$fragmentType;
+export type CommentsActivitiesBox_comments$data = $ReadOnlyArray<{|
+  +$fragmentSpreads: CommentsActivitiesLog_comments$fragmentType,
+  +$fragmentType: CommentsActivitiesBox_comments$fragmentType,
 |}>;
-export type CommentsActivitiesBox_comments$data = CommentsActivitiesBox_comments;
+export type CommentsActivitiesBox_comments = CommentsActivitiesBox_comments$data;
 export type CommentsActivitiesBox_comments$key = $ReadOnlyArray<{
   +$data?: CommentsActivitiesBox_comments$data,
-  +$fragmentRefs: CommentsActivitiesBox_comments$ref,
+  +$fragmentSpreads: CommentsActivitiesBox_comments$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -48,7 +44,10 @@ const node/*: ReaderFragment*/ = {
   "type": "Comment",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'c118bd6378979ed6e9cdf189f1f347c8';
 
-module.exports = node;
+(node/*: any*/).hash = "c118bd6378979ed6e9cdf189f1f347c8";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  CommentsActivitiesBox_comments$fragmentType,
+  CommentsActivitiesBox_comments$data,
+>*/);

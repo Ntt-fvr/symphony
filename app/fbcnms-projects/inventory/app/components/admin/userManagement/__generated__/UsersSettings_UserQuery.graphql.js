@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<4e7ce112f3ed82c95b2930ecbc7e59c4>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,33 +10,24 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type UsersSettings_UserQueryVariables = {|
-  authID: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type UsersSettings_UserQuery$variables = {|
+  authID: string,
 |};
-export type UsersSettings_UserQueryResponse = {|
+export type UsersSettings_UserQueryVariables = UsersSettings_UserQuery$variables;
+export type UsersSettings_UserQuery$data = {|
   +user: ?{|
-    +id: string
-  |}
+    +id: string,
+  |},
 |};
+export type UsersSettings_UserQueryResponse = UsersSettings_UserQuery$data;
 export type UsersSettings_UserQuery = {|
   variables: UsersSettings_UserQueryVariables,
-  response: UsersSettings_UserQueryResponse,
+  response: UsersSettings_UserQuery$data,
 |};
 */
 
-
-/*
-query UsersSettings_UserQuery(
-  $authID: String!
-) {
-  user(authID: $authID) {
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -100,7 +88,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '8bb8a3865034e4ca2fdbf08976b0f1ca';
 
-module.exports = node;
+(node/*: any*/).hash = "8bb8a3865034e4ca2fdbf08976b0f1ca";
+
+module.exports = ((node/*: any*/)/*: Query<
+  UsersSettings_UserQuery$variables,
+  UsersSettings_UserQuery$data,
+>*/);

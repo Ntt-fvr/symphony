@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<bf830930ac8e1df3c7499f8dd0ff668b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,45 +10,33 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type EditPropertyCategoryInput = {|
   id?: ?string,
   name: string,
   index: number,
   parameterCatalogId: string,
 |};
-export type EditPropertyCategoryTypeMutationVariables = {|
-  propertyCategories: $ReadOnlyArray<EditPropertyCategoryInput>
+export type EditPropertyCategoryTypeMutation$variables = {|
+  propertyCategories: $ReadOnlyArray<EditPropertyCategoryInput>,
 |};
-export type EditPropertyCategoryTypeMutationResponse = {|
+export type EditPropertyCategoryTypeMutationVariables = EditPropertyCategoryTypeMutation$variables;
+export type EditPropertyCategoryTypeMutation$data = {|
   +editPropertyCategories: ?$ReadOnlyArray<{|
     +id: string,
     +name: ?string,
     +index: ?number,
     +numberOfProperties: ?number,
-  |}>
+  |}>,
 |};
+export type EditPropertyCategoryTypeMutationResponse = EditPropertyCategoryTypeMutation$data;
 export type EditPropertyCategoryTypeMutation = {|
   variables: EditPropertyCategoryTypeMutationVariables,
-  response: EditPropertyCategoryTypeMutationResponse,
+  response: EditPropertyCategoryTypeMutation$data,
 |};
 */
 
-
-/*
-mutation EditPropertyCategoryTypeMutation(
-  $propertyCategories: [EditPropertyCategoryInput!]!
-) {
-  editPropertyCategories(propertyCategories: $propertyCategories) {
-    id
-    name
-    index
-    numberOfProperties
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -133,7 +118,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'ac22a42c88fd1c3fb21a7f8eb734967a';
 
-module.exports = node;
+(node/*: any*/).hash = "ac22a42c88fd1c3fb21a7f8eb734967a";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditPropertyCategoryTypeMutation$variables,
+  EditPropertyCategoryTypeMutation$data,
+>*/);

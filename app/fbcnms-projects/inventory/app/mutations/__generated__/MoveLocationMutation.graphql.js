@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<5f2ed84224d1ad20dc3b3547cf6f1c67>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type MoveLocationMutationVariables = {|
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type MoveLocationMutation$variables = {|
   locationID: string,
   parentLocationID?: ?string,
 |};
-export type MoveLocationMutationResponse = {|
+export type MoveLocationMutationVariables = MoveLocationMutation$variables;
+export type MoveLocationMutation$data = {|
   +moveLocation: {|
     +id: string,
     +externalId: ?string,
@@ -29,35 +27,16 @@ export type MoveLocationMutationResponse = {|
     |},
     +numChildren: number,
     +siteSurveyNeeded: boolean,
-  |}
+  |},
 |};
+export type MoveLocationMutationResponse = MoveLocationMutation$data;
 export type MoveLocationMutation = {|
   variables: MoveLocationMutationVariables,
-  response: MoveLocationMutationResponse,
+  response: MoveLocationMutation$data,
 |};
 */
 
-
-/*
-mutation MoveLocationMutation(
-  $locationID: ID!
-  $parentLocationID: ID
-) {
-  moveLocation(locationID: $locationID, parentLocationID: $parentLocationID) {
-    id
-    externalId
-    name
-    locationType {
-      id
-      name
-    }
-    numChildren
-    siteSurveyNeeded
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -171,7 +150,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '98502526513b758cda745d28f8b0f7ee';
 
-module.exports = node;
+(node/*: any*/).hash = "98502526513b758cda745d28f8b0f7ee";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  MoveLocationMutation$variables,
+  MoveLocationMutation$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<85ed25a0070fbe442fbd855502f1563c>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,33 +10,24 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type DownloadPythonPackageQueryVariables = {||};
-export type DownloadPythonPackageQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type DownloadPythonPackageQuery$variables = {||};
+export type DownloadPythonPackageQueryVariables = DownloadPythonPackageQuery$variables;
+export type DownloadPythonPackageQuery$data = {|
   +pythonPackages: $ReadOnlyArray<{|
     +version: string,
     +whlFileKey: string,
     +uploadTime: any,
-  |}>
+  |}>,
 |};
+export type DownloadPythonPackageQueryResponse = DownloadPythonPackageQuery$data;
 export type DownloadPythonPackageQuery = {|
   variables: DownloadPythonPackageQueryVariables,
-  response: DownloadPythonPackageQueryResponse,
+  response: DownloadPythonPackageQuery$data,
 |};
 */
 
-
-/*
-query DownloadPythonPackageQuery {
-  pythonPackages {
-    version
-    whlFileKey
-    uploadTime
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -101,7 +89,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'c2ffc17589d8cfa0daad1826bd83f69c';
 
-module.exports = node;
+(node/*: any*/).hash = "c2ffc17589d8cfa0daad1826bd83f69c";
+
+module.exports = ((node/*: any*/)/*: Query<
+  DownloadPythonPackageQuery$variables,
+  DownloadPythonPackageQuery$data,
+>*/);

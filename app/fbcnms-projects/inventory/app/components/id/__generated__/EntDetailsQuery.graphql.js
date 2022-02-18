@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<fc21f66a4ecffb1f7b800c635c9c7f95>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type EntDetailsQueryVariables = {|
-  id: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type EntDetailsQuery$variables = {|
+  id: string,
 |};
-export type EntDetailsQueryResponse = {|
+export type EntDetailsQueryVariables = EntDetailsQuery$variables;
+export type EntDetailsQuery$data = {|
   +vertex: ?{|
     +id: string,
     +type: string,
@@ -31,37 +29,16 @@ export type EntDetailsQueryResponse = {|
       +type: string,
       +ids: $ReadOnlyArray<string>,
     |}>,
-  |}
+  |},
 |};
+export type EntDetailsQueryResponse = EntDetailsQuery$data;
 export type EntDetailsQuery = {|
   variables: EntDetailsQueryVariables,
-  response: EntDetailsQueryResponse,
+  response: EntDetailsQuery$data,
 |};
 */
 
-
-/*
-query EntDetailsQuery(
-  $id: ID!
-) {
-  vertex(id: $id) {
-    id
-    type
-    fields {
-      name
-      value
-      type
-    }
-    edges {
-      name
-      type
-      ids
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -177,7 +154,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '4be33521bcf990ae9df86c758a47fcde';
 
-module.exports = node;
+(node/*: any*/).hash = "4be33521bcf990ae9df86c758a47fcde";
+
+module.exports = ((node/*: any*/)/*: Query<
+  EntDetailsQuery$variables,
+  EntDetailsQuery$data,
+>*/);

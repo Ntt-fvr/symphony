@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<38f6148fec7f9e7559de54e14318763c>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,71 +10,43 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type EditRuleItemFormQueryVariables = {||};
-export type EditRuleItemFormQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type EditRuleItemFormQuery$variables = {||};
+export type EditRuleItemFormQueryVariables = EditRuleItemFormQuery$variables;
+export type EditRuleItemFormQuery$data = {|
   +eventSeverities: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +comparators: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
   +ruleTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |}
-    |}>
+      |},
+    |}>,
   |},
 |};
+export type EditRuleItemFormQueryResponse = EditRuleItemFormQuery$data;
 export type EditRuleItemFormQuery = {|
   variables: EditRuleItemFormQueryVariables,
-  response: EditRuleItemFormQueryResponse,
+  response: EditRuleItemFormQuery$data,
 |};
 */
 
-
-/*
-query EditRuleItemFormQuery {
-  eventSeverities {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-  comparators {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-  ruleTypes {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -219,7 +188,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '450ba50fdd874132a811b0f8aa2b5c79';
 
-module.exports = node;
+(node/*: any*/).hash = "450ba50fdd874132a811b0f8aa2b5c79";
+
+module.exports = ((node/*: any*/)/*: Query<
+  EditRuleItemFormQuery$variables,
+  EditRuleItemFormQuery$data,
+>*/);

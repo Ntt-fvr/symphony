@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<fbe69072f43f57b6430589d4137485f0>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,29 +10,22 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type RemoveDocumentCategoryTypeMutationVariables = {|
-  id: string
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type RemoveDocumentCategoryTypeMutation$variables = {|
+  id: string,
 |};
-export type RemoveDocumentCategoryTypeMutationResponse = {|
-  +removeDocumentCategory: string
+export type RemoveDocumentCategoryTypeMutationVariables = RemoveDocumentCategoryTypeMutation$variables;
+export type RemoveDocumentCategoryTypeMutation$data = {|
+  +removeDocumentCategory: string,
 |};
+export type RemoveDocumentCategoryTypeMutationResponse = RemoveDocumentCategoryTypeMutation$data;
 export type RemoveDocumentCategoryTypeMutation = {|
   variables: RemoveDocumentCategoryTypeMutationVariables,
-  response: RemoveDocumentCategoryTypeMutationResponse,
+  response: RemoveDocumentCategoryTypeMutation$data,
 |};
 */
 
-
-/*
-mutation RemoveDocumentCategoryTypeMutation(
-  $id: ID!
-) {
-  removeDocumentCategory(id: $id)
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -85,7 +75,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'd75e236eab9202630c47d269fb69a9b5';
 
-module.exports = node;
+(node/*: any*/).hash = "d75e236eab9202630c47d269fb69a9b5";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  RemoveDocumentCategoryTypeMutation$variables,
+  RemoveDocumentCategoryTypeMutation$data,
+>*/);

@@ -20,8 +20,7 @@ import KqiFormEdit from './KqiFormEdit';
 import Button from '@symphony/design-system/components/Button';
 import KqiTable from './KqiTable';
 import fbt from 'fbt';
-import {fetchQuery} from 'relay-runtime';
-import {graphql} from 'react-relay';
+import {fetchQuery, graphql} from '../../common/RelayUtils';
 
 const useStyles = makeStyles(() => ({
   root: {

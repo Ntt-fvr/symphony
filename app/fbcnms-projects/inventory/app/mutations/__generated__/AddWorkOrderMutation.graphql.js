@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<aacd357488403a536675577583a197fa>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,14 +10,14 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type CellularNetworkType = "CDMA" | "GSM" | "LTE" | "WCDMA" | "%future added value";
-export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
-export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
-export type FileType = "FILE" | "IMAGE" | "%future added value";
-export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
-export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
-export type YesNoResponse = "NO" | "YES" | "%future added value";
+export type CheckListItemEnumSelectionMode = "single" | "multiple" | "%future added value";
+export type CheckListItemType = "simple" | "string" | "enum" | "files" | "yes_no" | "cell_scan" | "wifi_scan" | "%future added value";
+export type FileType = "IMAGE" | "FILE" | "%future added value";
+export type WorkOrderPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
+export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+export type YesNoResponse = "YES" | "NO" | "%future added value";
 export type AddWorkOrderInput = {|
   name: string,
   description?: ?string,
@@ -130,40 +127,27 @@ export type CheckListCategoryInput = {|
   description?: ?string,
   checkList?: ?$ReadOnlyArray<CheckListItemInput>,
 |};
-export type AddWorkOrderMutationVariables = {|
-  input: AddWorkOrderInput
+export type AddWorkOrderMutation$variables = {|
+  input: AddWorkOrderInput,
 |};
-export type AddWorkOrderMutationResponse = {|
+export type AddWorkOrderMutationVariables = AddWorkOrderMutation$variables;
+export type AddWorkOrderMutation$data = {|
   +addWorkOrder: {|
     +id: string,
     +organizationFk: ?{|
       +id: string,
       +name: string,
     |},
-  |}
+  |},
 |};
+export type AddWorkOrderMutationResponse = AddWorkOrderMutation$data;
 export type AddWorkOrderMutation = {|
   variables: AddWorkOrderMutationVariables,
-  response: AddWorkOrderMutationResponse,
+  response: AddWorkOrderMutation$data,
 |};
 */
 
-
-/*
-mutation AddWorkOrderMutation(
-  $input: AddWorkOrderInput!
-) {
-  addWorkOrder(input: $input) {
-    id
-    organizationFk {
-      id
-      name
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -244,7 +228,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'fb996588ebca77a8fb81d745d24fa138';
 
-module.exports = node;
+(node/*: any*/).hash = "fb996588ebca77a8fb81d745d24fa138";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddWorkOrderMutation$variables,
+  AddWorkOrderMutation$data,
+>*/);

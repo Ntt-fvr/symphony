@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<39903fccdf1cf0d1f57ca38861502154>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,27 +10,26 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type AddToEquipmentDialog_parentEquipment$ref: FragmentReference;
-declare export opaque type AddToEquipmentDialog_parentEquipment$fragmentType: AddToEquipmentDialog_parentEquipment$ref;
-export type AddToEquipmentDialog_parentEquipment = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type AddToEquipmentDialog_parentEquipment$fragmentType: FragmentType;
+export type AddToEquipmentDialog_parentEquipment$ref = AddToEquipmentDialog_parentEquipment$fragmentType;
+export type AddToEquipmentDialog_parentEquipment$data = {|
   +id: string,
   +locationHierarchy: $ReadOnlyArray<{|
-    +id: string
+    +id: string,
   |}>,
-  +$refType: AddToEquipmentDialog_parentEquipment$ref,
+  +$fragmentType: AddToEquipmentDialog_parentEquipment$fragmentType,
 |};
-export type AddToEquipmentDialog_parentEquipment$data = AddToEquipmentDialog_parentEquipment;
+export type AddToEquipmentDialog_parentEquipment = AddToEquipmentDialog_parentEquipment$data;
 export type AddToEquipmentDialog_parentEquipment$key = {
   +$data?: AddToEquipmentDialog_parentEquipment$data,
-  +$fragmentRefs: AddToEquipmentDialog_parentEquipment$ref,
+  +$fragmentSpreads: AddToEquipmentDialog_parentEquipment$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -65,7 +61,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '5f1bb222d3448e6445d42e84470b6d5c';
 
-module.exports = node;
+(node/*: any*/).hash = "5f1bb222d3448e6445d42e84470b6d5c";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  AddToEquipmentDialog_parentEquipment$fragmentType,
+  AddToEquipmentDialog_parentEquipment$data,
+>*/);

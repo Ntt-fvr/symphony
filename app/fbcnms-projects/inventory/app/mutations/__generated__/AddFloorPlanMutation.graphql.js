@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<2df7640bf9b0c1fc15446a9821a5fab7>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type FileAttachment_file$ref = any;
-export type ImageEntity = "CHECKLIST_ITEM" | "EQUIPMENT" | "LOCATION" | "SITE_SURVEY" | "USER" | "WORK_ORDER" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+type FileAttachment_file$fragmentType = any;
+export type ImageEntity = "LOCATION" | "WORK_ORDER" | "SITE_SURVEY" | "EQUIPMENT" | "USER" | "CHECKLIST_ITEM" | "%future added value";
 export type AddFloorPlanInput = {|
   name: string,
   locationID: string,
@@ -42,62 +39,27 @@ export type AddImageInput = {|
   annotation?: ?string,
   documentCategoryId?: ?string,
 |};
-export type AddFloorPlanMutationVariables = {|
-  input: AddFloorPlanInput
+export type AddFloorPlanMutation$variables = {|
+  input: AddFloorPlanInput,
 |};
-export type AddFloorPlanMutationResponse = {|
+export type AddFloorPlanMutationVariables = AddFloorPlanMutation$variables;
+export type AddFloorPlanMutation$data = {|
   +addFloorPlan: {|
     +id: string,
     +name: string,
     +image: {|
-      +$fragmentRefs: FileAttachment_file$ref
+      +$fragmentSpreads: FileAttachment_file$fragmentType,
     |},
-  |}
+  |},
 |};
+export type AddFloorPlanMutationResponse = AddFloorPlanMutation$data;
 export type AddFloorPlanMutation = {|
   variables: AddFloorPlanMutationVariables,
-  response: AddFloorPlanMutationResponse,
+  response: AddFloorPlanMutation$data,
 |};
 */
 
-
-/*
-mutation AddFloorPlanMutation(
-  $input: AddFloorPlanInput!
-) {
-  addFloorPlan(input: $input) {
-    id
-    name
-    image {
-      ...FileAttachment_file
-      id
-    }
-  }
-}
-
-fragment FileAttachment_file on File {
-  id
-  fileName
-  sizeInBytes
-  uploaded
-  fileType
-  storeKey
-  category
-  annotation
-  documentCategory {
-    id
-    name
-  }
-  ...ImageDialog_img
-}
-
-fragment ImageDialog_img on File {
-  storeKey
-  fileName
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -271,7 +233,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'd318199b52e4e0c7bbc6d5467669fe28';
 
-module.exports = node;
+(node/*: any*/).hash = "d318199b52e4e0c7bbc6d5467669fe28";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddFloorPlanMutation$variables,
+  AddFloorPlanMutation$data,
+>*/);

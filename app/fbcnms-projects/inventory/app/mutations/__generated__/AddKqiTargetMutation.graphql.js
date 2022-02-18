@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<7e3b37c54735e81e7891833c70945e25>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type AddKqiTargetInput = {|
   name: string,
   impact: string,
@@ -24,10 +21,11 @@ export type AddKqiTargetInput = {|
   status: boolean,
   kqi: string,
 |};
-export type AddKqiTargetMutationVariables = {|
-  input: AddKqiTargetInput
+export type AddKqiTargetMutation$variables = {|
+  input: AddKqiTargetInput,
 |};
-export type AddKqiTargetMutationResponse = {|
+export type AddKqiTargetMutationVariables = AddKqiTargetMutation$variables;
+export type AddKqiTargetMutation$data = {|
   +addKqiTarget: {|
     +id: string,
     +name: string,
@@ -49,45 +47,16 @@ export type AddKqiTargetMutationResponse = {|
         +name: string,
       |},
     |}>,
-  |}
+  |},
 |};
+export type AddKqiTargetMutationResponse = AddKqiTargetMutation$data;
 export type AddKqiTargetMutation = {|
   variables: AddKqiTargetMutationVariables,
-  response: AddKqiTargetMutationResponse,
+  response: AddKqiTargetMutation$data,
 |};
 */
 
-
-/*
-mutation AddKqiTargetMutation(
-  $input: AddKqiTargetInput!
-) {
-  addKqiTarget(input: $input) {
-    id
-    name
-    impact
-    allowedVariation
-    initTime
-    endTime
-    status
-    kqiComparator {
-      id
-      number
-      comparatorType
-      kqiTargetFk {
-        id
-        name
-      }
-      comparatorFk {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -242,7 +211,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '3c333cd5f77fdea21da4f9992d2ab0f5';
 
-module.exports = node;
+(node/*: any*/).hash = "3c333cd5f77fdea21da4f9992d2ab0f5";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddKqiTargetMutation$variables,
+  AddKqiTargetMutation$data,
+>*/);

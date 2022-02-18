@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<65726954f67555b079533bfe6bccef6a>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,8 +10,8 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
 export type ServiceTypeEditData = {|
   id: string,
   name: string,
@@ -52,10 +49,11 @@ export type ServiceEndpointDefinitionInput = {|
   index: number,
   equipmentTypeID: string,
 |};
-export type EditServiceTypeMutationVariables = {|
-  data: ServiceTypeEditData
+export type EditServiceTypeMutation$variables = {|
+  data: ServiceTypeEditData,
 |};
-export type EditServiceTypeMutationResponse = {|
+export type EditServiceTypeMutationVariables = EditServiceTypeMutation$variables;
+export type EditServiceTypeMutation$data = {|
   +editServiceType: {|
     +id: string,
     +name: string,
@@ -89,57 +87,16 @@ export type EditServiceTypeMutationResponse = {|
         +name: string,
       |},
     |}>,
-  |}
+  |},
 |};
+export type EditServiceTypeMutationResponse = EditServiceTypeMutation$data;
 export type EditServiceTypeMutation = {|
   variables: EditServiceTypeMutationVariables,
-  response: EditServiceTypeMutationResponse,
+  response: EditServiceTypeMutation$data,
 |};
 */
 
-
-/*
-mutation EditServiceTypeMutation(
-  $data: ServiceTypeEditData!
-) {
-  editServiceType(data: $data) {
-    id
-    name
-    propertyTypes {
-      id
-      name
-      type
-      nodeType
-      index
-      stringValue
-      intValue
-      booleanValue
-      floatValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      isEditable
-      isInstanceProperty
-      isMandatory
-      category
-      isDeleted
-    }
-    endpointDefinitions {
-      id
-      name
-      role
-      index
-      equipmentType {
-        id
-        name
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -369,7 +326,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '52080020a26a9e4e43dc488816bd10eb';
 
-module.exports = node;
+(node/*: any*/).hash = "52080020a26a9e4e43dc488816bd10eb";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditServiceTypeMutation$variables,
+  EditServiceTypeMutation$data,
+>*/);

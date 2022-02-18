@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<3d2e14d3d111dc7c0b36e6ba44bea118>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,10 +10,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type EquipmentTypesListQueryVariables = {||};
-export type EquipmentTypesListQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type EquipmentTypesListQuery$variables = {||};
+export type EquipmentTypesListQueryVariables = EquipmentTypesListQuery$variables;
+export type EquipmentTypesListQuery$data = {|
   +equipmentTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -42,51 +40,18 @@ export type EquipmentTypesListQueryResponse = {|
           +category: ?string,
           +isDeleted: ?boolean,
         |}>,
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type EquipmentTypesListQueryResponse = EquipmentTypesListQuery$data;
 export type EquipmentTypesListQuery = {|
   variables: EquipmentTypesListQueryVariables,
-  response: EquipmentTypesListQueryResponse,
+  response: EquipmentTypesListQuery$data,
 |};
 */
 
-
-/*
-query EquipmentTypesListQuery {
-  equipmentTypes {
-    edges {
-      node {
-        id
-        name
-        propertyTypes {
-          id
-          name
-          type
-          nodeType
-          index
-          stringValue
-          intValue
-          booleanValue
-          floatValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
-          isEditable
-          isInstanceProperty
-          isMandatory
-          category
-          isDeleted
-        }
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -290,7 +255,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'ab2a8022d8b174e5cac4f52d27d6c40c';
 
-module.exports = node;
+(node/*: any*/).hash = "ab2a8022d8b174e5cac4f52d27d6c40c";
+
+module.exports = ((node/*: any*/)/*: Query<
+  EquipmentTypesListQuery$variables,
+  EquipmentTypesListQuery$data,
+>*/);

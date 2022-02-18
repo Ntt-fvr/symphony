@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<2c83683f272c1d43ec363247244e5ec2>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,17 +10,18 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type AddKqiComparatorInput = {|
   kqiTargetFk: string,
   comparatorFk: string,
   number: number,
   comparatorType: string,
 |};
-export type AddKqiComparatorMutationVariables = {|
-  input: AddKqiComparatorInput
+export type AddKqiComparatorMutation$variables = {|
+  input: AddKqiComparatorInput,
 |};
-export type AddKqiComparatorMutationResponse = {|
+export type AddKqiComparatorMutationVariables = AddKqiComparatorMutation$variables;
+export type AddKqiComparatorMutation$data = {|
   +addKqiComparator: {|
     +id: string,
     +number: number,
@@ -36,36 +34,16 @@ export type AddKqiComparatorMutationResponse = {|
       +id: string,
       +name: string,
     |},
-  |}
+  |},
 |};
+export type AddKqiComparatorMutationResponse = AddKqiComparatorMutation$data;
 export type AddKqiComparatorMutation = {|
   variables: AddKqiComparatorMutationVariables,
-  response: AddKqiComparatorMutationResponse,
+  response: AddKqiComparatorMutation$data,
 |};
 */
 
-
-/*
-mutation AddKqiComparatorMutation(
-  $input: AddKqiComparatorInput!
-) {
-  addKqiComparator(input: $input) {
-    id
-    number
-    comparatorType
-    kqiTargetFk {
-      id
-      name
-    }
-    comparatorFk {
-      id
-      name
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -171,7 +149,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'c8b939e5a375ead9ecea34ccdafc94d1';
 
-module.exports = node;
+(node/*: any*/).hash = "c8b939e5a375ead9ecea34ccdafc94d1";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddKqiComparatorMutation$variables,
+  AddKqiComparatorMutation$data,
+>*/);

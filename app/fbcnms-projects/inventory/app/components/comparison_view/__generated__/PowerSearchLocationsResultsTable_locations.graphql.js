@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<e7fd5c044c76e874b91e9475ff42c21b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,12 +10,12 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type PowerSearchLocationsResultsTable_locations$ref: FragmentReference;
-declare export opaque type PowerSearchLocationsResultsTable_locations$fragmentType: PowerSearchLocationsResultsTable_locations$ref;
-export type PowerSearchLocationsResultsTable_locations = $ReadOnlyArray<{|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { FragmentType } from "relay-runtime";
+declare export opaque type PowerSearchLocationsResultsTable_locations$fragmentType: FragmentType;
+export type PowerSearchLocationsResultsTable_locations$ref = PowerSearchLocationsResultsTable_locations$fragmentType;
+export type PowerSearchLocationsResultsTable_locations$data = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +externalId: ?string,
@@ -72,21 +69,20 @@ export type PowerSearchLocationsResultsTable_locations = $ReadOnlyArray<{|
     +id: string,
     +name: string,
     +locationType: {|
-      +name: string
+      +name: string,
     |},
   |}>,
-  +$refType: PowerSearchLocationsResultsTable_locations$ref,
+  +$fragmentType: PowerSearchLocationsResultsTable_locations$fragmentType,
 |}>;
-export type PowerSearchLocationsResultsTable_locations$data = PowerSearchLocationsResultsTable_locations;
+export type PowerSearchLocationsResultsTable_locations = PowerSearchLocationsResultsTable_locations$data;
 export type PowerSearchLocationsResultsTable_locations$key = $ReadOnlyArray<{
   +$data?: PowerSearchLocationsResultsTable_locations$data,
-  +$fragmentRefs: PowerSearchLocationsResultsTable_locations$ref,
+  +$fragmentSpreads: PowerSearchLocationsResultsTable_locations$fragmentType,
   ...
 }>;
 */
 
-
-const node/*: ReaderFragment*/ = (function(){
+var node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -319,7 +315,10 @@ return {
   "abstractKey": null
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '9c674d8372a336785f6020ea8da65576';
 
-module.exports = node;
+(node/*: any*/).hash = "9c674d8372a336785f6020ea8da65576";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  PowerSearchLocationsResultsTable_locations$fragmentType,
+  PowerSearchLocationsResultsTable_locations$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<065610f49c73c0f263c304c7c20c94c7>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
 export type EditLocationInput = {|
   id: string,
   name: string,
@@ -37,10 +34,11 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type EditLocationMutationVariables = {|
-  input: EditLocationInput
+export type EditLocationMutation$variables = {|
+  input: EditLocationInput,
 |};
-export type EditLocationMutationResponse = {|
+export type EditLocationMutationVariables = EditLocationMutation$variables;
+export type EditLocationMutation$data = {|
   +editLocation: {|
     +id: string,
     +externalId: ?string,
@@ -51,34 +49,16 @@ export type EditLocationMutationResponse = {|
     |},
     +numChildren: number,
     +siteSurveyNeeded: boolean,
-  |}
+  |},
 |};
+export type EditLocationMutationResponse = EditLocationMutation$data;
 export type EditLocationMutation = {|
   variables: EditLocationMutationVariables,
-  response: EditLocationMutationResponse,
+  response: EditLocationMutation$data,
 |};
 */
 
-
-/*
-mutation EditLocationMutation(
-  $input: EditLocationInput!
-) {
-  editLocation(input: $input) {
-    id
-    externalId
-    name
-    locationType {
-      id
-      name
-    }
-    numChildren
-    siteSurveyNeeded
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -182,7 +162,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '85cc5be722818bbc1fbdbafbaa30f9ca';
 
-module.exports = node;
+(node/*: any*/).hash = "85cc5be722818bbc1fbdbafbaa30f9ca";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  EditLocationMutation$variables,
+  EditLocationMutation$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<95bb5f7f65778a4f028e1fdd81dee8e8>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,9 +10,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type CountersTypesQueryVariables = {||};
-export type CountersTypesQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type CountersTypesQuery$variables = {||};
+export type CountersTypesQueryVariables = CountersTypesQuery$variables;
+export type CountersTypesQuery$data = {|
   +counters: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -31,41 +29,18 @@ export type CountersTypesQueryResponse = {|
           +id: string,
           +name: string,
         |},
-      |}
-    |}>
-  |}
+      |},
+    |}>,
+  |},
 |};
+export type CountersTypesQueryResponse = CountersTypesQuery$data;
 export type CountersTypesQuery = {|
   variables: CountersTypesQueryVariables,
-  response: CountersTypesQueryResponse,
+  response: CountersTypesQuery$data,
 |};
 */
 
-
-/*
-query CountersTypesQuery {
-  counters {
-    edges {
-      node {
-        id
-        name
-        networkManagerSystem
-        externalID
-        counterFamily {
-          id
-          name
-        }
-        vendorFk {
-          id
-          name
-        }
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -182,7 +157,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '1d56822f33f92af4f33fab3097b9e3ef';
 
-module.exports = node;
+(node/*: any*/).hash = "1d56822f33f92af4f33fab3097b9e3ef";
+
+module.exports = ((node/*: any*/)/*: Query<
+  CountersTypesQuery$variables,
+  CountersTypesQuery$data,
+>*/);

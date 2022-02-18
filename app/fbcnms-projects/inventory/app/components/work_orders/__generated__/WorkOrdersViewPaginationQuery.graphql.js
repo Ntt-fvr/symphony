@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<feb6d824e42415bf74c7370a23f5f86b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,13 +10,14 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-type WorkOrdersView_query$ref = any;
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+type WorkOrdersView_query$fragmentType = any;
+export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type WorkOrderFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "WORK_ORDER_ASSIGNED_TO" | "WORK_ORDER_CLOSE_DATE" | "WORK_ORDER_CREATION_DATE" | "WORK_ORDER_LOCATION_INST" | "WORK_ORDER_NAME" | "WORK_ORDER_ORGANIZATION" | "WORK_ORDER_OWNED_BY" | "WORK_ORDER_PRIORITY" | "WORK_ORDER_STATUS" | "WORK_ORDER_TYPE" | "%future added value";
-export type WorkOrderOrderField = "CLOSED_AT" | "CREATED_AT" | "NAME" | "UPDATED_AT" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type WorkOrderFilterType = "WORK_ORDER_NAME" | "WORK_ORDER_STATUS" | "WORK_ORDER_OWNED_BY" | "WORK_ORDER_TYPE" | "WORK_ORDER_CREATION_DATE" | "WORK_ORDER_CLOSE_DATE" | "WORK_ORDER_ASSIGNED_TO" | "WORK_ORDER_LOCATION_INST" | "WORK_ORDER_PRIORITY" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "WORK_ORDER_ORGANIZATION" | "%future added value";
+export type WorkOrderOrderField = "CREATED_AT" | "UPDATED_AT" | "CLOSED_AT" | "NAME" | "%future added value";
 export type WorkOrderFilterInput = {|
   filterType: WorkOrderFilterType,
   operator: FilterOperator,
@@ -57,78 +55,24 @@ export type WorkOrderOrder = {|
   direction: OrderDirection,
   field?: ?WorkOrderOrderField,
 |};
-export type WorkOrdersViewPaginationQueryVariables = {|
+export type WorkOrdersViewPaginationQuery$variables = {|
   cursor?: ?any,
   filterBy?: ?$ReadOnlyArray<WorkOrderFilterInput>,
   first?: ?number,
   orderBy?: ?WorkOrderOrder,
 |};
-export type WorkOrdersViewPaginationQueryResponse = {|
-  +$fragmentRefs: WorkOrdersView_query$ref
+export type WorkOrdersViewPaginationQueryVariables = WorkOrdersViewPaginationQuery$variables;
+export type WorkOrdersViewPaginationQuery$data = {|
+  +$fragmentSpreads: WorkOrdersView_query$fragmentType,
 |};
+export type WorkOrdersViewPaginationQueryResponse = WorkOrdersViewPaginationQuery$data;
 export type WorkOrdersViewPaginationQuery = {|
   variables: WorkOrdersViewPaginationQueryVariables,
-  response: WorkOrdersViewPaginationQueryResponse,
+  response: WorkOrdersViewPaginationQuery$data,
 |};
 */
 
-
-/*
-query WorkOrdersViewPaginationQuery(
-  $cursor: Cursor
-  $filterBy: [WorkOrderFilterInput!]
-  $first: Int
-  $orderBy: WorkOrderOrder
-) {
-  ...WorkOrdersView_query_1O5gLD
-}
-
-fragment WorkOrdersView_query_1O5gLD on Query {
-  workOrders(after: $cursor, first: $first, orderBy: $orderBy, filterBy: $filterBy) {
-    totalCount
-    edges {
-      node {
-        id
-        name
-        description
-        owner {
-          id
-          email
-        }
-        creationDate
-        installDate
-        status
-        assignedTo {
-          id
-          email
-        }
-        location {
-          id
-          name
-        }
-        workOrderType {
-          id
-          name
-        }
-        project {
-          id
-          name
-        }
-        closeDate
-        priority
-        __typename
-      }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -432,7 +376,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '1f848fa22dd842b69652dfbeecc55645';
 
-module.exports = node;
+(node/*: any*/).hash = "89581ca397a5f1c5e6ab657b0a4f7217";
+
+module.exports = ((node/*: any*/)/*: Query<
+  WorkOrdersViewPaginationQuery$variables,
+  WorkOrdersViewPaginationQuery$data,
+>*/);

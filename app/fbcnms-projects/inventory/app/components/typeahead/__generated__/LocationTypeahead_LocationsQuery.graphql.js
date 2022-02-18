@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<f19c6e44809e36cf735242bccb298685>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,11 +10,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type LocationTypeahead_LocationsQueryVariables = {|
-  name: string
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type LocationTypeahead_LocationsQuery$variables = {|
+  name: string,
 |};
-export type LocationTypeahead_LocationsQueryResponse = {|
+export type LocationTypeahead_LocationsQueryVariables = LocationTypeahead_LocationsQuery$variables;
+export type LocationTypeahead_LocationsQuery$data = {|
   +searchForNode: {|
     +edges: ?$ReadOnlyArray<{|
       +node: ?({|
@@ -26,63 +24,31 @@ export type LocationTypeahead_LocationsQueryResponse = {|
         +externalId: ?string,
         +name: string,
         +locationType: {|
-          +name: string
+          +name: string,
         |},
         +locationHierarchy: $ReadOnlyArray<{|
           +id: string,
           +name: string,
           +locationType: {|
-            +name: string
+            +name: string,
           |},
         |}>,
       |} | {|
         // This will never be '%other', but we need some
         // value in case none of the concrete values match.
-        +__typename: "%other"
-      |})
-    |}>
-  |}
+        +__typename: "%other",
+      |}),
+    |}>,
+  |},
 |};
+export type LocationTypeahead_LocationsQueryResponse = LocationTypeahead_LocationsQuery$data;
 export type LocationTypeahead_LocationsQuery = {|
   variables: LocationTypeahead_LocationsQueryVariables,
-  response: LocationTypeahead_LocationsQueryResponse,
+  response: LocationTypeahead_LocationsQuery$data,
 |};
 */
 
-
-/*
-query LocationTypeahead_LocationsQuery(
-  $name: String!
-) {
-  searchForNode(name: $name, first: 10) {
-    edges {
-      node {
-        __typename
-        ... on Location {
-          id
-          externalId
-          name
-          locationType {
-            name
-            id
-          }
-          locationHierarchy {
-            id
-            name
-            locationType {
-              name
-              id
-            }
-          }
-        }
-        id
-      }
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -302,7 +268,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '9e4ab0ce3b932ff34a72c8db6f428190';
 
-module.exports = node;
+(node/*: any*/).hash = "9e4ab0ce3b932ff34a72c8db6f428190";
+
+module.exports = ((node/*: any*/)/*: Query<
+  LocationTypeahead_LocationsQuery$variables,
+  LocationTypeahead_LocationsQuery$data,
+>*/);

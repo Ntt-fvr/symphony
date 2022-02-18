@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<98970d92e323bf7e552aca205ba53d96>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,28 +10,27 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
+import type { Fragment, ReaderFragment } from 'relay-runtime';
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type UserManagementUtils_group_base$ref: FragmentReference;
-declare export opaque type UserManagementUtils_group_base$fragmentType: UserManagementUtils_group_base$ref;
-export type UserManagementUtils_group_base = {|
+import type { FragmentType } from "relay-runtime";
+declare export opaque type UserManagementUtils_group_base$fragmentType: FragmentType;
+export type UserManagementUtils_group_base$ref = UserManagementUtils_group_base$fragmentType;
+export type UserManagementUtils_group_base$data = {|
   +id: string,
   +name: string,
   +description: ?string,
   +status: UsersGroupStatus,
-  +$refType: UserManagementUtils_group_base$ref,
+  +$fragmentType: UserManagementUtils_group_base$fragmentType,
 |};
-export type UserManagementUtils_group_base$data = UserManagementUtils_group_base;
+export type UserManagementUtils_group_base = UserManagementUtils_group_base$data;
 export type UserManagementUtils_group_base$key = {
   +$data?: UserManagementUtils_group_base$data,
-  +$fragmentRefs: UserManagementUtils_group_base$ref,
+  +$fragmentSpreads: UserManagementUtils_group_base$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -72,7 +68,10 @@ const node/*: ReaderFragment*/ = {
   "type": "UsersGroup",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = 'f8f72157e01583f91e7d865430b1f224';
 
-module.exports = node;
+(node/*: any*/).hash = "f8f72157e01583f91e7d865430b1f224";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  UserManagementUtils_group_base$fragmentType,
+  UserManagementUtils_group_base$data,
+>*/);

@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<484a59a5795e6acaff8be2423b1fb5d6>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,29 +10,28 @@
 'use strict';
 
 /*::
-import type { ReaderFragment } from 'relay-runtime';
-import type { FragmentReference } from "relay-runtime";
-declare export opaque type TextCommentPost_comment$ref: FragmentReference;
-declare export opaque type TextCommentPost_comment$fragmentType: TextCommentPost_comment$ref;
-export type TextCommentPost_comment = {|
+import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { FragmentType } from "relay-runtime";
+declare export opaque type TextCommentPost_comment$fragmentType: FragmentType;
+export type TextCommentPost_comment$ref = TextCommentPost_comment$fragmentType;
+export type TextCommentPost_comment$data = {|
   +id: string,
   +author: {|
-    +email: string
+    +email: string,
   |},
   +text: string,
   +createTime: any,
-  +$refType: TextCommentPost_comment$ref,
+  +$fragmentType: TextCommentPost_comment$fragmentType,
 |};
-export type TextCommentPost_comment$data = TextCommentPost_comment;
+export type TextCommentPost_comment = TextCommentPost_comment$data;
 export type TextCommentPost_comment$key = {
   +$data?: TextCommentPost_comment$data,
-  +$fragmentRefs: TextCommentPost_comment$ref,
+  +$fragmentSpreads: TextCommentPost_comment$fragmentType,
   ...
 };
 */
 
-
-const node/*: ReaderFragment*/ = {
+var node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -84,7 +80,10 @@ const node/*: ReaderFragment*/ = {
   "type": "Comment",
   "abstractKey": null
 };
-// prettier-ignore
-(node/*: any*/).hash = '2dc0bd1e406e6fde1cdd0196b9b245eb';
 
-module.exports = node;
+(node/*: any*/).hash = "2dc0bd1e406e6fde1cdd0196b9b245eb";
+
+module.exports = ((node/*: any*/)/*: Fragment<
+  TextCommentPost_comment$fragmentType,
+  TextCommentPost_comment$data,
+>*/);

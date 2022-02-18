@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<65844ef76300913cd73f6b2da42c3ea5>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,8 +10,8 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type ProjectPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
 export type AddProjectInput = {|
   name: string,
   description?: ?string,
@@ -39,16 +36,17 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type AddProjectMutationVariables = {|
-  input: AddProjectInput
+export type AddProjectMutation$variables = {|
+  input: AddProjectInput,
 |};
-export type AddProjectMutationResponse = {|
+export type AddProjectMutationVariables = AddProjectMutation$variables;
+export type AddProjectMutation$data = {|
   +createProject: {|
     +id: string,
     +createTime: any,
     +name: string,
     +createdBy: ?{|
-      +email: string
+      +email: string,
     |},
     +location: ?{|
       +id: string,
@@ -60,42 +58,16 @@ export type AddProjectMutationResponse = {|
     |},
     +priority: ProjectPriority,
     +numberOfWorkOrders: number,
-  |}
+  |},
 |};
+export type AddProjectMutationResponse = AddProjectMutation$data;
 export type AddProjectMutation = {|
   variables: AddProjectMutationVariables,
-  response: AddProjectMutationResponse,
+  response: AddProjectMutation$data,
 |};
 */
 
-
-/*
-mutation AddProjectMutation(
-  $input: AddProjectInput!
-) {
-  createProject(input: $input) {
-    id
-    createTime
-    name
-    createdBy {
-      email
-      id
-    }
-    location {
-      id
-      name
-    }
-    type {
-      id
-      name
-    }
-    priority
-    numberOfWorkOrders
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -266,7 +238,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '49be5a9ffa393f7b29e5d148a9ff2cfe';
 
-module.exports = node;
+(node/*: any*/).hash = "49be5a9ffa393f7b29e5d148a9ff2cfe";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  AddProjectMutation$variables,
+  AddProjectMutation$data,
+>*/);

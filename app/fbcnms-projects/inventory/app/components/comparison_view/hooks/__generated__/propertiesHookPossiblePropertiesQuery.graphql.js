@@ -1,11 +1,8 @@
 /**
- * @generated
- * Copyright 2004-present Facebook. All Rights Reserved.
- *
- **/
-
- /**
+ * @generated SignedSource<<a0f1e3ec3950f464ec5fa743200cd2b8>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -13,42 +10,29 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type PropertyEntity = "EQUIPMENT" | "LINK" | "LOCATION" | "PORT" | "PROJECT" | "SERVICE" | "WORK_ORDER" | "%future added value";
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type propertiesHookPossiblePropertiesQueryVariables = {|
-  entityType: PropertyEntity
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type PropertyEntity = "EQUIPMENT" | "SERVICE" | "LINK" | "PORT" | "LOCATION" | "WORK_ORDER" | "PROJECT" | "%future added value";
+export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type propertiesHookPossiblePropertiesQuery$variables = {|
+  entityType: PropertyEntity,
 |};
-export type propertiesHookPossiblePropertiesQueryResponse = {|
+export type propertiesHookPossiblePropertiesQueryVariables = propertiesHookPossiblePropertiesQuery$variables;
+export type propertiesHookPossiblePropertiesQuery$data = {|
   +possibleProperties: $ReadOnlyArray<{|
     +name: string,
     +type: PropertyKind,
     +stringValue: ?string,
     +isListable: ?boolean,
-  |}>
+  |}>,
 |};
+export type propertiesHookPossiblePropertiesQueryResponse = propertiesHookPossiblePropertiesQuery$data;
 export type propertiesHookPossiblePropertiesQuery = {|
   variables: propertiesHookPossiblePropertiesQueryVariables,
-  response: propertiesHookPossiblePropertiesQueryResponse,
+  response: propertiesHookPossiblePropertiesQuery$data,
 |};
 */
 
-
-/*
-query propertiesHookPossiblePropertiesQuery(
-  $entityType: PropertyEntity!
-) {
-  possibleProperties(entityType: $entityType) {
-    name
-    type
-    stringValue
-    isListable
-    id
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -157,7 +141,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '4ff93c7ecfbfeba7cb7fe6a4251f78c7';
 
-module.exports = node;
+(node/*: any*/).hash = "4ff93c7ecfbfeba7cb7fe6a4251f78c7";
+
+module.exports = ((node/*: any*/)/*: Query<
+  propertiesHookPossiblePropertiesQuery$variables,
+  propertiesHookPossiblePropertiesQuery$data,
+>*/);
