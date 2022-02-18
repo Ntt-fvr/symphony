@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<aebde9c11a6bdda36cab4869cbe8b444>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,14 +13,14 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PermissionValue = "YES" | "NO" | "BY_CONDITION" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type UserManagementUtils_inventoryPolicy$fragmentType: FragmentType;
-export type UserManagementUtils_inventoryPolicy$ref = UserManagementUtils_inventoryPolicy$fragmentType;
-export type UserManagementUtils_inventoryPolicy$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type UserManagementUtils_inventoryPolicy$ref: FragmentReference;
+declare export opaque type UserManagementUtils_inventoryPolicy$fragmentType: UserManagementUtils_inventoryPolicy$ref;
+export type UserManagementUtils_inventoryPolicy = {|
   +read: {|
-    +isAllowed: PermissionValue,
+    +isAllowed: PermissionValue
   |},
   +propertyCategory: {|
     +read: ?{|
@@ -58,82 +61,83 @@ export type UserManagementUtils_inventoryPolicy$data = {|
   |},
   +location: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
       +isAllowed: PermissionValue,
       +locationTypeIds: ?$ReadOnlyArray<string>,
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
   +equipment: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
   +equipmentType: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
   +locationType: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
   +portType: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
   +serviceType: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
-  +$fragmentType: UserManagementUtils_inventoryPolicy$fragmentType,
+  +$refType: UserManagementUtils_inventoryPolicy$ref,
 |};
-export type UserManagementUtils_inventoryPolicy = UserManagementUtils_inventoryPolicy$data;
+export type UserManagementUtils_inventoryPolicy$data = UserManagementUtils_inventoryPolicy;
 export type UserManagementUtils_inventoryPolicy$key = {
   +$data?: UserManagementUtils_inventoryPolicy$data,
-  +$fragmentSpreads: UserManagementUtils_inventoryPolicy$fragmentType,
+  +$fragmentRefs: UserManagementUtils_inventoryPolicy$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -426,10 +430,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '595c79fb3d9ff39b9d572bfc44274a12';
 
-(node/*: any*/).hash = "595c79fb3d9ff39b9d572bfc44274a12";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  UserManagementUtils_inventoryPolicy$fragmentType,
-  UserManagementUtils_inventoryPolicy$data,
->*/);
+module.exports = node;

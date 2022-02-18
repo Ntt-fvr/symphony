@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<b61623666e599cbd67952d15ec02bc27>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,15 +13,14 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type FlowHeader_flowDraft$fragmentType = any;
-export type ActionTypeId = "work_order" | "update_inventory" | "update_workforce" | "worker" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type FlowHeader_flowDraft$ref = any;
+export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
-export type FlowDataContext_FlowDraftQuery$variables = {|
-  flowId: string,
+export type FlowDataContext_FlowDraftQueryVariables = {|
+  flowId: string
 |};
-export type FlowDataContext_FlowDraftQueryVariables = FlowDataContext_FlowDraftQuery$variables;
-export type FlowDataContext_FlowDraftQuery$data = {|
+export type FlowDataContext_FlowDraftQueryResponse = {|
   +flowDraft: ?{|
     +id?: string,
     +name?: string,
@@ -28,17 +30,17 @@ export type FlowDataContext_FlowDraftQuery$data = {|
       +details: {|
         +__typename: "ActionBlock",
         +actionType: {|
-          +id: ActionTypeId,
+          +id: ActionTypeId
         |},
       |} | {|
         +__typename: "TriggerBlock",
         +triggerType: {|
-          +id: TriggerTypeId,
+          +id: TriggerTypeId
         |},
       |} | {|
         // This will never be '%other', but we need some
         // value in case none of the concrete values match.
-        +__typename: "%other",
+        +__typename: "%other"
       |},
       +uiRepresentation: ?{|
         +name: string,
@@ -54,17 +56,69 @@ export type FlowDataContext_FlowDraftQuery$data = {|
         |},
       |}>,
     |}>,
-    +$fragmentSpreads: FlowHeader_flowDraft$fragmentType,
-  |},
+    +$fragmentRefs: FlowHeader_flowDraft$ref,
+  |}
 |};
-export type FlowDataContext_FlowDraftQueryResponse = FlowDataContext_FlowDraftQuery$data;
 export type FlowDataContext_FlowDraftQuery = {|
   variables: FlowDataContext_FlowDraftQueryVariables,
-  response: FlowDataContext_FlowDraftQuery$data,
+  response: FlowDataContext_FlowDraftQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query FlowDataContext_FlowDraftQuery(
+  $flowId: ID!
+) {
+  flowDraft: node(id: $flowId) {
+    __typename
+    ... on FlowDraft {
+      id
+      name
+      description
+      blocks {
+        cid
+        details {
+          __typename
+          ... on ActionBlock {
+            actionType {
+              id
+            }
+          }
+          ... on TriggerBlock {
+            triggerType {
+              id
+            }
+          }
+        }
+        uiRepresentation {
+          name
+          xPosition
+          yPosition
+        }
+        nextBlocks {
+          cid
+          uiRepresentation {
+            name
+            xPosition
+            yPosition
+          }
+          id
+        }
+        id
+      }
+      ...FlowHeader_flowDraft
+    }
+    id
+  }
+}
+
+fragment FlowHeader_flowDraft on FlowDraft {
+  name
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -322,10 +376,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e5bae895b1255c052225fa4b65f51480';
 
-(node/*: any*/).hash = "e5bae895b1255c052225fa4b65f51480";
-
-module.exports = ((node/*: any*/)/*: Query<
-  FlowDataContext_FlowDraftQuery$variables,
-  FlowDataContext_FlowDraftQuery$data,
->*/);
+module.exports = node;

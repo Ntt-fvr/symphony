@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<b3321d60584b7b68f3280fdf9f150446>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,17 +13,17 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type DynamicPropertiesGrid_properties$fragmentType = any;
-type DynamicPropertiesGrid_propertyTypes$fragmentType = any;
-type PropertyFormField_property$fragmentType = any;
-type PropertyTypeFormField_propertyType$fragmentType = any;
-export type DiscoveryMethod = "MANUAL" | "INVENTORY" | "%future added value";
-export type ServiceStatus = "PENDING" | "IN_SERVICE" | "MAINTENANCE" | "DISCONNECTED" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ServicesView_service$fragmentType: FragmentType;
-export type ServicesView_service$ref = ServicesView_service$fragmentType;
-export type ServicesView_service$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+type DynamicPropertiesGrid_properties$ref = any;
+type DynamicPropertiesGrid_propertyTypes$ref = any;
+type PropertyFormField_property$ref = any;
+type PropertyTypeFormField_propertyType$ref = any;
+export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
+export type ServiceStatus = "DISCONNECTED" | "IN_SERVICE" | "MAINTENANCE" | "PENDING" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ServicesView_service$ref: FragmentReference;
+declare export opaque type ServicesView_service$fragmentType: ServicesView_service$ref;
+export type ServicesView_service = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +externalId: ?string,
@@ -34,23 +37,24 @@ export type ServicesView_service$data = $ReadOnlyArray<{|
     +name: string,
     +discoveryMethod: DiscoveryMethod,
     +propertyTypes: $ReadOnlyArray<?{|
-      +$fragmentSpreads: PropertyTypeFormField_propertyType$fragmentType & DynamicPropertiesGrid_propertyTypes$fragmentType,
+      +$fragmentRefs: PropertyTypeFormField_propertyType$ref & DynamicPropertiesGrid_propertyTypes$ref
     |}>,
   |},
   +properties: $ReadOnlyArray<?{|
-    +$fragmentSpreads: PropertyFormField_property$fragmentType & DynamicPropertiesGrid_properties$fragmentType,
+    +$fragmentRefs: PropertyFormField_property$ref & DynamicPropertiesGrid_properties$ref
   |}>,
-  +$fragmentType: ServicesView_service$fragmentType,
+  +$refType: ServicesView_service$ref,
 |}>;
-export type ServicesView_service = ServicesView_service$data;
+export type ServicesView_service$data = ServicesView_service;
 export type ServicesView_service$key = $ReadOnlyArray<{
   +$data?: ServicesView_service$data,
-  +$fragmentSpreads: ServicesView_service$fragmentType,
+  +$fragmentRefs: ServicesView_service$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -169,10 +173,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '082bbb9aa27247bc35148e31b2a04903';
 
-(node/*: any*/).hash = "082bbb9aa27247bc35148e31b2a04903";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ServicesView_service$fragmentType,
-  ServicesView_service$data,
->*/);
+module.exports = node;

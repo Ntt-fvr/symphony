@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<6cc2ce4da0ab79477e376d2860f92f8f>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type PowerSearchLocationsResultsTable_locations$fragmentType = any;
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type LocationFilterType = "LOCATION_INST" | "LOCATION_INST_NAME" | "LOCATION_INST_EXTERNAL_ID" | "LOCATION_TYPE" | "LOCATION_INST_HAS_EQUIPMENT" | "PROPERTY" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type PowerSearchLocationsResultsTable_locations$ref = any;
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type LocationFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "LOCATION_INST_HAS_EQUIPMENT" | "LOCATION_INST_NAME" | "LOCATION_TYPE" | "PROPERTY" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type LocationFilterInput = {|
   filterType: LocationFilterType,
   operator: FilterOperator,
@@ -48,29 +51,106 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type LocationViewQueryRendererSearchQuery$variables = {|
+export type LocationViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<LocationFilterInput>,
 |};
-export type LocationViewQueryRendererSearchQueryVariables = LocationViewQueryRendererSearchQuery$variables;
-export type LocationViewQueryRendererSearchQuery$data = {|
+export type LocationViewQueryRendererSearchQueryResponse = {|
   +locations: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentSpreads: PowerSearchLocationsResultsTable_locations$fragmentType,
-      |},
+        +$fragmentRefs: PowerSearchLocationsResultsTable_locations$ref
+      |}
     |}>,
     +totalCount: number,
-  |},
+  |}
 |};
-export type LocationViewQueryRendererSearchQueryResponse = LocationViewQueryRendererSearchQuery$data;
 export type LocationViewQueryRendererSearchQuery = {|
   variables: LocationViewQueryRendererSearchQueryVariables,
-  response: LocationViewQueryRendererSearchQuery$data,
+  response: LocationViewQueryRendererSearchQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationViewQueryRendererSearchQuery(
+  $limit: Int
+  $filters: [LocationFilterInput!]!
+) {
+  locations(first: $limit, filterBy: $filters) {
+    edges {
+      node {
+        ...PowerSearchLocationsResultsTable_locations
+        id
+      }
+    }
+    totalCount
+  }
+}
+
+fragment PowerSearchLocationsResultsTable_locations on Location {
+  id
+  name
+  externalId
+  locationType {
+    id
+    name
+    propertyTypes {
+      id
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+    }
+  }
+  properties {
+    id
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    nodeValue {
+      __typename
+      id
+      name
+    }
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      isEditable
+      isInstanceProperty
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+    }
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -435,10 +515,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '4b7e7b9307ab17820f4baafcaba9edc8';
 
-(node/*: any*/).hash = "4b7e7b9307ab17820f4baafcaba9edc8";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationViewQueryRendererSearchQuery$variables,
-  LocationViewQueryRendererSearchQuery$data,
->*/);
+module.exports = node;

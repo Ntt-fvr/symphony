@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<23da1bd604532674a22db089f222b327>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,30 +13,76 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AddEditWorkerTypeCard_workerType$fragmentType = any;
-export type WorkerTypesQuery$variables = {||};
-export type WorkerTypesQueryVariables = WorkerTypesQuery$variables;
-export type WorkerTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditWorkerTypeCard_workerType$ref = any;
+export type WorkerTypesQueryVariables = {||};
+export type WorkerTypesQueryResponse = {|
   +workerTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +description: ?string,
-        +$fragmentSpreads: AddEditWorkerTypeCard_workerType$fragmentType,
-      |},
-    |}>,
-  |},
+        +$fragmentRefs: AddEditWorkerTypeCard_workerType$ref,
+      |}
+    |}>
+  |}
 |};
-export type WorkerTypesQueryResponse = WorkerTypesQuery$data;
 export type WorkerTypesQuery = {|
   variables: WorkerTypesQueryVariables,
-  response: WorkerTypesQuery$data,
+  response: WorkerTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query WorkerTypesQuery {
+  workerTypes(first: 500) {
+    edges {
+      node {
+        id
+        name
+        description
+        ...AddEditWorkerTypeCard_workerType
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+fragment AddEditWorkerTypeCard_workerType on WorkerType {
+  id
+  name
+  description
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    isDeleted
+    category
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -135,12 +184,12 @@ return {
                   (v0/*: any*/),
                   (v1/*: any*/),
                   (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddEditWorkerTypeCard_workerType"
-                  },
-                  (v3/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -358,10 +407,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'ad1cef4ab0ddb15d307ba5abaceb520e';
 
-(node/*: any*/).hash = "ad1cef4ab0ddb15d307ba5abaceb520e";
-
-module.exports = ((node/*: any*/)/*: Query<
-  WorkerTypesQuery$variables,
-  WorkerTypesQuery$data,
->*/);
+module.exports = node;

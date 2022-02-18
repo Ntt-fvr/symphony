@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<79217d71abb9c346c02518b632ff6f8f>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type AddToEquipmentDialog_parentEquipment$fragmentType = any;
+import type { ReaderFragment } from 'relay-runtime';
+type AddToEquipmentDialog_parentEquipment$ref = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type EquipmentPositionsGrid_equipment$fragmentType: FragmentType;
-export type EquipmentPositionsGrid_equipment$ref = EquipmentPositionsGrid_equipment$fragmentType;
-export type EquipmentPositionsGrid_equipment$data = {|
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type EquipmentPositionsGrid_equipment$ref: FragmentReference;
+declare export opaque type EquipmentPositionsGrid_equipment$fragmentType: EquipmentPositionsGrid_equipment$ref;
+export type EquipmentPositionsGrid_equipment = {|
   +id: string,
   +positions: $ReadOnlyArray<?{|
     +id: string,
@@ -31,11 +34,11 @@ export type EquipmentPositionsGrid_equipment$data = {|
       +name: string,
       +futureState: ?FutureState,
       +services: $ReadOnlyArray<?{|
-        +id: string,
+        +id: string
       |}>,
     |},
     +parentEquipment: {|
-      +id: string,
+      +id: string
     |},
   |}>,
   +equipmentType: {|
@@ -44,20 +47,21 @@ export type EquipmentPositionsGrid_equipment$data = {|
       +name: string,
       +index: ?number,
       +visibleLabel: ?string,
-    |}>,
+    |}>
   |},
-  +$fragmentSpreads: AddToEquipmentDialog_parentEquipment$fragmentType,
-  +$fragmentType: EquipmentPositionsGrid_equipment$fragmentType,
+  +$fragmentRefs: AddToEquipmentDialog_parentEquipment$ref,
+  +$refType: EquipmentPositionsGrid_equipment$ref,
 |};
-export type EquipmentPositionsGrid_equipment = EquipmentPositionsGrid_equipment$data;
+export type EquipmentPositionsGrid_equipment$data = EquipmentPositionsGrid_equipment;
 export type EquipmentPositionsGrid_equipment$key = {
   +$data?: EquipmentPositionsGrid_equipment$data,
-  +$fragmentSpreads: EquipmentPositionsGrid_equipment$fragmentType,
+  +$fragmentRefs: EquipmentPositionsGrid_equipment$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -100,11 +104,6 @@ return {
   "name": "EquipmentPositionsGrid_equipment",
   "selections": [
     (v0/*: any*/),
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "AddToEquipmentDialog_parentEquipment"
-    },
     {
       "alias": null,
       "args": null,
@@ -187,16 +186,18 @@ return {
         }
       ],
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "AddToEquipmentDialog_parentEquipment"
     }
   ],
   "type": "Equipment",
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'c4ed56ad25227e14dccf883ee79b3e2d';
 
-(node/*: any*/).hash = "c4ed56ad25227e14dccf883ee79b3e2d";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  EquipmentPositionsGrid_equipment$fragmentType,
-  EquipmentPositionsGrid_equipment$data,
->*/);
+module.exports = node;

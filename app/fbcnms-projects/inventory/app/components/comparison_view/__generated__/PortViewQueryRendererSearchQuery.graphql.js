@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<6d7c5f47651bc6014a29c71b1552994b>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type PowerSearchPortsResultsTable_ports$fragmentType = any;
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PortFilterType = "PORT_DEF" | "PORT_INST_HAS_LINK" | "PORT_INST_EQUIPMENT" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type PowerSearchPortsResultsTable_ports$ref = any;
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PortFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PORT_DEF" | "PORT_INST_EQUIPMENT" | "PORT_INST_HAS_LINK" | "PROPERTY" | "SERVICE_INST" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type PortFilterInput = {|
   filterType: PortFilterType,
   operator: FilterOperator,
@@ -48,29 +51,172 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type PortViewQueryRendererSearchQuery$variables = {|
+export type PortViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<PortFilterInput>,
 |};
-export type PortViewQueryRendererSearchQueryVariables = PortViewQueryRendererSearchQuery$variables;
-export type PortViewQueryRendererSearchQuery$data = {|
+export type PortViewQueryRendererSearchQueryResponse = {|
   +equipmentPorts: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentSpreads: PowerSearchPortsResultsTable_ports$fragmentType,
-      |},
+        +$fragmentRefs: PowerSearchPortsResultsTable_ports$ref
+      |}
     |}>,
     +totalCount: number,
-  |},
+  |}
 |};
-export type PortViewQueryRendererSearchQueryResponse = PortViewQueryRendererSearchQuery$data;
 export type PortViewQueryRendererSearchQuery = {|
   variables: PortViewQueryRendererSearchQueryVariables,
-  response: PortViewQueryRendererSearchQuery$data,
+  response: PortViewQueryRendererSearchQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query PortViewQueryRendererSearchQuery(
+  $limit: Int
+  $filters: [PortFilterInput!]!
+) {
+  equipmentPorts(first: $limit, filterBy: $filters) {
+    edges {
+      node {
+        ...PowerSearchPortsResultsTable_ports
+        id
+      }
+    }
+    totalCount
+  }
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment PowerSearchPortsResultsTable_ports on EquipmentPort {
+  id
+  definition {
+    id
+    name
+  }
+  link {
+    id
+    ports {
+      id
+      definition {
+        id
+        name
+      }
+      parentEquipment {
+        id
+        name
+        equipmentType {
+          id
+          name
+          portDefinitions {
+            id
+            name
+          }
+        }
+        ...EquipmentBreadcrumbs_equipment
+      }
+    }
+    properties {
+      id
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      propertyType {
+        id
+        name
+        type
+        nodeType
+        isEditable
+        isInstanceProperty
+        stringValue
+        intValue
+        floatValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+      }
+    }
+  }
+  parentEquipment {
+    id
+    name
+    equipmentType {
+      id
+      name
+    }
+    ...EquipmentBreadcrumbs_equipment
+  }
+  properties {
+    id
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      isEditable
+      isInstanceProperty
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -526,10 +672,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e9baf3a77ad1bd13495551c3233e0668';
 
-(node/*: any*/).hash = "e9baf3a77ad1bd13495551c3233e0668";
-
-module.exports = ((node/*: any*/)/*: Query<
-  PortViewQueryRendererSearchQuery$variables,
-  PortViewQueryRendererSearchQuery$data,
->*/);
+module.exports = node;

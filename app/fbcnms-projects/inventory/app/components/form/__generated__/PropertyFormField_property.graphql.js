@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<f3034d514a357759d76dec2e7d34ffec>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type PropertyFormField_property$fragmentType: FragmentType;
-export type PropertyFormField_property$ref = PropertyFormField_property$fragmentType;
-export type PropertyFormField_property$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type PropertyFormField_property$ref: FragmentReference;
+declare export opaque type PropertyFormField_property$fragmentType: PropertyFormField_property$ref;
+export type PropertyFormField_property = {|
   +id: string,
   +propertyType: {|
     +id: string,
@@ -49,17 +52,18 @@ export type PropertyFormField_property$data = {|
     +id: string,
     +name: string,
   |},
-  +$fragmentType: PropertyFormField_property$fragmentType,
+  +$refType: PropertyFormField_property$ref,
 |};
-export type PropertyFormField_property = PropertyFormField_property$data;
+export type PropertyFormField_property$data = PropertyFormField_property;
 export type PropertyFormField_property$key = {
   +$data?: PropertyFormField_property$data,
-  +$fragmentSpreads: PropertyFormField_property$fragmentType,
+  +$fragmentRefs: PropertyFormField_property$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -240,10 +244,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '1ab1f3c728b5670201d8721cc096343a';
 
-(node/*: any*/).hash = "1ab1f3c728b5670201d8721cc096343a";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  PropertyFormField_property$fragmentType,
-  PropertyFormField_property$data,
->*/);
+module.exports = node;

@@ -18,7 +18,7 @@ import * as React from 'react';
 import RelayEnvironment from '../common/RelayEnvironment';
 import {DEACTIVATED_PAGE_PATH} from './DeactivatedPage';
 import {PermissionValues} from './admin/userManagement/utils/UserManagementUtils';
-import {fetchQuery, graphql} from '../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {useContext, useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 

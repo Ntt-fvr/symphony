@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<3ab0a1152d26c93514a37b1356940e3a>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type FilterEntity = "WORK_ORDER" | "PORT" | "EQUIPMENT" | "LINK" | "LOCATION" | "SERVICE" | "%future added value";
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type FilterEntity = "EQUIPMENT" | "LINK" | "LOCATION" | "PORT" | "SERVICE" | "WORK_ORDER" | "%future added value";
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ReportFilterInput = {|
   name: string,
   entity: FilterEntity,
@@ -52,11 +55,10 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type AddReportFilterMutation$variables = {|
-  input: ReportFilterInput,
+export type AddReportFilterMutationVariables = {|
+  input: ReportFilterInput
 |};
-export type AddReportFilterMutationVariables = AddReportFilterMutation$variables;
-export type AddReportFilterMutation$data = {|
+export type AddReportFilterMutationResponse = {|
   +addReportFilter: {|
     +id: string,
     +name: string,
@@ -86,16 +88,53 @@ export type AddReportFilterMutation$data = {|
         +rangeToValue: ?number,
       |},
     |}>,
-  |},
+  |}
 |};
-export type AddReportFilterMutationResponse = AddReportFilterMutation$data;
 export type AddReportFilterMutation = {|
   variables: AddReportFilterMutationVariables,
-  response: AddReportFilterMutation$data,
+  response: AddReportFilterMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddReportFilterMutation(
+  $input: ReportFilterInput!
+) {
+  addReportFilter(input: $input) {
+    id
+    name
+    entity
+    filters {
+      filterType
+      key
+      operator
+      stringValue
+      idSet
+      stringSet
+      boolValue
+      propertyValue {
+        id
+        name
+        type
+        nodeType
+        isEditable
+        isInstanceProperty
+        stringValue
+        intValue
+        floatValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -324,10 +363,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'bbcdc57260e039cef894ffdf32b2ff2e';
 
-(node/*: any*/).hash = "bbcdc57260e039cef894ffdf32b2ff2e";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddReportFilterMutation$variables,
-  AddReportFilterMutation$data,
->*/);
+module.exports = node;

@@ -12,7 +12,9 @@ import {BLUE} from '@symphony/design-system/theme/symphony';
 
 import IconButton from '@material-ui/core/IconButton';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 import AddButton from './common/AddButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -181,7 +183,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton onClick={() => handleRemove(item.id)}>
-                    <DeleteOutlinedIcon style={{color: DARK.D300}} />
+                    <DeleteOutlinedIcon style={{color: DARK.D300}}/>
                   </IconButton>
                 </TableCell>
               </StyledTableRow>

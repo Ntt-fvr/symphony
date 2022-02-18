@@ -11,7 +11,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery} from 'relay-runtime';
+import {graphql} from 'react-relay';
 
 import symphony from '@symphony/design-system/theme/symphony';
 
@@ -273,91 +274,91 @@ const KpiTypes = () => {
 
   if (showEditCard) {
     return (
-      <EditKpiItemForm
-        isCompleted={isCompleted}
-        kpi={dataKpis.kpis?.edges.map(item => item.node)}
-        dataCounter={dataKpis.counters?.edges.map(item => item.node)}
-        dataFormula={formulaEditForm}
-        dataFormulaTable={dataKpis.formulas?.edges.map(item => item.node)}
-        formValues={dataEdit.item.node}
-        threshold={dataKpis.thresholds?.edges}
-        hideEditKpiForm={hideEditKpiForm}
-        handleEditFormulaClick={handleEditFormulaClick}
-        parentEditCallback={handleEditCallback}
-      />
+        <EditKpiItemForm
+            isCompleted={isCompleted}
+            kpi={dataKpis.kpis?.edges.map(item => item.node)}
+            dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+            dataFormula={formulaEditForm}
+            dataFormulaTable={dataKpis.formulas?.edges.map(item => item.node)}
+            formValues={dataEdit.item.node}
+            threshold={dataKpis.thresholds?.edges}
+            hideEditKpiForm={hideEditKpiForm}
+            handleEditFormulaClick={handleEditFormulaClick}
+            parentEditCallback={handleEditCallback}
+        />
     );
   }
 
   return (
-    <Grid className={classes.root} container spacing={0}>
-      <Grid className={classes.titleKpi} item xs={12}>
-        <ConfigureTitle
-          title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
-          subtitle={fbt(
-            'Indicators and formulas to be defined by users and calculated by performance management processes.',
-            'Kpi description',
-          )}
-        />
-      </Grid>
-      <Grid spacing={1} container>
-        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-          <TitleTextCardsKpi />
-          <List disablePadding className={classes.listContainer}>
-            {dataKpis.kpis?.edges.map((item, index) => (
-              <KpiTypeItem
-                key={index}
-                threshold={dataKpis.thresholds?.edges}
-                deleteItem={() => handleRemove(item.node.id)}
-                edit={() => showEditKpiItemForm({item})}
-                handleEditFormulaClick={handleEditFormulaClick}
-                parentEditCallback={handleEditCallback}
+      <Grid className={classes.root} container spacing={0}>
+        <Grid className={classes.titleKpi} item xs={12}>
+          <ConfigureTitle
+              title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
+              subtitle={fbt(
+                  'Indicators and formulas to be defined by users and calculated by performance management processes.',
+                  'Kpi description',
+              )}
+          />
+        </Grid>
+        <Grid spacing={1} container>
+          <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+            <TitleTextCardsKpi />
+            <List disablePadding className={classes.listContainer}>
+              {dataKpis.kpis?.edges.map((item, index) => (
+                  <KpiTypeItem
+                      key={index}
+                      threshold={dataKpis.thresholds?.edges}
+                      deleteItem={() => handleRemove(item.node.id)}
+                      edit={() => showEditKpiItemForm({item})}
+                      handleEditFormulaClick={handleEditFormulaClick}
+                      parentEditCallback={handleEditCallback}
+                      isCompleted={isCompleted}
+                      dataFormulaTable={dataKpis.formulas?.edges.map(
+                          item => item.node,
+                      )}
+                      {...item.node}
+                  />
+              ))}
+            </List>
+          </Grid>
+          <Grid item xs={12} sm={12} lg={3} xl={3}>
+            <AddKpiItemForm
+                kpiNames={dataKpis.kpis?.edges}
                 isCompleted={isCompleted}
-                dataFormulaTable={dataKpis.formulas?.edges.map(
-                  item => item.node,
-                )}
-                {...item.node}
-              />
-            ))}
-          </List>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={3} xl={3}>
-          <AddKpiItemForm
-            kpiNames={dataKpis.kpis?.edges}
-            isCompleted={isCompleted}
-          />
-          <AddFormulaItemForm
-            parentCallback={handleCallback}
-            handleClick={handleFormulaClick}
-            checking={showChecking}
-            changeChecking={() => setShowChecking(false)}
-            isCompleted={isCompleted}
-          />
-          {openDialog && (
-            <AddFormulaDialog
-              open={openDialog}
-              dataFormula={formulaForm}
-              dataCounter={dataKpis.counters?.edges.map(item => item.node)}
-              onClose={() => {
-                setOpenDialog(false);
-              }}
-              isCompleted={isCompleted}
-              changeChecking={() => setShowChecking(true)}
             />
-          )}
-          {openEditDialog && (
-            <EditFormulaDialog
-              open={openEditDialog}
-              dataFormula={formulaEditForm}
-              dataCounter={dataKpis.counters?.edges.map(item => item.node)}
-              onClose={() => {
-                setOpenEditDialog(false);
-              }}
-              isCompleted={isCompleted}
+            <AddFormulaItemForm
+                parentCallback={handleCallback}
+                handleClick={handleFormulaClick}
+                checking={showChecking}
+                changeChecking={() => setShowChecking(false)}
+                isCompleted={isCompleted}
             />
-          )}
+            {openDialog && (
+                <AddFormulaDialog
+                    open={openDialog}
+                    dataFormula={formulaForm}
+                    dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+                    onClose={() => {
+                      setOpenDialog(false);
+                    }}
+                    isCompleted={isCompleted}
+                    changeChecking={() => setShowChecking(true)}
+                />
+            )}
+            {openEditDialog && (
+                <EditFormulaDialog
+                    open={openEditDialog}
+                    dataFormula={formulaEditForm}
+                    dataCounter={dataKpis.counters?.edges.map(item => item.node)}
+                    onClose={() => {
+                      setOpenEditDialog(false);
+                    }}
+                    isCompleted={isCompleted}
+                />
+            )}
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
   );
 };
 

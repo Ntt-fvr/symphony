@@ -15,7 +15,7 @@ import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Typeahead from '@fbcnms/ui/components/Typeahead';
 import emptyFunction from '@fbcnms/util/emptyFunction';
 import {debounce} from 'lodash';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 const SERVICE_SEARCH_DEBOUNCE_TIMEOUT_MS = 200;
 const DEBOUNCE_CONFIG = {

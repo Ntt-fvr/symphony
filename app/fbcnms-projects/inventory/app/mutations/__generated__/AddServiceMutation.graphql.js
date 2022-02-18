@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<99d824bd54063de555a4f37a3695f56d>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,9 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type ServicesView_service$fragmentType = any;
-export type ServiceStatus = "PENDING" | "IN_SERVICE" | "MAINTENANCE" | "DISCONNECTED" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type ServicesView_service$ref = any;
+export type ServiceStatus = "DISCONNECTED" | "IN_SERVICE" | "MAINTENANCE" | "PENDING" | "%future added value";
 export type ServiceCreateData = {|
   name: string,
   externalId?: ?string,
@@ -37,24 +40,143 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type AddServiceMutation$variables = {|
-  data: ServiceCreateData,
+export type AddServiceMutationVariables = {|
+  data: ServiceCreateData
 |};
-export type AddServiceMutationVariables = AddServiceMutation$variables;
-export type AddServiceMutation$data = {|
+export type AddServiceMutationResponse = {|
   +addService: {|
     +id: string,
-    +$fragmentSpreads: ServicesView_service$fragmentType,
-  |},
+    +$fragmentRefs: ServicesView_service$ref,
+  |}
 |};
-export type AddServiceMutationResponse = AddServiceMutation$data;
 export type AddServiceMutation = {|
   variables: AddServiceMutationVariables,
-  response: AddServiceMutation$data,
+  response: AddServiceMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddServiceMutation(
+  $data: ServiceCreateData!
+) {
+  addService(data: $data) {
+    id
+    ...ServicesView_service
+  }
+}
+
+fragment DynamicPropertiesGrid_properties on Property {
+  ...PropertyFormField_property
+  propertyType {
+    id
+    index
+  }
+}
+
+fragment DynamicPropertiesGrid_propertyTypes on PropertyType {
+  id
+  name
+  index
+  isInstanceProperty
+  type
+  nodeType
+  stringValue
+  intValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  floatValue
+}
+
+fragment PropertyFormField_property on Property {
+  id
+  propertyType {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isInstanceProperty
+    isMandatory
+    category
+    isDeleted
+  }
+  stringValue
+  intValue
+  floatValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  nodeValue {
+    __typename
+    id
+    name
+  }
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+
+fragment ServicesView_service on Service {
+  id
+  name
+  externalId
+  status
+  customer {
+    id
+    name
+  }
+  serviceType {
+    id
+    name
+    discoveryMethod
+    propertyTypes {
+      ...PropertyTypeFormField_propertyType
+      ...DynamicPropertiesGrid_propertyTypes
+      id
+    }
+  }
+  properties {
+    ...PropertyFormField_property
+    ...DynamicPropertiesGrid_properties
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -373,10 +495,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'c1851bc1051259086d7d6c1a0a517c42';
 
-(node/*: any*/).hash = "c1851bc1051259086d7d6c1a0a517c42";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddServiceMutation$variables,
-  AddServiceMutation$data,
->*/);
+module.exports = node;

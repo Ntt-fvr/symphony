@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<27000af25861fc19e56fd520e688259e>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,35 +13,36 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type ServiceDetailsPanel_service$fragmentType = any;
-type ServiceEquipmentTopology_endpoints$fragmentType = any;
-type ServiceEquipmentTopology_topology$fragmentType = any;
-type ServicePanel_service$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ServiceCard_service$fragmentType: FragmentType;
-export type ServiceCard_service$ref = ServiceCard_service$fragmentType;
-export type ServiceCard_service$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type ServiceDetailsPanel_service$ref = any;
+type ServiceEquipmentTopology_endpoints$ref = any;
+type ServiceEquipmentTopology_topology$ref = any;
+type ServicePanel_service$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ServiceCard_service$ref: FragmentReference;
+declare export opaque type ServiceCard_service$fragmentType: ServiceCard_service$ref;
+export type ServiceCard_service = {|
   +id: string,
   +name: string,
   +topology: {|
-    +$fragmentSpreads: ServiceEquipmentTopology_topology$fragmentType,
+    +$fragmentRefs: ServiceEquipmentTopology_topology$ref
   |},
   +endpoints: $ReadOnlyArray<?{|
-    +$fragmentSpreads: ServiceEquipmentTopology_endpoints$fragmentType,
+    +$fragmentRefs: ServiceEquipmentTopology_endpoints$ref
   |}>,
-  +$fragmentSpreads: ServiceDetailsPanel_service$fragmentType & ServicePanel_service$fragmentType,
-  +$fragmentType: ServiceCard_service$fragmentType,
+  +$fragmentRefs: ServiceDetailsPanel_service$ref & ServicePanel_service$ref,
+  +$refType: ServiceCard_service$ref,
 |};
-export type ServiceCard_service = ServiceCard_service$data;
+export type ServiceCard_service$data = ServiceCard_service;
 export type ServiceCard_service$key = {
   +$data?: ServiceCard_service$data,
-  +$fragmentSpreads: ServiceCard_service$fragmentType,
+  +$fragmentRefs: ServiceCard_service$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -57,16 +61,6 @@ var node/*: ReaderFragment*/ = {
       "kind": "ScalarField",
       "name": "name",
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "ServiceDetailsPanel_service"
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "ServicePanel_service"
     },
     {
       "alias": null,
@@ -99,15 +93,22 @@ var node/*: ReaderFragment*/ = {
         }
       ],
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "ServiceDetailsPanel_service"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "ServicePanel_service"
     }
   ],
   "type": "Service",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = 'b365b307bdc31d3d737c3f7f1b6d33fe';
 
-(node/*: any*/).hash = "b365b307bdc31d3d737c3f7f1b6d33fe";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ServiceCard_service$fragmentType,
-  ServiceCard_service$data,
->*/);
+module.exports = node;

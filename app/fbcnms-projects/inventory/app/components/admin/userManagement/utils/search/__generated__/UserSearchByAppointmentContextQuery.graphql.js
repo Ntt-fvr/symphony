@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<205a307fe647113a68ce3fe03778fc09>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type UserFilterType = "USER_NAME" | "USER_STATUS" | "USER_ORGANIZATION" | "%future added value";
-export type UserRole = "USER" | "ADMIN" | "OWNER" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type UserFilterType = "USER_NAME" | "USER_ORGANIZATION" | "USER_STATUS" | "%future added value";
+export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UserFilterInput = {|
   filterType: UserFilterType,
@@ -60,14 +63,13 @@ export type RegularHoursInput = {|
   workdayEndMinute: number,
   timezone?: ?string,
 |};
-export type UserSearchByAppointmentContextQuery$variables = {|
+export type UserSearchByAppointmentContextQueryVariables = {|
   filterBy: $ReadOnlyArray<UserFilterInput>,
   slottedBy: SlotFilterInput,
   workday: RegularHoursInput,
   duration: number,
 |};
-export type UserSearchByAppointmentContextQueryVariables = UserSearchByAppointmentContextQuery$variables;
-export type UserSearchByAppointmentContextQuery$data = {|
+export type UserSearchByAppointmentContextQueryResponse = {|
   +usersAvailability: ?$ReadOnlyArray<{|
     +user: {|
       +id: string,
@@ -80,16 +82,39 @@ export type UserSearchByAppointmentContextQuery$data = {|
     |},
     +slotStartDate: any,
     +slotEndDate: any,
-  |}>,
+  |}>
 |};
-export type UserSearchByAppointmentContextQueryResponse = UserSearchByAppointmentContextQuery$data;
 export type UserSearchByAppointmentContextQuery = {|
   variables: UserSearchByAppointmentContextQueryVariables,
-  response: UserSearchByAppointmentContextQuery$data,
+  response: UserSearchByAppointmentContextQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query UserSearchByAppointmentContextQuery(
+  $filterBy: [UserFilterInput!]!
+  $slottedBy: SlotFilterInput!
+  $workday: RegularHoursInput!
+  $duration: Float!
+) {
+  usersAvailability(filterBy: $filterBy, slotFilterBy: $slottedBy, regularHours: $workday, duration: $duration) {
+    user {
+      id
+      authID
+      email
+      role
+      status
+      firstName
+      lastName
+    }
+    slotStartDate
+    slotEndDate
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -255,10 +280,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '58cf4069d0c3a3fc7fcefcabeea9266c';
 
-(node/*: any*/).hash = "d1982d6bfb841e3ec0b5d65e5cb1997c";
-
-module.exports = ((node/*: any*/)/*: Query<
-  UserSearchByAppointmentContextQuery$variables,
-  UserSearchByAppointmentContextQuery$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<fbc2351245971957ecccdedd7a3032d1>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType: FragmentType;
-export type WorkOrderDetailsPaneEquipmentItem_equipment$ref = WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType;
-export type WorkOrderDetailsPaneEquipmentItem_equipment$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type WorkOrderDetailsPaneEquipmentItem_equipment$ref: FragmentReference;
+declare export opaque type WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType: WorkOrderDetailsPaneEquipmentItem_equipment$ref;
+export type WorkOrderDetailsPaneEquipmentItem_equipment = {|
   +id: string,
   +name: string,
   +equipmentType: {|
@@ -40,17 +43,18 @@ export type WorkOrderDetailsPaneEquipmentItem_equipment$data = {|
       +name: string,
     |},
   |},
-  +$fragmentType: WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType,
+  +$refType: WorkOrderDetailsPaneEquipmentItem_equipment$ref,
 |};
-export type WorkOrderDetailsPaneEquipmentItem_equipment = WorkOrderDetailsPaneEquipmentItem_equipment$data;
+export type WorkOrderDetailsPaneEquipmentItem_equipment$data = WorkOrderDetailsPaneEquipmentItem_equipment;
 export type WorkOrderDetailsPaneEquipmentItem_equipment$key = {
   +$data?: WorkOrderDetailsPaneEquipmentItem_equipment$data,
-  +$fragmentSpreads: WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType,
+  +$fragmentRefs: WorkOrderDetailsPaneEquipmentItem_equipment$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -156,10 +160,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '50466f4314e67740e00fa80dc786d8e8';
 
-(node/*: any*/).hash = "50466f4314e67740e00fa80dc786d8e8";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  WorkOrderDetailsPaneEquipmentItem_equipment$fragmentType,
-  WorkOrderDetailsPaneEquipmentItem_equipment$data,
->*/);
+module.exports = node;

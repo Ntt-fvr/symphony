@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<80277a54dc1309677cf3d35de768de43>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,38 +13,144 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type DynamicPropertiesGrid_properties$fragmentType = any;
-type DynamicPropertiesGrid_propertyTypes$fragmentType = any;
-type LocationBreadcrumbsTitle_locationDetails$fragmentType = any;
-export type LocationPopoutQuery$variables = {|
-  locationId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+type DynamicPropertiesGrid_properties$ref = any;
+type DynamicPropertiesGrid_propertyTypes$ref = any;
+type LocationBreadcrumbsTitle_locationDetails$ref = any;
+export type LocationPopoutQueryVariables = {|
+  locationId: string
 |};
-export type LocationPopoutQueryVariables = LocationPopoutQuery$variables;
-export type LocationPopoutQuery$data = {|
+export type LocationPopoutQueryResponse = {|
   +location: ?{|
     +id?: string,
     +name?: string,
     +locationType?: {|
       +name: string,
       +propertyTypes: $ReadOnlyArray<?{|
-        +$fragmentSpreads: DynamicPropertiesGrid_propertyTypes$fragmentType,
+        +$fragmentRefs: DynamicPropertiesGrid_propertyTypes$ref
       |}>,
     |},
     +properties?: $ReadOnlyArray<?{|
-      +$fragmentSpreads: DynamicPropertiesGrid_properties$fragmentType,
+      +$fragmentRefs: DynamicPropertiesGrid_properties$ref
     |}>,
-    +$fragmentSpreads: LocationBreadcrumbsTitle_locationDetails$fragmentType,
-  |},
+    +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref,
+  |}
 |};
-export type LocationPopoutQueryResponse = LocationPopoutQuery$data;
 export type LocationPopoutQuery = {|
   variables: LocationPopoutQueryVariables,
-  response: LocationPopoutQuery$data,
+  response: LocationPopoutQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationPopoutQuery(
+  $locationId: ID!
+) {
+  location: node(id: $locationId) {
+    __typename
+    ... on Location {
+      id
+      name
+      locationType {
+        name
+        id
+        propertyTypes {
+          ...DynamicPropertiesGrid_propertyTypes
+          id
+        }
+      }
+      ...LocationBreadcrumbsTitle_locationDetails
+      properties {
+        ...DynamicPropertiesGrid_properties
+        id
+      }
+    }
+    id
+  }
+}
+
+fragment DynamicPropertiesGrid_properties on Property {
+  ...PropertyFormField_property
+  propertyType {
+    id
+    index
+  }
+}
+
+fragment DynamicPropertiesGrid_propertyTypes on PropertyType {
+  id
+  name
+  index
+  isInstanceProperty
+  type
+  nodeType
+  stringValue
+  intValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  floatValue
+}
+
+fragment LocationBreadcrumbsTitle_locationDetails on Location {
+  id
+  name
+  locationType {
+    name
+    id
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+}
+
+fragment PropertyFormField_property on Property {
+  id
+  propertyType {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isInstanceProperty
+    isMandatory
+    category
+    isDeleted
+  }
+  stringValue
+  intValue
+  floatValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  nodeValue {
+    __typename
+    id
+    name
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -210,11 +319,6 @@ return {
                 "storageKey": null
               },
               {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "LocationBreadcrumbsTitle_locationDetails"
-              },
-              {
                 "alias": null,
                 "args": null,
                 "concreteType": "Property",
@@ -229,6 +333,11 @@ return {
                   }
                 ],
                 "storageKey": null
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "LocationBreadcrumbsTitle_locationDetails"
               }
             ],
             "type": "Location",
@@ -431,10 +540,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '80eec4f9084409c4f63a764b3b6e91a1';
 
-(node/*: any*/).hash = "80eec4f9084409c4f63a764b3b6e91a1";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationPopoutQuery$variables,
-  LocationPopoutQuery$data,
->*/);
+module.exports = node;

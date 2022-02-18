@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<d2c64e45b2fff922e0d7cfc9129f9508>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,26 +13,27 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type DiscoveryMethod = "MANUAL" | "INVENTORY" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ServiceTypesListQuery_serviceType$fragmentType: FragmentType;
-export type ServiceTypesListQuery_serviceType$ref = ServiceTypesListQuery_serviceType$fragmentType;
-export type ServiceTypesListQuery_serviceType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ServiceTypesListQuery_serviceType$ref: FragmentReference;
+declare export opaque type ServiceTypesListQuery_serviceType$fragmentType: ServiceTypesListQuery_serviceType$ref;
+export type ServiceTypesListQuery_serviceType = {|
   +id: string,
   +name: string,
   +discoveryMethod: DiscoveryMethod,
-  +$fragmentType: ServiceTypesListQuery_serviceType$fragmentType,
+  +$refType: ServiceTypesListQuery_serviceType$ref,
 |};
-export type ServiceTypesListQuery_serviceType = ServiceTypesListQuery_serviceType$data;
+export type ServiceTypesListQuery_serviceType$data = ServiceTypesListQuery_serviceType;
 export type ServiceTypesListQuery_serviceType$key = {
   +$data?: ServiceTypesListQuery_serviceType$data,
-  +$fragmentSpreads: ServiceTypesListQuery_serviceType$fragmentType,
+  +$fragmentRefs: ServiceTypesListQuery_serviceType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -60,10 +64,7 @@ var node/*: ReaderFragment*/ = {
   "type": "ServiceType",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '746b4b7d14876a363b38950f2f7ab94d';
 
-(node/*: any*/).hash = "746b4b7d14876a363b38950f2f7ab94d";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ServiceTypesListQuery_serviceType$fragmentType,
-  ServiceTypesListQuery_serviceType$data,
->*/);
+module.exports = node;

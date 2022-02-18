@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<758656ed0ae4957039c334c93b96e3de>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type GraphVertexDetailsQuery$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type GraphVertexDetailsQueryVariables = {|
+  id: string
 |};
-export type GraphVertexDetailsQueryVariables = GraphVertexDetailsQuery$variables;
-export type GraphVertexDetailsQuery$data = {|
+export type GraphVertexDetailsQueryResponse = {|
   +vertex: ?{|
     +id: string,
     +type: string,
@@ -23,16 +25,31 @@ export type GraphVertexDetailsQuery$data = {|
       +name: string,
       +value: string,
     |}>,
-  |},
+  |}
 |};
-export type GraphVertexDetailsQueryResponse = GraphVertexDetailsQuery$data;
 export type GraphVertexDetailsQuery = {|
   variables: GraphVertexDetailsQueryVariables,
-  response: GraphVertexDetailsQuery$data,
+  response: GraphVertexDetailsQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query GraphVertexDetailsQuery(
+  $id: ID!
+) {
+  vertex(id: $id) {
+    id
+    type
+    fields {
+      name
+      value
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -125,10 +142,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'b810a4963a64c2695e2cb81fbd02be9e';
 
-(node/*: any*/).hash = "b810a4963a64c2695e2cb81fbd02be9e";
-
-module.exports = ((node/*: any*/)/*: Query<
-  GraphVertexDetailsQuery$variables,
-  GraphVertexDetailsQuery$data,
->*/);
+module.exports = node;

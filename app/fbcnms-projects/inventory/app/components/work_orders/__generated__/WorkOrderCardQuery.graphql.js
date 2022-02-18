@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<ab5d1ac97868b86d77cbc2d58a883ddc>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,27 +13,561 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type WorkOrderDetails_workOrder$fragmentType = any;
-export type WorkOrderCardQuery$variables = {|
-  workOrderId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+type WorkOrderDetails_workOrder$ref = any;
+export type WorkOrderCardQueryVariables = {|
+  workOrderId: string
 |};
-export type WorkOrderCardQueryVariables = WorkOrderCardQuery$variables;
-export type WorkOrderCardQuery$data = {|
+export type WorkOrderCardQueryResponse = {|
   +workOrder: ?{|
     +id?: string,
     +name?: string,
-    +$fragmentSpreads: WorkOrderDetails_workOrder$fragmentType,
-  |},
+    +$fragmentRefs: WorkOrderDetails_workOrder$ref,
+  |}
 |};
-export type WorkOrderCardQueryResponse = WorkOrderCardQuery$data;
 export type WorkOrderCardQuery = {|
   variables: WorkOrderCardQueryVariables,
-  response: WorkOrderCardQuery$data,
+  response: WorkOrderCardQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query WorkOrderCardQuery(
+  $workOrderId: ID!
+) {
+  workOrder: node(id: $workOrderId) {
+    __typename
+    ... on WorkOrder {
+      id
+      name
+      ...WorkOrderDetails_workOrder
+    }
+    id
+  }
+}
+
+fragment ActivityPost_activity on Activity {
+  id
+  author {
+    email
+    id
+  }
+  newValue
+  activityType
+  createTime
+  ...GenericActivityText_activity
+  ...WorkOrderCheckInActivityText_activity
+  ...WorkOrderCheckOutActivityText_activity
+}
+
+fragment CommentsActivitiesBox_activities on Activity {
+  ...CommentsActivitiesLog_activities
+}
+
+fragment CommentsActivitiesBox_comments on Comment {
+  ...CommentsActivitiesLog_comments
+}
+
+fragment CommentsActivitiesLog_activities on Activity {
+  id
+  createTime
+  ...ActivityPost_activity
+}
+
+fragment CommentsActivitiesLog_comments on Comment {
+  id
+  createTime
+  ...TextCommentPost_comment
+}
+
+fragment DocumentTable_files on File {
+  id
+  fileName
+  category
+  ...FileAttachment_file
+}
+
+fragment DocumentTable_hyperlinks on Hyperlink {
+  id
+  category
+  url
+  displayName
+  ...HyperlinkTableRow_hyperlink
+}
+
+fragment EntityDocumentsTable_files on File {
+  ...DocumentTable_files
+}
+
+fragment EntityDocumentsTable_hyperlinks on Hyperlink {
+  ...DocumentTable_hyperlinks
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment FileAttachment_file on File {
+  id
+  fileName
+  sizeInBytes
+  uploaded
+  fileType
+  storeKey
+  category
+  annotation
+  documentCategory {
+    id
+    name
+  }
+  ...ImageDialog_img
+}
+
+fragment GenericActivityText_activity on Activity {
+  activityType
+  newRelatedNode {
+    __typename
+    ... on User {
+      email
+    }
+    id
+  }
+  oldRelatedNode {
+    __typename
+    ... on User {
+      email
+    }
+    id
+  }
+  oldValue
+  newValue
+}
+
+fragment HyperlinkTableMenu_hyperlink on Hyperlink {
+  id
+  displayName
+  url
+}
+
+fragment HyperlinkTableRow_hyperlink on Hyperlink {
+  id
+  category
+  url
+  displayName
+  createTime
+  documentCategory {
+    id
+    name
+  }
+  ...HyperlinkTableMenu_hyperlink
+}
+
+fragment ImageDialog_img on File {
+  storeKey
+  fileName
+}
+
+fragment LocationBreadcrumbsTitle_locationDetails on Location {
+  id
+  name
+  locationType {
+    name
+    id
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+}
+
+fragment TextCommentPost_comment on Comment {
+  id
+  author {
+    email
+    id
+  }
+  text
+  createTime
+}
+
+fragment WorkOrderCheckInActivityText_activity on Activity {
+  activityType
+  clockDetails {
+    distanceMeters
+  }
+}
+
+fragment WorkOrderCheckOutActivityText_activity on Activity {
+  activityType
+  clockDetails {
+    clockOutReason
+    distanceMeters
+    comment
+  }
+}
+
+fragment WorkOrderDetailsPaneEquipmentItem_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  parentLocation {
+    id
+    name
+    locationType {
+      id
+      name
+    }
+  }
+  parentPosition {
+    id
+    definition {
+      name
+      visibleLabel
+      id
+    }
+    parentEquipment {
+      id
+      name
+    }
+  }
+}
+
+fragment WorkOrderDetailsPaneLinkItem_link on Link {
+  id
+  futureState
+  ports {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+      portType {
+        linkPropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        id
+      }
+    }
+    parentEquipment {
+      id
+      name
+      futureState
+      equipmentType {
+        id
+        name
+      }
+      ...EquipmentBreadcrumbs_equipment
+    }
+    serviceEndpoints {
+      definition {
+        role
+        id
+      }
+      service {
+        name
+        id
+      }
+      id
+    }
+  }
+  workOrder {
+    id
+    status
+  }
+  properties {
+    id
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      index
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isEditable
+      isInstanceProperty
+      isMandatory
+      category
+      isDeleted
+    }
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    nodeValue {
+      __typename
+      id
+      name
+    }
+  }
+  services {
+    id
+    name
+  }
+}
+
+fragment WorkOrderDetailsPane_workOrder on WorkOrder {
+  id
+  name
+  equipmentToAdd {
+    id
+    ...WorkOrderDetailsPaneEquipmentItem_equipment
+  }
+  equipmentToRemove {
+    id
+    ...WorkOrderDetailsPaneEquipmentItem_equipment
+  }
+  linksToAdd {
+    id
+    ...WorkOrderDetailsPaneLinkItem_link
+  }
+  linksToRemove {
+    id
+    ...WorkOrderDetailsPaneLinkItem_link
+  }
+}
+
+fragment WorkOrderDetails_workOrder on WorkOrder {
+  id
+  name
+  description
+  scheduledAt
+  organizationFk {
+    id
+    name
+    description
+  }
+  workOrderType {
+    name
+    id
+  }
+  workOrderTemplate {
+    assigneeCanCompleteWorkOrder
+  }
+  location {
+    name
+    id
+    latitude
+    longitude
+    locationType {
+      id
+      mapType
+      mapZoomLevel
+    }
+    ...LocationBreadcrumbsTitle_locationDetails
+  }
+  owner {
+    id
+    email
+  }
+  assignedTo {
+    id
+    email
+  }
+  creationDate
+  installDate
+  status
+  priority
+  ...WorkOrderDetailsPane_workOrder
+  properties {
+    id
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      index
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isEditable
+      isInstanceProperty
+      isMandatory
+      category
+      isDeleted
+    }
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    nodeValue {
+      __typename
+      id
+      name
+    }
+  }
+  images {
+    ...EntityDocumentsTable_files
+    id
+  }
+  files {
+    ...EntityDocumentsTable_files
+    id
+  }
+  hyperlinks {
+    ...EntityDocumentsTable_hyperlinks
+    id
+  }
+  comments {
+    ...CommentsActivitiesBox_comments
+    id
+  }
+  activities {
+    ...CommentsActivitiesBox_activities
+    id
+  }
+  project {
+    name
+    id
+    type {
+      id
+      name
+    }
+  }
+  checkListCategories {
+    id
+    title
+    description
+    checkList {
+      id
+      index
+      isMandatory
+      type
+      title
+      helpText
+      checked
+      enumValues
+      stringValue
+      enumSelectionMode
+      selectedEnumValues
+      yesNoResponse
+      files {
+        id
+        fileName
+        sizeInBytes
+        modified
+        uploaded
+        fileType
+        storeKey
+        category
+        annotation
+      }
+      cellData {
+        id
+        networkType
+        signalStrength
+        timestamp
+        baseStationID
+        networkID
+        systemID
+        cellID
+        locationAreaCode
+        mobileCountryCode
+        mobileNetworkCode
+        primaryScramblingCode
+        operator
+        arfcn
+        physicalCellID
+        trackingAreaCode
+        timingAdvance
+        earfcn
+        uarfcn
+        latitude
+        longitude
+      }
+      wifiData {
+        id
+        timestamp
+        frequency
+        channel
+        bssid
+        strength
+        ssid
+        band
+        channelWidth
+        capabilities
+        latitude
+        longitude
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -654,6 +1191,7 @@ v42 = {
 },
 v43 = [
   (v4/*: any*/),
+  (v2/*: any*/),
   {
     "kind": "InlineFragment",
     "selections": [
@@ -661,8 +1199,7 @@ v43 = [
     ],
     "type": "User",
     "abstractKey": null
-  },
-  (v2/*: any*/)
+  }
 ],
 v44 = {
   "alias": null,
@@ -1413,10 +1950,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'ba8f1936a3ba4fd0f7aa7b7b90970432';
 
-(node/*: any*/).hash = "ba8f1936a3ba4fd0f7aa7b7b90970432";
-
-module.exports = ((node/*: any*/)/*: Query<
-  WorkOrderCardQuery$variables,
-  WorkOrderCardQuery$data,
->*/);
+module.exports = node;

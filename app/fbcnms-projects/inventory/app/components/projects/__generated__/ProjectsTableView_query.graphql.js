@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<fafd480f9f363ac1153070611b379ae1>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,14 +13,13 @@
 'use strict';
 
 /*::
-import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
-export type ProjectPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ProjectsTableView_query$fragmentType: FragmentType;
-export type ProjectsTableView_query$ref = ProjectsTableView_query$fragmentType;
-type ProjectsTableViewPaginationQuery$variables = any;
-export type ProjectsTableView_query$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ProjectsTableView_query$ref: FragmentReference;
+declare export opaque type ProjectsTableView_query$fragmentType: ProjectsTableView_query$ref;
+export type ProjectsTableView_query = {|
   +projects: {|
     +totalCount: number,
     +edges: $ReadOnlyArray<{|
@@ -26,7 +28,7 @@ export type ProjectsTableView_query$data = {|
         +createTime: any,
         +name: string,
         +createdBy: ?{|
-          +email: string,
+          +email: string
         |},
         +location: ?{|
           +id: string,
@@ -70,20 +72,21 @@ export type ProjectsTableView_query$data = {|
           |},
         |}>,
         +numberOfWorkOrders: number,
-      |},
+      |}
     |}>,
   |},
-  +$fragmentType: ProjectsTableView_query$fragmentType,
+  +$refType: ProjectsTableView_query$ref,
 |};
-export type ProjectsTableView_query = ProjectsTableView_query$data;
+export type ProjectsTableView_query$data = ProjectsTableView_query;
 export type ProjectsTableView_query$key = {
   +$data?: ProjectsTableView_query$data,
-  +$fragmentSpreads: ProjectsTableView_query$fragmentType,
+  +$fragmentRefs: ProjectsTableView_query$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = [
   "projects"
 ],
@@ -214,7 +217,7 @@ return {
         "path": (v0/*: any*/)
       },
       "fragmentPathInResult": [],
-      "operation": require('./ProjectsTableViewPaginationQuery.graphql')
+      "operation": require('./ProjectsTableViewPaginationQuery.graphql.js')
     }
   },
   "name": "ProjectsTableView_query",
@@ -471,11 +474,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'a367392d6a8fed0ca337cc8f4ad0d464';
 
-(node/*: any*/).hash = "9af73a2dab4860b72aabdb10cc0f17ad";
-
-module.exports = ((node/*: any*/)/*: RefetchableFragment<
-  ProjectsTableView_query$fragmentType,
-  ProjectsTableView_query$data,
-  ProjectsTableViewPaginationQuery$variables,
->*/);
+module.exports = node;

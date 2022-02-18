@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<7a97c29c1f23521eedbb73ace3cec097>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AvailableLinksAndPortsTable_links$fragmentType = any;
-type AvailableLinksAndPortsTable_ports$fragmentType = any;
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type LinkFilterType = "LINK_FUTURE_STATUS" | "EQUIPMENT_TYPE" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "EQUIPMENT_INST" | "%future added value";
-export type PortFilterType = "PORT_DEF" | "PORT_INST_HAS_LINK" | "PORT_INST_EQUIPMENT" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type AvailableLinksAndPortsTable_links$ref = any;
+type AvailableLinksAndPortsTable_ports$ref = any;
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type LinkFilterType = "EQUIPMENT_INST" | "EQUIPMENT_TYPE" | "LINK_FUTURE_STATUS" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "%future added value";
+export type PortFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PORT_DEF" | "PORT_INST_EQUIPMENT" | "PORT_INST_HAS_LINK" | "PROPERTY" | "SERVICE_INST" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type LinkFilterInput = {|
   filterType: LinkFilterType,
   operator: FilterOperator,
@@ -59,12 +62,11 @@ export type PortFilterInput = {|
   stringSet?: ?$ReadOnlyArray<string>,
   maxDepth?: ?number,
 |};
-export type AddLinkOrPortToServiceDialogQuery$variables = {|
+export type AddLinkOrPortToServiceDialogQueryVariables = {|
   filters: $ReadOnlyArray<LinkFilterInput>,
   portFilters: $ReadOnlyArray<PortFilterInput>,
 |};
-export type AddLinkOrPortToServiceDialogQueryVariables = AddLinkOrPortToServiceDialogQuery$variables;
-export type AddLinkOrPortToServiceDialogQuery$data = {|
+export type AddLinkOrPortToServiceDialogQueryResponse = {|
   +links: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -79,30 +81,142 @@ export type AddLinkOrPortToServiceDialogQuery$data = {|
             +name: string,
           |},
         |}>,
-        +$fragmentSpreads: AvailableLinksAndPortsTable_links$fragmentType,
-      |},
-    |}>,
+        +$fragmentRefs: AvailableLinksAndPortsTable_links$ref,
+      |}
+    |}>
   |},
   +ports: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +link: ?{|
-          +id: string,
+          +id: string
         |},
-        +$fragmentSpreads: AvailableLinksAndPortsTable_ports$fragmentType,
-      |},
-    |}>,
+        +$fragmentRefs: AvailableLinksAndPortsTable_ports$ref,
+      |}
+    |}>
   |},
 |};
-export type AddLinkOrPortToServiceDialogQueryResponse = AddLinkOrPortToServiceDialogQuery$data;
 export type AddLinkOrPortToServiceDialogQuery = {|
   variables: AddLinkOrPortToServiceDialogQueryVariables,
-  response: AddLinkOrPortToServiceDialogQuery$data,
+  response: AddLinkOrPortToServiceDialogQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query AddLinkOrPortToServiceDialogQuery(
+  $filters: [LinkFilterInput!]!
+  $portFilters: [PortFilterInput!]!
+) {
+  links(filterBy: $filters, first: 50) {
+    edges {
+      node {
+        id
+        ports {
+          parentEquipment {
+            id
+            name
+          }
+          definition {
+            id
+            name
+          }
+          id
+        }
+        ...AvailableLinksAndPortsTable_links
+      }
+    }
+  }
+  ports: equipmentPorts(first: 50, filterBy: $portFilters) {
+    edges {
+      node {
+        id
+        link {
+          id
+        }
+        ...AvailableLinksAndPortsTable_ports
+      }
+    }
+  }
+}
+
+fragment AvailableLinksAndPortsTable_links on Link {
+  id
+  ports {
+    parentEquipment {
+      id
+      name
+      positionHierarchy {
+        parentEquipment {
+          id
+        }
+        id
+      }
+      ...EquipmentBreadcrumbs_equipment
+    }
+    definition {
+      id
+      name
+    }
+    id
+  }
+}
+
+fragment AvailableLinksAndPortsTable_ports on EquipmentPort {
+  id
+  parentEquipment {
+    id
+    name
+    positionHierarchy {
+      parentEquipment {
+        id
+      }
+      id
+    }
+    ...EquipmentBreadcrumbs_equipment
+  }
+  definition {
+    id
+    name
+  }
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -487,10 +601,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'ab0d180031ef7172a041ab75450ce1bf';
 
-(node/*: any*/).hash = "ab0d180031ef7172a041ab75450ce1bf";
-
-module.exports = ((node/*: any*/)/*: Query<
-  AddLinkOrPortToServiceDialogQuery$variables,
-  AddLinkOrPortToServiceDialogQuery$data,
->*/);
+module.exports = node;

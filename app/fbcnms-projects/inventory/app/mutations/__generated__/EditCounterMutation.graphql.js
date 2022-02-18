@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<0a5530d195293787fd3b654579a67061>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditCounterInput = {|
   id: string,
   name: string,
@@ -18,26 +21,38 @@ export type EditCounterInput = {|
   networkManagerSystem: string,
   vendorFk: string,
 |};
-export type EditCounterMutation$variables = {|
-  input: EditCounterInput,
+export type EditCounterMutationVariables = {|
+  input: EditCounterInput
 |};
-export type EditCounterMutationVariables = EditCounterMutation$variables;
-export type EditCounterMutation$data = {|
+export type EditCounterMutationResponse = {|
   +editCounter: {|
     +id: string,
     +name: string,
     +externalID: string,
     +networkManagerSystem: string,
-  |},
+  |}
 |};
-export type EditCounterMutationResponse = EditCounterMutation$data;
 export type EditCounterMutation = {|
   variables: EditCounterMutationVariables,
-  response: EditCounterMutation$data,
+  response: EditCounterMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditCounterMutation(
+  $input: EditCounterInput!
+) {
+  editCounter(input: $input) {
+    id
+    name
+    externalID
+    networkManagerSystem
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -119,10 +134,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'd9bd655fa7f6480955a97850e6a7246f';
 
-(node/*: any*/).hash = "d9bd655fa7f6480955a97850e6a7246f";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditCounterMutation$variables,
-  EditCounterMutation$data,
->*/);
+module.exports = node;

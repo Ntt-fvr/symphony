@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<485b8a4bd20fd2e6c55bdfc6bccfca38>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type AddLocationInput = {|
   name: string,
   type: string,
@@ -35,11 +38,10 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type AddLocationMutation$variables = {|
-  input: AddLocationInput,
+export type AddLocationMutationVariables = {|
+  input: AddLocationInput
 |};
-export type AddLocationMutationVariables = AddLocationMutation$variables;
-export type AddLocationMutation$data = {|
+export type AddLocationMutationResponse = {|
   +addLocation: {|
     +id: string,
     +externalId: ?string,
@@ -61,16 +63,45 @@ export type AddLocationMutation$data = {|
       +numChildren: number,
       +siteSurveyNeeded: boolean,
     |}>,
-  |},
+  |}
 |};
-export type AddLocationMutationResponse = AddLocationMutation$data;
 export type AddLocationMutation = {|
   variables: AddLocationMutationVariables,
-  response: AddLocationMutation$data,
+  response: AddLocationMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddLocationMutation(
+  $input: AddLocationInput!
+) {
+  addLocation(input: $input) {
+    id
+    externalId
+    name
+    locationType {
+      id
+      name
+    }
+    numChildren
+    siteSurveyNeeded
+    children {
+      id
+      externalId
+      name
+      locationType {
+        id
+        name
+      }
+      numChildren
+      siteSurveyNeeded
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -195,10 +226,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '6f4409b93601426ac35ab303fcdaea26';
 
-(node/*: any*/).hash = "6f4409b93601426ac35ab303fcdaea26";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddLocationMutation$variables,
-  AddLocationMutation$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<a5e52a806362c3a749eb608df3aa6c3e>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { ReaderFragment } from 'relay-runtime';
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type EquipmentPropertiesCard_baseEquipmentProps$fragmentType: FragmentType;
-export type EquipmentPropertiesCard_baseEquipmentProps$ref = EquipmentPropertiesCard_baseEquipmentProps$fragmentType;
-export type EquipmentPropertiesCard_baseEquipmentProps$data = {
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type EquipmentPropertiesCard_baseEquipmentProps$ref: FragmentReference;
+declare export opaque type EquipmentPropertiesCard_baseEquipmentProps$fragmentType: EquipmentPropertiesCard_baseEquipmentProps$ref;
+export type EquipmentPropertiesCard_baseEquipmentProps = {
   +id: string,
   +name: string,
   +futureState: ?FutureState,
@@ -26,15 +29,16 @@ export type EquipmentPropertiesCard_baseEquipmentProps$data = {
   },
   ...
 };
-export type EquipmentPropertiesCard_baseEquipmentProps = EquipmentPropertiesCard_baseEquipmentProps$data;
+export type EquipmentPropertiesCard_baseEquipmentProps$data = EquipmentPropertiesCard_baseEquipmentProps;
 export type EquipmentPropertiesCard_baseEquipmentProps$key = {
   +$data?: EquipmentPropertiesCard_baseEquipmentProps$data,
-  +$fragmentSpreads: EquipmentPropertiesCard_baseEquipmentProps$fragmentType,
+  +$fragmentRefs: EquipmentPropertiesCard_baseEquipmentProps$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -84,10 +88,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '38c108dd662662f36827a889ffc2706f';
 
-(node/*: any*/).hash = "38c108dd662662f36827a889ffc2706f";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  EquipmentPropertiesCard_baseEquipmentProps$fragmentType,
-  EquipmentPropertiesCard_baseEquipmentProps$data,
->*/);
+module.exports = node;

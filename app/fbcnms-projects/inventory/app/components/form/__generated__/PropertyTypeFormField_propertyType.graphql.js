@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<b2e5d0f2705ad755cf38691680e38ad9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type PropertyTypeFormField_propertyType$fragmentType: FragmentType;
-export type PropertyTypeFormField_propertyType$ref = PropertyTypeFormField_propertyType$fragmentType;
-export type PropertyTypeFormField_propertyType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type PropertyTypeFormField_propertyType$ref: FragmentReference;
+declare export opaque type PropertyTypeFormField_propertyType$fragmentType: PropertyTypeFormField_propertyType$ref;
+export type PropertyTypeFormField_propertyType = {|
   +id: string,
   +name: string,
   +type: PropertyKind,
@@ -34,17 +37,18 @@ export type PropertyTypeFormField_propertyType$data = {|
   +isMandatory: ?boolean,
   +category: ?string,
   +isDeleted: ?boolean,
-  +$fragmentType: PropertyTypeFormField_propertyType$fragmentType,
+  +$refType: PropertyTypeFormField_propertyType$ref,
 |};
-export type PropertyTypeFormField_propertyType = PropertyTypeFormField_propertyType$data;
+export type PropertyTypeFormField_propertyType$data = PropertyTypeFormField_propertyType;
 export type PropertyTypeFormField_propertyType$key = {
   +$data?: PropertyTypeFormField_propertyType$data,
-  +$fragmentSpreads: PropertyTypeFormField_propertyType$fragmentType,
+  +$fragmentRefs: PropertyTypeFormField_propertyType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -180,10 +184,7 @@ var node/*: ReaderFragment*/ = {
   "type": "PropertyType",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = 'e9ebc13a5940b5ac262a1d0496f2253c';
 
-(node/*: any*/).hash = "e9ebc13a5940b5ac262a1d0496f2253c";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  PropertyTypeFormField_propertyType$fragmentType,
-  PropertyTypeFormField_propertyType$data,
->*/);
+module.exports = node;

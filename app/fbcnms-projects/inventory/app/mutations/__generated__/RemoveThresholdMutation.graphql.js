@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<abdbfdf87c8b45b3bf2e2a61a2dbe06a>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,22 +13,29 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type RemoveThresholdMutation$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type RemoveThresholdMutationVariables = {|
+  id: string
 |};
-export type RemoveThresholdMutationVariables = RemoveThresholdMutation$variables;
-export type RemoveThresholdMutation$data = {|
-  +removeThreshold: string,
+export type RemoveThresholdMutationResponse = {|
+  +removeThreshold: string
 |};
-export type RemoveThresholdMutationResponse = RemoveThresholdMutation$data;
 export type RemoveThresholdMutation = {|
   variables: RemoveThresholdMutationVariables,
-  response: RemoveThresholdMutation$data,
+  response: RemoveThresholdMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation RemoveThresholdMutation(
+  $id: ID!
+) {
+  removeThreshold(id: $id)
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -75,10 +85,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '787d8391415d17458e8d80f404f57bab';
 
-(node/*: any*/).hash = "787d8391415d17458e8d80f404f57bab";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  RemoveThresholdMutation$variables,
-  RemoveThresholdMutation$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<cd4252a55b64f3e1cdf3dc2e415d85bd>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,40 +13,41 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type EntityDocumentsTable_files$fragmentType = any;
-type EntityDocumentsTable_hyperlinks$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type LocationDocumentsCard_location$fragmentType: FragmentType;
-export type LocationDocumentsCard_location$ref = LocationDocumentsCard_location$fragmentType;
-export type LocationDocumentsCard_location$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type EntityDocumentsTable_files$ref = any;
+type EntityDocumentsTable_hyperlinks$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type LocationDocumentsCard_location$ref: FragmentReference;
+declare export opaque type LocationDocumentsCard_location$fragmentType: LocationDocumentsCard_location$ref;
+export type LocationDocumentsCard_location = {|
   +id: string,
   +images: $ReadOnlyArray<?{|
-    +$fragmentSpreads: EntityDocumentsTable_files$fragmentType,
+    +$fragmentRefs: EntityDocumentsTable_files$ref
   |}>,
   +files: $ReadOnlyArray<?{|
-    +$fragmentSpreads: EntityDocumentsTable_files$fragmentType,
+    +$fragmentRefs: EntityDocumentsTable_files$ref
   |}>,
   +hyperlinks: $ReadOnlyArray<{|
-    +$fragmentSpreads: EntityDocumentsTable_hyperlinks$fragmentType,
+    +$fragmentRefs: EntityDocumentsTable_hyperlinks$ref
   |}>,
   +locationType: {|
     +documentCategories: $ReadOnlyArray<?{|
       +id: string,
       +name: ?string,
-    |}>,
+    |}>
   |},
-  +$fragmentType: LocationDocumentsCard_location$fragmentType,
+  +$refType: LocationDocumentsCard_location$ref,
 |};
-export type LocationDocumentsCard_location = LocationDocumentsCard_location$data;
+export type LocationDocumentsCard_location$data = LocationDocumentsCard_location;
 export type LocationDocumentsCard_location$key = {
   +$data?: LocationDocumentsCard_location$data,
-  +$fragmentSpreads: LocationDocumentsCard_location$fragmentType,
+  +$fragmentRefs: LocationDocumentsCard_location$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -136,10 +140,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '133ac192485dd4df8ddabc306e27ef2c';
 
-(node/*: any*/).hash = "133ac192485dd4df8ddabc306e27ef2c";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  LocationDocumentsCard_location$fragmentType,
-  LocationDocumentsCard_location$data,
->*/);
+module.exports = node;

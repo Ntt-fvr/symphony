@@ -15,7 +15,7 @@ import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import nullthrows from '@fbcnms/util/nullthrows';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {useTokens} from './tokensHook';
 
 const locationTokenizerQuery = graphql`

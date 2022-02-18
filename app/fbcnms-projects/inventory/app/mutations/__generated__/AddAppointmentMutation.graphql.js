@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<760224679a3bfdd80d4d9a3b6ab47956>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type AddAppointmentInput = {|
   creatorId?: ?string,
   assigneeID: string,
@@ -18,15 +21,14 @@ export type AddAppointmentInput = {|
   date: any,
   duration: number,
 |};
-export type AddAppointmentMutation$variables = {|
-  input: AddAppointmentInput,
+export type AddAppointmentMutationVariables = {|
+  input: AddAppointmentInput
 |};
-export type AddAppointmentMutationVariables = AddAppointmentMutation$variables;
-export type AddAppointmentMutation$data = {|
+export type AddAppointmentMutationResponse = {|
   +addAppointment: {|
     +id: string,
     +workOrder: {|
-      +id: string,
+      +id: string
     |},
     +assignee: {|
       +id: string,
@@ -37,16 +39,38 @@ export type AddAppointmentMutation$data = {|
     |},
     +start: any,
     +end: any,
-  |},
+  |}
 |};
-export type AddAppointmentMutationResponse = AddAppointmentMutation$data;
 export type AddAppointmentMutation = {|
   variables: AddAppointmentMutationVariables,
-  response: AddAppointmentMutation$data,
+  response: AddAppointmentMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddAppointmentMutation(
+  $input: AddAppointmentInput!
+) {
+  addAppointment(input: $input) {
+    id
+    workOrder {
+      id
+    }
+    assignee {
+      id
+      authID
+      firstName
+      lastName
+      email
+    }
+    start
+    end
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -174,10 +198,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '6feed58e73f06e4f5d7d642dd30c5b81';
 
-(node/*: any*/).hash = "6feed58e73f06e4f5d7d642dd30c5b81";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddAppointmentMutation$variables,
-  AddAppointmentMutation$data,
->*/);
+module.exports = node;

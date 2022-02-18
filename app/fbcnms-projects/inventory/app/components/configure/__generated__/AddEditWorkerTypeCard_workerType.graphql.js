@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<1a4aa595fee9571dff656d33ad2d3615>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AddEditWorkerTypeCard_workerType$fragmentType: FragmentType;
-export type AddEditWorkerTypeCard_workerType$ref = AddEditWorkerTypeCard_workerType$fragmentType;
-export type AddEditWorkerTypeCard_workerType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type AddEditWorkerTypeCard_workerType$ref: FragmentReference;
+declare export opaque type AddEditWorkerTypeCard_workerType$fragmentType: AddEditWorkerTypeCard_workerType$ref;
+export type AddEditWorkerTypeCard_workerType = {|
   +id: string,
   +name: string,
   +description: ?string,
@@ -39,17 +42,18 @@ export type AddEditWorkerTypeCard_workerType$data = {|
     +isDeleted: ?boolean,
     +category: ?string,
   |}>,
-  +$fragmentType: AddEditWorkerTypeCard_workerType$fragmentType,
+  +$refType: AddEditWorkerTypeCard_workerType$ref,
 |};
-export type AddEditWorkerTypeCard_workerType = AddEditWorkerTypeCard_workerType$data;
+export type AddEditWorkerTypeCard_workerType$data = AddEditWorkerTypeCard_workerType;
 export type AddEditWorkerTypeCard_workerType$key = {
   +$data?: AddEditWorkerTypeCard_workerType$data,
-  +$fragmentSpreads: AddEditWorkerTypeCard_workerType$fragmentType,
+  +$fragmentRefs: AddEditWorkerTypeCard_workerType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -209,10 +213,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'a85547639aad9b3404a048703f2f62cc';
 
-(node/*: any*/).hash = "a85547639aad9b3404a048703f2f62cc";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  AddEditWorkerTypeCard_workerType$fragmentType,
-  AddEditWorkerTypeCard_workerType$data,
->*/);
+module.exports = node;

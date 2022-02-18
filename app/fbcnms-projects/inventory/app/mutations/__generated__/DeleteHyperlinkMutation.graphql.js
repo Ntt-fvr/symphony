@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<6fc1041e99b7c41ebe5917c4d058ec47>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,25 +13,54 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type HyperlinkTableRow_hyperlink$fragmentType = any;
-export type DeleteHyperlinkMutation$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+type HyperlinkTableRow_hyperlink$ref = any;
+export type DeleteHyperlinkMutationVariables = {|
+  id: string
 |};
-export type DeleteHyperlinkMutationVariables = DeleteHyperlinkMutation$variables;
-export type DeleteHyperlinkMutation$data = {|
+export type DeleteHyperlinkMutationResponse = {|
   +deleteHyperlink: {|
-    +$fragmentSpreads: HyperlinkTableRow_hyperlink$fragmentType,
-  |},
+    +$fragmentRefs: HyperlinkTableRow_hyperlink$ref
+  |}
 |};
-export type DeleteHyperlinkMutationResponse = DeleteHyperlinkMutation$data;
 export type DeleteHyperlinkMutation = {|
   variables: DeleteHyperlinkMutationVariables,
-  response: DeleteHyperlinkMutation$data,
+  response: DeleteHyperlinkMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation DeleteHyperlinkMutation(
+  $id: ID!
+) {
+  deleteHyperlink(id: $id) {
+    ...HyperlinkTableRow_hyperlink
+    id
+  }
+}
+
+fragment HyperlinkTableMenu_hyperlink on Hyperlink {
+  id
+  displayName
+  url
+}
+
+fragment HyperlinkTableRow_hyperlink on Hyperlink {
+  id
+  category
+  url
+  displayName
+  createTime
+  documentCategory {
+    id
+    name
+  }
+  ...HyperlinkTableMenu_hyperlink
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -154,10 +186,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'eea56538c03c8ce55b62e4e48331a303';
 
-(node/*: any*/).hash = "eea56538c03c8ce55b62e4e48331a303";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  DeleteHyperlinkMutation$variables,
-  DeleteHyperlinkMutation$data,
->*/);
+module.exports = node;
