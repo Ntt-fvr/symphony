@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<0feb30076d8528a98146ad72e51bfb2f>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type AddEditProjectTypeCard_editingProjectType$fragmentType = any;
-type ProjectTypeCard_projectType$fragmentType = any;
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditProjectTypeCard_editingProjectType$ref = any;
+type ProjectTypeCard_projectType$ref = any;
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditProjectTypeInput = {|
   id: string,
   name: string,
@@ -49,23 +52,82 @@ export type WorkOrderDefinitionInput = {|
   index?: ?number,
   type: string,
 |};
-export type EditProjectTypeMutation$variables = {|
-  input: EditProjectTypeInput,
+export type EditProjectTypeMutationVariables = {|
+  input: EditProjectTypeInput
 |};
-export type EditProjectTypeMutationVariables = EditProjectTypeMutation$variables;
-export type EditProjectTypeMutation$data = {|
+export type EditProjectTypeMutationResponse = {|
   +editProjectType: {|
-    +$fragmentSpreads: ProjectTypeCard_projectType$fragmentType & AddEditProjectTypeCard_editingProjectType$fragmentType,
-  |},
+    +$fragmentRefs: ProjectTypeCard_projectType$ref & AddEditProjectTypeCard_editingProjectType$ref
+  |}
 |};
-export type EditProjectTypeMutationResponse = EditProjectTypeMutation$data;
 export type EditProjectTypeMutation = {|
   variables: EditProjectTypeMutationVariables,
-  response: EditProjectTypeMutation$data,
+  response: EditProjectTypeMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditProjectTypeMutation(
+  $input: EditProjectTypeInput!
+) {
+  editProjectType(input: $input) {
+    ...ProjectTypeCard_projectType
+    ...AddEditProjectTypeCard_editingProjectType
+    id
+  }
+}
+
+fragment AddEditProjectTypeCard_editingProjectType on ProjectType {
+  id
+  name
+  description
+  workOrders {
+    id
+    type {
+      id
+      name
+      ...ProjectTypeWorkOrderTemplatesPanel_workOrderTypes
+    }
+  }
+  properties {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    isDeleted
+  }
+}
+
+fragment ProjectTypeCard_projectType on ProjectType {
+  id
+  name
+  description
+  numberOfProjects
+  workOrders {
+    id
+  }
+}
+
+fragment ProjectTypeWorkOrderTemplatesPanel_workOrderTypes on WorkOrderType {
+  id
+  name
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -314,10 +376,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'daec04ab717918a0f3359b70b60a4dd9';
 
-(node/*: any*/).hash = "daec04ab717918a0f3359b70b60a4dd9";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditProjectTypeMutation$variables,
-  EditProjectTypeMutation$data,
->*/);
+module.exports = node;

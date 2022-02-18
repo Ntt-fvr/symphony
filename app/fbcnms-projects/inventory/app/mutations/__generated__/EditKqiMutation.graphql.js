@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<8908360531febc2f1caed0f4ad6a23e3>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditKqiInput = {|
   id: string,
   name: string,
@@ -23,11 +26,10 @@ export type EditKqiInput = {|
   kqiSource: string,
   kqiTemporalFrequency: string,
 |};
-export type EditKqiMutation$variables = {|
-  input: EditKqiInput,
+export type EditKqiMutationVariables = {|
+  input: EditKqiInput
 |};
-export type EditKqiMutationVariables = EditKqiMutation$variables;
-export type EditKqiMutation$data = {|
+export type EditKqiMutationResponse = {|
   +editKqi: {|
     +id: string,
     +name: string,
@@ -51,16 +53,47 @@ export type EditKqiMutation$data = {|
       +id: string,
       +name: string,
     |},
-  |},
+  |}
 |};
-export type EditKqiMutationResponse = EditKqiMutation$data;
 export type EditKqiMutation = {|
   variables: EditKqiMutationVariables,
-  response: EditKqiMutation$data,
+  response: EditKqiMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditKqiMutation(
+  $input: EditKqiInput!
+) {
+  editKqi(input: $input) {
+    id
+    name
+    description
+    formula
+    startDateTime
+    endDateTime
+    kqiCategory {
+      id
+      name
+    }
+    kqiPerspective {
+      id
+      name
+    }
+    kqiSource {
+      id
+      name
+    }
+    kqiTemporalFrequency {
+      id
+      name
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -202,10 +235,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '468b7b4dec765f1ef791df8b337db1b0';
 
-(node/*: any*/).hash = "468b7b4dec765f1ef791df8b337db1b0";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditKqiMutation$variables,
-  EditKqiMutation$data,
->*/);
+module.exports = node;

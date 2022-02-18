@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<d85277b2b6395ed0cab42b8b24dcbce7>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type AddEditWorkOrderTypeCard_workOrderType$fragmentType = any;
-export type CheckListItemEnumSelectionMode = "single" | "multiple" | "%future added value";
-export type CheckListItemType = "simple" | "string" | "enum" | "files" | "yes_no" | "cell_scan" | "wifi_scan" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditWorkOrderTypeCard_workOrderType$ref = any;
+export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
+export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type AddWorkOrderTypeInput = {|
   name: string,
   description?: ?string,
@@ -62,26 +65,81 @@ export type CheckListDefinitionInput = {|
   enumSelectionMode?: ?CheckListItemEnumSelectionMode,
   helpText?: ?string,
 |};
-export type AddWorkOrderTypeMutation$variables = {|
-  input: AddWorkOrderTypeInput,
+export type AddWorkOrderTypeMutationVariables = {|
+  input: AddWorkOrderTypeInput
 |};
-export type AddWorkOrderTypeMutationVariables = AddWorkOrderTypeMutation$variables;
-export type AddWorkOrderTypeMutation$data = {|
+export type AddWorkOrderTypeMutationResponse = {|
   +addWorkOrderType: {|
     +id: string,
     +name: string,
     +description: ?string,
-    +$fragmentSpreads: AddEditWorkOrderTypeCard_workOrderType$fragmentType,
-  |},
+    +$fragmentRefs: AddEditWorkOrderTypeCard_workOrderType$ref,
+  |}
 |};
-export type AddWorkOrderTypeMutationResponse = AddWorkOrderTypeMutation$data;
 export type AddWorkOrderTypeMutation = {|
   variables: AddWorkOrderTypeMutationVariables,
-  response: AddWorkOrderTypeMutation$data,
+  response: AddWorkOrderTypeMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddWorkOrderTypeMutation(
+  $input: AddWorkOrderTypeInput!
+) {
+  addWorkOrderType(input: $input) {
+    id
+    name
+    description
+    ...AddEditWorkOrderTypeCard_workOrderType
+  }
+}
+
+fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
+  id
+  name
+  description
+  assigneeCanCompleteWorkOrder
+  numberOfWorkOrders
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    isDeleted
+    category
+  }
+  checkListCategoryDefinitions {
+    id
+    title
+    description
+    checklistItemDefinitions {
+      id
+      title
+      type
+      index
+      isMandatory
+      enumValues
+      enumSelectionMode
+      helpText
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -379,10 +437,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '1f296cdaf33a0807ddd00b2dd62f80b8';
 
-(node/*: any*/).hash = "1f296cdaf33a0807ddd00b2dd62f80b8";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddWorkOrderTypeMutation$variables,
-  AddWorkOrderTypeMutation$data,
->*/);
+module.exports = node;

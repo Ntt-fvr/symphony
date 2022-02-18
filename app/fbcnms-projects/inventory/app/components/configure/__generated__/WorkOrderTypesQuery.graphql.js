@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<fa870d3cb023573ac559e5d882d6e76c>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,30 +13,93 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AddEditWorkOrderTypeCard_workOrderType$fragmentType = any;
-export type WorkOrderTypesQuery$variables = {||};
-export type WorkOrderTypesQueryVariables = WorkOrderTypesQuery$variables;
-export type WorkOrderTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditWorkOrderTypeCard_workOrderType$ref = any;
+export type WorkOrderTypesQueryVariables = {||};
+export type WorkOrderTypesQueryResponse = {|
   +workOrderTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +description: ?string,
-        +$fragmentSpreads: AddEditWorkOrderTypeCard_workOrderType$fragmentType,
-      |},
-    |}>,
-  |},
+        +$fragmentRefs: AddEditWorkOrderTypeCard_workOrderType$ref,
+      |}
+    |}>
+  |}
 |};
-export type WorkOrderTypesQueryResponse = WorkOrderTypesQuery$data;
 export type WorkOrderTypesQuery = {|
   variables: WorkOrderTypesQueryVariables,
-  response: WorkOrderTypesQuery$data,
+  response: WorkOrderTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query WorkOrderTypesQuery {
+  workOrderTypes(first: 500) {
+    edges {
+      node {
+        id
+        name
+        description
+        ...AddEditWorkOrderTypeCard_workOrderType
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
+  id
+  name
+  description
+  assigneeCanCompleteWorkOrder
+  numberOfWorkOrders
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    isDeleted
+    category
+  }
+  checkListCategoryDefinitions {
+    id
+    title
+    description
+    checklistItemDefinitions {
+      id
+      title
+      type
+      index
+      isMandatory
+      enumValues
+      enumSelectionMode
+      helpText
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -163,12 +229,12 @@ return {
                   (v0/*: any*/),
                   (v1/*: any*/),
                   (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddEditWorkOrderTypeCard_workOrderType"
-                  },
-                  (v3/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -433,10 +499,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '3ccc96c93793d16a4cd794405847c2f5';
 
-(node/*: any*/).hash = "3ccc96c93793d16a4cd794405847c2f5";
-
-module.exports = ((node/*: any*/)/*: Query<
-  WorkOrderTypesQuery$variables,
-  WorkOrderTypesQuery$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<9d64dc1c57ff0455ba0e35d619a899d9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,24 +13,25 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ImageDialog_img$fragmentType: FragmentType;
-export type ImageDialog_img$ref = ImageDialog_img$fragmentType;
-export type ImageDialog_img$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ImageDialog_img$ref: FragmentReference;
+declare export opaque type ImageDialog_img$fragmentType: ImageDialog_img$ref;
+export type ImageDialog_img = {|
   +storeKey: ?string,
   +fileName: string,
-  +$fragmentType: ImageDialog_img$fragmentType,
+  +$refType: ImageDialog_img$ref,
 |};
-export type ImageDialog_img = ImageDialog_img$data;
+export type ImageDialog_img$data = ImageDialog_img;
 export type ImageDialog_img$key = {
   +$data?: ImageDialog_img$data,
-  +$fragmentSpreads: ImageDialog_img$fragmentType,
+  +$fragmentRefs: ImageDialog_img$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -51,10 +55,7 @@ var node/*: ReaderFragment*/ = {
   "type": "File",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '9df3ae53271a85ffc0bd704420104cc5';
 
-(node/*: any*/).hash = "9df3ae53271a85ffc0bd704420104cc5";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ImageDialog_img$fragmentType,
-  ImageDialog_img$data,
->*/);
+module.exports = node;

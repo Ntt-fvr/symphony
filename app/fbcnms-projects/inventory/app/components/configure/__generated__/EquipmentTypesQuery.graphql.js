@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<24a630a9ecf3491186014e411a881892>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,30 +13,159 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AddEditEquipmentTypeCard_editingEquipmentType$fragmentType = any;
-type EquipmentTypeItem_equipmentType$fragmentType = any;
-export type EquipmentTypesQuery$variables = {||};
-export type EquipmentTypesQueryVariables = EquipmentTypesQuery$variables;
-export type EquipmentTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditEquipmentTypeCard_editingEquipmentType$ref = any;
+type EquipmentTypeItem_equipmentType$ref = any;
+export type EquipmentTypesQueryVariables = {||};
+export type EquipmentTypesQueryResponse = {|
   +equipmentTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-        +$fragmentSpreads: EquipmentTypeItem_equipmentType$fragmentType & AddEditEquipmentTypeCard_editingEquipmentType$fragmentType,
-      |},
-    |}>,
-  |},
+        +$fragmentRefs: EquipmentTypeItem_equipmentType$ref & AddEditEquipmentTypeCard_editingEquipmentType$ref,
+      |}
+    |}>
+  |}
 |};
-export type EquipmentTypesQueryResponse = EquipmentTypesQuery$data;
 export type EquipmentTypesQuery = {|
   variables: EquipmentTypesQueryVariables,
-  response: EquipmentTypesQuery$data,
+  response: EquipmentTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query EquipmentTypesQuery {
+  equipmentTypes(first: 500) {
+    edges {
+      node {
+        id
+        name
+        ...EquipmentTypeItem_equipmentType
+        ...AddEditEquipmentTypeCard_editingEquipmentType
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+fragment AddEditEquipmentTypeCard_editingEquipmentType on EquipmentType {
+  id
+  name
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    isEditable
+    isInstanceProperty
+    isMandatory
+  }
+  positionDefinitions {
+    id
+    name
+    index
+    visibleLabel
+  }
+  portDefinitions {
+    id
+    name
+    index
+    visibleLabel
+    portType {
+      id
+      name
+    }
+    connectedPorts {
+      id
+      name
+    }
+  }
+  numberOfEquipment
+}
+
+fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
+  ...PropertyTypeFormField_propertyType
+  id
+  index
+}
+
+fragment EquipmentTypeItem_equipmentType on EquipmentType {
+  id
+  name
+  propertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+  positionDefinitions {
+    ...PositionDefinitionsTable_positionDefinitions
+    id
+  }
+  portDefinitions {
+    ...PortDefinitionsTable_portDefinitions
+    id
+  }
+  numberOfEquipment
+}
+
+fragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {
+  id
+  name
+  index
+  visibleLabel
+  portType {
+    id
+    name
+  }
+  connectedPorts {
+    id
+    name
+  }
+}
+
+fragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {
+  id
+  name
+  index
+  visibleLabel
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -145,6 +277,7 @@ return {
                 "selections": [
                   (v0/*: any*/),
                   (v1/*: any*/),
+                  (v2/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -154,8 +287,7 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddEditEquipmentTypeCard_editingEquipmentType"
-                  },
-                  (v2/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -423,10 +555,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'dce6a1e94bb8c2b2a9c536813b9d4488';
 
-(node/*: any*/).hash = "dce6a1e94bb8c2b2a9c536813b9d4488";
-
-module.exports = ((node/*: any*/)/*: Query<
-  EquipmentTypesQuery$variables,
-  EquipmentTypesQuery$data,
->*/);
+module.exports = node;

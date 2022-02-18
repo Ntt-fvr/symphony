@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<90099e355310a70da482c73a20af1487>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,43 +13,71 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type AddRuleItemFormQuery$variables = {||};
-export type AddRuleItemFormQueryVariables = AddRuleItemFormQuery$variables;
-export type AddRuleItemFormQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type AddRuleItemFormQueryVariables = {||};
+export type AddRuleItemFormQueryResponse = {|
   +eventSeverities: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +comparators: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +ruleTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
 |};
-export type AddRuleItemFormQueryResponse = AddRuleItemFormQuery$data;
 export type AddRuleItemFormQuery = {|
   variables: AddRuleItemFormQueryVariables,
-  response: AddRuleItemFormQuery$data,
+  response: AddRuleItemFormQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query AddRuleItemFormQuery {
+  eventSeverities {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  comparators {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  ruleTypes {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -188,10 +219,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '10ccdaae7cb934622ec9af64dd160b5b';
 
-(node/*: any*/).hash = "10ccdaae7cb934622ec9af64dd160b5b";
-
-module.exports = ((node/*: any*/)/*: Query<
-  AddRuleItemFormQuery$variables,
-  AddRuleItemFormQuery$data,
->*/);
+module.exports = node;

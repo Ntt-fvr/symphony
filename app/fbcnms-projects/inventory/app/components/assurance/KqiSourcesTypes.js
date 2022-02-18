@@ -14,7 +14,7 @@ import DeleteKqiSourceMutation from '../../mutations/DeleteKqiSourceMutation';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 import ConfigureTitle from './common/ConfigureTitle';
 import {Grid, List} from '@material-ui/core';

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<5d801786840fdbcd97efc5c142ce906e>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,28 +13,41 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type OrganizationsQuery$variables = {||};
-export type OrganizationsQueryVariables = OrganizationsQuery$variables;
-export type OrganizationsQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type OrganizationsQueryVariables = {||};
+export type OrganizationsQueryResponse = {|
   +organizations: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +description: string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type OrganizationsQueryResponse = OrganizationsQuery$data;
 export type OrganizationsQuery = {|
   variables: OrganizationsQueryVariables,
-  response: OrganizationsQuery$data,
+  response: OrganizationsQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query OrganizationsQuery {
+  organizations {
+    edges {
+      node {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -115,10 +131,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '4a1c59ed34170b2d33a06a610a3966e6';
 
-(node/*: any*/).hash = "4a1c59ed34170b2d33a06a610a3966e6";
-
-module.exports = ((node/*: any*/)/*: Query<
-  OrganizationsQuery$variables,
-  OrganizationsQuery$data,
->*/);
+module.exports = node;

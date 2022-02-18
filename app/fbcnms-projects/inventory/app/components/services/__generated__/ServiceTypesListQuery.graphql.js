@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<dd850c6f3144079575f7ba560eef0ac6>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,29 +13,48 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type DiscoveryMethod = "MANUAL" | "INVENTORY" | "%future added value";
-export type ServiceTypesListQuery$variables = {||};
-export type ServiceTypesListQueryVariables = ServiceTypesListQuery$variables;
-export type ServiceTypesListQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
+export type ServiceTypesListQueryVariables = {||};
+export type ServiceTypesListQueryResponse = {|
   +serviceTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +discoveryMethod: DiscoveryMethod,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type ServiceTypesListQueryResponse = ServiceTypesListQuery$data;
 export type ServiceTypesListQuery = {|
   variables: ServiceTypesListQueryVariables,
-  response: ServiceTypesListQuery$data,
+  response: ServiceTypesListQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ServiceTypesListQuery {
+  serviceTypes(first: 500) {
+    edges {
+      node {
+        id
+        name
+        discoveryMethod
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -193,10 +215,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'b6456da176f3cef0fee9aa727073135d';
 
-(node/*: any*/).hash = "b6456da176f3cef0fee9aa727073135d";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ServiceTypesListQuery$variables,
-  ServiceTypesListQuery$data,
->*/);
+module.exports = node;

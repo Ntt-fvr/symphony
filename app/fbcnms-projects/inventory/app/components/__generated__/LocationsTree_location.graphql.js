@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<112b342b526ae7fd165f38b7f496d7bb>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type LocationsTree_location$fragmentType: FragmentType;
-export type LocationsTree_location$ref = LocationsTree_location$fragmentType;
-export type LocationsTree_location$data = {
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type LocationsTree_location$ref: FragmentReference;
+declare export opaque type LocationsTree_location$fragmentType: LocationsTree_location$ref;
+export type LocationsTree_location = {
   +id: string,
   +externalId: ?string,
   +name: string,
@@ -27,15 +30,16 @@ export type LocationsTree_location$data = {
   +siteSurveyNeeded: boolean,
   ...
 };
-export type LocationsTree_location = LocationsTree_location$data;
+export type LocationsTree_location$data = LocationsTree_location;
 export type LocationsTree_location$key = {
   +$data?: LocationsTree_location$data,
-  +$fragmentSpreads: LocationsTree_location$fragmentType,
+  +$fragmentRefs: LocationsTree_location$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -99,10 +103,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '5f66e0c34ff91e14429645285c63ea7f';
 
-(node/*: any*/).hash = "5f66e0c34ff91e14429645285c63ea7f";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  LocationsTree_location$fragmentType,
-  LocationsTree_location$data,
->*/);
+module.exports = node;

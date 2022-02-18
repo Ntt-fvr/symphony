@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<885c7119201f11b22b1302e796af0d88>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
+import type { ReaderFragment } from 'relay-runtime';
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type EquipmentPropertiesCard_position$fragmentType: FragmentType;
-export type EquipmentPropertiesCard_position$ref = EquipmentPropertiesCard_position$fragmentType;
-export type EquipmentPropertiesCard_position$data = {
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type EquipmentPropertiesCard_position$ref: FragmentReference;
+declare export opaque type EquipmentPropertiesCard_position$fragmentType: EquipmentPropertiesCard_position$ref;
+export type EquipmentPropertiesCard_position = {
   +id: string,
   +definition: {
     +id: string,
@@ -38,15 +41,16 @@ export type EquipmentPropertiesCard_position$data = {
   },
   ...
 };
-export type EquipmentPropertiesCard_position = EquipmentPropertiesCard_position$data;
+export type EquipmentPropertiesCard_position$data = EquipmentPropertiesCard_position;
 export type EquipmentPropertiesCard_position$key = {
   +$data?: EquipmentPropertiesCard_position$data,
-  +$fragmentSpreads: EquipmentPropertiesCard_position$fragmentType,
+  +$fragmentRefs: EquipmentPropertiesCard_position$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -141,10 +145,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'd1e6f2ef9ef3182e98188066491a9856';
 
-(node/*: any*/).hash = "d1e6f2ef9ef3182e98188066491a9856";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  EquipmentPropertiesCard_position$fragmentType,
-  EquipmentPropertiesCard_position$data,
->*/);
+module.exports = node;

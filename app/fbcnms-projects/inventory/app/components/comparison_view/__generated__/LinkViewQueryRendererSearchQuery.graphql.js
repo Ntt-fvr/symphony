@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<65e4b305d6533dce2742875fafe16fad>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type PowerSearchLinksResultsTable_links$fragmentType = any;
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type LinkFilterType = "LINK_FUTURE_STATUS" | "EQUIPMENT_TYPE" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "EQUIPMENT_INST" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type PowerSearchLinksResultsTable_links$ref = any;
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type LinkFilterType = "EQUIPMENT_INST" | "EQUIPMENT_TYPE" | "LINK_FUTURE_STATUS" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type LinkFilterInput = {|
   filterType: LinkFilterType,
   operator: FilterOperator,
@@ -47,29 +50,169 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type LinkViewQueryRendererSearchQuery$variables = {|
+export type LinkViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<LinkFilterInput>,
 |};
-export type LinkViewQueryRendererSearchQueryVariables = LinkViewQueryRendererSearchQuery$variables;
-export type LinkViewQueryRendererSearchQuery$data = {|
+export type LinkViewQueryRendererSearchQueryResponse = {|
   +links: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentSpreads: PowerSearchLinksResultsTable_links$fragmentType,
-      |},
+        +$fragmentRefs: PowerSearchLinksResultsTable_links$ref
+      |}
     |}>,
     +totalCount: number,
-  |},
+  |}
 |};
-export type LinkViewQueryRendererSearchQueryResponse = LinkViewQueryRendererSearchQuery$data;
 export type LinkViewQueryRendererSearchQuery = {|
   variables: LinkViewQueryRendererSearchQueryVariables,
-  response: LinkViewQueryRendererSearchQuery$data,
+  response: LinkViewQueryRendererSearchQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LinkViewQueryRendererSearchQuery(
+  $limit: Int
+  $filters: [LinkFilterInput!]!
+) {
+  links(first: $limit, filterBy: $filters) {
+    edges {
+      node {
+        ...PowerSearchLinksResultsTable_links
+        id
+      }
+    }
+    totalCount
+  }
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment PowerSearchLinksResultsTable_links on Link {
+  id
+  futureState
+  ports {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+      portType {
+        linkPropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        id
+      }
+    }
+    parentEquipment {
+      id
+      name
+      futureState
+      equipmentType {
+        id
+        name
+        portDefinitions {
+          id
+          name
+          visibleLabel
+          bandwidth
+          portType {
+            id
+            name
+          }
+        }
+      }
+      ...EquipmentBreadcrumbs_equipment
+    }
+  }
+  properties {
+    id
+    stringValue
+    intValue
+    floatValue
+    booleanValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    propertyType {
+      id
+      name
+      type
+      nodeType
+      isEditable
+      isInstanceProperty
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+    }
+  }
+  workOrder {
+    id
+    status
+  }
+  services {
+    id
+    name
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -623,10 +766,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '0aac6b3cedfb9b89f5e29a03679b0a09';
 
-(node/*: any*/).hash = "0aac6b3cedfb9b89f5e29a03679b0a09";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LinkViewQueryRendererSearchQuery$variables,
-  LinkViewQueryRendererSearchQuery$data,
->*/);
+module.exports = node;

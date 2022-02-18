@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<980358159ef8be8d8ffbd40e3756cfd4>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType: FragmentType;
-export type AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref = AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType;
-export type AddEditEquipmentPortTypeCard_editingEquipmentPortType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref: FragmentReference;
+declare export opaque type AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType: AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref;
+export type AddEditEquipmentPortTypeCard_editingEquipmentPortType = {|
   +id: string,
   +name: string,
   +numberOfPortDefinitions: number,
@@ -49,17 +52,18 @@ export type AddEditEquipmentPortTypeCard_editingEquipmentPortType$data = {|
     +isEditable: ?boolean,
     +isInstanceProperty: ?boolean,
   |}>,
-  +$fragmentType: AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType,
+  +$refType: AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref,
 |};
-export type AddEditEquipmentPortTypeCard_editingEquipmentPortType = AddEditEquipmentPortTypeCard_editingEquipmentPortType$data;
+export type AddEditEquipmentPortTypeCard_editingEquipmentPortType$data = AddEditEquipmentPortTypeCard_editingEquipmentPortType;
 export type AddEditEquipmentPortTypeCard_editingEquipmentPortType$key = {
   +$data?: AddEditEquipmentPortTypeCard_editingEquipmentPortType$data,
-  +$fragmentSpreads: AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType,
+  +$fragmentRefs: AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -195,10 +199,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '7ac4f29ced9bfcf2b8395e8a95c58b15';
 
-(node/*: any*/).hash = "7ac4f29ced9bfcf2b8395e8a95c58b15";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType,
-  AddEditEquipmentPortTypeCard_editingEquipmentPortType$data,
->*/);
+module.exports = node;

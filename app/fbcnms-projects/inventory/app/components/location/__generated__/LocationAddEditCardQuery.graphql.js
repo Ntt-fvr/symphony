@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<6b2c7074b5442a7f70047088b3986233>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type LocationAddEditCardQuery$variables = {|
-  locationId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type LocationAddEditCardQueryVariables = {|
+  locationId: string
 |};
-export type LocationAddEditCardQueryVariables = LocationAddEditCardQuery$variables;
-export type LocationAddEditCardQuery$data = {|
+export type LocationAddEditCardQueryResponse = {|
   +location: ?{|
     +id?: string,
     +name?: string,
@@ -80,16 +82,92 @@ export type LocationAddEditCardQuery$data = {|
         +name: string,
       |},
     |}>,
-  |},
+  |}
 |};
-export type LocationAddEditCardQueryResponse = LocationAddEditCardQuery$data;
 export type LocationAddEditCardQuery = {|
   variables: LocationAddEditCardQueryVariables,
-  response: LocationAddEditCardQuery$data,
+  response: LocationAddEditCardQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationAddEditCardQuery(
+  $locationId: ID!
+) {
+  location: node(id: $locationId) {
+    __typename
+    ... on Location {
+      id
+      name
+      latitude
+      longitude
+      externalId
+      locationType {
+        id
+        name
+        mapType
+        mapZoomLevel
+        propertyTypes {
+          id
+          name
+          index
+          isInstanceProperty
+          type
+          nodeType
+          stringValue
+          intValue
+          floatValue
+          booleanValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isMandatory
+        }
+      }
+      equipments {
+        id
+        name
+        equipmentType {
+          id
+          name
+        }
+      }
+      properties {
+        id
+        propertyType {
+          id
+          name
+          type
+          nodeType
+          index
+          isEditable
+          isInstanceProperty
+          stringValue
+          isMandatory
+        }
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        nodeValue {
+          __typename
+          id
+          name
+        }
+      }
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -489,10 +567,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'abfd7091b5c16d02b59c1efa02e234f2';
 
-(node/*: any*/).hash = "abfd7091b5c16d02b59c1efa02e234f2";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationAddEditCardQuery$variables,
-  LocationAddEditCardQuery$data,
->*/);
+module.exports = node;

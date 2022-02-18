@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<beacbf6478e0bf44289a4c11f0fdc700>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AddEditEquipmentTypeCard_editingEquipmentType$fragmentType: FragmentType;
-export type AddEditEquipmentTypeCard_editingEquipmentType$ref = AddEditEquipmentTypeCard_editingEquipmentType$fragmentType;
-export type AddEditEquipmentTypeCard_editingEquipmentType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type AddEditEquipmentTypeCard_editingEquipmentType$ref: FragmentReference;
+declare export opaque type AddEditEquipmentTypeCard_editingEquipmentType$fragmentType: AddEditEquipmentTypeCard_editingEquipmentType$ref;
+export type AddEditEquipmentTypeCard_editingEquipmentType = {|
   +id: string,
   +name: string,
   +propertyTypes: $ReadOnlyArray<?{|
@@ -55,17 +58,18 @@ export type AddEditEquipmentTypeCard_editingEquipmentType$data = {|
     |}>,
   |}>,
   +numberOfEquipment: number,
-  +$fragmentType: AddEditEquipmentTypeCard_editingEquipmentType$fragmentType,
+  +$refType: AddEditEquipmentTypeCard_editingEquipmentType$ref,
 |};
-export type AddEditEquipmentTypeCard_editingEquipmentType = AddEditEquipmentTypeCard_editingEquipmentType$data;
+export type AddEditEquipmentTypeCard_editingEquipmentType$data = AddEditEquipmentTypeCard_editingEquipmentType;
 export type AddEditEquipmentTypeCard_editingEquipmentType$key = {
   +$data?: AddEditEquipmentTypeCard_editingEquipmentType$data,
-  +$fragmentSpreads: AddEditEquipmentTypeCard_editingEquipmentType$fragmentType,
+  +$fragmentRefs: AddEditEquipmentTypeCard_editingEquipmentType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -259,10 +263,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '226ffe758520c11d9f13e40b845252bc';
 
-(node/*: any*/).hash = "226ffe758520c11d9f13e40b845252bc";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  AddEditEquipmentTypeCard_editingEquipmentType$fragmentType,
-  AddEditEquipmentTypeCard_editingEquipmentType$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<c751eb32d0871e56e69d7be65ec88cef>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,18 +13,17 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditThresholdInput = {|
   id: string,
   name: string,
   description: string,
   status: boolean,
 |};
-export type EditThresholdMutation$variables = {|
-  input: EditThresholdInput,
+export type EditThresholdMutationVariables = {|
+  input: EditThresholdInput
 |};
-export type EditThresholdMutationVariables = EditThresholdMutation$variables;
-export type EditThresholdMutation$data = {|
+export type EditThresholdMutationResponse = {|
   +editThreshold: {|
     +id: string,
     +name: string,
@@ -31,16 +33,33 @@ export type EditThresholdMutation$data = {|
       +id: string,
       +name: string,
     |},
-  |},
+  |}
 |};
-export type EditThresholdMutationResponse = EditThresholdMutation$data;
 export type EditThresholdMutation = {|
   variables: EditThresholdMutationVariables,
-  response: EditThresholdMutation$data,
+  response: EditThresholdMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditThresholdMutation(
+  $input: EditThresholdInput!
+) {
+  editThreshold(input: $input) {
+    id
+    name
+    description
+    status
+    kpi {
+      id
+      name
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -137,10 +156,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '183dcd24d2f824d040b92b5a51f55222';
 
-(node/*: any*/).hash = "183dcd24d2f824d040b92b5a51f55222";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditThresholdMutation$variables,
-  EditThresholdMutation$data,
->*/);
+module.exports = node;

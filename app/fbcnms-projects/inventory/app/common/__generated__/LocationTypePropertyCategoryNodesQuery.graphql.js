@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<08a5b5dd235a74443c990502dc076f40>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,27 +13,39 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type LocationTypePropertyCategoryNodesQuery$variables = {||};
-export type LocationTypePropertyCategoryNodesQueryVariables = LocationTypePropertyCategoryNodesQuery$variables;
-export type LocationTypePropertyCategoryNodesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type LocationTypePropertyCategoryNodesQueryVariables = {||};
+export type LocationTypePropertyCategoryNodesQueryResponse = {|
   +propertyCategories: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: ?string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type LocationTypePropertyCategoryNodesQueryResponse = LocationTypePropertyCategoryNodesQuery$data;
 export type LocationTypePropertyCategoryNodesQuery = {|
   variables: LocationTypePropertyCategoryNodesQueryVariables,
-  response: LocationTypePropertyCategoryNodesQuery$data,
+  response: LocationTypePropertyCategoryNodesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationTypePropertyCategoryNodesQuery {
+  propertyCategories {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -107,10 +122,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '73a1971915682f7fb8e8fd94636c1165';
 
-(node/*: any*/).hash = "73a1971915682f7fb8e8fd94636c1165";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationTypePropertyCategoryNodesQuery$variables,
-  LocationTypePropertyCategoryNodesQuery$data,
->*/);
+module.exports = node;

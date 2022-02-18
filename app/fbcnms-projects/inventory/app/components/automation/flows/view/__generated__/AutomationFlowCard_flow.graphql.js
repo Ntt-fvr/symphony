@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<75552c6ef11b47b8fb97ed90945d138f>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type FlowNewInstancesPolicy = "ENABLED" | "DISABLED" | "%future added value";
-export type FlowStatus = "PUBLISHED" | "UNPUBLISHED" | "ARCHIVED" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AutomationFlowCard_flow$fragmentType: FragmentType;
-export type AutomationFlowCard_flow$ref = AutomationFlowCard_flow$fragmentType;
-export type AutomationFlowCard_flow$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type FlowNewInstancesPolicy = "DISABLED" | "ENABLED" | "%future added value";
+export type FlowStatus = "ARCHIVED" | "PUBLISHED" | "UNPUBLISHED" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type AutomationFlowCard_flow$ref: FragmentReference;
+declare export opaque type AutomationFlowCard_flow$fragmentType: AutomationFlowCard_flow$ref;
+export type AutomationFlowCard_flow = {|
   +id: string,
   +name: string,
   +description: ?string,
@@ -26,17 +29,18 @@ export type AutomationFlowCard_flow$data = {|
     +id: string,
     +sameAsFlow: boolean,
   |},
-  +$fragmentType: AutomationFlowCard_flow$fragmentType,
+  +$refType: AutomationFlowCard_flow$ref,
 |};
-export type AutomationFlowCard_flow = AutomationFlowCard_flow$data;
+export type AutomationFlowCard_flow$data = AutomationFlowCard_flow;
 export type AutomationFlowCard_flow$key = {
   +$data?: AutomationFlowCard_flow$data,
-  +$fragmentSpreads: AutomationFlowCard_flow$fragmentType,
+  +$fragmentRefs: AutomationFlowCard_flow$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -103,10 +107,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '0195fe5bd257450ba0ebfd27dcd0abe3';
 
-(node/*: any*/).hash = "0195fe5bd257450ba0ebfd27dcd0abe3";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  AutomationFlowCard_flow$fragmentType,
-  AutomationFlowCard_flow$data,
->*/);
+module.exports = node;

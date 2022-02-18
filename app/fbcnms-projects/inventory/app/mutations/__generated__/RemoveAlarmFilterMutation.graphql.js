@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<8aaefc39dedff3212560c3c3da0e601f>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,22 +13,29 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type RemoveAlarmFilterMutation$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type RemoveAlarmFilterMutationVariables = {|
+  id: string
 |};
-export type RemoveAlarmFilterMutationVariables = RemoveAlarmFilterMutation$variables;
-export type RemoveAlarmFilterMutation$data = {|
-  +removeAlarmFilter: string,
+export type RemoveAlarmFilterMutationResponse = {|
+  +removeAlarmFilter: string
 |};
-export type RemoveAlarmFilterMutationResponse = RemoveAlarmFilterMutation$data;
 export type RemoveAlarmFilterMutation = {|
   variables: RemoveAlarmFilterMutationVariables,
-  response: RemoveAlarmFilterMutation$data,
+  response: RemoveAlarmFilterMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation RemoveAlarmFilterMutation(
+  $id: ID!
+) {
+  removeAlarmFilter(id: $id)
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -75,10 +85,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e8a235cbfd33583725253244ec9ddd94';
 
-(node/*: any*/).hash = "e8a235cbfd33583725253244ec9ddd94";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  RemoveAlarmFilterMutation$variables,
-  RemoveAlarmFilterMutation$data,
->*/);
+module.exports = node;

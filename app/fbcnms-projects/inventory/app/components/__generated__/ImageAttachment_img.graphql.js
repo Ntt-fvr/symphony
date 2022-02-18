@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<38ab38297225fc1e5c4cf633847ef1d5>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type ImageDialog_img$fragmentType = any;
-export type FileType = "IMAGE" | "FILE" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ImageAttachment_img$fragmentType: FragmentType;
-export type ImageAttachment_img$ref = ImageAttachment_img$fragmentType;
-export type ImageAttachment_img$data = {
+import type { ReaderFragment } from 'relay-runtime';
+type ImageDialog_img$ref = any;
+export type FileType = "FILE" | "IMAGE" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ImageAttachment_img$ref: FragmentReference;
+declare export opaque type ImageAttachment_img$fragmentType: ImageAttachment_img$ref;
+export type ImageAttachment_img = {
   +id: string,
   +fileName: string,
   +sizeInBytes: ?number,
@@ -24,18 +27,19 @@ export type ImageAttachment_img$data = {
   +fileType: ?FileType,
   +storeKey: ?string,
   +category: ?string,
-  +$fragmentSpreads: ImageDialog_img$fragmentType,
+  +$fragmentRefs: ImageDialog_img$ref,
   ...
 };
-export type ImageAttachment_img = ImageAttachment_img$data;
+export type ImageAttachment_img$data = ImageAttachment_img;
 export type ImageAttachment_img$key = {
   +$data?: ImageAttachment_img$data,
-  +$fragmentSpreads: ImageAttachment_img$fragmentType,
+  +$fragmentRefs: ImageAttachment_img$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -101,10 +105,7 @@ var node/*: ReaderFragment*/ = {
   "type": "File",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '94d064d47a4a69874394dea293d6bf62';
 
-(node/*: any*/).hash = "94d064d47a4a69874394dea293d6bf62";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ImageAttachment_img$fragmentType,
-  ImageAttachment_img$data,
->*/);
+module.exports = node;

@@ -19,7 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
 import RelayEnvironment from '../common/RelayEnvironment.js';
 import RouterIcon from '@material-ui/icons/Router';
-import {fetchQuery, graphql} from '../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<302fa86c5e2a7410de1f9f0cd52d5279>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,28 +13,29 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type PropertyFormField_property$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type DynamicPropertiesGrid_properties$fragmentType: FragmentType;
-export type DynamicPropertiesGrid_properties$ref = DynamicPropertiesGrid_properties$fragmentType;
-export type DynamicPropertiesGrid_properties$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+type PropertyFormField_property$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type DynamicPropertiesGrid_properties$ref: FragmentReference;
+declare export opaque type DynamicPropertiesGrid_properties$fragmentType: DynamicPropertiesGrid_properties$ref;
+export type DynamicPropertiesGrid_properties = $ReadOnlyArray<{|
   +propertyType: {|
     +id: string,
     +index: ?number,
   |},
-  +$fragmentSpreads: PropertyFormField_property$fragmentType,
-  +$fragmentType: DynamicPropertiesGrid_properties$fragmentType,
+  +$fragmentRefs: PropertyFormField_property$ref,
+  +$refType: DynamicPropertiesGrid_properties$ref,
 |}>;
-export type DynamicPropertiesGrid_properties = DynamicPropertiesGrid_properties$data;
+export type DynamicPropertiesGrid_properties$data = DynamicPropertiesGrid_properties;
 export type DynamicPropertiesGrid_properties$key = $ReadOnlyArray<{
   +$data?: DynamicPropertiesGrid_properties$data,
-  +$fragmentSpreads: DynamicPropertiesGrid_properties$fragmentType,
+  +$fragmentRefs: DynamicPropertiesGrid_properties$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -39,11 +43,6 @@ var node/*: ReaderFragment*/ = {
   },
   "name": "DynamicPropertiesGrid_properties",
   "selections": [
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "PropertyFormField_property"
-    },
     {
       "alias": null,
       "args": null,
@@ -68,15 +67,17 @@ var node/*: ReaderFragment*/ = {
         }
       ],
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "PropertyFormField_property"
     }
   ],
   "type": "Property",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '7b83547f439381a2346b2b5c487b5134';
 
-(node/*: any*/).hash = "7b83547f439381a2346b2b5c487b5134";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  DynamicPropertiesGrid_properties$fragmentType,
-  DynamicPropertiesGrid_properties$data,
->*/);
+module.exports = node;

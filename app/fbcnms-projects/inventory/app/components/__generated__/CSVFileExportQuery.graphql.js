@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<8b8c9117a11319df18b9504adca7634f>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,27 +13,42 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type ExportStatus = "PENDING" | "IN_PROGRESS" | "SUCCEEDED" | "FAILED" | "%future added value";
-export type CSVFileExportQuery$variables = {|
-  taskId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type ExportStatus = "FAILED" | "IN_PROGRESS" | "PENDING" | "SUCCEEDED" | "%future added value";
+export type CSVFileExportQueryVariables = {|
+  taskId: string
 |};
-export type CSVFileExportQueryVariables = CSVFileExportQuery$variables;
-export type CSVFileExportQuery$data = {|
+export type CSVFileExportQueryResponse = {|
   +task: ?{|
     +id?: string,
     +status?: ExportStatus,
     +progress?: number,
-  |},
+  |}
 |};
-export type CSVFileExportQueryResponse = CSVFileExportQuery$data;
 export type CSVFileExportQuery = {|
   variables: CSVFileExportQueryVariables,
-  response: CSVFileExportQuery$data,
+  response: CSVFileExportQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query CSVFileExportQuery(
+  $taskId: ID!
+) {
+  task: node(id: $taskId) {
+    __typename
+    ... on ExportTask {
+      id
+      status
+      progress
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -144,10 +162,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '0e0cc7aeb35079d37a437ccd497243dc';
 
-(node/*: any*/).hash = "0e0cc7aeb35079d37a437ccd497243dc";
-
-module.exports = ((node/*: any*/)/*: Query<
-  CSVFileExportQuery$variables,
-  CSVFileExportQuery$data,
->*/);
+module.exports = node;

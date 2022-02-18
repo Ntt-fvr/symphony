@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<b614c421cd53d69907e38d44bbb90e1d>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,26 +13,56 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type EquipmentPropertiesCard_position$fragmentType = any;
-export type RemoveEquipmentFromPositionMutation$variables = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type EquipmentPropertiesCard_position$ref = any;
+export type RemoveEquipmentFromPositionMutationVariables = {|
   position_id: string,
   work_order_id?: ?string,
 |};
-export type RemoveEquipmentFromPositionMutationVariables = RemoveEquipmentFromPositionMutation$variables;
-export type RemoveEquipmentFromPositionMutation$data = {|
+export type RemoveEquipmentFromPositionMutationResponse = {|
   +removeEquipmentFromPosition: {|
-    +$fragmentSpreads: EquipmentPropertiesCard_position$fragmentType,
-  |},
+    +$fragmentRefs: EquipmentPropertiesCard_position$ref
+  |}
 |};
-export type RemoveEquipmentFromPositionMutationResponse = RemoveEquipmentFromPositionMutation$data;
 export type RemoveEquipmentFromPositionMutation = {|
   variables: RemoveEquipmentFromPositionMutationVariables,
-  response: RemoveEquipmentFromPositionMutation$data,
+  response: RemoveEquipmentFromPositionMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation RemoveEquipmentFromPositionMutation(
+  $position_id: ID!
+  $work_order_id: ID
+) {
+  removeEquipmentFromPosition(positionId: $position_id, workOrderId: $work_order_id) {
+    ...EquipmentPropertiesCard_position
+    id
+  }
+}
+
+fragment EquipmentPropertiesCard_position on EquipmentPosition {
+  id
+  definition {
+    id
+    name
+    index
+    visibleLabel
+  }
+  attachedEquipment {
+    id
+    name
+    futureState
+    workOrder {
+      id
+      status
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -191,10 +224,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '1f8d76215413ec45214f82f0beebb61b';
 
-(node/*: any*/).hash = "d186a2a7a210e4281b5091e52bc5138b";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  RemoveEquipmentFromPositionMutation$variables,
-  RemoveEquipmentFromPositionMutation$data,
->*/);
+module.exports = node;

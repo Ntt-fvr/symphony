@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<7623bf8965017eb3f8edd9da3e7d526c>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,51 +13,87 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type AddFormulaItemFormQuery$variables = {||};
-export type AddFormulaItemFormQueryVariables = AddFormulaItemFormQuery$variables;
-export type AddFormulaItemFormQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type AddFormulaItemFormQueryVariables = {||};
+export type AddFormulaItemFormQueryResponse = {|
   +kpis: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +vendors: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +techs: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +networkTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
 |};
-export type AddFormulaItemFormQueryResponse = AddFormulaItemFormQuery$data;
 export type AddFormulaItemFormQuery = {|
   variables: AddFormulaItemFormQueryVariables,
-  response: AddFormulaItemFormQuery$data,
+  response: AddFormulaItemFormQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query AddFormulaItemFormQuery {
+  kpis {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  vendors {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  techs {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  networkTypes {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -228,10 +267,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '1a271a36b7f64330e684f3f06de4f5b5';
 
-(node/*: any*/).hash = "1a271a36b7f64330e684f3f06de4f5b5";
-
-module.exports = ((node/*: any*/)/*: Query<
-  AddFormulaItemFormQuery$variables,
-  AddFormulaItemFormQuery$data,
->*/);
+module.exports = node;

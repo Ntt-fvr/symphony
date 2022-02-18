@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<65726954f67555b079533bfe6bccef6a>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,8 +13,8 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ServiceTypeEditData = {|
   id: string,
   name: string,
@@ -49,11 +52,10 @@ export type ServiceEndpointDefinitionInput = {|
   index: number,
   equipmentTypeID: string,
 |};
-export type EditServiceTypeMutation$variables = {|
-  data: ServiceTypeEditData,
+export type EditServiceTypeMutationVariables = {|
+  data: ServiceTypeEditData
 |};
-export type EditServiceTypeMutationVariables = EditServiceTypeMutation$variables;
-export type EditServiceTypeMutation$data = {|
+export type EditServiceTypeMutationResponse = {|
   +editServiceType: {|
     +id: string,
     +name: string,
@@ -87,16 +89,57 @@ export type EditServiceTypeMutation$data = {|
         +name: string,
       |},
     |}>,
-  |},
+  |}
 |};
-export type EditServiceTypeMutationResponse = EditServiceTypeMutation$data;
 export type EditServiceTypeMutation = {|
   variables: EditServiceTypeMutationVariables,
-  response: EditServiceTypeMutation$data,
+  response: EditServiceTypeMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditServiceTypeMutation(
+  $data: ServiceTypeEditData!
+) {
+  editServiceType(data: $data) {
+    id
+    name
+    propertyTypes {
+      id
+      name
+      type
+      nodeType
+      index
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isEditable
+      isInstanceProperty
+      isMandatory
+      category
+      isDeleted
+    }
+    endpointDefinitions {
+      id
+      name
+      role
+      index
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -326,10 +369,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '52080020a26a9e4e43dc488816bd10eb';
 
-(node/*: any*/).hash = "52080020a26a9e4e43dc488816bd10eb";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditServiceTypeMutation$variables,
-  EditServiceTypeMutation$data,
->*/);
+module.exports = node;
