@@ -56434,21 +56434,21 @@ func (m *ResourceSpecificationItemsMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ResourceSpecificationRelationshipMutation struct {
 	config
-	op                                         Op
-	typ                                        string
-	id                                         *int
-	create_time                                *time.Time
-	update_time                                *time.Time
-	name                                       *string
-	clearedFields                              map[string]struct{}
-	resourcespecification                      *int
-	clearedresourcespecification               bool
-	resource_specification_relationship        map[int]struct{}
-	removedresource_specification_relationship map[int]struct{}
-	clearedresource_specification_relationship bool
-	done                                       bool
-	oldValue                                   func(context.Context) (*ResourceSpecificationRelationship, error)
-	predicates                                 []predicate.ResourceSpecificationRelationship
+	op                           Op
+	typ                          string
+	id                           *int
+	create_time                  *time.Time
+	update_time                  *time.Time
+	name                         *string
+	clearedFields                map[string]struct{}
+	resourcespecification        *int
+	clearedresourcespecification bool
+	resource_sr                  map[int]struct{}
+	removedresource_sr           map[int]struct{}
+	clearedresource_sr           bool
+	done                         bool
+	oldValue                     func(context.Context) (*ResourceSpecificationRelationship, error)
+	predicates                   []predicate.ResourceSpecificationRelationship
 }
 
 var _ ent.Mutation = (*ResourceSpecificationRelationshipMutation)(nil)
@@ -56680,57 +56680,57 @@ func (m *ResourceSpecificationRelationshipMutation) ResetResourcespecification()
 	m.clearedresourcespecification = false
 }
 
-// AddResourceSpecificationRelationshipIDs adds the resource_specification_relationship edge to ResourceSpecificationItems by ids.
-func (m *ResourceSpecificationRelationshipMutation) AddResourceSpecificationRelationshipIDs(ids ...int) {
-	if m.resource_specification_relationship == nil {
-		m.resource_specification_relationship = make(map[int]struct{})
+// AddResourceSrIDs adds the resource_sr edge to ResourceSpecificationItems by ids.
+func (m *ResourceSpecificationRelationshipMutation) AddResourceSrIDs(ids ...int) {
+	if m.resource_sr == nil {
+		m.resource_sr = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.resource_specification_relationship[ids[i]] = struct{}{}
+		m.resource_sr[ids[i]] = struct{}{}
 	}
 }
 
-// ClearResourceSpecificationRelationship clears the resource_specification_relationship edge to ResourceSpecificationItems.
-func (m *ResourceSpecificationRelationshipMutation) ClearResourceSpecificationRelationship() {
-	m.clearedresource_specification_relationship = true
+// ClearResourceSr clears the resource_sr edge to ResourceSpecificationItems.
+func (m *ResourceSpecificationRelationshipMutation) ClearResourceSr() {
+	m.clearedresource_sr = true
 }
 
-// ResourceSpecificationRelationshipCleared returns if the edge resource_specification_relationship was cleared.
-func (m *ResourceSpecificationRelationshipMutation) ResourceSpecificationRelationshipCleared() bool {
-	return m.clearedresource_specification_relationship
+// ResourceSrCleared returns if the edge resource_sr was cleared.
+func (m *ResourceSpecificationRelationshipMutation) ResourceSrCleared() bool {
+	return m.clearedresource_sr
 }
 
-// RemoveResourceSpecificationRelationshipIDs removes the resource_specification_relationship edge to ResourceSpecificationItems by ids.
-func (m *ResourceSpecificationRelationshipMutation) RemoveResourceSpecificationRelationshipIDs(ids ...int) {
-	if m.removedresource_specification_relationship == nil {
-		m.removedresource_specification_relationship = make(map[int]struct{})
+// RemoveResourceSrIDs removes the resource_sr edge to ResourceSpecificationItems by ids.
+func (m *ResourceSpecificationRelationshipMutation) RemoveResourceSrIDs(ids ...int) {
+	if m.removedresource_sr == nil {
+		m.removedresource_sr = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedresource_specification_relationship[ids[i]] = struct{}{}
+		m.removedresource_sr[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedResourceSpecificationRelationship returns the removed ids of resource_specification_relationship.
-func (m *ResourceSpecificationRelationshipMutation) RemovedResourceSpecificationRelationshipIDs() (ids []int) {
-	for id := range m.removedresource_specification_relationship {
+// RemovedResourceSr returns the removed ids of resource_sr.
+func (m *ResourceSpecificationRelationshipMutation) RemovedResourceSrIDs() (ids []int) {
+	for id := range m.removedresource_sr {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResourceSpecificationRelationshipIDs returns the resource_specification_relationship ids in the mutation.
-func (m *ResourceSpecificationRelationshipMutation) ResourceSpecificationRelationshipIDs() (ids []int) {
-	for id := range m.resource_specification_relationship {
+// ResourceSrIDs returns the resource_sr ids in the mutation.
+func (m *ResourceSpecificationRelationshipMutation) ResourceSrIDs() (ids []int) {
+	for id := range m.resource_sr {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetResourceSpecificationRelationship reset all changes of the "resource_specification_relationship" edge.
-func (m *ResourceSpecificationRelationshipMutation) ResetResourceSpecificationRelationship() {
-	m.resource_specification_relationship = nil
-	m.clearedresource_specification_relationship = false
-	m.removedresource_specification_relationship = nil
+// ResetResourceSr reset all changes of the "resource_sr" edge.
+func (m *ResourceSpecificationRelationshipMutation) ResetResourceSr() {
+	m.resource_sr = nil
+	m.clearedresource_sr = false
+	m.removedresource_sr = nil
 }
 
 // Op returns the operation name.
@@ -56886,8 +56886,8 @@ func (m *ResourceSpecificationRelationshipMutation) AddedEdges() []string {
 	if m.resourcespecification != nil {
 		edges = append(edges, resourcespecificationrelationship.EdgeResourcespecification)
 	}
-	if m.resource_specification_relationship != nil {
-		edges = append(edges, resourcespecificationrelationship.EdgeResourceSpecificationRelationship)
+	if m.resource_sr != nil {
+		edges = append(edges, resourcespecificationrelationship.EdgeResourceSr)
 	}
 	return edges
 }
@@ -56900,9 +56900,9 @@ func (m *ResourceSpecificationRelationshipMutation) AddedIDs(name string) []ent.
 		if id := m.resourcespecification; id != nil {
 			return []ent.Value{*id}
 		}
-	case resourcespecificationrelationship.EdgeResourceSpecificationRelationship:
-		ids := make([]ent.Value, 0, len(m.resource_specification_relationship))
-		for id := range m.resource_specification_relationship {
+	case resourcespecificationrelationship.EdgeResourceSr:
+		ids := make([]ent.Value, 0, len(m.resource_sr))
+		for id := range m.resource_sr {
 			ids = append(ids, id)
 		}
 		return ids
@@ -56914,8 +56914,8 @@ func (m *ResourceSpecificationRelationshipMutation) AddedIDs(name string) []ent.
 // mutation.
 func (m *ResourceSpecificationRelationshipMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removedresource_specification_relationship != nil {
-		edges = append(edges, resourcespecificationrelationship.EdgeResourceSpecificationRelationship)
+	if m.removedresource_sr != nil {
+		edges = append(edges, resourcespecificationrelationship.EdgeResourceSr)
 	}
 	return edges
 }
@@ -56924,9 +56924,9 @@ func (m *ResourceSpecificationRelationshipMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *ResourceSpecificationRelationshipMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case resourcespecificationrelationship.EdgeResourceSpecificationRelationship:
-		ids := make([]ent.Value, 0, len(m.removedresource_specification_relationship))
-		for id := range m.removedresource_specification_relationship {
+	case resourcespecificationrelationship.EdgeResourceSr:
+		ids := make([]ent.Value, 0, len(m.removedresource_sr))
+		for id := range m.removedresource_sr {
 			ids = append(ids, id)
 		}
 		return ids
@@ -56941,8 +56941,8 @@ func (m *ResourceSpecificationRelationshipMutation) ClearedEdges() []string {
 	if m.clearedresourcespecification {
 		edges = append(edges, resourcespecificationrelationship.EdgeResourcespecification)
 	}
-	if m.clearedresource_specification_relationship {
-		edges = append(edges, resourcespecificationrelationship.EdgeResourceSpecificationRelationship)
+	if m.clearedresource_sr {
+		edges = append(edges, resourcespecificationrelationship.EdgeResourceSr)
 	}
 	return edges
 }
@@ -56953,8 +56953,8 @@ func (m *ResourceSpecificationRelationshipMutation) EdgeCleared(name string) boo
 	switch name {
 	case resourcespecificationrelationship.EdgeResourcespecification:
 		return m.clearedresourcespecification
-	case resourcespecificationrelationship.EdgeResourceSpecificationRelationship:
-		return m.clearedresource_specification_relationship
+	case resourcespecificationrelationship.EdgeResourceSr:
+		return m.clearedresource_sr
 	}
 	return false
 }
@@ -56978,8 +56978,8 @@ func (m *ResourceSpecificationRelationshipMutation) ResetEdge(name string) error
 	case resourcespecificationrelationship.EdgeResourcespecification:
 		m.ResetResourcespecification()
 		return nil
-	case resourcespecificationrelationship.EdgeResourceSpecificationRelationship:
-		m.ResetResourceSpecificationRelationship()
+	case resourcespecificationrelationship.EdgeResourceSr:
+		m.ResetResourceSr()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecificationRelationship edge %s", name)

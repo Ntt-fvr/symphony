@@ -421,7 +421,7 @@ func (rsiq *ResourceSpecificationItemsQuery) sqlAll(ctx context.Context) ([]*Res
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*ResourceSpecificationItems)
 		for i := range nodes {
-			if fk := nodes[i].resource_specification_relationship_resource_specification_relationship; fk != nil {
+			if fk := nodes[i].resource_specification_relationship_resource_sr; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -434,7 +434,7 @@ func (rsiq *ResourceSpecificationItemsQuery) sqlAll(ctx context.Context) ([]*Res
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_relationship_resource_specification_relationship" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_relationship_resource_sr" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcespecificationrelationship = n

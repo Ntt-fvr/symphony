@@ -2283,7 +2283,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "resource_specification_resource_specification_items", Type: field.TypeInt, Nullable: true},
-		{Name: "resource_specification_relationship_resource_specification_relationship", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_specification_relationship_resource_sr", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceSpecificationItemsTable holds the schema information for the "resource_specification_items" table.
 	ResourceSpecificationItemsTable = &schema.Table{
@@ -2299,7 +2299,7 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "resource_specification_items_resource_specification_relationships_resource_specification_relationship",
+				Symbol:  "resource_specification_items_resource_specification_relationships_resource_sr",
 				Columns: []*schema.Column{ResourceSpecificationItemsColumns[4]},
 
 				RefColumns: []*schema.Column{ResourceSpecificationRelationshipsColumns[0]},

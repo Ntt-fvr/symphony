@@ -26,7 +26,7 @@ func (r resourceSpecificationRelationshipResolver) ResourceSpecification(ctx con
 }
 
 func (r resourceSpecificationRelationshipResolver) ResourceSpecificationItems(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) ([]*ent.ResourceSpecificationItems, error) {
-	variable, err := resourceSpecificationRelationship.ResourceSpecificationRelationship(ctx)
+	variable, err := resourceSpecificationRelationship.ResourceSr(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
 	}

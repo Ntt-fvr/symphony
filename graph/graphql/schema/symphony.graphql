@@ -9378,12 +9378,12 @@ input ResourceSpecificationRelationshipFilterInput {
 type ResourceSpecificationItems implements Node {
   id: ID!
   resourceSpecificationRelationship: ResourceSpecificationRelationship!
-  resourceSpecification: ResourceSpecification!
+  resourceSpecification: ResourceSpecification
 }
 
 input AddResourceSpecificationItemsInput {  
   resourceSpecificationRelationship: ID!
-  resourceSpecification: ID!
+  resourceSpecification: ID
 }
 
 input EditResourceSpecificationItemsInput {

@@ -28,9 +28,9 @@ type ResourceSpecificationItems struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceSpecificationItemsQuery when eager-loading is set.
-	Edges                                                                   ResourceSpecificationItemsEdges `json:"edges"`
-	resource_specification_resource_specification_items                     *int
-	resource_specification_relationship_resource_specification_relationship *int
+	Edges                                               ResourceSpecificationItemsEdges `json:"edges"`
+	resource_specification_resource_specification_items *int
+	resource_specification_relationship_resource_sr     *int
 }
 
 // ResourceSpecificationItemsEdges holds the relations/edges for other nodes in the graph.
@@ -85,7 +85,7 @@ func (*ResourceSpecificationItems) scanValues() []interface{} {
 func (*ResourceSpecificationItems) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // resource_specification_resource_specification_items
-		&sql.NullInt64{}, // resource_specification_relationship_resource_specification_relationship
+		&sql.NullInt64{}, // resource_specification_relationship_resource_sr
 	}
 }
 
@@ -120,10 +120,10 @@ func (rsi *ResourceSpecificationItems) assignValues(values ...interface{}) error
 			*rsi.resource_specification_resource_specification_items = int(value.Int64)
 		}
 		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_specification_relationship_resource_specification_relationship", value)
+			return fmt.Errorf("unexpected type %T for edge-field resource_specification_relationship_resource_sr", value)
 		} else if value.Valid {
-			rsi.resource_specification_relationship_resource_specification_relationship = new(int)
-			*rsi.resource_specification_relationship_resource_specification_relationship = int(value.Int64)
+			rsi.resource_specification_relationship_resource_sr = new(int)
+			*rsi.resource_specification_relationship_resource_sr = int(value.Int64)
 		}
 	}
 	return nil

@@ -26,8 +26,8 @@ const (
 
 	// EdgeResourcespecification holds the string denoting the resourcespecification edge name in mutations.
 	EdgeResourcespecification = "resourcespecification"
-	// EdgeResourceSpecificationRelationship holds the string denoting the resource_specification_relationship edge name in mutations.
-	EdgeResourceSpecificationRelationship = "resource_specification_relationship"
+	// EdgeResourceSr holds the string denoting the resource_sr edge name in mutations.
+	EdgeResourceSr = "resource_sr"
 
 	// Table holds the table name of the resourcespecificationrelationship in the database.
 	Table = "resource_specification_relationships"
@@ -38,13 +38,13 @@ const (
 	ResourcespecificationInverseTable = "resource_specifications"
 	// ResourcespecificationColumn is the table column denoting the resourcespecification relation/edge.
 	ResourcespecificationColumn = "resource_specification_resource_specification"
-	// ResourceSpecificationRelationshipTable is the table the holds the resource_specification_relationship relation/edge.
-	ResourceSpecificationRelationshipTable = "resource_specification_items"
-	// ResourceSpecificationRelationshipInverseTable is the table name for the ResourceSpecificationItems entity.
+	// ResourceSrTable is the table the holds the resource_sr relation/edge.
+	ResourceSrTable = "resource_specification_items"
+	// ResourceSrInverseTable is the table name for the ResourceSpecificationItems entity.
 	// It exists in this package in order to avoid circular dependency with the "resourcespecificationitems" package.
-	ResourceSpecificationRelationshipInverseTable = "resource_specification_items"
-	// ResourceSpecificationRelationshipColumn is the table column denoting the resource_specification_relationship relation/edge.
-	ResourceSpecificationRelationshipColumn = "resource_specification_relationship_resource_specification_relationship"
+	ResourceSrInverseTable = "resource_specification_items"
+	// ResourceSrColumn is the table column denoting the resource_sr relation/edge.
+	ResourceSrColumn = "resource_specification_relationship_resource_sr"
 )
 
 // Columns holds all SQL columns for resourcespecificationrelationship fields.

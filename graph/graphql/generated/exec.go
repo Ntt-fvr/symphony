@@ -24057,12 +24057,12 @@ input ResourceSpecificationRelationshipFilterInput {
 type ResourceSpecificationItems implements Node {
   id: ID!
   resourceSpecificationRelationship: ResourceSpecificationRelationship!
-  resourceSpecification: ResourceSpecification!
+  resourceSpecification: ResourceSpecification
 }
 
 input AddResourceSpecificationItemsInput {  
   resourceSpecificationRelationship: ID!
-  resourceSpecification: ID!
+  resourceSpecification: ID
 }
 
 input EditResourceSpecificationItemsInput {
@@ -72224,14 +72224,11 @@ func (ec *executionContext) _ResourceSpecificationItems_resourceSpecification(ct
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*ent.ResourceSpecification)
 	fc.Result = res
-	return ec.marshalNResourceSpecification2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx, field.Selections, res)
+	return ec.marshalOResourceSpecification2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceSpecificationItemsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationItemsConnection) (ret graphql.Marshaler) {
@@ -89072,7 +89069,7 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationItemsInput(ctx
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
-			it.ResourceSpecification, err = ec.unmarshalNID2int(ctx, v)
+			it.ResourceSpecification, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -112500,9 +112497,6 @@ func (ec *executionContext) _ResourceSpecificationItems(ctx context.Context, sel
 					}
 				}()
 				res = ec._ResourceSpecificationItems_resourceSpecification(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			})
 		default:

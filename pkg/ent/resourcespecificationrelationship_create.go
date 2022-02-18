@@ -79,19 +79,19 @@ func (rsrc *ResourceSpecificationRelationshipCreate) SetResourcespecification(r 
 	return rsrc.SetResourcespecificationID(r.ID)
 }
 
-// AddResourceSpecificationRelationshipIDs adds the resource_specification_relationship edge to ResourceSpecificationItems by ids.
-func (rsrc *ResourceSpecificationRelationshipCreate) AddResourceSpecificationRelationshipIDs(ids ...int) *ResourceSpecificationRelationshipCreate {
-	rsrc.mutation.AddResourceSpecificationRelationshipIDs(ids...)
+// AddResourceSrIDs adds the resource_sr edge to ResourceSpecificationItems by ids.
+func (rsrc *ResourceSpecificationRelationshipCreate) AddResourceSrIDs(ids ...int) *ResourceSpecificationRelationshipCreate {
+	rsrc.mutation.AddResourceSrIDs(ids...)
 	return rsrc
 }
 
-// AddResourceSpecificationRelationship adds the resource_specification_relationship edges to ResourceSpecificationItems.
-func (rsrc *ResourceSpecificationRelationshipCreate) AddResourceSpecificationRelationship(r ...*ResourceSpecificationItems) *ResourceSpecificationRelationshipCreate {
+// AddResourceSr adds the resource_sr edges to ResourceSpecificationItems.
+func (rsrc *ResourceSpecificationRelationshipCreate) AddResourceSr(r ...*ResourceSpecificationItems) *ResourceSpecificationRelationshipCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rsrc.AddResourceSpecificationRelationshipIDs(ids...)
+	return rsrc.AddResourceSrIDs(ids...)
 }
 
 // Mutation returns the ResourceSpecificationRelationshipMutation object of the builder.
@@ -242,12 +242,12 @@ func (rsrc *ResourceSpecificationRelationshipCreate) createSpec() (*ResourceSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rsrc.mutation.ResourceSpecificationRelationshipIDs(); len(nodes) > 0 {
+	if nodes := rsrc.mutation.ResourceSrIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecificationrelationship.ResourceSpecificationRelationshipTable,
-			Columns: []string{resourcespecificationrelationship.ResourceSpecificationRelationshipColumn},
+			Table:   resourcespecificationrelationship.ResourceSrTable,
+			Columns: []string{resourcespecificationrelationship.ResourceSrColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

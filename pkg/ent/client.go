@@ -10525,15 +10525,15 @@ func (c *ResourceSpecificationRelationshipClient) QueryResourcespecification(rsr
 	return query
 }
 
-// QueryResourceSpecificationRelationship queries the resource_specification_relationship edge of a ResourceSpecificationRelationship.
-func (c *ResourceSpecificationRelationshipClient) QueryResourceSpecificationRelationship(rsr *ResourceSpecificationRelationship) *ResourceSpecificationItemsQuery {
+// QueryResourceSr queries the resource_sr edge of a ResourceSpecificationRelationship.
+func (c *ResourceSpecificationRelationshipClient) QueryResourceSr(rsr *ResourceSpecificationRelationship) *ResourceSpecificationItemsQuery {
 	query := &ResourceSpecificationItemsQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := rsr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID, id),
 			sqlgraph.To(resourcespecificationitems.Table, resourcespecificationitems.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecificationrelationship.ResourceSpecificationRelationshipTable, resourcespecificationrelationship.ResourceSpecificationRelationshipColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecificationrelationship.ResourceSrTable, resourcespecificationrelationship.ResourceSrColumn),
 		)
 		fromV = sqlgraph.Neighbors(rsr.driver.Dialect(), step)
 		return fromV, nil

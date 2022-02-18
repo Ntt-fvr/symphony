@@ -38,7 +38,7 @@ func (r mutationResolver) AddResourceSpecificationItems(ctx context.Context, inp
 	typ, err := client.
 		ResourceSpecificationItems.Create().
 		SetResourcespecificationrelationshipID(input.ResourceSpecificationRelationship).
-		SetResourcespecificationitemsID(input.ResourceSpecification).
+		SetNillableResourcespecificationitemsID(input.ResourceSpecification).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {

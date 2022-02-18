@@ -20,7 +20,7 @@ type ResourceSpecificationItems struct {
 func (ResourceSpecificationItems) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("resourcespecificationrelationship", ResourceSpecificationRelationship.Type).
-			Ref("resource_specification_relationship").Unique(),
+			Ref("resource_sr").Unique(),
 		edge.From("resourcespecificationitems", ResourceSpecification.Type).
 			Ref("resource_specification_items").Unique(),
 	}

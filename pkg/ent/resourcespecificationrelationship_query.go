@@ -31,9 +31,9 @@ type ResourceSpecificationRelationshipQuery struct {
 	unique     []string
 	predicates []predicate.ResourceSpecificationRelationship
 	// eager-loading edges.
-	withResourcespecification             *ResourceSpecificationQuery
-	withResourceSpecificationRelationship *ResourceSpecificationItemsQuery
-	withFKs                               bool
+	withResourcespecification *ResourceSpecificationQuery
+	withResourceSr            *ResourceSpecificationItemsQuery
+	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -85,8 +85,8 @@ func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourcespecification()
 	return query
 }
 
-// QueryResourceSpecificationRelationship chains the current query on the resource_specification_relationship edge.
-func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourceSpecificationRelationship() *ResourceSpecificationItemsQuery {
+// QueryResourceSr chains the current query on the resource_sr edge.
+func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourceSr() *ResourceSpecificationItemsQuery {
 	query := &ResourceSpecificationItemsQuery{config: rsrq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rsrq.prepareQuery(ctx); err != nil {
@@ -99,7 +99,7 @@ func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourceSpecificationRe
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID, selector),
 			sqlgraph.To(resourcespecificationitems.Table, resourcespecificationitems.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecificationrelationship.ResourceSpecificationRelationshipTable, resourcespecificationrelationship.ResourceSpecificationRelationshipColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecificationrelationship.ResourceSrTable, resourcespecificationrelationship.ResourceSrColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsrq.driver.Dialect(), step)
 		return fromU, nil
@@ -277,14 +277,14 @@ func (rsrq *ResourceSpecificationRelationshipQuery) Clone() *ResourceSpecificati
 		return nil
 	}
 	return &ResourceSpecificationRelationshipQuery{
-		config:                                rsrq.config,
-		limit:                                 rsrq.limit,
-		offset:                                rsrq.offset,
-		order:                                 append([]OrderFunc{}, rsrq.order...),
-		unique:                                append([]string{}, rsrq.unique...),
-		predicates:                            append([]predicate.ResourceSpecificationRelationship{}, rsrq.predicates...),
-		withResourcespecification:             rsrq.withResourcespecification.Clone(),
-		withResourceSpecificationRelationship: rsrq.withResourceSpecificationRelationship.Clone(),
+		config:                    rsrq.config,
+		limit:                     rsrq.limit,
+		offset:                    rsrq.offset,
+		order:                     append([]OrderFunc{}, rsrq.order...),
+		unique:                    append([]string{}, rsrq.unique...),
+		predicates:                append([]predicate.ResourceSpecificationRelationship{}, rsrq.predicates...),
+		withResourcespecification: rsrq.withResourcespecification.Clone(),
+		withResourceSr:            rsrq.withResourceSr.Clone(),
 		// clone intermediate query.
 		sql:  rsrq.sql.Clone(),
 		path: rsrq.path,
@@ -302,14 +302,14 @@ func (rsrq *ResourceSpecificationRelationshipQuery) WithResourcespecification(op
 	return rsrq
 }
 
-//  WithResourceSpecificationRelationship tells the query-builder to eager-loads the nodes that are connected to
-// the "resource_specification_relationship" edge. The optional arguments used to configure the query builder of the edge.
-func (rsrq *ResourceSpecificationRelationshipQuery) WithResourceSpecificationRelationship(opts ...func(*ResourceSpecificationItemsQuery)) *ResourceSpecificationRelationshipQuery {
+//  WithResourceSr tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_sr" edge. The optional arguments used to configure the query builder of the edge.
+func (rsrq *ResourceSpecificationRelationshipQuery) WithResourceSr(opts ...func(*ResourceSpecificationItemsQuery)) *ResourceSpecificationRelationshipQuery {
 	query := &ResourceSpecificationItemsQuery{config: rsrq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rsrq.withResourceSpecificationRelationship = query
+	rsrq.withResourceSr = query
 	return rsrq
 }
 
@@ -385,7 +385,7 @@ func (rsrq *ResourceSpecificationRelationshipQuery) sqlAll(ctx context.Context) 
 		_spec       = rsrq.querySpec()
 		loadedTypes = [2]bool{
 			rsrq.withResourcespecification != nil,
-			rsrq.withResourceSpecificationRelationship != nil,
+			rsrq.withResourceSr != nil,
 		}
 	)
 	if rsrq.withResourcespecification != nil {
@@ -443,32 +443,32 @@ func (rsrq *ResourceSpecificationRelationshipQuery) sqlAll(ctx context.Context) 
 		}
 	}
 
-	if query := rsrq.withResourceSpecificationRelationship; query != nil {
+	if query := rsrq.withResourceSr; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*ResourceSpecificationRelationship)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceSpecificationRelationship = []*ResourceSpecificationItems{}
+			nodes[i].Edges.ResourceSr = []*ResourceSpecificationItems{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ResourceSpecificationItems(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcespecificationrelationship.ResourceSpecificationRelationshipColumn, fks...))
+			s.Where(sql.InValues(resourcespecificationrelationship.ResourceSrColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.resource_specification_relationship_resource_specification_relationship
+			fk := n.resource_specification_relationship_resource_sr
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_specification_relationship_resource_specification_relationship" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "resource_specification_relationship_resource_sr" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_relationship_resource_specification_relationship" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_relationship_resource_sr" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.ResourceSpecificationRelationship = append(node.Edges.ResourceSpecificationRelationship, n)
+			node.Edges.ResourceSr = append(node.Edges.ResourceSr, n)
 		}
 	}
 

@@ -379,8 +379,8 @@ type AddResourceSpecificationInput struct {
 }
 
 type AddResourceSpecificationItemsInput struct {
-	ResourceSpecificationRelationship int `json:"resourceSpecificationRelationship"`
-	ResourceSpecification             int `json:"resourceSpecification"`
+	ResourceSpecificationRelationship int  `json:"resourceSpecificationRelationship"`
+	ResourceSpecification             *int `json:"resourceSpecification"`
 }
 
 type AddResourceSpecificationRelationShipListInput struct {

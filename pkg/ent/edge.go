@@ -1768,10 +1768,10 @@ func (rsr *ResourceSpecificationRelationship) Resourcespecification(ctx context.
 	return result, MaskNotFound(err)
 }
 
-func (rsr *ResourceSpecificationRelationship) ResourceSpecificationRelationship(ctx context.Context) ([]*ResourceSpecificationItems, error) {
-	result, err := rsr.Edges.ResourceSpecificationRelationshipOrErr()
+func (rsr *ResourceSpecificationRelationship) ResourceSr(ctx context.Context) ([]*ResourceSpecificationItems, error) {
+	result, err := rsr.Edges.ResourceSrOrErr()
 	if IsNotLoaded(err) {
-		result, err = rsr.QueryResourceSpecificationRelationship().All(ctx)
+		result, err = rsr.QueryResourceSr().All(ctx)
 	}
 	return result, err
 }

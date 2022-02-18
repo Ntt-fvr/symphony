@@ -1396,7 +1396,7 @@ func (rsr *ResourceSpecificationRelationshipQuery) collectField(ctx *graphql.Ope
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "resourcespecificationrelationship":
-			rsr = rsr.WithResourceSpecificationRelationship(func(query *ResourceSpecificationItemsQuery) {
+			rsr = rsr.WithResourceSr(func(query *ResourceSpecificationItemsQuery) {
 				query.collectField(ctx, field)
 			})
 		}

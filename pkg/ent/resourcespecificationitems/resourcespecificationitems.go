@@ -35,7 +35,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "resourcespecificationrelationship" package.
 	ResourcespecificationrelationshipInverseTable = "resource_specification_relationships"
 	// ResourcespecificationrelationshipColumn is the table column denoting the resourcespecificationrelationship relation/edge.
-	ResourcespecificationrelationshipColumn = "resource_specification_relationship_resource_specification_relationship"
+	ResourcespecificationrelationshipColumn = "resource_specification_relationship_resource_sr"
 	// ResourcespecificationitemsTable is the table the holds the resourcespecificationitems relation/edge.
 	ResourcespecificationitemsTable = "resource_specification_items"
 	// ResourcespecificationitemsInverseTable is the table name for the ResourceSpecification entity.
@@ -55,7 +55,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceSpecificationItems type.
 var ForeignKeys = []string{
 	"resource_specification_resource_specification_items",
-	"resource_specification_relationship_resource_specification_relationship",
+	"resource_specification_relationship_resource_sr",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

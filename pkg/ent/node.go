@@ -6112,9 +6112,9 @@ func (rsr *ResourceSpecificationRelationship) Node(ctx context.Context) (node *N
 	}
 	node.Edges[1] = &Edge{
 		Type: "ResourceSpecificationItems",
-		Name: "resource_specification_relationship",
+		Name: "resource_sr",
 	}
-	node.Edges[1].IDs, err = rsr.QueryResourceSpecificationRelationship().
+	node.Edges[1].IDs, err = rsr.QueryResourceSr().
 		Select(resourcespecificationitems.FieldID).
 		Ints(ctx)
 	if err != nil {

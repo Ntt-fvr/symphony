@@ -409,25 +409,25 @@ func HasResourcespecificationWith(preds ...predicate.ResourceSpecification) pred
 	})
 }
 
-// HasResourceSpecificationRelationship applies the HasEdge predicate on the "resource_specification_relationship" edge.
-func HasResourceSpecificationRelationship() predicate.ResourceSpecificationRelationship {
+// HasResourceSr applies the HasEdge predicate on the "resource_sr" edge.
+func HasResourceSr() predicate.ResourceSpecificationRelationship {
 	return predicate.ResourceSpecificationRelationship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceSpecificationRelationshipTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationRelationshipTable, ResourceSpecificationRelationshipColumn),
+			sqlgraph.To(ResourceSrTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSrTable, ResourceSrColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasResourceSpecificationRelationshipWith applies the HasEdge predicate on the "resource_specification_relationship" edge with a given conditions (other predicates).
-func HasResourceSpecificationRelationshipWith(preds ...predicate.ResourceSpecificationItems) predicate.ResourceSpecificationRelationship {
+// HasResourceSrWith applies the HasEdge predicate on the "resource_sr" edge with a given conditions (other predicates).
+func HasResourceSrWith(preds ...predicate.ResourceSpecificationItems) predicate.ResourceSpecificationRelationship {
 	return predicate.ResourceSpecificationRelationship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourceSpecificationRelationshipInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationRelationshipTable, ResourceSpecificationRelationshipColumn),
+			sqlgraph.To(ResourceSrInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSrTable, ResourceSrColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

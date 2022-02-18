@@ -37,8 +37,8 @@ type ResourceSpecificationRelationship struct {
 type ResourceSpecificationRelationshipEdges struct {
 	// Resourcespecification holds the value of the resourcespecification edge.
 	Resourcespecification *ResourceSpecification
-	// ResourceSpecificationRelationship holds the value of the resource_specification_relationship edge.
-	ResourceSpecificationRelationship []*ResourceSpecificationItems
+	// ResourceSr holds the value of the resource_sr edge.
+	ResourceSr []*ResourceSpecificationItems
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -58,13 +58,13 @@ func (e ResourceSpecificationRelationshipEdges) ResourcespecificationOrErr() (*R
 	return nil, &NotLoadedError{edge: "resourcespecification"}
 }
 
-// ResourceSpecificationRelationshipOrErr returns the ResourceSpecificationRelationship value or an error if the edge
+// ResourceSrOrErr returns the ResourceSr value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceSpecificationRelationshipEdges) ResourceSpecificationRelationshipOrErr() ([]*ResourceSpecificationItems, error) {
+func (e ResourceSpecificationRelationshipEdges) ResourceSrOrErr() ([]*ResourceSpecificationItems, error) {
 	if e.loadedTypes[1] {
-		return e.ResourceSpecificationRelationship, nil
+		return e.ResourceSr, nil
 	}
-	return nil, &NotLoadedError{edge: "resource_specification_relationship"}
+	return nil, &NotLoadedError{edge: "resource_sr"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -128,9 +128,9 @@ func (rsr *ResourceSpecificationRelationship) QueryResourcespecification() *Reso
 	return (&ResourceSpecificationRelationshipClient{config: rsr.config}).QueryResourcespecification(rsr)
 }
 
-// QueryResourceSpecificationRelationship queries the resource_specification_relationship edge of the ResourceSpecificationRelationship.
-func (rsr *ResourceSpecificationRelationship) QueryResourceSpecificationRelationship() *ResourceSpecificationItemsQuery {
-	return (&ResourceSpecificationRelationshipClient{config: rsr.config}).QueryResourceSpecificationRelationship(rsr)
+// QueryResourceSr queries the resource_sr edge of the ResourceSpecificationRelationship.
+func (rsr *ResourceSpecificationRelationship) QueryResourceSr() *ResourceSpecificationItemsQuery {
+	return (&ResourceSpecificationRelationshipClient{config: rsr.config}).QueryResourceSr(rsr)
 }
 
 // Update returns a builder for updating this ResourceSpecificationRelationship.
