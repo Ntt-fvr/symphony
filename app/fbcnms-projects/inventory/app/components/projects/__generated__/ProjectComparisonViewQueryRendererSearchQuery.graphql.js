@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<785dbf3c7b5c1aca15db331552b30f91>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,14 +13,14 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type ProjectsMap_projects$fragmentType = any;
-type ProjectsTableView_query$fragmentType = any;
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type ProjectsMap_projects$ref = any;
+type ProjectsTableView_query$ref = any;
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type ProjectFilterType = "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_TYPE" | "LOCATION_INST" | "PROJECT_PRIORITY" | "PROPERTY" | "%future added value";
-export type ProjectOrderField = "NAME" | "CREATED_AT" | "UPDATED_AT" | "PRIORITY" | "PROPERTY" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "PROPERTY" | "%future added value";
+export type ProjectOrderField = "CREATED_AT" | "NAME" | "PRIORITY" | "PROPERTY" | "UPDATED_AT" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
   operator: FilterOperator,
@@ -54,33 +57,131 @@ export type ProjectOrder = {|
   direction: OrderDirection,
   field?: ?ProjectOrderField,
 |};
-export type ProjectComparisonViewQueryRendererSearchQuery$variables = {|
+export type ProjectComparisonViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<ProjectFilterInput>,
   orderBy?: ?ProjectOrder,
   propertyValue?: ?string,
   propertyOrder?: ?string,
 |};
-export type ProjectComparisonViewQueryRendererSearchQueryVariables = ProjectComparisonViewQueryRendererSearchQuery$variables;
-export type ProjectComparisonViewQueryRendererSearchQuery$data = {|
+export type ProjectComparisonViewQueryRendererSearchQueryResponse = {|
   +projectsMap: {|
     +totalCount: number,
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentSpreads: ProjectsMap_projects$fragmentType,
-      |},
+        +$fragmentRefs: ProjectsMap_projects$ref
+      |}
     |}>,
   |},
-  +$fragmentSpreads: ProjectsTableView_query$fragmentType,
+  +$fragmentRefs: ProjectsTableView_query$ref,
 |};
-export type ProjectComparisonViewQueryRendererSearchQueryResponse = ProjectComparisonViewQueryRendererSearchQuery$data;
 export type ProjectComparisonViewQueryRendererSearchQuery = {|
   variables: ProjectComparisonViewQueryRendererSearchQueryVariables,
-  response: ProjectComparisonViewQueryRendererSearchQuery$data,
+  response: ProjectComparisonViewQueryRendererSearchQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ProjectComparisonViewQueryRendererSearchQuery(
+  $limit: Int
+  $filters: [ProjectFilterInput!]!
+  $orderBy: ProjectOrder
+  $propertyValue: String
+  $propertyOrder: String
+) {
+  ...ProjectsTableView_query_3d7G7C
+  projectsMap: projects(first: 100, orderBy: $orderBy, filterBy: $filters, propertyValue: $propertyValue, propertyOrder: $propertyOrder) {
+    totalCount
+    edges {
+      node {
+        ...ProjectsMap_projects
+        id
+      }
+    }
+  }
+}
+
+fragment ProjectsMap_projects on Project {
+  id
+  name
+  location {
+    id
+    name
+    latitude
+    longitude
+  }
+  numberOfWorkOrders
+}
+
+fragment ProjectsTableView_query_3d7G7C on Query {
+  projects(first: $limit, orderBy: $orderBy, propertyValue: $propertyValue, propertyOrder: $propertyOrder, filterBy: $filters) {
+    totalCount
+    edges {
+      node {
+        id
+        createTime
+        name
+        createdBy {
+          email
+          id
+        }
+        location {
+          id
+          name
+        }
+        type {
+          id
+          name
+        }
+        priority
+        properties {
+          id
+          stringValue
+          intValue
+          floatValue
+          booleanValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          nodeValue {
+            __typename
+            id
+            name
+          }
+          propertyType {
+            id
+            name
+            type
+            nodeType
+            isEditable
+            isMandatory
+            isInstanceProperty
+            stringValue
+            intValue
+            floatValue
+            booleanValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+          }
+        }
+        numberOfWorkOrders
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -129,17 +230,6 @@ v8 = {
 v9 = [
   (v5/*: any*/),
   {
-    "kind": "Variable",
-    "name": "first",
-    "variableName": "limit"
-  },
-  (v6/*: any*/),
-  (v7/*: any*/),
-  (v8/*: any*/)
-],
-v10 = [
-  (v5/*: any*/),
-  {
     "kind": "Literal",
     "name": "first",
     "value": 100
@@ -148,13 +238,24 @@ v10 = [
   (v7/*: any*/),
   (v8/*: any*/)
 ],
-v11 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "totalCount",
   "storageKey": null
 },
+v11 = [
+  (v5/*: any*/),
+  {
+    "kind": "Variable",
+    "name": "first",
+    "variableName": "limit"
+  },
+  (v6/*: any*/),
+  (v7/*: any*/),
+  (v8/*: any*/)
+],
 v12 = {
   "alias": null,
   "args": null,
@@ -257,19 +358,14 @@ return {
     "name": "ProjectComparisonViewQueryRendererSearchQuery",
     "selections": [
       {
-        "args": (v9/*: any*/),
-        "kind": "FragmentSpread",
-        "name": "ProjectsTableView_query"
-      },
-      {
         "alias": "projectsMap",
-        "args": (v10/*: any*/),
+        "args": (v9/*: any*/),
         "concreteType": "ProjectConnection",
         "kind": "LinkedField",
         "name": "projects",
         "plural": false,
         "selections": [
-          (v11/*: any*/),
+          (v10/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -299,6 +395,11 @@ return {
           }
         ],
         "storageKey": null
+      },
+      {
+        "args": (v11/*: any*/),
+        "kind": "FragmentSpread",
+        "name": "ProjectsTableView_query"
       }
     ],
     "type": "Query",
@@ -318,13 +419,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v9/*: any*/),
+        "args": (v11/*: any*/),
         "concreteType": "ProjectConnection",
         "kind": "LinkedField",
         "name": "projects",
         "plural": false,
         "selections": [
-          (v11/*: any*/),
+          (v10/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -531,7 +632,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v9/*: any*/),
+        "args": (v11/*: any*/),
         "filters": [
           "orderBy",
           "propertyValue",
@@ -545,13 +646,13 @@ return {
       },
       {
         "alias": "projectsMap",
-        "args": (v10/*: any*/),
+        "args": (v9/*: any*/),
         "concreteType": "ProjectConnection",
         "kind": "LinkedField",
         "name": "projects",
         "plural": false,
         "selections": [
-          (v11/*: any*/),
+          (v10/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -619,10 +720,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '95fecda6e9ac1ea8ad04e12e5a71a4da';
 
-(node/*: any*/).hash = "3e2800ed572e86ac1b134e0964ec6ab3";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ProjectComparisonViewQueryRendererSearchQuery$variables,
-  ProjectComparisonViewQueryRendererSearchQuery$data,
->*/);
+module.exports = node;

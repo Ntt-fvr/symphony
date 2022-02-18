@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<dd4566dea980ab1b20fe2675a2fee488>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type AddCounterFormulaListInput = {|
   formulaFk: string,
   counterList: $ReadOnlyArray<?CounterListInput>,
@@ -19,11 +22,10 @@ export type CounterListInput = {|
   counterFk: string,
   mandatory: boolean,
 |};
-export type AddCounterFormulaListMutation$variables = {|
-  input: AddCounterFormulaListInput,
+export type AddCounterFormulaListMutationVariables = {|
+  input: AddCounterFormulaListInput
 |};
-export type AddCounterFormulaListMutationVariables = AddCounterFormulaListMutation$variables;
-export type AddCounterFormulaListMutation$data = {|
+export type AddCounterFormulaListMutationResponse = {|
   +addCounterFormulaList: $ReadOnlyArray<{|
     +id: string,
     +mandatory: boolean,
@@ -32,18 +34,36 @@ export type AddCounterFormulaListMutation$data = {|
       +name: string,
     |},
     +formulaFk: {|
-      +id: string,
+      +id: string
     |},
-  |}>,
+  |}>
 |};
-export type AddCounterFormulaListMutationResponse = AddCounterFormulaListMutation$data;
 export type AddCounterFormulaListMutation = {|
   variables: AddCounterFormulaListMutationVariables,
-  response: AddCounterFormulaListMutation$data,
+  response: AddCounterFormulaListMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddCounterFormulaListMutation(
+  $input: AddCounterFormulaListInput!
+) {
+  addCounterFormulaList(input: $input) {
+    id
+    mandatory
+    counterFk {
+      id
+      name
+    }
+    formulaFk {
+      id
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -143,10 +163,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'fa5ec9f286e32afda939beb7b5c788b5';
 
-(node/*: any*/).hash = "fa5ec9f286e32afda939beb7b5c788b5";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddCounterFormulaListMutation$variables,
-  AddCounterFormulaListMutation$data,
->*/);
+module.exports = node;

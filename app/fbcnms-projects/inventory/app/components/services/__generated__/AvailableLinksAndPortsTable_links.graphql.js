@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<9b903bbfbd0ea609a29cf14cbee772e8>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AvailableLinksAndPortsTable_links$fragmentType: FragmentType;
-export type AvailableLinksAndPortsTable_links$ref = AvailableLinksAndPortsTable_links$fragmentType;
-export type AvailableLinksAndPortsTable_links$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type AvailableLinksAndPortsTable_links$ref: FragmentReference;
+declare export opaque type AvailableLinksAndPortsTable_links$fragmentType: AvailableLinksAndPortsTable_links$ref;
+export type AvailableLinksAndPortsTable_links = $ReadOnlyArray<{|
   +id: string,
   +ports: $ReadOnlyArray<?{|
     +parentEquipment: {|
@@ -23,27 +26,28 @@ export type AvailableLinksAndPortsTable_links$data = $ReadOnlyArray<{|
       +name: string,
       +positionHierarchy: $ReadOnlyArray<{|
         +parentEquipment: {|
-          +id: string,
-        |},
+          +id: string
+        |}
       |}>,
-      +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
+      +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
     |},
     +definition: {|
       +id: string,
       +name: string,
     |},
   |}>,
-  +$fragmentType: AvailableLinksAndPortsTable_links$fragmentType,
+  +$refType: AvailableLinksAndPortsTable_links$ref,
 |}>;
-export type AvailableLinksAndPortsTable_links = AvailableLinksAndPortsTable_links$data;
+export type AvailableLinksAndPortsTable_links$data = AvailableLinksAndPortsTable_links;
 export type AvailableLinksAndPortsTable_links$key = $ReadOnlyArray<{
   +$data?: AvailableLinksAndPortsTable_links$data,
-  +$fragmentSpreads: AvailableLinksAndPortsTable_links$fragmentType,
+  +$fragmentRefs: AvailableLinksAndPortsTable_links$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -137,10 +141,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e3f5879ccbd1a0bc982fc5c83526b90f';
 
-(node/*: any*/).hash = "e3f5879ccbd1a0bc982fc5c83526b90f";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  AvailableLinksAndPortsTable_links$fragmentType,
-  AvailableLinksAndPortsTable_links$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<435becfc4f313976a093490e6c5aa795>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditKpiInput = {|
   id: string,
   name: string,
@@ -19,11 +22,10 @@ export type EditKpiInput = {|
   kpiCategoryFK: string,
   status: boolean,
 |};
-export type EditKpiMutation$variables = {|
-  input: EditKpiInput,
+export type EditKpiMutationVariables = {|
+  input: EditKpiInput
 |};
-export type EditKpiMutationVariables = EditKpiMutation$variables;
-export type EditKpiMutation$data = {|
+export type EditKpiMutationResponse = {|
   +editKpi: {|
     +id: string,
     +name: string,
@@ -31,16 +33,31 @@ export type EditKpiMutation$data = {|
       +id: string,
       +name: string,
     |},
-  |},
+  |}
 |};
-export type EditKpiMutationResponse = EditKpiMutation$data;
 export type EditKpiMutation = {|
   variables: EditKpiMutationVariables,
-  response: EditKpiMutation$data,
+  response: EditKpiMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditKpiMutation(
+  $input: EditKpiInput!
+) {
+  editKpi(input: $input) {
+    id
+    name
+    domainFk {
+      id
+      name
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -123,10 +140,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '44811a67c1c5dfca81b7e7e4489fc0f7';
 
-(node/*: any*/).hash = "44811a67c1c5dfca81b7e7e4489fc0f7";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditKpiMutation$variables,
-  EditKpiMutation$data,
->*/);
+module.exports = node;

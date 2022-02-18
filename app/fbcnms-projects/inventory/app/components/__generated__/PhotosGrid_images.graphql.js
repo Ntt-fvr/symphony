@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<1d09f62fed295386b6bd5a07ecf49b2b>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,25 +13,26 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type ImageAttachment_img$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type PhotosGrid_images$fragmentType: FragmentType;
-export type PhotosGrid_images$ref = PhotosGrid_images$fragmentType;
-export type PhotosGrid_images$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+type ImageAttachment_img$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type PhotosGrid_images$ref: FragmentReference;
+declare export opaque type PhotosGrid_images$fragmentType: PhotosGrid_images$ref;
+export type PhotosGrid_images = $ReadOnlyArray<{|
   +id: string,
-  +$fragmentSpreads: ImageAttachment_img$fragmentType,
-  +$fragmentType: PhotosGrid_images$fragmentType,
+  +$fragmentRefs: ImageAttachment_img$ref,
+  +$refType: PhotosGrid_images$ref,
 |}>;
-export type PhotosGrid_images = PhotosGrid_images$data;
+export type PhotosGrid_images$data = PhotosGrid_images;
 export type PhotosGrid_images$key = $ReadOnlyArray<{
   +$data?: PhotosGrid_images$data,
-  +$fragmentSpreads: PhotosGrid_images$fragmentType,
+  +$fragmentRefs: PhotosGrid_images$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -52,10 +56,7 @@ var node/*: ReaderFragment*/ = {
   "type": "File",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '80a98a9a4d57a8e83e65f977e4b203bb';
 
-(node/*: any*/).hash = "80a98a9a4d57a8e83e65f977e4b203bb";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  PhotosGrid_images$fragmentType,
-  PhotosGrid_images$data,
->*/);
+module.exports = node;

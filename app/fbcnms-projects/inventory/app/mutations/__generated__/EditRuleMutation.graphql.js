@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<d80493918b9365f3d39e72a7f2a8f778>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type EditRuleInput = {|
   id: string,
   name: string,
@@ -25,24 +28,34 @@ export type EditRuleInput = {|
   eventSeverity: string,
   threshold: string,
 |};
-export type EditRuleMutation$variables = {|
-  input: EditRuleInput,
+export type EditRuleMutationVariables = {|
+  input: EditRuleInput
 |};
-export type EditRuleMutationVariables = EditRuleMutation$variables;
-export type EditRuleMutation$data = {|
+export type EditRuleMutationResponse = {|
   +editRule: {|
     +id: string,
     +name: string,
-  |},
+  |}
 |};
-export type EditRuleMutationResponse = EditRuleMutation$data;
 export type EditRuleMutation = {|
   variables: EditRuleMutationVariables,
-  response: EditRuleMutation$data,
+  response: EditRuleMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditRuleMutation(
+  $input: EditRuleInput!
+) {
+  editRule(input: $input) {
+    id
+    name
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -110,10 +123,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '75428291d5582725d5d9afa78d41c456';
 
-(node/*: any*/).hash = "75428291d5582725d5d9afa78d41c456";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditRuleMutation$variables,
-  EditRuleMutation$data,
->*/);
+module.exports = node;

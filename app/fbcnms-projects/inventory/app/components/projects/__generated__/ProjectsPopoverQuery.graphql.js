@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<c9665711b45fb1cda3914f11631cc56b>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,14 +13,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type WorkOrderPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
-export type ProjectsPopoverQuery$variables = {|
-  projectId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
+export type ProjectsPopoverQueryVariables = {|
+  projectId: string
 |};
-export type ProjectsPopoverQueryVariables = ProjectsPopoverQuery$variables;
-export type ProjectsPopoverQuery$data = {|
+export type ProjectsPopoverQueryResponse = {|
   +project: ?{|
     +id?: string,
     +name?: string,
@@ -49,16 +51,59 @@ export type ProjectsPopoverQuery$data = {|
         +longitude: number,
       |},
     |}>,
-  |},
+  |}
 |};
-export type ProjectsPopoverQueryResponse = ProjectsPopoverQuery$data;
 export type ProjectsPopoverQuery = {|
   variables: ProjectsPopoverQueryVariables,
-  response: ProjectsPopoverQuery$data,
+  response: ProjectsPopoverQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ProjectsPopoverQuery(
+  $projectId: ID!
+) {
+  project: node(id: $projectId) {
+    __typename
+    ... on Project {
+      id
+      name
+      location {
+        id
+        name
+        latitude
+        longitude
+      }
+      workOrders {
+        id
+        name
+        description
+        owner {
+          id
+          email
+        }
+        status
+        priority
+        assignedTo {
+          id
+          email
+        }
+        installDate
+        location {
+          id
+          name
+          latitude
+          longitude
+        }
+      }
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -266,10 +311,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '94e8e66d8e2608553c3a5bb7e742468e';
 
-(node/*: any*/).hash = "94e8e66d8e2608553c3a5bb7e742468e";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ProjectsPopoverQuery$variables,
-  ProjectsPopoverQuery$data,
->*/);
+module.exports = node;

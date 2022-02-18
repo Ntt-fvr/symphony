@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<9e409c7a2db7cee3f9c0b1dc30d41b6b>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,31 +13,138 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AddEditLocationTypeCard_editingLocationType$fragmentType = any;
-type LocationTypeItem_locationType$fragmentType = any;
-export type LocationTypesQuery$variables = {||};
-export type LocationTypesQueryVariables = LocationTypesQuery$variables;
-export type LocationTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditLocationTypeCard_editingLocationType$ref = any;
+type LocationTypeItem_locationType$ref = any;
+export type LocationTypesQueryVariables = {||};
+export type LocationTypesQueryResponse = {|
   +locationTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +index: ?number,
-        +$fragmentSpreads: LocationTypeItem_locationType$fragmentType & AddEditLocationTypeCard_editingLocationType$fragmentType,
-      |},
-    |}>,
-  |},
+        +$fragmentRefs: LocationTypeItem_locationType$ref & AddEditLocationTypeCard_editingLocationType$ref,
+      |}
+    |}>
+  |}
 |};
-export type LocationTypesQueryResponse = LocationTypesQuery$data;
 export type LocationTypesQuery = {|
   variables: LocationTypesQueryVariables,
-  response: LocationTypesQuery$data,
+  response: LocationTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationTypesQuery {
+  locationTypes(first: 500) {
+    edges {
+      node {
+        ...LocationTypeItem_locationType
+        ...AddEditLocationTypeCard_editingLocationType
+        id
+        name
+        index
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+fragment AddEditLocationTypeCard_editingLocationType on LocationType {
+  id
+  name
+  mapType
+  mapZoomLevel
+  numberOfLocations
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    propertyCategory {
+      id
+      name
+    }
+  }
+  documentCategories {
+    id
+    name
+    index
+    numberOfDocuments
+  }
+  surveyTemplateCategories {
+    id
+    categoryTitle
+    categoryDescription
+    surveyTemplateQuestions {
+      id
+      questionTitle
+      questionDescription
+      questionType
+      index
+    }
+  }
+}
+
+fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
+  ...PropertyTypeFormField_propertyType
+  id
+  index
+}
+
+fragment LocationTypeItem_locationType on LocationType {
+  id
+  name
+  index
+  propertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+  numberOfLocations
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -133,6 +243,10 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -142,11 +256,7 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddEditLocationTypeCard_editingLocationType"
-                  },
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  (v3/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -473,10 +583,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '69c919a00bec8771ecb48980757d63cd';
 
-(node/*: any*/).hash = "69c919a00bec8771ecb48980757d63cd";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationTypesQuery$variables,
-  LocationTypesQuery$data,
->*/);
+module.exports = node;

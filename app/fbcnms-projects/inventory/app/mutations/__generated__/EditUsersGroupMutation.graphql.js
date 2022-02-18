@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<1e73551761e44620069608fdf0b2f143>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,9 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type PermissionValue = "YES" | "NO" | "BY_CONDITION" | "%future added value";
-export type UserRole = "USER" | "ADMIN" | "OWNER" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
+export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type EditUsersGroupInput = {|
@@ -23,11 +26,10 @@ export type EditUsersGroupInput = {|
   members?: ?$ReadOnlyArray<string>,
   policies?: ?$ReadOnlyArray<string>,
 |};
-export type EditUsersGroupMutation$variables = {|
-  input: EditUsersGroupInput,
+export type EditUsersGroupMutationVariables = {|
+  input: EditUsersGroupInput
 |};
-export type EditUsersGroupMutationVariables = EditUsersGroupMutation$variables;
-export type EditUsersGroupMutation$data = {|
+export type EditUsersGroupMutationResponse = {|
   +editUsersGroup: {|
     +id: string,
     +name: string,
@@ -55,7 +57,7 @@ export type EditUsersGroupMutation$data = {|
       +policy: {|
         +__typename: "InventoryPolicy",
         +read: {|
-          +isAllowed: PermissionValue,
+          +isAllowed: PermissionValue
         |},
         +propertyCategory: {|
           +read: ?{|
@@ -96,69 +98,69 @@ export type EditUsersGroupMutation$data = {|
         |},
         +location: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
             +isAllowed: PermissionValue,
             +locationTypeIds: ?$ReadOnlyArray<string>,
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +equipment: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +equipmentType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +locationType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +portType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +serviceType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
       |} | {|
@@ -171,48 +173,229 @@ export type EditUsersGroupMutation$data = {|
         |},
         +templates: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +data: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +assign: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +transferOwnership: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
       |} | {|
         // This will never be '%other', but we need some
         // value in case none of the concrete values match.
-        +__typename: "%other",
+        +__typename: "%other"
       |},
     |}>,
-  |},
+  |}
 |};
-export type EditUsersGroupMutationResponse = EditUsersGroupMutation$data;
 export type EditUsersGroupMutation = {|
   variables: EditUsersGroupMutationVariables,
-  response: EditUsersGroupMutation$data,
+  response: EditUsersGroupMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditUsersGroupMutation(
+  $input: EditUsersGroupInput!
+) {
+  editUsersGroup(input: $input) {
+    id
+    name
+    description
+    status
+    members {
+      id
+      authID
+      firstName
+      lastName
+      email
+      status
+      role
+      organizationFk {
+        id
+        name
+        description
+      }
+    }
+    policies {
+      id
+      name
+      description
+      isGlobal
+      policy {
+        __typename
+        ... on InventoryPolicy {
+          read {
+            isAllowed
+          }
+          propertyCategory {
+            read {
+              isAllowed
+              propertyCategoryIds
+            }
+            create {
+              isAllowed
+              propertyCategoryIds
+            }
+            update {
+              isAllowed
+              propertyCategoryIds
+            }
+            delete {
+              isAllowed
+              propertyCategoryIds
+            }
+          }
+          documentCategory {
+            locationTypeID
+            read {
+              isAllowed
+              documentCategoryIds
+            }
+            create {
+              isAllowed
+              documentCategoryIds
+            }
+            update {
+              isAllowed
+              documentCategoryIds
+            }
+            delete {
+              isAllowed
+              documentCategoryIds
+            }
+          }
+          location {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+              locationTypeIds
+            }
+            delete {
+              isAllowed
+            }
+          }
+          equipment {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          equipmentType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          locationType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          portType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          serviceType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+        }
+        ... on WorkforcePolicy {
+          read {
+            isAllowed
+            projectTypeIds
+            workOrderTypeIds
+            organizationIds
+          }
+          templates {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          data {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+            assign {
+              isAllowed
+            }
+            transferOwnership {
+              isAllowed
+            }
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -798,10 +981,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '34078eb6c09ee4ce62f28cd37509f647';
 
-(node/*: any*/).hash = "34078eb6c09ee4ce62f28cd37509f647";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditUsersGroupMutation$variables,
-  EditUsersGroupMutation$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<84f1f46aa97cd2c08d8452e0d3a05ef5>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,37 +13,112 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AddEditProjectTypeCard_editingProjectType$fragmentType = any;
-type ProjectTypeCard_projectType$fragmentType = any;
-type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType = any;
-export type WorkOrderProjectTypesQuery$variables = {||};
-export type WorkOrderProjectTypesQueryVariables = WorkOrderProjectTypesQuery$variables;
-export type WorkOrderProjectTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditProjectTypeCard_editingProjectType$ref = any;
+type ProjectTypeCard_projectType$ref = any;
+type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref = any;
+export type WorkOrderProjectTypesQueryVariables = {||};
+export type WorkOrderProjectTypesQueryResponse = {|
   +projectTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
-        +$fragmentSpreads: ProjectTypeCard_projectType$fragmentType & AddEditProjectTypeCard_editingProjectType$fragmentType,
-      |},
-    |}>,
+        +$fragmentRefs: ProjectTypeCard_projectType$ref & AddEditProjectTypeCard_editingProjectType$ref,
+      |}
+    |}>
   |},
   +workOrderTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentSpreads: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType,
-      |},
-    |}>,
+        +$fragmentRefs: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref
+      |}
+    |}>
   |},
 |};
-export type WorkOrderProjectTypesQueryResponse = WorkOrderProjectTypesQuery$data;
 export type WorkOrderProjectTypesQuery = {|
   variables: WorkOrderProjectTypesQueryVariables,
-  response: WorkOrderProjectTypesQuery$data,
+  response: WorkOrderProjectTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query WorkOrderProjectTypesQuery {
+  projectTypes(first: 500) {
+    edges {
+      node {
+        id
+        ...ProjectTypeCard_projectType
+        ...AddEditProjectTypeCard_editingProjectType
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+  workOrderTypes {
+    edges {
+      node {
+        ...ProjectTypeWorkOrderTemplatesPanel_workOrderTypes
+        id
+      }
+    }
+  }
+}
+
+fragment AddEditProjectTypeCard_editingProjectType on ProjectType {
+  id
+  name
+  description
+  workOrders {
+    id
+    type {
+      id
+      name
+      ...ProjectTypeWorkOrderTemplatesPanel_workOrderTypes
+    }
+  }
+  properties {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    isDeleted
+  }
+}
+
+fragment ProjectTypeCard_projectType on ProjectType {
+  id
+  name
+  description
+  numberOfProjects
+  workOrders {
+    id
+  }
+}
+
+fragment ProjectTypeWorkOrderTemplatesPanel_workOrderTypes on WorkOrderType {
+  id
+  name
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -137,6 +215,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v0/*: any*/),
+                  (v1/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -146,8 +225,7 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddEditProjectTypeCard_editingProjectType"
-                  },
-                  (v1/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -463,10 +541,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'c3f4898b42bea467f6aa4f3af6e0a400';
 
-(node/*: any*/).hash = "c3f4898b42bea467f6aa4f3af6e0a400";
-
-module.exports = ((node/*: any*/)/*: Query<
-  WorkOrderProjectTypesQuery$variables,
-  WorkOrderProjectTypesQuery$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<9de5609f60040af98b112ac25c9a15e6>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,8 +13,8 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type ImageEntity = "LOCATION" | "WORK_ORDER" | "SITE_SURVEY" | "EQUIPMENT" | "USER" | "CHECKLIST_ITEM" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type ImageEntity = "CHECKLIST_ITEM" | "EQUIPMENT" | "LOCATION" | "SITE_SURVEY" | "USER" | "WORK_ORDER" | "%future added value";
 export type AddHyperlinkInput = {|
   entityType: ImageEntity,
   entityId: string,
@@ -20,27 +23,40 @@ export type AddHyperlinkInput = {|
   category?: ?string,
   documentCategoryId?: ?string,
 |};
-export type AddHyperlinkMutation$variables = {|
-  input: AddHyperlinkInput,
+export type AddHyperlinkMutationVariables = {|
+  input: AddHyperlinkInput
 |};
-export type AddHyperlinkMutationVariables = AddHyperlinkMutation$variables;
-export type AddHyperlinkMutation$data = {|
+export type AddHyperlinkMutationResponse = {|
   +addHyperlink: {|
     +id: string,
     +url: string,
     +displayName: ?string,
     +category: ?string,
     +createTime: any,
-  |},
+  |}
 |};
-export type AddHyperlinkMutationResponse = AddHyperlinkMutation$data;
 export type AddHyperlinkMutation = {|
   variables: AddHyperlinkMutationVariables,
-  response: AddHyperlinkMutation$data,
+  response: AddHyperlinkMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddHyperlinkMutation(
+  $input: AddHyperlinkInput!
+) {
+  addHyperlink(input: $input) {
+    id
+    url
+    displayName
+    category
+    createTime
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -129,10 +145,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '8aeb4cde118c6a2a5365fe50a82c419e';
 
-(node/*: any*/).hash = "8aeb4cde118c6a2a5365fe50a82c419e";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddHyperlinkMutation$variables,
-  AddHyperlinkMutation$data,
->*/);
+module.exports = node;

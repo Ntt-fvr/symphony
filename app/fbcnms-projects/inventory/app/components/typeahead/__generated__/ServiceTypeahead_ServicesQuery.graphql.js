@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<3ab5bfcd478645de9d7edf41ee5d74b6>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type ServiceFilterType = "SERVICE_INST_NAME" | "SERVICE_STATUS" | "SERVICE_DISCOVERY_METHOD" | "SERVICE_TYPE" | "SERVICE_INST_EXTERNAL_ID" | "SERVICE_INST_CUSTOMER_NAME" | "PROPERTY" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "EQUIPMENT_IN_SERVICE" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type ServiceFilterType = "EQUIPMENT_IN_SERVICE" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_DISCOVERY_METHOD" | "SERVICE_INST_CUSTOMER_NAME" | "SERVICE_INST_EXTERNAL_ID" | "SERVICE_INST_NAME" | "SERVICE_STATUS" | "SERVICE_TYPE" | "%future added value";
 export type ServiceFilterInput = {|
   filterType: ServiceFilterType,
   operator: FilterOperator,
@@ -46,29 +49,44 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type ServiceTypeahead_ServicesQuery$variables = {|
+export type ServiceTypeahead_ServicesQueryVariables = {|
   filters: $ReadOnlyArray<ServiceFilterInput>,
   limit?: ?number,
 |};
-export type ServiceTypeahead_ServicesQueryVariables = ServiceTypeahead_ServicesQuery$variables;
-export type ServiceTypeahead_ServicesQuery$data = {|
+export type ServiceTypeahead_ServicesQueryResponse = {|
   +services: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type ServiceTypeahead_ServicesQueryResponse = ServiceTypeahead_ServicesQuery$data;
 export type ServiceTypeahead_ServicesQuery = {|
   variables: ServiceTypeahead_ServicesQueryVariables,
-  response: ServiceTypeahead_ServicesQuery$data,
+  response: ServiceTypeahead_ServicesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ServiceTypeahead_ServicesQuery(
+  $filters: [ServiceFilterInput!]!
+  $limit: Int
+) {
+  services(filterBy: $filters, first: $limit) {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -168,10 +186,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '76ab89e627f48adb6ac1601ad66f151f';
 
-(node/*: any*/).hash = "76ab89e627f48adb6ac1601ad66f151f";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ServiceTypeahead_ServicesQuery$variables,
-  ServiceTypeahead_ServicesQuery$data,
->*/);
+module.exports = node;

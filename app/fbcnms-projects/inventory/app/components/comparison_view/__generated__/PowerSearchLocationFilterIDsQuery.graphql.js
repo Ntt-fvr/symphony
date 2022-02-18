@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<40c4e6d5592f770858e95df5990b3351>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,25 +13,39 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PowerSearchLocationFilterIDsQuery$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type PowerSearchLocationFilterIDsQueryVariables = {|
+  id: string
 |};
-export type PowerSearchLocationFilterIDsQueryVariables = PowerSearchLocationFilterIDsQuery$variables;
-export type PowerSearchLocationFilterIDsQuery$data = {|
+export type PowerSearchLocationFilterIDsQueryResponse = {|
   +node: ?{|
     +id?: string,
     +name?: string,
-  |},
+  |}
 |};
-export type PowerSearchLocationFilterIDsQueryResponse = PowerSearchLocationFilterIDsQuery$data;
 export type PowerSearchLocationFilterIDsQuery = {|
   variables: PowerSearchLocationFilterIDsQueryVariables,
-  response: PowerSearchLocationFilterIDsQuery$data,
+  response: PowerSearchLocationFilterIDsQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query PowerSearchLocationFilterIDsQuery(
+  $id: ID!
+) {
+  node(id: $id) {
+    __typename
+    ... on Location {
+      id
+      name
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -133,10 +150,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'bdfe75d0e508f3482de572d6b8948576';
 
-(node/*: any*/).hash = "bdfe75d0e508f3482de572d6b8948576";
-
-module.exports = ((node/*: any*/)/*: Query<
-  PowerSearchLocationFilterIDsQuery$variables,
-  PowerSearchLocationFilterIDsQuery$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<07a7a2a3753f326b857c8bab9b240b08>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,14 +13,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$fragmentType = any;
-type LocationBreadcrumbsTitle_locationDetails$fragmentType = any;
-export type InventoryEntitiesTypeaheadQuery$variables = {|
-  name: string,
+import type { ConcreteRequest } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$ref = any;
+type LocationBreadcrumbsTitle_locationDetails$ref = any;
+export type InventoryEntitiesTypeaheadQueryVariables = {|
+  name: string
 |};
-export type InventoryEntitiesTypeaheadQueryVariables = InventoryEntitiesTypeaheadQuery$variables;
-export type InventoryEntitiesTypeaheadQuery$data = {|
+export type InventoryEntitiesTypeaheadQueryResponse = {|
   +searchForNode: {|
     +edges: ?$ReadOnlyArray<{|
       +node: ?({|
@@ -26,41 +28,134 @@ export type InventoryEntitiesTypeaheadQuery$data = {|
         +externalId: ?string,
         +name: string,
         +locationType: {|
-          +name: string,
+          +name: string
         |},
         +locationHierarchy: $ReadOnlyArray<{|
           +id: string,
           +name: string,
           +locationType: {|
-            +name: string,
+            +name: string
           |},
         |}>,
-        +$fragmentSpreads: LocationBreadcrumbsTitle_locationDetails$fragmentType,
+        +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref,
       |} | {|
         +__typename: "Equipment",
         +id: string,
         +externalId: ?string,
         +name: string,
         +equipmentType: {|
-          +name: string,
+          +name: string
         |},
-        +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
+        +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
       |} | {|
         // This will never be '%other', but we need some
         // value in case none of the concrete values match.
-        +__typename: "%other",
-      |}),
-    |}>,
-  |},
+        +__typename: "%other"
+      |})
+    |}>
+  |}
 |};
-export type InventoryEntitiesTypeaheadQueryResponse = InventoryEntitiesTypeaheadQuery$data;
 export type InventoryEntitiesTypeaheadQuery = {|
   variables: InventoryEntitiesTypeaheadQueryVariables,
-  response: InventoryEntitiesTypeaheadQuery$data,
+  response: InventoryEntitiesTypeaheadQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query InventoryEntitiesTypeaheadQuery(
+  $name: String!
+) {
+  searchForNode(name: $name, first: 10) {
+    edges {
+      node {
+        __typename
+        ... on Location {
+          id
+          externalId
+          name
+          locationType {
+            name
+            id
+          }
+          locationHierarchy {
+            id
+            name
+            locationType {
+              name
+              id
+            }
+          }
+          ...LocationBreadcrumbsTitle_locationDetails
+        }
+        ... on Equipment {
+          id
+          externalId
+          name
+          equipmentType {
+            name
+            id
+          }
+          ...EquipmentBreadcrumbs_equipment
+        }
+        id
+      }
+    }
+  }
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment LocationBreadcrumbsTitle_locationDetails on Location {
+  id
+  name
+  locationType {
+    name
+    id
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -391,10 +486,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '9f94d06d3fb8a17c75633ca24ccd6f66';
 
-(node/*: any*/).hash = "9f94d06d3fb8a17c75633ca24ccd6f66";
-
-module.exports = ((node/*: any*/)/*: Query<
-  InventoryEntitiesTypeaheadQuery$variables,
-  InventoryEntitiesTypeaheadQuery$data,
->*/);
+module.exports = node;

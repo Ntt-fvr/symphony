@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<671ba51c3050a6183e4f1106542fb269>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type WorkOrderPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW" | "NONE" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ProjectWorkOrdersList_workOrders$fragmentType: FragmentType;
-export type ProjectWorkOrdersList_workOrders$ref = ProjectWorkOrdersList_workOrders$fragmentType;
-export type ProjectWorkOrdersList_workOrders$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ProjectWorkOrdersList_workOrders$ref: FragmentReference;
+declare export opaque type ProjectWorkOrdersList_workOrders$fragmentType: ProjectWorkOrdersList_workOrders$ref;
+export type ProjectWorkOrdersList_workOrders = $ReadOnlyArray<{|
   +id: string,
   +workOrderType: {|
     +name: string,
@@ -32,17 +35,18 @@ export type ProjectWorkOrdersList_workOrders$data = $ReadOnlyArray<{|
   +installDate: ?any,
   +status: WorkOrderStatus,
   +priority: WorkOrderPriority,
-  +$fragmentType: ProjectWorkOrdersList_workOrders$fragmentType,
+  +$refType: ProjectWorkOrdersList_workOrders$ref,
 |}>;
-export type ProjectWorkOrdersList_workOrders = ProjectWorkOrdersList_workOrders$data;
+export type ProjectWorkOrdersList_workOrders$data = ProjectWorkOrdersList_workOrders;
 export type ProjectWorkOrdersList_workOrders$key = $ReadOnlyArray<{
   +$data?: ProjectWorkOrdersList_workOrders$data,
-  +$fragmentSpreads: ProjectWorkOrdersList_workOrders$fragmentType,
+  +$fragmentRefs: ProjectWorkOrdersList_workOrders$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -139,10 +143,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '50a592240f38b75d0859f49f5a89fa3e';
 
-(node/*: any*/).hash = "50a592240f38b75d0859f49f5a89fa3e";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ProjectWorkOrdersList_workOrders$fragmentType,
-  ProjectWorkOrdersList_workOrders$data,
->*/);
+module.exports = node;

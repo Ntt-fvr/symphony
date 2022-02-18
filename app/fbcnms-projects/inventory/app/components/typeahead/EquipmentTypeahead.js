@@ -15,7 +15,7 @@ import * as React from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Typeahead from '@fbcnms/ui/components/Typeahead';
 import {debounce} from 'lodash';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 const equipmentTypeaheadQuery = graphql`
   query EquipmentTypeahead_equipmentQuery($filters: [EquipmentFilterInput!]!) {

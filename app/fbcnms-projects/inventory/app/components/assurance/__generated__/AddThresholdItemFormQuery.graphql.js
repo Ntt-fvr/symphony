@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<7fdcc9ed729495fd06e24071a3c00da9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,27 +13,39 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type AddThresholdItemFormQuery$variables = {||};
-export type AddThresholdItemFormQueryVariables = AddThresholdItemFormQuery$variables;
-export type AddThresholdItemFormQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type AddThresholdItemFormQueryVariables = {||};
+export type AddThresholdItemFormQueryResponse = {|
   +kpis: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type AddThresholdItemFormQueryResponse = AddThresholdItemFormQuery$data;
 export type AddThresholdItemFormQuery = {|
   variables: AddThresholdItemFormQueryVariables,
-  response: AddThresholdItemFormQuery$data,
+  response: AddThresholdItemFormQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query AddThresholdItemFormQuery {
+  kpis {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -107,10 +122,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'ddec98e7f7695cb7526c0b586fe52e17';
 
-(node/*: any*/).hash = "ddec98e7f7695cb7526c0b586fe52e17";
-
-module.exports = ((node/*: any*/)/*: Query<
-  AddThresholdItemFormQuery$variables,
-  AddThresholdItemFormQuery$data,
->*/);
+module.exports = node;

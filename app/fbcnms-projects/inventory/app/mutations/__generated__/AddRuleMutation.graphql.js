@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<45a2a900640c67a9de1b809722c98c17>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type AddRuleInput = {|
   name: string,
   gracePeriod: number,
@@ -24,24 +27,34 @@ export type AddRuleInput = {|
   eventSeverity: string,
   threshold: string,
 |};
-export type AddRuleMutation$variables = {|
-  input: AddRuleInput,
+export type AddRuleMutationVariables = {|
+  input: AddRuleInput
 |};
-export type AddRuleMutationVariables = AddRuleMutation$variables;
-export type AddRuleMutation$data = {|
+export type AddRuleMutationResponse = {|
   +addRule: {|
     +id: string,
     +name: string,
-  |},
+  |}
 |};
-export type AddRuleMutationResponse = AddRuleMutation$data;
 export type AddRuleMutation = {|
   variables: AddRuleMutationVariables,
-  response: AddRuleMutation$data,
+  response: AddRuleMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddRuleMutation(
+  $input: AddRuleInput!
+) {
+  addRule(input: $input) {
+    id
+    name
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -109,10 +122,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '1a392ea3806377decd1789a65baa54d6';
 
-(node/*: any*/).hash = "1a392ea3806377decd1789a65baa54d6";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddRuleMutation$variables,
-  AddRuleMutation$data,
->*/);
+module.exports = node;

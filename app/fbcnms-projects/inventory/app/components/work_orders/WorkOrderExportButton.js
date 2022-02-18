@@ -22,7 +22,7 @@ import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {DocumentAPIUrls} from '../../common/DocumentAPI';
 import {UploadAPIUrls} from '../../common/UploadAPI';
 import {csvFileExportKeyQuery, csvFileExportQuery} from '../CSVFileExport';
-import {fetchQuery} from '../../common/RelayUtils';
+import {fetchQuery} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 

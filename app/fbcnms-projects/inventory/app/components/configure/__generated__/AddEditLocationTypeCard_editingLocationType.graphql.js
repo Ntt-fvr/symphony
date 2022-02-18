@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<d8d69091ea7c4dc3de39d37c58620db8>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type SurveyQuestionType = "BOOL" | "EMAIL" | "COORDS" | "PHONE" | "TEXT" | "TEXTAREA" | "PHOTO" | "WIFI" | "CELLULAR" | "FLOAT" | "INTEGER" | "DATE" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AddEditLocationTypeCard_editingLocationType$fragmentType: FragmentType;
-export type AddEditLocationTypeCard_editingLocationType$ref = AddEditLocationTypeCard_editingLocationType$fragmentType;
-export type AddEditLocationTypeCard_editingLocationType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type SurveyQuestionType = "BOOL" | "CELLULAR" | "COORDS" | "DATE" | "EMAIL" | "FLOAT" | "INTEGER" | "PHONE" | "PHOTO" | "TEXT" | "TEXTAREA" | "WIFI" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type AddEditLocationTypeCard_editingLocationType$ref: FragmentReference;
+declare export opaque type AddEditLocationTypeCard_editingLocationType$fragmentType: AddEditLocationTypeCard_editingLocationType$ref;
+export type AddEditLocationTypeCard_editingLocationType = {|
   +id: string,
   +name: string,
   +mapType: ?string,
@@ -62,17 +65,18 @@ export type AddEditLocationTypeCard_editingLocationType$data = {|
       +index: number,
     |}>,
   |}>,
-  +$fragmentType: AddEditLocationTypeCard_editingLocationType$fragmentType,
+  +$refType: AddEditLocationTypeCard_editingLocationType$ref,
 |};
-export type AddEditLocationTypeCard_editingLocationType = AddEditLocationTypeCard_editingLocationType$data;
+export type AddEditLocationTypeCard_editingLocationType$data = AddEditLocationTypeCard_editingLocationType;
 export type AddEditLocationTypeCard_editingLocationType$key = {
   +$data?: AddEditLocationTypeCard_editingLocationType$data,
-  +$fragmentSpreads: AddEditLocationTypeCard_editingLocationType$fragmentType,
+  +$fragmentRefs: AddEditLocationTypeCard_editingLocationType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -327,10 +331,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'bf5f7b7c2910e46dd59deb7d8029ff85';
 
-(node/*: any*/).hash = "bf5f7b7c2910e46dd59deb7d8029ff85";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  AddEditLocationTypeCard_editingLocationType$fragmentType,
-  AddEditLocationTypeCard_editingLocationType$data,
->*/);
+module.exports = node;

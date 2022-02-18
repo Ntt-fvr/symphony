@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<45ac9dccd0df050469b50004bcc4ed60>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,21 +13,20 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type DynamicPropertiesGrid_properties$fragmentType = any;
-type DynamicPropertiesGrid_propertyTypes$fragmentType = any;
-type EquipmentBreadcrumbs_equipment$fragmentType = any;
-type EquipmentDocumentsCard_equipment$fragmentType = any;
-type EquipmentPortsTable_equipment$fragmentType = any;
-type EquipmentPositionsGrid_equipment$fragmentType = any;
-type PositionDefinitionsTable_positionDefinitions$fragmentType = any;
-type PropertyFormField_property$fragmentType = any;
-type PropertyTypeFormField_propertyType$fragmentType = any;
-export type EquipmentPropertiesCardQuery$variables = {|
-  equipmentId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+type DynamicPropertiesGrid_properties$ref = any;
+type DynamicPropertiesGrid_propertyTypes$ref = any;
+type EquipmentBreadcrumbs_equipment$ref = any;
+type EquipmentDocumentsCard_equipment$ref = any;
+type EquipmentPortsTable_equipment$ref = any;
+type EquipmentPositionsGrid_equipment$ref = any;
+type PositionDefinitionsTable_positionDefinitions$ref = any;
+type PropertyFormField_property$ref = any;
+type PropertyTypeFormField_propertyType$ref = any;
+export type EquipmentPropertiesCardQueryVariables = {|
+  equipmentId: string
 |};
-export type EquipmentPropertiesCardQueryVariables = EquipmentPropertiesCardQuery$variables;
-export type EquipmentPropertiesCardQuery$data = {|
+export type EquipmentPropertiesCardQueryResponse = {|
   +equipment: ?{|
     +id?: string,
     +name?: string,
@@ -32,14 +34,14 @@ export type EquipmentPropertiesCardQuery$data = {|
       +id: string,
       +name: string,
       +propertyTypes: $ReadOnlyArray<?{|
-        +$fragmentSpreads: PropertyTypeFormField_propertyType$fragmentType & DynamicPropertiesGrid_propertyTypes$fragmentType,
+        +$fragmentRefs: PropertyTypeFormField_propertyType$ref & DynamicPropertiesGrid_propertyTypes$ref
       |}>,
       +positionDefinitions: $ReadOnlyArray<?{|
         +id: string,
-        +$fragmentSpreads: PositionDefinitionsTable_positionDefinitions$fragmentType,
+        +$fragmentRefs: PositionDefinitionsTable_positionDefinitions$ref,
       |}>,
       +portDefinitions: $ReadOnlyArray<?{|
-        +id: string,
+        +id: string
       |}>,
     |},
     +parentLocation?: ?{|
@@ -49,41 +51,1529 @@ export type EquipmentPropertiesCardQuery$data = {|
     +parentPosition?: ?{|
       +parentEquipment: {|
         +parentLocation: ?{|
-          +id: string,
-        |},
-      |},
+          +id: string
+        |}
+      |}
     |},
     +positions?: $ReadOnlyArray<?{|
       +parentEquipment: {|
-        +id: string,
-      |},
+        +id: string
+      |}
     |}>,
     +properties?: $ReadOnlyArray<?{|
-      +$fragmentSpreads: PropertyFormField_property$fragmentType & DynamicPropertiesGrid_properties$fragmentType,
+      +$fragmentRefs: PropertyFormField_property$ref & DynamicPropertiesGrid_properties$ref
     |}>,
     +services?: $ReadOnlyArray<?{|
       +id: string,
       +name: string,
       +externalId: ?string,
       +customer: ?{|
-        +name: string,
+        +name: string
       |},
       +serviceType: {|
         +id: string,
         +name: string,
       |},
     |}>,
-    +$fragmentSpreads: EquipmentPortsTable_equipment$fragmentType & EquipmentBreadcrumbs_equipment$fragmentType & EquipmentPositionsGrid_equipment$fragmentType & EquipmentDocumentsCard_equipment$fragmentType,
-  |},
+    +$fragmentRefs: EquipmentPortsTable_equipment$ref & EquipmentBreadcrumbs_equipment$ref & EquipmentPositionsGrid_equipment$ref & EquipmentDocumentsCard_equipment$ref,
+  |}
 |};
-export type EquipmentPropertiesCardQueryResponse = EquipmentPropertiesCardQuery$data;
 export type EquipmentPropertiesCardQuery = {|
   variables: EquipmentPropertiesCardQueryVariables,
-  response: EquipmentPropertiesCardQuery$data,
+  response: EquipmentPropertiesCardQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query EquipmentPropertiesCardQuery(
+  $equipmentId: ID!
+) {
+  equipment: node(id: $equipmentId) {
+    __typename
+    ... on Equipment {
+      id
+      name
+      ...EquipmentPortsTable_equipment
+      equipmentType {
+        id
+        name
+        propertyTypes {
+          ...PropertyTypeFormField_propertyType
+          ...DynamicPropertiesGrid_propertyTypes
+          id
+        }
+        positionDefinitions {
+          id
+          ...PositionDefinitionsTable_positionDefinitions
+        }
+        portDefinitions {
+          id
+        }
+      }
+      ...EquipmentBreadcrumbs_equipment
+      parentLocation {
+        id
+        name
+      }
+      parentPosition {
+        parentEquipment {
+          parentLocation {
+            id
+          }
+          id
+        }
+        id
+      }
+      ...EquipmentPositionsGrid_equipment
+      positions {
+        parentEquipment {
+          id
+        }
+        id
+      }
+      properties {
+        ...PropertyFormField_property
+        ...DynamicPropertiesGrid_properties
+        id
+      }
+      services {
+        id
+        name
+        externalId
+        customer {
+          name
+          id
+        }
+        serviceType {
+          id
+          name
+        }
+      }
+      ...EquipmentDocumentsCard_equipment
+    }
+    id
+  }
+}
+
+fragment AddToEquipmentDialog_parentEquipment on Equipment {
+  id
+  locationHierarchy {
+    id
+  }
+}
+
+fragment DocumentTable_files on File {
+  id
+  fileName
+  category
+  ...FileAttachment_file
+}
+
+fragment DocumentTable_hyperlinks on Hyperlink {
+  id
+  category
+  url
+  displayName
+  ...HyperlinkTableRow_hyperlink
+}
+
+fragment DynamicPropertiesGrid_properties on Property {
+  ...PropertyFormField_property
+  propertyType {
+    id
+    index
+  }
+}
+
+fragment DynamicPropertiesGrid_propertyTypes on PropertyType {
+  id
+  name
+  index
+  isInstanceProperty
+  type
+  nodeType
+  stringValue
+  intValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  floatValue
+}
+
+fragment EntityDocumentsTable_files on File {
+  ...DocumentTable_files
+}
+
+fragment EntityDocumentsTable_hyperlinks on Hyperlink {
+  ...DocumentTable_hyperlinks
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment EquipmentDocumentsCard_equipment on Equipment {
+  id
+  images {
+    ...EntityDocumentsTable_files
+    id
+  }
+  files {
+    ...EntityDocumentsTable_files
+    id
+  }
+  hyperlinks {
+    ...EntityDocumentsTable_hyperlinks
+    id
+  }
+  parentLocation {
+    locationType {
+      documentCategories {
+        id
+        name
+      }
+      id
+    }
+    id
+  }
+}
+
+fragment EquipmentPortsTable_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+    portDefinitions {
+      id
+      name
+      index
+      visibleLabel
+      portType {
+        id
+        name
+        propertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        linkPropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+      }
+    }
+  }
+  ports {
+    id
+    definition {
+      id
+      name
+      index
+      visibleLabel
+      portType {
+        id
+        name
+        propertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        linkPropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+      }
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+    link {
+      id
+      futureState
+      ports {
+        id
+        definition {
+          id
+          name
+          visibleLabel
+          portType {
+            linkPropertyTypes {
+              id
+              name
+              type
+              nodeType
+              index
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isEditable
+              isInstanceProperty
+              isMandatory
+              category
+              isDeleted
+            }
+            id
+          }
+        }
+        parentEquipment {
+          id
+          name
+          futureState
+          equipmentType {
+            id
+            name
+          }
+          ...EquipmentBreadcrumbs_equipment
+        }
+        serviceEndpoints {
+          definition {
+            role
+            id
+          }
+          service {
+            name
+            id
+          }
+          id
+        }
+      }
+      workOrder {
+        id
+        status
+      }
+      properties {
+        id
+        propertyType {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        stringValue
+        intValue
+        floatValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        nodeValue {
+          __typename
+          id
+          name
+        }
+      }
+      services {
+        id
+        name
+      }
+    }
+    properties {
+      id
+      propertyType {
+        id
+        name
+        type
+        nodeType
+        index
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        isEditable
+        isInstanceProperty
+        isMandatory
+        category
+        isDeleted
+      }
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      nodeValue {
+        __typename
+        id
+        name
+      }
+    }
+    serviceEndpoints {
+      definition {
+        role
+        id
+      }
+      service {
+        name
+        id
+      }
+      id
+    }
+  }
+  positions {
+    attachedEquipment {
+      id
+      name
+      ports {
+        id
+        definition {
+          id
+          name
+          index
+          visibleLabel
+          portType {
+            id
+            name
+            propertyTypes {
+              id
+              name
+              type
+              nodeType
+              index
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isEditable
+              isInstanceProperty
+              isMandatory
+              category
+              isDeleted
+            }
+            linkPropertyTypes {
+              id
+              name
+              type
+              nodeType
+              index
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isEditable
+              isInstanceProperty
+              isMandatory
+              category
+              isDeleted
+            }
+          }
+        }
+        parentEquipment {
+          id
+          name
+          equipmentType {
+            id
+            name
+          }
+        }
+        link {
+          id
+          futureState
+          ports {
+            id
+            definition {
+              id
+              name
+              visibleLabel
+              portType {
+                linkPropertyTypes {
+                  id
+                  name
+                  type
+                  nodeType
+                  index
+                  stringValue
+                  intValue
+                  booleanValue
+                  floatValue
+                  latitudeValue
+                  longitudeValue
+                  rangeFromValue
+                  rangeToValue
+                  isEditable
+                  isInstanceProperty
+                  isMandatory
+                  category
+                  isDeleted
+                }
+                id
+              }
+            }
+            parentEquipment {
+              id
+              name
+              futureState
+              equipmentType {
+                id
+                name
+              }
+              ...EquipmentBreadcrumbs_equipment
+            }
+            serviceEndpoints {
+              definition {
+                role
+                id
+              }
+              service {
+                name
+                id
+              }
+              id
+            }
+          }
+          workOrder {
+            id
+            status
+          }
+          properties {
+            id
+            propertyType {
+              id
+              name
+              type
+              nodeType
+              index
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isEditable
+              isInstanceProperty
+              isMandatory
+              category
+              isDeleted
+            }
+            stringValue
+            intValue
+            floatValue
+            booleanValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            nodeValue {
+              __typename
+              id
+              name
+            }
+          }
+          services {
+            id
+            name
+          }
+        }
+        properties {
+          id
+          propertyType {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isInstanceProperty
+            isMandatory
+            category
+            isDeleted
+          }
+          stringValue
+          intValue
+          floatValue
+          booleanValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          nodeValue {
+            __typename
+            id
+            name
+          }
+        }
+        serviceEndpoints {
+          definition {
+            role
+            id
+          }
+          service {
+            name
+            id
+          }
+          id
+        }
+      }
+      equipmentType {
+        portDefinitions {
+          id
+          name
+          visibleLabel
+          bandwidth
+        }
+        id
+      }
+      positions {
+        attachedEquipment {
+          id
+          name
+          ports {
+            id
+            definition {
+              id
+              name
+              index
+              visibleLabel
+              portType {
+                id
+                name
+                propertyTypes {
+                  id
+                  name
+                  type
+                  nodeType
+                  index
+                  stringValue
+                  intValue
+                  booleanValue
+                  floatValue
+                  latitudeValue
+                  longitudeValue
+                  rangeFromValue
+                  rangeToValue
+                  isEditable
+                  isInstanceProperty
+                  isMandatory
+                  category
+                  isDeleted
+                }
+                linkPropertyTypes {
+                  id
+                  name
+                  type
+                  nodeType
+                  index
+                  stringValue
+                  intValue
+                  booleanValue
+                  floatValue
+                  latitudeValue
+                  longitudeValue
+                  rangeFromValue
+                  rangeToValue
+                  isEditable
+                  isInstanceProperty
+                  isMandatory
+                  category
+                  isDeleted
+                }
+              }
+            }
+            parentEquipment {
+              id
+              name
+              equipmentType {
+                id
+                name
+              }
+            }
+            link {
+              id
+              futureState
+              ports {
+                id
+                definition {
+                  id
+                  name
+                  visibleLabel
+                  portType {
+                    linkPropertyTypes {
+                      id
+                      name
+                      type
+                      nodeType
+                      index
+                      stringValue
+                      intValue
+                      booleanValue
+                      floatValue
+                      latitudeValue
+                      longitudeValue
+                      rangeFromValue
+                      rangeToValue
+                      isEditable
+                      isInstanceProperty
+                      isMandatory
+                      category
+                      isDeleted
+                    }
+                    id
+                  }
+                }
+                parentEquipment {
+                  id
+                  name
+                  futureState
+                  equipmentType {
+                    id
+                    name
+                  }
+                  ...EquipmentBreadcrumbs_equipment
+                }
+                serviceEndpoints {
+                  definition {
+                    role
+                    id
+                  }
+                  service {
+                    name
+                    id
+                  }
+                  id
+                }
+              }
+              workOrder {
+                id
+                status
+              }
+              properties {
+                id
+                propertyType {
+                  id
+                  name
+                  type
+                  nodeType
+                  index
+                  stringValue
+                  intValue
+                  booleanValue
+                  floatValue
+                  latitudeValue
+                  longitudeValue
+                  rangeFromValue
+                  rangeToValue
+                  isEditable
+                  isInstanceProperty
+                  isMandatory
+                  category
+                  isDeleted
+                }
+                stringValue
+                intValue
+                floatValue
+                booleanValue
+                latitudeValue
+                longitudeValue
+                rangeFromValue
+                rangeToValue
+                nodeValue {
+                  __typename
+                  id
+                  name
+                }
+              }
+              services {
+                id
+                name
+              }
+            }
+            properties {
+              id
+              propertyType {
+                id
+                name
+                type
+                nodeType
+                index
+                stringValue
+                intValue
+                booleanValue
+                floatValue
+                latitudeValue
+                longitudeValue
+                rangeFromValue
+                rangeToValue
+                isEditable
+                isInstanceProperty
+                isMandatory
+                category
+                isDeleted
+              }
+              stringValue
+              intValue
+              floatValue
+              booleanValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              nodeValue {
+                __typename
+                id
+                name
+              }
+            }
+            serviceEndpoints {
+              definition {
+                role
+                id
+              }
+              service {
+                name
+                id
+              }
+              id
+            }
+          }
+          equipmentType {
+            portDefinitions {
+              id
+              name
+              visibleLabel
+              bandwidth
+            }
+            id
+          }
+          positions {
+            attachedEquipment {
+              id
+              name
+              ports {
+                id
+                definition {
+                  id
+                  name
+                  index
+                  visibleLabel
+                  portType {
+                    id
+                    name
+                    propertyTypes {
+                      id
+                      name
+                      type
+                      nodeType
+                      index
+                      stringValue
+                      intValue
+                      booleanValue
+                      floatValue
+                      latitudeValue
+                      longitudeValue
+                      rangeFromValue
+                      rangeToValue
+                      isEditable
+                      isInstanceProperty
+                      isMandatory
+                      category
+                      isDeleted
+                    }
+                    linkPropertyTypes {
+                      id
+                      name
+                      type
+                      nodeType
+                      index
+                      stringValue
+                      intValue
+                      booleanValue
+                      floatValue
+                      latitudeValue
+                      longitudeValue
+                      rangeFromValue
+                      rangeToValue
+                      isEditable
+                      isInstanceProperty
+                      isMandatory
+                      category
+                      isDeleted
+                    }
+                  }
+                }
+                parentEquipment {
+                  id
+                  name
+                  equipmentType {
+                    id
+                    name
+                  }
+                }
+                link {
+                  id
+                  futureState
+                  ports {
+                    id
+                    definition {
+                      id
+                      name
+                      visibleLabel
+                      portType {
+                        linkPropertyTypes {
+                          id
+                          name
+                          type
+                          nodeType
+                          index
+                          stringValue
+                          intValue
+                          booleanValue
+                          floatValue
+                          latitudeValue
+                          longitudeValue
+                          rangeFromValue
+                          rangeToValue
+                          isEditable
+                          isInstanceProperty
+                          isMandatory
+                          category
+                          isDeleted
+                        }
+                        id
+                      }
+                    }
+                    parentEquipment {
+                      id
+                      name
+                      futureState
+                      equipmentType {
+                        id
+                        name
+                      }
+                      ...EquipmentBreadcrumbs_equipment
+                    }
+                    serviceEndpoints {
+                      definition {
+                        role
+                        id
+                      }
+                      service {
+                        name
+                        id
+                      }
+                      id
+                    }
+                  }
+                  workOrder {
+                    id
+                    status
+                  }
+                  properties {
+                    id
+                    propertyType {
+                      id
+                      name
+                      type
+                      nodeType
+                      index
+                      stringValue
+                      intValue
+                      booleanValue
+                      floatValue
+                      latitudeValue
+                      longitudeValue
+                      rangeFromValue
+                      rangeToValue
+                      isEditable
+                      isInstanceProperty
+                      isMandatory
+                      category
+                      isDeleted
+                    }
+                    stringValue
+                    intValue
+                    floatValue
+                    booleanValue
+                    latitudeValue
+                    longitudeValue
+                    rangeFromValue
+                    rangeToValue
+                    nodeValue {
+                      __typename
+                      id
+                      name
+                    }
+                  }
+                  services {
+                    id
+                    name
+                  }
+                }
+                properties {
+                  id
+                  propertyType {
+                    id
+                    name
+                    type
+                    nodeType
+                    index
+                    stringValue
+                    intValue
+                    booleanValue
+                    floatValue
+                    latitudeValue
+                    longitudeValue
+                    rangeFromValue
+                    rangeToValue
+                    isEditable
+                    isInstanceProperty
+                    isMandatory
+                    category
+                    isDeleted
+                  }
+                  stringValue
+                  intValue
+                  floatValue
+                  booleanValue
+                  latitudeValue
+                  longitudeValue
+                  rangeFromValue
+                  rangeToValue
+                  nodeValue {
+                    __typename
+                    id
+                    name
+                  }
+                }
+                serviceEndpoints {
+                  definition {
+                    role
+                    id
+                  }
+                  service {
+                    name
+                    id
+                  }
+                  id
+                }
+              }
+              equipmentType {
+                portDefinitions {
+                  id
+                  name
+                  visibleLabel
+                  bandwidth
+                }
+                id
+              }
+              positions {
+                attachedEquipment {
+                  id
+                  name
+                  ports {
+                    id
+                    definition {
+                      id
+                      name
+                      index
+                      visibleLabel
+                      portType {
+                        id
+                        name
+                        propertyTypes {
+                          id
+                          name
+                          type
+                          nodeType
+                          index
+                          stringValue
+                          intValue
+                          booleanValue
+                          floatValue
+                          latitudeValue
+                          longitudeValue
+                          rangeFromValue
+                          rangeToValue
+                          isEditable
+                          isInstanceProperty
+                          isMandatory
+                          category
+                          isDeleted
+                        }
+                        linkPropertyTypes {
+                          id
+                          name
+                          type
+                          nodeType
+                          index
+                          stringValue
+                          intValue
+                          booleanValue
+                          floatValue
+                          latitudeValue
+                          longitudeValue
+                          rangeFromValue
+                          rangeToValue
+                          isEditable
+                          isInstanceProperty
+                          isMandatory
+                          category
+                          isDeleted
+                        }
+                      }
+                    }
+                    parentEquipment {
+                      id
+                      name
+                      equipmentType {
+                        id
+                        name
+                      }
+                    }
+                    link {
+                      id
+                      futureState
+                      ports {
+                        id
+                        definition {
+                          id
+                          name
+                          visibleLabel
+                          portType {
+                            linkPropertyTypes {
+                              id
+                              name
+                              type
+                              nodeType
+                              index
+                              stringValue
+                              intValue
+                              booleanValue
+                              floatValue
+                              latitudeValue
+                              longitudeValue
+                              rangeFromValue
+                              rangeToValue
+                              isEditable
+                              isInstanceProperty
+                              isMandatory
+                              category
+                              isDeleted
+                            }
+                            id
+                          }
+                        }
+                        parentEquipment {
+                          id
+                          name
+                          futureState
+                          equipmentType {
+                            id
+                            name
+                          }
+                          ...EquipmentBreadcrumbs_equipment
+                        }
+                        serviceEndpoints {
+                          definition {
+                            role
+                            id
+                          }
+                          service {
+                            name
+                            id
+                          }
+                          id
+                        }
+                      }
+                      workOrder {
+                        id
+                        status
+                      }
+                      properties {
+                        id
+                        propertyType {
+                          id
+                          name
+                          type
+                          nodeType
+                          index
+                          stringValue
+                          intValue
+                          booleanValue
+                          floatValue
+                          latitudeValue
+                          longitudeValue
+                          rangeFromValue
+                          rangeToValue
+                          isEditable
+                          isInstanceProperty
+                          isMandatory
+                          category
+                          isDeleted
+                        }
+                        stringValue
+                        intValue
+                        floatValue
+                        booleanValue
+                        latitudeValue
+                        longitudeValue
+                        rangeFromValue
+                        rangeToValue
+                        nodeValue {
+                          __typename
+                          id
+                          name
+                        }
+                      }
+                      services {
+                        id
+                        name
+                      }
+                    }
+                    properties {
+                      id
+                      propertyType {
+                        id
+                        name
+                        type
+                        nodeType
+                        index
+                        stringValue
+                        intValue
+                        booleanValue
+                        floatValue
+                        latitudeValue
+                        longitudeValue
+                        rangeFromValue
+                        rangeToValue
+                        isEditable
+                        isInstanceProperty
+                        isMandatory
+                        category
+                        isDeleted
+                      }
+                      stringValue
+                      intValue
+                      floatValue
+                      booleanValue
+                      latitudeValue
+                      longitudeValue
+                      rangeFromValue
+                      rangeToValue
+                      nodeValue {
+                        __typename
+                        id
+                        name
+                      }
+                    }
+                    serviceEndpoints {
+                      definition {
+                        role
+                        id
+                      }
+                      service {
+                        name
+                        id
+                      }
+                      id
+                    }
+                  }
+                  equipmentType {
+                    portDefinitions {
+                      id
+                      name
+                      visibleLabel
+                      bandwidth
+                    }
+                    id
+                  }
+                }
+                id
+              }
+            }
+            id
+          }
+        }
+        id
+      }
+    }
+    id
+  }
+}
+
+fragment EquipmentPositionsGrid_equipment on Equipment {
+  id
+  ...AddToEquipmentDialog_parentEquipment
+  positions {
+    id
+    definition {
+      id
+      name
+      index
+      visibleLabel
+    }
+    attachedEquipment {
+      id
+      name
+      futureState
+      services {
+        id
+      }
+    }
+    parentEquipment {
+      id
+    }
+  }
+  equipmentType {
+    positionDefinitions {
+      id
+      name
+      index
+      visibleLabel
+    }
+    id
+  }
+}
+
+fragment FileAttachment_file on File {
+  id
+  fileName
+  sizeInBytes
+  uploaded
+  fileType
+  storeKey
+  category
+  annotation
+  documentCategory {
+    id
+    name
+  }
+  ...ImageDialog_img
+}
+
+fragment HyperlinkTableMenu_hyperlink on Hyperlink {
+  id
+  displayName
+  url
+}
+
+fragment HyperlinkTableRow_hyperlink on Hyperlink {
+  id
+  category
+  url
+  displayName
+  createTime
+  documentCategory {
+    id
+    name
+  }
+  ...HyperlinkTableMenu_hyperlink
+}
+
+fragment ImageDialog_img on File {
+  storeKey
+  fileName
+}
+
+fragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {
+  id
+  name
+  index
+  visibleLabel
+}
+
+fragment PropertyFormField_property on Property {
+  id
+  propertyType {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isInstanceProperty
+    isMandatory
+    category
+    isDeleted
+  }
+  stringValue
+  intValue
+  floatValue
+  booleanValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  nodeValue {
+    __typename
+    id
+    name
+  }
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -749,11 +2239,6 @@ return {
               (v2/*: any*/),
               (v3/*: any*/),
               {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "EquipmentPortsTable_equipment"
-              },
-              {
                 "alias": null,
                 "args": null,
                 "concreteType": "EquipmentType",
@@ -815,11 +2300,6 @@ return {
                 "storageKey": null
               },
               {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "EquipmentBreadcrumbs_equipment"
-              },
-              {
                 "alias": null,
                 "args": null,
                 "concreteType": "Location",
@@ -851,11 +2331,6 @@ return {
                   }
                 ],
                 "storageKey": null
-              },
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "EquipmentPositionsGrid_equipment"
               },
               {
                 "alias": null,
@@ -916,6 +2391,21 @@ return {
                   (v9/*: any*/)
                 ],
                 "storageKey": null
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "EquipmentPortsTable_equipment"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "EquipmentBreadcrumbs_equipment"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "EquipmentPositionsGrid_equipment"
               },
               {
                 "args": null,
@@ -1280,10 +2770,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '45289b80018793a427858ef59546d84c';
 
-(node/*: any*/).hash = "45289b80018793a427858ef59546d84c";
-
-module.exports = ((node/*: any*/)/*: Query<
-  EquipmentPropertiesCardQuery$variables,
-  EquipmentPropertiesCardQuery$data,
->*/);
+module.exports = node;

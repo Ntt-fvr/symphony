@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<e63c2f0ce28837c22a57525c0a5419fb>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,7 +13,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
+import type { ConcreteRequest } from 'relay-runtime';
 export type AddCounterInput = {|
   name: string,
   externalID: string,
@@ -18,24 +21,34 @@ export type AddCounterInput = {|
   counterFamily: string,
   vendorFk: string,
 |};
-export type AddCounterMutation$variables = {|
-  input: AddCounterInput,
+export type AddCounterMutationVariables = {|
+  input: AddCounterInput
 |};
-export type AddCounterMutationVariables = AddCounterMutation$variables;
-export type AddCounterMutation$data = {|
+export type AddCounterMutationResponse = {|
   +addCounter: {|
     +id: string,
     +name: string,
-  |},
+  |}
 |};
-export type AddCounterMutationResponse = AddCounterMutation$data;
 export type AddCounterMutation = {|
   variables: AddCounterMutationVariables,
-  response: AddCounterMutation$data,
+  response: AddCounterMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddCounterMutation(
+  $input: AddCounterInput!
+) {
+  addCounter(input: $input) {
+    id
+    name
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -103,10 +116,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'ea55240b40f19c7038f41b1ca59c0abc';
 
-(node/*: any*/).hash = "ea55240b40f19c7038f41b1ca59c0abc";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddCounterMutation$variables,
-  AddCounterMutation$data,
->*/);
+module.exports = node;

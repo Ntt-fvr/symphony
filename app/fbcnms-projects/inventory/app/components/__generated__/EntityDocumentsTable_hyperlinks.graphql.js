@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<706b5273e9178bddd2d6ff81a1df46d2>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,24 +13,25 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type DocumentTable_hyperlinks$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type EntityDocumentsTable_hyperlinks$fragmentType: FragmentType;
-export type EntityDocumentsTable_hyperlinks$ref = EntityDocumentsTable_hyperlinks$fragmentType;
-export type EntityDocumentsTable_hyperlinks$data = $ReadOnlyArray<{|
-  +$fragmentSpreads: DocumentTable_hyperlinks$fragmentType,
-  +$fragmentType: EntityDocumentsTable_hyperlinks$fragmentType,
+import type { ReaderFragment } from 'relay-runtime';
+type DocumentTable_hyperlinks$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type EntityDocumentsTable_hyperlinks$ref: FragmentReference;
+declare export opaque type EntityDocumentsTable_hyperlinks$fragmentType: EntityDocumentsTable_hyperlinks$ref;
+export type EntityDocumentsTable_hyperlinks = $ReadOnlyArray<{|
+  +$fragmentRefs: DocumentTable_hyperlinks$ref,
+  +$refType: EntityDocumentsTable_hyperlinks$ref,
 |}>;
-export type EntityDocumentsTable_hyperlinks = EntityDocumentsTable_hyperlinks$data;
+export type EntityDocumentsTable_hyperlinks$data = EntityDocumentsTable_hyperlinks;
 export type EntityDocumentsTable_hyperlinks$key = $ReadOnlyArray<{
   +$data?: EntityDocumentsTable_hyperlinks$data,
-  +$fragmentSpreads: EntityDocumentsTable_hyperlinks$fragmentType,
+  +$fragmentRefs: EntityDocumentsTable_hyperlinks$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -44,10 +48,7 @@ var node/*: ReaderFragment*/ = {
   "type": "Hyperlink",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = 'dff4323de5cb8d1ba32bfd2518647a88';
 
-(node/*: any*/).hash = "dff4323de5cb8d1ba32bfd2518647a88";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  EntityDocumentsTable_hyperlinks$fragmentType,
-  EntityDocumentsTable_hyperlinks$data,
->*/);
+module.exports = node;

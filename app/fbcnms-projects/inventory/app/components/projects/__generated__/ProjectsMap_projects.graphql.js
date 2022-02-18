@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<6ca7708d0baff86f7e3beaf681cfa434>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ProjectsMap_projects$fragmentType: FragmentType;
-export type ProjectsMap_projects$ref = ProjectsMap_projects$fragmentType;
-export type ProjectsMap_projects$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ProjectsMap_projects$ref: FragmentReference;
+declare export opaque type ProjectsMap_projects$fragmentType: ProjectsMap_projects$ref;
+export type ProjectsMap_projects = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +location: ?{|
@@ -24,17 +27,18 @@ export type ProjectsMap_projects$data = $ReadOnlyArray<{|
     +longitude: number,
   |},
   +numberOfWorkOrders: number,
-  +$fragmentType: ProjectsMap_projects$fragmentType,
+  +$refType: ProjectsMap_projects$ref,
 |}>;
-export type ProjectsMap_projects = ProjectsMap_projects$data;
+export type ProjectsMap_projects$data = ProjectsMap_projects;
 export type ProjectsMap_projects$key = $ReadOnlyArray<{
   +$data?: ProjectsMap_projects$data,
-  +$fragmentSpreads: ProjectsMap_projects$fragmentType,
+  +$fragmentRefs: ProjectsMap_projects$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -98,10 +102,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'd43c7f541350f23d3936722943b7ca9b';
 
-(node/*: any*/).hash = "d43c7f541350f23d3936722943b7ca9b";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ProjectsMap_projects$fragmentType,
-  ProjectsMap_projects$data,
->*/);
+module.exports = node;

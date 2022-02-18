@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<9b227bdaa8642af67b969358eac74308>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,8 +13,8 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type VariableType = "STRING" | "INT" | "DATE" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "LOCATION" | "PROJECT" | "USER" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type AddFlowDraftInput = {|
   name: string,
   description?: ?string,
@@ -26,23 +29,32 @@ export type VariableDefinitionInput = {|
   choices?: ?$ReadOnlyArray<string>,
   defaultValue?: ?string,
 |};
-export type AddFlowDraftMutation$variables = {|
-  input: AddFlowDraftInput,
+export type AddFlowDraftMutationVariables = {|
+  input: AddFlowDraftInput
 |};
-export type AddFlowDraftMutationVariables = AddFlowDraftMutation$variables;
-export type AddFlowDraftMutation$data = {|
+export type AddFlowDraftMutationResponse = {|
   +addFlowDraft: {|
-    +id: string,
-  |},
+    +id: string
+  |}
 |};
-export type AddFlowDraftMutationResponse = AddFlowDraftMutation$data;
 export type AddFlowDraftMutation = {|
   variables: AddFlowDraftMutationVariables,
-  response: AddFlowDraftMutation$data,
+  response: AddFlowDraftMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddFlowDraftMutation(
+  $input: AddFlowDraftInput!
+) {
+  addFlowDraft(input: $input) {
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -103,10 +115,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '2a03ddebdf4f40d66801512eda972102';
 
-(node/*: any*/).hash = "2a03ddebdf4f40d66801512eda972102";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddFlowDraftMutation$variables,
-  AddFlowDraftMutation$data,
->*/);
+module.exports = node;

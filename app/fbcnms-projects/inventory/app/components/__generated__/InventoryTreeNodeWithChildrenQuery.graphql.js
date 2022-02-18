@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<ee1198a0737bb652fda141cab755c174>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type InventoryTreeNodeWithChildrenQuery$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type InventoryTreeNodeWithChildrenQueryVariables = {|
+  id: string
 |};
-export type InventoryTreeNodeWithChildrenQueryVariables = InventoryTreeNodeWithChildrenQuery$variables;
-export type InventoryTreeNodeWithChildrenQuery$data = {|
+export type InventoryTreeNodeWithChildrenQueryResponse = {|
   +location: ?{|
     +id?: string,
     +externalId?: ?string,
@@ -37,16 +39,49 @@ export type InventoryTreeNodeWithChildrenQuery$data = {|
       +numChildren: number,
       +siteSurveyNeeded: boolean,
     |}>,
-  |},
+  |}
 |};
-export type InventoryTreeNodeWithChildrenQueryResponse = InventoryTreeNodeWithChildrenQuery$data;
 export type InventoryTreeNodeWithChildrenQuery = {|
   variables: InventoryTreeNodeWithChildrenQueryVariables,
-  response: InventoryTreeNodeWithChildrenQuery$data,
+  response: InventoryTreeNodeWithChildrenQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query InventoryTreeNodeWithChildrenQuery(
+  $id: ID!
+) {
+  location: node(id: $id) {
+    __typename
+    ... on Location {
+      id
+      externalId
+      name
+      locationType {
+        id
+        name
+      }
+      numChildren
+      siteSurveyNeeded
+      children {
+        id
+        externalId
+        name
+        locationType {
+          id
+          name
+        }
+        numChildren
+        siteSurveyNeeded
+      }
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -212,10 +247,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '76a5d4ca2dafaf7f713fd3916fc4420a';
 
-(node/*: any*/).hash = "76a5d4ca2dafaf7f713fd3916fc4420a";
-
-module.exports = ((node/*: any*/)/*: Query<
-  InventoryTreeNodeWithChildrenQuery$variables,
-  InventoryTreeNodeWithChildrenQuery$data,
->*/);
+module.exports = node;

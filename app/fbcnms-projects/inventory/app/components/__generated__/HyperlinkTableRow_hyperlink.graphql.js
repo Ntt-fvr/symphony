@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<2ce251bff94f6a58589b031b818c1ef1>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type HyperlinkTableMenu_hyperlink$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type HyperlinkTableRow_hyperlink$fragmentType: FragmentType;
-export type HyperlinkTableRow_hyperlink$ref = HyperlinkTableRow_hyperlink$fragmentType;
-export type HyperlinkTableRow_hyperlink$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type HyperlinkTableMenu_hyperlink$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type HyperlinkTableRow_hyperlink$ref: FragmentReference;
+declare export opaque type HyperlinkTableRow_hyperlink$fragmentType: HyperlinkTableRow_hyperlink$ref;
+export type HyperlinkTableRow_hyperlink = {|
   +id: string,
   +category: ?string,
   +url: string,
@@ -25,18 +28,19 @@ export type HyperlinkTableRow_hyperlink$data = {|
     +id: string,
     +name: ?string,
   |},
-  +$fragmentSpreads: HyperlinkTableMenu_hyperlink$fragmentType,
-  +$fragmentType: HyperlinkTableRow_hyperlink$fragmentType,
+  +$fragmentRefs: HyperlinkTableMenu_hyperlink$ref,
+  +$refType: HyperlinkTableRow_hyperlink$ref,
 |};
-export type HyperlinkTableRow_hyperlink = HyperlinkTableRow_hyperlink$data;
+export type HyperlinkTableRow_hyperlink$data = HyperlinkTableRow_hyperlink;
 export type HyperlinkTableRow_hyperlink$key = {
   +$data?: HyperlinkTableRow_hyperlink$data,
-  +$fragmentSpreads: HyperlinkTableRow_hyperlink$fragmentType,
+  +$fragmentRefs: HyperlinkTableRow_hyperlink$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -108,10 +112,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'ef14736933385473d66c5a8a57f3634b';
 
-(node/*: any*/).hash = "ef14736933385473d66c5a8a57f3634b";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  HyperlinkTableRow_hyperlink$fragmentType,
-  HyperlinkTableRow_hyperlink$data,
->*/);
+module.exports = node;

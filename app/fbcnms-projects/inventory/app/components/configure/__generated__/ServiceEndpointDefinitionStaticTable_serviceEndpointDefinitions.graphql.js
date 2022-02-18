@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<bd957bc841c8b3b02ef0a5dafcb2fb3b>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType: FragmentType;
-export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$ref = ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType;
-export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$ref: FragmentReference;
+declare export opaque type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$ref;
+export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +role: ?string,
@@ -23,17 +26,18 @@ export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$data
     +id: string,
     +name: string,
   |},
-  +$fragmentType: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType,
+  +$refType: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$ref,
 |}>;
-export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions = ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$data;
+export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$data = ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions;
 export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$key = $ReadOnlyArray<{
   +$data?: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$data,
-  +$fragmentSpreads: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType,
+  +$fragmentRefs: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -90,10 +94,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '355047f79b4b79d16aa746b866d228ae';
 
-(node/*: any*/).hash = "355047f79b4b79d16aa746b866d228ae";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$fragmentType,
-  ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$data,
->*/);
+module.exports = node;

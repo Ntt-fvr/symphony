@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<69e6088bad17fedbdfbc88e40e9cfb9c>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,24 +13,25 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType: FragmentType;
-export type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref = ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType;
-export type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref: FragmentReference;
+declare export opaque type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref;
+export type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes = $ReadOnlyArray<{|
   +id: string,
   +name: string,
-  +$fragmentType: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType,
+  +$refType: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref,
 |}>;
-export type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes = ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$data;
+export type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$data = ProjectTypeWorkOrderTemplatesPanel_workOrderTypes;
 export type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$key = $ReadOnlyArray<{
   +$data?: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$data,
-  +$fragmentSpreads: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType,
+  +$fragmentRefs: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -53,10 +57,7 @@ var node/*: ReaderFragment*/ = {
   "type": "WorkOrderType",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = 'b8387d4894b17459891a362d8757d82f';
 
-(node/*: any*/).hash = "b8387d4894b17459891a362d8757d82f";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType,
-  ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$data,
->*/);
+module.exports = node;

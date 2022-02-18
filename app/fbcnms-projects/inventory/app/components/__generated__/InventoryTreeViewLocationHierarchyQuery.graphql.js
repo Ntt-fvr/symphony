@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<7d68f43315c73b7c943c3ae36ea228e7>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,26 +13,41 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type InventoryTreeViewLocationHierarchyQuery$variables = {|
-  locationId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type InventoryTreeViewLocationHierarchyQueryVariables = {|
+  locationId: string
 |};
-export type InventoryTreeViewLocationHierarchyQueryVariables = InventoryTreeViewLocationHierarchyQuery$variables;
-export type InventoryTreeViewLocationHierarchyQuery$data = {|
+export type InventoryTreeViewLocationHierarchyQueryResponse = {|
   +location: ?{|
     +locationHierarchy?: $ReadOnlyArray<{|
-      +id: string,
-    |}>,
-  |},
+      +id: string
+    |}>
+  |}
 |};
-export type InventoryTreeViewLocationHierarchyQueryResponse = InventoryTreeViewLocationHierarchyQuery$data;
 export type InventoryTreeViewLocationHierarchyQuery = {|
   variables: InventoryTreeViewLocationHierarchyQueryVariables,
-  response: InventoryTreeViewLocationHierarchyQuery$data,
+  response: InventoryTreeViewLocationHierarchyQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query InventoryTreeViewLocationHierarchyQuery(
+  $locationId: ID!
+) {
+  location: node(id: $locationId) {
+    __typename
+    ... on Location {
+      locationHierarchy {
+        id
+      }
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -114,8 +132,8 @@ return {
             "name": "__typename",
             "storageKey": null
           },
-          (v3/*: any*/),
-          (v2/*: any*/)
+          (v2/*: any*/),
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
@@ -131,10 +149,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '37b918eaa916d586a5f62c755f6a1b83';
 
-(node/*: any*/).hash = "37b918eaa916d586a5f62c755f6a1b83";
-
-module.exports = ((node/*: any*/)/*: Query<
-  InventoryTreeViewLocationHierarchyQuery$variables,
-  InventoryTreeViewLocationHierarchyQuery$data,
->*/);
+module.exports = node;

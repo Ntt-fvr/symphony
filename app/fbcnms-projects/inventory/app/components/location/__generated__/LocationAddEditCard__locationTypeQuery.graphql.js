@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<e5ddc54625591b7efcfbff7a68c5ef7a>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type LocationAddEditCard__locationTypeQuery$variables = {|
-  locationTypeId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type LocationAddEditCard__locationTypeQueryVariables = {|
+  locationTypeId: string
 |};
-export type LocationAddEditCard__locationTypeQueryVariables = LocationAddEditCard__locationTypeQuery$variables;
-export type LocationAddEditCard__locationTypeQuery$data = {|
+export type LocationAddEditCard__locationTypeQueryResponse = {|
   +locationType: ?{|
     +id?: string,
     +name?: string,
@@ -38,16 +40,49 @@ export type LocationAddEditCard__locationTypeQuery$data = {|
       +isInstanceProperty: ?boolean,
       +isMandatory: ?boolean,
     |}>,
-  |},
+  |}
 |};
-export type LocationAddEditCard__locationTypeQueryResponse = LocationAddEditCard__locationTypeQuery$data;
 export type LocationAddEditCard__locationTypeQuery = {|
   variables: LocationAddEditCard__locationTypeQueryVariables,
-  response: LocationAddEditCard__locationTypeQuery$data,
+  response: LocationAddEditCard__locationTypeQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationAddEditCard__locationTypeQuery(
+  $locationTypeId: ID!
+) {
+  locationType: node(id: $locationTypeId) {
+    __typename
+    ... on LocationType {
+      id
+      name
+      propertyTypes {
+        id
+        name
+        type
+        nodeType
+        index
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        isEditable
+        isInstanceProperty
+        isMandatory
+      }
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -265,10 +300,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'f48e051d918fb0d2fd6ff5ca4a7d441c';
 
-(node/*: any*/).hash = "f48e051d918fb0d2fd6ff5ca4a7d441c";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationAddEditCard__locationTypeQuery$variables,
-  LocationAddEditCard__locationTypeQuery$data,
->*/);
+module.exports = node;

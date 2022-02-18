@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<8cffe1f08856afacb41823b7cc19b955>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type SiteSurveyQuestionReply_question$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type SiteSurveyPane_survey$fragmentType: FragmentType;
-export type SiteSurveyPane_survey$ref = SiteSurveyPane_survey$fragmentType;
-export type SiteSurveyPane_survey$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type SiteSurveyQuestionReply_question$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type SiteSurveyPane_survey$ref: FragmentReference;
+declare export opaque type SiteSurveyPane_survey$fragmentType: SiteSurveyPane_survey$ref;
+export type SiteSurveyPane_survey = {|
   +name: string,
   +completionTimestamp: number,
   +surveyResponses: $ReadOnlyArray<?{|
@@ -24,19 +27,20 @@ export type SiteSurveyPane_survey$data = {|
     +formName: ?string,
     +formIndex: number,
     +questionIndex: number,
-    +$fragmentSpreads: SiteSurveyQuestionReply_question$fragmentType,
+    +$fragmentRefs: SiteSurveyQuestionReply_question$ref,
   |}>,
-  +$fragmentType: SiteSurveyPane_survey$fragmentType,
+  +$refType: SiteSurveyPane_survey$ref,
 |};
-export type SiteSurveyPane_survey = SiteSurveyPane_survey$data;
+export type SiteSurveyPane_survey$data = SiteSurveyPane_survey;
 export type SiteSurveyPane_survey$key = {
   +$data?: SiteSurveyPane_survey$data,
-  +$fragmentSpreads: SiteSurveyPane_survey$fragmentType,
+  +$fragmentRefs: SiteSurveyPane_survey$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -111,10 +115,7 @@ var node/*: ReaderFragment*/ = {
   "type": "Survey",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = 'abb3682eadcff198afba66898e28a2a0';
 
-(node/*: any*/).hash = "abb3682eadcff198afba66898e28a2a0";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  SiteSurveyPane_survey$fragmentType,
-  SiteSurveyPane_survey$data,
->*/);
+module.exports = node;

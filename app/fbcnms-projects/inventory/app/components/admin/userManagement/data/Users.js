@@ -19,19 +19,17 @@ import type {UsersByAuthIDQuery} from './__generated__/UsersByAuthIDQuery.graphq
 import type {UserManagementUtils_user as user} from '../utils/__generated__/UserManagementUtils_user.graphql';
 import type {UserManagementUtils_user_base as user_base} from '../utils/__generated__/UserManagementUtils_user_base.graphql';
 
-import {ConnectionHandler} from 'relay-runtime';
-import {getGraphError} from '../../../../common/EntUtils';
-
 import EditUserMutation from '../../../../mutations/EditUserMutation';
 import RelayEnvironment from '../../../../common/RelayEnvironment';
 import UpdateUserGroupsMutation from '../../../../mutations/UpdateUserGroupsMutation';
 import axios from 'axios';
 import nullthrows from 'nullthrows';
+import {ConnectionHandler, fetchQuery, graphql} from 'relay-runtime';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {Organization} from './Organizations';
 import {USER_ROLES} from '../utils/UserManagementUtils';
 import {UserRoles} from '@fbcnms/auth/types';
-import {fetchQuery, graphql} from '../../../../common/RelayUtils';
+import {getGraphError} from '../../../../common/EntUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 export type User = OptionalRefTypeWrapper<user>;
@@ -70,7 +68,7 @@ export function useUsers(): $ReadOnlyArray<User> {
 export function useUsersOrganization(
   organizations: [Organization],
 ): $ReadOnlyArray<User> {
-  return organizations.map(org => {
+  const data = organizations.map(org => {
     const filterBy = [
       {
         filterType: 'USER_ORGANIZATION',
@@ -89,6 +87,7 @@ export function useUsersOrganization(
       members: usersData.map(p => p.node).filter(Boolean),
     };
   });
+  return data;
 }
 
 function roleToNodeRole(role: UserRole): number {

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<fd10028b6b9a39bfaff3fb472fc12854>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type AddEditProjectTypeCard_editingProjectType$fragmentType = any;
-type ProjectTypeCard_projectType$fragmentType = any;
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditProjectTypeCard_editingProjectType$ref = any;
+type ProjectTypeCard_projectType$ref = any;
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type AddProjectTypeInput = {|
   name: string,
   description?: ?string,
@@ -48,23 +51,82 @@ export type WorkOrderDefinitionInput = {|
   index?: ?number,
   type: string,
 |};
-export type CreateProjectTypeMutation$variables = {|
-  input: AddProjectTypeInput,
+export type CreateProjectTypeMutationVariables = {|
+  input: AddProjectTypeInput
 |};
-export type CreateProjectTypeMutationVariables = CreateProjectTypeMutation$variables;
-export type CreateProjectTypeMutation$data = {|
+export type CreateProjectTypeMutationResponse = {|
   +createProjectType: {|
-    +$fragmentSpreads: ProjectTypeCard_projectType$fragmentType & AddEditProjectTypeCard_editingProjectType$fragmentType,
-  |},
+    +$fragmentRefs: ProjectTypeCard_projectType$ref & AddEditProjectTypeCard_editingProjectType$ref
+  |}
 |};
-export type CreateProjectTypeMutationResponse = CreateProjectTypeMutation$data;
 export type CreateProjectTypeMutation = {|
   variables: CreateProjectTypeMutationVariables,
-  response: CreateProjectTypeMutation$data,
+  response: CreateProjectTypeMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation CreateProjectTypeMutation(
+  $input: AddProjectTypeInput!
+) {
+  createProjectType(input: $input) {
+    ...ProjectTypeCard_projectType
+    ...AddEditProjectTypeCard_editingProjectType
+    id
+  }
+}
+
+fragment AddEditProjectTypeCard_editingProjectType on ProjectType {
+  id
+  name
+  description
+  workOrders {
+    id
+    type {
+      id
+      name
+      ...ProjectTypeWorkOrderTemplatesPanel_workOrderTypes
+    }
+  }
+  properties {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    isDeleted
+  }
+}
+
+fragment ProjectTypeCard_projectType on ProjectType {
+  id
+  name
+  description
+  numberOfProjects
+  workOrders {
+    id
+  }
+}
+
+fragment ProjectTypeWorkOrderTemplatesPanel_workOrderTypes on WorkOrderType {
+  id
+  name
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -313,10 +375,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '43ef30d5e1d5929b5020e1279b40cb15';
 
-(node/*: any*/).hash = "43ef30d5e1d5929b5020e1279b40cb15";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  CreateProjectTypeMutation$variables,
-  CreateProjectTypeMutation$data,
->*/);
+module.exports = node;

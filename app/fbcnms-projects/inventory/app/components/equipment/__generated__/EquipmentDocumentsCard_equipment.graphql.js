@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<cd4991ca5986a50dc4e2c52e786350d9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,42 +13,43 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type EntityDocumentsTable_files$fragmentType = any;
-type EntityDocumentsTable_hyperlinks$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type EquipmentDocumentsCard_equipment$fragmentType: FragmentType;
-export type EquipmentDocumentsCard_equipment$ref = EquipmentDocumentsCard_equipment$fragmentType;
-export type EquipmentDocumentsCard_equipment$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type EntityDocumentsTable_files$ref = any;
+type EntityDocumentsTable_hyperlinks$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type EquipmentDocumentsCard_equipment$ref: FragmentReference;
+declare export opaque type EquipmentDocumentsCard_equipment$fragmentType: EquipmentDocumentsCard_equipment$ref;
+export type EquipmentDocumentsCard_equipment = {|
   +id: string,
   +images: $ReadOnlyArray<?{|
-    +$fragmentSpreads: EntityDocumentsTable_files$fragmentType,
+    +$fragmentRefs: EntityDocumentsTable_files$ref
   |}>,
   +files: $ReadOnlyArray<?{|
-    +$fragmentSpreads: EntityDocumentsTable_files$fragmentType,
+    +$fragmentRefs: EntityDocumentsTable_files$ref
   |}>,
   +hyperlinks: $ReadOnlyArray<{|
-    +$fragmentSpreads: EntityDocumentsTable_hyperlinks$fragmentType,
+    +$fragmentRefs: EntityDocumentsTable_hyperlinks$ref
   |}>,
   +parentLocation: ?{|
     +locationType: {|
       +documentCategories: $ReadOnlyArray<?{|
         +id: string,
         +name: ?string,
-      |}>,
-    |},
+      |}>
+    |}
   |},
-  +$fragmentType: EquipmentDocumentsCard_equipment$fragmentType,
+  +$refType: EquipmentDocumentsCard_equipment$ref,
 |};
-export type EquipmentDocumentsCard_equipment = EquipmentDocumentsCard_equipment$data;
+export type EquipmentDocumentsCard_equipment$data = EquipmentDocumentsCard_equipment;
 export type EquipmentDocumentsCard_equipment$key = {
   +$data?: EquipmentDocumentsCard_equipment$data,
-  +$fragmentSpreads: EquipmentDocumentsCard_equipment$fragmentType,
+  +$fragmentRefs: EquipmentDocumentsCard_equipment$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -149,10 +153,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '9abc148ec98dcd8b498b5ad14c20d525';
 
-(node/*: any*/).hash = "9abc148ec98dcd8b498b5ad14c20d525";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  EquipmentDocumentsCard_equipment$fragmentType,
-  EquipmentDocumentsCard_equipment$data,
->*/);
+module.exports = node;

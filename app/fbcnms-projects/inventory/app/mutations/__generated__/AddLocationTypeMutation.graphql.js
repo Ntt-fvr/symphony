@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<08e8d2386756a7929ecdc2587c06b9b3>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type AddEditLocationTypeCard_editingLocationType$fragmentType = any;
-type LocationTypeItem_locationType$fragmentType = any;
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type SurveyQuestionType = "BOOL" | "EMAIL" | "COORDS" | "PHONE" | "TEXT" | "TEXTAREA" | "PHOTO" | "WIFI" | "CELLULAR" | "FLOAT" | "INTEGER" | "DATE" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditLocationTypeCard_editingLocationType$ref = any;
+type LocationTypeItem_locationType$ref = any;
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type SurveyQuestionType = "BOOL" | "CELLULAR" | "COORDS" | "DATE" | "EMAIL" | "FLOAT" | "INTEGER" | "PHONE" | "PHOTO" | "TEXT" | "TEXTAREA" | "WIFI" | "%future added value";
 export type AddLocationTypeInput = {|
   name: string,
   mapType?: ?string,
@@ -65,25 +68,123 @@ export type SurveyTemplateQuestionInput = {|
   questionType: SurveyQuestionType,
   index: number,
 |};
-export type AddLocationTypeMutation$variables = {|
-  input: AddLocationTypeInput,
+export type AddLocationTypeMutationVariables = {|
+  input: AddLocationTypeInput
 |};
-export type AddLocationTypeMutationVariables = AddLocationTypeMutation$variables;
-export type AddLocationTypeMutation$data = {|
+export type AddLocationTypeMutationResponse = {|
   +addLocationType: {|
     +id: string,
     +name: string,
-    +$fragmentSpreads: LocationTypeItem_locationType$fragmentType & AddEditLocationTypeCard_editingLocationType$fragmentType,
-  |},
+    +$fragmentRefs: LocationTypeItem_locationType$ref & AddEditLocationTypeCard_editingLocationType$ref,
+  |}
 |};
-export type AddLocationTypeMutationResponse = AddLocationTypeMutation$data;
 export type AddLocationTypeMutation = {|
   variables: AddLocationTypeMutationVariables,
-  response: AddLocationTypeMutation$data,
+  response: AddLocationTypeMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation AddLocationTypeMutation(
+  $input: AddLocationTypeInput!
+) {
+  addLocationType(input: $input) {
+    id
+    name
+    ...LocationTypeItem_locationType
+    ...AddEditLocationTypeCard_editingLocationType
+  }
+}
+
+fragment AddEditLocationTypeCard_editingLocationType on LocationType {
+  id
+  name
+  mapType
+  mapZoomLevel
+  numberOfLocations
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+    propertyCategory {
+      id
+      name
+    }
+  }
+  documentCategories {
+    id
+    name
+    index
+    numberOfDocuments
+  }
+  surveyTemplateCategories {
+    id
+    categoryTitle
+    categoryDescription
+    surveyTemplateQuestions {
+      id
+      questionTitle
+      questionDescription
+      questionType
+      index
+    }
+  }
+}
+
+fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
+  ...PropertyTypeFormField_propertyType
+  id
+  index
+}
+
+fragment LocationTypeItem_locationType on LocationType {
+  id
+  name
+  index
+  propertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+  numberOfLocations
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -419,10 +520,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '754cc54988ca2f679ee665da803fae10';
 
-(node/*: any*/).hash = "754cc54988ca2f679ee665da803fae10";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  AddLocationTypeMutation$variables,
-  AddLocationTypeMutation$data,
->*/);
+module.exports = node;
