@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<4684ca3d72e3d52eac668aed9635acec>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-type EquipmentBreadcrumbs_equipment$fragmentType = any;
+import type { ConcreteRequest } from 'relay-runtime';
+type EquipmentBreadcrumbs_equipment$ref = any;
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type WorkOrderStatus = "PLANNED" | "IN_PROGRESS" | "PENDING" | "SUBMITTED" | "CLOSED" | "DONE" | "BLOCKED" | "CANCELED" | "SUSPENDED" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
 export type EditEquipmentPortInput = {|
   side: LinkSide,
   properties?: ?$ReadOnlyArray<PropertyInput>,
@@ -38,11 +41,10 @@ export type PropertyInput = {|
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
 |};
-export type EditEquipmentPortMutation$variables = {|
-  input: EditEquipmentPortInput,
+export type EditEquipmentPortMutationVariables = {|
+  input: EditEquipmentPortInput
 |};
-export type EditEquipmentPortMutationVariables = EditEquipmentPortMutation$variables;
-export type EditEquipmentPortMutation$data = {|
+export type EditEquipmentPortMutationResponse = {|
   +editEquipmentPort: {|
     +id: string,
     +definition: {|
@@ -132,7 +134,7 @@ export type EditEquipmentPortMutation$data = {|
               +isMandatory: ?boolean,
               +category: ?string,
               +isDeleted: ?boolean,
-            |}>,
+            |}>
           |},
         |},
         +parentEquipment: {|
@@ -143,14 +145,14 @@ export type EditEquipmentPortMutation$data = {|
             +id: string,
             +name: string,
           |},
-          +$fragmentSpreads: EquipmentBreadcrumbs_equipment$fragmentType,
+          +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
         |},
         +serviceEndpoints: $ReadOnlyArray<{|
           +definition: {|
-            +role: ?string,
+            +role: ?string
           |},
           +service: {|
-            +name: string,
+            +name: string
           |},
         |}>,
       |}>,
@@ -235,22 +237,270 @@ export type EditEquipmentPortMutation$data = {|
     |}>,
     +serviceEndpoints: $ReadOnlyArray<{|
       +definition: {|
-        +role: ?string,
+        +role: ?string
       |},
       +service: {|
-        +name: string,
+        +name: string
       |},
     |}>,
-  |},
+  |}
 |};
-export type EditEquipmentPortMutationResponse = EditEquipmentPortMutation$data;
 export type EditEquipmentPortMutation = {|
   variables: EditEquipmentPortMutationVariables,
-  response: EditEquipmentPortMutation$data,
+  response: EditEquipmentPortMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation EditEquipmentPortMutation(
+  $input: EditEquipmentPortInput!
+) {
+  editEquipmentPort(input: $input) {
+    id
+    definition {
+      id
+      name
+      index
+      visibleLabel
+      portType {
+        id
+        name
+        propertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        linkPropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+      }
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+    link {
+      id
+      futureState
+      ports {
+        id
+        definition {
+          id
+          name
+          visibleLabel
+          portType {
+            linkPropertyTypes {
+              id
+              name
+              type
+              nodeType
+              index
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isEditable
+              isInstanceProperty
+              isMandatory
+              category
+              isDeleted
+            }
+            id
+          }
+        }
+        parentEquipment {
+          id
+          name
+          futureState
+          equipmentType {
+            id
+            name
+          }
+          ...EquipmentBreadcrumbs_equipment
+        }
+        serviceEndpoints {
+          definition {
+            role
+            id
+          }
+          service {
+            name
+            id
+          }
+          id
+        }
+      }
+      workOrder {
+        id
+        status
+      }
+      properties {
+        id
+        propertyType {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isInstanceProperty
+          isMandatory
+          category
+          isDeleted
+        }
+        stringValue
+        intValue
+        floatValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        nodeValue {
+          __typename
+          id
+          name
+        }
+      }
+      services {
+        id
+        name
+      }
+    }
+    properties {
+      id
+      propertyType {
+        id
+        name
+        type
+        nodeType
+        index
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        isEditable
+        isInstanceProperty
+        isMandatory
+        category
+        isDeleted
+      }
+      stringValue
+      intValue
+      floatValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      nodeValue {
+        __typename
+        id
+        name
+      }
+    }
+    serviceEndpoints {
+      definition {
+        role
+        id
+      }
+      service {
+        name
+        id
+      }
+      id
+    }
+  }
+}
+
+fragment EquipmentBreadcrumbs_equipment on Equipment {
+  id
+  name
+  equipmentType {
+    id
+    name
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+  positionHierarchy {
+    id
+    definition {
+      id
+      name
+      visibleLabel
+    }
+    parentEquipment {
+      id
+      name
+      equipmentType {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -944,10 +1194,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '17646fd648bd82deafa700b7e3584457';
 
-(node/*: any*/).hash = "17646fd648bd82deafa700b7e3584457";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  EditEquipmentPortMutation$variables,
-  EditEquipmentPortMutation$data,
->*/);
+module.exports = node;

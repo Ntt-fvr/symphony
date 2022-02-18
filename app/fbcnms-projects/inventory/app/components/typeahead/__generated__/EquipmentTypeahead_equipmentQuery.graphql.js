@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<8db7f96931e3038a1f2d58c5addd098e>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type EquipmentFilterType = "EQUIP_INST_NAME" | "EQUIP_INST_EXTERNAL_ID" | "PROPERTY" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "EQUIPMENT_TYPE" | "%future added value";
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type EquipmentFilterType = "EQUIPMENT_TYPE" | "EQUIP_INST_EXTERNAL_ID" | "EQUIP_INST_NAME" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "%future added value";
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EquipmentFilterInput = {|
   filterType: EquipmentFilterType,
   operator: FilterOperator,
@@ -46,28 +49,42 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type EquipmentTypeahead_equipmentQuery$variables = {|
-  filters: $ReadOnlyArray<EquipmentFilterInput>,
+export type EquipmentTypeahead_equipmentQueryVariables = {|
+  filters: $ReadOnlyArray<EquipmentFilterInput>
 |};
-export type EquipmentTypeahead_equipmentQueryVariables = EquipmentTypeahead_equipmentQuery$variables;
-export type EquipmentTypeahead_equipmentQuery$data = {|
+export type EquipmentTypeahead_equipmentQueryResponse = {|
   +equipments: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type EquipmentTypeahead_equipmentQueryResponse = EquipmentTypeahead_equipmentQuery$data;
 export type EquipmentTypeahead_equipmentQuery = {|
   variables: EquipmentTypeahead_equipmentQueryVariables,
-  response: EquipmentTypeahead_equipmentQuery$data,
+  response: EquipmentTypeahead_equipmentQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query EquipmentTypeahead_equipmentQuery(
+  $filters: [EquipmentFilterInput!]!
+) {
+  equipments(first: 10, filterBy: $filters) {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -162,10 +179,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'ae7478b94317b7281e0a0a3b7d9be648';
 
-(node/*: any*/).hash = "ae7478b94317b7281e0a0a3b7d9be648";
-
-module.exports = ((node/*: any*/)/*: Query<
-  EquipmentTypeahead_equipmentQuery$variables,
-  EquipmentTypeahead_equipmentQuery$data,
->*/);
+module.exports = node;

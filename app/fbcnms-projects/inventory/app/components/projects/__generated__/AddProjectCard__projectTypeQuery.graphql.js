@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<59ab7271c73c031e126d65bd9e4622b9>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type AddProjectCard__projectTypeQuery$variables = {|
-  projectTypeId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type AddProjectCard__projectTypeQueryVariables = {|
+  projectTypeId: string
 |};
-export type AddProjectCard__projectTypeQueryVariables = AddProjectCard__projectTypeQuery$variables;
-export type AddProjectCard__projectTypeQuery$data = {|
+export type AddProjectCard__projectTypeQueryResponse = {|
   +projectType: ?{|
     +id?: string,
     +name?: string,
@@ -40,16 +42,51 @@ export type AddProjectCard__projectTypeQuery$data = {|
       +isDeleted: ?boolean,
       +isMandatory: ?boolean,
     |}>,
-  |},
+  |}
 |};
-export type AddProjectCard__projectTypeQueryResponse = AddProjectCard__projectTypeQuery$data;
 export type AddProjectCard__projectTypeQuery = {|
   variables: AddProjectCard__projectTypeQueryVariables,
-  response: AddProjectCard__projectTypeQuery$data,
+  response: AddProjectCard__projectTypeQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query AddProjectCard__projectTypeQuery(
+  $projectTypeId: ID!
+) {
+  projectType: node(id: $projectTypeId) {
+    __typename
+    ... on ProjectType {
+      id
+      name
+      description
+      properties {
+        id
+        name
+        type
+        nodeType
+        index
+        stringValue
+        intValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        isEditable
+        isInstanceProperty
+        isDeleted
+        isMandatory
+      }
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -283,10 +320,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '30fccb6e48c301875aa28df6e9702411';
 
-(node/*: any*/).hash = "30fccb6e48c301875aa28df6e9702411";
-
-module.exports = ((node/*: any*/)/*: Query<
-  AddProjectCard__projectTypeQuery$variables,
-  AddProjectCard__projectTypeQuery$data,
->*/);
+module.exports = node;

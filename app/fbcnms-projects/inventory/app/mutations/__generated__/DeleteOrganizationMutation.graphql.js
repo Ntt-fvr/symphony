@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<2542e3feff919af853af4d4f984649fc>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,22 +13,29 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type DeleteOrganizationMutation$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type DeleteOrganizationMutationVariables = {|
+  id: string
 |};
-export type DeleteOrganizationMutationVariables = DeleteOrganizationMutation$variables;
-export type DeleteOrganizationMutation$data = {|
-  +removeOrganization: string,
+export type DeleteOrganizationMutationResponse = {|
+  +removeOrganization: string
 |};
-export type DeleteOrganizationMutationResponse = DeleteOrganizationMutation$data;
 export type DeleteOrganizationMutation = {|
   variables: DeleteOrganizationMutationVariables,
-  response: DeleteOrganizationMutation$data,
+  response: DeleteOrganizationMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation DeleteOrganizationMutation(
+  $id: ID!
+) {
+  removeOrganization(id: $id)
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -75,10 +85,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'e4c1b4e26bfce47ab0f6c42f8df402e0';
 
-(node/*: any*/).hash = "e4c1b4e26bfce47ab0f6c42f8df402e0";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  DeleteOrganizationMutation$variables,
-  DeleteOrganizationMutation$data,
->*/);
+module.exports = node;

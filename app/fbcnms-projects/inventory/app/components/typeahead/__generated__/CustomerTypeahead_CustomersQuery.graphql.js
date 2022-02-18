@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<f0f9c4fc3b75fdd2cdeb73dbe85f0011>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,30 +13,45 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type CustomerTypeahead_CustomersQuery$variables = {|
-  limit?: ?number,
+import type { ConcreteRequest } from 'relay-runtime';
+export type CustomerTypeahead_CustomersQueryVariables = {|
+  limit?: ?number
 |};
-export type CustomerTypeahead_CustomersQueryVariables = CustomerTypeahead_CustomersQuery$variables;
-export type CustomerTypeahead_CustomersQuery$data = {|
+export type CustomerTypeahead_CustomersQueryResponse = {|
   +customers: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +externalId: ?string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type CustomerTypeahead_CustomersQueryResponse = CustomerTypeahead_CustomersQuery$data;
 export type CustomerTypeahead_CustomersQuery = {|
   variables: CustomerTypeahead_CustomersQueryVariables,
-  response: CustomerTypeahead_CustomersQuery$data,
+  response: CustomerTypeahead_CustomersQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query CustomerTypeahead_CustomersQuery(
+  $limit: Int
+) {
+  customers(first: $limit) {
+    edges {
+      node {
+        id
+        name
+        externalId
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -130,10 +148,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '18df0202c887393e4158102ab7e9ba4c';
 
-(node/*: any*/).hash = "18df0202c887393e4158102ab7e9ba4c";
-
-module.exports = ((node/*: any*/)/*: Query<
-  CustomerTypeahead_CustomersQuery$variables,
-  CustomerTypeahead_CustomersQuery$data,
->*/);
+module.exports = node;

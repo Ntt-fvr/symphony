@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<79dc61c5556671ed8ae49016426f4d7e>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PermissionValue = "YES" | "NO" | "BY_CONDITION" | "%future added value";
-export type MainContextMeQuery$variables = {||};
-export type MainContextMeQueryVariables = MainContextMeQuery$variables;
-export type MainContextMeQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
+export type MainContextMeQueryVariables = {||};
+export type MainContextMeQueryResponse = {|
   +me: ?{|
     +user: ?{|
       +id: string,
@@ -31,12 +33,12 @@ export type MainContextMeQuery$data = {|
     +permissions: {|
       +adminPolicy: {|
         +access: {|
-          +isAllowed: PermissionValue,
-        |},
+          +isAllowed: PermissionValue
+        |}
       |},
       +inventoryPolicy: {|
         +read: {|
-          +isAllowed: PermissionValue,
+          +isAllowed: PermissionValue
         |},
         +location: {|
           +create: {|
@@ -72,57 +74,57 @@ export type MainContextMeQuery$data = {|
         |},
         +equipment: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +equipmentType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +locationType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +portType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +serviceType: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
       |},
@@ -135,13 +137,13 @@ export type MainContextMeQuery$data = {|
         |},
         +templates: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
         +data: {|
@@ -174,31 +176,211 @@ export type MainContextMeQuery$data = {|
       |},
       +automationPolicy: {|
         +read: {|
-          +isAllowed: PermissionValue,
+          +isAllowed: PermissionValue
         |},
         +templates: {|
           +create: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +update: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
           +delete: {|
-            +isAllowed: PermissionValue,
+            +isAllowed: PermissionValue
           |},
         |},
       |},
     |},
-  |},
+  |}
 |};
-export type MainContextMeQueryResponse = MainContextMeQuery$data;
 export type MainContextMeQuery = {|
   variables: MainContextMeQueryVariables,
-  response: MainContextMeQuery$data,
+  response: MainContextMeQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query MainContextMeQuery {
+  me {
+    user {
+      id
+      authID
+      email
+      firstName
+      lastName
+      organizationFk {
+        id
+        name
+        description
+      }
+    }
+    permissions {
+      adminPolicy {
+        access {
+          isAllowed
+        }
+      }
+      inventoryPolicy {
+        read {
+          isAllowed
+        }
+        location {
+          create {
+            isAllowed
+            locationTypeIds
+          }
+          update {
+            isAllowed
+            locationTypeIds
+          }
+          delete {
+            isAllowed
+            locationTypeIds
+          }
+        }
+        documentCategory {
+          read {
+            isAllowed
+            documentCategoryIds
+          }
+          create {
+            isAllowed
+            documentCategoryIds
+          }
+          update {
+            isAllowed
+            documentCategoryIds
+          }
+          delete {
+            isAllowed
+            documentCategoryIds
+          }
+        }
+        equipment {
+          create {
+            isAllowed
+          }
+          update {
+            isAllowed
+          }
+          delete {
+            isAllowed
+          }
+        }
+        equipmentType {
+          create {
+            isAllowed
+          }
+          update {
+            isAllowed
+          }
+          delete {
+            isAllowed
+          }
+        }
+        locationType {
+          create {
+            isAllowed
+          }
+          update {
+            isAllowed
+          }
+          delete {
+            isAllowed
+          }
+        }
+        portType {
+          create {
+            isAllowed
+          }
+          update {
+            isAllowed
+          }
+          delete {
+            isAllowed
+          }
+        }
+        serviceType {
+          create {
+            isAllowed
+          }
+          update {
+            isAllowed
+          }
+          delete {
+            isAllowed
+          }
+        }
+      }
+      workforcePolicy {
+        read {
+          isAllowed
+          projectTypeIds
+          workOrderTypeIds
+          organizationIds
+        }
+        templates {
+          create {
+            isAllowed
+          }
+          update {
+            isAllowed
+          }
+          delete {
+            isAllowed
+          }
+        }
+        data {
+          create {
+            isAllowed
+            projectTypeIds
+            workOrderTypeIds
+          }
+          update {
+            isAllowed
+            projectTypeIds
+            workOrderTypeIds
+          }
+          delete {
+            isAllowed
+            projectTypeIds
+            workOrderTypeIds
+          }
+          assign {
+            isAllowed
+            projectTypeIds
+            workOrderTypeIds
+          }
+          transferOwnership {
+            isAllowed
+            projectTypeIds
+            workOrderTypeIds
+          }
+        }
+      }
+      automationPolicy {
+        read {
+          isAllowed
+        }
+        templates {
+          create {
+            isAllowed
+          }
+          update {
+            isAllowed
+          }
+          delete {
+            isAllowed
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -706,10 +888,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'fd54da9d9131a266f0cfa4f53639fa1c';
 
-(node/*: any*/).hash = "fd54da9d9131a266f0cfa4f53639fa1c";
-
-module.exports = ((node/*: any*/)/*: Query<
-  MainContextMeQuery$variables,
-  MainContextMeQuery$data,
->*/);
+module.exports = node;

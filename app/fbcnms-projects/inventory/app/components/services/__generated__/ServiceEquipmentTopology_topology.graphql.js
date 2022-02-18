@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<42673980cca3e71a17f8fd8465d91f83>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,28 +13,29 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type ForceNetworkTopology_topology$fragmentType = any;
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ServiceEquipmentTopology_topology$fragmentType: FragmentType;
-export type ServiceEquipmentTopology_topology$ref = ServiceEquipmentTopology_topology$fragmentType;
-export type ServiceEquipmentTopology_topology$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type ForceNetworkTopology_topology$ref = any;
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ServiceEquipmentTopology_topology$ref: FragmentReference;
+declare export opaque type ServiceEquipmentTopology_topology$fragmentType: ServiceEquipmentTopology_topology$ref;
+export type ServiceEquipmentTopology_topology = {|
   +nodes: $ReadOnlyArray<{|
     +id?: string,
     +name?: string,
   |}>,
-  +$fragmentSpreads: ForceNetworkTopology_topology$fragmentType,
-  +$fragmentType: ServiceEquipmentTopology_topology$fragmentType,
+  +$fragmentRefs: ForceNetworkTopology_topology$ref,
+  +$refType: ServiceEquipmentTopology_topology$ref,
 |};
-export type ServiceEquipmentTopology_topology = ServiceEquipmentTopology_topology$data;
+export type ServiceEquipmentTopology_topology$data = ServiceEquipmentTopology_topology;
 export type ServiceEquipmentTopology_topology$key = {
   +$data?: ServiceEquipmentTopology_topology$data,
-  +$fragmentSpreads: ServiceEquipmentTopology_topology$fragmentType,
+  +$fragmentRefs: ServiceEquipmentTopology_topology$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = {
+
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -78,10 +82,7 @@ var node/*: ReaderFragment*/ = {
   "type": "NetworkTopology",
   "abstractKey": null
 };
+// prettier-ignore
+(node/*: any*/).hash = '3aacf7059c6ccea42895132c69cbb030';
 
-(node/*: any*/).hash = "3aacf7059c6ccea42895132c69cbb030";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ServiceEquipmentTopology_topology$fragmentType,
-  ServiceEquipmentTopology_topology$data,
->*/);
+module.exports = node;

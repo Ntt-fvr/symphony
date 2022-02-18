@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<a202a52c86996ed2917373b5805a49df>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,12 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-export type PermissionValue = "YES" | "NO" | "BY_CONDITION" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type UserManagementUtils_workforcePolicy$fragmentType: FragmentType;
-export type UserManagementUtils_workforcePolicy$ref = UserManagementUtils_workforcePolicy$fragmentType;
-export type UserManagementUtils_workforcePolicy$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type UserManagementUtils_workforcePolicy$ref: FragmentReference;
+declare export opaque type UserManagementUtils_workforcePolicy$fragmentType: UserManagementUtils_workforcePolicy$ref;
+export type UserManagementUtils_workforcePolicy = {|
   +read: {|
     +isAllowed: PermissionValue,
     +projectTypeIds: ?$ReadOnlyArray<string>,
@@ -24,43 +27,44 @@ export type UserManagementUtils_workforcePolicy$data = {|
   |},
   +templates: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
   +data: {|
     +create: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +update: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +delete: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +assign: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
     +transferOwnership: {|
-      +isAllowed: PermissionValue,
+      +isAllowed: PermissionValue
     |},
   |},
-  +$fragmentType: UserManagementUtils_workforcePolicy$fragmentType,
+  +$refType: UserManagementUtils_workforcePolicy$ref,
 |};
-export type UserManagementUtils_workforcePolicy = UserManagementUtils_workforcePolicy$data;
+export type UserManagementUtils_workforcePolicy$data = UserManagementUtils_workforcePolicy;
 export type UserManagementUtils_workforcePolicy$key = {
   +$data?: UserManagementUtils_workforcePolicy$data,
-  +$fragmentSpreads: UserManagementUtils_workforcePolicy$fragmentType,
+  +$fragmentRefs: UserManagementUtils_workforcePolicy$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -217,10 +221,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '6e0ede76cc84c737b1384c598f467940';
 
-(node/*: any*/).hash = "6e0ede76cc84c737b1384c598f467940";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  UserManagementUtils_workforcePolicy$fragmentType,
-  UserManagementUtils_workforcePolicy$data,
->*/);
+module.exports = node;

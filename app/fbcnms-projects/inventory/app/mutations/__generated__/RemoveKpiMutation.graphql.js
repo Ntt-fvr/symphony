@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<53b0acfee5ae0d053efe3eeb69db6dcf>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,22 +13,29 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type RemoveKpiMutation$variables = {|
-  id: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type RemoveKpiMutationVariables = {|
+  id: string
 |};
-export type RemoveKpiMutationVariables = RemoveKpiMutation$variables;
-export type RemoveKpiMutation$data = {|
-  +removeKpi: string,
+export type RemoveKpiMutationResponse = {|
+  +removeKpi: string
 |};
-export type RemoveKpiMutationResponse = RemoveKpiMutation$data;
 export type RemoveKpiMutation = {|
   variables: RemoveKpiMutationVariables,
-  response: RemoveKpiMutation$data,
+  response: RemoveKpiMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation RemoveKpiMutation(
+  $id: ID!
+) {
+  removeKpi(id: $id)
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -75,10 +85,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'cc7d7eb95c2f8f8fb6edd0fc121c7ebb';
 
-(node/*: any*/).hash = "cc7d7eb95c2f8f8fb6edd0fc121c7ebb";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  RemoveKpiMutation$variables,
-  RemoveKpiMutation$data,
->*/);
+module.exports = node;

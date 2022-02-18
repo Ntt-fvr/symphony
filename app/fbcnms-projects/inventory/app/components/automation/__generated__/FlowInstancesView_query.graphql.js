@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<9427ab2d922402c9d4398544ff91fcdf>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,12 @@
 'use strict';
 
 /*::
-import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
-export type FlowInstanceStatus = "IN_PROGRESS" | "FAILED" | "COMPLETED" | "CANCELED" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type FlowInstancesView_query$fragmentType: FragmentType;
-export type FlowInstancesView_query$ref = FlowInstancesView_query$fragmentType;
-type FlowInstancesViewPaginationQuery$variables = any;
-export type FlowInstancesView_query$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+export type FlowInstanceStatus = "CANCELED" | "COMPLETED" | "FAILED" | "IN_PROGRESS" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type FlowInstancesView_query$ref: FragmentReference;
+declare export opaque type FlowInstancesView_query$fragmentType: FlowInstancesView_query$ref;
+export type FlowInstancesView_query = {|
   +flowInstances: {|
     +totalCount: number,
     +edges: ?$ReadOnlyArray<{|
@@ -31,20 +33,21 @@ export type FlowInstancesView_query$data = {|
           +id: string,
           +name: string,
         |},
-      |},
+      |}
     |}>,
   |},
-  +$fragmentType: FlowInstancesView_query$fragmentType,
+  +$refType: FlowInstancesView_query$ref,
 |};
-export type FlowInstancesView_query = FlowInstancesView_query$data;
+export type FlowInstancesView_query$data = FlowInstancesView_query;
 export type FlowInstancesView_query$key = {
   +$data?: FlowInstancesView_query$data,
-  +$fragmentSpreads: FlowInstancesView_query$fragmentType,
+  +$fragmentRefs: FlowInstancesView_query$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = [
   "flowInstances"
 ],
@@ -98,7 +101,7 @@ return {
         "path": (v0/*: any*/)
       },
       "fragmentPathInResult": [],
-      "operation": require('./FlowInstancesViewPaginationQuery.graphql')
+      "operation": require('./FlowInstancesViewPaginationQuery.graphql.js')
     }
   },
   "name": "FlowInstancesView_query",
@@ -253,11 +256,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '7942d016ca3ac6e6094785f425707d9a';
 
-(node/*: any*/).hash = "5638d06230090775fb1733edaf39f546";
-
-module.exports = ((node/*: any*/)/*: RefetchableFragment<
-  FlowInstancesView_query$fragmentType,
-  FlowInstancesView_query$data,
-  FlowInstancesViewPaginationQuery$variables,
->*/);
+module.exports = node;

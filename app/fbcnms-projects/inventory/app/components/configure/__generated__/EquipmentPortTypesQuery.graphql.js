@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<62d80abd67b52058df8c41bd392d0961>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,30 +13,127 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType = any;
-type EquipmentPortTypeItem_equipmentPortType$fragmentType = any;
-export type EquipmentPortTypesQuery$variables = {||};
-export type EquipmentPortTypesQueryVariables = EquipmentPortTypesQuery$variables;
-export type EquipmentPortTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref = any;
+type EquipmentPortTypeItem_equipmentPortType$ref = any;
+export type EquipmentPortTypesQueryVariables = {||};
+export type EquipmentPortTypesQueryResponse = {|
   +equipmentPortTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-        +$fragmentSpreads: EquipmentPortTypeItem_equipmentPortType$fragmentType & AddEditEquipmentPortTypeCard_editingEquipmentPortType$fragmentType,
-      |},
-    |}>,
-  |},
+        +$fragmentRefs: EquipmentPortTypeItem_equipmentPortType$ref & AddEditEquipmentPortTypeCard_editingEquipmentPortType$ref,
+      |}
+    |}>
+  |}
 |};
-export type EquipmentPortTypesQueryResponse = EquipmentPortTypesQuery$data;
 export type EquipmentPortTypesQuery = {|
   variables: EquipmentPortTypesQueryVariables,
-  response: EquipmentPortTypesQuery$data,
+  response: EquipmentPortTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query EquipmentPortTypesQuery {
+  equipmentPortTypes(first: 500) {
+    edges {
+      node {
+        ...EquipmentPortTypeItem_equipmentPortType
+        ...AddEditEquipmentPortTypeCard_editingEquipmentPortType
+        id
+        name
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+fragment AddEditEquipmentPortTypeCard_editingEquipmentPortType on EquipmentPortType {
+  id
+  name
+  numberOfPortDefinitions
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    isEditable
+    isInstanceProperty
+  }
+  linkPropertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    isEditable
+    isInstanceProperty
+  }
+}
+
+fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {
+  ...PropertyTypeFormField_propertyType
+  id
+  index
+}
+
+fragment EquipmentPortTypeItem_equipmentPortType on EquipmentPortType {
+  id
+  name
+  numberOfPortDefinitions
+  propertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+  linkPropertyTypes {
+    ...DynamicPropertyTypesGrid_propertyTypes
+    id
+  }
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -241,6 +341,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -250,10 +353,7 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddEditEquipmentPortTypeCard_editingEquipmentPortType"
-                  },
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v2/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -372,10 +472,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'bbfe2ae6972634e9f7fc0bdabbb613f7';
 
-(node/*: any*/).hash = "bbfe2ae6972634e9f7fc0bdabbb613f7";
-
-module.exports = ((node/*: any*/)/*: Query<
-  EquipmentPortTypesQuery$variables,
-  EquipmentPortTypesQuery$data,
->*/);
+module.exports = node;

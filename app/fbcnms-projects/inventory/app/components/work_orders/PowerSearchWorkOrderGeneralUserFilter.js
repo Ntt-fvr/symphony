@@ -19,7 +19,7 @@ import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
-import {fetchQuery, graphql} from '../../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 const usersQuery = graphql`
   query PowerSearchWorkOrderGeneralUserFilter_userQuery(

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<00f1ac3f3d68694ab39a505a447d678e>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,11 +13,11 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type PortDefinitionsTable_portDefinitions$fragmentType: FragmentType;
-export type PortDefinitionsTable_portDefinitions$ref = PortDefinitionsTable_portDefinitions$fragmentType;
-export type PortDefinitionsTable_portDefinitions$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type PortDefinitionsTable_portDefinitions$ref: FragmentReference;
+declare export opaque type PortDefinitionsTable_portDefinitions$fragmentType: PortDefinitionsTable_portDefinitions$ref;
+export type PortDefinitionsTable_portDefinitions = $ReadOnlyArray<{|
   +id: string,
   +name: string,
   +index: ?number,
@@ -27,17 +30,18 @@ export type PortDefinitionsTable_portDefinitions$data = $ReadOnlyArray<{|
     +id: string,
     +name: string,
   |}>,
-  +$fragmentType: PortDefinitionsTable_portDefinitions$fragmentType,
+  +$refType: PortDefinitionsTable_portDefinitions$ref,
 |}>;
-export type PortDefinitionsTable_portDefinitions = PortDefinitionsTable_portDefinitions$data;
+export type PortDefinitionsTable_portDefinitions$data = PortDefinitionsTable_portDefinitions;
 export type PortDefinitionsTable_portDefinitions$key = $ReadOnlyArray<{
   +$data?: PortDefinitionsTable_portDefinitions$data,
-  +$fragmentSpreads: PortDefinitionsTable_portDefinitions$fragmentType,
+  +$fragmentRefs: PortDefinitionsTable_portDefinitions$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -105,10 +109,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '214290ff7d5ae32d63df37643bf60009';
 
-(node/*: any*/).hash = "214290ff7d5ae32d63df37643bf60009";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  PortDefinitionsTable_portDefinitions$fragmentType,
-  PortDefinitionsTable_portDefinitions$data,
->*/);
+module.exports = node;

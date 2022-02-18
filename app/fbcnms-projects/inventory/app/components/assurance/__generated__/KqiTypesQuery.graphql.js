@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<0f916e7bff6e700c944e141cb8bdc6e4>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type KqiTypesQuery$variables = {||};
-export type KqiTypesQueryVariables = KqiTypesQuery$variables;
-export type KqiTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type KqiTypesQueryVariables = {||};
+export type KqiTypesQueryResponse = {|
   +kqis: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -66,40 +68,40 @@ export type KqiTypesQuery$data = {|
             +comparatorType: string,
           |}>,
         |}>,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +kqiPerspectives: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +kqiSources: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +kqiCategories: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +kqiTemporalFrequencies: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +kqiTargets: {|
     +edges: $ReadOnlyArray<{|
@@ -129,26 +131,157 @@ export type KqiTypesQuery$data = {|
           +number: number,
           +comparatorType: string,
         |}>,
-      |},
-    |}>,
+      |}
+    |}>
   |},
   +comparators: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
+      |}
+    |}>
   |},
 |};
-export type KqiTypesQueryResponse = KqiTypesQuery$data;
 export type KqiTypesQuery = {|
   variables: KqiTypesQueryVariables,
-  response: KqiTypesQuery$data,
+  response: KqiTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query KqiTypesQuery {
+  kqis {
+    edges {
+      node {
+        id
+        name
+        description
+        formula
+        startDateTime
+        endDateTime
+        kqiCategory {
+          id
+          name
+        }
+        kqiPerspective {
+          id
+          name
+        }
+        kqiSource {
+          id
+          name
+        }
+        kqiTemporalFrequency {
+          id
+          name
+        }
+        kqiTarget {
+          id
+          name
+          impact
+          allowedVariation
+          initTime
+          endTime
+          status
+          period
+          kqi {
+            id
+            name
+          }
+          kqiComparator {
+            kqiTargetFk {
+              id
+              name
+            }
+            comparatorFk {
+              id
+              name
+            }
+            id
+            number
+            comparatorType
+          }
+        }
+      }
+    }
+  }
+  kqiPerspectives {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  kqiSources {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  kqiCategories {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  kqiTemporalFrequencies {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  kqiTargets {
+    edges {
+      node {
+        id
+        name
+        impact
+        allowedVariation
+        initTime
+        endTime
+        status
+        period
+        kqi {
+          id
+          name
+        }
+        kqiComparator {
+          kqiTargetFk {
+            id
+            name
+          }
+          comparatorFk {
+            id
+            name
+          }
+          id
+          number
+          comparatorType
+        }
+      }
+    }
+  }
+  comparators {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -603,10 +736,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '9e520c88a25893d1635c768aff9304f2';
 
-(node/*: any*/).hash = "9e520c88a25893d1635c768aff9304f2";
-
-module.exports = ((node/*: any*/)/*: Query<
-  KqiTypesQuery$variables,
-  KqiTypesQuery$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<4fe55daa2503da36a6dc8d1d27c9c042>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,28 +13,29 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ProjectMoreActionsButton_project$fragmentType: FragmentType;
-export type ProjectMoreActionsButton_project$ref = ProjectMoreActionsButton_project$fragmentType;
-export type ProjectMoreActionsButton_project$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ProjectMoreActionsButton_project$ref: FragmentReference;
+declare export opaque type ProjectMoreActionsButton_project$fragmentType: ProjectMoreActionsButton_project$ref;
+export type ProjectMoreActionsButton_project = {|
   +id: string,
   +name: string,
   +numberOfWorkOrders: number,
   +type: {|
-    +id: string,
+    +id: string
   |},
-  +$fragmentType: ProjectMoreActionsButton_project$fragmentType,
+  +$refType: ProjectMoreActionsButton_project$ref,
 |};
-export type ProjectMoreActionsButton_project = ProjectMoreActionsButton_project$data;
+export type ProjectMoreActionsButton_project$data = ProjectMoreActionsButton_project;
 export type ProjectMoreActionsButton_project$key = {
   +$data?: ProjectMoreActionsButton_project$data,
-  +$fragmentSpreads: ProjectMoreActionsButton_project$fragmentType,
+  +$fragmentRefs: ProjectMoreActionsButton_project$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -77,10 +81,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'fab778d2924d1e0b30c094cc7dfa5572';
 
-(node/*: any*/).hash = "fab778d2924d1e0b30c094cc7dfa5572";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ProjectMoreActionsButton_project$fragmentType,
-  ProjectMoreActionsButton_project$data,
->*/);
+module.exports = node;

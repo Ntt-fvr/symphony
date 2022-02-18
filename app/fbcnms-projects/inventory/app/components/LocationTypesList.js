@@ -20,7 +20,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import React from 'react';
 import RelayEnvironment from '../common/RelayEnvironment.js';
-import {fetchQuery, graphql} from '../common/RelayUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 

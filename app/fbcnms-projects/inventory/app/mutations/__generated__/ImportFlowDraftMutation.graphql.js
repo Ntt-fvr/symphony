@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<5d031dabb1f2a4c8150e9f30ac5f61ef>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type ActionTypeId = "work_order" | "update_inventory" | "update_workforce" | "worker" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
-export type ExitPointRole = "DEFAULT" | "DECISION" | "%future added value";
+export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
-export type VariableExpressionType = "VariableDefinition" | "PropertyTypeDefinition" | "DecisionDefinition" | "ChekListItemDefinition" | "%future added value";
-export type VariableType = "STRING" | "INT" | "DATE" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "LOCATION" | "PROJECT" | "USER" | "%future added value";
+export type VariableExpressionType = "ChekListItemDefinition" | "DecisionDefinition" | "PropertyTypeDefinition" | "VariableDefinition" | "%future added value";
+export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type ImportFlowDraftInput = {|
   id: string,
   name: string,
@@ -119,11 +122,10 @@ export type EntryPointInput = {|
   role?: ?EntryPointRole,
   cid?: ?string,
 |};
-export type ImportFlowDraftMutation$variables = {|
-  input: ImportFlowDraftInput,
+export type ImportFlowDraftMutationVariables = {|
+  input: ImportFlowDraftInput
 |};
-export type ImportFlowDraftMutationVariables = ImportFlowDraftMutation$variables;
-export type ImportFlowDraftMutation$data = {|
+export type ImportFlowDraftMutationResponse = {|
   +importFlowDraft: {|
     +id: string,
     +name: string,
@@ -131,7 +133,7 @@ export type ImportFlowDraftMutation$data = {|
     +blocks: $ReadOnlyArray<{|
       +cid: string,
       +details: {|
-        +__typename: string,
+        +__typename: string
       |},
       +uiRepresentation: ?{|
         +name: string,
@@ -147,16 +149,49 @@ export type ImportFlowDraftMutation$data = {|
         |},
       |}>,
     |}>,
-  |},
+  |}
 |};
-export type ImportFlowDraftMutationResponse = ImportFlowDraftMutation$data;
 export type ImportFlowDraftMutation = {|
   variables: ImportFlowDraftMutationVariables,
-  response: ImportFlowDraftMutation$data,
+  response: ImportFlowDraftMutationResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+mutation ImportFlowDraftMutation(
+  $input: ImportFlowDraftInput!
+) {
+  importFlowDraft(input: $input) {
+    id
+    name
+    description
+    blocks {
+      cid
+      details {
+        __typename
+      }
+      uiRepresentation {
+        name
+        xPosition
+        yPosition
+      }
+      nextBlocks {
+        cid
+        uiRepresentation {
+          name
+          xPosition
+          yPosition
+        }
+        id
+      }
+      id
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -356,10 +391,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '90f6f56a4c3591dacbc2f112b5a59c34';
 
-(node/*: any*/).hash = "90f6f56a4c3591dacbc2f112b5a59c34";
-
-module.exports = ((node/*: any*/)/*: Mutation<
-  ImportFlowDraftMutation$variables,
-  ImportFlowDraftMutation$data,
->*/);
+module.exports = node;

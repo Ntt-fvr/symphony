@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<01450266ceb8160c34241b2b1600e721>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type LocationsMapTypesQuery$variables = {||};
-export type LocationsMapTypesQueryVariables = LocationsMapTypesQuery$variables;
-export type LocationsMapTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type LocationsMapTypesQueryVariables = {||};
+export type LocationsMapTypesQueryResponse = {|
   +locationTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -26,21 +28,44 @@ export type LocationsMapTypesQuery$data = {|
               +name: string,
               +latitude: number,
               +longitude: number,
-            |},
-          |}>,
+            |}
+          |}>
         |},
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type LocationsMapTypesQueryResponse = LocationsMapTypesQuery$data;
 export type LocationsMapTypesQuery = {|
   variables: LocationsMapTypesQueryVariables,
-  response: LocationsMapTypesQuery$data,
+  response: LocationsMapTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationsMapTypesQuery {
+  locationTypes {
+    edges {
+      node {
+        id
+        name
+        locations(enforceHasLatLong: true) {
+          edges {
+            node {
+              id
+              name
+              latitude
+              longitude
+            }
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -174,10 +199,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'fc689b6b48f62c12d1c96d10d3f80c7c';
 
-(node/*: any*/).hash = "fc689b6b48f62c12d1c96d10d3f80c7c";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationsMapTypesQuery$variables,
-  LocationsMapTypesQuery$data,
->*/);
+module.exports = node;

@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<0e289e67f6754e03aba37277b9705b7b>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PowerSearchLocationFilterQuery$variables = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type PowerSearchLocationFilterQueryVariables = {|
   name: string,
   types?: ?$ReadOnlyArray<string>,
 |};
-export type PowerSearchLocationFilterQueryVariables = PowerSearchLocationFilterQuery$variables;
-export type PowerSearchLocationFilterQuery$data = {|
+export type PowerSearchLocationFilterQueryResponse = {|
   +locations: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -26,18 +28,38 @@ export type PowerSearchLocationFilterQuery$data = {|
           +id: string,
           +name: string,
         |},
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type PowerSearchLocationFilterQueryResponse = PowerSearchLocationFilterQuery$data;
 export type PowerSearchLocationFilterQuery = {|
   variables: PowerSearchLocationFilterQueryVariables,
-  response: PowerSearchLocationFilterQuery$data,
+  response: PowerSearchLocationFilterQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query PowerSearchLocationFilterQuery(
+  $name: String!
+  $types: [ID!]
+) {
+  locations(name: $name, first: 10, types: $types) {
+    edges {
+      node {
+        id
+        name
+        parentLocation {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -157,10 +179,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '4361823ce4f9bdf393a3e64e6060a46d';
 
-(node/*: any*/).hash = "4361823ce4f9bdf393a3e64e6060a46d";
-
-module.exports = ((node/*: any*/)/*: Query<
-  PowerSearchLocationFilterQuery$variables,
-  PowerSearchLocationFilterQuery$data,
->*/);
+module.exports = node;

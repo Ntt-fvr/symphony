@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<b9cb0d67da413f6aa083d72232e0ffd3>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,9 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type ThresholdTypesQuery$variables = {||};
-export type ThresholdTypesQueryVariables = ThresholdTypesQuery$variables;
-export type ThresholdTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type ThresholdTypesQueryVariables = {||};
+export type ThresholdTypesQueryResponse = {|
   +thresholds: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -57,18 +59,69 @@ export type ThresholdTypesQuery$data = {|
             +name: string,
           |},
         |}>,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type ThresholdTypesQueryResponse = ThresholdTypesQuery$data;
 export type ThresholdTypesQuery = {|
   variables: ThresholdTypesQueryVariables,
-  response: ThresholdTypesQuery$data,
+  response: ThresholdTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ThresholdTypesQuery {
+  thresholds {
+    edges {
+      node {
+        id
+        name
+        description
+        status
+        kpi {
+          id
+          name
+        }
+        rule {
+          id
+          name
+          status
+          gracePeriod
+          additionalInfo
+          specificProblem
+          eventTypeName
+          startDateTime
+          endDateTime
+          ruleType {
+            id
+            name
+          }
+          ruleLimit {
+            comparator {
+              id
+              name
+            }
+            id
+            number
+            limitType
+          }
+          eventSeverity {
+            id
+            name
+          }
+          threshold {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -298,10 +351,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = 'a21c0c1b751bacf8a7f0247d42320156';
 
-(node/*: any*/).hash = "a21c0c1b751bacf8a7f0247d42320156";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ThresholdTypesQuery$variables,
-  ThresholdTypesQuery$data,
->*/);
+module.exports = node;

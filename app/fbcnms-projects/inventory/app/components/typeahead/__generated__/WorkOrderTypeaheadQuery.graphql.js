@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<1ba632e80a6a2ceaf5471b0505e8904a>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,10 +13,10 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type FilterOperator = "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "CONTAINS" | "IS_ONE_OF" | "IS_NOT_ONE_OF" | "DATE_GREATER_THAN" | "DATE_LESS_THAN" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "%future added value";
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type WorkOrderFilterType = "WORK_ORDER_NAME" | "WORK_ORDER_STATUS" | "WORK_ORDER_OWNED_BY" | "WORK_ORDER_TYPE" | "WORK_ORDER_CREATION_DATE" | "WORK_ORDER_CLOSE_DATE" | "WORK_ORDER_ASSIGNED_TO" | "WORK_ORDER_LOCATION_INST" | "WORK_ORDER_PRIORITY" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "WORK_ORDER_ORGANIZATION" | "%future added value";
+import type { ConcreteRequest } from 'relay-runtime';
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type WorkOrderFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "WORK_ORDER_ASSIGNED_TO" | "WORK_ORDER_CLOSE_DATE" | "WORK_ORDER_CREATION_DATE" | "WORK_ORDER_LOCATION_INST" | "WORK_ORDER_NAME" | "WORK_ORDER_ORGANIZATION" | "WORK_ORDER_OWNED_BY" | "WORK_ORDER_PRIORITY" | "WORK_ORDER_STATUS" | "WORK_ORDER_TYPE" | "%future added value";
 export type WorkOrderFilterInput = {|
   filterType: WorkOrderFilterType,
   operator: FilterOperator,
@@ -47,32 +50,51 @@ export type PropertyTypeInput = {|
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
 |};
-export type WorkOrderTypeaheadQuery$variables = {|
+export type WorkOrderTypeaheadQueryVariables = {|
   filters: $ReadOnlyArray<WorkOrderFilterInput>,
   limit?: ?number,
 |};
-export type WorkOrderTypeaheadQueryVariables = WorkOrderTypeaheadQuery$variables;
-export type WorkOrderTypeaheadQuery$data = {|
+export type WorkOrderTypeaheadQueryResponse = {|
   +workOrders: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +workOrderType: {|
-          +name: string,
+          +name: string
         |},
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type WorkOrderTypeaheadQueryResponse = WorkOrderTypeaheadQuery$data;
 export type WorkOrderTypeaheadQuery = {|
   variables: WorkOrderTypeaheadQueryVariables,
-  response: WorkOrderTypeaheadQuery$data,
+  response: WorkOrderTypeaheadQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query WorkOrderTypeaheadQuery(
+  $filters: [WorkOrderFilterInput!]!
+  $limit: Int
+) {
+  workOrders(filterBy: $filters, first: $limit) {
+    edges {
+      node {
+        id
+        name
+        workOrderType {
+          name
+          id
+        }
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -235,10 +257,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '22e168c446827de92450cbeb97441fec';
 
-(node/*: any*/).hash = "22e168c446827de92450cbeb97441fec";
-
-module.exports = ((node/*: any*/)/*: Query<
-  WorkOrderTypeaheadQuery$variables,
-  WorkOrderTypeaheadQuery$data,
->*/);
+module.exports = node;

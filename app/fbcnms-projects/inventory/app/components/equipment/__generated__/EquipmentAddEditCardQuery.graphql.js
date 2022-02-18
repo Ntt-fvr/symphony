@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<a32b1dd55b9d9bf880381844a74de59c>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,21 +13,20 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-export type EquipmentAddEditCardQuery$variables = {|
-  equipmentId: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type EquipmentAddEditCardQueryVariables = {|
+  equipmentId: string
 |};
-export type EquipmentAddEditCardQueryVariables = EquipmentAddEditCardQuery$variables;
-export type EquipmentAddEditCardQuery$data = {|
+export type EquipmentAddEditCardQueryResponse = {|
   +equipment: ?{|
     +id?: string,
     +name?: string,
     +parentLocation?: ?{|
-      +id: string,
+      +id: string
     |},
     +parentPosition?: ?{|
-      +id: string,
+      +id: string
     |},
     +equipmentType?: {|
       +id: string,
@@ -72,16 +74,84 @@ export type EquipmentAddEditCardQuery$data = {|
         +name: string,
       |},
     |}>,
-  |},
+  |}
 |};
-export type EquipmentAddEditCardQueryResponse = EquipmentAddEditCardQuery$data;
 export type EquipmentAddEditCardQuery = {|
   variables: EquipmentAddEditCardQueryVariables,
-  response: EquipmentAddEditCardQuery$data,
+  response: EquipmentAddEditCardQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query EquipmentAddEditCardQuery(
+  $equipmentId: ID!
+) {
+  equipment: node(id: $equipmentId) {
+    __typename
+    ... on Equipment {
+      id
+      name
+      parentLocation {
+        id
+      }
+      parentPosition {
+        id
+      }
+      equipmentType {
+        id
+        name
+        propertyTypes {
+          id
+          name
+          index
+          isInstanceProperty
+          type
+          nodeType
+          isMandatory
+          stringValue
+          intValue
+          floatValue
+          booleanValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+        }
+      }
+      properties {
+        propertyType {
+          id
+          name
+          index
+          isInstanceProperty
+          type
+          nodeType
+          stringValue
+          isMandatory
+        }
+        id
+        stringValue
+        intValue
+        floatValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        nodeValue {
+          __typename
+          id
+          name
+        }
+      }
+    }
+    id
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -434,10 +504,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '64a622418ebaf5845d9a3641e7e96797';
 
-(node/*: any*/).hash = "64a622418ebaf5845d9a3641e7e96797";
-
-module.exports = ((node/*: any*/)/*: Query<
-  EquipmentAddEditCardQuery$variables,
-  EquipmentAddEditCardQuery$data,
->*/);
+module.exports = node;

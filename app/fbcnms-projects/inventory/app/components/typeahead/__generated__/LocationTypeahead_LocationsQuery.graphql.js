@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<f19c6e44809e36cf735242bccb298685>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,12 +13,11 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type LocationTypeahead_LocationsQuery$variables = {|
-  name: string,
+import type { ConcreteRequest } from 'relay-runtime';
+export type LocationTypeahead_LocationsQueryVariables = {|
+  name: string
 |};
-export type LocationTypeahead_LocationsQueryVariables = LocationTypeahead_LocationsQuery$variables;
-export type LocationTypeahead_LocationsQuery$data = {|
+export type LocationTypeahead_LocationsQueryResponse = {|
   +searchForNode: {|
     +edges: ?$ReadOnlyArray<{|
       +node: ?({|
@@ -24,31 +26,63 @@ export type LocationTypeahead_LocationsQuery$data = {|
         +externalId: ?string,
         +name: string,
         +locationType: {|
-          +name: string,
+          +name: string
         |},
         +locationHierarchy: $ReadOnlyArray<{|
           +id: string,
           +name: string,
           +locationType: {|
-            +name: string,
+            +name: string
           |},
         |}>,
       |} | {|
         // This will never be '%other', but we need some
         // value in case none of the concrete values match.
-        +__typename: "%other",
-      |}),
-    |}>,
-  |},
+        +__typename: "%other"
+      |})
+    |}>
+  |}
 |};
-export type LocationTypeahead_LocationsQueryResponse = LocationTypeahead_LocationsQuery$data;
 export type LocationTypeahead_LocationsQuery = {|
   variables: LocationTypeahead_LocationsQueryVariables,
-  response: LocationTypeahead_LocationsQuery$data,
+  response: LocationTypeahead_LocationsQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query LocationTypeahead_LocationsQuery(
+  $name: String!
+) {
+  searchForNode(name: $name, first: 10) {
+    edges {
+      node {
+        __typename
+        ... on Location {
+          id
+          externalId
+          name
+          locationType {
+            name
+            id
+          }
+          locationHierarchy {
+            id
+            name
+            locationType {
+              name
+              id
+            }
+          }
+        }
+        id
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -268,10 +302,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '9e4ab0ce3b932ff34a72c8db6f428190';
 
-(node/*: any*/).hash = "9e4ab0ce3b932ff34a72c8db6f428190";
-
-module.exports = ((node/*: any*/)/*: Query<
-  LocationTypeahead_LocationsQuery$variables,
-  LocationTypeahead_LocationsQuery$data,
->*/);
+module.exports = node;

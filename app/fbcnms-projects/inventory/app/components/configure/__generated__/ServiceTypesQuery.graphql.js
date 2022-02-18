@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<043bbb6f92c02aed44da69528ef528db>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,31 +13,134 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-type AddEditServiceTypeCard_editingServiceType$fragmentType = any;
-type ServiceTypeItem_serviceType$fragmentType = any;
-export type ServiceTypesQuery$variables = {||};
-export type ServiceTypesQueryVariables = ServiceTypesQuery$variables;
-export type ServiceTypesQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+type AddEditServiceTypeCard_editingServiceType$ref = any;
+type ServiceTypeItem_serviceType$ref = any;
+export type ServiceTypesQueryVariables = {||};
+export type ServiceTypesQueryResponse = {|
   +serviceTypes: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
         +isDeleted: boolean,
-        +$fragmentSpreads: ServiceTypeItem_serviceType$fragmentType & AddEditServiceTypeCard_editingServiceType$fragmentType,
-      |},
-    |}>,
-  |},
+        +$fragmentRefs: ServiceTypeItem_serviceType$ref & AddEditServiceTypeCard_editingServiceType$ref,
+      |}
+    |}>
+  |}
 |};
-export type ServiceTypesQueryResponse = ServiceTypesQuery$data;
 export type ServiceTypesQuery = {|
   variables: ServiceTypesQueryVariables,
-  response: ServiceTypesQuery$data,
+  response: ServiceTypesQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query ServiceTypesQuery {
+  serviceTypes(first: 500) {
+    edges {
+      node {
+        ...ServiceTypeItem_serviceType
+        ...AddEditServiceTypeCard_editingServiceType
+        id
+        name
+        isDeleted
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+fragment AddEditServiceTypeCard_editingServiceType on ServiceType {
+  id
+  name
+  numberOfServices
+  discoveryMethod
+  propertyTypes {
+    id
+    name
+    type
+    nodeType
+    index
+    stringValue
+    intValue
+    booleanValue
+    floatValue
+    latitudeValue
+    longitudeValue
+    rangeFromValue
+    rangeToValue
+    isEditable
+    isMandatory
+    isInstanceProperty
+  }
+  endpointDefinitions {
+    id
+    index
+    role
+    name
+    equipmentType {
+      name
+      id
+    }
+  }
+}
+
+fragment PropertyTypeFormField_propertyType on PropertyType {
+  id
+  name
+  type
+  nodeType
+  index
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isInstanceProperty
+  isMandatory
+  category
+  isDeleted
+}
+
+fragment ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions on ServiceEndpointDefinition {
+  id
+  name
+  role
+  index
+  equipmentType {
+    id
+    name
+  }
+}
+
+fragment ServiceTypeItem_serviceType on ServiceType {
+  id
+  name
+  discoveryMethod
+  propertyTypes {
+    ...PropertyTypeFormField_propertyType
+    id
+  }
+  endpointDefinitions {
+    ...ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions
+    id
+  }
+  numberOfServices
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -140,6 +246,10 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -149,11 +259,7 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "AddEditServiceTypeCard_editingServiceType"
-                  },
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  (v3/*: any*/)
+                  }
                 ],
                 "storageKey": null
               },
@@ -407,10 +513,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '27909e6e8675e10f68f441661a634c35';
 
-(node/*: any*/).hash = "27909e6e8675e10f68f441661a634c35";
-
-module.exports = ((node/*: any*/)/*: Query<
-  ServiceTypesQuery$variables,
-  ServiceTypesQuery$data,
->*/);
+module.exports = node;

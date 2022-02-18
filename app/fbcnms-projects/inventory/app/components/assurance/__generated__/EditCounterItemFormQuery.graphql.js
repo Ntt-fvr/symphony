@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<4d487b2e120a4ad8b7bbe8880c136f09>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,27 +13,39 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type EditCounterItemFormQuery$variables = {||};
-export type EditCounterItemFormQueryVariables = EditCounterItemFormQuery$variables;
-export type EditCounterItemFormQuery$data = {|
+import type { ConcreteRequest } from 'relay-runtime';
+export type EditCounterItemFormQueryVariables = {||};
+export type EditCounterItemFormQueryResponse = {|
   +vendors: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-      |},
-    |}>,
-  |},
+      |}
+    |}>
+  |}
 |};
-export type EditCounterItemFormQueryResponse = EditCounterItemFormQuery$data;
 export type EditCounterItemFormQuery = {|
   variables: EditCounterItemFormQueryVariables,
-  response: EditCounterItemFormQuery$data,
+  response: EditCounterItemFormQueryResponse,
 |};
 */
 
-var node/*: ConcreteRequest*/ = (function(){
+
+/*
+query EditCounterItemFormQuery {
+  vendors {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -107,10 +122,7 @@ return {
   }
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '8a100cc382883cf7a200b2ceab5dc39d';
 
-(node/*: any*/).hash = "8a100cc382883cf7a200b2ceab5dc39d";
-
-module.exports = ((node/*: any*/)/*: Query<
-  EditCounterItemFormQuery$variables,
-  EditCounterItemFormQuery$data,
->*/);
+module.exports = node;

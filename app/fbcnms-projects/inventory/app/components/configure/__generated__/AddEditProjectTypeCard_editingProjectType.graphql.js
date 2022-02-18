@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<2395de095001093c6c165e65c87c0809>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,13 +13,13 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType = any;
-export type PropertyKind = "string" | "int" | "bool" | "float" | "date" | "enum" | "range" | "email" | "gps_location" | "datetime_local" | "node" | "%future added value";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AddEditProjectTypeCard_editingProjectType$fragmentType: FragmentType;
-export type AddEditProjectTypeCard_editingProjectType$ref = AddEditProjectTypeCard_editingProjectType$fragmentType;
-export type AddEditProjectTypeCard_editingProjectType$data = {|
+import type { ReaderFragment } from 'relay-runtime';
+type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref = any;
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type AddEditProjectTypeCard_editingProjectType$ref: FragmentReference;
+declare export opaque type AddEditProjectTypeCard_editingProjectType$fragmentType: AddEditProjectTypeCard_editingProjectType$ref;
+export type AddEditProjectTypeCard_editingProjectType = {|
   +id: string,
   +name: string,
   +description: ?string,
@@ -25,7 +28,7 @@ export type AddEditProjectTypeCard_editingProjectType$data = {|
     +type: {|
       +id: string,
       +name: string,
-      +$fragmentSpreads: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$fragmentType,
+      +$fragmentRefs: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref,
     |},
   |}>,
   +properties: $ReadOnlyArray<{|
@@ -47,17 +50,18 @@ export type AddEditProjectTypeCard_editingProjectType$data = {|
     +isInstanceProperty: ?boolean,
     +isDeleted: ?boolean,
   |}>,
-  +$fragmentType: AddEditProjectTypeCard_editingProjectType$fragmentType,
+  +$refType: AddEditProjectTypeCard_editingProjectType$ref,
 |};
-export type AddEditProjectTypeCard_editingProjectType = AddEditProjectTypeCard_editingProjectType$data;
+export type AddEditProjectTypeCard_editingProjectType$data = AddEditProjectTypeCard_editingProjectType;
 export type AddEditProjectTypeCard_editingProjectType$key = {
   +$data?: AddEditProjectTypeCard_editingProjectType$data,
-  +$fragmentSpreads: AddEditProjectTypeCard_editingProjectType$fragmentType,
+  +$fragmentRefs: AddEditProjectTypeCard_editingProjectType$ref,
   ...
 };
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -240,10 +244,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '5ca97f35079eff8213de17a78ba0e716';
 
-(node/*: any*/).hash = "5ca97f35079eff8213de17a78ba0e716";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  AddEditProjectTypeCard_editingProjectType$fragmentType,
-  AddEditProjectTypeCard_editingProjectType$data,
->*/);
+module.exports = node;

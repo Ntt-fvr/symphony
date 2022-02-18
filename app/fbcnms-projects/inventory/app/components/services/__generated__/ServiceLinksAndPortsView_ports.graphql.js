@@ -1,8 +1,11 @@
 /**
- * @generated SignedSource<<1e94e5a94ad7bbd2b999cb33b1373cdf>>
+ * @generated
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ **/
+
+ /**
  * @flow
- * @lightSyntaxTransform
- * @nogrep
  */
 
 /* eslint-disable */
@@ -10,34 +13,35 @@
 'use strict';
 
 /*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ServiceLinksAndPortsView_ports$fragmentType: FragmentType;
-export type ServiceLinksAndPortsView_ports$ref = ServiceLinksAndPortsView_ports$fragmentType;
-export type ServiceLinksAndPortsView_ports$data = $ReadOnlyArray<{|
+import type { ReaderFragment } from 'relay-runtime';
+import type { FragmentReference } from "relay-runtime";
+declare export opaque type ServiceLinksAndPortsView_ports$ref: FragmentReference;
+declare export opaque type ServiceLinksAndPortsView_ports$fragmentType: ServiceLinksAndPortsView_ports$ref;
+export type ServiceLinksAndPortsView_ports = $ReadOnlyArray<{|
   +id: string,
   +parentEquipment: {|
     +id: string,
     +name: string,
     +equipmentType: {|
-      +name: string,
+      +name: string
     |},
   |},
   +definition: {|
     +id: string,
     +name: string,
   |},
-  +$fragmentType: ServiceLinksAndPortsView_ports$fragmentType,
+  +$refType: ServiceLinksAndPortsView_ports$ref,
 |}>;
-export type ServiceLinksAndPortsView_ports = ServiceLinksAndPortsView_ports$data;
+export type ServiceLinksAndPortsView_ports$data = ServiceLinksAndPortsView_ports;
 export type ServiceLinksAndPortsView_ports$key = $ReadOnlyArray<{
   +$data?: ServiceLinksAndPortsView_ports$data,
-  +$fragmentSpreads: ServiceLinksAndPortsView_ports$fragmentType,
+  +$fragmentRefs: ServiceLinksAndPortsView_ports$ref,
   ...
 }>;
 */
 
-var node/*: ReaderFragment*/ = (function(){
+
+const node/*: ReaderFragment*/ = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -104,10 +108,7 @@ return {
   "abstractKey": null
 };
 })();
+// prettier-ignore
+(node/*: any*/).hash = '3c5ec3c451149626125b19ee8257c1c4';
 
-(node/*: any*/).hash = "3c5ec3c451149626125b19ee8257c1c4";
-
-module.exports = ((node/*: any*/)/*: Fragment<
-  ServiceLinksAndPortsView_ports$fragmentType,
-  ServiceLinksAndPortsView_ports$data,
->*/);
+module.exports = node;
