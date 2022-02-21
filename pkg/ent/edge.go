@@ -1632,26 +1632,26 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	return result, MaskNotFound(err)
 }
 
-func (pt *PropertyType) PropType(ctx context.Context) ([]*PropertyTypeValue, error) {
-	result, err := pt.Edges.PropTypeOrErr()
+func (pt *PropertyType) PropertyTypeValues(ctx context.Context) ([]*PropertyTypeValue, error) {
+	result, err := pt.Edges.PropertyTypeValuesOrErr()
 	if IsNotLoaded(err) {
-		result, err = pt.QueryPropType().All(ctx)
+		result, err = pt.QueryPropertyTypeValues().All(ctx)
 	}
 	return result, err
 }
 
-func (pt *PropertyType) PropertyTy(ctx context.Context) (*PropertyType, error) {
-	result, err := pt.Edges.PropertyTyOrErr()
+func (pt *PropertyType) PropertyTypeDependence(ctx context.Context) (*PropertyType, error) {
+	result, err := pt.Edges.PropertyTypeDependenceOrErr()
 	if IsNotLoaded(err) {
-		result, err = pt.QueryPropertyTy().Only(ctx)
+		result, err = pt.QueryPropertyTypeDependence().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
 
-func (pt *PropertyType) ProperType(ctx context.Context) ([]*PropertyType, error) {
-	result, err := pt.Edges.ProperTypeOrErr()
+func (pt *PropertyType) PropertyType(ctx context.Context) ([]*PropertyType, error) {
+	result, err := pt.Edges.PropertyTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = pt.QueryProperType().All(ctx)
+		result, err = pt.QueryPropertyType().All(ctx)
 	}
 	return result, err
 }
@@ -1672,18 +1672,18 @@ func (ptv *PropertyTypeValue) PropertyType(ctx context.Context) (*PropertyType, 
 	return result, MaskNotFound(err)
 }
 
-func (ptv *PropertyTypeValue) ProTypVal(ctx context.Context) (*PropertyTypeValue, error) {
-	result, err := ptv.Edges.ProTypValOrErr()
+func (ptv *PropertyTypeValue) PropertyTypeValueDependence(ctx context.Context) (*PropertyTypeValue, error) {
+	result, err := ptv.Edges.PropertyTypeValueDependenceOrErr()
 	if IsNotLoaded(err) {
-		result, err = ptv.QueryProTypVal().Only(ctx)
+		result, err = ptv.QueryPropertyTypeValueDependence().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
 
-func (ptv *PropertyTypeValue) PropTypeValue(ctx context.Context) ([]*PropertyTypeValue, error) {
-	result, err := ptv.Edges.PropTypeValueOrErr()
+func (ptv *PropertyTypeValue) PropertyTypeValue(ctx context.Context) ([]*PropertyTypeValue, error) {
+	result, err := ptv.Edges.PropertyTypeValueOrErr()
 	if IsNotLoaded(err) {
-		result, err = ptv.QueryPropTypeValue().All(ctx)
+		result, err = ptv.QueryPropertyTypeValue().All(ctx)
 	}
 	return result, err
 }

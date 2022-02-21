@@ -10,7 +10,6 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
-	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
 //PropertyTypeValue defines the property type schema
@@ -28,17 +27,21 @@ func (PropertyTypeValue) Fields() []ent.Field {
 func (PropertyTypeValue) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("property_type", PropertyType.Type).
-			Ref("prop_type").Unique(),
-		edge.To("prop_type_value", PropertyTypeValue.Type).
-			Annotations(entgql.Bind()).From("pro_typ_val").
-			Unique().Annotations(entgql.MapsTo("proper_type_values")),
+			Ref("property_type_values").Unique(),
+		edge.To("property_type_value", PropertyTypeValue.Type).
+			Annotations(entgql.Bind()).From("property_type_value_dependence").
+			Unique().Annotations(entgql.MapsTo("property_type_value_dependence")),
 	}
 }
 
 func (PropertyTypeValue) Policy() ent.Policy {
 	return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.PropertyReadPolicyRule(),
+		),
 		authz.WithMutationRules(
-			privacy.AlwaysAllowRule(),
+			authz.PropertyWritePolicyRule(),
+			authz.PropertyCreatePolicyRule(),
 		),
 	)
 }

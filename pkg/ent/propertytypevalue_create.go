@@ -78,38 +78,38 @@ func (ptvc *PropertyTypeValueCreate) SetPropertyType(p *PropertyType) *PropertyT
 	return ptvc.SetPropertyTypeID(p.ID)
 }
 
-// SetProTypValID sets the pro_typ_val edge to PropertyTypeValue by id.
-func (ptvc *PropertyTypeValueCreate) SetProTypValID(id int) *PropertyTypeValueCreate {
-	ptvc.mutation.SetProTypValID(id)
+// SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
+func (ptvc *PropertyTypeValueCreate) SetPropertyTypeValueDependenceID(id int) *PropertyTypeValueCreate {
+	ptvc.mutation.SetPropertyTypeValueDependenceID(id)
 	return ptvc
 }
 
-// SetNillableProTypValID sets the pro_typ_val edge to PropertyTypeValue by id if the given value is not nil.
-func (ptvc *PropertyTypeValueCreate) SetNillableProTypValID(id *int) *PropertyTypeValueCreate {
+// SetNillablePropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id if the given value is not nil.
+func (ptvc *PropertyTypeValueCreate) SetNillablePropertyTypeValueDependenceID(id *int) *PropertyTypeValueCreate {
 	if id != nil {
-		ptvc = ptvc.SetProTypValID(*id)
+		ptvc = ptvc.SetPropertyTypeValueDependenceID(*id)
 	}
 	return ptvc
 }
 
-// SetProTypVal sets the pro_typ_val edge to PropertyTypeValue.
-func (ptvc *PropertyTypeValueCreate) SetProTypVal(p *PropertyTypeValue) *PropertyTypeValueCreate {
-	return ptvc.SetProTypValID(p.ID)
+// SetPropertyTypeValueDependence sets the property_type_value_dependence edge to PropertyTypeValue.
+func (ptvc *PropertyTypeValueCreate) SetPropertyTypeValueDependence(p *PropertyTypeValue) *PropertyTypeValueCreate {
+	return ptvc.SetPropertyTypeValueDependenceID(p.ID)
 }
 
-// AddPropTypeValueIDs adds the prop_type_value edge to PropertyTypeValue by ids.
-func (ptvc *PropertyTypeValueCreate) AddPropTypeValueIDs(ids ...int) *PropertyTypeValueCreate {
-	ptvc.mutation.AddPropTypeValueIDs(ids...)
+// AddPropertyTypeValueIDs adds the property_type_value edge to PropertyTypeValue by ids.
+func (ptvc *PropertyTypeValueCreate) AddPropertyTypeValueIDs(ids ...int) *PropertyTypeValueCreate {
+	ptvc.mutation.AddPropertyTypeValueIDs(ids...)
 	return ptvc
 }
 
-// AddPropTypeValue adds the prop_type_value edges to PropertyTypeValue.
-func (ptvc *PropertyTypeValueCreate) AddPropTypeValue(p ...*PropertyTypeValue) *PropertyTypeValueCreate {
+// AddPropertyTypeValue adds the property_type_value edges to PropertyTypeValue.
+func (ptvc *PropertyTypeValueCreate) AddPropertyTypeValue(p ...*PropertyTypeValue) *PropertyTypeValueCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptvc.AddPropTypeValueIDs(ids...)
+	return ptvc.AddPropertyTypeValueIDs(ids...)
 }
 
 // Mutation returns the PropertyTypeValueMutation object of the builder.
@@ -260,12 +260,12 @@ func (ptvc *PropertyTypeValueCreate) createSpec() (*PropertyTypeValue, *sqlgraph
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptvc.mutation.ProTypValIDs(); len(nodes) > 0 {
+	if nodes := ptvc.mutation.PropertyTypeValueDependenceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   propertytypevalue.ProTypValTable,
-			Columns: []string{propertytypevalue.ProTypValColumn},
+			Table:   propertytypevalue.PropertyTypeValueDependenceTable,
+			Columns: []string{propertytypevalue.PropertyTypeValueDependenceColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -279,12 +279,12 @@ func (ptvc *PropertyTypeValueCreate) createSpec() (*PropertyTypeValue, *sqlgraph
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptvc.mutation.PropTypeValueIDs(); len(nodes) > 0 {
+	if nodes := ptvc.mutation.PropertyTypeValueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertytypevalue.PropTypeValueTable,
-			Columns: []string{propertytypevalue.PropTypeValueColumn},
+			Table:   propertytypevalue.PropertyTypeValueTable,
+			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

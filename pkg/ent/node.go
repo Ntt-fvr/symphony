@@ -5613,9 +5613,9 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[11] = &Edge{
 		Type: "PropertyTypeValue",
-		Name: "prop_type",
+		Name: "property_type_values",
 	}
-	node.Edges[11].IDs, err = pt.QueryPropType().
+	node.Edges[11].IDs, err = pt.QueryPropertyTypeValues().
 		Select(propertytypevalue.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -5623,9 +5623,9 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[12] = &Edge{
 		Type: "PropertyType",
-		Name: "property_ty",
+		Name: "property_type_dependence",
 	}
-	node.Edges[12].IDs, err = pt.QueryPropertyTy().
+	node.Edges[12].IDs, err = pt.QueryPropertyTypeDependence().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -5633,9 +5633,9 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[13] = &Edge{
 		Type: "PropertyType",
-		Name: "proper_type",
+		Name: "property_type",
 	}
-	node.Edges[13].IDs, err = pt.QueryProperType().
+	node.Edges[13].IDs, err = pt.QueryPropertyType().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -5698,9 +5698,9 @@ func (ptv *PropertyTypeValue) Node(ctx context.Context) (node *Node, err error) 
 	}
 	node.Edges[1] = &Edge{
 		Type: "PropertyTypeValue",
-		Name: "pro_typ_val",
+		Name: "property_type_value_dependence",
 	}
-	node.Edges[1].IDs, err = ptv.QueryProTypVal().
+	node.Edges[1].IDs, err = ptv.QueryPropertyTypeValueDependence().
 		Select(propertytypevalue.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -5708,9 +5708,9 @@ func (ptv *PropertyTypeValue) Node(ctx context.Context) (node *Node, err error) 
 	}
 	node.Edges[2] = &Edge{
 		Type: "PropertyTypeValue",
-		Name: "prop_type_value",
+		Name: "property_type_value",
 	}
-	node.Edges[2].IDs, err = ptv.QueryPropTypeValue().
+	node.Edges[2].IDs, err = ptv.QueryPropertyTypeValue().
 		Select(propertytypevalue.FieldID).
 		Ints(ctx)
 	if err != nil {

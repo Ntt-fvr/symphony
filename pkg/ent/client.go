@@ -9602,15 +9602,15 @@ func (c *PropertyTypeClient) QueryWorkerType(pt *PropertyType) *WorkerTypeQuery 
 	return query
 }
 
-// QueryPropType queries the prop_type edge of a PropertyType.
-func (c *PropertyTypeClient) QueryPropType(pt *PropertyType) *PropertyTypeValueQuery {
+// QueryPropertyTypeValues queries the property_type_values edge of a PropertyType.
+func (c *PropertyTypeClient) QueryPropertyTypeValues(pt *PropertyType) *PropertyTypeValueQuery {
 	query := &PropertyTypeValueQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := pt.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
 			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, propertytype.PropTypeTable, propertytype.PropTypeColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytype.PropertyTypeValuesTable, propertytype.PropertyTypeValuesColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil
@@ -9618,15 +9618,15 @@ func (c *PropertyTypeClient) QueryPropType(pt *PropertyType) *PropertyTypeValueQ
 	return query
 }
 
-// QueryPropertyTy queries the property_ty edge of a PropertyType.
-func (c *PropertyTypeClient) QueryPropertyTy(pt *PropertyType) *PropertyTypeQuery {
+// QueryPropertyTypeDependence queries the property_type_dependence edge of a PropertyType.
+func (c *PropertyTypeClient) QueryPropertyTypeDependence(pt *PropertyType) *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := pt.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.PropertyTyTable, propertytype.PropertyTyColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.PropertyTypeDependenceTable, propertytype.PropertyTypeDependenceColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil
@@ -9634,15 +9634,15 @@ func (c *PropertyTypeClient) QueryPropertyTy(pt *PropertyType) *PropertyTypeQuer
 	return query
 }
 
-// QueryProperType queries the proper_type edge of a PropertyType.
-func (c *PropertyTypeClient) QueryProperType(pt *PropertyType) *PropertyTypeQuery {
+// QueryPropertyType queries the property_type edge of a PropertyType.
+func (c *PropertyTypeClient) QueryPropertyType(pt *PropertyType) *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := pt.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, propertytype.ProperTypeTable, propertytype.ProperTypeColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytype.PropertyTypeTable, propertytype.PropertyTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil
@@ -9771,15 +9771,15 @@ func (c *PropertyTypeValueClient) QueryPropertyType(ptv *PropertyTypeValue) *Pro
 	return query
 }
 
-// QueryProTypVal queries the pro_typ_val edge of a PropertyTypeValue.
-func (c *PropertyTypeValueClient) QueryProTypVal(ptv *PropertyTypeValue) *PropertyTypeValueQuery {
+// QueryPropertyTypeValueDependence queries the property_type_value_dependence edge of a PropertyTypeValue.
+func (c *PropertyTypeValueClient) QueryPropertyTypeValueDependence(ptv *PropertyTypeValue) *PropertyTypeValueQuery {
 	query := &PropertyTypeValueQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := ptv.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytypevalue.Table, propertytypevalue.FieldID, id),
 			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, propertytypevalue.ProTypValTable, propertytypevalue.ProTypValColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytypevalue.PropertyTypeValueDependenceTable, propertytypevalue.PropertyTypeValueDependenceColumn),
 		)
 		fromV = sqlgraph.Neighbors(ptv.driver.Dialect(), step)
 		return fromV, nil
@@ -9787,15 +9787,15 @@ func (c *PropertyTypeValueClient) QueryProTypVal(ptv *PropertyTypeValue) *Proper
 	return query
 }
 
-// QueryPropTypeValue queries the prop_type_value edge of a PropertyTypeValue.
-func (c *PropertyTypeValueClient) QueryPropTypeValue(ptv *PropertyTypeValue) *PropertyTypeValueQuery {
+// QueryPropertyTypeValue queries the property_type_value edge of a PropertyTypeValue.
+func (c *PropertyTypeValueClient) QueryPropertyTypeValue(ptv *PropertyTypeValue) *PropertyTypeValueQuery {
 	query := &PropertyTypeValueQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := ptv.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytypevalue.Table, propertytypevalue.FieldID, id),
 			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, propertytypevalue.PropTypeValueTable, propertytypevalue.PropTypeValueColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytypevalue.PropertyTypeValueTable, propertytypevalue.PropertyTypeValueColumn),
 		)
 		fromV = sqlgraph.Neighbors(ptv.driver.Dialect(), step)
 		return fromV, nil

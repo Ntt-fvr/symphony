@@ -289,7 +289,7 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 					SetNillableMandatory(propType.IsMandatory).
 					SetNillableDeleted(propType.IsDeleted).
 					SetNillableListable(propType.IsListable).
-					SetNillablePropertyTyID(&idPropType.ID).
+					SetNillablePropertyTypeDependenceID(&idPropType.ID).
 					Save(ctx)
 
 				if err1 != nil {
@@ -3296,7 +3296,7 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 				var arrayProperties []*pkgmodels.PropertyTypeInput
 				arrayProperties = append(arrayProperties, propertyTypes)
 				err2 := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-					ptc.SetPropertyTyID(*input.ID)
+					ptc.SetPropertyTypeDependenceID(*input.ID)
 				}, arrayProperties)
 				if err2 != nil {
 					if ent.IsConstraintError(err2) {

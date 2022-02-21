@@ -519,53 +519,53 @@ func (ptc *PropertyTypeCreate) SetWorkerType(w *WorkerType) *PropertyTypeCreate 
 	return ptc.SetWorkerTypeID(w.ID)
 }
 
-// AddPropTypeIDs adds the prop_type edge to PropertyTypeValue by ids.
-func (ptc *PropertyTypeCreate) AddPropTypeIDs(ids ...int) *PropertyTypeCreate {
-	ptc.mutation.AddPropTypeIDs(ids...)
+// AddPropertyTypeValueIDs adds the property_type_values edge to PropertyTypeValue by ids.
+func (ptc *PropertyTypeCreate) AddPropertyTypeValueIDs(ids ...int) *PropertyTypeCreate {
+	ptc.mutation.AddPropertyTypeValueIDs(ids...)
 	return ptc
 }
 
-// AddPropType adds the prop_type edges to PropertyTypeValue.
-func (ptc *PropertyTypeCreate) AddPropType(p ...*PropertyTypeValue) *PropertyTypeCreate {
+// AddPropertyTypeValues adds the property_type_values edges to PropertyTypeValue.
+func (ptc *PropertyTypeCreate) AddPropertyTypeValues(p ...*PropertyTypeValue) *PropertyTypeCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptc.AddPropTypeIDs(ids...)
+	return ptc.AddPropertyTypeValueIDs(ids...)
 }
 
-// SetPropertyTyID sets the property_ty edge to PropertyType by id.
-func (ptc *PropertyTypeCreate) SetPropertyTyID(id int) *PropertyTypeCreate {
-	ptc.mutation.SetPropertyTyID(id)
+// SetPropertyTypeDependenceID sets the property_type_dependence edge to PropertyType by id.
+func (ptc *PropertyTypeCreate) SetPropertyTypeDependenceID(id int) *PropertyTypeCreate {
+	ptc.mutation.SetPropertyTypeDependenceID(id)
 	return ptc
 }
 
-// SetNillablePropertyTyID sets the property_ty edge to PropertyType by id if the given value is not nil.
-func (ptc *PropertyTypeCreate) SetNillablePropertyTyID(id *int) *PropertyTypeCreate {
+// SetNillablePropertyTypeDependenceID sets the property_type_dependence edge to PropertyType by id if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillablePropertyTypeDependenceID(id *int) *PropertyTypeCreate {
 	if id != nil {
-		ptc = ptc.SetPropertyTyID(*id)
+		ptc = ptc.SetPropertyTypeDependenceID(*id)
 	}
 	return ptc
 }
 
-// SetPropertyTy sets the property_ty edge to PropertyType.
-func (ptc *PropertyTypeCreate) SetPropertyTy(p *PropertyType) *PropertyTypeCreate {
-	return ptc.SetPropertyTyID(p.ID)
+// SetPropertyTypeDependence sets the property_type_dependence edge to PropertyType.
+func (ptc *PropertyTypeCreate) SetPropertyTypeDependence(p *PropertyType) *PropertyTypeCreate {
+	return ptc.SetPropertyTypeDependenceID(p.ID)
 }
 
-// AddProperTypeIDs adds the proper_type edge to PropertyType by ids.
-func (ptc *PropertyTypeCreate) AddProperTypeIDs(ids ...int) *PropertyTypeCreate {
-	ptc.mutation.AddProperTypeIDs(ids...)
+// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
+func (ptc *PropertyTypeCreate) AddPropertyTypeIDs(ids ...int) *PropertyTypeCreate {
+	ptc.mutation.AddPropertyTypeIDs(ids...)
 	return ptc
 }
 
-// AddProperType adds the proper_type edges to PropertyType.
-func (ptc *PropertyTypeCreate) AddProperType(p ...*PropertyType) *PropertyTypeCreate {
+// AddPropertyType adds the property_type edges to PropertyType.
+func (ptc *PropertyTypeCreate) AddPropertyType(p ...*PropertyType) *PropertyTypeCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptc.AddProperTypeIDs(ids...)
+	return ptc.AddPropertyTypeIDs(ids...)
 }
 
 // SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
@@ -1107,12 +1107,12 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptc.mutation.PropTypeIDs(); len(nodes) > 0 {
+	if nodes := ptc.mutation.PropertyTypeValuesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertytype.PropTypeTable,
-			Columns: []string{propertytype.PropTypeColumn},
+			Table:   propertytype.PropertyTypeValuesTable,
+			Columns: []string{propertytype.PropertyTypeValuesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1126,12 +1126,12 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptc.mutation.PropertyTyIDs(); len(nodes) > 0 {
+	if nodes := ptc.mutation.PropertyTypeDependenceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   propertytype.PropertyTyTable,
-			Columns: []string{propertytype.PropertyTyColumn},
+			Table:   propertytype.PropertyTypeDependenceTable,
+			Columns: []string{propertytype.PropertyTypeDependenceColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1145,12 +1145,12 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptc.mutation.ProperTypeIDs(); len(nodes) > 0 {
+	if nodes := ptc.mutation.PropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   propertytype.ProperTypeTable,
-			Columns: []string{propertytype.ProperTypeColumn},
+			Table:   propertytype.PropertyTypeTable,
+			Columns: []string{propertytype.PropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

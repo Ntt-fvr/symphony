@@ -1271,20 +1271,20 @@ func (pt *PropertyTypeQuery) CollectFields(ctx context.Context, satisfies ...str
 func (pt *PropertyTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyTypeQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "property_type_value":
-			pt = pt.WithPropType(func(query *PropertyTypeValueQuery) {
-				query.collectField(ctx, field)
-			})
-		case "proper_type":
-			pt = pt.WithProperType(func(query *PropertyTypeQuery) {
-				query.collectField(ctx, field)
-			})
 		case "propertyCategory":
 			pt = pt.WithPropertyCategory(func(query *PropertyCategoryQuery) {
 				query.collectField(ctx, field)
 			})
-		case "proper_types":
-			pt = pt.WithPropertyTy(func(query *PropertyTypeQuery) {
+		case "property_type":
+			pt = pt.WithPropertyType(func(query *PropertyTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		case "property_type_dependence":
+			pt = pt.WithPropertyTypeDependence(func(query *PropertyTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		case "property_type_values":
+			pt = pt.WithPropertyTypeValues(func(query *PropertyTypeValueQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -1303,12 +1303,12 @@ func (ptv *PropertyTypeValueQuery) CollectFields(ctx context.Context, satisfies 
 func (ptv *PropertyTypeValueQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyTypeValueQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "proper_type_values":
-			ptv = ptv.WithProTypVal(func(query *PropertyTypeValueQuery) {
+		case "property_type_value":
+			ptv = ptv.WithPropertyTypeValue(func(query *PropertyTypeValueQuery) {
 				query.collectField(ctx, field)
 			})
-		case "prop_type_value":
-			ptv = ptv.WithPropTypeValue(func(query *PropertyTypeValueQuery) {
+		case "property_type_value_dependence":
+			ptv = ptv.WithPropertyTypeValueDependence(func(query *PropertyTypeValueQuery) {
 				query.collectField(ctx, field)
 			})
 		}

@@ -2004,7 +2004,7 @@ var (
 		{Name: "project_template_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "project_type_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "property_category_properties_type", Type: field.TypeInt, Nullable: true},
-		{Name: "property_type_proper_type", Type: field.TypeInt, Nullable: true},
+		{Name: "property_type_property_type", Type: field.TypeInt, Nullable: true},
 		{Name: "service_type_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type_property_types", Type: field.TypeInt, Nullable: true},
@@ -2066,7 +2066,7 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "property_types_property_types_proper_type",
+				Symbol:  "property_types_property_types_property_type",
 				Columns: []*schema.Column{PropertyTypesColumns[29]},
 
 				RefColumns: []*schema.Column{PropertyTypesColumns[0]},
@@ -2145,8 +2145,8 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "property_type_prop_type", Type: field.TypeInt, Nullable: true},
-		{Name: "property_type_value_prop_type_value", Type: field.TypeInt, Nullable: true},
+		{Name: "property_type_property_type_values", Type: field.TypeInt, Nullable: true},
+		{Name: "property_type_value_property_type_value", Type: field.TypeInt, Nullable: true},
 	}
 	// PropertyTypeValuesTable holds the schema information for the "property_type_values" table.
 	PropertyTypeValuesTable = &schema.Table{
@@ -2155,14 +2155,14 @@ var (
 		PrimaryKey: []*schema.Column{PropertyTypeValuesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "property_type_values_property_types_prop_type",
+				Symbol:  "property_type_values_property_types_property_type_values",
 				Columns: []*schema.Column{PropertyTypeValuesColumns[4]},
 
 				RefColumns: []*schema.Column{PropertyTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "property_type_values_property_type_values_prop_type_value",
+				Symbol:  "property_type_values_property_type_values_property_type_value",
 				Columns: []*schema.Column{PropertyTypeValuesColumns[5]},
 
 				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},

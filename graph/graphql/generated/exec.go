@@ -2674,7 +2674,6 @@ type PropertyTypeResolver interface {
 	RawValue(ctx context.Context, obj *ent.PropertyType) (*string, error)
 
 	DependencePropertyTypes(ctx context.Context, obj *ent.PropertyType) ([]*ent.PropertyType, error)
-	PropertyTypeValues(ctx context.Context, obj *ent.PropertyType) ([]*ent.PropertyTypeValue, error)
 }
 type PropertyTypeValueResolver interface {
 	PropertyTypeValue(ctx context.Context, obj *ent.PropertyTypeValue) (*ent.PropertyTypeValue, error)
@@ -65055,13 +65054,13 @@ func (ec *executionContext) _PropertyType_propertyTypeValues(ctx context.Context
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.PropertyType().PropertyTypeValues(rctx, obj)
+		return obj.PropertyTypeValues(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
