@@ -18,8 +18,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 )
 
 // ResourceSpecificationRelationshipQuery is the builder for querying ResourceSpecificationRelationship entities.
@@ -32,7 +32,7 @@ type ResourceSpecificationRelationshipQuery struct {
 	predicates []predicate.ResourceSpecificationRelationship
 	// eager-loading edges.
 	withResourcespecification *ResourceSpecificationQuery
-	withResourceSr            *ResourceSRItemsQuery
+	withResourceSr            *ResourceSpecificationItemsQuery
 	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -86,8 +86,8 @@ func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourcespecification()
 }
 
 // QueryResourceSr chains the current query on the resource_sr edge.
-func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourceSr() *ResourceSRItemsQuery {
-	query := &ResourceSRItemsQuery{config: rsrq.config}
+func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourceSr() *ResourceSpecificationItemsQuery {
+	query := &ResourceSpecificationItemsQuery{config: rsrq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rsrq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -98,7 +98,7 @@ func (rsrq *ResourceSpecificationRelationshipQuery) QueryResourceSr() *ResourceS
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcespecificationrelationship.Table, resourcespecificationrelationship.FieldID, selector),
-			sqlgraph.To(resourcesritems.Table, resourcesritems.FieldID),
+			sqlgraph.To(resourcespecificationitems.Table, resourcespecificationitems.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecificationrelationship.ResourceSrTable, resourcespecificationrelationship.ResourceSrColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsrq.driver.Dialect(), step)
@@ -304,8 +304,8 @@ func (rsrq *ResourceSpecificationRelationshipQuery) WithResourcespecification(op
 
 //  WithResourceSr tells the query-builder to eager-loads the nodes that are connected to
 // the "resource_sr" edge. The optional arguments used to configure the query builder of the edge.
-func (rsrq *ResourceSpecificationRelationshipQuery) WithResourceSr(opts ...func(*ResourceSRItemsQuery)) *ResourceSpecificationRelationshipQuery {
-	query := &ResourceSRItemsQuery{config: rsrq.config}
+func (rsrq *ResourceSpecificationRelationshipQuery) WithResourceSr(opts ...func(*ResourceSpecificationItemsQuery)) *ResourceSpecificationRelationshipQuery {
+	query := &ResourceSpecificationItemsQuery{config: rsrq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -449,10 +449,10 @@ func (rsrq *ResourceSpecificationRelationshipQuery) sqlAll(ctx context.Context) 
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceSr = []*ResourceSRItems{}
+			nodes[i].Edges.ResourceSr = []*ResourceSpecificationItems{}
 		}
 		query.withFKs = true
-		query.Where(predicate.ResourceSRItems(func(s *sql.Selector) {
+		query.Where(predicate.ResourceSpecificationItems(func(s *sql.Selector) {
 			s.Where(sql.InValues(resourcespecificationrelationship.ResourceSrColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)

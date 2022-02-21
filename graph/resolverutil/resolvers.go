@@ -181,16 +181,6 @@ func ResourceSpecificationRelationshipFilter(query *ent.ResourceSpecificationRel
 	return query, nil
 }
 
-func ResourceSpecificationRelationshipItemsFilter(query *ent.ResourceSRItemsQuery, filters []*models.ResourceSRItemsFilterInput) (*ent.ResourceSRItemsQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceSpecificationRelationshipItemsFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
 func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -493,4 +483,14 @@ func SlotFilter(query *ent.AppointmentQuery, filter *models.SlotFilterInput) (*e
 		appointment.And(
 			appointment.StartGTE(filter.SlotStartDate),
 			appointment.StartLTE(filter.SlotEndDate)))).Order(ent.Asc(appointment.FieldStart)), nil
+}
+
+func ResourceSpecificationItemsFilter(query *ent.ResourceSpecificationItemsQuery, filters []*models.ResourceSpecificationItemsFilterInput) (*ent.ResourceSpecificationItemsQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceSpecificationItemsFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
 }

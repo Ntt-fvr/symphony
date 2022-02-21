@@ -422,7 +422,7 @@ func HasResourceSr() predicate.ResourceSpecificationRelationship {
 }
 
 // HasResourceSrWith applies the HasEdge predicate on the "resource_sr" edge with a given conditions (other predicates).
-func HasResourceSrWith(preds ...predicate.ResourceSRItems) predicate.ResourceSpecificationRelationship {
+func HasResourceSrWith(preds ...predicate.ResourceSpecificationItems) predicate.ResourceSpecificationRelationship {
 	return predicate.ResourceSpecificationRelationship(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

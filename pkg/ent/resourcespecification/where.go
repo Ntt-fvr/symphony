@@ -465,6 +465,34 @@ func HasResourceSpecificationWith(preds ...predicate.ResourceSpecificationRelati
 	})
 }
 
+// HasResourceSpecificationItems applies the HasEdge predicate on the "resource_specification_items" edge.
+func HasResourceSpecificationItems() predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourceSpecificationItemsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationItemsTable, ResourceSpecificationItemsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasResourceSpecificationItemsWith applies the HasEdge predicate on the "resource_specification_items" edge with a given conditions (other predicates).
+func HasResourceSpecificationItemsWith(preds ...predicate.ResourceSpecificationItems) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourceSpecificationItemsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceSpecificationItemsTable, ResourceSpecificationItemsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.ResourceSpecification) predicate.ResourceSpecification {
 	return predicate.ResourceSpecification(func(s *sql.Selector) {

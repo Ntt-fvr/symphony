@@ -347,21 +347,19 @@ func (r queryResolver) ResourceSpecificationRelationships(
 		)
 }
 
-func (r queryResolver) ResourceSRItems(
+func (r queryResolver) ResourceSpecificationItems(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceSRItemsOrder,
-	filterBy []*models.ResourceSRItemsFilterInput,
-) (*ent.ResourceSRItemsConnection, error) {
+	filterBy []*models.ResourceSpecificationItemsFilterInput,
+) (*ent.ResourceSpecificationItemsConnection, error) {
 	return r.ClientFrom(ctx).
-		ResourceSRItems.
+		ResourceSpecificationItems.
 		Query().
 		Paginate(ctx, after, first, before, last,
-			ent.WithResourceSRItemsOrder(orderBy),
-			ent.WithResourceSRItemsFilter(
-				func(query *ent.ResourceSRItemsQuery) (*ent.ResourceSRItemsQuery, error) {
-					return resolverutil.ResourceSpecificationRelationshipItemsFilter(query, filterBy)
+			ent.WithResourceSpecificationItemsFilter(
+				func(query *ent.ResourceSpecificationItemsQuery) (*ent.ResourceSpecificationItemsQuery, error) {
+					return resolverutil.ResourceSpecificationItemsFilter(query, filterBy)
 				},
 			),
 		)

@@ -41,9 +41,11 @@ type ResourceSpecificationEdges struct {
 	PropertyType []*PropertyType
 	// ResourceSpecification holds the value of the resource_specification edge.
 	ResourceSpecification []*ResourceSpecificationRelationship
+	// ResourceSpecificationItems holds the value of the resource_specification_items edge.
+	ResourceSpecificationItems []*ResourceSpecificationItems
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // ResourcetypeOrErr returns the Resourcetype value or an error if the edge
@@ -76,6 +78,15 @@ func (e ResourceSpecificationEdges) ResourceSpecificationOrErr() ([]*ResourceSpe
 		return e.ResourceSpecification, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_specification"}
+}
+
+// ResourceSpecificationItemsOrErr returns the ResourceSpecificationItems value or an error if the edge
+// was not loaded in eager-loading.
+func (e ResourceSpecificationEdges) ResourceSpecificationItemsOrErr() ([]*ResourceSpecificationItems, error) {
+	if e.loadedTypes[3] {
+		return e.ResourceSpecificationItems, nil
+	}
+	return nil, &NotLoadedError{edge: "resource_specification_items"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -147,6 +158,11 @@ func (rs *ResourceSpecification) QueryPropertyType() *PropertyTypeQuery {
 // QueryResourceSpecification queries the resource_specification edge of the ResourceSpecification.
 func (rs *ResourceSpecification) QueryResourceSpecification() *ResourceSpecificationRelationshipQuery {
 	return (&ResourceSpecificationClient{config: rs.config}).QueryResourceSpecification(rs)
+}
+
+// QueryResourceSpecificationItems queries the resource_specification_items edge of the ResourceSpecification.
+func (rs *ResourceSpecification) QueryResourceSpecificationItems() *ResourceSpecificationItemsQuery {
+	return (&ResourceSpecificationClient{config: rs.config}).QueryResourceSpecificationItems(rs)
 }
 
 // Update returns a builder for updating this ResourceSpecification.

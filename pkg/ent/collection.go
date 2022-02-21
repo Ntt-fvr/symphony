@@ -1345,18 +1345,6 @@ func (rf *ReportFilterQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (rsi *ResourceSRItemsQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceSRItemsQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		rsi = rsi.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return rsi
-}
-
-func (rsi *ResourceSRItemsQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceSRItemsQuery {
-	return rsi
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rs *ResourceSpecificationQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceSpecificationQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rs = rs.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1375,9 +1363,25 @@ func (rs *ResourceSpecificationQuery) collectField(ctx *graphql.OperationContext
 			rs = rs.WithResourceSpecification(func(query *ResourceSpecificationRelationshipQuery) {
 				query.collectField(ctx, field)
 			})
+		case "resourcespecificationitems":
+			rs = rs.WithResourceSpecificationItems(func(query *ResourceSpecificationItemsQuery) {
+				query.collectField(ctx, field)
+			})
 		}
 	}
 	return rs
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rsi *ResourceSpecificationItemsQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceSpecificationItemsQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rsi = rsi.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rsi
+}
+
+func (rsi *ResourceSpecificationItemsQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceSpecificationItemsQuery {
+	return rsi
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -1391,8 +1395,8 @@ func (rsr *ResourceSpecificationRelationshipQuery) CollectFields(ctx context.Con
 func (rsr *ResourceSpecificationRelationshipQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceSpecificationRelationshipQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "resourcesr":
-			rsr = rsr.WithResourceSr(func(query *ResourceSRItemsQuery) {
+		case "resourcespecificationrelationship":
+			rsr = rsr.WithResourceSr(func(query *ResourceSpecificationItemsQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -1421,10 +1425,6 @@ func (rt *ResourceTypeQuery) collectField(ctx *graphql.OperationContext, field g
 			})
 		case "resourcespecification":
 			rt = rt.WithResourceSpecification(func(query *ResourceSpecificationQuery) {
-				query.collectField(ctx, field)
-			})
-		case "resourcetype":
-			rt = rt.WithResourcetypeItems(func(query *ResourceSRItemsQuery) {
 				query.collectField(ctx, field)
 			})
 		}
