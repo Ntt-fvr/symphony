@@ -27,6 +27,7 @@ import {makeStyles} from '@material-ui/styles';
 
 import AddResourceTypeMutation from '../../mutations/AddResourceTypeMutation';
 
+import type {DataSelector} from './ResourceTypes';
 import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 
@@ -92,7 +93,7 @@ type Node = {
 type Props = $ReadOnly<{|
   isCompleted: void => void,
   resourceNames?: Array<Node>,
-  dataSelector: any,
+  dataSelector: DataSelector,
 |}>;
 
 type Resources = {
@@ -188,9 +189,9 @@ export default function AddResourceTypeForm(props: Props) {
           name="resourceTypeclass"
           variant="outlined"
           defaultValue="">
-          {dataSelector.resourceTypeClassList.map((item, index) => (
+          {dataSelector.resourceTypeClass.map((item, index) => (
             <MenuItem key={index} value={item.name}>
-              {item.name}
+              {item.name.toLowerCase()}
             </MenuItem>
           ))}
         </TextField>
@@ -204,9 +205,9 @@ export default function AddResourceTypeForm(props: Props) {
           name="resourceTypeBaseType"
           variant="outlined"
           defaultValue="">
-          {dataSelector.resourceTypeBaseTypeList.map((item, index) => (
+          {dataSelector.resourceTypeBaseType.map((item, index) => (
             <MenuItem key={index} value={item.name}>
-              {item.name}
+              {item.name.toLowerCase()}
             </MenuItem>
           ))}
         </TextField>

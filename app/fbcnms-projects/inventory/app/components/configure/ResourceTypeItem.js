@@ -69,12 +69,8 @@ type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
-    resourceTypeClass: {
-      name: string,
-    },
-    resourceTypeBaseType: {
-      name: string,
-    },
+    resourceTypeClass: string,
+    resourceTypeBaseType: string,
   },
   edit: () => void,
   handleRemove: void => void,
@@ -147,12 +143,12 @@ export default function ResourceTypeItem(props: Props) {
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Class: </span>
               <br />
-              <strong>{formValues.resourceTypeBaseType.name}</strong>
+              <strong>{formValues.resourceTypeClass.toLowerCase()}</strong>
             </Grid>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Resource type class:</span>
               <br />
-              <strong>{formValues.resourceTypeClass.name}</strong>
+              <strong>{formValues.resourceTypeBaseType.toLowerCase()}</strong>
             </Grid>
           </Grid>
         </AccordionDetails>

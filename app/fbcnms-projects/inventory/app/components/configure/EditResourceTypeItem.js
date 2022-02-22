@@ -13,7 +13,7 @@ import fbt from 'fbt';
 
 import {useFormInput} from '../assurance/common/useFormInput';
 
-import type {EditResourceTypeItemQuery} from './__generated__/EditResourceTypeItemQuery.graphql';
+import type {DataSelector} from './ResourceTypes';
 import type {EditResourceTypeMutationVariables} from '../../mutations/__generated__/EditResourceTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
 
@@ -30,10 +30,8 @@ import TextField from '@material-ui/core/TextField';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddEditResourceSpecification} from './AddEditResourceSpecification';
 import {Grid, MenuItem} from '@material-ui/core';
-import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
-import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useValidationEdit} from '../assurance/common/useValidation';
 
 const useStyles = makeStyles(() => ({
@@ -93,27 +91,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// const EditResourceTypeQuery = graphql`
-//   query EditResourceTypeItemQuery {
-//     resourceTypeClass {
-//       edges {
-//         node {
-//           id
-//           name
-//         }
-//       }
-//     }
-//     resourceTypeBaseTypes {
-//       edges {
-//         node {
-//           id
-//           name
-//         }
-//       }
-//     }
-//   }
-// `;
-
 type Resource = {
   name: string,
 };
@@ -134,20 +111,15 @@ type Props = $ReadOnly<{|
     resourceType: {
       id: string,
     },
-    resourceTypeBaseType: {
-      id: string,
-      name: string,
-    },
-    resourceTypeClass: {
-      id: string,
-      name: string,
-    },
+    resourceTypeBaseType: string,
+    resourceTypeClass: string,
     propertyTypes: Array<PropertyType>,
   },
   hideEditResourceTypeForm: void => void,
   isCompleted: void => void,
   resources: Array<Resource>,
   resourceSpecifications: ResourceSpecifications,
+  dataSelector: DataSelector,
 |}>;
 
 export const EditResourceTypeItem = (props: Props) => {
@@ -157,6 +129,7 @@ export const EditResourceTypeItem = (props: Props) => {
     resources,
     isCompleted,
     resourceSpecifications,
+    dataSelector,
   } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -166,13 +139,8 @@ export const EditResourceTypeItem = (props: Props) => {
 
   const name = useFormInput(formValues.name);
 
-  const resourceTypeBaseType = useFormInput(formValues.resourceTypeBaseType.id);
-  const resourceTypeClass = useFormInput(formValues.resourceTypeClass.id);
-  const data = useLazyLoadQuery<EditResourceTypeItemQuery>(
-    EditResourceTypeQuery,
-    {},
-  );
-
+  const resourceTypeBaseType = useFormInput(formValues.resourceTypeBaseType);
+  const resourceTypeClass = useFormInput(formValues.resourceTypeClass);
   const resourcesNames = resources?.map(item => item.name);
 
   const dataInputsObject = [
@@ -307,9 +275,9 @@ export const EditResourceTypeItem = (props: Props) => {
                   name="resourceTypeBaseType"
                   fullWidth
                   {...resourceTypeBaseType}>
-                  {data.resourceTypeBaseTypes.edges.map((item, index) => (
-                    <MenuItem key={index} value={item.node?.id}>
-                      {item.node?.name}
+                  {dataSelector.resourceTypeBaseType.map((item, index) => (
+                    <MenuItem key={index} value={item.name}>
+                      {item.name.toLowerCase()}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -326,9 +294,9 @@ export const EditResourceTypeItem = (props: Props) => {
                   type="string"
                   fullWidth
                   {...resourceTypeClass}>
-                  {data.resourceTypeClass.edges.map((item, index) => (
-                    <MenuItem key={index} value={item.node?.id}>
-                      {item.node?.name}
+                  {dataSelector.resourceTypeClass.map((item, index) => (
+                    <MenuItem key={index} value={item.name}>
+                      {item.name.toLowerCase()}
                     </MenuItem>
                   ))}
                 </TextField>

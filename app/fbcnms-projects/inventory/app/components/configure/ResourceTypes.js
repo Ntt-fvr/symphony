@@ -20,8 +20,6 @@ import {fetchQuery, graphql} from 'relay-runtime';
 // MUTATIONS //
 import type {PropertyType} from '../../common/PropertyType';
 import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
-import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
-import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 
 import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
 
@@ -83,7 +81,7 @@ const ResourceTypesQuery = graphql`
 
 const objectSelectors = {
   data: {
-    resourceTypeBaseTypeList: [
+    resourceTypeBaseType: [
       {
         name: 'EQUIPMENT',
       },
@@ -101,7 +99,7 @@ const objectSelectors = {
       },
     ],
 
-    resourceTypeClassList: [
+    resourceTypeClass: [
       {
         name: 'LOGICAL_RESOURCE',
       },
@@ -123,11 +121,16 @@ type Resources = {
       resourceType: {
         id: string,
       },
-      resourceTypeBaseType: ResourceTypeBaseTypeKind,
-      resourceTypeClass: ResourceTypeClassKind,
+      resourceTypeBaseType: string,
+      resourceTypeClass: string,
       propertyTypes: Array<PropertyType>,
     },
   },
+};
+
+export type DataSelector = {
+  resourceTypeBaseType: string,
+  resourceTypeClass: string,
 };
 
 const ResourceTypes = () => {
@@ -167,6 +170,7 @@ const ResourceTypes = () => {
     return (
       <EditResourceTypeItem
         isCompleted={isCompleted}
+        dataSelector={objectSelectors.data}
         formValues={dataEdit.item.node}
         resources={resourceTypes.resourceTypes?.edges.map(item => item.node)}
         resourceSpecifications={resourceTypes.resourceSpecifications?.edges.map(
