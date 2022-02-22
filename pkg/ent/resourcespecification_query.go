@@ -18,6 +18,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resource"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
@@ -37,6 +38,7 @@ type ResourceSpecificationQuery struct {
 	withPropertyType               *PropertyTypeQuery
 	withResourceSpecification      *ResourceSpecificationRelationshipQuery
 	withResourceSpecificationItems *ResourceSpecificationItemsQuery
+	withResourceRspecification     *ResourceQuery
 	withFKs                        bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -148,6 +150,28 @@ func (rsq *ResourceSpecificationQuery) QueryResourceSpecificationItems() *Resour
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
 			sqlgraph.To(resourcespecificationitems.Table, resourcespecificationitems.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourceSpecificationItemsTable, resourcespecification.ResourceSpecificationItemsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryResourceRspecification chains the current query on the resource_rspecification edge.
+func (rsq *ResourceSpecificationQuery) QueryResourceRspecification() *ResourceQuery {
+	query := &ResourceQuery{config: rsq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rsq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
+			sqlgraph.To(resource.Table, resource.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourceRspecificationTable, resourcespecification.ResourceRspecificationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
 		return fromU, nil
@@ -335,6 +359,7 @@ func (rsq *ResourceSpecificationQuery) Clone() *ResourceSpecificationQuery {
 		withPropertyType:               rsq.withPropertyType.Clone(),
 		withResourceSpecification:      rsq.withResourceSpecification.Clone(),
 		withResourceSpecificationItems: rsq.withResourceSpecificationItems.Clone(),
+		withResourceRspecification:     rsq.withResourceRspecification.Clone(),
 		// clone intermediate query.
 		sql:  rsq.sql.Clone(),
 		path: rsq.path,
@@ -382,6 +407,17 @@ func (rsq *ResourceSpecificationQuery) WithResourceSpecificationItems(opts ...fu
 		opt(query)
 	}
 	rsq.withResourceSpecificationItems = query
+	return rsq
+}
+
+//  WithResourceRspecification tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_rspecification" edge. The optional arguments used to configure the query builder of the edge.
+func (rsq *ResourceSpecificationQuery) WithResourceRspecification(opts ...func(*ResourceQuery)) *ResourceSpecificationQuery {
+	query := &ResourceQuery{config: rsq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rsq.withResourceRspecification = query
 	return rsq
 }
 
@@ -455,11 +491,12 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		nodes       = []*ResourceSpecification{}
 		withFKs     = rsq.withFKs
 		_spec       = rsq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			rsq.withResourcetype != nil,
 			rsq.withPropertyType != nil,
 			rsq.withResourceSpecification != nil,
 			rsq.withResourceSpecificationItems != nil,
+			rsq.withResourceRspecification != nil,
 		}
 	)
 	if rsq.withResourcetype != nil {
@@ -601,6 +638,35 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_resource_specification_items" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.ResourceSpecificationItems = append(node.Edges.ResourceSpecificationItems, n)
+		}
+	}
+
+	if query := rsq.withResourceRspecification; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*ResourceSpecification)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.ResourceRspecification = []*Resource{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Resource(func(s *sql.Selector) {
+			s.Where(sql.InValues(resourcespecification.ResourceRspecificationColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.resource_specification_resource_rspecification
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "resource_specification_resource_rspecification" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_resource_rspecification" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.ResourceRspecification = append(node.Edges.ResourceRspecification, n)
 		}
 	}
 

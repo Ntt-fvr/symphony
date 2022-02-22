@@ -52,6 +52,14 @@ func (r resourceSpecificationResolver) ResourceSpecificationItems(ctx context.Co
 	return variable, nil
 }
 
+func (r resourceSpecificationResolver) Resource(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.Resource, error) {
+	variable, err := resourceSpecification.ResourceRspecification(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	return variable, nil
+}
+
 func (r mutationResolver) AddResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error) {
 
 	client := r.ClientFrom(ctx)

@@ -150,6 +150,10 @@ type Tx struct {
 	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
+	// Resource is the client for interacting with the Resource builders.
+	Resource *ResourceClient
+	// ResourceRelationship is the client for interacting with the ResourceRelationship builders.
+	ResourceRelationship *ResourceRelationshipClient
 	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
 	ResourceSpecification *ResourceSpecificationClient
 	// ResourceSpecificationItems is the client for interacting with the ResourceSpecificationItems builders.
@@ -408,6 +412,8 @@ func (tx *Tx) init() {
 	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
 	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
+	tx.Resource = NewResourceClient(tx.config)
+	tx.ResourceRelationship = NewResourceRelationshipClient(tx.config)
 	tx.ResourceSpecification = NewResourceSpecificationClient(tx.config)
 	tx.ResourceSpecificationItems = NewResourceSpecificationItemsClient(tx.config)
 	tx.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(tx.config)

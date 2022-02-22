@@ -289,21 +289,9 @@ func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
 
-/*func (r resolver) ResourceRelationship() generated.ResourceRelationshipResolver {
-	return resourceRelationshipResolver{}
-}*/
-
-/*func (r resolver) ResourceType() generated.ResourceTypeResolver {
-	return resourceTypeResolver{}
-}*/
-
 func (r resolver) ResourceSpecification() generated.ResourceSpecificationResolver {
 	return resourceSpecificationResolver{}
 }
-
-/*func (r resolver) ResourceSpecificationRelationship() generated.ResourceSpecificationRelationshipResolver {
-	return resourceSpecificationRelationshipResolver{}
-}*/
 
 func (r resolver) ResourceSpecificationItems() generated.ResourceSpecificationItemsResolver {
 	return resourceSpecificationItemsResolver{}
@@ -311,4 +299,12 @@ func (r resolver) ResourceSpecificationItems() generated.ResourceSpecificationIt
 
 func (r resolver) PropertyCategory() generated.PropertyCategoryResolver {
 	return propertyCategoryResolver{}
+}
+
+func (r resolver) Resource() generated.ResourceResolver {
+	return resourceResolver{}
+}
+
+func (r resolver) ResourceRelationship() generated.ResourceRelationshipResolver {
+	return resourceRelationshipResolver{}
 }
