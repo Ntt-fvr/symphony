@@ -80,23 +80,19 @@ type Props = $ReadOnly<{|
 export default function ResourceTypeItem(props: Props) {
   const {edit, handleRemove, formValues, resourceDataLenght} = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
 
   const filterDataById = resourceDataLenght
     .map(item => item.node)
     .filter(rsData => rsData?.resourceType?.id === formValues.id);
 
-  function handleOpen(event) {
+  const handleDelete = event => {
     event.stopPropagation();
-    setOpen(!open);
-  }
+    handleRemove();
+  };
 
   return (
     <div className={classes.root}>
-      <Accordion
-        className={classes.container}
-        expanded={open}
-        onChange={handleOpen}>
+      <Accordion className={classes.container}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -126,7 +122,7 @@ export default function ResourceTypeItem(props: Props) {
             <Grid item xs={2} container justify="flex-end" alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={handleRemove}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>
