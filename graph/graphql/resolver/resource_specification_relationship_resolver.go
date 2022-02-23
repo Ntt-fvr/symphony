@@ -17,6 +17,22 @@ import (
 
 type resourceSpecificationRelationshipResolver struct{}
 
+func (r resourceSpecificationRelationshipResolver) ResourceSpecification(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) (*ent.ResourceSpecification, error) {
+	variable, err := resourceSpecificationRelationship.Resourcespecification(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	return variable, nil
+}
+
+func (r resourceSpecificationRelationshipResolver) ResourceSpecificationItems(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) ([]*ent.ResourceSpecificationItems, error) {
+	variable, err := resourceSpecificationRelationship.ResourceSr(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	return variable, nil
+}
+
 func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.Context, input models.AddResourceSpecificationRelationShipListInput) ([]*ent.ResourceSpecificationRelationship, error) {
 	var resourceSpecification []*ent.ResourceSpecificationRelationship
 	for _, resource_specification := range input.NameList {
@@ -35,22 +51,6 @@ func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.C
 	}
 
 	return resourceSpecification, nil
-}
-
-func (r resourceSpecificationRelationshipResolver) ResourceSpecification(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) (*ent.ResourceSpecification, error) {
-	variable, err := resourceSpecificationRelationship.Resourcespecification(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
-	}
-	return variable, nil
-}
-
-func (r resourceSpecificationRelationshipResolver) ResourceSpecificationRelationshipItems(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) ([]*ent.ResourceSRItems, error) {
-	variable, err := resourceSpecificationRelationship.ResourceSr(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
-	}
-	return variable, nil
 }
 
 func (r mutationResolver) AddResourceSpecificationRelationship(ctx context.Context, input models.AddResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error) {

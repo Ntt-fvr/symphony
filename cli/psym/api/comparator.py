@@ -34,16 +34,10 @@ def add_comparator(
 
     .. code-block:: python
 
-        new_comparatores = client.add_comparator(name="new_comparator")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_comparator = client.add_comparator(
             name="comparator",
-
         )
+        print(new_comparator)
     """ 
     comparator_input = AddComparatorInput(name=name)
     result = addComparator.execute(client, input=comparator_input)
@@ -68,17 +62,11 @@ def edit_comparator(
 
     .. code-block:: python
 
-        alarm_statu_edited = client.edit_comparator(comparator=comparator ,new_name="new_comparator")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_comparator = client.add_comparator(
-            comparator=comparator,
-            new_name="comparator",
-
-        )
+        comparator_edited = client.edit_comparator(
+        comparator=new_comparator,
+        new_name="comparator_edited",
+                )
+        print(comparator_edited)    
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -98,7 +86,7 @@ def get_comparators(client: SymphonyClient) -> Iterator[comparator]:
 
     .. code-block:: python
 
-        comparatores = client.get_comparators()
+        comparators = client.get_comparators()
         for comparator in comparators:
             print(comparator.name)
     """
@@ -131,6 +119,6 @@ def remove_comparator(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_comparator(comparator)
+        remove_comparator=client.remove_comparator(id=123456789)
     """
     removeComparator.execute(client, id=id)

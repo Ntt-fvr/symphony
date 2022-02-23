@@ -37,12 +37,6 @@ def add_kqi_source(
 
     .. code-block:: python
 
-        new_kqi_sourcees = client.add_kqi_source(name="new_kqi_source")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_kqi_source = client.add_kqi_source(
             name="kqi_source",
 
@@ -72,15 +66,9 @@ def edit_kqi_source(
 
     .. code-block:: python
 
-        kqi_source_edited = client.edit_kqi_source(kqi_source=KqiSource ,new_name="new_kqi_source")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_kqi_source = client.edit_kqi_source(
+        new_kqi_source_edited = client.edit_kqi_source(
             kqi_source=KqiSource,
-            new_name="kqi_source",
+            new_name="kqi_source_edited",
 
         )
     """
@@ -135,7 +123,7 @@ def delete_kqi_source(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_kqi_source(KqiSource)
+        client.delete_kqi_source(id=123456789)
     """
     removeKqiSource.execute(client, id=id)
 

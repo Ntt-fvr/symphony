@@ -178,7 +178,7 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.ResourceSpecificationRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationRelationshipOrder, _ []*models.ResourceSpecificationRelationshipFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.ResourceSRItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSRItemsOrder, _ []*models.ResourceSRItemsFilterInput) int {
+	complexity.Query.ResourceSpecificationItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.ResourceSpecificationItemsFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.ResourceTypeRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeRelationshipOrder, _ []*models.ResourceTypeRelationshipFilterInput) int {
@@ -188,6 +188,12 @@ func New() (complexity generated.ComplexityRoot) {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.ResourceTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeOrder, _ []*models.ResourceTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Resources = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceOrder, _ []*models.ResourceFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceRelationshipOrder, _ []*models.ResourceRelationshipFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 

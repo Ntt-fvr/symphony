@@ -29,13 +29,7 @@ def add_rule_type(
     :type name: str
 
     :return: ruleType object
-    :rtype: :class:`~psym.common.data_class.ruleType`
-
-    **Example 1**
-
-    .. code-block:: python
-
-        new_rule_type = client.add_rule_type(name="new_rule_type")
+    :rtype: :class:`~psym.common.data_class.ruleType`)
 
     **Example 2**
 
@@ -69,15 +63,9 @@ def edit_rule_type(
 
     .. code-block:: python
 
-        rule_type_edited = client.edit_rule_type(rule_type=ruleType ,new_name="new_rule_type")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_rule_type = client.edit_rule_type(
+        new_rule_type_Edited = client.edit_rule_type(
             rule_type=ruleType,
-            new_name="rule_type",
+            new_name="rule_type_edited",
 
         )
     """
@@ -130,7 +118,7 @@ def remove_rule_type(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_rule_type(ruleType)
+        client.remove_rule_type(id=123456798)
     """
     removeRuleType.execute(client, id=id)
 
