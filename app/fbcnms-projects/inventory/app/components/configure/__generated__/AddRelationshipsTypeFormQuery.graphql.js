@@ -14,12 +14,16 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type ResourceTypeBaseTypeKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "%future added value";
+export type ResourceTypeClassKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
 export type ResourceTypeFilterType = "NAME" | "RESOURCE_TYPE_BASE_TYPE" | "RESOURCE_TYPE_CLASS" | "%future added value";
 export type ResourceTypeFilterInput = {|
   filterType: ResourceTypeFilterType,
   operator: FilterOperator,
   stringValue?: ?string,
+  typeClassValue?: ?ResourceTypeClassKind,
+  typeBaseTypeValue?: ?ResourceTypeBaseTypeKind,
   idSet?: ?$ReadOnlyArray<string>,
   maxDepth?: ?number,
   stringSet?: ?$ReadOnlyArray<string>,
@@ -33,14 +37,6 @@ export type AddRelationshipsTypeFormQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
-        +resourceTypeBaseType: ?{|
-          +id: string,
-          +name: string,
-        |},
-        +resourceTypeClass: ?{|
-          +id: string,
-          +name: string,
-        |},
       |}
     |}>
   |}
@@ -61,14 +57,6 @@ query AddRelationshipsTypeFormQuery(
       node {
         id
         name
-        resourceTypeBaseType {
-          id
-          name
-        }
-        resourceTypeClass {
-          id
-          name
-        }
       }
     }
   }
@@ -83,25 +71,7 @@ var v0 = [
     "name": "filterBy"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v3 = [
-  (v1/*: any*/),
-  (v2/*: any*/)
-],
-v4 = [
+v1 = [
   {
     "alias": null,
     "args": [
@@ -132,26 +102,18 @@ v4 = [
             "name": "node",
             "plural": false,
             "selections": [
-              (v1/*: any*/),
-              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ResourceTypeBaseType",
-                "kind": "LinkedField",
-                "name": "resourceTypeBaseType",
-                "plural": false,
-                "selections": (v3/*: any*/),
+                "kind": "ScalarField",
+                "name": "id",
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ResourceTypeClass",
-                "kind": "LinkedField",
-                "name": "resourceTypeClass",
-                "plural": false,
-                "selections": (v3/*: any*/),
+                "kind": "ScalarField",
+                "name": "name",
                 "storageKey": null
               }
             ],
@@ -170,7 +132,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddRelationshipsTypeFormQuery",
-    "selections": (v4/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -179,19 +141,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddRelationshipsTypeFormQuery",
-    "selections": (v4/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "32bbd0599340e0f05c078fb16bd85a52",
+    "cacheID": "ebee6a04a5063053da33016e56dc3ab9",
     "id": null,
     "metadata": {},
     "name": "AddRelationshipsTypeFormQuery",
     "operationKind": "query",
-    "text": "query AddRelationshipsTypeFormQuery(\n  $filterBy: [ResourceTypeFilterInput!]\n) {\n  resourceTypes(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType {\n          id\n          name\n        }\n        resourceTypeClass {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AddRelationshipsTypeFormQuery(\n  $filterBy: [ResourceTypeFilterInput!]\n) {\n  resourceTypes(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8abb1114d8e2095e7121d1fd3625c0ad';
+(node/*: any*/).hash = 'dd1e63a8cbe12ea791cb9e3527bc3fea';
 
 module.exports = node;

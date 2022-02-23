@@ -22,7 +22,7 @@ import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {useDisabledButtonSelect} from './../assurance/common/useDisabledButton';
+import {useDisabledButtonSelect} from '../assurance/common/useDisabledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,14 +79,6 @@ const addRelationshipsTypeForm = graphql`
         node {
           id
           name
-          resourceTypeBaseType {
-            id
-            name
-          }
-          resourceTypeClass {
-            id
-            name
-          }
         }
       }
     }
@@ -182,12 +174,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
 
   const handleHasError =
     relationships?.data?.resourceTypeA === undefined &&
-    relationships?.data?.resourceTypeB === undefined
-      ? false
-      : relationships?.data?.resourceTypeA ===
-        relationships?.data?.resourceTypeB
-      ? true
-      : false;
+    relationships?.data?.resourceTypeB === undefined;
 
   const handleDisable = useDisabledButtonSelect(
     relationships.data,

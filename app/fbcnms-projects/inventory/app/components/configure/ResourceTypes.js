@@ -40,14 +40,8 @@ const ResourceTypesQuery = graphql`
         node {
           id
           name
-          resourceTypeBaseType {
-            id
-            name
-          }
-          resourceTypeClass {
-            id
-            name
-          }
+          resourceTypeBaseType
+          resourceTypeClass
         }
       }
     }
@@ -85,6 +79,40 @@ const ResourceTypesQuery = graphql`
   }
 `;
 
+const objectSelectors = {
+  data: {
+    resourceTypeBaseType: [
+      {
+        name: 'EQUIPMENT',
+      },
+      {
+        name: 'SLOT',
+      },
+      {
+        name: 'RACK',
+      },
+      {
+        name: 'PORT',
+      },
+      {
+        name: 'CARD',
+      },
+    ],
+
+    resourceTypeClass: [
+      {
+        name: 'LOGICAL_RESOURCE',
+      },
+      {
+        name: 'PHYSICAL_RESOURCE',
+      },
+      {
+        name: 'VIRTUAL_RESOURCE',
+      },
+    ],
+  },
+};
+
 type Resources = {
   item: {
     node: {
@@ -93,17 +121,16 @@ type Resources = {
       resourceType: {
         id: string,
       },
-      resourceTypeBaseType: {
-        id: string,
-        name: string,
-      },
-      resourceTypeClass: {
-        id: string,
-        name: string,
-      },
+      resourceTypeBaseType: string,
+      resourceTypeClass: string,
       propertyTypes: Array<PropertyType>,
     },
   },
+};
+
+export type DataSelector = {
+  resourceTypeBaseType: string,
+  resourceTypeClass: string,
 };
 
 const ResourceTypes = () => {
@@ -143,6 +170,7 @@ const ResourceTypes = () => {
     return (
       <EditResourceTypeItem
         isCompleted={isCompleted}
+        dataSelector={objectSelectors.data}
         formValues={dataEdit.item.node}
         resources={resourceTypes.resourceTypes?.edges.map(item => item.node)}
         resourceSpecifications={resourceTypes.resourceSpecifications?.edges.map(
@@ -184,6 +212,7 @@ const ResourceTypes = () => {
         <AddResourceTypeForm
           isCompleted={isCompleted}
           resourceNames={resourceTypes.resourceTypes?.edges}
+          dataSelector={objectSelectors.data}
         />
       </Grid>
     </Grid>

@@ -14,17 +14,21 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ResourceTypeBaseTypeKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "%future added value";
+export type ResourceTypeClassKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
 export type AddResourceTypeInput = {|
   name: string,
-  resourceTypeBaseType: string,
-  resourceTypeClass: string,
+  resourceTypeBaseType: ResourceTypeBaseTypeKind,
+  resourceTypeClass: ResourceTypeClassKind,
 |};
 export type AddResourceTypeMutationVariables = {|
   input: AddResourceTypeInput
 |};
 export type AddResourceTypeMutationResponse = {|
   +addResourceType: {|
-    +name: string
+    +name: string,
+    +resourceTypeBaseType: ResourceTypeBaseTypeKind,
+    +resourceTypeClass: ResourceTypeClassKind,
   |}
 |};
 export type AddResourceTypeMutation = {|
@@ -40,6 +44,8 @@ mutation AddResourceTypeMutation(
 ) {
   addResourceType(input: $input) {
     name
+    resourceTypeBaseType
+    resourceTypeClass
     id
   }
 }
@@ -66,6 +72,20 @@ v2 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceTypeBaseType",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceTypeClass",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -82,7 +102,9 @@ return {
         "name": "addResourceType",
         "plural": false,
         "selections": [
-          (v2/*: any*/)
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/)
         ],
         "storageKey": null
       }
@@ -105,6 +127,8 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -118,16 +142,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bf8c64de4529c66262d165bb13bc42fa",
+    "cacheID": "b959f5b6f0e7b86c33f393828137f381",
     "id": null,
     "metadata": {},
     "name": "AddResourceTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceTypeMutation(\n  $input: AddResourceTypeInput!\n) {\n  addResourceType(input: $input) {\n    name\n    id\n  }\n}\n"
+    "text": "mutation AddResourceTypeMutation(\n  $input: AddResourceTypeInput!\n) {\n  addResourceType(input: $input) {\n    name\n    resourceTypeBaseType\n    resourceTypeClass\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '51b4099965c8f8826b76fc8a1b434fda';
+(node/*: any*/).hash = 'bbdceeaaa46bd7703507eca340bb7194';
 
 module.exports = node;

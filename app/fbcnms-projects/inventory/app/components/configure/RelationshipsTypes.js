@@ -57,16 +57,6 @@ const RelationshipsTypesQuery = graphql`
       edges {
         node {
           id
-          resourceRelationshipType
-          resourceRelationshipMultiplicity
-          resourceTypeA {
-            id
-            name
-          }
-          resourceTypeB {
-            id
-            name
-          }
         }
       }
     }
