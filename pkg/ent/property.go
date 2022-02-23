@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -98,9 +99,11 @@ type PropertyEdges struct {
 	UserValue *User
 	// ProjectValue holds the value of the project_value edge.
 	ProjectValue *Project
+	// PropertyValue holds the value of the property_value edge.
+	PropertyValue *PropertyValue
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [14]bool
+	loadedTypes [15]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -297,6 +300,20 @@ func (e PropertyEdges) ProjectValueOrErr() (*Project, error) {
 		return e.ProjectValue, nil
 	}
 	return nil, &NotLoadedError{edge: "project_value"}
+}
+
+// PropertyValueOrErr returns the PropertyValue value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PropertyEdges) PropertyValueOrErr() (*PropertyValue, error) {
+	if e.loadedTypes[14] {
+		if e.PropertyValue == nil {
+			// The edge property_value was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: propertyvalue.Label}
+		}
+		return e.PropertyValue, nil
+	}
+	return nil, &NotLoadedError{edge: "property_value"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -564,6 +581,11 @@ func (pr *Property) QueryUserValue() *UserQuery {
 // QueryProjectValue queries the project_value edge of the Property.
 func (pr *Property) QueryProjectValue() *ProjectQuery {
 	return (&PropertyClient{config: pr.config}).QueryProjectValue(pr)
+}
+
+// QueryPropertyValue queries the property_value edge of the Property.
+func (pr *Property) QueryPropertyValue() *PropertyValueQuery {
+	return (&PropertyClient{config: pr.config}).QueryPropertyValue(pr)
 }
 
 // Update returns a builder for updating this Property.

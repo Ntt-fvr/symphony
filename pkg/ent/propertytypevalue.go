@@ -38,13 +38,15 @@ type PropertyTypeValue struct {
 type PropertyTypeValueEdges struct {
 	// PropertyType holds the value of the property_type edge.
 	PropertyType *PropertyType
+	// PropertyValue holds the value of the property_value edge.
+	PropertyValue []*PropertyValue
 	// PropertyTypeValueDependence holds the value of the property_type_value_dependence edge.
 	PropertyTypeValueDependence *PropertyTypeValue
 	// PropertyTypeValue holds the value of the property_type_value edge.
 	PropertyTypeValue []*PropertyTypeValue
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // PropertyTypeOrErr returns the PropertyType value or an error if the edge
@@ -61,10 +63,19 @@ func (e PropertyTypeValueEdges) PropertyTypeOrErr() (*PropertyType, error) {
 	return nil, &NotLoadedError{edge: "property_type"}
 }
 
+// PropertyValueOrErr returns the PropertyValue value or an error if the edge
+// was not loaded in eager-loading.
+func (e PropertyTypeValueEdges) PropertyValueOrErr() ([]*PropertyValue, error) {
+	if e.loadedTypes[1] {
+		return e.PropertyValue, nil
+	}
+	return nil, &NotLoadedError{edge: "property_value"}
+}
+
 // PropertyTypeValueDependenceOrErr returns the PropertyTypeValueDependence value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e PropertyTypeValueEdges) PropertyTypeValueDependenceOrErr() (*PropertyTypeValue, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.PropertyTypeValueDependence == nil {
 			// The edge property_type_value_dependence was loaded in eager-loading,
 			// but was not found.
@@ -78,7 +89,7 @@ func (e PropertyTypeValueEdges) PropertyTypeValueDependenceOrErr() (*PropertyTyp
 // PropertyTypeValueOrErr returns the PropertyTypeValue value or an error if the edge
 // was not loaded in eager-loading.
 func (e PropertyTypeValueEdges) PropertyTypeValueOrErr() ([]*PropertyTypeValue, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.PropertyTypeValue, nil
 	}
 	return nil, &NotLoadedError{edge: "property_type_value"}
@@ -150,6 +161,11 @@ func (ptv *PropertyTypeValue) assignValues(values ...interface{}) error {
 // QueryPropertyType queries the property_type edge of the PropertyTypeValue.
 func (ptv *PropertyTypeValue) QueryPropertyType() *PropertyTypeQuery {
 	return (&PropertyTypeValueClient{config: ptv.config}).QueryPropertyType(ptv)
+}
+
+// QueryPropertyValue queries the property_value edge of the PropertyTypeValue.
+func (ptv *PropertyTypeValue) QueryPropertyValue() *PropertyValueQuery {
+	return (&PropertyTypeValueClient{config: ptv.config}).QueryPropertyValue(ptv)
 }
 
 // QueryPropertyTypeValueDependence queries the property_type_value_dependence edge of the PropertyTypeValue.

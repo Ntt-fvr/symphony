@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -23,6 +24,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -51,6 +53,7 @@ type PropertyQuery struct {
 	withWorkOrderValue *WorkOrderQuery
 	withUserValue      *UserQuery
 	withProjectValue   *ProjectQuery
+	withPropertyValue  *PropertyValueQuery
 	withFKs            bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -389,6 +392,28 @@ func (pq *PropertyQuery) QueryProjectValue() *ProjectQuery {
 	return query
 }
 
+// QueryPropertyValue chains the current query on the property_value edge.
+func (pq *PropertyQuery) QueryPropertyValue() *PropertyValueQuery {
+	query := &PropertyValueQuery{config: pq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(property.Table, property.FieldID, selector),
+			sqlgraph.To(propertyvalue.Table, propertyvalue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, property.PropertyValueTable, property.PropertyValueColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Property entity in the query. Returns *NotFoundError when no property was found.
 func (pq *PropertyQuery) First(ctx context.Context) (*Property, error) {
 	nodes, err := pq.Limit(1).All(ctx)
@@ -579,6 +604,7 @@ func (pq *PropertyQuery) Clone() *PropertyQuery {
 		withWorkOrderValue: pq.withWorkOrderValue.Clone(),
 		withUserValue:      pq.withUserValue.Clone(),
 		withProjectValue:   pq.withProjectValue.Clone(),
+		withPropertyValue:  pq.withPropertyValue.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
@@ -739,6 +765,17 @@ func (pq *PropertyQuery) WithProjectValue(opts ...func(*ProjectQuery)) *Property
 	return pq
 }
 
+//  WithPropertyValue tells the query-builder to eager-loads the nodes that are connected to
+// the "property_value" edge. The optional arguments used to configure the query builder of the edge.
+func (pq *PropertyQuery) WithPropertyValue(opts ...func(*PropertyValueQuery)) *PropertyQuery {
+	query := &PropertyValueQuery{config: pq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withPropertyValue = query
+	return pq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -809,7 +846,7 @@ func (pq *PropertyQuery) sqlAll(ctx context.Context) ([]*Property, error) {
 		nodes       = []*Property{}
 		withFKs     = pq.withFKs
 		_spec       = pq.querySpec()
-		loadedTypes = [14]bool{
+		loadedTypes = [15]bool{
 			pq.withType != nil,
 			pq.withLocation != nil,
 			pq.withEquipment != nil,
@@ -824,6 +861,7 @@ func (pq *PropertyQuery) sqlAll(ctx context.Context) ([]*Property, error) {
 			pq.withWorkOrderValue != nil,
 			pq.withUserValue != nil,
 			pq.withProjectValue != nil,
+			pq.withPropertyValue != nil,
 		}
 	)
 	if pq.withType != nil || pq.withLocation != nil || pq.withEquipment != nil || pq.withService != nil || pq.withEquipmentPort != nil || pq.withLink != nil || pq.withWorkOrder != nil || pq.withProject != nil || pq.withEquipmentValue != nil || pq.withLocationValue != nil || pq.withServiceValue != nil || pq.withWorkOrderValue != nil || pq.withUserValue != nil || pq.withProjectValue != nil {
@@ -1203,6 +1241,34 @@ func (pq *PropertyQuery) sqlAll(ctx context.Context) ([]*Property, error) {
 			for i := range nodes {
 				nodes[i].Edges.ProjectValue = n
 			}
+		}
+	}
+
+	if query := pq.withPropertyValue; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Property)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.PropertyValue(func(s *sql.Selector) {
+			s.Where(sql.InValues(property.PropertyValueColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.property_property_value
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "property_property_value" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "property_property_value" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.PropertyValue = n
 		}
 	}
 

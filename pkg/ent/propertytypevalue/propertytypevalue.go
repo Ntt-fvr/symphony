@@ -26,6 +26,8 @@ const (
 
 	// EdgePropertyType holds the string denoting the property_type edge name in mutations.
 	EdgePropertyType = "property_type"
+	// EdgePropertyValue holds the string denoting the property_value edge name in mutations.
+	EdgePropertyValue = "property_value"
 	// EdgePropertyTypeValueDependence holds the string denoting the property_type_value_dependence edge name in mutations.
 	EdgePropertyTypeValueDependence = "property_type_value_dependence"
 	// EdgePropertyTypeValue holds the string denoting the property_type_value edge name in mutations.
@@ -40,6 +42,13 @@ const (
 	PropertyTypeInverseTable = "property_types"
 	// PropertyTypeColumn is the table column denoting the property_type relation/edge.
 	PropertyTypeColumn = "property_type_property_type_values"
+	// PropertyValueTable is the table the holds the property_value relation/edge.
+	PropertyValueTable = "property_values"
+	// PropertyValueInverseTable is the table name for the PropertyValue entity.
+	// It exists in this package in order to avoid circular dependency with the "propertyvalue" package.
+	PropertyValueInverseTable = "property_values"
+	// PropertyValueColumn is the table column denoting the property_value relation/edge.
+	PropertyValueColumn = "property_type_value_property_value"
 	// PropertyTypeValueDependenceTable is the table the holds the property_type_value_dependence relation/edge.
 	PropertyTypeValueDependenceTable = "property_type_values"
 	// PropertyTypeValueDependenceColumn is the table column denoting the property_type_value_dependence relation/edge.

@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 )
 
 // PropertyTypeValueUpdate is the builder for updating PropertyTypeValue entities.
@@ -54,6 +55,21 @@ func (ptvu *PropertyTypeValueUpdate) SetNillablePropertyTypeID(id *int) *Propert
 // SetPropertyType sets the property_type edge to PropertyType.
 func (ptvu *PropertyTypeValueUpdate) SetPropertyType(p *PropertyType) *PropertyTypeValueUpdate {
 	return ptvu.SetPropertyTypeID(p.ID)
+}
+
+// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
+func (ptvu *PropertyTypeValueUpdate) AddPropertyValueIDs(ids ...int) *PropertyTypeValueUpdate {
+	ptvu.mutation.AddPropertyValueIDs(ids...)
+	return ptvu
+}
+
+// AddPropertyValue adds the property_value edges to PropertyValue.
+func (ptvu *PropertyTypeValueUpdate) AddPropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvu.AddPropertyValueIDs(ids...)
 }
 
 // SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
@@ -99,6 +115,27 @@ func (ptvu *PropertyTypeValueUpdate) Mutation() *PropertyTypeValueMutation {
 func (ptvu *PropertyTypeValueUpdate) ClearPropertyType() *PropertyTypeValueUpdate {
 	ptvu.mutation.ClearPropertyType()
 	return ptvu
+}
+
+// ClearPropertyValue clears all "property_value" edges to type PropertyValue.
+func (ptvu *PropertyTypeValueUpdate) ClearPropertyValue() *PropertyTypeValueUpdate {
+	ptvu.mutation.ClearPropertyValue()
+	return ptvu
+}
+
+// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
+func (ptvu *PropertyTypeValueUpdate) RemovePropertyValueIDs(ids ...int) *PropertyTypeValueUpdate {
+	ptvu.mutation.RemovePropertyValueIDs(ids...)
+	return ptvu
+}
+
+// RemovePropertyValue removes property_value edges to PropertyValue.
+func (ptvu *PropertyTypeValueUpdate) RemovePropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvu.RemovePropertyValueIDs(ids...)
 }
 
 // ClearPropertyTypeValueDependence clears the "property_type_value_dependence" edge to type PropertyTypeValue.
@@ -271,6 +308,60 @@ func (ptvu *PropertyTypeValueUpdate) sqlSave(ctx context.Context) (n int, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ptvu.mutation.PropertyValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyValueTable,
+			Columns: []string{propertytypevalue.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvu.mutation.RemovedPropertyValueIDs(); len(nodes) > 0 && !ptvu.mutation.PropertyValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyValueTable,
+			Columns: []string{propertytypevalue.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvu.mutation.PropertyValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyValueTable,
+			Columns: []string{propertytypevalue.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ptvu.mutation.PropertyTypeValueDependenceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -403,6 +494,21 @@ func (ptvuo *PropertyTypeValueUpdateOne) SetPropertyType(p *PropertyType) *Prope
 	return ptvuo.SetPropertyTypeID(p.ID)
 }
 
+// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
+func (ptvuo *PropertyTypeValueUpdateOne) AddPropertyValueIDs(ids ...int) *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.AddPropertyValueIDs(ids...)
+	return ptvuo
+}
+
+// AddPropertyValue adds the property_value edges to PropertyValue.
+func (ptvuo *PropertyTypeValueUpdateOne) AddPropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvuo.AddPropertyValueIDs(ids...)
+}
+
 // SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
 func (ptvuo *PropertyTypeValueUpdateOne) SetPropertyTypeValueDependenceID(id int) *PropertyTypeValueUpdateOne {
 	ptvuo.mutation.SetPropertyTypeValueDependenceID(id)
@@ -446,6 +552,27 @@ func (ptvuo *PropertyTypeValueUpdateOne) Mutation() *PropertyTypeValueMutation {
 func (ptvuo *PropertyTypeValueUpdateOne) ClearPropertyType() *PropertyTypeValueUpdateOne {
 	ptvuo.mutation.ClearPropertyType()
 	return ptvuo
+}
+
+// ClearPropertyValue clears all "property_value" edges to type PropertyValue.
+func (ptvuo *PropertyTypeValueUpdateOne) ClearPropertyValue() *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.ClearPropertyValue()
+	return ptvuo
+}
+
+// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
+func (ptvuo *PropertyTypeValueUpdateOne) RemovePropertyValueIDs(ids ...int) *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.RemovePropertyValueIDs(ids...)
+	return ptvuo
+}
+
+// RemovePropertyValue removes property_value edges to PropertyValue.
+func (ptvuo *PropertyTypeValueUpdateOne) RemovePropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvuo.RemovePropertyValueIDs(ids...)
 }
 
 // ClearPropertyTypeValueDependence clears the "property_type_value_dependence" edge to type PropertyTypeValue.
@@ -608,6 +735,60 @@ func (ptvuo *PropertyTypeValueUpdateOne) sqlSave(ctx context.Context) (_node *Pr
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptvuo.mutation.PropertyValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyValueTable,
+			Columns: []string{propertytypevalue.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvuo.mutation.RemovedPropertyValueIDs(); len(nodes) > 0 && !ptvuo.mutation.PropertyValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyValueTable,
+			Columns: []string{propertytypevalue.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvuo.mutation.PropertyValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyValueTable,
+			Columns: []string{propertytypevalue.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
 				},
 			},
 		}

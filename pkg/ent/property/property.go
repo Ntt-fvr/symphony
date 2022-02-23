@@ -66,6 +66,8 @@ const (
 	EdgeUserValue = "user_value"
 	// EdgeProjectValue holds the string denoting the project_value edge name in mutations.
 	EdgeProjectValue = "project_value"
+	// EdgePropertyValue holds the string denoting the property_value edge name in mutations.
+	EdgePropertyValue = "property_value"
 
 	// Table holds the table name of the property in the database.
 	Table = "properties"
@@ -167,6 +169,13 @@ const (
 	ProjectValueInverseTable = "projects"
 	// ProjectValueColumn is the table column denoting the project_value relation/edge.
 	ProjectValueColumn = "property_project_value"
+	// PropertyValueTable is the table the holds the property_value relation/edge.
+	PropertyValueTable = "property_values"
+	// PropertyValueInverseTable is the table name for the PropertyValue entity.
+	// It exists in this package in order to avoid circular dependency with the "propertyvalue" package.
+	PropertyValueInverseTable = "property_values"
+	// PropertyValueColumn is the table column denoting the property_value relation/edge.
+	PropertyValueColumn = "property_property_value"
 )
 
 // Columns holds all SQL columns for property fields.

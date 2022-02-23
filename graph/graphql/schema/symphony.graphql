@@ -1,4 +1,4 @@
- # Copyright (c) 2004-present Facebook All rights reserved.
+# Copyright (c) 2004-present Facebook All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
@@ -3604,7 +3604,7 @@ type KqiEdge {
   """
   cursor: Cursor!
 }
-################################ conection Organization ###############################################
+
 """
 Properties by which Organization connections can be ordered.
 """
@@ -3672,7 +3672,6 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendations ###############################################
 """
 Properties by which Recommendations connections can be ordered.
 """
@@ -3740,7 +3739,6 @@ type RecommendationsEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendationsSources ###############################################
 """
 Properties by which RecommendationsSources connections can be ordered.
 """
@@ -3808,7 +3806,6 @@ type RecommendationsSourcesEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendationsCategory ###############################################
 """
 Properties by which RecommendationsCategory connections can be ordered.
 """
@@ -4276,6 +4273,86 @@ type PropertyTypeValueEdge {
   A cursor for use in pagination.
   """
   cursor: Cursor!
+}
+
+"""
+Properties by which PropertyValues connections can be ordered.
+"""
+enum PropertyValueOrderField {
+  """
+  Order propertyValue by name.
+  """
+  NAME
+
+  """
+  Order propertyValue by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order propertyValue by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for propertyValues connections.
+"""
+input PropertyValueOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order PropertyValue by.
+  """
+  field: PropertyValueOrderField
+}
+
+"""
+A connection to a list of PropertyValue.
+"""
+type PropertyValueConnection {
+  """
+  Total PropertyValue of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of PropertyValue edges.
+  """
+  edges: [PropertyValueEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A property value edge in a connection.
+"""
+type PropertyValueEdge {
+  """
+  The property value at the end of the edge.
+  """
+  node: PropertyValue
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+enum PropertyValueFilterType {
+  NAME
+}
+
+input PropertyValueFilterInput {
+  filterType: PropertyValueFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 """
@@ -6386,9 +6463,9 @@ type Query {
     """
     orderBy: CounterOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [CounterFilterInput!]
   ): CounterConnection!
   
@@ -6421,9 +6498,9 @@ type Query {
     """
     orderBy: KpiOrder
 
-    
-    #Filtering options for the returned kpis.
-    
+    """
+    Filtering options for the returned kpis.
+    """
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
 
@@ -6456,9 +6533,9 @@ type Query {
     """
     orderBy: KpiCategoryOrder
 
-    
-    #Filtering options for the returned kpiCategoriess.
-    
+    """
+    Filtering options for the returned kpiCategoriess.
+    """
     filterBy: [KpiCategoryFilterInput!]
   ): KpiCategoryConnection!
 
@@ -6491,9 +6568,9 @@ type Query {
     """
     orderBy: ThresholdOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [ThresholdFilterInput!]
   ): ThresholdConnection!
   
@@ -6526,12 +6603,11 @@ type Query {
     """
     orderBy: AlarmFilterOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [AlarmFilterFilterInput!]
   ): AlarmFilterConnection!
-
   
   """
   A list of domains.
@@ -6562,9 +6638,9 @@ type Query {
     """
     orderBy: DomainOrder
 
-    
-    #Filtering options for the returned domains.
-    
+    """
+    Filtering options for the returned domains.
+    """
     filterBy: [DomainFilterInput!]
   ): DomainConnection!
 
@@ -6597,9 +6673,9 @@ type Query {
     """
     orderBy: VendorOrder
 
-    
-    #Filtering options for the returned vendors.
-    
+    """
+    Filtering options for the returned vendors.
+    """
     filterBy: [VendorFilterInput!]
   ): VendorConnection!
 
@@ -6632,12 +6708,11 @@ type Query {
     """
     orderBy: CounterFamilyOrder
 
-    
-    #Filtering options for the returned counterFamilies.
-    
+    """
+    Filtering options for the returned counterFamilies.
+    """
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
-
   
   """
   A list of ruleTypes.
@@ -6668,9 +6743,9 @@ type Query {
     """
     orderBy: RuleTypeOrder
 
-    
-    #Filtering options for the returned ruleTypes.
-    
+    """
+    Filtering options for the returned ruleTypes.
+    """
     filterBy: [RuleTypeFilterInput!]
   ): RuleTypeConnection!
 
@@ -6703,16 +6778,15 @@ type Query {
     """
     orderBy: EventSeverityOrder
 
-    
-    #Filtering options for the returned eventSeverities.
-    
+    """
+    Filtering options for the returned eventSeverities.
+    """
     filterBy: [EventSeverityFilterInput!]
   ): EventSeverityConnection!
   
   """
   A list of comparator.
   """
-  
   comparators(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -6739,16 +6813,15 @@ type Query {
     """
     orderBy: ComparatorOrder
 
-    
-    #Filtering options for the returned comparator.
-    
+    """
+    Filtering options for the returned comparator.
+    """
     filterBy: [ComparatorFilterInput!]
   ): ComparatorConnection!
 
   """
   A list of alarmStatus.
-  """
-  
+  """  
   alarmStatus(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -6775,9 +6848,9 @@ type Query {
     """
     orderBy: AlarmStatusOrder
 
-    
-    #Filtering options for the returned alarmStatus.
-    
+    """
+    Filtering options for the returned alarmStatus.
+    """
     filterBy: [AlarmStatusFilterInput!]
   ): AlarmStatusConnection!
 
@@ -6810,9 +6883,9 @@ type Query {
     """
     orderBy: KqiOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [KqiFilterInput!]
   ): KqiConnection!
   
@@ -6845,9 +6918,9 @@ type Query {
     """
     orderBy: KqiCategoryOrder
 
-    
-    #Filtering options for the returned kqiCategories.
-    
+    """
+    Filtering options for the returned kqiCategories.
+    """
     filterBy: [KqiCategoryFilterInput!]
   ): KqiCategoryConnection!
 
@@ -6880,9 +6953,9 @@ type Query {
     """
     orderBy: KqiPerspectiveOrder
 
-    
-    #Filtering options for the returned kqiPerspectives.
-    
+    """
+    Filtering options for the returned kqiPerspectives.
+    """
     filterBy: [KqiPerspectiveFilterInput!]
   ): KqiPerspectiveConnection!
 
@@ -6915,9 +6988,9 @@ type Query {
     """
     orderBy: KqiTemporalFrequencyOrder
 
-    
-    #Filtering options for the returned kqiTemporalFrequency.
-    
+    """
+    Filtering options for the returned kqiTemporalFrequency.
+    """
     filterBy: [KqiTemporalFrequencyFilterInput!]
   ): KqiTemporalFrequencyConnection!
 
@@ -6950,9 +7023,9 @@ type Query {
     """
     orderBy: KqiSourceOrder
 
-    
-    #Filtering options for the returned kqiSource.
-    
+    """
+    Filtering options for the returned kqiSource.
+    """
     filterBy: [KqiSourceFilterInput!]
   ): KqiSourceConnection!
 
@@ -6985,15 +7058,15 @@ type Query {
     """
     orderBy: KqiTargetOrder
 
-    
-    #Filtering options for the returned kqiTarget.
+    """
+    Filtering options for the returned kqiTarget.
+    """
     filterBy: [KqiTargetFilterInput!]
   ): KqiTargetConnection!
 
   """
   A list of organization.
   """
-  
   organizations(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7020,11 +7093,12 @@ type Query {
     """
     orderBy: OrganizationOrder
 
-    
-    #Filtering options for the returned organization.
-    
+    """
+    Filtering options for the returned organization.
+    """
     filterBy: [OrganizationFilterInput!]
   ): OrganizationConnection!
+
   """
   A list of Recommendations.
   """
@@ -7054,11 +7128,12 @@ type Query {
     """
     orderBy: RecommendationsOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsFilterInput!]
   ): RecommendationsConnection!
+
   """
   A list of RecommendationsSources.
   """
@@ -7088,11 +7163,12 @@ type Query {
     """
     orderBy: RecommendationsSourcesOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsSourcesFilterInput!]
   ): RecommendationsSourcesConnection!
+
   """
   A list of RecommendationsCategories.
   """
@@ -7122,12 +7198,13 @@ type Query {
     """
     orderBy: RecommendationsCategoryOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsCategoryFilterInput!]
   ): RecommendationsCategoryConnection!
-     """
+
+  """
   A list of formulas.
   """
   formulas(
@@ -7156,9 +7233,9 @@ type Query {
     """
     orderBy: FormulaOrder
 
-    
-    #Filtering options for the returned formulas.
-    
+    """
+    Filtering options for the returned formulas.
+    """
     filterBy: [FormulaFilterInput!]
   ): FormulaConnection!
 
@@ -7191,13 +7268,48 @@ type Query {
     """
     orderBy: PropertyTypeValueOrder
 
-    
-    #Filtering options for the returned networkTypes.
-    
+    """
+    Filtering options for the returned networkTypes.
+    """
     filterBy: [PropertyTypeValueFilterInput!]
   ): PropertyTypeValueConnection!
+  
+  """
+  A list of propertyValue.
+  """
+  propertyValues(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
 
     """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned networkTypes.
+    """
+    orderBy: PropertyValueOrder
+
+    """
+    Filtering options for the returned networkTypes.
+    """
+    filterBy: [PropertyValueFilterInput!]
+  ): PropertyValueConnection!
+
+  """
   A list of techs.
   """
   techs(
@@ -7226,9 +7338,9 @@ type Query {
     """
     orderBy: TechOrder
 
-    
-    #Filtering options for the returned techs.
-    
+    """
+    Filtering options for the returned techs.
+    """
     filterBy: [TechFilterInput!]
   ): TechConnection!
 
@@ -7261,9 +7373,9 @@ type Query {
     """
     orderBy: NetworkTypeOrder
 
-    
-    #Filtering options for the returned networkTypes.
-    
+    """
+    Filtering options for the returned networkTypes.
+    """
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
  
@@ -8543,8 +8655,6 @@ input EditKqiComparatorInput {
   comparatorType: String!
 }
 
-##################### RECOMMENDATIONS #######################
-
 type Recommendations implements Node {
   id: ID!
   externalID: String!
@@ -8603,7 +8713,7 @@ input EditRecommendationsInput {
   userApprobed: ID
   vendor: ID!
 }
-######################## filter ###################
+
 enum RecommendationsFilterType {
   EXTERNALID
   RESOURCE
@@ -8689,7 +8799,6 @@ input RecommendationsCategoryFilterInput {
   stringSet: [String!]
 }
 
-## scheduling
 """
 A connection to a list of appoinments.
 """
@@ -8815,4 +8924,30 @@ enum AppointmentStatus
   ) {
   ACTIVE
   CANCELED
+}
+
+type PropertyValue implements Node {
+  id: ID!
+  name: String!
+  property: Property
+  propertyTypeValue: PropertyTypeValue
+  propertyValue: PropertyValue
+  propertyValues: [PropertyValue]
+}
+
+input AddPropertyValueInput {
+  id: ID
+  name: String!
+  property: ID
+  propertyTypeValue: ID
+  propertyValue: ID
+  propertyValues: [AddPropertyValueInput]
+}
+
+input EditPropertyValueInput {
+  id: ID
+  name: String!
+  property: ID
+  propertyValue: ID
+  propertyValues: [EditPropertyValueInput]
 }

@@ -77,6 +77,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
@@ -243,6 +244,8 @@ type Client struct {
 	PropertyType *PropertyTypeClient
 	// PropertyTypeValue is the client for interacting with the PropertyTypeValue builders.
 	PropertyTypeValue *PropertyTypeValueClient
+	// PropertyValue is the client for interacting with the PropertyValue builders.
+	PropertyValue *PropertyValueClient
 	// Recommendations is the client for interacting with the Recommendations builders.
 	Recommendations *RecommendationsClient
 	// RecommendationsCategory is the client for interacting with the RecommendationsCategory builders.
@@ -376,6 +379,7 @@ func (c *Client) init() {
 	c.PropertyCategory = NewPropertyCategoryClient(c.config)
 	c.PropertyType = NewPropertyTypeClient(c.config)
 	c.PropertyTypeValue = NewPropertyTypeValueClient(c.config)
+	c.PropertyValue = NewPropertyValueClient(c.config)
 	c.Recommendations = NewRecommendationsClient(c.config)
 	c.RecommendationsCategory = NewRecommendationsCategoryClient(c.config)
 	c.RecommendationsSources = NewRecommendationsSourcesClient(c.config)
@@ -499,6 +503,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PropertyCategory:            NewPropertyCategoryClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
 		PropertyTypeValue:           NewPropertyTypeValueClient(cfg),
+		PropertyValue:               NewPropertyValueClient(cfg),
 		Recommendations:             NewRecommendationsClient(cfg),
 		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
@@ -605,6 +610,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PropertyCategory:            NewPropertyCategoryClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
 		PropertyTypeValue:           NewPropertyTypeValueClient(cfg),
+		PropertyValue:               NewPropertyValueClient(cfg),
 		Recommendations:             NewRecommendationsClient(cfg),
 		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
@@ -724,6 +730,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.PropertyCategory.Use(hooks...)
 	c.PropertyType.Use(hooks...)
 	c.PropertyTypeValue.Use(hooks...)
+	c.PropertyValue.Use(hooks...)
 	c.Recommendations.Use(hooks...)
 	c.RecommendationsCategory.Use(hooks...)
 	c.RecommendationsSources.Use(hooks...)
@@ -9216,6 +9223,22 @@ func (c *PropertyClient) QueryProjectValue(pr *Property) *ProjectQuery {
 	return query
 }
 
+// QueryPropertyValue queries the property_value edge of a Property.
+func (c *PropertyClient) QueryPropertyValue(pr *Property) *PropertyValueQuery {
+	query := &PropertyValueQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(property.Table, property.FieldID, id),
+			sqlgraph.To(propertyvalue.Table, propertyvalue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, property.PropertyValueTable, property.PropertyValueColumn),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PropertyClient) Hooks() []Hook {
 	hooks := c.hooks.Property
@@ -9771,6 +9794,22 @@ func (c *PropertyTypeValueClient) QueryPropertyType(ptv *PropertyTypeValue) *Pro
 	return query
 }
 
+// QueryPropertyValue queries the property_value edge of a PropertyTypeValue.
+func (c *PropertyTypeValueClient) QueryPropertyValue(ptv *PropertyTypeValue) *PropertyValueQuery {
+	query := &PropertyValueQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ptv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytypevalue.Table, propertytypevalue.FieldID, id),
+			sqlgraph.To(propertyvalue.Table, propertyvalue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytypevalue.PropertyValueTable, propertytypevalue.PropertyValueColumn),
+		)
+		fromV = sqlgraph.Neighbors(ptv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryPropertyTypeValueDependence queries the property_type_value_dependence edge of a PropertyTypeValue.
 func (c *PropertyTypeValueClient) QueryPropertyTypeValueDependence(ptv *PropertyTypeValue) *PropertyTypeValueQuery {
 	query := &PropertyTypeValueQuery{config: c.config}
@@ -9807,6 +9846,159 @@ func (c *PropertyTypeValueClient) QueryPropertyTypeValue(ptv *PropertyTypeValue)
 func (c *PropertyTypeValueClient) Hooks() []Hook {
 	hooks := c.hooks.PropertyTypeValue
 	return append(hooks[:len(hooks):len(hooks)], propertytypevalue.Hooks[:]...)
+}
+
+// PropertyValueClient is a client for the PropertyValue schema.
+type PropertyValueClient struct {
+	config
+}
+
+// NewPropertyValueClient returns a client for the PropertyValue from the given config.
+func NewPropertyValueClient(c config) *PropertyValueClient {
+	return &PropertyValueClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `propertyvalue.Hooks(f(g(h())))`.
+func (c *PropertyValueClient) Use(hooks ...Hook) {
+	c.hooks.PropertyValue = append(c.hooks.PropertyValue, hooks...)
+}
+
+// Create returns a create builder for PropertyValue.
+func (c *PropertyValueClient) Create() *PropertyValueCreate {
+	mutation := newPropertyValueMutation(c.config, OpCreate)
+	return &PropertyValueCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PropertyValue entities.
+func (c *PropertyValueClient) CreateBulk(builders ...*PropertyValueCreate) *PropertyValueCreateBulk {
+	return &PropertyValueCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PropertyValue.
+func (c *PropertyValueClient) Update() *PropertyValueUpdate {
+	mutation := newPropertyValueMutation(c.config, OpUpdate)
+	return &PropertyValueUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PropertyValueClient) UpdateOne(pv *PropertyValue) *PropertyValueUpdateOne {
+	mutation := newPropertyValueMutation(c.config, OpUpdateOne, withPropertyValue(pv))
+	return &PropertyValueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PropertyValueClient) UpdateOneID(id int) *PropertyValueUpdateOne {
+	mutation := newPropertyValueMutation(c.config, OpUpdateOne, withPropertyValueID(id))
+	return &PropertyValueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PropertyValue.
+func (c *PropertyValueClient) Delete() *PropertyValueDelete {
+	mutation := newPropertyValueMutation(c.config, OpDelete)
+	return &PropertyValueDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *PropertyValueClient) DeleteOne(pv *PropertyValue) *PropertyValueDeleteOne {
+	return c.DeleteOneID(pv.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *PropertyValueClient) DeleteOneID(id int) *PropertyValueDeleteOne {
+	builder := c.Delete().Where(propertyvalue.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PropertyValueDeleteOne{builder}
+}
+
+// Query returns a query builder for PropertyValue.
+func (c *PropertyValueClient) Query() *PropertyValueQuery {
+	return &PropertyValueQuery{config: c.config}
+}
+
+// Get returns a PropertyValue entity by its id.
+func (c *PropertyValueClient) Get(ctx context.Context, id int) (*PropertyValue, error) {
+	return c.Query().Where(propertyvalue.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PropertyValueClient) GetX(ctx context.Context, id int) *PropertyValue {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProperty queries the property edge of a PropertyValue.
+func (c *PropertyValueClient) QueryProperty(pv *PropertyValue) *PropertyQuery {
+	query := &PropertyQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertyvalue.Table, propertyvalue.FieldID, id),
+			sqlgraph.To(property.Table, property.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, propertyvalue.PropertyTable, propertyvalue.PropertyColumn),
+		)
+		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPropertyTypeValue queries the property_type_value edge of a PropertyValue.
+func (c *PropertyValueClient) QueryPropertyTypeValue(pv *PropertyValue) *PropertyTypeValueQuery {
+	query := &PropertyTypeValueQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertyvalue.Table, propertyvalue.FieldID, id),
+			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertyvalue.PropertyTypeValueTable, propertyvalue.PropertyTypeValueColumn),
+		)
+		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPropertyValueDependence queries the property_value_dependence edge of a PropertyValue.
+func (c *PropertyValueClient) QueryPropertyValueDependence(pv *PropertyValue) *PropertyValueQuery {
+	query := &PropertyValueQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertyvalue.Table, propertyvalue.FieldID, id),
+			sqlgraph.To(propertyvalue.Table, propertyvalue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertyvalue.PropertyValueDependenceTable, propertyvalue.PropertyValueDependenceColumn),
+		)
+		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPropertyValue queries the property_value edge of a PropertyValue.
+func (c *PropertyValueClient) QueryPropertyValue(pv *PropertyValue) *PropertyValueQuery {
+	query := &PropertyValueQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertyvalue.Table, propertyvalue.FieldID, id),
+			sqlgraph.To(propertyvalue.Table, propertyvalue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertyvalue.PropertyValueTable, propertyvalue.PropertyValueColumn),
+		)
+		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PropertyValueClient) Hooks() []Hook {
+	hooks := c.hooks.PropertyValue
+	return append(hooks[:len(hooks):len(hooks)], propertyvalue.Hooks[:]...)
 }
 
 // RecommendationsClient is a client for the Recommendations schema.

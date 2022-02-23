@@ -169,6 +169,9 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.PropertyTypeValues = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.PropertyTypeValueOrder, _ []*models.PropertyTypeValueFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.PropertyValues = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.PropertyValueOrder, _ []*models.PropertyValueFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.ParametersCatalog = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {
 		return SearchComplexity(childComplexity, nil)
 	}

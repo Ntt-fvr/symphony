@@ -144,6 +144,8 @@ type Tx struct {
 	PropertyType *PropertyTypeClient
 	// PropertyTypeValue is the client for interacting with the PropertyTypeValue builders.
 	PropertyTypeValue *PropertyTypeValueClient
+	// PropertyValue is the client for interacting with the PropertyValue builders.
+	PropertyValue *PropertyValueClient
 	// Recommendations is the client for interacting with the Recommendations builders.
 	Recommendations *RecommendationsClient
 	// RecommendationsCategory is the client for interacting with the RecommendationsCategory builders.
@@ -397,6 +399,7 @@ func (tx *Tx) init() {
 	tx.PropertyCategory = NewPropertyCategoryClient(tx.config)
 	tx.PropertyType = NewPropertyTypeClient(tx.config)
 	tx.PropertyTypeValue = NewPropertyTypeValueClient(tx.config)
+	tx.PropertyValue = NewPropertyValueClient(tx.config)
 	tx.Recommendations = NewRecommendationsClient(tx.config)
 	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
 	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)

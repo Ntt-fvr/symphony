@@ -92,6 +92,7 @@ type hooks struct {
 	PropertyCategory            []ent.Hook
 	PropertyType                []ent.Hook
 	PropertyTypeValue           []ent.Hook
+	PropertyValue               []ent.Hook
 	Recommendations             []ent.Hook
 	RecommendationsCategory     []ent.Hook
 	RecommendationsSources      []ent.Hook

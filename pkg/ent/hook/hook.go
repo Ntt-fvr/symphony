@@ -845,6 +845,19 @@ func (f PropertyTypeValueFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.
 	return f(ctx, mv)
 }
 
+// The PropertyValueFunc type is an adapter to allow the use of ordinary
+// function as PropertyValue mutator.
+type PropertyValueFunc func(context.Context, *ent.PropertyValueMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PropertyValueFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PropertyValueMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PropertyValueMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The RecommendationsFunc type is an adapter to allow the use of ordinary
 // function as Recommendations mutator.
 type RecommendationsFunc func(context.Context, *ent.RecommendationsMutation) (ent.Value, error)

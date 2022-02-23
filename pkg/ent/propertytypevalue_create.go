@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 )
 
 // PropertyTypeValueCreate is the builder for creating a PropertyTypeValue entity.
@@ -76,6 +77,21 @@ func (ptvc *PropertyTypeValueCreate) SetNillablePropertyTypeID(id *int) *Propert
 // SetPropertyType sets the property_type edge to PropertyType.
 func (ptvc *PropertyTypeValueCreate) SetPropertyType(p *PropertyType) *PropertyTypeValueCreate {
 	return ptvc.SetPropertyTypeID(p.ID)
+}
+
+// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
+func (ptvc *PropertyTypeValueCreate) AddPropertyValueIDs(ids ...int) *PropertyTypeValueCreate {
+	ptvc.mutation.AddPropertyValueIDs(ids...)
+	return ptvc
+}
+
+// AddPropertyValue adds the property_value edges to PropertyValue.
+func (ptvc *PropertyTypeValueCreate) AddPropertyValue(p ...*PropertyValue) *PropertyTypeValueCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvc.AddPropertyValueIDs(ids...)
 }
 
 // SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
@@ -252,6 +268,25 @@ func (ptvc *PropertyTypeValueCreate) createSpec() (*PropertyTypeValue, *sqlgraph
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ptvc.mutation.PropertyValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyValueTable,
+			Columns: []string{propertytypevalue.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
 				},
 			},
 		}

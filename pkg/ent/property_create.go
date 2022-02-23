@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -429,6 +430,25 @@ func (pc *PropertyCreate) SetNillableProjectValueID(id *int) *PropertyCreate {
 // SetProjectValue sets the project_value edge to Project.
 func (pc *PropertyCreate) SetProjectValue(p *Project) *PropertyCreate {
 	return pc.SetProjectValueID(p.ID)
+}
+
+// SetPropertyValueID sets the property_value edge to PropertyValue by id.
+func (pc *PropertyCreate) SetPropertyValueID(id int) *PropertyCreate {
+	pc.mutation.SetPropertyValueID(id)
+	return pc
+}
+
+// SetNillablePropertyValueID sets the property_value edge to PropertyValue by id if the given value is not nil.
+func (pc *PropertyCreate) SetNillablePropertyValueID(id *int) *PropertyCreate {
+	if id != nil {
+		pc = pc.SetPropertyValueID(*id)
+	}
+	return pc
+}
+
+// SetPropertyValue sets the property_value edge to PropertyValue.
+func (pc *PropertyCreate) SetPropertyValue(p *PropertyValue) *PropertyCreate {
+	return pc.SetPropertyValueID(p.ID)
 }
 
 // Mutation returns the PropertyMutation object of the builder.
@@ -869,6 +889,25 @@ func (pc *PropertyCreate) createSpec() (*Property, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: project.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.PropertyValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   property.PropertyValueTable,
+			Columns: []string{property.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
 				},
 			},
 		}

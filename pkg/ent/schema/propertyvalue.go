@@ -12,31 +12,31 @@ import (
 	"github.com/facebookincubator/symphony/pkg/authz"
 )
 
-//PropertyTypeValue defines the property type schema
-type PropertyTypeValue struct {
+//PropertyValue defines the property type schema
+type PropertyValue struct {
 	schema
 }
 
-func (PropertyTypeValue) Fields() []ent.Field {
+func (PropertyValue) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().
 			Annotations(entgql.OrderField("NAME")),
 	}
 }
 
-func (PropertyTypeValue) Edges() []ent.Edge {
+func (PropertyValue) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("property_type", PropertyType.Type).
-			Ref("property_type_values").Unique(),
+		edge.From("property", Property.Type).
+			Ref("property_value").Unique(),
+		edge.From("property_type_value", PropertyTypeValue.Type).
+			Ref("property_value").Unique(),
 		edge.To("property_value", PropertyValue.Type).
-			Annotations(entgql.MapsTo("propertyvalue")),
-		edge.To("property_type_value", PropertyTypeValue.Type).
-			Annotations(entgql.Bind()).From("property_type_value_dependence").
-			Unique().Annotations(entgql.MapsTo("property_type_value_dependence")),
+			Annotations(entgql.Bind()).From("property_value_dependence").
+			Unique().Annotations(entgql.MapsTo("property_value_dependence")),
 	}
 }
 
-func (PropertyTypeValue) Policy() ent.Policy {
+func (PropertyValue) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithQueryRules(
 			authz.PropertyReadPolicyRule(),

@@ -266,6 +266,8 @@ func (Property) Edges() []ent.Edge {
 			Unique(),
 		edge.To("project_value", Project.Type).
 			Unique(),
+		edge.To("property_value", PropertyValue.Type).
+			Unique(),
 	}
 }
 

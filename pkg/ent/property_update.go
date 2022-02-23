@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -500,6 +501,25 @@ func (pu *PropertyUpdate) SetProjectValue(p *Project) *PropertyUpdate {
 	return pu.SetProjectValueID(p.ID)
 }
 
+// SetPropertyValueID sets the property_value edge to PropertyValue by id.
+func (pu *PropertyUpdate) SetPropertyValueID(id int) *PropertyUpdate {
+	pu.mutation.SetPropertyValueID(id)
+	return pu
+}
+
+// SetNillablePropertyValueID sets the property_value edge to PropertyValue by id if the given value is not nil.
+func (pu *PropertyUpdate) SetNillablePropertyValueID(id *int) *PropertyUpdate {
+	if id != nil {
+		pu = pu.SetPropertyValueID(*id)
+	}
+	return pu
+}
+
+// SetPropertyValue sets the property_value edge to PropertyValue.
+func (pu *PropertyUpdate) SetPropertyValue(p *PropertyValue) *PropertyUpdate {
+	return pu.SetPropertyValueID(p.ID)
+}
+
 // Mutation returns the PropertyMutation object of the builder.
 func (pu *PropertyUpdate) Mutation() *PropertyMutation {
 	return pu.mutation
@@ -586,6 +606,12 @@ func (pu *PropertyUpdate) ClearUserValue() *PropertyUpdate {
 // ClearProjectValue clears the "project_value" edge to type Project.
 func (pu *PropertyUpdate) ClearProjectValue() *PropertyUpdate {
 	pu.mutation.ClearProjectValue()
+	return pu
+}
+
+// ClearPropertyValue clears the "property_value" edge to type PropertyValue.
+func (pu *PropertyUpdate) ClearPropertyValue() *PropertyUpdate {
+	pu.mutation.ClearPropertyValue()
 	return pu
 }
 
@@ -1324,6 +1350,41 @@ func (pu *PropertyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if pu.mutation.PropertyValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   property.PropertyValueTable,
+			Columns: []string{property.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.PropertyValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   property.PropertyValueTable,
+			Columns: []string{property.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{property.Label}
@@ -1802,6 +1863,25 @@ func (puo *PropertyUpdateOne) SetProjectValue(p *Project) *PropertyUpdateOne {
 	return puo.SetProjectValueID(p.ID)
 }
 
+// SetPropertyValueID sets the property_value edge to PropertyValue by id.
+func (puo *PropertyUpdateOne) SetPropertyValueID(id int) *PropertyUpdateOne {
+	puo.mutation.SetPropertyValueID(id)
+	return puo
+}
+
+// SetNillablePropertyValueID sets the property_value edge to PropertyValue by id if the given value is not nil.
+func (puo *PropertyUpdateOne) SetNillablePropertyValueID(id *int) *PropertyUpdateOne {
+	if id != nil {
+		puo = puo.SetPropertyValueID(*id)
+	}
+	return puo
+}
+
+// SetPropertyValue sets the property_value edge to PropertyValue.
+func (puo *PropertyUpdateOne) SetPropertyValue(p *PropertyValue) *PropertyUpdateOne {
+	return puo.SetPropertyValueID(p.ID)
+}
+
 // Mutation returns the PropertyMutation object of the builder.
 func (puo *PropertyUpdateOne) Mutation() *PropertyMutation {
 	return puo.mutation
@@ -1888,6 +1968,12 @@ func (puo *PropertyUpdateOne) ClearUserValue() *PropertyUpdateOne {
 // ClearProjectValue clears the "project_value" edge to type Project.
 func (puo *PropertyUpdateOne) ClearProjectValue() *PropertyUpdateOne {
 	puo.mutation.ClearProjectValue()
+	return puo
+}
+
+// ClearPropertyValue clears the "property_value" edge to type PropertyValue.
+func (puo *PropertyUpdateOne) ClearPropertyValue() *PropertyUpdateOne {
+	puo.mutation.ClearPropertyValue()
 	return puo
 }
 
@@ -2616,6 +2702,41 @@ func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (_node *Property, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: project.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.PropertyValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   property.PropertyValueTable,
+			Columns: []string{property.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.PropertyValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   property.PropertyValueTable,
+			Columns: []string{property.PropertyValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertyvalue.FieldID,
 				},
 			},
 		}

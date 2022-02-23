@@ -2170,6 +2170,45 @@ var (
 			},
 		},
 	}
+	// PropertyValuesColumns holds the columns for the "property_values" table.
+	PropertyValuesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "property_property_value", Type: field.TypeInt, Unique: true, Nullable: true},
+		{Name: "property_type_value_property_value", Type: field.TypeInt, Nullable: true},
+		{Name: "property_value_property_value", Type: field.TypeInt, Nullable: true},
+	}
+	// PropertyValuesTable holds the schema information for the "property_values" table.
+	PropertyValuesTable = &schema.Table{
+		Name:       "property_values",
+		Columns:    PropertyValuesColumns,
+		PrimaryKey: []*schema.Column{PropertyValuesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "property_values_properties_property_value",
+				Columns: []*schema.Column{PropertyValuesColumns[4]},
+
+				RefColumns: []*schema.Column{PropertiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "property_values_property_type_values_property_value",
+				Columns: []*schema.Column{PropertyValuesColumns[5]},
+
+				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "property_values_property_values_property_value",
+				Columns: []*schema.Column{PropertyValuesColumns[6]},
+
+				RefColumns: []*schema.Column{PropertyValuesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// RecommendationsColumns holds the columns for the "recommendations" table.
 	RecommendationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3423,6 +3462,7 @@ var (
 		PropertyCategoriesTable,
 		PropertyTypesTable,
 		PropertyTypeValuesTable,
+		PropertyValuesTable,
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
 		RecommendationsSourcesTable,
@@ -3575,6 +3615,9 @@ func init() {
 	PropertyTypesTable.ForeignKeys[11].RefTable = WorkerTypesTable
 	PropertyTypeValuesTable.ForeignKeys[0].RefTable = PropertyTypesTable
 	PropertyTypeValuesTable.ForeignKeys[1].RefTable = PropertyTypeValuesTable
+	PropertyValuesTable.ForeignKeys[0].RefTable = PropertiesTable
+	PropertyValuesTable.ForeignKeys[1].RefTable = PropertyTypeValuesTable
+	PropertyValuesTable.ForeignKeys[2].RefTable = PropertyValuesTable
 	RecommendationsTable.ForeignKeys[0].RefTable = RecommendationsCategoriesTable
 	RecommendationsTable.ForeignKeys[1].RefTable = RecommendationsSourcesTable
 	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable

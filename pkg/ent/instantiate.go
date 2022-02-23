@@ -391,6 +391,12 @@ func (c *PropertyTypeValueClient) Instantiate(ptv *PropertyTypeValue) *PropertyT
 }
 
 // Instantiate entity configuration.
+func (c *PropertyValueClient) Instantiate(pv *PropertyValue) *PropertyValue {
+	pv.config = c.config
+	return pv
+}
+
+// Instantiate entity configuration.
 func (c *RecommendationsClient) Instantiate(r *Recommendations) *Recommendations {
 	r.config = c.config
 	return r
