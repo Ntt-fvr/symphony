@@ -46,6 +46,49 @@ def add_rule_limit(
 
     .. code-block:: python
 
+        domain = client.add_domain(
+            name="domain",
+        )
+        kpi_category = client.add_kpi_category(
+            name="kpi_category",
+        )
+
+        Kpi = client.add_Kpi(
+            name="Kpi_2",
+            description="new kpi",
+            status=True,
+            domain=domain.id,
+            kpiCategory=kpi_category.id
+        )
+
+        threshold = client.add_Threshold(
+            name="Threshold",
+            description="threshold",
+            status=True,
+            kpi=Kpi.id
+        )
+        rule_type = client.add_rule_type(
+            name="rule_type",
+        )
+        event_severity = client.add_event_severity(
+            name="event_severity",
+        )
+        rule = client.add_rule(
+            name="rule_1",
+            additionalInfo="none",
+            eventTypeName="none",
+            gracePeriod=2,
+            specificProblem="none",
+            status=True,
+            threshold=threshold.id,
+            ruleType=rule_type.id,
+            eventSeverity=event_severity.id,
+            )
+
+        comparator = client.add_comparator(
+            name="comparator",
+        )
+
         new_rule_limit = client.add_rule_limit(
             number=1,
             limitType="none",
@@ -93,6 +136,9 @@ def edit_rule_limit(
         new_rule_limit = client.edit_rule_limit(
             rule_limit=ruleLimit,
             new_number=new_number,
+            limitType="none",
+            comparator=comparator.id,
+            rule=rule.id
 
 
         )
@@ -109,7 +155,6 @@ def edit_rule_limit(
         rule=rule))
 
 
-
 def remove_rule_limit(client: SymphonyClient, id: str) -> None:
     """This function delete Rule Limit.
 
@@ -121,8 +166,6 @@ def remove_rule_limit(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_rule_limit(ruleLimit)
+        client.remove_rule_limit(id=123456798)
     """
     removeRuleLimit.execute(client, id=id)
-
-

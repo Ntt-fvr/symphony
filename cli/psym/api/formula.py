@@ -44,13 +44,40 @@ def add_formula(
 
     .. code-block:: python
 
+       domain = client.add_domain(
+            name="domain",
+        )
+
+        kpi_category = client.add_kpi_category(
+            name="kpi_category",
+        )
+
+        Kpi = client.add_Kpi(
+            name="Kpi_2",
+            description="new kpi",
+            status=True,
+            domain=domain.id,
+            kpiCategory=kpi_category.id
+        )
+
+        domain = client.add_domain(
+            name="domain",
+        )
+
+        tech = client.add_Tech(
+            name="new_Tech", 
+            domain=domain.id
+            
+        network_type = client.add_network_type(
+            name="network_type",
+        )
+
         new_formula = client.add_formula(
             textFormula="formula_1",
             status=True,
-            kpi=Kpi_created.id,
-            tech=tech_created.id,
+            kpi=Kpi.id,
+            tech=tech.id,
             networkType=network_type.id
-
         )
     """
     formula_input = AddFormulaInput(
@@ -93,7 +120,14 @@ def edit_formula(
 
     .. code-block:: python
 
-        formula_edited = client.edit_formula(formula=formula ,new_name="new_formula")
+        formula_edited = client.edit_formula(
+            formula=formula,
+            new_name="new_formula_edited",
+            status=True,
+            kpi=Kpi.id,
+            tech=tech.id,
+            networkType=network_type.id
+            )
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -158,7 +192,7 @@ def remove_formula(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_formula(formula)
+        client.remove_formula(id=123456789)
     """
     removeFormula.execute(client, id=id)
 

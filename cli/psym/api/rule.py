@@ -59,7 +59,34 @@ def add_rule(
 
     .. code-block:: python
 
-        new_rulees = client.add_rule(
+        domain = client.add_domain(
+            name="domain",
+        )
+        kpi_category = client.add_kpi_category(
+            name="kpi_category",
+        )
+
+        Kpi = client.add_Kpi(
+            name="Kpi_2",
+            description="new kpi",
+            status=True,
+            domain=domain.id,
+            kpiCategory=kpi_category.id
+        )
+
+        threshold = client.add_Threshold(
+            name="Threshold",
+            description="threshold",
+            status=True,
+            kpi=Kpi.id
+        )
+        rule_type = client.add_rule_type(
+            name="rule_type",
+        )
+        event_severity = client.add_event_severity(
+            name="event_severity",
+        )
+        new_rules = client.add_rule(
             name="rule_1",
             additionalInfo="none",
             eventTypeName="none",

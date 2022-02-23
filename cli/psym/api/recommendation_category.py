@@ -35,16 +35,10 @@ def add_recommendations_category(
 
     .. code-block:: python
 
-        new_recommendations_categoryes = client.add_recommendations_category(name="new_recommendations_category")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_recommendations_category = client.add_recommendations_category(
             name="recommendations_category",
-
         )
+        print(new_recommendations_category)
     """
     recommendations_category_input = AddRecommendationsCategoryInput(name=name)
     result = addRecommendationsCategory.execute(client, input=recommendations_category_input)
@@ -69,16 +63,9 @@ def edit_recommendations_category(
 
     .. code-block:: python
 
-        recommendations_category_edited = client.edit_recommendations_category(recommendations_category=recommendationsCategory ,new_name="new_recommendations_category")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_recommendations_category = client.edit_recommendations_category(
+        new_recommendations_category_edited = client.edit_recommendations_category(
             recommendations_category=recommendationsCategory,
-            new_name="recommendations_category",
-
+            new_name="recommendations_category_edited",
         )
     """
     params: Dict[str, Any] = {}
@@ -132,8 +119,7 @@ def remove_recommendations_category(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_recommendations_category(recommendationsCategory)
+        client.remove_recommendations_category(id=123456789)
     """
     removeRecommendationCategory.execute(client, id=id)
 
-    
