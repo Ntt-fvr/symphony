@@ -13,31 +13,34 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-// ResourceSpecificationRelationshipItems defines the property type schema.
-type ResourceSRItems struct {
+// Resource defines the property type schema.
+type Resource struct {
 	schema
 }
 
-// ResourceSRItems returns property type Resource.
-func (ResourceSRItems) Fields() []ent.Field {
+// Resource returns property type counter.
+func (Resource) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").
-			Annotations(entgql.OrderField("NAME")).Optional().Nillable(),
+		field.String("name").NotEmpty().Unique().
+			Annotations(entgql.OrderField("NAME")),
+		field.Bool("available").Nillable().Optional(),
 	}
 }
 
-// ResourceSRItems returns property type edges.
-func (ResourceSRItems) Edges() []ent.Edge {
+// Resource returns property type edges.
+func (Resource) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("resourcesr", ResourceSpecificationRelationship.Type).
-			Ref("resource_sr").Unique(),
-		edge.From("resourcetype", ResourceType.Type).
-			Ref("resourcetype_items").Unique().Annotations(entgql.OrderField("ResourceType")),
+		edge.From("resourcespec", ResourceSpecification.Type).
+			Ref("resource_rspecification").Unique(),
+		edge.To("resource_a", ResourceRelationship.Type).
+			Annotations(entgql.MapsTo("resourcea")),
+		edge.To("resource_b", ResourceRelationship.Type).
+			Annotations(entgql.MapsTo("resourceb")),
 	}
 }
 
 // Policy returns entity policy.
-func (ResourceSRItems) Policy() ent.Policy {
+func (Resource) Policy() ent.Policy {
 	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),

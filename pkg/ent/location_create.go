@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
 	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
@@ -302,6 +303,21 @@ func (lc *LocationCreate) AddFloorPlans(f ...*FloorPlan) *LocationCreate {
 		ids[i] = f[i].ID
 	}
 	return lc.AddFloorPlanIDs(ids...)
+}
+
+// AddRsLocationIDs adds the rs_location edge to ResourceRelationship by ids.
+func (lc *LocationCreate) AddRsLocationIDs(ids ...int) *LocationCreate {
+	lc.mutation.AddRsLocationIDs(ids...)
+	return lc
+}
+
+// AddRsLocation adds the rs_location edges to ResourceRelationship.
+func (lc *LocationCreate) AddRsLocation(r ...*ResourceRelationship) *LocationCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return lc.AddRsLocationIDs(ids...)
 }
 
 // Mutation returns the LocationMutation object of the builder.
@@ -716,6 +732,25 @@ func (lc *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: floorplan.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := lc.mutation.RsLocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.RsLocationTable,
+			Columns: []string{location.RsLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcerelationship.FieldID,
 				},
 			},
 		}

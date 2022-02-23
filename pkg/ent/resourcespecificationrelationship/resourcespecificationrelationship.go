@@ -39,10 +39,10 @@ const (
 	// ResourcespecificationColumn is the table column denoting the resourcespecification relation/edge.
 	ResourcespecificationColumn = "resource_specification_resource_specification"
 	// ResourceSrTable is the table the holds the resource_sr relation/edge.
-	ResourceSrTable = "resource_sr_items"
-	// ResourceSrInverseTable is the table name for the ResourceSRItems entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcesritems" package.
-	ResourceSrInverseTable = "resource_sr_items"
+	ResourceSrTable = "resource_specification_items"
+	// ResourceSrInverseTable is the table name for the ResourceSpecificationItems entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcespecificationitems" package.
+	ResourceSrInverseTable = "resource_specification_items"
 	// ResourceSrColumn is the table column denoting the resource_sr relation/edge.
 	ResourceSrColumn = "resource_specification_relationship_resource_sr"
 )
