@@ -21,6 +21,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
 import SubjectIcon from '@material-ui/icons/Subject';
 import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -208,145 +209,137 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               reorder(parameters, source.index, destination.index),
             );
           }}>
-          <div>
-            <Droppable droppableId={'1'}>
-              {droppableProvided => (
-                <div
-                  ref={droppableProvided.innerRef}
-                  {...droppableProvided.droppableProps}>
-                  {parameters.map((item, i) => (
-                    <Draggable key={item.id} draggableId={item.id} index={i}>
-                      {draggableProvided => (
-                        <div
-                          {...draggableProvided.draggableProps}
-                          ref={draggableProvided.innerRef}>
-                          <TableCell
-                            style={{minWidth: '35px', width: '35px'}}
-                            size="small"
-                            padding="none"
-                            component="div">
-                            <div {...draggableProvided.dragHandleProps}>
-                              <DragIndicatorIcon
-                                className={classes.dragIndicatorIcon}
+          <Droppable droppableId={'1'}>
+            {droppableProvided => (
+              <TableBody
+                ref={droppableProvided.innerRef}
+                {...droppableProvided.droppableProps}>
+                {parameters.map((item, i) => (
+                  <Draggable key={item.id} draggableId={item.id} index={i}>
+                    {draggableProvided => (
+                      <TableRow
+                        {...draggableProvided.draggableProps}
+                        ref={draggableProvided.innerRef}>
+                        <TableCell
+                          style={{minWidth: '35px', width: '35px'}}
+                          size="small"
+                          padding="none"
+                          component="div">
+                          <div {...draggableProvided.dragHandleProps}>
+                            <DragIndicatorIcon
+                              className={classes.dragIndicatorIcon}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell
+                          style={{width: '20%'}}
+                          component="div"
+                          scope="row">
+                          <FormField>
+                            <TextInput
+                              autoFocus={true}
+                              placeholder="Name"
+                              autoComplete="off"
+                              className={classes.input}
+                              onChange={nameChange}
+                            />
+                          </FormField>
+                        </TableCell>
+                        <TableCell
+                          style={{width: '20%'}}
+                          component="div"
+                          scope="row">
+                          <form
+                            className={classes.formField}
+                            autoComplete="off">
+                            <TextField
+                              required
+                              id="outlined-select-option-native-simple"
+                              select
+                              className={classes.selectField}
+                              label="Option"
+                              defaultValue="Text"
+                              name="status"
+                              variant="outlined">
+                              <MenuItem
+                                onClick={() => handleOption('MC')}
+                                value={'Multiple Choice'}>
+                                Multiple Choice
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() => handleOption('TXT')}
+                                value={'Text'}>
+                                Text
+                              </MenuItem>
+                            </TextField>
+                          </form>
+                        </TableCell>
+                        <TableCell
+                          style={{width: '20%'}}
+                          component="div"
+                          scope="row">
+                          {changeInput === 'MC' && (
+                            <EnumPropertyValueInput
+                              onChange={() => chip()}
+                              property={item}
+                            />
+                          )}
+                          {changeInput === 'TXT' && (
+                            <TextInput
+                              autoFocus={true}
+                              placeholder={'Text'}
+                              autoComplete="off"
+                              className={classes.input}
+                              onChange={nameChange}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell
+                          style={{width: '20%'}}
+                          component="div"
+                          scope="row">
+                          <FormField>
+                            <EnumPropertyValueInput
+                              onChange={chip}
+                              property={item}
+                            />
+                          </FormField>
+                        </TableCell>
+                        <TableCell className={classes.checkbox} component="div">
+                          <FormAction>
+                            <SubjectIcon
+                              className={classes.mapping}
+                              onClick={handleModal}
+                            />
+                          </FormAction>
+                        </TableCell>
+                        <TableCell className={classes.checkbox} component="div">
+                          <FormField>
+                            <Checkbox
+                              checked={checked}
+                              onClick={handleChecked}
+                              title={null}
+                            />
+                          </FormField>
+                        </TableCell>
+                        <TableCell className={classes.checkbox} component="div">
+                          <FormAction>
+                            <IconButton aria-label="delete">
+                              <DeleteOutlinedIcon
+                                color="primary"
+                                onClick={() => handleDelete(i, item.id)}
                               />
-                            </div>
-                          </TableCell>
-                          <TableCell
-                            style={{width: '20%'}}
-                            component="div"
-                            scope="row">
-                            <FormField>
-                              <TextInput
-                                autoFocus={true}
-                                placeholder="Name"
-                                autoComplete="off"
-                                className={classes.input}
-                                onChange={nameChange}
-                              />
-                            </FormField>
-                          </TableCell>
-                          <TableCell
-                            style={{width: '20%'}}
-                            component="div"
-                            scope="row">
-                            <form
-                              className={classes.formField}
-                              autoComplete="off">
-                              <TextField
-                                required
-                                id="outlined-select-option-native-simple"
-                                select
-                                className={classes.selectField}
-                                label="Option"
-                                defaultValue="Text"
-                                name="status"
-                                variant="outlined">
-                                <MenuItem
-                                  onClick={() => handleOption('MC')}
-                                  value={'Multiple Choice'}>
-                                  Multiple Choice
-                                </MenuItem>
-                                <MenuItem
-                                  onClick={() => handleOption('TXT')}
-                                  value={'Text'}>
-                                  Text
-                                </MenuItem>
-                              </TextField>
-                            </form>
-                          </TableCell>
-                          <TableCell
-                            style={{width: '20%'}}
-                            component="div"
-                            scope="row">
-                            {changeInput === 'MC' && (
-                              <EnumPropertyValueInput
-                                onChange={() => chip()}
-                                property={item}
-                              />
-                            )}
-                            {changeInput === 'TXT' && (
-                              <TextInput
-                                autoFocus={true}
-                                placeholder={'Text'}
-                                autoComplete="off"
-                                className={classes.input}
-                                onChange={nameChange}
-                              />
-                            )}
-                          </TableCell>
-                          <TableCell
-                            style={{width: '20%'}}
-                            component="div"
-                            scope="row">
-                            <FormField>
-                              <EnumPropertyValueInput
-                                onChange={chip}
-                                property={item}
-                              />
-                            </FormField>
-                          </TableCell>
-                          <TableCell
-                            className={classes.checkbox}
-                            component="div">
-                            <FormAction>
-                              <SubjectIcon
-                                className={classes.mapping}
-                                onClick={handleModal}
-                              />
-                            </FormAction>
-                          </TableCell>
-                          <TableCell
-                            className={classes.checkbox}
-                            component="div">
-                            <FormField>
-                              <Checkbox
-                                checked={checked}
-                                onClick={handleChecked}
-                                title={null}
-                              />
-                            </FormField>
-                          </TableCell>
-                          <TableCell
-                            className={classes.checkbox}
-                            component="div">
-                            <FormAction>
-                              <IconButton aria-label="delete">
-                                <DeleteOutlinedIcon
-                                  color="primary"
-                                  onClick={() => handleDelete(i, item.id)}
-                                />
-                              </IconButton>
-                            </FormAction>
-                          </TableCell>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {droppableProvided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </div>
+                            </IconButton>
+                          </FormAction>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </Draggable>
+                ))}
+                {droppableProvided.placeholder}
+              </TableBody>
+            )}
+          </Droppable>
         </DragDropContext>
       </Table>
       <FormAction>
