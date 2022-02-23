@@ -125,7 +125,7 @@ func (ff *FlowFactory) ReadStartBlockLocalActivity(ctx context.Context, input Ru
 func (ff *FlowFactory) NewWorkers(client workflowserviceclient.Interface, workerOptions worker.Options) []worker.Worker {
 	// w := worker.New(client, FlowDomainName.String(), TaskListName, workerOptions)
 	// w.RegisterWorkflowWithOptions(ff.RunFlowWorkflow, workflow.RegisterOptions{
-	//	Name: RunFlowWorkflowName,
+	// 	Name: RunFlowWorkflowName,
 	// })
 	// w.RegisterActivityWithOptions(ff.CompleteFlowActivity, activity.RegisterOptions{})
 	// return []worker.Worker{w}

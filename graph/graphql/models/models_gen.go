@@ -18,6 +18,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -368,6 +370,42 @@ type AddRecommendationsListInput struct {
 
 type AddRecommendationsSourcesInput struct {
 	Name string `json:"name"`
+}
+
+type AddResourceSRItemsInput struct {
+	Name                              *string `json:"name"`
+	ResourceSpecificationRelationship int     `json:"resourceSpecificationRelationship"`
+	ResourceType                      int     `json:"resourceType"`
+}
+
+type AddResourceSpecificationInput struct {
+	Name          string                      `json:"name"`
+	ResourceType  int                         `json:"resourceType"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
+}
+
+type AddResourceSpecificationRelationShipListInput struct {
+	ResourceSpecification int                                           `json:"resourceSpecification"`
+	NameList              []*ResourceSpecificationRelationShipListInput `json:"nameList"`
+}
+
+type AddResourceSpecificationRelationshipInput struct {
+	Name                  string `json:"name"`
+	ResourceSpecification int    `json:"resourceSpecification"`
+}
+
+type AddResourceTypeInput struct {
+	Name                 string                            `json:"name"`
+	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`
+	ResourceTypeClass    resourcetype.ResourceTypeClass    `json:"resourceTypeClass"`
+}
+
+type AddResourceTypeRelationshipInput struct {
+	ResourceRelationshipType         resourcetyperelationship.ResourceRelationshipType         `json:"resourceRelationshipType"`
+	ResourceRelationshipMultiplicity resourcetyperelationship.ResourceRelationshipMultiplicity `json:"resourceRelationshipMultiplicity"`
+	LocationType                     *int                                                      `json:"locationType"`
+	ResourceTypeA                    int                                                       `json:"resourceTypeA"`
+	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
 }
 
 type AddRuleInput struct {
@@ -953,6 +991,42 @@ type EditReportFilterInput struct {
 	Name string `json:"name"`
 }
 
+type EditResourceSRItemsInput struct {
+	ID                                int     `json:"id"`
+	Name                              *string `json:"name"`
+	ResourceSpecificationRelationship *int    `json:"resourceSpecificationRelationship"`
+	ResourceType                      *int    `json:"resourceType"`
+}
+
+type EditResourceSpecificationInput struct {
+	ID            int                         `json:"id"`
+	Name          string                      `json:"name"`
+	ResourceType  *int                        `json:"resourceType"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
+}
+
+type EditResourceSpecificationRelationshipInput struct {
+	ID                    int    `json:"id"`
+	Name                  string `json:"name"`
+	ResourceSpecification *int   `json:"resourceSpecification"`
+}
+
+type EditResourceTypeInput struct {
+	ID                   int                               `json:"id"`
+	Name                 string                            `json:"name"`
+	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`
+	ResourceTypeClass    resourcetype.ResourceTypeClass    `json:"resourceTypeClass"`
+}
+
+type EditResourceTypeRelationshipInput struct {
+	ID                               int                                                       `json:"id"`
+	ResourceRelationshipType         resourcetyperelationship.ResourceRelationshipType         `json:"resourceRelationshipType"`
+	ResourceRelationshipMultiplicity resourcetyperelationship.ResourceRelationshipMultiplicity `json:"resourceRelationshipMultiplicity"`
+	LocationType                     *int                                                      `json:"locationType"`
+	ResourceTypeA                    int                                                       `json:"resourceTypeA"`
+	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
+}
+
 type EditRuleInput struct {
 	ID              int        `json:"id"`
 	Name            string     `json:"name"`
@@ -1411,6 +1485,59 @@ type ReportFilterInput struct {
 	Name    string                `json:"name"`
 	Entity  FilterEntity          `json:"entity"`
 	Filters []*GeneralFilterInput `json:"filters"`
+}
+
+type ResourceSRItemsFilterInput struct {
+	FilterType  ResourceSRItemsFilterType `json:"filterType"`
+	Operator    enum.FilterOperator       `json:"operator"`
+	StringValue *string                   `json:"stringValue"`
+	IDSet       []int                     `json:"idSet"`
+	MaxDepth    *int                      `json:"maxDepth"`
+	StringSet   []string                  `json:"stringSet"`
+}
+
+type ResourceSpecificationFilterInput struct {
+	FilterType  ResourceSpecificationFilterType `json:"filterType"`
+	Operator    enum.FilterOperator             `json:"operator"`
+	StringValue *string                         `json:"stringValue"`
+	IDSet       []int                           `json:"idSet"`
+	MaxDepth    *int                            `json:"maxDepth"`
+	StringSet   []string                        `json:"stringSet"`
+}
+
+type ResourceSpecificationRelationShipListInput struct {
+	Name string `json:"name"`
+}
+
+type ResourceSpecificationRelationshipFilterInput struct {
+	FilterType  ResourceSpecificationRelationshipFilterType `json:"filterType"`
+	Operator    enum.FilterOperator                         `json:"operator"`
+	StringValue *string                                     `json:"stringValue"`
+	IDSet       []int                                       `json:"idSet"`
+	MaxDepth    *int                                        `json:"maxDepth"`
+	StringSet   []string                                    `json:"stringSet"`
+}
+
+type ResourceTypeFilterInput struct {
+	FilterType        ResourceTypeFilterType             `json:"filterType"`
+	Operator          enum.FilterOperator                `json:"operator"`
+	StringValue       *string                            `json:"stringValue"`
+	TypeClassValue    *resourcetype.ResourceTypeClass    `json:"typeClassValue"`
+	TypeBaseTypeValue *resourcetype.ResourceTypeBaseType `json:"typeBaseTypeValue"`
+	IDSet             []int                              `json:"idSet"`
+	MaxDepth          *int                               `json:"maxDepth"`
+	StringSet         []string                           `json:"stringSet"`
+}
+
+type ResourceTypeRelationshipFilterInput struct {
+	FilterType        ResourceTypeRelationshipFilterType                         `json:"filterType"`
+	Operator          enum.FilterOperator                                        `json:"operator"`
+	StringValue       *string                                                    `json:"stringValue"`
+	MultiplicityValue *resourcetyperelationship.ResourceRelationshipMultiplicity `json:"multiplicityValue"`
+	TypeValue         *resourcetyperelationship.ResourceRelationshipType         `json:"typeValue"`
+	IDSet             []int                                                      `json:"idSet"`
+	MaxDepth          *int                                                       `json:"maxDepth"`
+	StringSet         []string                                                   `json:"stringSet"`
 }
 
 type RuleInput struct {
@@ -2938,6 +3065,215 @@ func (e *RecommendationsSourcesFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ResourceSRItemsFilterType string
+
+const (
+	ResourceSRItemsFilterTypeName ResourceSRItemsFilterType = "NAME"
+)
+
+var AllResourceSRItemsFilterType = []ResourceSRItemsFilterType{
+	ResourceSRItemsFilterTypeName,
+}
+
+func (e ResourceSRItemsFilterType) IsValid() bool {
+	switch e {
+	case ResourceSRItemsFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e ResourceSRItemsFilterType) String() string {
+	return string(e)
+}
+
+func (e *ResourceSRItemsFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ResourceSRItemsFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ResourceSRItemsFilterType", str)
+	}
+	return nil
+}
+
+func (e ResourceSRItemsFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ResourceSpecificationFilterType string
+
+const (
+	ResourceSpecificationFilterTypeName         ResourceSpecificationFilterType = "NAME"
+	ResourceSpecificationFilterTypeResourceType ResourceSpecificationFilterType = "RESOURCE_TYPE"
+)
+
+var AllResourceSpecificationFilterType = []ResourceSpecificationFilterType{
+	ResourceSpecificationFilterTypeName,
+	ResourceSpecificationFilterTypeResourceType,
+}
+
+func (e ResourceSpecificationFilterType) IsValid() bool {
+	switch e {
+	case ResourceSpecificationFilterTypeName, ResourceSpecificationFilterTypeResourceType:
+		return true
+	}
+	return false
+}
+
+func (e ResourceSpecificationFilterType) String() string {
+	return string(e)
+}
+
+func (e *ResourceSpecificationFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ResourceSpecificationFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ResourceSpecificationFilterType", str)
+	}
+	return nil
+}
+
+func (e ResourceSpecificationFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ResourceSpecificationRelationshipFilterType string
+
+const (
+	ResourceSpecificationRelationshipFilterTypeName                  ResourceSpecificationRelationshipFilterType = "NAME"
+	ResourceSpecificationRelationshipFilterTypeResourceSpecification ResourceSpecificationRelationshipFilterType = "RESOURCE_SPECIFICATION"
+)
+
+var AllResourceSpecificationRelationshipFilterType = []ResourceSpecificationRelationshipFilterType{
+	ResourceSpecificationRelationshipFilterTypeName,
+	ResourceSpecificationRelationshipFilterTypeResourceSpecification,
+}
+
+func (e ResourceSpecificationRelationshipFilterType) IsValid() bool {
+	switch e {
+	case ResourceSpecificationRelationshipFilterTypeName, ResourceSpecificationRelationshipFilterTypeResourceSpecification:
+		return true
+	}
+	return false
+}
+
+func (e ResourceSpecificationRelationshipFilterType) String() string {
+	return string(e)
+}
+
+func (e *ResourceSpecificationRelationshipFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ResourceSpecificationRelationshipFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ResourceSpecificationRelationshipFilterType", str)
+	}
+	return nil
+}
+
+func (e ResourceSpecificationRelationshipFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ResourceTypeFilterType string
+
+const (
+	ResourceTypeFilterTypeName                 ResourceTypeFilterType = "NAME"
+	ResourceTypeFilterTypeResourceTypeClass    ResourceTypeFilterType = "RESOURCE_TYPE_CLASS"
+	ResourceTypeFilterTypeResourceTypeBaseType ResourceTypeFilterType = "RESOURCE_TYPE_BASE_TYPE"
+)
+
+var AllResourceTypeFilterType = []ResourceTypeFilterType{
+	ResourceTypeFilterTypeName,
+	ResourceTypeFilterTypeResourceTypeClass,
+	ResourceTypeFilterTypeResourceTypeBaseType,
+}
+
+func (e ResourceTypeFilterType) IsValid() bool {
+	switch e {
+	case ResourceTypeFilterTypeName, ResourceTypeFilterTypeResourceTypeClass, ResourceTypeFilterTypeResourceTypeBaseType:
+		return true
+	}
+	return false
+}
+
+func (e ResourceTypeFilterType) String() string {
+	return string(e)
+}
+
+func (e *ResourceTypeFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ResourceTypeFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ResourceTypeFilterType", str)
+	}
+	return nil
+}
+
+func (e ResourceTypeFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ResourceTypeRelationshipFilterType string
+
+const (
+	ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
+	ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_LOCATION_TYPE"
+	ResourceTypeRelationshipFilterTypeResourceRelationshipType         ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
+	ResourceTypeRelationshipFilterTypeResourceRelationshipResource     ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE"
+)
+
+var AllResourceTypeRelationshipFilterType = []ResourceTypeRelationshipFilterType{
+	ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity,
+	ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType,
+	ResourceTypeRelationshipFilterTypeResourceRelationshipType,
+	ResourceTypeRelationshipFilterTypeResourceRelationshipResource,
+}
+
+func (e ResourceTypeRelationshipFilterType) IsValid() bool {
+	switch e {
+	case ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType, ResourceTypeRelationshipFilterTypeResourceRelationshipType, ResourceTypeRelationshipFilterTypeResourceRelationshipResource:
+		return true
+	}
+	return false
+}
+
+func (e ResourceTypeRelationshipFilterType) String() string {
+	return string(e)
+}
+
+func (e *ResourceTypeRelationshipFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ResourceTypeRelationshipFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ResourceTypeRelationshipFilterType", str)
+	}
+	return nil
+}
+
+func (e ResourceTypeRelationshipFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

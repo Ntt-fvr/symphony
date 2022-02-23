@@ -171,6 +171,26 @@ func CounterFilter(query *ent.CounterQuery, filters []*models.CounterFilterInput
 	return query, nil
 }
 
+func ResourceSpecificationRelationshipFilter(query *ent.ResourceSpecificationRelationshipQuery, filters []*models.ResourceSpecificationRelationshipFilterInput) (*ent.ResourceSpecificationRelationshipQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceSpecificationRelationshipFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func ResourceSpecificationRelationshipItemsFilter(query *ent.ResourceSRItemsQuery, filters []*models.ResourceSRItemsFilterInput) (*ent.ResourceSRItemsQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceSpecificationRelationshipItemsFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
 func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -411,6 +431,35 @@ func NetworkTypeFilter(query *ent.NetworkTypeQuery, filters []*models.NetworkTyp
 	var err error
 	for _, f := range filters {
 		if query, err = handleNetworkTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func ResourceTypeFilter(query *ent.ResourceTypeQuery, filters []*models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func ResourceSpecificationFilter(query *ent.ResourceSpecificationQuery, filters []*models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceSpecificationFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ResourceTypeRelationshipFilter(query *ent.ResourceTypeRelationshipQuery, filters []*models.ResourceTypeRelationshipFilterInput) (*ent.ResourceTypeRelationshipQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceTypeRelationshipFilter(query, f); err != nil {
 			return nil, err
 		}
 	}
