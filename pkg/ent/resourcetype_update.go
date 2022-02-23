@@ -15,7 +15,6 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 )
@@ -96,21 +95,6 @@ func (rtu *ResourceTypeUpdate) AddResourceSpecification(r ...*ResourceSpecificat
 	return rtu.AddResourceSpecificationIDs(ids...)
 }
 
-// AddResourcetypeItemIDs adds the resourcetype_items edge to ResourceSRItems by ids.
-func (rtu *ResourceTypeUpdate) AddResourcetypeItemIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.AddResourcetypeItemIDs(ids...)
-	return rtu
-}
-
-// AddResourcetypeItems adds the resourcetype_items edges to ResourceSRItems.
-func (rtu *ResourceTypeUpdate) AddResourcetypeItems(r ...*ResourceSRItems) *ResourceTypeUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return rtu.AddResourcetypeItemIDs(ids...)
-}
-
 // Mutation returns the ResourceTypeMutation object of the builder.
 func (rtu *ResourceTypeUpdate) Mutation() *ResourceTypeMutation {
 	return rtu.mutation
@@ -177,27 +161,6 @@ func (rtu *ResourceTypeUpdate) RemoveResourceSpecification(r ...*ResourceSpecifi
 		ids[i] = r[i].ID
 	}
 	return rtu.RemoveResourceSpecificationIDs(ids...)
-}
-
-// ClearResourcetypeItems clears all "resourcetype_items" edges to type ResourceSRItems.
-func (rtu *ResourceTypeUpdate) ClearResourcetypeItems() *ResourceTypeUpdate {
-	rtu.mutation.ClearResourcetypeItems()
-	return rtu
-}
-
-// RemoveResourcetypeItemIDs removes the resourcetype_items edge to ResourceSRItems by ids.
-func (rtu *ResourceTypeUpdate) RemoveResourcetypeItemIDs(ids ...int) *ResourceTypeUpdate {
-	rtu.mutation.RemoveResourcetypeItemIDs(ids...)
-	return rtu
-}
-
-// RemoveResourcetypeItems removes resourcetype_items edges to ResourceSRItems.
-func (rtu *ResourceTypeUpdate) RemoveResourcetypeItems(r ...*ResourceSRItems) *ResourceTypeUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return rtu.RemoveResourcetypeItemIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -494,60 +457,6 @@ func (rtu *ResourceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rtu.mutation.ResourcetypeItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetype.ResourcetypeItemsTable,
-			Columns: []string{resourcetype.ResourcetypeItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtu.mutation.RemovedResourcetypeItemsIDs(); len(nodes) > 0 && !rtu.mutation.ResourcetypeItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetype.ResourcetypeItemsTable,
-			Columns: []string{resourcetype.ResourcetypeItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtu.mutation.ResourcetypeItemsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetype.ResourcetypeItemsTable,
-			Columns: []string{resourcetype.ResourcetypeItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, rtu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{resourcetype.Label}
@@ -629,21 +538,6 @@ func (rtuo *ResourceTypeUpdateOne) AddResourceSpecification(r ...*ResourceSpecif
 	return rtuo.AddResourceSpecificationIDs(ids...)
 }
 
-// AddResourcetypeItemIDs adds the resourcetype_items edge to ResourceSRItems by ids.
-func (rtuo *ResourceTypeUpdateOne) AddResourcetypeItemIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.AddResourcetypeItemIDs(ids...)
-	return rtuo
-}
-
-// AddResourcetypeItems adds the resourcetype_items edges to ResourceSRItems.
-func (rtuo *ResourceTypeUpdateOne) AddResourcetypeItems(r ...*ResourceSRItems) *ResourceTypeUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return rtuo.AddResourcetypeItemIDs(ids...)
-}
-
 // Mutation returns the ResourceTypeMutation object of the builder.
 func (rtuo *ResourceTypeUpdateOne) Mutation() *ResourceTypeMutation {
 	return rtuo.mutation
@@ -710,27 +604,6 @@ func (rtuo *ResourceTypeUpdateOne) RemoveResourceSpecification(r ...*ResourceSpe
 		ids[i] = r[i].ID
 	}
 	return rtuo.RemoveResourceSpecificationIDs(ids...)
-}
-
-// ClearResourcetypeItems clears all "resourcetype_items" edges to type ResourceSRItems.
-func (rtuo *ResourceTypeUpdateOne) ClearResourcetypeItems() *ResourceTypeUpdateOne {
-	rtuo.mutation.ClearResourcetypeItems()
-	return rtuo
-}
-
-// RemoveResourcetypeItemIDs removes the resourcetype_items edge to ResourceSRItems by ids.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourcetypeItemIDs(ids ...int) *ResourceTypeUpdateOne {
-	rtuo.mutation.RemoveResourcetypeItemIDs(ids...)
-	return rtuo
-}
-
-// RemoveResourcetypeItems removes resourcetype_items edges to ResourceSRItems.
-func (rtuo *ResourceTypeUpdateOne) RemoveResourcetypeItems(r ...*ResourceSRItems) *ResourceTypeUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return rtuo.RemoveResourcetypeItemIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -1017,60 +890,6 @@ func (rtuo *ResourceTypeUpdateOne) sqlSave(ctx context.Context) (_node *Resource
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rtuo.mutation.ResourcetypeItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetype.ResourcetypeItemsTable,
-			Columns: []string{resourcetype.ResourcetypeItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtuo.mutation.RemovedResourcetypeItemsIDs(); len(nodes) > 0 && !rtuo.mutation.ResourcetypeItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetype.ResourcetypeItemsTable,
-			Columns: []string{resourcetype.ResourcetypeItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rtuo.mutation.ResourcetypeItemsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcetype.ResourcetypeItemsTable,
-			Columns: []string{resourcetype.ResourcetypeItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
 				},
 			},
 		}

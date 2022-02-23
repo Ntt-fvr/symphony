@@ -14,6 +14,7 @@ import type {PropertyType} from '../../common/PropertyType';
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DroppableTableBody from '../draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
@@ -34,7 +35,6 @@ import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
 import {useContext} from 'react';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -52,14 +52,14 @@ const useStyles = makeStyles(() => ({
   },
   gridRight: {
     '& div': {
-      padding: '0'
-    }
+      padding: '0',
+    },
   },
   checkbox: {
     textAlign: 'center',
     '& div': {
-      justifyContent: 'center'
-    }
+      justifyContent: 'center',
+    },
   },
   selectMenu: {
     height: '14px',
@@ -140,7 +140,7 @@ const ExperimentalPropertyTypesTable = ({
                     <TextInput
                       autoFocus={true}
                       placeholder="Name"
-                      autoComplete='off'
+                      autoComplete="off"
                       className={classes.input}
                       value={property.name}
                       onChange={({target}) =>

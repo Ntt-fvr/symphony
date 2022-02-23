@@ -77,9 +77,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/resource"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
@@ -1937,29 +1939,56 @@ func init() {
 	reportfilterDescFilters := reportfilterFields[2].Descriptor()
 	// reportfilter.DefaultFilters holds the default value on creation for the filters field.
 	reportfilter.DefaultFilters = reportfilterDescFilters.Default.(string)
-	resourcesritemsMixin := schema.ResourceSRItems{}.Mixin()
-	resourcesritems.Policy = privacy.NewPolicies(schema.ResourceSRItems{})
-	resourcesritems.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+	resourceMixin := schema.Resource{}.Mixin()
+	resource.Policy = privacy.NewPolicies(schema.Resource{})
+	resource.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := resourcesritems.Policy.EvalMutation(ctx, m); err != nil {
+			if err := resource.Policy.EvalMutation(ctx, m); err != nil {
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-	resourcesritemsMixinFields0 := resourcesritemsMixin[0].Fields()
-	resourcesritemsFields := schema.ResourceSRItems{}.Fields()
-	_ = resourcesritemsFields
-	// resourcesritemsDescCreateTime is the schema descriptor for create_time field.
-	resourcesritemsDescCreateTime := resourcesritemsMixinFields0[0].Descriptor()
-	// resourcesritems.DefaultCreateTime holds the default value on creation for the create_time field.
-	resourcesritems.DefaultCreateTime = resourcesritemsDescCreateTime.Default.(func() time.Time)
-	// resourcesritemsDescUpdateTime is the schema descriptor for update_time field.
-	resourcesritemsDescUpdateTime := resourcesritemsMixinFields0[1].Descriptor()
-	// resourcesritems.DefaultUpdateTime holds the default value on creation for the update_time field.
-	resourcesritems.DefaultUpdateTime = resourcesritemsDescUpdateTime.Default.(func() time.Time)
-	// resourcesritems.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	resourcesritems.UpdateDefaultUpdateTime = resourcesritemsDescUpdateTime.UpdateDefault.(func() time.Time)
+	resourceMixinFields0 := resourceMixin[0].Fields()
+	resourceFields := schema.Resource{}.Fields()
+	_ = resourceFields
+	// resourceDescCreateTime is the schema descriptor for create_time field.
+	resourceDescCreateTime := resourceMixinFields0[0].Descriptor()
+	// resource.DefaultCreateTime holds the default value on creation for the create_time field.
+	resource.DefaultCreateTime = resourceDescCreateTime.Default.(func() time.Time)
+	// resourceDescUpdateTime is the schema descriptor for update_time field.
+	resourceDescUpdateTime := resourceMixinFields0[1].Descriptor()
+	// resource.DefaultUpdateTime holds the default value on creation for the update_time field.
+	resource.DefaultUpdateTime = resourceDescUpdateTime.Default.(func() time.Time)
+	// resource.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	resource.UpdateDefaultUpdateTime = resourceDescUpdateTime.UpdateDefault.(func() time.Time)
+	// resourceDescName is the schema descriptor for name field.
+	resourceDescName := resourceFields[0].Descriptor()
+	// resource.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	resource.NameValidator = resourceDescName.Validators[0].(func(string) error)
+	resourcerelationshipMixin := schema.ResourceRelationship{}.Mixin()
+	resourcerelationship.Policy = privacy.NewPolicies(schema.ResourceRelationship{})
+	resourcerelationship.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := resourcerelationship.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	resourcerelationshipMixinFields0 := resourcerelationshipMixin[0].Fields()
+	resourcerelationshipFields := schema.ResourceRelationship{}.Fields()
+	_ = resourcerelationshipFields
+	// resourcerelationshipDescCreateTime is the schema descriptor for create_time field.
+	resourcerelationshipDescCreateTime := resourcerelationshipMixinFields0[0].Descriptor()
+	// resourcerelationship.DefaultCreateTime holds the default value on creation for the create_time field.
+	resourcerelationship.DefaultCreateTime = resourcerelationshipDescCreateTime.Default.(func() time.Time)
+	// resourcerelationshipDescUpdateTime is the schema descriptor for update_time field.
+	resourcerelationshipDescUpdateTime := resourcerelationshipMixinFields0[1].Descriptor()
+	// resourcerelationship.DefaultUpdateTime holds the default value on creation for the update_time field.
+	resourcerelationship.DefaultUpdateTime = resourcerelationshipDescUpdateTime.Default.(func() time.Time)
+	// resourcerelationship.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	resourcerelationship.UpdateDefaultUpdateTime = resourcerelationshipDescUpdateTime.UpdateDefault.(func() time.Time)
 	resourcespecificationMixin := schema.ResourceSpecification{}.Mixin()
 	resourcespecification.Policy = privacy.NewPolicies(schema.ResourceSpecification{})
 	resourcespecification.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1987,6 +2016,29 @@ func init() {
 	resourcespecificationDescName := resourcespecificationFields[0].Descriptor()
 	// resourcespecification.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	resourcespecification.NameValidator = resourcespecificationDescName.Validators[0].(func(string) error)
+	resourcespecificationitemsMixin := schema.ResourceSpecificationItems{}.Mixin()
+	resourcespecificationitems.Policy = privacy.NewPolicies(schema.ResourceSpecificationItems{})
+	resourcespecificationitems.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := resourcespecificationitems.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	resourcespecificationitemsMixinFields0 := resourcespecificationitemsMixin[0].Fields()
+	resourcespecificationitemsFields := schema.ResourceSpecificationItems{}.Fields()
+	_ = resourcespecificationitemsFields
+	// resourcespecificationitemsDescCreateTime is the schema descriptor for create_time field.
+	resourcespecificationitemsDescCreateTime := resourcespecificationitemsMixinFields0[0].Descriptor()
+	// resourcespecificationitems.DefaultCreateTime holds the default value on creation for the create_time field.
+	resourcespecificationitems.DefaultCreateTime = resourcespecificationitemsDescCreateTime.Default.(func() time.Time)
+	// resourcespecificationitemsDescUpdateTime is the schema descriptor for update_time field.
+	resourcespecificationitemsDescUpdateTime := resourcespecificationitemsMixinFields0[1].Descriptor()
+	// resourcespecificationitems.DefaultUpdateTime holds the default value on creation for the update_time field.
+	resourcespecificationitems.DefaultUpdateTime = resourcespecificationitemsDescUpdateTime.Default.(func() time.Time)
+	// resourcespecificationitems.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	resourcespecificationitems.UpdateDefaultUpdateTime = resourcespecificationitemsDescUpdateTime.UpdateDefault.(func() time.Time)
 	resourcespecificationrelationshipMixin := schema.ResourceSpecificationRelationship{}.Mixin()
 	resourcespecificationrelationship.Policy = privacy.NewPolicies(schema.ResourceSpecificationRelationship{})
 	resourcespecificationrelationship.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -38,7 +38,7 @@ type ResourceSpecificationRelationshipEdges struct {
 	// Resourcespecification holds the value of the resourcespecification edge.
 	Resourcespecification *ResourceSpecification
 	// ResourceSr holds the value of the resource_sr edge.
-	ResourceSr []*ResourceSRItems
+	ResourceSr []*ResourceSpecificationItems
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -60,7 +60,7 @@ func (e ResourceSpecificationRelationshipEdges) ResourcespecificationOrErr() (*R
 
 // ResourceSrOrErr returns the ResourceSr value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceSpecificationRelationshipEdges) ResourceSrOrErr() ([]*ResourceSRItems, error) {
+func (e ResourceSpecificationRelationshipEdges) ResourceSrOrErr() ([]*ResourceSpecificationItems, error) {
 	if e.loadedTypes[1] {
 		return e.ResourceSr, nil
 	}
@@ -129,7 +129,7 @@ func (rsr *ResourceSpecificationRelationship) QueryResourcespecification() *Reso
 }
 
 // QueryResourceSr queries the resource_sr edge of the ResourceSpecificationRelationship.
-func (rsr *ResourceSpecificationRelationship) QueryResourceSr() *ResourceSRItemsQuery {
+func (rsr *ResourceSpecificationRelationship) QueryResourceSr() *ResourceSpecificationItemsQuery {
 	return (&ResourceSpecificationRelationshipClient{config: rsr.config}).QueryResourceSr(rsr)
 }
 

@@ -56,6 +56,8 @@ const (
 	EdgeWorkOrders = "work_orders"
 	// EdgeFloorPlans holds the string denoting the floor_plans edge name in mutations.
 	EdgeFloorPlans = "floor_plans"
+	// EdgeRsLocation holds the string denoting the rs_location edge name in mutations.
+	EdgeRsLocation = "rs_location"
 
 	// Table holds the table name of the location in the database.
 	Table = "locations"
@@ -137,6 +139,13 @@ const (
 	FloorPlansInverseTable = "floor_plans"
 	// FloorPlansColumn is the table column denoting the floor_plans relation/edge.
 	FloorPlansColumn = "floor_plan_location"
+	// RsLocationTable is the table the holds the rs_location relation/edge.
+	RsLocationTable = "resource_relationships"
+	// RsLocationInverseTable is the table name for the ResourceRelationship entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcerelationship" package.
+	RsLocationInverseTable = "resource_relationships"
+	// RsLocationColumn is the table column denoting the rs_location relation/edge.
+	RsLocationColumn = "location_rs_location"
 )
 
 // Columns holds all SQL columns for location fields.

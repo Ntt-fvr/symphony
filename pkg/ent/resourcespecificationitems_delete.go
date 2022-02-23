@@ -14,24 +14,24 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 )
 
-// ResourceSRItemsDelete is the builder for deleting a ResourceSRItems entity.
-type ResourceSRItemsDelete struct {
+// ResourceSpecificationItemsDelete is the builder for deleting a ResourceSpecificationItems entity.
+type ResourceSpecificationItemsDelete struct {
 	config
 	hooks    []Hook
-	mutation *ResourceSRItemsMutation
+	mutation *ResourceSpecificationItemsMutation
 }
 
 // Where adds a new predicate to the delete builder.
-func (rsid *ResourceSRItemsDelete) Where(ps ...predicate.ResourceSRItems) *ResourceSRItemsDelete {
+func (rsid *ResourceSpecificationItemsDelete) Where(ps ...predicate.ResourceSpecificationItems) *ResourceSpecificationItemsDelete {
 	rsid.mutation.predicates = append(rsid.mutation.predicates, ps...)
 	return rsid
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (rsid *ResourceSRItemsDelete) Exec(ctx context.Context) (int, error) {
+func (rsid *ResourceSpecificationItemsDelete) Exec(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -40,7 +40,7 @@ func (rsid *ResourceSRItemsDelete) Exec(ctx context.Context) (int, error) {
 		affected, err = rsid.sqlExec(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ResourceSRItemsMutation)
+			mutation, ok := m.(*ResourceSpecificationItemsMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -60,7 +60,7 @@ func (rsid *ResourceSRItemsDelete) Exec(ctx context.Context) (int, error) {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (rsid *ResourceSRItemsDelete) ExecX(ctx context.Context) int {
+func (rsid *ResourceSpecificationItemsDelete) ExecX(ctx context.Context) int {
 	n, err := rsid.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -68,13 +68,13 @@ func (rsid *ResourceSRItemsDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (rsid *ResourceSRItemsDelete) sqlExec(ctx context.Context) (int, error) {
+func (rsid *ResourceSpecificationItemsDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := &sqlgraph.DeleteSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table: resourcesritems.Table,
+			Table: resourcespecificationitems.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: resourcesritems.FieldID,
+				Column: resourcespecificationitems.FieldID,
 			},
 		},
 	}
@@ -88,25 +88,25 @@ func (rsid *ResourceSRItemsDelete) sqlExec(ctx context.Context) (int, error) {
 	return sqlgraph.DeleteNodes(ctx, rsid.driver, _spec)
 }
 
-// ResourceSRItemsDeleteOne is the builder for deleting a single ResourceSRItems entity.
-type ResourceSRItemsDeleteOne struct {
-	rsid *ResourceSRItemsDelete
+// ResourceSpecificationItemsDeleteOne is the builder for deleting a single ResourceSpecificationItems entity.
+type ResourceSpecificationItemsDeleteOne struct {
+	rsid *ResourceSpecificationItemsDelete
 }
 
 // Exec executes the deletion query.
-func (rsido *ResourceSRItemsDeleteOne) Exec(ctx context.Context) error {
+func (rsido *ResourceSpecificationItemsDeleteOne) Exec(ctx context.Context) error {
 	n, err := rsido.rsid.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{resourcesritems.Label}
+		return &NotFoundError{resourcespecificationitems.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (rsido *ResourceSRItemsDeleteOne) ExecX(ctx context.Context) {
+func (rsido *ResourceSpecificationItemsDeleteOne) ExecX(ctx context.Context) {
 	rsido.rsid.ExecX(ctx)
 }
