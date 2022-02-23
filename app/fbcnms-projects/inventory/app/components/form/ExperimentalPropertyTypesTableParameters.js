@@ -14,8 +14,6 @@ import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DialogMapping from '../configure/DialogMapping';
 import DragIndicatorIcon from '@fbcnms/ui/icons/DragIndicatorIcon';
-import DraggableTableRow from '../draggable/DraggableTableRow';
-import DroppableTableBody from '../draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
@@ -27,14 +25,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
 import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-import {sortByIndex} from '../draggable/DraggableUtils';
 import {useState} from 'react';
 
 import EnumPropertyValueInput from './EnumPropertyValueInput';
@@ -85,11 +81,6 @@ const useStyles = makeStyles(() => ({
   selectField: {
     width: '100%',
   },
-  gridRight: {
-    '& div': {
-      padding: '0',
-    },
-  },
   checkbox: {
     textAlign: 'center',
     '& div': {
@@ -100,14 +91,7 @@ const useStyles = makeStyles(() => ({
     cursor: 'pointer',
     color: '#8895AD',
   },
-  selectMenu: {
-    height: '14px',
-  },
-  actionsBar: {
-    width: '20px',
-  },
   dragIndicatorIcon: {
-    // cursor: 'grab',
     '&&': {
       fontSize: '15px',
     },
@@ -115,11 +99,6 @@ const useStyles = makeStyles(() => ({
     cursor: 'grabbing',
   },
 }));
-
-export type PropertyTypeInfo = $ReadOnly<{|
-  label: string,
-  isNode?: boolean,
-|}>;
 
 type Props = $ReadOnly<{||}>;
 
