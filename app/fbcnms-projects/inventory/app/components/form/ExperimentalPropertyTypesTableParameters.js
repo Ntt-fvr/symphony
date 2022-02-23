@@ -25,6 +25,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
