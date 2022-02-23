@@ -1050,6 +1050,34 @@ func HasFloorPlansWith(preds ...predicate.FloorPlan) predicate.Location {
 	})
 }
 
+// HasRsLocation applies the HasEdge predicate on the "rs_location" edge.
+func HasRsLocation() predicate.Location {
+	return predicate.Location(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RsLocationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RsLocationTable, RsLocationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRsLocationWith applies the HasEdge predicate on the "rs_location" edge with a given conditions (other predicates).
+func HasRsLocationWith(preds ...predicate.ResourceRelationship) predicate.Location {
+	return predicate.Location(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RsLocationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RsLocationTable, RsLocationColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Location) predicate.Location {
 	return predicate.Location(func(s *sql.Selector) {

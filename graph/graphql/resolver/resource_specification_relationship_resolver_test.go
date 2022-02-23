@@ -35,18 +35,8 @@ func TestAddRemoveResourceSpecificationRelationshipResolver(t *testing.T) {
 }
 
 func AddResourceSpecificationRelationShipListTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) ([]*ent.ResourceSpecificationRelationship, error) {
-	resourceTypeClass, err := mr.AddResourceTypeClass(ctx, models.AddResourceTypeClassInput{
-		Name: "resource_type_class_test_2",
-	})
-	require.NoError(t, err)
-	resourceTypeBaseType, err := mr.AddResourceTypeBaseType(ctx, models.AddResourceTypeBaseTypeInput{
-		Name: "resource_type_base_type_test_2",
-	})
-	require.NoError(t, err)
 	resourceType, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "resource_type_test_2",
-		ResourceTypeClass:    resourceTypeClass.ID,
-		ResourceTypeBaseType: resourceTypeBaseType.ID,
+		Name: "resource_type_test_2",
 	})
 	require.NoError(t, err)
 	resourceSpecification, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
@@ -68,20 +58,8 @@ func AddResourceSpecificationRelationShipListTest(ctx context.Context, t *testin
 
 func AddResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
 
-	resourcetypeclass1, err := mr.AddResourceTypeClass(ctx, models.AddResourceTypeClassInput{
-		Name: "my_test_1_resource_type_class",
-	})
-	require.NoError(t, err)
-
-	resourcetypebasetype1, err := mr.AddResourceTypeBaseType(ctx, models.AddResourceTypeBaseTypeInput{
-		Name: "my_test_1_resource_type_base_type",
-	})
-	require.NoError(t, err)
-
 	resourcetype, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "my_test_1_resource_type",
-		ResourceTypeClass:    resourcetypeclass1.ID,
-		ResourceTypeBaseType: resourcetypebasetype1.ID,
+		Name: "my_test_1_resource_type",
 	})
 	require.NoError(t, err)
 

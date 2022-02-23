@@ -17,14 +17,6 @@ import (
 
 type resourceTypeResolver struct{}
 
-func (r resourceTypeResolver) ResourceSpecificationRelationshipItems(ctx context.Context, resourceType *ent.ResourceType) ([]*ent.ResourceSRItems, error) {
-	variable, err := resourceType.ResourcetypeItems(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
-	}
-	return variable, nil
-}
-
 func (r mutationResolver) AddResourceType(ctx context.Context, input models.AddResourceTypeInput) (*ent.ResourceType, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

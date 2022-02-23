@@ -347,21 +347,19 @@ func (r queryResolver) ResourceSpecificationRelationships(
 		)
 }
 
-func (r queryResolver) ResourceSRItems(
+func (r queryResolver) ResourceSpecificationItems(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceSRItemsOrder,
-	filterBy []*models.ResourceSRItemsFilterInput,
-) (*ent.ResourceSRItemsConnection, error) {
+	filterBy []*models.ResourceSpecificationItemsFilterInput,
+) (*ent.ResourceSpecificationItemsConnection, error) {
 	return r.ClientFrom(ctx).
-		ResourceSRItems.
+		ResourceSpecificationItems.
 		Query().
 		Paginate(ctx, after, first, before, last,
-			ent.WithResourceSRItemsOrder(orderBy),
-			ent.WithResourceSRItemsFilter(
-				func(query *ent.ResourceSRItemsQuery) (*ent.ResourceSRItemsQuery, error) {
-					return resolverutil.ResourceSpecificationRelationshipItemsFilter(query, filterBy)
+			ent.WithResourceSpecificationItemsFilter(
+				func(query *ent.ResourceSpecificationItemsQuery) (*ent.ResourceSpecificationItemsQuery, error) {
+					return resolverutil.ResourceSpecificationItemsFilter(query, filterBy)
 				},
 			),
 		)
@@ -1231,6 +1229,46 @@ func (r queryResolver) Appointments(
 			ent.WithAppointmentFilter(
 				func(query *ent.AppointmentQuery) (*ent.AppointmentQuery, error) {
 					return resolverutil.SlotFilter(query, slotFilterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) Resources(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.ResourceOrder,
+	filterBy []*models.ResourceFilterInput,
+) (*ent.ResourceConnection, error) {
+	return r.ClientFrom(ctx).
+		Resource.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithResourceOrder(orderBy),
+			ent.WithResourceFilter(
+				func(query *ent.ResourceQuery) (*ent.ResourceQuery, error) {
+					return resolverutil.ResourceFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) ResourceRelationships(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.ResourceRelationshipOrder,
+	filterBy []*models.ResourceRelationshipFilterInput,
+) (*ent.ResourceRelationshipConnection, error) {
+	return r.ClientFrom(ctx).
+		ResourceRelationship.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithResourceRelationshipOrder(orderBy),
+			ent.WithResourceRelationshipFilter(
+				func(query *ent.ResourceRelationshipQuery) (*ent.ResourceRelationshipQuery, error) {
+					return resolverutil.ResourceRelationshipFilter(query, filterBy)
 				},
 			),
 		)

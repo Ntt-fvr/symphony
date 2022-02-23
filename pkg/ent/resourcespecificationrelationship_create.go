@@ -15,8 +15,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcesritems"
 )
 
 // ResourceSpecificationRelationshipCreate is the builder for creating a ResourceSpecificationRelationship entity.
@@ -79,14 +79,14 @@ func (rsrc *ResourceSpecificationRelationshipCreate) SetResourcespecification(r 
 	return rsrc.SetResourcespecificationID(r.ID)
 }
 
-// AddResourceSrIDs adds the resource_sr edge to ResourceSRItems by ids.
+// AddResourceSrIDs adds the resource_sr edge to ResourceSpecificationItems by ids.
 func (rsrc *ResourceSpecificationRelationshipCreate) AddResourceSrIDs(ids ...int) *ResourceSpecificationRelationshipCreate {
 	rsrc.mutation.AddResourceSrIDs(ids...)
 	return rsrc
 }
 
-// AddResourceSr adds the resource_sr edges to ResourceSRItems.
-func (rsrc *ResourceSpecificationRelationshipCreate) AddResourceSr(r ...*ResourceSRItems) *ResourceSpecificationRelationshipCreate {
+// AddResourceSr adds the resource_sr edges to ResourceSpecificationItems.
+func (rsrc *ResourceSpecificationRelationshipCreate) AddResourceSr(r ...*ResourceSpecificationItems) *ResourceSpecificationRelationshipCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -252,7 +252,7 @@ func (rsrc *ResourceSpecificationRelationshipCreate) createSpec() (*ResourceSpec
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: resourcesritems.FieldID,
+					Column: resourcespecificationitems.FieldID,
 				},
 			},
 		}
