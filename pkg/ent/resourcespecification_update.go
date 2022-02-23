@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resource"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
@@ -104,6 +105,21 @@ func (rsu *ResourceSpecificationUpdate) AddResourceSpecificationItems(r ...*Reso
 	return rsu.AddResourceSpecificationItemIDs(ids...)
 }
 
+// AddResourceRspecificationIDs adds the resource_rspecification edge to Resource by ids.
+func (rsu *ResourceSpecificationUpdate) AddResourceRspecificationIDs(ids ...int) *ResourceSpecificationUpdate {
+	rsu.mutation.AddResourceRspecificationIDs(ids...)
+	return rsu
+}
+
+// AddResourceRspecification adds the resource_rspecification edges to Resource.
+func (rsu *ResourceSpecificationUpdate) AddResourceRspecification(r ...*Resource) *ResourceSpecificationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rsu.AddResourceRspecificationIDs(ids...)
+}
+
 // Mutation returns the ResourceSpecificationMutation object of the builder.
 func (rsu *ResourceSpecificationUpdate) Mutation() *ResourceSpecificationMutation {
 	return rsu.mutation
@@ -176,6 +192,27 @@ func (rsu *ResourceSpecificationUpdate) RemoveResourceSpecificationItems(r ...*R
 		ids[i] = r[i].ID
 	}
 	return rsu.RemoveResourceSpecificationItemIDs(ids...)
+}
+
+// ClearResourceRspecification clears all "resource_rspecification" edges to type Resource.
+func (rsu *ResourceSpecificationUpdate) ClearResourceRspecification() *ResourceSpecificationUpdate {
+	rsu.mutation.ClearResourceRspecification()
+	return rsu
+}
+
+// RemoveResourceRspecificationIDs removes the resource_rspecification edge to Resource by ids.
+func (rsu *ResourceSpecificationUpdate) RemoveResourceRspecificationIDs(ids ...int) *ResourceSpecificationUpdate {
+	rsu.mutation.RemoveResourceRspecificationIDs(ids...)
+	return rsu
+}
+
+// RemoveResourceRspecification removes resource_rspecification edges to Resource.
+func (rsu *ResourceSpecificationUpdate) RemoveResourceRspecification(r ...*Resource) *ResourceSpecificationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rsu.RemoveResourceRspecificationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -483,6 +520,60 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if rsu.mutation.ResourceRspecificationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resourcespecification.ResourceRspecificationTable,
+			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resource.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsu.mutation.RemovedResourceRspecificationIDs(); len(nodes) > 0 && !rsu.mutation.ResourceRspecificationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resourcespecification.ResourceRspecificationTable,
+			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resource.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsu.mutation.ResourceRspecificationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resourcespecification.ResourceRspecificationTable,
+			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resource.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, rsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{resourcespecification.Label}
@@ -571,6 +662,21 @@ func (rsuo *ResourceSpecificationUpdateOne) AddResourceSpecificationItems(r ...*
 	return rsuo.AddResourceSpecificationItemIDs(ids...)
 }
 
+// AddResourceRspecificationIDs adds the resource_rspecification edge to Resource by ids.
+func (rsuo *ResourceSpecificationUpdateOne) AddResourceRspecificationIDs(ids ...int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.AddResourceRspecificationIDs(ids...)
+	return rsuo
+}
+
+// AddResourceRspecification adds the resource_rspecification edges to Resource.
+func (rsuo *ResourceSpecificationUpdateOne) AddResourceRspecification(r ...*Resource) *ResourceSpecificationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rsuo.AddResourceRspecificationIDs(ids...)
+}
+
 // Mutation returns the ResourceSpecificationMutation object of the builder.
 func (rsuo *ResourceSpecificationUpdateOne) Mutation() *ResourceSpecificationMutation {
 	return rsuo.mutation
@@ -643,6 +749,27 @@ func (rsuo *ResourceSpecificationUpdateOne) RemoveResourceSpecificationItems(r .
 		ids[i] = r[i].ID
 	}
 	return rsuo.RemoveResourceSpecificationItemIDs(ids...)
+}
+
+// ClearResourceRspecification clears all "resource_rspecification" edges to type Resource.
+func (rsuo *ResourceSpecificationUpdateOne) ClearResourceRspecification() *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ClearResourceRspecification()
+	return rsuo
+}
+
+// RemoveResourceRspecificationIDs removes the resource_rspecification edge to Resource by ids.
+func (rsuo *ResourceSpecificationUpdateOne) RemoveResourceRspecificationIDs(ids ...int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.RemoveResourceRspecificationIDs(ids...)
+	return rsuo
+}
+
+// RemoveResourceRspecification removes resource_rspecification edges to Resource.
+func (rsuo *ResourceSpecificationUpdateOne) RemoveResourceRspecification(r ...*Resource) *ResourceSpecificationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rsuo.RemoveResourceRspecificationIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -940,6 +1067,60 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecificationitems.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rsuo.mutation.ResourceRspecificationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resourcespecification.ResourceRspecificationTable,
+			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resource.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsuo.mutation.RemovedResourceRspecificationIDs(); len(nodes) > 0 && !rsuo.mutation.ResourceRspecificationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resourcespecification.ResourceRspecificationTable,
+			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resource.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsuo.mutation.ResourceRspecificationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resourcespecification.ResourceRspecificationTable,
+			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resource.FieldID,
 				},
 			},
 		}

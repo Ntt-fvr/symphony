@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resource"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
@@ -124,6 +125,21 @@ func (rsc *ResourceSpecificationCreate) AddResourceSpecificationItems(r ...*Reso
 		ids[i] = r[i].ID
 	}
 	return rsc.AddResourceSpecificationItemIDs(ids...)
+}
+
+// AddResourceRspecificationIDs adds the resource_rspecification edge to Resource by ids.
+func (rsc *ResourceSpecificationCreate) AddResourceRspecificationIDs(ids ...int) *ResourceSpecificationCreate {
+	rsc.mutation.AddResourceRspecificationIDs(ids...)
+	return rsc
+}
+
+// AddResourceRspecification adds the resource_rspecification edges to Resource.
+func (rsc *ResourceSpecificationCreate) AddResourceRspecification(r ...*Resource) *ResourceSpecificationCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rsc.AddResourceRspecificationIDs(ids...)
 }
 
 // Mutation returns the ResourceSpecificationMutation object of the builder.
@@ -323,6 +339,25 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecificationitems.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rsc.mutation.ResourceRspecificationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resourcespecification.ResourceRspecificationTable,
+			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resource.FieldID,
 				},
 			},
 		}
