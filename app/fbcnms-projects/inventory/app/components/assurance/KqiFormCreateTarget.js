@@ -17,7 +17,6 @@ import AddKqiComparatorMutation from '../../mutations/AddKqiComparatorMutation';
 import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import React, {useState} from 'react';
@@ -138,9 +137,9 @@ const KqiFormCreateTarget = (props: Props) => {
   const handleDisable = useDisabledButton(KqiTarget.data, dataNameTarget, 10);
 
   const validationName = useValidation(
-      KqiTarget.data.name,
-      dataNameTarget,
-      'Kqi Target',
+    KqiTarget.data.name,
+    dataNameTarget,
+    'Kqi Target',
   );
 
   function handleChange({target}) {
@@ -195,203 +194,203 @@ const KqiFormCreateTarget = (props: Props) => {
   }
 
   return (
-      <div className={classes.root}>
-        <Grid
-            className={classes.header}
-            container
-            direction="row"
-            justify="flex-end"
-            alignItems="center">
-          <Grid item xs>
-            <Text variant="h6" weight={'bold'}>
-              {fbt('Create target', ' ')}
-            </Text>
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete variant="outlined" onClick={() => returnFormEdit()}>
-              Cancel
-            </ButtonSaveDelete>
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete
-                onClick={() => {
-                  handleClick();
-                  returnFormEdit();
-                }}
-                disabled={handleDisable}>
-              Save
-            </ButtonSaveDelete>
-          </Grid>
+    <div className={classes.root}>
+      <Grid
+        className={classes.header}
+        container
+        direction="row"
+        justify="flex-end"
+        alignItems="center">
+        <Grid item xs>
+          <Text variant="h6" weight={'bold'}>
+            {fbt('Create target', ' ')}
+          </Text>
         </Grid>
-        <Grid className={classes.container} item xs>
-          <Card>
-            <Grid container className={classes.formField} spacing={3}>
-              <Grid style={{marginTop: '-10px'}} item xs={12} sm={1}>
-                <Text style={{fontSize: '12px'}}>Enable</Text>
-                <br />
-                <Switch checked={checked} title={''} onChange={setChecked} />
-              </Grid>
-              <Grid item xs={12} sm={11}>
-                <TextField
-                    required
-                    fullWidth
-                    label="Target name"
-                    variant="outlined"
-                    name="name"
-                    onChange={handleChange}
-                    {...validationName}
-                />
-              </Grid>
-            </Grid>
-            <Grid container className={classes.formField} spacing={3}>
-              <Grid item xs={12} sm={6} lg>
-                <TextField
-                    select
-                    required
-                    label="Comparator"
-                    fullWidth
-                    name="comparatorSelect"
-                    defaultValue=""
-                    onChange={handleChange}
-                    variant="outlined">
-                  {dataComparatorSelect?.map((item, index) => (
-                      <MenuItem key={index} value={item.id}>
-                        {item.name}
-                      </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6} lg>
-                <TextField
-                    required
-                    fullWidth
-                    variant="outlined"
-                    name="comparatorNumber"
-                    type="number"
-                    placeholder="Number"
-                    onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} lg>
-                <TextField
-                    select
-                    required
-                    label="Warning comparator"
-                    fullWidth
-                    name="warningComparatorSelect"
-                    defaultValue=""
-                    onChange={handleChange}
-                    variant="outlined">
-                  {dataComparatorSelect?.map((item, index) => (
-                      <MenuItem key={index} value={item.id}>
-                        {item.name}
-                      </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6} lg>
-                <TextField
-                    required
-                    fullWidth
-                    variant="outlined"
-                    name="warningComparatorNumber"
-                    type="number"
-                    placeholder="Number"
-                    onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={5}>
-                <TextField
-                    required
-                    fullWidth
-                    multiline
-                    rows={2}
-                    label="Impact"
-                    variant="outlined"
-                    name="impact"
-                    className={classes.textarea}
-                    inputProps={{maxLength: 200}}
-                    onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-            <Grid container className={classes.formField} spacing={3}>
-              <Grid item xs={12} sm={6} lg>
-                <TextField
-                    required
-                    fullWidth
-                    type="number"
-                    label="Periods"
-                    placeholder="Number"
-                    variant="outlined"
-                    name="period"
-                    onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} lg>
-                <TextField
-                    required
-                    fullWidth
-                    type="number"
-                    label="Allowed Variation"
-                    placeholder="Number"
-                    variant="outlined"
-                    name="allowedVariation"
-                    onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} lg>
-                <Grid item xs={12} className={classes.title}>
-                  <Text style={{fontSize: '14px'}}>Active Hours</Text>
-                </Grid>
-                <Grid container item xs={12} alignItems="center">
-                  <Grid className={classes.subtitle} item xs={3} lg={3} xl={2}>
-                    <Text variant="caption">From</Text>
-                  </Grid>
-                  <Grid item xs={9} lg={9} xl={10}>
-                    <TextField
-                        required
-                        fullWidth
-                        variant="outlined"
-                        name="initTime"
-                        type="number"
-                        InputProps={{
-                          endAdornment: (
-                              <InputAdornment position="end">hrs</InputAdornment>
-                          ),
-                        }}
-                        onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12} sm={6} lg>
-                <Grid container item xs={12} alignItems="center">
-                  <Grid className={classes.subtitle} item xs={3} xl={1}>
-                    <Text variant="caption">to</Text>
-                  </Grid>
-                  <Grid item xs={9} xl={11}>
-                    <TextField
-                        required
-                        fullWidth
-                        variant="outlined"
-                        name="endTime"
-                        type="number"
-                        InputProps={{
-                          endAdornment: (
-                              <InputAdornment position="end">hrs</InputAdornment>
-                          ),
-                        }}
-                        onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid className={classes.onlyOnDesk} item lg={5} />
-            </Grid>
-          </Card>
+        <Grid>
+          <ButtonSaveDelete variant="outlined" onClick={() => returnFormEdit()}>
+            Cancel
+          </ButtonSaveDelete>
         </Grid>
-      </div>
+        <Grid>
+          <ButtonSaveDelete
+            onClick={() => {
+              handleClick();
+              returnFormEdit();
+            }}
+            disabled={handleDisable}>
+            Save
+          </ButtonSaveDelete>
+        </Grid>
+      </Grid>
+      <Grid className={classes.container} item xs>
+        <Card>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid style={{marginTop: '-10px'}} item xs={12} sm={1}>
+              <Text style={{fontSize: '12px'}}>Enable</Text>
+              <br />
+              <Switch checked={checked} title={''} onChange={setChecked} />
+            </Grid>
+            <Grid item xs={12} sm={11}>
+              <TextField
+                required
+                fullWidth
+                label="Target name"
+                variant="outlined"
+                name="name"
+                onChange={handleChange}
+                {...validationName}
+              />
+            </Grid>
+          </Grid>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                select
+                required
+                label="Comparator"
+                fullWidth
+                name="comparatorSelect"
+                defaultValue=""
+                onChange={handleChange}
+                variant="outlined">
+                {dataComparatorSelect?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                variant="outlined"
+                name="comparatorNumber"
+                type="number"
+                placeholder="Number"
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                select
+                required
+                label="Warning comparator"
+                fullWidth
+                name="warningComparatorSelect"
+                defaultValue=""
+                onChange={handleChange}
+                variant="outlined">
+                {dataComparatorSelect?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                variant="outlined"
+                name="warningComparatorNumber"
+                type="number"
+                placeholder="Number"
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} lg={5}>
+              <TextField
+                required
+                fullWidth
+                multiline
+                rows={2}
+                label="Impact"
+                variant="outlined"
+                name="impact"
+                className={classes.textarea}
+                inputProps={{maxLength: 200}}
+                onChange={handleChange}
+              />
+            </Grid>
+          </Grid>
+          <Grid container className={classes.formField} spacing={3}>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                type="number"
+                label="Periods"
+                placeholder="Number"
+                variant="outlined"
+                name="period"
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <TextField
+                required
+                fullWidth
+                type="number"
+                label="Allowed Variation"
+                placeholder="Number"
+                variant="outlined"
+                name="allowedVariation"
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <Grid item xs={12} className={classes.title}>
+                <Text style={{fontSize: '14px'}}>Active Hours</Text>
+              </Grid>
+              <Grid container item xs={12} alignItems="center">
+                <Grid className={classes.subtitle} item xs={3} lg={3} xl={2}>
+                  <Text variant="caption">From</Text>
+                </Grid>
+                <Grid item xs={9} lg={9} xl={10}>
+                  <TextField
+                    required
+                    fullWidth
+                    variant="outlined"
+                    name="initTime"
+                    type="number"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">hrs</InputAdornment>
+                      ),
+                    }}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={6} lg>
+              <Grid container item xs={12} alignItems="center">
+                <Grid className={classes.subtitle} item xs={3} xl={1}>
+                  <Text variant="caption">to</Text>
+                </Grid>
+                <Grid item xs={9} xl={11}>
+                  <TextField
+                    required
+                    fullWidth
+                    variant="outlined"
+                    name="endTime"
+                    type="number"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">hrs</InputAdornment>
+                      ),
+                    }}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid className={classes.onlyOnDesk} item lg={5} />
+          </Grid>
+        </Card>
+      </Grid>
+    </div>
   );
 };
 export default KqiFormCreateTarget;
