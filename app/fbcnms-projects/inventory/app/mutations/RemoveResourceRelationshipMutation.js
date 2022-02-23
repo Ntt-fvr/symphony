@@ -8,34 +8,32 @@
  * @format
  */
 
-import type {
-  AddResourceTypeMutation,
-  AddResourceTypeMutationResponse,
-  AddResourceTypeMutationVariables,
-} from './__generated__/AddResourceTypeMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
+
+import type {
+  RemoveResourceRelationshipMutation,
+  RemoveResourceRelationshipMutationResponse,
+  RemoveResourceRelationshipMutationVariables,
+} from './__generated__/RemoveResourceRelationshipMutation.graphql';
+
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
 import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddResourceTypeMutation($input: AddResourceTypeInput!) {
-    addResourceType(input: $input) {
-      name
-      resourceTypeBaseType
-      resourceTypeClass
-    }
+  mutation RemoveResourceRelationshipMutation($id: ID!) {
+    removeResourceRelationship(id: $id)
   }
 `;
 
 export default (
-  variables: AddResourceTypeMutationVariables,
-  callbacks?: MutationCallbacks<AddResourceTypeMutationResponse>,
+  variables: RemoveResourceRelationshipMutationVariables,
+  callbacks?: MutationCallbacks<RemoveResourceRelationshipMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddResourceTypeMutation>(RelayEnvironment, {
+  commitMutation<RemoveResourceRelationshipMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

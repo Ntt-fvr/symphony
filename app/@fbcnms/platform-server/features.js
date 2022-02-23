@@ -250,8 +250,8 @@ export const arrayConfigs = [
     enabledByDefault: false,
   },
   {
-    id: 'enable_resource_catalog',
-    title: 'Resource Catalog',
+    id: 'enable_resource_catalog_&_relationships',
+    title: 'Resource Catalog & Relationships',
     enabledByDefault: true,
   },
   {

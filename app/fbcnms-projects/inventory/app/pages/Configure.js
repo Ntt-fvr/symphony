@@ -22,6 +22,7 @@ import fbt from 'fbt';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
+import {RelationshipsTypes} from '../components/configure/RelationshipsTypes';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
@@ -61,7 +62,9 @@ export default function Configure() {
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
-  const resourcesEnabled = useFeatureFlag('enable_resource_catalog');
+  const resourcesRelationshipsEnabled = useFeatureFlag(
+    'enable_resource_catalog_&_relationships',
+  );
   const servicesEnabled = useFeatureFlag('services');
   const equipmentPortsFlag = useFeatureFlag('equipment_&_ports_module');
   const tabBars: Array<RouteTab> = useMemo(
@@ -84,7 +87,7 @@ export default function Configure() {
         },
         path: 'location_types',
       },
-      ...(resourcesEnabled
+      ...(resourcesRelationshipsEnabled
         ? [
             {
               id: 'resource_types',
@@ -92,6 +95,17 @@ export default function Configure() {
                 label: fbt('RESOURCES', ''),
               },
               path: 'resource_types',
+            },
+          ]
+        : []),
+      ...(resourcesRelationshipsEnabled
+        ? [
+            {
+              id: 'relationships_types',
+              tab: {
+                label: fbt('RELATIONSHIPS', ''),
+              },
+              path: 'relationships_types',
             },
           ]
         : []),
@@ -157,6 +171,10 @@ export default function Configure() {
             <Route
               path={relativeUrl('/resource_types')}
               component={ResourceTypes}
+            />
+            <Route
+              path={relativeUrl('/relationships_types')}
+              component={RelationshipsTypes}
             />
             <Route
               path={relativeUrl('/port_types')}
