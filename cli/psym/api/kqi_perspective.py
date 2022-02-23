@@ -37,12 +37,6 @@ def add_kqi_perspective(
 
     .. code-block:: python
 
-        new_Kqi_perspectivees = client.add_kqi_perspective(name="new_Kqi_perspective")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_Kqi_perspective = client.add_kqi_perspective(
             name="Kqi_perspective",
 
@@ -72,15 +66,9 @@ def edit_kqi_perspective(
 
     .. code-block:: python
 
-        kqi_perspective_edited = client.edit_kqi_perspective(Kqi_perspective=KqiPerspective ,new_name="new_Kqi_perspective")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_Kqi_perspective = client.edit_kqi_perspective(
+        new_Kqi_perspective_edited = client.edit_kqi_perspective(
             Kqi_perspective=KqiPerspective,
-            new_name="Kqi_perspective",
+            new_name="Kqi_perspective_edited",
 
         )
     """
@@ -135,7 +123,7 @@ def delete_kqi_perspective(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_kqi_perspective(KqiPerspective)
+        client.delete_kqi_perspective(id=123456789)
     """
     removeKqiPerspective.execute(client, id=id)
 

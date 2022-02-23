@@ -37,8 +37,8 @@ def add_vendor(
 
         new_vendor = client.add_vendor(
             name="vendor",
-
         )
+        print(new_vendor)
     """
     vendor_input = AddVendorInput(name=name)
     result = addVendor.execute(client, input=vendor_input)
@@ -63,7 +63,9 @@ def edit_vendor(
 
     .. code-block:: python
 
-        vendor_edited = client.edit_vendor(vendor=vendor ,new_name="new_vendor")
+        vendor_edited = client.edit_vendor(
+            vendor=vendor,
+            new_name="new_vendor")
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -116,6 +118,6 @@ def remove_vendor(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_vendor(vendor)
+        client.remove_vendor(id=123456789)
     """
     removeVendor.execute(client, id=id)

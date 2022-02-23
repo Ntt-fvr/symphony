@@ -34,16 +34,10 @@ def add_event_severity(
 
     .. code-block:: python
 
-        new_event_severityes = client.add_event_severity(name="new_event_severity")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_event_severity = client.add_event_severity(
             name="event_severity",
-
         )
+        print(new_event_severity)
     """
     event_severity_input = AddEventSeverityInput(name=name)
     result = addEventSeverity.execute(client, input=event_severity_input)
@@ -68,15 +62,9 @@ def edit_event_severity(
 
     .. code-block:: python
 
-        event_severity_edited = client.edit_event_severity(event_severity=eventSeverity ,new_name="new_event_severity")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_event_severity = client.edit_event_severity(
-            event_severity=eventSeverity,
-            new_name="event_severity",
+            event_severity=new_event_severity,
+            new_name="event_severity_edited",
 
         )
     """
@@ -97,7 +85,7 @@ def get_event_severities(client: SymphonyClient) -> Iterator[ruleType]:
 
     .. code-block:: python
 
-        event_severityes = client.get_event_severities()
+        event_severities = client.get_event_severities()
         for event_severity in event_severities:
             print(event_severity.name)
     """
@@ -130,7 +118,7 @@ def remove_event_severity(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_event_severity(eventSeverity)
+        client.remove_event_severity(id=123456789)
     """
     removeEventSeverity.execute(client, id=id)
 
