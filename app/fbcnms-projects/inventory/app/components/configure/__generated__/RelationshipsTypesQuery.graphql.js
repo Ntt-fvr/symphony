@@ -14,24 +14,12 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type ResourceRelationshipMultiplicityKind = "MANY_TO_MANY" | "MANY_TO_ONE" | "ONE_TO_MANY" | "ONE_TO_ONE" | "%future added value";
-export type ResourceRelationshipTypeKind = "BELONGS_TO" | "CROSS_CONNECTION" | "LOCATED_IN" | "LOGICAL_LINK" | "PHYSICAL_LINK" | "%future added value";
 export type RelationshipsTypesQueryVariables = {||};
 export type RelationshipsTypesQueryResponse = {|
   +resourceRelationships: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +id: string,
-        +resourceRelationshipType: ResourceRelationshipTypeKind,
-        +resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind,
-        +resourceTypeA: {|
-          +id: string,
-          +name: string,
-        |},
-        +resourceTypeB: ?{|
-          +id: string,
-          +name: string,
-        |},
+        +id: string
       |}
     |}>
   |}
@@ -49,16 +37,6 @@ query RelationshipsTypesQuery {
     edges {
       node {
         id
-        resourceRelationshipType
-        resourceRelationshipMultiplicity
-        resourceTypeA {
-          id
-          name
-        }
-        resourceTypeB {
-          id
-          name
-        }
       }
     }
   }
@@ -66,24 +44,7 @@ query RelationshipsTypesQuery {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = [
-  (v0/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "name",
-    "storageKey": null
-  }
-],
-v2 = [
+var v0 = [
   {
     "alias": null,
     "args": null,
@@ -108,39 +69,11 @@ v2 = [
             "name": "node",
             "plural": false,
             "selections": [
-              (v0/*: any*/),
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "resourceRelationshipType",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourceRelationshipMultiplicity",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceType",
-                "kind": "LinkedField",
-                "name": "resourceTypeA",
-                "plural": false,
-                "selections": (v1/*: any*/),
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceType",
-                "kind": "LinkedField",
-                "name": "resourceTypeB",
-                "plural": false,
-                "selections": (v1/*: any*/),
+                "name": "id",
                 "storageKey": null
               }
             ],
@@ -159,7 +92,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "RelationshipsTypesQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -168,19 +101,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "RelationshipsTypesQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "7c2bf01d409b6db43204824a6c5b1829",
+    "cacheID": "cac1aef2e06216ab0099815ae5ec048a",
     "id": null,
     "metadata": {},
     "name": "RelationshipsTypesQuery",
     "operationKind": "query",
-    "text": "query RelationshipsTypesQuery {\n  resourceRelationships {\n    edges {\n      node {\n        id\n        resourceRelationshipType\n        resourceRelationshipMultiplicity\n        resourceTypeA {\n          id\n          name\n        }\n        resourceTypeB {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RelationshipsTypesQuery {\n  resourceRelationships {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f9d7f8002add5410bbd5e687fdc328ce';
+(node/*: any*/).hash = '4dbcb75bfb5cf5797ca5109869b6216d';
 
 module.exports = node;
