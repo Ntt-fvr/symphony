@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
   action: {
     flexWrap: 'nowrap',
   },
-  accionDelete: {
+  actionDelete: {
     marginRight: '1rem',
   },
 }));
@@ -46,7 +46,7 @@ export const TitleTextCardsKqiSource = () => {
         item
         xs={2}>
         <Text
-          className={classes.accionDelete}
+          className={classes.actionDelete}
           useEllipsis={true}
           color="primary"
           variant="subtitle2">
