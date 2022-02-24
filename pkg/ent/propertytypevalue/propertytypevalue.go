@@ -26,10 +26,12 @@ const (
 
 	// EdgePropertyType holds the string denoting the property_type edge name in mutations.
 	EdgePropertyType = "property_type"
-	// EdgeProTypVal holds the string denoting the pro_typ_val edge name in mutations.
-	EdgeProTypVal = "pro_typ_val"
-	// EdgePropTypeValue holds the string denoting the prop_type_value edge name in mutations.
-	EdgePropTypeValue = "prop_type_value"
+	// EdgePropertyValue holds the string denoting the property_value edge name in mutations.
+	EdgePropertyValue = "property_value"
+	// EdgePropertyTypeValueDependence holds the string denoting the property_type_value_dependence edge name in mutations.
+	EdgePropertyTypeValueDependence = "property_type_value_dependence"
+	// EdgePropertyTypeValue holds the string denoting the property_type_value edge name in mutations.
+	EdgePropertyTypeValue = "property_type_value"
 
 	// Table holds the table name of the propertytypevalue in the database.
 	Table = "property_type_values"
@@ -39,15 +41,22 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "propertytype" package.
 	PropertyTypeInverseTable = "property_types"
 	// PropertyTypeColumn is the table column denoting the property_type relation/edge.
-	PropertyTypeColumn = "property_type_prop_type"
-	// ProTypValTable is the table the holds the pro_typ_val relation/edge.
-	ProTypValTable = "property_type_values"
-	// ProTypValColumn is the table column denoting the pro_typ_val relation/edge.
-	ProTypValColumn = "property_type_value_prop_type_value"
-	// PropTypeValueTable is the table the holds the prop_type_value relation/edge.
-	PropTypeValueTable = "property_type_values"
-	// PropTypeValueColumn is the table column denoting the prop_type_value relation/edge.
-	PropTypeValueColumn = "property_type_value_prop_type_value"
+	PropertyTypeColumn = "property_type_property_type_values"
+	// PropertyValueTable is the table the holds the property_value relation/edge.
+	PropertyValueTable = "property_values"
+	// PropertyValueInverseTable is the table name for the PropertyValue entity.
+	// It exists in this package in order to avoid circular dependency with the "propertyvalue" package.
+	PropertyValueInverseTable = "property_values"
+	// PropertyValueColumn is the table column denoting the property_value relation/edge.
+	PropertyValueColumn = "property_type_value_property_value"
+	// PropertyTypeValueDependenceTable is the table the holds the property_type_value_dependence relation/edge.
+	PropertyTypeValueDependenceTable = "property_type_values"
+	// PropertyTypeValueDependenceColumn is the table column denoting the property_type_value_dependence relation/edge.
+	PropertyTypeValueDependenceColumn = "property_type_value_property_type_value"
+	// PropertyTypeValueTable is the table the holds the property_type_value relation/edge.
+	PropertyTypeValueTable = "property_type_values"
+	// PropertyTypeValueColumn is the table column denoting the property_type_value relation/edge.
+	PropertyTypeValueColumn = "property_type_value_property_type_value"
 )
 
 // Columns holds all SQL columns for propertytypevalue fields.
@@ -60,8 +69,8 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the PropertyTypeValue type.
 var ForeignKeys = []string{
-	"property_type_prop_type",
-	"property_type_value_prop_type_value",
+	"property_type_property_type_values",
+	"property_type_value_property_type_value",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -349,7 +349,7 @@ def delete_service_type_with_services(
 
     .. code-block:: python
 
-        client.delete_service_type_with_services(service_type=service_type)
+        client.delete_service_type_with_services(service_type=service_type.id)
     """
     service_type_with_services = ServiceTypeServicesQuery.execute(
         client, id=service_type.id

@@ -21,10 +21,9 @@ import type {EditThresholdMutationVariables} from '../../mutations/__generated__
 import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 
 // DESIGN SYSTEM //
-import Button from '@symphony/design-system/components/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
@@ -107,11 +106,6 @@ const useStyles = makeStyles(() => ({
   action: {
     paddingRight: '1.3rem',
   },
-  addThreshold: {
-    marginRight: '1.5rem',
-    width: '98px',
-    alignSelf: 'flex-end',
-  },
   title: {
     marginLeft: '10px',
   },
@@ -170,16 +164,16 @@ const EditThresholdItemForm = (props: Props) => {
   const dataInputsObject = [name.value.trim(), description.value.trim()];
 
   const filterRuleTableById = dataRulesTable?.filter(
-    thresholdData => thresholdData?.id === formValues.id,
+      thresholdData => thresholdData?.id === formValues.id,
   );
 
   const capacitorRules = filterRuleTableById[0].rule?.map(rule => rule);
 
   const inputFilter = () => {
     return (
-      thresholdNames?.filter(
-        item => item === name.value.trim() && item !== formValues.name.trim(),
-      ) || []
+        thresholdNames?.filter(
+            item => item === name.value.trim() && item !== formValues.name.trim(),
+        ) || []
     );
   };
 
@@ -205,160 +199,154 @@ const EditThresholdItemForm = (props: Props) => {
   };
 
   return (
-    <div className={classes.root}>
-      <Grid container>
-        <Grid
-          className={classes.header}
-          container
-          direction="row"
-          justifycontent="flex-end"
-          alignItems="center">
-          <Grid item xs>
-            <ConfigureTitleSubItem
-              title={fbt('Threshold Catalog/', 'Threshold Catalog')}
-              tag={` ${formValues.name}`}
-            />
-          </Grid>
-          <Grid>
-            <FormField>
-              <Button
-                className={classes.addThreshold}
-                onClick={() => {
-                  handleClick();
-                  hideEditThresholdForm();
-                }}
-                disabled={handleDisable}>
-                Save
-              </Button>
-            </FormField>
-          </Grid>
-          <Grid>
-            <FormField>
-              <Button
-                className={classes.addThreshold}
-                onClick={() => {
-                  hideEditThresholdForm();
-                }}
-                skin="brightGray">
-                Cancel
-              </Button>
-            </FormField>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card margins={'none'}>
-            <Grid
-              className={classes.headerCardEdit}
+      <div className={classes.root}>
+        <Grid container>
+          <Grid
+              className={classes.header}
               container
               direction="row"
-              justifycontent="space-evenly"
+              justifycontent="flex-end"
               alignItems="center">
-              <Grid item xs>
-                <Text
+            <Grid item xs>
+              <ConfigureTitleSubItem
+                  title={fbt('Threshold Catalog/', 'Threshold Catalog')}
+                  tag={` ${formValues.name}`}
+              />
+            </Grid>
+            <Grid>
+              <ButtonSaveDelete
+                  variant={'outlined'}
+                  onClick={() => {
+                    hideEditThresholdForm();
+                  }}>
+                Cancel
+              </ButtonSaveDelete>
+            </Grid>
+            <Grid>
+              <ButtonSaveDelete
+                  onClick={() => {
+                    handleClick();
+                    hideEditThresholdForm();
+                  }}
+                  disabled={handleDisable}>
+                Save
+              </ButtonSaveDelete>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={12} lg={12} xl={12}>
+            <Card margins={'none'}>
+              <Grid
+                  className={classes.headerCardEdit}
+                  container
+                  direction="row"
+                  justifycontent="space-evenly"
+                  alignItems="center">
+                <Grid item xs>
+                  <Text
+                      weight={'bold'}
+                      variant={'h6'}
+                      className={classes.cardHeader}>
+                    Edit container detail
+                  </Text>
+                </Grid>
+                <Grid>
+                  <Switch
+                      className={classes.titleSwitch}
+                      title={'Enabled'}
+                      checked={checked}
+                      onChange={setChecked}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={12} sm={12} md={6}>
+                  <Grid item xs={12}>
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                          required
+                          className={classes.textInput}
+                          label="Name"
+                          variant="outlined"
+                          name="name"
+                          fullWidth
+                          {...name}
+                          {...validationName}
+                      />
+                    </form>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                          required
+                          fullWidth
+                          className={classes.textInput}
+                          label="ID"
+                          variant="outlined"
+                          name="id"
+                          value={formValues.id}
+                          disabled
+                      />
+                    </form>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} sm={12} md={6}>
+                  <Grid item xs={12}>
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                          required
+                          fullWidth
+                          className={classes.textInput}
+                          label="Associated KPI"
+                          variant="outlined"
+                          name="kpi"
+                          value={formValues?.kpi.name}
+                          disabled
+                      />
+                    </form>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                          multiline
+                          rows={3}
+                          required
+                          className={classes.description}
+                          label="Description"
+                          variant="outlined"
+                          name="description"
+                          inputProps={{maxLength: 120}}
+                          fullWidth
+                          {...description}
+                      />
+                    </form>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
+          <Grid
+              className={classes.containerTable}
+              item
+              xs={12}
+              sm={12}
+              lg={12}
+              xl={12}>
+            <Grid className={classes.headerTableContainer}>
+              <Text
                   weight={'bold'}
                   variant={'h6'}
-                  className={classes.cardHeader}>
-                  Edit container detail
-                </Text>
-              </Grid>
-              <Grid>
-                <Switch
-                  className={classes.titleSwitch}
-                  title={'Enabled'}
-                  checked={checked}
-                  onChange={setChecked}
-                />
-              </Grid>
+                  className={classes.headerTable}>
+                Rules contained
+              </Text>
             </Grid>
-            <Grid container>
-              <Grid item xs={12} sm={12} md={6}>
-                <Grid item xs={12}>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      required
-                      className={classes.textInput}
-                      label="Name"
-                      variant="outlined"
-                      name="name"
-                      fullWidth
-                      {...name}
-                      {...validationName}
-                    />
-                  </form>
-                </Grid>
-                <Grid item xs={12}>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      required
-                      fullWidth
-                      className={classes.textInput}
-                      label="ID"
-                      variant="outlined"
-                      name="id"
-                      value={formValues.id}
-                      disabled
-                    />
-                  </form>
-                </Grid>
-              </Grid>
-              <Grid item xs={12} sm={12} md={6}>
-                <Grid item xs={12}>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      required
-                      fullWidth
-                      className={classes.textInput}
-                      label="Associated KPI"
-                      variant="outlined"
-                      name="kpi"
-                      value={formValues?.kpi.name}
-                      disabled
-                    />
-                  </form>
-                </Grid>
-                <Grid item xs={12}>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      multiline
-                      rows={3}
-                      required
-                      className={classes.description}
-                      label="Description"
-                      variant="outlined"
-                      name="description"
-                      inputProps={{maxLength: 120}}
-                      fullWidth
-                      {...description}
-                    />
-                  </form>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Card>
-        </Grid>
-        <Grid
-          className={classes.containerTable}
-          item
-          xs={12}
-          sm={12}
-          lg={12}
-          xl={12}>
-          <Grid className={classes.headerTableContainer}>
-            <Text
-              weight={'bold'}
-              variant={'h6'}
-              className={classes.headerTable}>
-              Rules contained
-            </Text>
+            <TableThreshold
+                isCompleted={isCompleted}
+                rule={capacitorRules}
+                editRule={editRule}
+            />
           </Grid>
-          <TableThreshold
-            isCompleted={isCompleted}
-            rule={capacitorRules}
-            editRule={editRule}
-          />
         </Grid>
-      </Grid>
-    </div>
+      </div>
   );
 };
 export default EditThresholdItemForm;

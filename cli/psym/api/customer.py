@@ -80,6 +80,6 @@ def delete_customer(client: SymphonyClient, customer: Customer) -> None:
 
     .. code-block:: python
 
-        client.delete_customer(customer)
+        client.delete_customer(customer.id)
     """
     RemoveCustomerMutation.execute(client, id=customer.id)

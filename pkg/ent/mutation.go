@@ -68,14 +68,17 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
@@ -173,13 +176,16 @@ const (
 	TypeLocationType                = "LocationType"
 	TypeNetworkType                 = "NetworkType"
 	TypeOrganization                = "Organization"
+	TypeParameterCatalog            = "ParameterCatalog"
 	TypePermissionsPolicy           = "PermissionsPolicy"
 	TypeProject                     = "Project"
 	TypeProjectTemplate             = "ProjectTemplate"
 	TypeProjectType                 = "ProjectType"
 	TypeProperty                    = "Property"
+	TypePropertyCategory            = "PropertyCategory"
 	TypePropertyType                = "PropertyType"
 	TypePropertyTypeValue           = "PropertyTypeValue"
+	TypePropertyValue               = "PropertyValue"
 	TypeRecommendations             = "Recommendations"
 	TypeRecommendationsCategory     = "RecommendationsCategory"
 	TypeRecommendationsSources      = "RecommendationsSources"
@@ -42855,6 +42861,648 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Organization edge %s", name)
 }
 
+// ParameterCatalogMutation represents an operation that mutate the ParameterCatalogs
+// nodes in the graph.
+type ParameterCatalogMutation struct {
+	config
+	op                         Op
+	typ                        string
+	id                         *int
+	create_time                *time.Time
+	update_time                *time.Time
+	name                       *string
+	index                      *int
+	addindex                   *int
+	disabled                   *bool
+	clearedFields              map[string]struct{}
+	property_categories        map[int]struct{}
+	removedproperty_categories map[int]struct{}
+	clearedproperty_categories bool
+	done                       bool
+	oldValue                   func(context.Context) (*ParameterCatalog, error)
+	predicates                 []predicate.ParameterCatalog
+}
+
+var _ ent.Mutation = (*ParameterCatalogMutation)(nil)
+
+// parametercatalogOption allows to manage the mutation configuration using functional options.
+type parametercatalogOption func(*ParameterCatalogMutation)
+
+// newParameterCatalogMutation creates new mutation for ParameterCatalog.
+func newParameterCatalogMutation(c config, op Op, opts ...parametercatalogOption) *ParameterCatalogMutation {
+	m := &ParameterCatalogMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeParameterCatalog,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withParameterCatalogID sets the id field of the mutation.
+func withParameterCatalogID(id int) parametercatalogOption {
+	return func(m *ParameterCatalogMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ParameterCatalog
+		)
+		m.oldValue = func(ctx context.Context) (*ParameterCatalog, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ParameterCatalog.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withParameterCatalog sets the old ParameterCatalog of the mutation.
+func withParameterCatalog(node *ParameterCatalog) parametercatalogOption {
+	return func(m *ParameterCatalogMutation) {
+		m.oldValue = func(context.Context) (*ParameterCatalog, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ParameterCatalogMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ParameterCatalogMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ParameterCatalogMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ParameterCatalogMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ParameterCatalogMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ParameterCatalogMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ParameterCatalogMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ParameterCatalogMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ParameterCatalogMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *ParameterCatalogMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *ParameterCatalogMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *ParameterCatalogMutation) ResetName() {
+	m.name = nil
+}
+
+// SetIndex sets the index field.
+func (m *ParameterCatalogMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *ParameterCatalogMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *ParameterCatalogMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
+	}
+}
+
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *ParameterCatalogMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *ParameterCatalogMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+}
+
+// SetDisabled sets the disabled field.
+func (m *ParameterCatalogMutation) SetDisabled(b bool) {
+	m.disabled = &b
+}
+
+// Disabled returns the disabled value in the mutation.
+func (m *ParameterCatalogMutation) Disabled() (r bool, exists bool) {
+	v := m.disabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisabled returns the old disabled value of the ParameterCatalog.
+// If the ParameterCatalog object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ParameterCatalogMutation) OldDisabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDisabled is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDisabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisabled: %w", err)
+	}
+	return oldValue.Disabled, nil
+}
+
+// ResetDisabled reset all changes of the "disabled" field.
+func (m *ParameterCatalogMutation) ResetDisabled() {
+	m.disabled = nil
+}
+
+// AddPropertyCategoryIDs adds the property_categories edge to PropertyCategory by ids.
+func (m *ParameterCatalogMutation) AddPropertyCategoryIDs(ids ...int) {
+	if m.property_categories == nil {
+		m.property_categories = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.property_categories[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPropertyCategories clears the property_categories edge to PropertyCategory.
+func (m *ParameterCatalogMutation) ClearPropertyCategories() {
+	m.clearedproperty_categories = true
+}
+
+// PropertyCategoriesCleared returns if the edge property_categories was cleared.
+func (m *ParameterCatalogMutation) PropertyCategoriesCleared() bool {
+	return m.clearedproperty_categories
+}
+
+// RemovePropertyCategoryIDs removes the property_categories edge to PropertyCategory by ids.
+func (m *ParameterCatalogMutation) RemovePropertyCategoryIDs(ids ...int) {
+	if m.removedproperty_categories == nil {
+		m.removedproperty_categories = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperty_categories[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertyCategories returns the removed ids of property_categories.
+func (m *ParameterCatalogMutation) RemovedPropertyCategoriesIDs() (ids []int) {
+	for id := range m.removedproperty_categories {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertyCategoriesIDs returns the property_categories ids in the mutation.
+func (m *ParameterCatalogMutation) PropertyCategoriesIDs() (ids []int) {
+	for id := range m.property_categories {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertyCategories reset all changes of the "property_categories" edge.
+func (m *ParameterCatalogMutation) ResetPropertyCategories() {
+	m.property_categories = nil
+	m.clearedproperty_categories = false
+	m.removedproperty_categories = nil
+}
+
+// Op returns the operation name.
+func (m *ParameterCatalogMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (ParameterCatalog).
+func (m *ParameterCatalogMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ParameterCatalogMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, parametercatalog.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, parametercatalog.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, parametercatalog.FieldName)
+	}
+	if m.index != nil {
+		fields = append(fields, parametercatalog.FieldIndex)
+	}
+	if m.disabled != nil {
+		fields = append(fields, parametercatalog.FieldDisabled)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ParameterCatalogMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		return m.CreateTime()
+	case parametercatalog.FieldUpdateTime:
+		return m.UpdateTime()
+	case parametercatalog.FieldName:
+		return m.Name()
+	case parametercatalog.FieldIndex:
+		return m.Index()
+	case parametercatalog.FieldDisabled:
+		return m.Disabled()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ParameterCatalogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case parametercatalog.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case parametercatalog.FieldName:
+		return m.OldName(ctx)
+	case parametercatalog.FieldIndex:
+		return m.OldIndex(ctx)
+	case parametercatalog.FieldDisabled:
+		return m.OldDisabled(ctx)
+	}
+	return nil, fmt.Errorf("unknown ParameterCatalog field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ParameterCatalogMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case parametercatalog.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case parametercatalog.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case parametercatalog.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	case parametercatalog.FieldDisabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisabled(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ParameterCatalogMutation) AddedFields() []string {
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, parametercatalog.FieldIndex)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ParameterCatalogMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case parametercatalog.FieldIndex:
+		return m.AddedIndex()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ParameterCatalogMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case parametercatalog.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ParameterCatalogMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ParameterCatalogMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ParameterCatalogMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ParameterCatalog nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ParameterCatalogMutation) ResetField(name string) error {
+	switch name {
+	case parametercatalog.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case parametercatalog.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case parametercatalog.FieldName:
+		m.ResetName()
+		return nil
+	case parametercatalog.FieldIndex:
+		m.ResetIndex()
+		return nil
+	case parametercatalog.FieldDisabled:
+		m.ResetDisabled()
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ParameterCatalogMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.property_categories != nil {
+		edges = append(edges, parametercatalog.EdgePropertyCategories)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ParameterCatalogMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		ids := make([]ent.Value, 0, len(m.property_categories))
+		for id := range m.property_categories {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ParameterCatalogMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedproperty_categories != nil {
+		edges = append(edges, parametercatalog.EdgePropertyCategories)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ParameterCatalogMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		ids := make([]ent.Value, 0, len(m.removedproperty_categories))
+		for id := range m.removedproperty_categories {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ParameterCatalogMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedproperty_categories {
+		edges = append(edges, parametercatalog.EdgePropertyCategories)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ParameterCatalogMutation) EdgeCleared(name string) bool {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		return m.clearedproperty_categories
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ParameterCatalogMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ParameterCatalog unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ParameterCatalogMutation) ResetEdge(name string) error {
+	switch name {
+	case parametercatalog.EdgePropertyCategories:
+		m.ResetPropertyCategories()
+		return nil
+	}
+	return fmt.Errorf("unknown ParameterCatalog edge %s", name)
+}
+
 // PermissionsPolicyMutation represents an operation that mutate the PermissionsPolicies
 // nodes in the graph.
 type PermissionsPolicyMutation struct {
@@ -46363,57 +47011,65 @@ func (m *ProjectTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type PropertyMutation struct {
 	config
-	op                      Op
-	typ                     string
-	id                      *int
-	create_time             *time.Time
-	update_time             *time.Time
-	int_val                 *int
-	addint_val              *int
-	bool_val                *bool
-	float_val               *float64
-	addfloat_val            *float64
-	latitude_val            *float64
-	addlatitude_val         *float64
-	longitude_val           *float64
-	addlongitude_val        *float64
-	range_from_val          *float64
-	addrange_from_val       *float64
-	range_to_val            *float64
-	addrange_to_val         *float64
-	string_val              *string
-	clearedFields           map[string]struct{}
-	_type                   *int
-	cleared_type            bool
-	location                *int
-	clearedlocation         bool
-	equipment               *int
-	clearedequipment        bool
-	service                 *int
-	clearedservice          bool
-	equipment_port          *int
-	clearedequipment_port   bool
-	link                    *int
-	clearedlink             bool
-	work_order              *int
-	clearedwork_order       bool
-	project                 *int
-	clearedproject          bool
-	equipment_value         *int
-	clearedequipment_value  bool
-	location_value          *int
-	clearedlocation_value   bool
-	service_value           *int
-	clearedservice_value    bool
-	work_order_value        *int
-	clearedwork_order_value bool
-	user_value              *int
-	cleareduser_value       bool
-	project_value           *int
-	clearedproject_value    bool
-	done                    bool
-	oldValue                func(context.Context) (*Property, error)
-	predicates              []predicate.Property
+	op                         Op
+	typ                        string
+	id                         *int
+	create_time                *time.Time
+	update_time                *time.Time
+	int_val                    *int
+	addint_val                 *int
+	bool_val                   *bool
+	float_val                  *float64
+	addfloat_val               *float64
+	latitude_val               *float64
+	addlatitude_val            *float64
+	longitude_val              *float64
+	addlongitude_val           *float64
+	range_from_val             *float64
+	addrange_from_val          *float64
+	range_to_val               *float64
+	addrange_to_val            *float64
+	string_val                 *string
+	clearedFields              map[string]struct{}
+	_type                      *int
+	cleared_type               bool
+	location                   *int
+	clearedlocation            bool
+	equipment                  *int
+	clearedequipment           bool
+	service                    *int
+	clearedservice             bool
+	equipment_port             *int
+	clearedequipment_port      bool
+	link                       *int
+	clearedlink                bool
+	work_order                 *int
+	clearedwork_order          bool
+	project                    *int
+	clearedproject             bool
+	equipment_value            *int
+	clearedequipment_value     bool
+	location_value             *int
+	clearedlocation_value      bool
+	service_value              *int
+	clearedservice_value       bool
+	work_order_value           *int
+	clearedwork_order_value    bool
+	user_value                 *int
+	cleareduser_value          bool
+	project_value              *int
+	clearedproject_value       bool
+	property_value             map[int]struct{}
+	removedproperty_value      map[int]struct{}
+	clearedproperty_value      bool
+	property_dependence        *int
+	clearedproperty_dependence bool
+	property                   map[int]struct{}
+	removedproperty            map[int]struct{}
+	clearedproperty            bool
+	done                       bool
+	oldValue                   func(context.Context) (*Property, error)
+	predicates                 []predicate.Property
 }
 
 var _ ent.Mutation = (*PropertyMutation)(nil)
@@ -47641,6 +48297,151 @@ func (m *PropertyMutation) ResetProjectValue() {
 	m.clearedproject_value = false
 }
 
+// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
+func (m *PropertyMutation) AddPropertyValueIDs(ids ...int) {
+	if m.property_value == nil {
+		m.property_value = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.property_value[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPropertyValue clears the property_value edge to PropertyValue.
+func (m *PropertyMutation) ClearPropertyValue() {
+	m.clearedproperty_value = true
+}
+
+// PropertyValueCleared returns if the edge property_value was cleared.
+func (m *PropertyMutation) PropertyValueCleared() bool {
+	return m.clearedproperty_value
+}
+
+// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
+func (m *PropertyMutation) RemovePropertyValueIDs(ids ...int) {
+	if m.removedproperty_value == nil {
+		m.removedproperty_value = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperty_value[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertyValue returns the removed ids of property_value.
+func (m *PropertyMutation) RemovedPropertyValueIDs() (ids []int) {
+	for id := range m.removedproperty_value {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertyValueIDs returns the property_value ids in the mutation.
+func (m *PropertyMutation) PropertyValueIDs() (ids []int) {
+	for id := range m.property_value {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertyValue reset all changes of the "property_value" edge.
+func (m *PropertyMutation) ResetPropertyValue() {
+	m.property_value = nil
+	m.clearedproperty_value = false
+	m.removedproperty_value = nil
+}
+
+// SetPropertyDependenceID sets the property_dependence edge to Property by id.
+func (m *PropertyMutation) SetPropertyDependenceID(id int) {
+	m.property_dependence = &id
+}
+
+// ClearPropertyDependence clears the property_dependence edge to Property.
+func (m *PropertyMutation) ClearPropertyDependence() {
+	m.clearedproperty_dependence = true
+}
+
+// PropertyDependenceCleared returns if the edge property_dependence was cleared.
+func (m *PropertyMutation) PropertyDependenceCleared() bool {
+	return m.clearedproperty_dependence
+}
+
+// PropertyDependenceID returns the property_dependence id in the mutation.
+func (m *PropertyMutation) PropertyDependenceID() (id int, exists bool) {
+	if m.property_dependence != nil {
+		return *m.property_dependence, true
+	}
+	return
+}
+
+// PropertyDependenceIDs returns the property_dependence ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// PropertyDependenceID instead. It exists only for internal usage by the builders.
+func (m *PropertyMutation) PropertyDependenceIDs() (ids []int) {
+	if id := m.property_dependence; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPropertyDependence reset all changes of the "property_dependence" edge.
+func (m *PropertyMutation) ResetPropertyDependence() {
+	m.property_dependence = nil
+	m.clearedproperty_dependence = false
+}
+
+// AddPropertyIDs adds the property edge to Property by ids.
+func (m *PropertyMutation) AddPropertyIDs(ids ...int) {
+	if m.property == nil {
+		m.property = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.property[ids[i]] = struct{}{}
+	}
+}
+
+// ClearProperty clears the property edge to Property.
+func (m *PropertyMutation) ClearProperty() {
+	m.clearedproperty = true
+}
+
+// PropertyCleared returns if the edge property was cleared.
+func (m *PropertyMutation) PropertyCleared() bool {
+	return m.clearedproperty
+}
+
+// RemovePropertyIDs removes the property edge to Property by ids.
+func (m *PropertyMutation) RemovePropertyIDs(ids ...int) {
+	if m.removedproperty == nil {
+		m.removedproperty = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperty[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedProperty returns the removed ids of property.
+func (m *PropertyMutation) RemovedPropertyIDs() (ids []int) {
+	for id := range m.removedproperty {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertyIDs returns the property ids in the mutation.
+func (m *PropertyMutation) PropertyIDs() (ids []int) {
+	for id := range m.property {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetProperty reset all changes of the "property" edge.
+func (m *PropertyMutation) ResetProperty() {
+	m.property = nil
+	m.clearedproperty = false
+	m.removedproperty = nil
+}
+
 // Op returns the operation name.
 func (m *PropertyMutation) Op() Op {
 	return m.op
@@ -48035,7 +48836,7 @@ func (m *PropertyMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PropertyMutation) AddedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 17)
 	if m._type != nil {
 		edges = append(edges, property.EdgeType)
 	}
@@ -48077,6 +48878,15 @@ func (m *PropertyMutation) AddedEdges() []string {
 	}
 	if m.project_value != nil {
 		edges = append(edges, property.EdgeProjectValue)
+	}
+	if m.property_value != nil {
+		edges = append(edges, property.EdgePropertyValue)
+	}
+	if m.property_dependence != nil {
+		edges = append(edges, property.EdgePropertyDependence)
+	}
+	if m.property != nil {
+		edges = append(edges, property.EdgeProperty)
 	}
 	return edges
 }
@@ -48141,6 +48951,22 @@ func (m *PropertyMutation) AddedIDs(name string) []ent.Value {
 		if id := m.project_value; id != nil {
 			return []ent.Value{*id}
 		}
+	case property.EdgePropertyValue:
+		ids := make([]ent.Value, 0, len(m.property_value))
+		for id := range m.property_value {
+			ids = append(ids, id)
+		}
+		return ids
+	case property.EdgePropertyDependence:
+		if id := m.property_dependence; id != nil {
+			return []ent.Value{*id}
+		}
+	case property.EdgeProperty:
+		ids := make([]ent.Value, 0, len(m.property))
+		for id := range m.property {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -48148,7 +48974,13 @@ func (m *PropertyMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PropertyMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 17)
+	if m.removedproperty_value != nil {
+		edges = append(edges, property.EdgePropertyValue)
+	}
+	if m.removedproperty != nil {
+		edges = append(edges, property.EdgeProperty)
+	}
 	return edges
 }
 
@@ -48156,6 +48988,18 @@ func (m *PropertyMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *PropertyMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case property.EdgePropertyValue:
+		ids := make([]ent.Value, 0, len(m.removedproperty_value))
+		for id := range m.removedproperty_value {
+			ids = append(ids, id)
+		}
+		return ids
+	case property.EdgeProperty:
+		ids := make([]ent.Value, 0, len(m.removedproperty))
+		for id := range m.removedproperty {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -48163,7 +49007,7 @@ func (m *PropertyMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PropertyMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 17)
 	if m.cleared_type {
 		edges = append(edges, property.EdgeType)
 	}
@@ -48206,6 +49050,15 @@ func (m *PropertyMutation) ClearedEdges() []string {
 	if m.clearedproject_value {
 		edges = append(edges, property.EdgeProjectValue)
 	}
+	if m.clearedproperty_value {
+		edges = append(edges, property.EdgePropertyValue)
+	}
+	if m.clearedproperty_dependence {
+		edges = append(edges, property.EdgePropertyDependence)
+	}
+	if m.clearedproperty {
+		edges = append(edges, property.EdgeProperty)
+	}
 	return edges
 }
 
@@ -48241,6 +49094,12 @@ func (m *PropertyMutation) EdgeCleared(name string) bool {
 		return m.cleareduser_value
 	case property.EdgeProjectValue:
 		return m.clearedproject_value
+	case property.EdgePropertyValue:
+		return m.clearedproperty_value
+	case property.EdgePropertyDependence:
+		return m.clearedproperty_dependence
+	case property.EdgeProperty:
+		return m.clearedproperty
 	}
 	return false
 }
@@ -48290,6 +49149,9 @@ func (m *PropertyMutation) ClearEdge(name string) error {
 		return nil
 	case property.EdgeProjectValue:
 		m.ClearProjectValue()
+		return nil
+	case property.EdgePropertyDependence:
+		m.ClearPropertyDependence()
 		return nil
 	}
 	return fmt.Errorf("unknown Property unique edge %s", name)
@@ -48342,8 +49204,663 @@ func (m *PropertyMutation) ResetEdge(name string) error {
 	case property.EdgeProjectValue:
 		m.ResetProjectValue()
 		return nil
+	case property.EdgePropertyValue:
+		m.ResetPropertyValue()
+		return nil
+	case property.EdgePropertyDependence:
+		m.ResetPropertyDependence()
+		return nil
+	case property.EdgeProperty:
+		m.ResetProperty()
+		return nil
 	}
 	return fmt.Errorf("unknown Property edge %s", name)
+}
+
+// PropertyCategoryMutation represents an operation that mutate the PropertyCategories
+// nodes in the graph.
+type PropertyCategoryMutation struct {
+	config
+	op                       Op
+	typ                      string
+	id                       *int
+	create_time              *time.Time
+	update_time              *time.Time
+	name                     *string
+	index                    *int
+	addindex                 *int
+	clearedFields            map[string]struct{}
+	properties_type          map[int]struct{}
+	removedproperties_type   map[int]struct{}
+	clearedproperties_type   bool
+	parameter_catalog        *int
+	clearedparameter_catalog bool
+	done                     bool
+	oldValue                 func(context.Context) (*PropertyCategory, error)
+	predicates               []predicate.PropertyCategory
+}
+
+var _ ent.Mutation = (*PropertyCategoryMutation)(nil)
+
+// propertycategoryOption allows to manage the mutation configuration using functional options.
+type propertycategoryOption func(*PropertyCategoryMutation)
+
+// newPropertyCategoryMutation creates new mutation for PropertyCategory.
+func newPropertyCategoryMutation(c config, op Op, opts ...propertycategoryOption) *PropertyCategoryMutation {
+	m := &PropertyCategoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePropertyCategory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPropertyCategoryID sets the id field of the mutation.
+func withPropertyCategoryID(id int) propertycategoryOption {
+	return func(m *PropertyCategoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PropertyCategory
+		)
+		m.oldValue = func(ctx context.Context) (*PropertyCategory, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PropertyCategory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPropertyCategory sets the old PropertyCategory of the mutation.
+func withPropertyCategory(node *PropertyCategory) propertycategoryOption {
+	return func(m *PropertyCategoryMutation) {
+		m.oldValue = func(context.Context) (*PropertyCategory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PropertyCategoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PropertyCategoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *PropertyCategoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *PropertyCategoryMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *PropertyCategoryMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *PropertyCategoryMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *PropertyCategoryMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *PropertyCategoryMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *PropertyCategoryMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *PropertyCategoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *PropertyCategoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *PropertyCategoryMutation) ResetName() {
+	m.name = nil
+}
+
+// SetIndex sets the index field.
+func (m *PropertyCategoryMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *PropertyCategoryMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the PropertyCategory.
+// If the PropertyCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyCategoryMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *PropertyCategoryMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
+	}
+}
+
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *PropertyCategoryMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *PropertyCategoryMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+}
+
+// AddPropertiesTypeIDs adds the properties_type edge to PropertyType by ids.
+func (m *PropertyCategoryMutation) AddPropertiesTypeIDs(ids ...int) {
+	if m.properties_type == nil {
+		m.properties_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.properties_type[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPropertiesType clears the properties_type edge to PropertyType.
+func (m *PropertyCategoryMutation) ClearPropertiesType() {
+	m.clearedproperties_type = true
+}
+
+// PropertiesTypeCleared returns if the edge properties_type was cleared.
+func (m *PropertyCategoryMutation) PropertiesTypeCleared() bool {
+	return m.clearedproperties_type
+}
+
+// RemovePropertiesTypeIDs removes the properties_type edge to PropertyType by ids.
+func (m *PropertyCategoryMutation) RemovePropertiesTypeIDs(ids ...int) {
+	if m.removedproperties_type == nil {
+		m.removedproperties_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperties_type[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertiesType returns the removed ids of properties_type.
+func (m *PropertyCategoryMutation) RemovedPropertiesTypeIDs() (ids []int) {
+	for id := range m.removedproperties_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertiesTypeIDs returns the properties_type ids in the mutation.
+func (m *PropertyCategoryMutation) PropertiesTypeIDs() (ids []int) {
+	for id := range m.properties_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertiesType reset all changes of the "properties_type" edge.
+func (m *PropertyCategoryMutation) ResetPropertiesType() {
+	m.properties_type = nil
+	m.clearedproperties_type = false
+	m.removedproperties_type = nil
+}
+
+// SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
+func (m *PropertyCategoryMutation) SetParameterCatalogID(id int) {
+	m.parameter_catalog = &id
+}
+
+// ClearParameterCatalog clears the parameter_catalog edge to ParameterCatalog.
+func (m *PropertyCategoryMutation) ClearParameterCatalog() {
+	m.clearedparameter_catalog = true
+}
+
+// ParameterCatalogCleared returns if the edge parameter_catalog was cleared.
+func (m *PropertyCategoryMutation) ParameterCatalogCleared() bool {
+	return m.clearedparameter_catalog
+}
+
+// ParameterCatalogID returns the parameter_catalog id in the mutation.
+func (m *PropertyCategoryMutation) ParameterCatalogID() (id int, exists bool) {
+	if m.parameter_catalog != nil {
+		return *m.parameter_catalog, true
+	}
+	return
+}
+
+// ParameterCatalogIDs returns the parameter_catalog ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ParameterCatalogID instead. It exists only for internal usage by the builders.
+func (m *PropertyCategoryMutation) ParameterCatalogIDs() (ids []int) {
+	if id := m.parameter_catalog; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParameterCatalog reset all changes of the "parameter_catalog" edge.
+func (m *PropertyCategoryMutation) ResetParameterCatalog() {
+	m.parameter_catalog = nil
+	m.clearedparameter_catalog = false
+}
+
+// Op returns the operation name.
+func (m *PropertyCategoryMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (PropertyCategory).
+func (m *PropertyCategoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *PropertyCategoryMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, propertycategory.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, propertycategory.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, propertycategory.FieldName)
+	}
+	if m.index != nil {
+		fields = append(fields, propertycategory.FieldIndex)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *PropertyCategoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		return m.CreateTime()
+	case propertycategory.FieldUpdateTime:
+		return m.UpdateTime()
+	case propertycategory.FieldName:
+		return m.Name()
+	case propertycategory.FieldIndex:
+		return m.Index()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *PropertyCategoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case propertycategory.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case propertycategory.FieldName:
+		return m.OldName(ctx)
+	case propertycategory.FieldIndex:
+		return m.OldIndex(ctx)
+	}
+	return nil, fmt.Errorf("unknown PropertyCategory field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *PropertyCategoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case propertycategory.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case propertycategory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case propertycategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *PropertyCategoryMutation) AddedFields() []string {
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, propertycategory.FieldIndex)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *PropertyCategoryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case propertycategory.FieldIndex:
+		return m.AddedIndex()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *PropertyCategoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case propertycategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *PropertyCategoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *PropertyCategoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PropertyCategoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown PropertyCategory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *PropertyCategoryMutation) ResetField(name string) error {
+	switch name {
+	case propertycategory.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case propertycategory.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case propertycategory.FieldName:
+		m.ResetName()
+		return nil
+	case propertycategory.FieldIndex:
+		m.ResetIndex()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *PropertyCategoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.properties_type != nil {
+		edges = append(edges, propertycategory.EdgePropertiesType)
+	}
+	if m.parameter_catalog != nil {
+		edges = append(edges, propertycategory.EdgeParameterCatalog)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *PropertyCategoryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		ids := make([]ent.Value, 0, len(m.properties_type))
+		for id := range m.properties_type {
+			ids = append(ids, id)
+		}
+		return ids
+	case propertycategory.EdgeParameterCatalog:
+		if id := m.parameter_catalog; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *PropertyCategoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedproperties_type != nil {
+		edges = append(edges, propertycategory.EdgePropertiesType)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *PropertyCategoryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		ids := make([]ent.Value, 0, len(m.removedproperties_type))
+		for id := range m.removedproperties_type {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *PropertyCategoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedproperties_type {
+		edges = append(edges, propertycategory.EdgePropertiesType)
+	}
+	if m.clearedparameter_catalog {
+		edges = append(edges, propertycategory.EdgeParameterCatalog)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *PropertyCategoryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		return m.clearedproperties_type
+	case propertycategory.EdgeParameterCatalog:
+		return m.clearedparameter_catalog
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *PropertyCategoryMutation) ClearEdge(name string) error {
+	switch name {
+	case propertycategory.EdgeParameterCatalog:
+		m.ClearParameterCatalog()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *PropertyCategoryMutation) ResetEdge(name string) error {
+	switch name {
+	case propertycategory.EdgePropertiesType:
+		m.ResetPropertiesType()
+		return nil
+	case propertycategory.EdgeParameterCatalog:
+		m.ResetParameterCatalog()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyCategory edge %s", name)
 }
 
 // PropertyTypeMutation represents an operation that mutate the PropertyTypes
@@ -48405,14 +49922,16 @@ type PropertyTypeMutation struct {
 	clearedproject_template         bool
 	worker_type                     *int
 	clearedworker_type              bool
-	prop_type                       map[int]struct{}
-	removedprop_type                map[int]struct{}
-	clearedprop_type                bool
-	property_ty                     *int
-	clearedproperty_ty              bool
-	proper_type                     map[int]struct{}
-	removedproper_type              map[int]struct{}
-	clearedproper_type              bool
+	property_type_values            map[int]struct{}
+	removedproperty_type_values     map[int]struct{}
+	clearedproperty_type_values     bool
+	property_type_dependence        *int
+	clearedproperty_type_dependence bool
+	property_type                   map[int]struct{}
+	removedproperty_type            map[int]struct{}
+	clearedproperty_type            bool
+	property_category               *int
+	clearedproperty_category        bool
 	done                            bool
 	oldValue                        func(context.Context) (*PropertyType, error)
 	predicates                      []predicate.PropertyType
@@ -50020,149 +51539,188 @@ func (m *PropertyTypeMutation) ResetWorkerType() {
 	m.clearedworker_type = false
 }
 
-// AddPropTypeIDs adds the prop_type edge to PropertyTypeValue by ids.
-func (m *PropertyTypeMutation) AddPropTypeIDs(ids ...int) {
-	if m.prop_type == nil {
-		m.prop_type = make(map[int]struct{})
+// AddPropertyTypeValueIDs adds the property_type_values edge to PropertyTypeValue by ids.
+func (m *PropertyTypeMutation) AddPropertyTypeValueIDs(ids ...int) {
+	if m.property_type_values == nil {
+		m.property_type_values = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.prop_type[ids[i]] = struct{}{}
+		m.property_type_values[ids[i]] = struct{}{}
 	}
 }
 
-// ClearPropType clears the prop_type edge to PropertyTypeValue.
-func (m *PropertyTypeMutation) ClearPropType() {
-	m.clearedprop_type = true
+// ClearPropertyTypeValues clears the property_type_values edge to PropertyTypeValue.
+func (m *PropertyTypeMutation) ClearPropertyTypeValues() {
+	m.clearedproperty_type_values = true
 }
 
-// PropTypeCleared returns if the edge prop_type was cleared.
-func (m *PropertyTypeMutation) PropTypeCleared() bool {
-	return m.clearedprop_type
+// PropertyTypeValuesCleared returns if the edge property_type_values was cleared.
+func (m *PropertyTypeMutation) PropertyTypeValuesCleared() bool {
+	return m.clearedproperty_type_values
 }
 
-// RemovePropTypeIDs removes the prop_type edge to PropertyTypeValue by ids.
-func (m *PropertyTypeMutation) RemovePropTypeIDs(ids ...int) {
-	if m.removedprop_type == nil {
-		m.removedprop_type = make(map[int]struct{})
+// RemovePropertyTypeValueIDs removes the property_type_values edge to PropertyTypeValue by ids.
+func (m *PropertyTypeMutation) RemovePropertyTypeValueIDs(ids ...int) {
+	if m.removedproperty_type_values == nil {
+		m.removedproperty_type_values = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedprop_type[ids[i]] = struct{}{}
+		m.removedproperty_type_values[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedPropType returns the removed ids of prop_type.
-func (m *PropertyTypeMutation) RemovedPropTypeIDs() (ids []int) {
-	for id := range m.removedprop_type {
+// RemovedPropertyTypeValues returns the removed ids of property_type_values.
+func (m *PropertyTypeMutation) RemovedPropertyTypeValuesIDs() (ids []int) {
+	for id := range m.removedproperty_type_values {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// PropTypeIDs returns the prop_type ids in the mutation.
-func (m *PropertyTypeMutation) PropTypeIDs() (ids []int) {
-	for id := range m.prop_type {
+// PropertyTypeValuesIDs returns the property_type_values ids in the mutation.
+func (m *PropertyTypeMutation) PropertyTypeValuesIDs() (ids []int) {
+	for id := range m.property_type_values {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetPropType reset all changes of the "prop_type" edge.
-func (m *PropertyTypeMutation) ResetPropType() {
-	m.prop_type = nil
-	m.clearedprop_type = false
-	m.removedprop_type = nil
+// ResetPropertyTypeValues reset all changes of the "property_type_values" edge.
+func (m *PropertyTypeMutation) ResetPropertyTypeValues() {
+	m.property_type_values = nil
+	m.clearedproperty_type_values = false
+	m.removedproperty_type_values = nil
 }
 
-// SetPropertyTyID sets the property_ty edge to PropertyType by id.
-func (m *PropertyTypeMutation) SetPropertyTyID(id int) {
-	m.property_ty = &id
+// SetPropertyTypeDependenceID sets the property_type_dependence edge to PropertyType by id.
+func (m *PropertyTypeMutation) SetPropertyTypeDependenceID(id int) {
+	m.property_type_dependence = &id
 }
 
-// ClearPropertyTy clears the property_ty edge to PropertyType.
-func (m *PropertyTypeMutation) ClearPropertyTy() {
-	m.clearedproperty_ty = true
+// ClearPropertyTypeDependence clears the property_type_dependence edge to PropertyType.
+func (m *PropertyTypeMutation) ClearPropertyTypeDependence() {
+	m.clearedproperty_type_dependence = true
 }
 
-// PropertyTyCleared returns if the edge property_ty was cleared.
-func (m *PropertyTypeMutation) PropertyTyCleared() bool {
-	return m.clearedproperty_ty
+// PropertyTypeDependenceCleared returns if the edge property_type_dependence was cleared.
+func (m *PropertyTypeMutation) PropertyTypeDependenceCleared() bool {
+	return m.clearedproperty_type_dependence
 }
 
-// PropertyTyID returns the property_ty id in the mutation.
-func (m *PropertyTypeMutation) PropertyTyID() (id int, exists bool) {
-	if m.property_ty != nil {
-		return *m.property_ty, true
+// PropertyTypeDependenceID returns the property_type_dependence id in the mutation.
+func (m *PropertyTypeMutation) PropertyTypeDependenceID() (id int, exists bool) {
+	if m.property_type_dependence != nil {
+		return *m.property_type_dependence, true
 	}
 	return
 }
 
-// PropertyTyIDs returns the property_ty ids in the mutation.
+// PropertyTypeDependenceIDs returns the property_type_dependence ids in the mutation.
 // Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// PropertyTyID instead. It exists only for internal usage by the builders.
-func (m *PropertyTypeMutation) PropertyTyIDs() (ids []int) {
-	if id := m.property_ty; id != nil {
+// PropertyTypeDependenceID instead. It exists only for internal usage by the builders.
+func (m *PropertyTypeMutation) PropertyTypeDependenceIDs() (ids []int) {
+	if id := m.property_type_dependence; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetPropertyTy reset all changes of the "property_ty" edge.
-func (m *PropertyTypeMutation) ResetPropertyTy() {
-	m.property_ty = nil
-	m.clearedproperty_ty = false
+// ResetPropertyTypeDependence reset all changes of the "property_type_dependence" edge.
+func (m *PropertyTypeMutation) ResetPropertyTypeDependence() {
+	m.property_type_dependence = nil
+	m.clearedproperty_type_dependence = false
 }
 
-// AddProperTypeIDs adds the proper_type edge to PropertyType by ids.
-func (m *PropertyTypeMutation) AddProperTypeIDs(ids ...int) {
-	if m.proper_type == nil {
-		m.proper_type = make(map[int]struct{})
+// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
+func (m *PropertyTypeMutation) AddPropertyTypeIDs(ids ...int) {
+	if m.property_type == nil {
+		m.property_type = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.proper_type[ids[i]] = struct{}{}
+		m.property_type[ids[i]] = struct{}{}
 	}
 }
 
-// ClearProperType clears the proper_type edge to PropertyType.
-func (m *PropertyTypeMutation) ClearProperType() {
-	m.clearedproper_type = true
+// ClearPropertyType clears the property_type edge to PropertyType.
+func (m *PropertyTypeMutation) ClearPropertyType() {
+	m.clearedproperty_type = true
 }
 
-// ProperTypeCleared returns if the edge proper_type was cleared.
-func (m *PropertyTypeMutation) ProperTypeCleared() bool {
-	return m.clearedproper_type
+// PropertyTypeCleared returns if the edge property_type was cleared.
+func (m *PropertyTypeMutation) PropertyTypeCleared() bool {
+	return m.clearedproperty_type
 }
 
-// RemoveProperTypeIDs removes the proper_type edge to PropertyType by ids.
-func (m *PropertyTypeMutation) RemoveProperTypeIDs(ids ...int) {
-	if m.removedproper_type == nil {
-		m.removedproper_type = make(map[int]struct{})
+// RemovePropertyTypeIDs removes the property_type edge to PropertyType by ids.
+func (m *PropertyTypeMutation) RemovePropertyTypeIDs(ids ...int) {
+	if m.removedproperty_type == nil {
+		m.removedproperty_type = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedproper_type[ids[i]] = struct{}{}
+		m.removedproperty_type[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedProperType returns the removed ids of proper_type.
-func (m *PropertyTypeMutation) RemovedProperTypeIDs() (ids []int) {
-	for id := range m.removedproper_type {
+// RemovedPropertyType returns the removed ids of property_type.
+func (m *PropertyTypeMutation) RemovedPropertyTypeIDs() (ids []int) {
+	for id := range m.removedproperty_type {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ProperTypeIDs returns the proper_type ids in the mutation.
-func (m *PropertyTypeMutation) ProperTypeIDs() (ids []int) {
-	for id := range m.proper_type {
+// PropertyTypeIDs returns the property_type ids in the mutation.
+func (m *PropertyTypeMutation) PropertyTypeIDs() (ids []int) {
+	for id := range m.property_type {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetProperType reset all changes of the "proper_type" edge.
-func (m *PropertyTypeMutation) ResetProperType() {
-	m.proper_type = nil
-	m.clearedproper_type = false
-	m.removedproper_type = nil
+// ResetPropertyType reset all changes of the "property_type" edge.
+func (m *PropertyTypeMutation) ResetPropertyType() {
+	m.property_type = nil
+	m.clearedproperty_type = false
+	m.removedproperty_type = nil
+}
+
+// SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
+func (m *PropertyTypeMutation) SetPropertyCategoryID(id int) {
+	m.property_category = &id
+}
+
+// ClearPropertyCategory clears the property_category edge to PropertyCategory.
+func (m *PropertyTypeMutation) ClearPropertyCategory() {
+	m.clearedproperty_category = true
+}
+
+// PropertyCategoryCleared returns if the edge property_category was cleared.
+func (m *PropertyTypeMutation) PropertyCategoryCleared() bool {
+	return m.clearedproperty_category
+}
+
+// PropertyCategoryID returns the property_category id in the mutation.
+func (m *PropertyTypeMutation) PropertyCategoryID() (id int, exists bool) {
+	if m.property_category != nil {
+		return *m.property_category, true
+	}
+	return
+}
+
+// PropertyCategoryIDs returns the property_category ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// PropertyCategoryID instead. It exists only for internal usage by the builders.
+func (m *PropertyTypeMutation) PropertyCategoryIDs() (ids []int) {
+	if id := m.property_category; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPropertyCategory reset all changes of the "property_category" edge.
+func (m *PropertyTypeMutation) ResetPropertyCategory() {
+	m.property_category = nil
+	m.clearedproperty_category = false
 }
 
 // Op returns the operation name.
@@ -50782,7 +52340,7 @@ func (m *PropertyTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PropertyTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 15)
 	if m.properties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -50816,14 +52374,17 @@ func (m *PropertyTypeMutation) AddedEdges() []string {
 	if m.worker_type != nil {
 		edges = append(edges, propertytype.EdgeWorkerType)
 	}
-	if m.prop_type != nil {
-		edges = append(edges, propertytype.EdgePropType)
+	if m.property_type_values != nil {
+		edges = append(edges, propertytype.EdgePropertyTypeValues)
 	}
-	if m.property_ty != nil {
-		edges = append(edges, propertytype.EdgePropertyTy)
+	if m.property_type_dependence != nil {
+		edges = append(edges, propertytype.EdgePropertyTypeDependence)
 	}
-	if m.proper_type != nil {
-		edges = append(edges, propertytype.EdgeProperType)
+	if m.property_type != nil {
+		edges = append(edges, propertytype.EdgePropertyType)
+	}
+	if m.property_category != nil {
+		edges = append(edges, propertytype.EdgePropertyCategory)
 	}
 	return edges
 }
@@ -50878,22 +52439,26 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 		if id := m.worker_type; id != nil {
 			return []ent.Value{*id}
 		}
-	case propertytype.EdgePropType:
-		ids := make([]ent.Value, 0, len(m.prop_type))
-		for id := range m.prop_type {
+	case propertytype.EdgePropertyTypeValues:
+		ids := make([]ent.Value, 0, len(m.property_type_values))
+		for id := range m.property_type_values {
 			ids = append(ids, id)
 		}
 		return ids
-	case propertytype.EdgePropertyTy:
-		if id := m.property_ty; id != nil {
+	case propertytype.EdgePropertyTypeDependence:
+		if id := m.property_type_dependence; id != nil {
 			return []ent.Value{*id}
 		}
-	case propertytype.EdgeProperType:
-		ids := make([]ent.Value, 0, len(m.proper_type))
-		for id := range m.proper_type {
+	case propertytype.EdgePropertyType:
+		ids := make([]ent.Value, 0, len(m.property_type))
+		for id := range m.property_type {
 			ids = append(ids, id)
 		}
 		return ids
+	case propertytype.EdgePropertyCategory:
+		if id := m.property_category; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -50901,15 +52466,15 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PropertyTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 15)
 	if m.removedproperties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
-	if m.removedprop_type != nil {
-		edges = append(edges, propertytype.EdgePropType)
+	if m.removedproperty_type_values != nil {
+		edges = append(edges, propertytype.EdgePropertyTypeValues)
 	}
-	if m.removedproper_type != nil {
-		edges = append(edges, propertytype.EdgeProperType)
+	if m.removedproperty_type != nil {
+		edges = append(edges, propertytype.EdgePropertyType)
 	}
 	return edges
 }
@@ -50924,15 +52489,15 @@ func (m *PropertyTypeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case propertytype.EdgePropType:
-		ids := make([]ent.Value, 0, len(m.removedprop_type))
-		for id := range m.removedprop_type {
+	case propertytype.EdgePropertyTypeValues:
+		ids := make([]ent.Value, 0, len(m.removedproperty_type_values))
+		for id := range m.removedproperty_type_values {
 			ids = append(ids, id)
 		}
 		return ids
-	case propertytype.EdgeProperType:
-		ids := make([]ent.Value, 0, len(m.removedproper_type))
-		for id := range m.removedproper_type {
+	case propertytype.EdgePropertyType:
+		ids := make([]ent.Value, 0, len(m.removedproperty_type))
+		for id := range m.removedproperty_type {
 			ids = append(ids, id)
 		}
 		return ids
@@ -50943,7 +52508,7 @@ func (m *PropertyTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PropertyTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 15)
 	if m.clearedproperties {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -50977,14 +52542,17 @@ func (m *PropertyTypeMutation) ClearedEdges() []string {
 	if m.clearedworker_type {
 		edges = append(edges, propertytype.EdgeWorkerType)
 	}
-	if m.clearedprop_type {
-		edges = append(edges, propertytype.EdgePropType)
+	if m.clearedproperty_type_values {
+		edges = append(edges, propertytype.EdgePropertyTypeValues)
 	}
-	if m.clearedproperty_ty {
-		edges = append(edges, propertytype.EdgePropertyTy)
+	if m.clearedproperty_type_dependence {
+		edges = append(edges, propertytype.EdgePropertyTypeDependence)
 	}
-	if m.clearedproper_type {
-		edges = append(edges, propertytype.EdgeProperType)
+	if m.clearedproperty_type {
+		edges = append(edges, propertytype.EdgePropertyType)
+	}
+	if m.clearedproperty_category {
+		edges = append(edges, propertytype.EdgePropertyCategory)
 	}
 	return edges
 }
@@ -51015,12 +52583,14 @@ func (m *PropertyTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedproject_template
 	case propertytype.EdgeWorkerType:
 		return m.clearedworker_type
-	case propertytype.EdgePropType:
-		return m.clearedprop_type
-	case propertytype.EdgePropertyTy:
-		return m.clearedproperty_ty
-	case propertytype.EdgeProperType:
-		return m.clearedproper_type
+	case propertytype.EdgePropertyTypeValues:
+		return m.clearedproperty_type_values
+	case propertytype.EdgePropertyTypeDependence:
+		return m.clearedproperty_type_dependence
+	case propertytype.EdgePropertyType:
+		return m.clearedproperty_type
+	case propertytype.EdgePropertyCategory:
+		return m.clearedproperty_category
 	}
 	return false
 }
@@ -51059,8 +52629,11 @@ func (m *PropertyTypeMutation) ClearEdge(name string) error {
 	case propertytype.EdgeWorkerType:
 		m.ClearWorkerType()
 		return nil
-	case propertytype.EdgePropertyTy:
-		m.ClearPropertyTy()
+	case propertytype.EdgePropertyTypeDependence:
+		m.ClearPropertyTypeDependence()
+		return nil
+	case propertytype.EdgePropertyCategory:
+		m.ClearPropertyCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType unique edge %s", name)
@@ -51104,14 +52677,17 @@ func (m *PropertyTypeMutation) ResetEdge(name string) error {
 	case propertytype.EdgeWorkerType:
 		m.ResetWorkerType()
 		return nil
-	case propertytype.EdgePropType:
-		m.ResetPropType()
+	case propertytype.EdgePropertyTypeValues:
+		m.ResetPropertyTypeValues()
 		return nil
-	case propertytype.EdgePropertyTy:
-		m.ResetPropertyTy()
+	case propertytype.EdgePropertyTypeDependence:
+		m.ResetPropertyTypeDependence()
 		return nil
-	case propertytype.EdgeProperType:
-		m.ResetProperType()
+	case propertytype.EdgePropertyType:
+		m.ResetPropertyType()
+		return nil
+	case propertytype.EdgePropertyCategory:
+		m.ResetPropertyCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType edge %s", name)
@@ -51121,23 +52697,26 @@ func (m *PropertyTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type PropertyTypeValueMutation struct {
 	config
-	op                     Op
-	typ                    string
-	id                     *int
-	create_time            *time.Time
-	update_time            *time.Time
-	name                   *string
-	clearedFields          map[string]struct{}
-	property_type          *int
-	clearedproperty_type   bool
-	pro_typ_val            *int
-	clearedpro_typ_val     bool
-	prop_type_value        map[int]struct{}
-	removedprop_type_value map[int]struct{}
-	clearedprop_type_value bool
-	done                   bool
-	oldValue               func(context.Context) (*PropertyTypeValue, error)
-	predicates             []predicate.PropertyTypeValue
+	op                                    Op
+	typ                                   string
+	id                                    *int
+	create_time                           *time.Time
+	update_time                           *time.Time
+	name                                  *string
+	clearedFields                         map[string]struct{}
+	property_type                         *int
+	clearedproperty_type                  bool
+	property_value                        map[int]struct{}
+	removedproperty_value                 map[int]struct{}
+	clearedproperty_value                 bool
+	property_type_value_dependence        *int
+	clearedproperty_type_value_dependence bool
+	property_type_value                   map[int]struct{}
+	removedproperty_type_value            map[int]struct{}
+	clearedproperty_type_value            bool
+	done                                  bool
+	oldValue                              func(context.Context) (*PropertyTypeValue, error)
+	predicates                            []predicate.PropertyTypeValue
 }
 
 var _ ent.Mutation = (*PropertyTypeValueMutation)(nil)
@@ -51369,96 +52948,149 @@ func (m *PropertyTypeValueMutation) ResetPropertyType() {
 	m.clearedproperty_type = false
 }
 
-// SetProTypValID sets the pro_typ_val edge to PropertyTypeValue by id.
-func (m *PropertyTypeValueMutation) SetProTypValID(id int) {
-	m.pro_typ_val = &id
+// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
+func (m *PropertyTypeValueMutation) AddPropertyValueIDs(ids ...int) {
+	if m.property_value == nil {
+		m.property_value = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.property_value[ids[i]] = struct{}{}
+	}
 }
 
-// ClearProTypVal clears the pro_typ_val edge to PropertyTypeValue.
-func (m *PropertyTypeValueMutation) ClearProTypVal() {
-	m.clearedpro_typ_val = true
+// ClearPropertyValue clears the property_value edge to PropertyValue.
+func (m *PropertyTypeValueMutation) ClearPropertyValue() {
+	m.clearedproperty_value = true
 }
 
-// ProTypValCleared returns if the edge pro_typ_val was cleared.
-func (m *PropertyTypeValueMutation) ProTypValCleared() bool {
-	return m.clearedpro_typ_val
+// PropertyValueCleared returns if the edge property_value was cleared.
+func (m *PropertyTypeValueMutation) PropertyValueCleared() bool {
+	return m.clearedproperty_value
 }
 
-// ProTypValID returns the pro_typ_val id in the mutation.
-func (m *PropertyTypeValueMutation) ProTypValID() (id int, exists bool) {
-	if m.pro_typ_val != nil {
-		return *m.pro_typ_val, true
+// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
+func (m *PropertyTypeValueMutation) RemovePropertyValueIDs(ids ...int) {
+	if m.removedproperty_value == nil {
+		m.removedproperty_value = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperty_value[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertyValue returns the removed ids of property_value.
+func (m *PropertyTypeValueMutation) RemovedPropertyValueIDs() (ids []int) {
+	for id := range m.removedproperty_value {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// ProTypValIDs returns the pro_typ_val ids in the mutation.
+// PropertyValueIDs returns the property_value ids in the mutation.
+func (m *PropertyTypeValueMutation) PropertyValueIDs() (ids []int) {
+	for id := range m.property_value {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertyValue reset all changes of the "property_value" edge.
+func (m *PropertyTypeValueMutation) ResetPropertyValue() {
+	m.property_value = nil
+	m.clearedproperty_value = false
+	m.removedproperty_value = nil
+}
+
+// SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
+func (m *PropertyTypeValueMutation) SetPropertyTypeValueDependenceID(id int) {
+	m.property_type_value_dependence = &id
+}
+
+// ClearPropertyTypeValueDependence clears the property_type_value_dependence edge to PropertyTypeValue.
+func (m *PropertyTypeValueMutation) ClearPropertyTypeValueDependence() {
+	m.clearedproperty_type_value_dependence = true
+}
+
+// PropertyTypeValueDependenceCleared returns if the edge property_type_value_dependence was cleared.
+func (m *PropertyTypeValueMutation) PropertyTypeValueDependenceCleared() bool {
+	return m.clearedproperty_type_value_dependence
+}
+
+// PropertyTypeValueDependenceID returns the property_type_value_dependence id in the mutation.
+func (m *PropertyTypeValueMutation) PropertyTypeValueDependenceID() (id int, exists bool) {
+	if m.property_type_value_dependence != nil {
+		return *m.property_type_value_dependence, true
+	}
+	return
+}
+
+// PropertyTypeValueDependenceIDs returns the property_type_value_dependence ids in the mutation.
 // Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// ProTypValID instead. It exists only for internal usage by the builders.
-func (m *PropertyTypeValueMutation) ProTypValIDs() (ids []int) {
-	if id := m.pro_typ_val; id != nil {
+// PropertyTypeValueDependenceID instead. It exists only for internal usage by the builders.
+func (m *PropertyTypeValueMutation) PropertyTypeValueDependenceIDs() (ids []int) {
+	if id := m.property_type_value_dependence; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetProTypVal reset all changes of the "pro_typ_val" edge.
-func (m *PropertyTypeValueMutation) ResetProTypVal() {
-	m.pro_typ_val = nil
-	m.clearedpro_typ_val = false
+// ResetPropertyTypeValueDependence reset all changes of the "property_type_value_dependence" edge.
+func (m *PropertyTypeValueMutation) ResetPropertyTypeValueDependence() {
+	m.property_type_value_dependence = nil
+	m.clearedproperty_type_value_dependence = false
 }
 
-// AddPropTypeValueIDs adds the prop_type_value edge to PropertyTypeValue by ids.
-func (m *PropertyTypeValueMutation) AddPropTypeValueIDs(ids ...int) {
-	if m.prop_type_value == nil {
-		m.prop_type_value = make(map[int]struct{})
+// AddPropertyTypeValueIDs adds the property_type_value edge to PropertyTypeValue by ids.
+func (m *PropertyTypeValueMutation) AddPropertyTypeValueIDs(ids ...int) {
+	if m.property_type_value == nil {
+		m.property_type_value = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.prop_type_value[ids[i]] = struct{}{}
+		m.property_type_value[ids[i]] = struct{}{}
 	}
 }
 
-// ClearPropTypeValue clears the prop_type_value edge to PropertyTypeValue.
-func (m *PropertyTypeValueMutation) ClearPropTypeValue() {
-	m.clearedprop_type_value = true
+// ClearPropertyTypeValue clears the property_type_value edge to PropertyTypeValue.
+func (m *PropertyTypeValueMutation) ClearPropertyTypeValue() {
+	m.clearedproperty_type_value = true
 }
 
-// PropTypeValueCleared returns if the edge prop_type_value was cleared.
-func (m *PropertyTypeValueMutation) PropTypeValueCleared() bool {
-	return m.clearedprop_type_value
+// PropertyTypeValueCleared returns if the edge property_type_value was cleared.
+func (m *PropertyTypeValueMutation) PropertyTypeValueCleared() bool {
+	return m.clearedproperty_type_value
 }
 
-// RemovePropTypeValueIDs removes the prop_type_value edge to PropertyTypeValue by ids.
-func (m *PropertyTypeValueMutation) RemovePropTypeValueIDs(ids ...int) {
-	if m.removedprop_type_value == nil {
-		m.removedprop_type_value = make(map[int]struct{})
+// RemovePropertyTypeValueIDs removes the property_type_value edge to PropertyTypeValue by ids.
+func (m *PropertyTypeValueMutation) RemovePropertyTypeValueIDs(ids ...int) {
+	if m.removedproperty_type_value == nil {
+		m.removedproperty_type_value = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedprop_type_value[ids[i]] = struct{}{}
+		m.removedproperty_type_value[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedPropTypeValue returns the removed ids of prop_type_value.
-func (m *PropertyTypeValueMutation) RemovedPropTypeValueIDs() (ids []int) {
-	for id := range m.removedprop_type_value {
+// RemovedPropertyTypeValue returns the removed ids of property_type_value.
+func (m *PropertyTypeValueMutation) RemovedPropertyTypeValueIDs() (ids []int) {
+	for id := range m.removedproperty_type_value {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// PropTypeValueIDs returns the prop_type_value ids in the mutation.
-func (m *PropertyTypeValueMutation) PropTypeValueIDs() (ids []int) {
-	for id := range m.prop_type_value {
+// PropertyTypeValueIDs returns the property_type_value ids in the mutation.
+func (m *PropertyTypeValueMutation) PropertyTypeValueIDs() (ids []int) {
+	for id := range m.property_type_value {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetPropTypeValue reset all changes of the "prop_type_value" edge.
-func (m *PropertyTypeValueMutation) ResetPropTypeValue() {
-	m.prop_type_value = nil
-	m.clearedprop_type_value = false
-	m.removedprop_type_value = nil
+// ResetPropertyTypeValue reset all changes of the "property_type_value" edge.
+func (m *PropertyTypeValueMutation) ResetPropertyTypeValue() {
+	m.property_type_value = nil
+	m.clearedproperty_type_value = false
+	m.removedproperty_type_value = nil
 }
 
 // Op returns the operation name.
@@ -51610,15 +53242,18 @@ func (m *PropertyTypeValueMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PropertyTypeValueMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.property_type != nil {
 		edges = append(edges, propertytypevalue.EdgePropertyType)
 	}
-	if m.pro_typ_val != nil {
-		edges = append(edges, propertytypevalue.EdgeProTypVal)
+	if m.property_value != nil {
+		edges = append(edges, propertytypevalue.EdgePropertyValue)
 	}
-	if m.prop_type_value != nil {
-		edges = append(edges, propertytypevalue.EdgePropTypeValue)
+	if m.property_type_value_dependence != nil {
+		edges = append(edges, propertytypevalue.EdgePropertyTypeValueDependence)
+	}
+	if m.property_type_value != nil {
+		edges = append(edges, propertytypevalue.EdgePropertyTypeValue)
 	}
 	return edges
 }
@@ -51631,13 +53266,19 @@ func (m *PropertyTypeValueMutation) AddedIDs(name string) []ent.Value {
 		if id := m.property_type; id != nil {
 			return []ent.Value{*id}
 		}
-	case propertytypevalue.EdgeProTypVal:
-		if id := m.pro_typ_val; id != nil {
+	case propertytypevalue.EdgePropertyValue:
+		ids := make([]ent.Value, 0, len(m.property_value))
+		for id := range m.property_value {
+			ids = append(ids, id)
+		}
+		return ids
+	case propertytypevalue.EdgePropertyTypeValueDependence:
+		if id := m.property_type_value_dependence; id != nil {
 			return []ent.Value{*id}
 		}
-	case propertytypevalue.EdgePropTypeValue:
-		ids := make([]ent.Value, 0, len(m.prop_type_value))
-		for id := range m.prop_type_value {
+	case propertytypevalue.EdgePropertyTypeValue:
+		ids := make([]ent.Value, 0, len(m.property_type_value))
+		for id := range m.property_type_value {
 			ids = append(ids, id)
 		}
 		return ids
@@ -51648,9 +53289,12 @@ func (m *PropertyTypeValueMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PropertyTypeValueMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.removedprop_type_value != nil {
-		edges = append(edges, propertytypevalue.EdgePropTypeValue)
+	edges := make([]string, 0, 4)
+	if m.removedproperty_value != nil {
+		edges = append(edges, propertytypevalue.EdgePropertyValue)
+	}
+	if m.removedproperty_type_value != nil {
+		edges = append(edges, propertytypevalue.EdgePropertyTypeValue)
 	}
 	return edges
 }
@@ -51659,9 +53303,15 @@ func (m *PropertyTypeValueMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *PropertyTypeValueMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case propertytypevalue.EdgePropTypeValue:
-		ids := make([]ent.Value, 0, len(m.removedprop_type_value))
-		for id := range m.removedprop_type_value {
+	case propertytypevalue.EdgePropertyValue:
+		ids := make([]ent.Value, 0, len(m.removedproperty_value))
+		for id := range m.removedproperty_value {
+			ids = append(ids, id)
+		}
+		return ids
+	case propertytypevalue.EdgePropertyTypeValue:
+		ids := make([]ent.Value, 0, len(m.removedproperty_type_value))
+		for id := range m.removedproperty_type_value {
 			ids = append(ids, id)
 		}
 		return ids
@@ -51672,15 +53322,18 @@ func (m *PropertyTypeValueMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PropertyTypeValueMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedproperty_type {
 		edges = append(edges, propertytypevalue.EdgePropertyType)
 	}
-	if m.clearedpro_typ_val {
-		edges = append(edges, propertytypevalue.EdgeProTypVal)
+	if m.clearedproperty_value {
+		edges = append(edges, propertytypevalue.EdgePropertyValue)
 	}
-	if m.clearedprop_type_value {
-		edges = append(edges, propertytypevalue.EdgePropTypeValue)
+	if m.clearedproperty_type_value_dependence {
+		edges = append(edges, propertytypevalue.EdgePropertyTypeValueDependence)
+	}
+	if m.clearedproperty_type_value {
+		edges = append(edges, propertytypevalue.EdgePropertyTypeValue)
 	}
 	return edges
 }
@@ -51691,10 +53344,12 @@ func (m *PropertyTypeValueMutation) EdgeCleared(name string) bool {
 	switch name {
 	case propertytypevalue.EdgePropertyType:
 		return m.clearedproperty_type
-	case propertytypevalue.EdgeProTypVal:
-		return m.clearedpro_typ_val
-	case propertytypevalue.EdgePropTypeValue:
-		return m.clearedprop_type_value
+	case propertytypevalue.EdgePropertyValue:
+		return m.clearedproperty_value
+	case propertytypevalue.EdgePropertyTypeValueDependence:
+		return m.clearedproperty_type_value_dependence
+	case propertytypevalue.EdgePropertyTypeValue:
+		return m.clearedproperty_type_value
 	}
 	return false
 }
@@ -51706,8 +53361,8 @@ func (m *PropertyTypeValueMutation) ClearEdge(name string) error {
 	case propertytypevalue.EdgePropertyType:
 		m.ClearPropertyType()
 		return nil
-	case propertytypevalue.EdgeProTypVal:
-		m.ClearProTypVal()
+	case propertytypevalue.EdgePropertyTypeValueDependence:
+		m.ClearPropertyTypeValueDependence()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyTypeValue unique edge %s", name)
@@ -51721,14 +53376,690 @@ func (m *PropertyTypeValueMutation) ResetEdge(name string) error {
 	case propertytypevalue.EdgePropertyType:
 		m.ResetPropertyType()
 		return nil
-	case propertytypevalue.EdgeProTypVal:
-		m.ResetProTypVal()
+	case propertytypevalue.EdgePropertyValue:
+		m.ResetPropertyValue()
 		return nil
-	case propertytypevalue.EdgePropTypeValue:
-		m.ResetPropTypeValue()
+	case propertytypevalue.EdgePropertyTypeValueDependence:
+		m.ResetPropertyTypeValueDependence()
+		return nil
+	case propertytypevalue.EdgePropertyTypeValue:
+		m.ResetPropertyTypeValue()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyTypeValue edge %s", name)
+}
+
+// PropertyValueMutation represents an operation that mutate the PropertyValues
+// nodes in the graph.
+type PropertyValueMutation struct {
+	config
+	op                               Op
+	typ                              string
+	id                               *int
+	create_time                      *time.Time
+	update_time                      *time.Time
+	name                             *string
+	clearedFields                    map[string]struct{}
+	property                         *int
+	clearedproperty                  bool
+	property_type_value              *int
+	clearedproperty_type_value       bool
+	property_value_dependence        *int
+	clearedproperty_value_dependence bool
+	property_value                   map[int]struct{}
+	removedproperty_value            map[int]struct{}
+	clearedproperty_value            bool
+	done                             bool
+	oldValue                         func(context.Context) (*PropertyValue, error)
+	predicates                       []predicate.PropertyValue
+}
+
+var _ ent.Mutation = (*PropertyValueMutation)(nil)
+
+// propertyvalueOption allows to manage the mutation configuration using functional options.
+type propertyvalueOption func(*PropertyValueMutation)
+
+// newPropertyValueMutation creates new mutation for PropertyValue.
+func newPropertyValueMutation(c config, op Op, opts ...propertyvalueOption) *PropertyValueMutation {
+	m := &PropertyValueMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePropertyValue,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPropertyValueID sets the id field of the mutation.
+func withPropertyValueID(id int) propertyvalueOption {
+	return func(m *PropertyValueMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PropertyValue
+		)
+		m.oldValue = func(ctx context.Context) (*PropertyValue, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PropertyValue.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPropertyValue sets the old PropertyValue of the mutation.
+func withPropertyValue(node *PropertyValue) propertyvalueOption {
+	return func(m *PropertyValueMutation) {
+		m.oldValue = func(context.Context) (*PropertyValue, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PropertyValueMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PropertyValueMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *PropertyValueMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *PropertyValueMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *PropertyValueMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the PropertyValue.
+// If the PropertyValue object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyValueMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *PropertyValueMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *PropertyValueMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *PropertyValueMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the PropertyValue.
+// If the PropertyValue object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyValueMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *PropertyValueMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *PropertyValueMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *PropertyValueMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the PropertyValue.
+// If the PropertyValue object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PropertyValueMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *PropertyValueMutation) ResetName() {
+	m.name = nil
+}
+
+// SetPropertyID sets the property edge to Property by id.
+func (m *PropertyValueMutation) SetPropertyID(id int) {
+	m.property = &id
+}
+
+// ClearProperty clears the property edge to Property.
+func (m *PropertyValueMutation) ClearProperty() {
+	m.clearedproperty = true
+}
+
+// PropertyCleared returns if the edge property was cleared.
+func (m *PropertyValueMutation) PropertyCleared() bool {
+	return m.clearedproperty
+}
+
+// PropertyID returns the property id in the mutation.
+func (m *PropertyValueMutation) PropertyID() (id int, exists bool) {
+	if m.property != nil {
+		return *m.property, true
+	}
+	return
+}
+
+// PropertyIDs returns the property ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// PropertyID instead. It exists only for internal usage by the builders.
+func (m *PropertyValueMutation) PropertyIDs() (ids []int) {
+	if id := m.property; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetProperty reset all changes of the "property" edge.
+func (m *PropertyValueMutation) ResetProperty() {
+	m.property = nil
+	m.clearedproperty = false
+}
+
+// SetPropertyTypeValueID sets the property_type_value edge to PropertyTypeValue by id.
+func (m *PropertyValueMutation) SetPropertyTypeValueID(id int) {
+	m.property_type_value = &id
+}
+
+// ClearPropertyTypeValue clears the property_type_value edge to PropertyTypeValue.
+func (m *PropertyValueMutation) ClearPropertyTypeValue() {
+	m.clearedproperty_type_value = true
+}
+
+// PropertyTypeValueCleared returns if the edge property_type_value was cleared.
+func (m *PropertyValueMutation) PropertyTypeValueCleared() bool {
+	return m.clearedproperty_type_value
+}
+
+// PropertyTypeValueID returns the property_type_value id in the mutation.
+func (m *PropertyValueMutation) PropertyTypeValueID() (id int, exists bool) {
+	if m.property_type_value != nil {
+		return *m.property_type_value, true
+	}
+	return
+}
+
+// PropertyTypeValueIDs returns the property_type_value ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// PropertyTypeValueID instead. It exists only for internal usage by the builders.
+func (m *PropertyValueMutation) PropertyTypeValueIDs() (ids []int) {
+	if id := m.property_type_value; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPropertyTypeValue reset all changes of the "property_type_value" edge.
+func (m *PropertyValueMutation) ResetPropertyTypeValue() {
+	m.property_type_value = nil
+	m.clearedproperty_type_value = false
+}
+
+// SetPropertyValueDependenceID sets the property_value_dependence edge to PropertyValue by id.
+func (m *PropertyValueMutation) SetPropertyValueDependenceID(id int) {
+	m.property_value_dependence = &id
+}
+
+// ClearPropertyValueDependence clears the property_value_dependence edge to PropertyValue.
+func (m *PropertyValueMutation) ClearPropertyValueDependence() {
+	m.clearedproperty_value_dependence = true
+}
+
+// PropertyValueDependenceCleared returns if the edge property_value_dependence was cleared.
+func (m *PropertyValueMutation) PropertyValueDependenceCleared() bool {
+	return m.clearedproperty_value_dependence
+}
+
+// PropertyValueDependenceID returns the property_value_dependence id in the mutation.
+func (m *PropertyValueMutation) PropertyValueDependenceID() (id int, exists bool) {
+	if m.property_value_dependence != nil {
+		return *m.property_value_dependence, true
+	}
+	return
+}
+
+// PropertyValueDependenceIDs returns the property_value_dependence ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// PropertyValueDependenceID instead. It exists only for internal usage by the builders.
+func (m *PropertyValueMutation) PropertyValueDependenceIDs() (ids []int) {
+	if id := m.property_value_dependence; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPropertyValueDependence reset all changes of the "property_value_dependence" edge.
+func (m *PropertyValueMutation) ResetPropertyValueDependence() {
+	m.property_value_dependence = nil
+	m.clearedproperty_value_dependence = false
+}
+
+// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
+func (m *PropertyValueMutation) AddPropertyValueIDs(ids ...int) {
+	if m.property_value == nil {
+		m.property_value = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.property_value[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPropertyValue clears the property_value edge to PropertyValue.
+func (m *PropertyValueMutation) ClearPropertyValue() {
+	m.clearedproperty_value = true
+}
+
+// PropertyValueCleared returns if the edge property_value was cleared.
+func (m *PropertyValueMutation) PropertyValueCleared() bool {
+	return m.clearedproperty_value
+}
+
+// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
+func (m *PropertyValueMutation) RemovePropertyValueIDs(ids ...int) {
+	if m.removedproperty_value == nil {
+		m.removedproperty_value = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperty_value[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertyValue returns the removed ids of property_value.
+func (m *PropertyValueMutation) RemovedPropertyValueIDs() (ids []int) {
+	for id := range m.removedproperty_value {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertyValueIDs returns the property_value ids in the mutation.
+func (m *PropertyValueMutation) PropertyValueIDs() (ids []int) {
+	for id := range m.property_value {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertyValue reset all changes of the "property_value" edge.
+func (m *PropertyValueMutation) ResetPropertyValue() {
+	m.property_value = nil
+	m.clearedproperty_value = false
+	m.removedproperty_value = nil
+}
+
+// Op returns the operation name.
+func (m *PropertyValueMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (PropertyValue).
+func (m *PropertyValueMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *PropertyValueMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, propertyvalue.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, propertyvalue.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, propertyvalue.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *PropertyValueMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case propertyvalue.FieldCreateTime:
+		return m.CreateTime()
+	case propertyvalue.FieldUpdateTime:
+		return m.UpdateTime()
+	case propertyvalue.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *PropertyValueMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case propertyvalue.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case propertyvalue.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case propertyvalue.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown PropertyValue field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *PropertyValueMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case propertyvalue.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case propertyvalue.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case propertyvalue.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyValue field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *PropertyValueMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *PropertyValueMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *PropertyValueMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown PropertyValue numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *PropertyValueMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *PropertyValueMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PropertyValueMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown PropertyValue nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *PropertyValueMutation) ResetField(name string) error {
+	switch name {
+	case propertyvalue.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case propertyvalue.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case propertyvalue.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyValue field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *PropertyValueMutation) AddedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.property != nil {
+		edges = append(edges, propertyvalue.EdgeProperty)
+	}
+	if m.property_type_value != nil {
+		edges = append(edges, propertyvalue.EdgePropertyTypeValue)
+	}
+	if m.property_value_dependence != nil {
+		edges = append(edges, propertyvalue.EdgePropertyValueDependence)
+	}
+	if m.property_value != nil {
+		edges = append(edges, propertyvalue.EdgePropertyValue)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *PropertyValueMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case propertyvalue.EdgeProperty:
+		if id := m.property; id != nil {
+			return []ent.Value{*id}
+		}
+	case propertyvalue.EdgePropertyTypeValue:
+		if id := m.property_type_value; id != nil {
+			return []ent.Value{*id}
+		}
+	case propertyvalue.EdgePropertyValueDependence:
+		if id := m.property_value_dependence; id != nil {
+			return []ent.Value{*id}
+		}
+	case propertyvalue.EdgePropertyValue:
+		ids := make([]ent.Value, 0, len(m.property_value))
+		for id := range m.property_value {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *PropertyValueMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.removedproperty_value != nil {
+		edges = append(edges, propertyvalue.EdgePropertyValue)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *PropertyValueMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case propertyvalue.EdgePropertyValue:
+		ids := make([]ent.Value, 0, len(m.removedproperty_value))
+		for id := range m.removedproperty_value {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *PropertyValueMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.clearedproperty {
+		edges = append(edges, propertyvalue.EdgeProperty)
+	}
+	if m.clearedproperty_type_value {
+		edges = append(edges, propertyvalue.EdgePropertyTypeValue)
+	}
+	if m.clearedproperty_value_dependence {
+		edges = append(edges, propertyvalue.EdgePropertyValueDependence)
+	}
+	if m.clearedproperty_value {
+		edges = append(edges, propertyvalue.EdgePropertyValue)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *PropertyValueMutation) EdgeCleared(name string) bool {
+	switch name {
+	case propertyvalue.EdgeProperty:
+		return m.clearedproperty
+	case propertyvalue.EdgePropertyTypeValue:
+		return m.clearedproperty_type_value
+	case propertyvalue.EdgePropertyValueDependence:
+		return m.clearedproperty_value_dependence
+	case propertyvalue.EdgePropertyValue:
+		return m.clearedproperty_value
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *PropertyValueMutation) ClearEdge(name string) error {
+	switch name {
+	case propertyvalue.EdgeProperty:
+		m.ClearProperty()
+		return nil
+	case propertyvalue.EdgePropertyTypeValue:
+		m.ClearPropertyTypeValue()
+		return nil
+	case propertyvalue.EdgePropertyValueDependence:
+		m.ClearPropertyValueDependence()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyValue unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *PropertyValueMutation) ResetEdge(name string) error {
+	switch name {
+	case propertyvalue.EdgeProperty:
+		m.ResetProperty()
+		return nil
+	case propertyvalue.EdgePropertyTypeValue:
+		m.ResetPropertyTypeValue()
+		return nil
+	case propertyvalue.EdgePropertyValueDependence:
+		m.ResetPropertyValueDependence()
+		return nil
+	case propertyvalue.EdgePropertyValue:
+		m.ResetPropertyValue()
+		return nil
+	}
+	return fmt.Errorf("unknown PropertyValue edge %s", name)
 }
 
 // RecommendationsMutation represents an operation that mutate the RecommendationsSlice

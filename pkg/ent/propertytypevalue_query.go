@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
+	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 )
 
 // PropertyTypeValueQuery is the builder for querying PropertyTypeValue entities.
@@ -30,10 +31,11 @@ type PropertyTypeValueQuery struct {
 	unique     []string
 	predicates []predicate.PropertyTypeValue
 	// eager-loading edges.
-	withPropertyType  *PropertyTypeQuery
-	withProTypVal     *PropertyTypeValueQuery
-	withPropTypeValue *PropertyTypeValueQuery
-	withFKs           bool
+	withPropertyType                *PropertyTypeQuery
+	withPropertyValue               *PropertyValueQuery
+	withPropertyTypeValueDependence *PropertyTypeValueQuery
+	withPropertyTypeValue           *PropertyTypeValueQuery
+	withFKs                         bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -85,9 +87,9 @@ func (ptvq *PropertyTypeValueQuery) QueryPropertyType() *PropertyTypeQuery {
 	return query
 }
 
-// QueryProTypVal chains the current query on the pro_typ_val edge.
-func (ptvq *PropertyTypeValueQuery) QueryProTypVal() *PropertyTypeValueQuery {
-	query := &PropertyTypeValueQuery{config: ptvq.config}
+// QueryPropertyValue chains the current query on the property_value edge.
+func (ptvq *PropertyTypeValueQuery) QueryPropertyValue() *PropertyValueQuery {
+	query := &PropertyValueQuery{config: ptvq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ptvq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -98,8 +100,8 @@ func (ptvq *PropertyTypeValueQuery) QueryProTypVal() *PropertyTypeValueQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytypevalue.Table, propertytypevalue.FieldID, selector),
-			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, propertytypevalue.ProTypValTable, propertytypevalue.ProTypValColumn),
+			sqlgraph.To(propertyvalue.Table, propertyvalue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytypevalue.PropertyValueTable, propertytypevalue.PropertyValueColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptvq.driver.Dialect(), step)
 		return fromU, nil
@@ -107,8 +109,8 @@ func (ptvq *PropertyTypeValueQuery) QueryProTypVal() *PropertyTypeValueQuery {
 	return query
 }
 
-// QueryPropTypeValue chains the current query on the prop_type_value edge.
-func (ptvq *PropertyTypeValueQuery) QueryPropTypeValue() *PropertyTypeValueQuery {
+// QueryPropertyTypeValueDependence chains the current query on the property_type_value_dependence edge.
+func (ptvq *PropertyTypeValueQuery) QueryPropertyTypeValueDependence() *PropertyTypeValueQuery {
 	query := &PropertyTypeValueQuery{config: ptvq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ptvq.prepareQuery(ctx); err != nil {
@@ -121,7 +123,29 @@ func (ptvq *PropertyTypeValueQuery) QueryPropTypeValue() *PropertyTypeValueQuery
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytypevalue.Table, propertytypevalue.FieldID, selector),
 			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, propertytypevalue.PropTypeValueTable, propertytypevalue.PropTypeValueColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytypevalue.PropertyTypeValueDependenceTable, propertytypevalue.PropertyTypeValueDependenceColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptvq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPropertyTypeValue chains the current query on the property_type_value edge.
+func (ptvq *PropertyTypeValueQuery) QueryPropertyTypeValue() *PropertyTypeValueQuery {
+	query := &PropertyTypeValueQuery{config: ptvq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptvq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptvq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytypevalue.Table, propertytypevalue.FieldID, selector),
+			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytypevalue.PropertyTypeValueTable, propertytypevalue.PropertyTypeValueColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptvq.driver.Dialect(), step)
 		return fromU, nil
@@ -299,15 +323,16 @@ func (ptvq *PropertyTypeValueQuery) Clone() *PropertyTypeValueQuery {
 		return nil
 	}
 	return &PropertyTypeValueQuery{
-		config:            ptvq.config,
-		limit:             ptvq.limit,
-		offset:            ptvq.offset,
-		order:             append([]OrderFunc{}, ptvq.order...),
-		unique:            append([]string{}, ptvq.unique...),
-		predicates:        append([]predicate.PropertyTypeValue{}, ptvq.predicates...),
-		withPropertyType:  ptvq.withPropertyType.Clone(),
-		withProTypVal:     ptvq.withProTypVal.Clone(),
-		withPropTypeValue: ptvq.withPropTypeValue.Clone(),
+		config:                          ptvq.config,
+		limit:                           ptvq.limit,
+		offset:                          ptvq.offset,
+		order:                           append([]OrderFunc{}, ptvq.order...),
+		unique:                          append([]string{}, ptvq.unique...),
+		predicates:                      append([]predicate.PropertyTypeValue{}, ptvq.predicates...),
+		withPropertyType:                ptvq.withPropertyType.Clone(),
+		withPropertyValue:               ptvq.withPropertyValue.Clone(),
+		withPropertyTypeValueDependence: ptvq.withPropertyTypeValueDependence.Clone(),
+		withPropertyTypeValue:           ptvq.withPropertyTypeValue.Clone(),
 		// clone intermediate query.
 		sql:  ptvq.sql.Clone(),
 		path: ptvq.path,
@@ -325,25 +350,36 @@ func (ptvq *PropertyTypeValueQuery) WithPropertyType(opts ...func(*PropertyTypeQ
 	return ptvq
 }
 
-//  WithProTypVal tells the query-builder to eager-loads the nodes that are connected to
-// the "pro_typ_val" edge. The optional arguments used to configure the query builder of the edge.
-func (ptvq *PropertyTypeValueQuery) WithProTypVal(opts ...func(*PropertyTypeValueQuery)) *PropertyTypeValueQuery {
-	query := &PropertyTypeValueQuery{config: ptvq.config}
+//  WithPropertyValue tells the query-builder to eager-loads the nodes that are connected to
+// the "property_value" edge. The optional arguments used to configure the query builder of the edge.
+func (ptvq *PropertyTypeValueQuery) WithPropertyValue(opts ...func(*PropertyValueQuery)) *PropertyTypeValueQuery {
+	query := &PropertyValueQuery{config: ptvq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	ptvq.withProTypVal = query
+	ptvq.withPropertyValue = query
 	return ptvq
 }
 
-//  WithPropTypeValue tells the query-builder to eager-loads the nodes that are connected to
-// the "prop_type_value" edge. The optional arguments used to configure the query builder of the edge.
-func (ptvq *PropertyTypeValueQuery) WithPropTypeValue(opts ...func(*PropertyTypeValueQuery)) *PropertyTypeValueQuery {
+//  WithPropertyTypeValueDependence tells the query-builder to eager-loads the nodes that are connected to
+// the "property_type_value_dependence" edge. The optional arguments used to configure the query builder of the edge.
+func (ptvq *PropertyTypeValueQuery) WithPropertyTypeValueDependence(opts ...func(*PropertyTypeValueQuery)) *PropertyTypeValueQuery {
 	query := &PropertyTypeValueQuery{config: ptvq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	ptvq.withPropTypeValue = query
+	ptvq.withPropertyTypeValueDependence = query
+	return ptvq
+}
+
+//  WithPropertyTypeValue tells the query-builder to eager-loads the nodes that are connected to
+// the "property_type_value" edge. The optional arguments used to configure the query builder of the edge.
+func (ptvq *PropertyTypeValueQuery) WithPropertyTypeValue(opts ...func(*PropertyTypeValueQuery)) *PropertyTypeValueQuery {
+	query := &PropertyTypeValueQuery{config: ptvq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptvq.withPropertyTypeValue = query
 	return ptvq
 }
 
@@ -417,13 +453,14 @@ func (ptvq *PropertyTypeValueQuery) sqlAll(ctx context.Context) ([]*PropertyType
 		nodes       = []*PropertyTypeValue{}
 		withFKs     = ptvq.withFKs
 		_spec       = ptvq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			ptvq.withPropertyType != nil,
-			ptvq.withProTypVal != nil,
-			ptvq.withPropTypeValue != nil,
+			ptvq.withPropertyValue != nil,
+			ptvq.withPropertyTypeValueDependence != nil,
+			ptvq.withPropertyTypeValue != nil,
 		}
 	)
-	if ptvq.withPropertyType != nil || ptvq.withProTypVal != nil {
+	if ptvq.withPropertyType != nil || ptvq.withPropertyTypeValueDependence != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -457,7 +494,7 @@ func (ptvq *PropertyTypeValueQuery) sqlAll(ctx context.Context) ([]*PropertyType
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PropertyTypeValue)
 		for i := range nodes {
-			if fk := nodes[i].property_type_prop_type; fk != nil {
+			if fk := nodes[i].property_type_property_type_values; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -470,7 +507,7 @@ func (ptvq *PropertyTypeValueQuery) sqlAll(ctx context.Context) ([]*PropertyType
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "property_type_prop_type" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "property_type_property_type_values" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.PropertyType = n
@@ -478,11 +515,40 @@ func (ptvq *PropertyTypeValueQuery) sqlAll(ctx context.Context) ([]*PropertyType
 		}
 	}
 
-	if query := ptvq.withProTypVal; query != nil {
+	if query := ptvq.withPropertyValue; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*PropertyTypeValue)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PropertyValue = []*PropertyValue{}
+		}
+		query.withFKs = true
+		query.Where(predicate.PropertyValue(func(s *sql.Selector) {
+			s.Where(sql.InValues(propertytypevalue.PropertyValueColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.property_type_value_property_value
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "property_type_value_property_value" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "property_type_value_property_value" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.PropertyValue = append(node.Edges.PropertyValue, n)
+		}
+	}
+
+	if query := ptvq.withPropertyTypeValueDependence; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PropertyTypeValue)
 		for i := range nodes {
-			if fk := nodes[i].property_type_value_prop_type_value; fk != nil {
+			if fk := nodes[i].property_type_value_property_type_value; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -495,40 +561,40 @@ func (ptvq *PropertyTypeValueQuery) sqlAll(ctx context.Context) ([]*PropertyType
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "property_type_value_prop_type_value" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "property_type_value_property_type_value" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.ProTypVal = n
+				nodes[i].Edges.PropertyTypeValueDependence = n
 			}
 		}
 	}
 
-	if query := ptvq.withPropTypeValue; query != nil {
+	if query := ptvq.withPropertyTypeValue; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*PropertyTypeValue)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.PropTypeValue = []*PropertyTypeValue{}
+			nodes[i].Edges.PropertyTypeValue = []*PropertyTypeValue{}
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyTypeValue(func(s *sql.Selector) {
-			s.Where(sql.InValues(propertytypevalue.PropTypeValueColumn, fks...))
+			s.Where(sql.InValues(propertytypevalue.PropertyTypeValueColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.property_type_value_prop_type_value
+			fk := n.property_type_value_property_type_value
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "property_type_value_prop_type_value" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "property_type_value_property_type_value" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "property_type_value_prop_type_value" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "property_type_value_property_type_value" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.PropTypeValue = append(node.Edges.PropTypeValue, n)
+			node.Edges.PropertyTypeValue = append(node.Edges.PropertyTypeValue, n)
 		}
 	}
 

@@ -2084,25 +2084,25 @@ func HasWorkerTypeWith(preds ...predicate.WorkerType) predicate.PropertyType {
 	})
 }
 
-// HasPropType applies the HasEdge predicate on the "prop_type" edge.
-func HasPropType() predicate.PropertyType {
+// HasPropertyTypeValues applies the HasEdge predicate on the "property_type_values" edge.
+func HasPropertyTypeValues() predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropTypeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropTypeTable, PropTypeColumn),
+			sqlgraph.To(PropertyTypeValuesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTypeValuesTable, PropertyTypeValuesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasPropTypeWith applies the HasEdge predicate on the "prop_type" edge with a given conditions (other predicates).
-func HasPropTypeWith(preds ...predicate.PropertyTypeValue) predicate.PropertyType {
+// HasPropertyTypeValuesWith applies the HasEdge predicate on the "property_type_values" edge with a given conditions (other predicates).
+func HasPropertyTypeValuesWith(preds ...predicate.PropertyTypeValue) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropTypeInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropTypeTable, PropTypeColumn),
+			sqlgraph.To(PropertyTypeValuesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTypeValuesTable, PropertyTypeValuesColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -2112,25 +2112,25 @@ func HasPropTypeWith(preds ...predicate.PropertyTypeValue) predicate.PropertyTyp
 	})
 }
 
-// HasPropertyTy applies the HasEdge predicate on the "property_ty" edge.
-func HasPropertyTy() predicate.PropertyType {
+// HasPropertyTypeDependence applies the HasEdge predicate on the "property_type_dependence" edge.
+func HasPropertyTypeDependence() predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropertyTyTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PropertyTyTable, PropertyTyColumn),
+			sqlgraph.To(PropertyTypeDependenceTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyTypeDependenceTable, PropertyTypeDependenceColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasPropertyTyWith applies the HasEdge predicate on the "property_ty" edge with a given conditions (other predicates).
-func HasPropertyTyWith(preds ...predicate.PropertyType) predicate.PropertyType {
+// HasPropertyTypeDependenceWith applies the HasEdge predicate on the "property_type_dependence" edge with a given conditions (other predicates).
+func HasPropertyTypeDependenceWith(preds ...predicate.PropertyType) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PropertyTyTable, PropertyTyColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyTypeDependenceTable, PropertyTypeDependenceColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -2140,25 +2140,53 @@ func HasPropertyTyWith(preds ...predicate.PropertyType) predicate.PropertyType {
 	})
 }
 
-// HasProperType applies the HasEdge predicate on the "proper_type" edge.
-func HasProperType() predicate.PropertyType {
+// HasPropertyType applies the HasEdge predicate on the "property_type" edge.
+func HasPropertyType() predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ProperTypeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProperTypeTable, ProperTypeColumn),
+			sqlgraph.To(PropertyTypeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTypeTable, PropertyTypeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasProperTypeWith applies the HasEdge predicate on the "proper_type" edge with a given conditions (other predicates).
-func HasProperTypeWith(preds ...predicate.PropertyType) predicate.PropertyType {
+// HasPropertyTypeWith applies the HasEdge predicate on the "property_type" edge with a given conditions (other predicates).
+func HasPropertyTypeWith(preds ...predicate.PropertyType) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProperTypeTable, ProperTypeColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTypeTable, PropertyTypeColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPropertyCategory applies the HasEdge predicate on the "property_category" edge.
+func HasPropertyCategory() predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyCategoryTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyCategoryTable, PropertyCategoryColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPropertyCategoryWith applies the HasEdge predicate on the "property_category" edge with a given conditions (other predicates).
+func HasPropertyCategoryWith(preds ...predicate.PropertyCategory) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyCategoryInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyCategoryTable, PropertyCategoryColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

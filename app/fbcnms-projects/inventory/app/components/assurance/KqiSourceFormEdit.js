@@ -14,10 +14,8 @@ import EditKqiSourceMutation from '../../mutations/EditKqiSourceMutation';
 import React from 'react';
 import fbt from 'fbt';
 
-import Button from '@material-ui/core/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
-import ConfigureTitle from './common/ConfigureTitle';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
@@ -70,11 +68,6 @@ const useStyles = makeStyles(() => ({
   header: {
     marginBottom: '1rem',
   },
-  option: {
-    width: '111px',
-    height: '36px',
-    alignSelf: 'flex-end',
-  },
   delete: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -125,9 +118,9 @@ const KqiSourceFormEdit = (props: Props) => {
 
   const inputFilter = () => {
     return (
-      kqiSourcesNames?.filter(
-        item => item === name.value.trim() && item !== formValues.name.trim(),
-      ) || []
+        kqiSourcesNames?.filter(
+            item => item === name.value.trim() && item !== formValues.name.trim(),
+        ) || []
     );
   };
 
@@ -152,77 +145,67 @@ const KqiSourceFormEdit = (props: Props) => {
   };
 
   return (
-    <div className={classes.root}>
-      <Grid
-        className={classes.header}
-        container
-        direction="row"
-        justify="flex-end"
-        alignItems="center">
-        <Grid>
-          <Text variant="h6" weight={'bold'}>
-            {fbt('Edit KQI Source', ' ')}
-          </Text>
+      <div className={classes.root}>
+        <Grid
+            className={classes.header}
+            container
+            direction="row"
+            justify="flex-end"
+            alignItems="center">
+          <Grid item xs>
+            <Text variant="h6" weight={'bold'}>
+              {fbt('Edit KQI Source', ' ')}
+            </Text>
+          </Grid>
+          <Grid>
+            <ButtonSaveDelete
+                variant="outlined"
+                onClick={() => hideKqiSourceFormEdit()}>
+              Cancel
+            </ButtonSaveDelete>
+          </Grid>
+          <Grid>
+            <ButtonSaveDelete
+                onClick={() => {
+                  hideKqiSourceFormEdit();
+                  handleClick();
+                }}
+                disabled={handleDisable}>
+              Save
+            </ButtonSaveDelete>
+          </Grid>
         </Grid>
         <Grid item xs>
-          <FormField>
-            <Button
-              style={{marginRight: '1rem'}}
-              className={classes.option}
-              variant="outlined"
-              color="primary"
-              onClick={() => hideKqiSourceFormEdit()}>
-              Cancel
-            </Button>
-          </FormField>
-        </Grid>
-        <Grid>
-          <FormField>
-            <Button
-              className={classes.option}
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                hideKqiSourceFormEdit();
-                handleClick();
-              }}
-              disabled={handleDisable}>
-              Save
-            </Button>
-          </FormField>
-        </Grid>
-      </Grid>
-      <Grid className={classes.container} item xs>
-        <Card>
-          <Grid container className={classes.formField} spacing={2}>
-            <Grid item xs={12} lg={6}>
-              <TextField
-                required
-                className={classes.textInput}
-                label="Name"
-                variant="outlined"
-                name="name"
-                fullWidth
-                {...name}
-                {...validationName}
-              />
+          <Card>
+            <Grid container className={classes.formField} spacing={2}>
+              <Grid item xs={12} lg={6}>
+                <TextField
+                    required
+                    className={classes.textInput}
+                    label="Name"
+                    variant="outlined"
+                    name="name"
+                    fullWidth
+                    {...name}
+                    {...validationName}
+                />
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <TextField
+                    required
+                    disabled
+                    className={classes.textInput}
+                    label="ID"
+                    variant="outlined"
+                    name="iD"
+                    fullWidth
+                    {...id}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} lg={6}>
-              <TextField
-                required
-                disabled
-                className={classes.textInput}
-                label="ID"
-                variant="outlined"
-                name="iD"
-                fullWidth
-                {...id}
-              />
-            </Grid>
-          </Grid>
-        </Card>
-      </Grid>
-    </div>
+          </Card>
+        </Grid>
+      </div>
   );
 };
 export default KqiSourceFormEdit;

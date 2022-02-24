@@ -28,10 +28,12 @@ func (PropertyTypeValue) Fields() []ent.Field {
 func (PropertyTypeValue) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("property_type", PropertyType.Type).
-			Ref("prop_type").Unique(),
-		edge.To("prop_type_value", PropertyTypeValue.Type).
-			Annotations(entgql.Bind()).From("pro_typ_val").
-			Unique().Annotations(entgql.MapsTo("proper_type_values")),
+			Ref("property_type_values").Unique(),
+		edge.To("property_value", PropertyValue.Type).
+			Annotations(entgql.MapsTo("propertyvalue")),
+		edge.To("property_type_value", PropertyTypeValue.Type).
+			Annotations(entgql.Bind()).From("property_type_value_dependence").
+			Unique().Annotations(entgql.MapsTo("property_type_value_dependence")),
 	}
 }
 

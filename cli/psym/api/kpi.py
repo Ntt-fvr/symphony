@@ -43,14 +43,22 @@ def add_kpi(
 
     .. code-block:: python
 
+
+        domain = client.add_domain(
+            name="domain",
+        )
+        kpi_category = client.add_kpi_category(
+            name="kpi_category",
+        )
+
         new_Kpi = client.add_Kpi(
             name="Kpi_2",
             description="new kpi",
             status=True,
             domain=domain.id,
             kpiCategory=kpi_category.id
-
         )
+        print(new_Kpi)
     """
     domain_input = AddKpiInput(name=name, description=description,
     status=status, 
@@ -88,7 +96,13 @@ def edit_kpi(
 
     .. code-block:: python
 
-        Kpi_edited = client.edit_Kpi(Kpi=Kpi ,new_name="new_Kpi")
+        Kpi_edited = client.edit_Kpi(
+            Kpi=Kpi,
+            new_name="new_Kpi",
+            description="new kpi_edited",
+            status=True,
+            domain=domain.id,
+            kpiCategory=kpi_category.id)
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -153,7 +167,7 @@ def remove_kpi(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_Kpi(Kpi)
+        client.remove_kpi(id=123456789)
     """
     removeKpi.execute(client, id=id)
 

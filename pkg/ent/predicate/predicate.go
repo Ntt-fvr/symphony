@@ -175,6 +175,9 @@ type NetworkType func(*sql.Selector)
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
 
+// ParameterCatalog is the predicate function for parametercatalog builders.
+type ParameterCatalog func(*sql.Selector)
+
 // PermissionsPolicy is the predicate function for permissionspolicy builders.
 type PermissionsPolicy func(*sql.Selector)
 
@@ -190,11 +193,17 @@ type ProjectType func(*sql.Selector)
 // Property is the predicate function for property builders.
 type Property func(*sql.Selector)
 
+// PropertyCategory is the predicate function for propertycategory builders.
+type PropertyCategory func(*sql.Selector)
+
 // PropertyType is the predicate function for propertytype builders.
 type PropertyType func(*sql.Selector)
 
 // PropertyTypeValue is the predicate function for propertytypevalue builders.
 type PropertyTypeValue func(*sql.Selector)
+
+// PropertyValue is the predicate function for propertyvalue builders.
+type PropertyValue func(*sql.Selector)
 
 // Recommendations is the predicate function for recommendations builders.
 type Recommendations func(*sql.Selector)

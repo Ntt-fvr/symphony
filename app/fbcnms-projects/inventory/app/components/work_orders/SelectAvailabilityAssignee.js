@@ -119,9 +119,9 @@ const SelectAvailabilityAssignee = (props: Props) => {
     setAppointment(false);
   }, []);
 
-  const setInfo = (label: string, user: ShortUser) => {
+  const setInfo = (label: string, user: ShortUser, startDate: string) => {
     _setWorkOrderDetail(label, user);
-    setAppointment(true);
+    setAppointment(true, startDate);
   };
 
   const applyFilters = () => {
@@ -133,10 +133,13 @@ const SelectAvailabilityAssignee = (props: Props) => {
     setAppointment(false);
   };
 
-  const setAppointment = saveAppointment => {
+  const setAppointment = (
+    saveAppointment,
+    selectedDate = slotStartDate.toISOString(),
+  ) => {
     setAppointmentData({
       duration,
-      date: slotStartDate.toISOString(),
+      date: selectedDate,
       saveAppointment: saveAppointment,
     });
   };
@@ -172,6 +175,7 @@ const SelectAvailabilityAssignee = (props: Props) => {
                 <DateTimePicker
                   variant="inline"
                   inputVariant="outlined"
+                  minDate={moment()}
                   value={slotStartDate}
                   onChange={setSlotStartDate}
                   onClose={orderDatesValidation}
@@ -269,7 +273,9 @@ const SelectAvailabilityAssignee = (props: Props) => {
         {useFilters ? (
           <UserByAppointmentTypeahead
             selectedUser={workOrder.assignedTo || undefined}
-            onUserSelection={user => setInfo('assignedTo', user)}
+            onUserSelection={(user, startDate) =>
+              setInfo('assignedTo', user, startDate)
+            }
             slotStartDate={slotStartDate.toISOString()}
             slotEndDate={slotEndDate.toISOString()}
             duration={duration}

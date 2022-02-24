@@ -30,20 +30,15 @@ def add_network_type(
     :return: networkType object
     :rtype: :class:`~psym.common.data_class.networkType`
 
+
     **Example 1**
-
-    .. code-block:: python
-
-        new_network_typees = client.add_network_type(name="new_network_type")
-
-    **Example 2**
 
     .. code-block:: python
 
         new_network_type = client.add_network_type(
             name="network_type",
-
         )
+        print(new_network_type)
     """
     network_type_input = AddNetworkTypeInput(name=name)
     result = addNetworkType.execute(client, input=network_type_input)
@@ -68,15 +63,9 @@ def edit_network_type(
 
     .. code-block:: python
 
-        network_type_edited = client.edit_network_type(network_type=networkType ,new_name="new_network_type")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_network_type = client.edit_network_type(
             network_type=networkType,
-            new_name="network_type",
+            new_name="network_type_edit",
 
         )
     """
@@ -131,6 +120,6 @@ def remove_network_type(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_network_type(networkType)
+        client.remove_network_type(id=12346789)
     """
     removeNetworkType.execute(client, id=id)

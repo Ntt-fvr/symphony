@@ -7,12 +7,11 @@ package resolver
 import (
 	"context"
 
+	"github.com/facebookincubator/symphony/graph/graphql/generated"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
-
-	"github.com/facebookincubator/symphony/graph/graphql/generated"
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/log"
 )
 
@@ -291,4 +290,12 @@ func (r resolver) Recommendations() generated.RecommendationsResolver {
 
 func (r resolver) PropertyTypeValue() generated.PropertyTypeValueResolver {
 	return propertyTypeValueResolver{}
+}
+
+func (r resolver) PropertyCategory() generated.PropertyCategoryResolver {
+	return propertyCategoryResolver{}
+}
+
+func (r resolver) PropertyValue() generated.PropertyValueResolver {
+	return propertyValueResolver{}
 }

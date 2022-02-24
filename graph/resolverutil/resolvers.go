@@ -427,6 +427,16 @@ func PropertyTypeValueFilter(query *ent.PropertyTypeValueQuery, filters []*model
 	return query, nil
 }
 
+func PropertyValueFilter(query *ent.PropertyValueQuery, filters []*models.PropertyValueFilterInput) (*ent.PropertyValueQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handlePropertyValueFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
 func validateSlot(startDate time.Time, endDate time.Time) (err error) {
 	/*switch {
 	case startDate == nil || endDate == nil:

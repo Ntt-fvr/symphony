@@ -1089,6 +1089,26 @@ func (o *OrganizationQuery) collectField(ctx *graphql.OperationContext, field gr
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pc *ParameterCatalogQuery) CollectFields(ctx context.Context, satisfies ...string) *ParameterCatalogQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pc
+}
+
+func (pc *ParameterCatalogQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ParameterCatalogQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "propertyCategories":
+			pc = pc.WithPropertyCategories(func(query *PropertyCategoryQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return pc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (pp *PermissionsPolicyQuery) CollectFields(ctx context.Context, satisfies ...string) *PermissionsPolicyQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		pp = pp.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1215,6 +1235,14 @@ func (pr *PropertyQuery) collectField(ctx *graphql.OperationContext, field graph
 			pr = pr.WithLocation(func(query *LocationQuery) {
 				query.collectField(ctx, field)
 			})
+		case "property":
+			pr = pr.WithProperty(func(query *PropertyQuery) {
+				query.collectField(ctx, field)
+			})
+		case "property_dependence":
+			pr = pr.WithPropertyDependence(func(query *PropertyQuery) {
+				query.collectField(ctx, field)
+			})
 		case "serviceValue":
 			pr = pr.WithService(func(query *ServiceQuery) {
 				query.collectField(ctx, field)
@@ -1229,6 +1257,18 @@ func (pr *PropertyQuery) collectField(ctx *graphql.OperationContext, field graph
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pc *PropertyCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *PropertyCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pc = pc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pc
+}
+
+func (pc *PropertyCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyCategoryQuery {
+	return pc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (pt *PropertyTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *PropertyTypeQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		pt = pt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1239,16 +1279,20 @@ func (pt *PropertyTypeQuery) CollectFields(ctx context.Context, satisfies ...str
 func (pt *PropertyTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyTypeQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "property_type_value":
-			pt = pt.WithPropType(func(query *PropertyTypeValueQuery) {
+		case "propertyCategory":
+			pt = pt.WithPropertyCategory(func(query *PropertyCategoryQuery) {
 				query.collectField(ctx, field)
 			})
-		case "proper_type":
-			pt = pt.WithProperType(func(query *PropertyTypeQuery) {
+		case "property_type":
+			pt = pt.WithPropertyType(func(query *PropertyTypeQuery) {
 				query.collectField(ctx, field)
 			})
-		case "proper_types":
-			pt = pt.WithPropertyTy(func(query *PropertyTypeQuery) {
+		case "property_type_dependence":
+			pt = pt.WithPropertyTypeDependence(func(query *PropertyTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		case "property_type_values":
+			pt = pt.WithPropertyTypeValues(func(query *PropertyTypeValueQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -1267,17 +1311,45 @@ func (ptv *PropertyTypeValueQuery) CollectFields(ctx context.Context, satisfies 
 func (ptv *PropertyTypeValueQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyTypeValueQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "proper_type_values":
-			ptv = ptv.WithProTypVal(func(query *PropertyTypeValueQuery) {
+		case "property_type_value":
+			ptv = ptv.WithPropertyTypeValue(func(query *PropertyTypeValueQuery) {
 				query.collectField(ctx, field)
 			})
-		case "prop_type_value":
-			ptv = ptv.WithPropTypeValue(func(query *PropertyTypeValueQuery) {
+		case "property_type_value_dependence":
+			ptv = ptv.WithPropertyTypeValueDependence(func(query *PropertyTypeValueQuery) {
+				query.collectField(ctx, field)
+			})
+		case "propertyvalue":
+			ptv = ptv.WithPropertyValue(func(query *PropertyValueQuery) {
 				query.collectField(ctx, field)
 			})
 		}
 	}
 	return ptv
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pv *PropertyValueQuery) CollectFields(ctx context.Context, satisfies ...string) *PropertyValueQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pv = pv.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pv
+}
+
+func (pv *PropertyValueQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PropertyValueQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "property_value":
+			pv = pv.WithPropertyValue(func(query *PropertyValueQuery) {
+				query.collectField(ctx, field)
+			})
+		case "property_value_dependence":
+			pv = pv.WithPropertyValueDependence(func(query *PropertyValueQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return pv
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

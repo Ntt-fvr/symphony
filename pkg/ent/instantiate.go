@@ -337,6 +337,12 @@ func (c *OrganizationClient) Instantiate(o *Organization) *Organization {
 }
 
 // Instantiate entity configuration.
+func (c *ParameterCatalogClient) Instantiate(pc *ParameterCatalog) *ParameterCatalog {
+	pc.config = c.config
+	return pc
+}
+
+// Instantiate entity configuration.
 func (c *PermissionsPolicyClient) Instantiate(pp *PermissionsPolicy) *PermissionsPolicy {
 	pp.config = c.config
 	return pp
@@ -367,6 +373,12 @@ func (c *PropertyClient) Instantiate(pr *Property) *Property {
 }
 
 // Instantiate entity configuration.
+func (c *PropertyCategoryClient) Instantiate(pc *PropertyCategory) *PropertyCategory {
+	pc.config = c.config
+	return pc
+}
+
+// Instantiate entity configuration.
 func (c *PropertyTypeClient) Instantiate(pt *PropertyType) *PropertyType {
 	pt.config = c.config
 	return pt
@@ -376,6 +388,12 @@ func (c *PropertyTypeClient) Instantiate(pt *PropertyType) *PropertyType {
 func (c *PropertyTypeValueClient) Instantiate(ptv *PropertyTypeValue) *PropertyTypeValue {
 	ptv.config = c.config
 	return ptv
+}
+
+// Instantiate entity configuration.
+func (c *PropertyValueClient) Instantiate(pv *PropertyValue) *PropertyValue {
+	pv.config = c.config
+	return pv
 }
 
 // Instantiate entity configuration.

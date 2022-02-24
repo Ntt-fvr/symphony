@@ -265,6 +265,11 @@ export const arrayConfigs = [
     enabledByDefault: true,
   },
   {
+    id: 'ipt_import_project',
+    title: 'IPT import projects',
+    enabledByDefault: false,
+  },
+  {
     id: 'property_combo',
     title: 'Combo de Propiedades',
     enabledByDefault: false,

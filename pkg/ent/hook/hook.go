@@ -728,6 +728,19 @@ func (f OrganizationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The ParameterCatalogFunc type is an adapter to allow the use of ordinary
+// function as ParameterCatalog mutator.
+type ParameterCatalogFunc func(context.Context, *ent.ParameterCatalogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ParameterCatalogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ParameterCatalogMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ParameterCatalogMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The PermissionsPolicyFunc type is an adapter to allow the use of ordinary
 // function as PermissionsPolicy mutator.
 type PermissionsPolicyFunc func(context.Context, *ent.PermissionsPolicyMutation) (ent.Value, error)
@@ -793,6 +806,19 @@ func (f PropertyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The PropertyCategoryFunc type is an adapter to allow the use of ordinary
+// function as PropertyCategory mutator.
+type PropertyCategoryFunc func(context.Context, *ent.PropertyCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PropertyCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PropertyCategoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PropertyCategoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The PropertyTypeFunc type is an adapter to allow the use of ordinary
 // function as PropertyType mutator.
 type PropertyTypeFunc func(context.Context, *ent.PropertyTypeMutation) (ent.Value, error)
@@ -815,6 +841,19 @@ func (f PropertyTypeValueFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.
 	mv, ok := m.(*ent.PropertyTypeValueMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PropertyTypeValueMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PropertyValueFunc type is an adapter to allow the use of ordinary
+// function as PropertyValue mutator.
+type PropertyValueFunc func(context.Context, *ent.PropertyValueMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PropertyValueFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PropertyValueMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PropertyValueMutation", m)
 	}
 	return f(ctx, mv)
 }

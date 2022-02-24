@@ -129,11 +129,15 @@ func (PropertyType) Edges() []ent.Edge {
 		edge.From("worker_type", WorkerType.Type).
 			Ref("property_types").
 			Unique(),
-		edge.To("prop_type", PropertyTypeValue.Type).
-			Annotations(entgql.MapsTo("property_type_value")),
-		edge.To("proper_type", PropertyType.Type).
-			Annotations(entgql.Bind()).From("property_ty").
-			Unique().Annotations(entgql.MapsTo("proper_types")),
+		edge.To("property_type_values", PropertyTypeValue.Type).
+			Annotations(entgql.MapsTo("property_type_values")),
+		edge.To("property_type", PropertyType.Type).
+			Annotations(entgql.Bind()).From("property_type_dependence").
+			Unique().Annotations(entgql.MapsTo("property_type_dependence")),
+		edge.From("property_category", PropertyCategory.Type).
+			Ref("properties_type").
+			Unique().
+			Annotations(entgql.MapsTo("propertyCategory")),
 	}
 }
 
@@ -158,12 +162,17 @@ func (PropertyType) Indexes() []ent.Index {
 		index.Fields("name").
 			Edges("worker_type").
 			Unique(),
+		index.Fields("name").
+			Edges("property_category"),
 	}
 }
 
 // Policy returns property type policy.
 func (PropertyType) Policy() ent.Policy {
 	return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.PropertyTypeReadPolicyRule(),
+		),
 		authz.WithMutationRules(
 			authz.PropertyTypeWritePolicyRule(),
 			authz.PropertyTypeCreatePolicyRule(),
@@ -257,6 +266,10 @@ func (Property) Edges() []ent.Edge {
 			Unique(),
 		edge.To("project_value", Project.Type).
 			Unique(),
+		edge.To("property_value", PropertyValue.Type),
+		edge.To("property", Property.Type).
+			Annotations(entgql.Bind()).From("property_dependence").
+			Unique().Annotations(entgql.MapsTo("property_dependence")),
 	}
 }
 

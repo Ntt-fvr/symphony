@@ -50,7 +50,7 @@ const MultiSelect = <TValue>({
   ...selectMenuProps
 }: Props<TValue>) => {
   const classes = useStyles();
-  const {selectedValues} = selectMenuProps;
+  const {selectedValues, isVisible} = selectMenuProps;
   return (
     <BasePopoverTrigger
       popover={
@@ -60,7 +60,11 @@ const MultiSelect = <TValue>({
           size="normal"
         />
       }>
-      {(onShow, _onHide, contextRef) => (
+      {(onShow, _onHide, contextRef, visible) => {
+        if(typeof isVisible === 'function' && visible != undefined){
+          isVisible(visible)
+        }
+        return (
         <Button
           className={classNames(classes.root, className)}
           ref={contextRef}
@@ -86,7 +90,8 @@ const MultiSelect = <TValue>({
             </span>
           ) : null}
         </Button>
-      )}
+        )}
+      }
     </BasePopoverTrigger>
   );
 };

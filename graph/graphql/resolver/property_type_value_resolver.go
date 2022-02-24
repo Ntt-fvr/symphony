@@ -18,24 +18,24 @@ import (
 
 type propertyTypeValueResolver struct{}
 
-func (propertyTypeValueResolver) PropertyTypeValue(ctx context.Context, propertyTypeVal *ent.PropertyTypeValue) (*ent.PropertyTypeValue, error) {
-	variable, err := propertyTypeVal.ProTypVal(ctx)
+func (propertyTypeValueResolver) PropertyTypeValue(ctx context.Context, propertyTypeValue *ent.PropertyTypeValue) (*ent.PropertyTypeValue, error) {
+	variable, err := propertyTypeValue.PropertyTypeValueDependence(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
 }
 
-func (propertyTypeValueResolver) PropertyTypeValues(ctx context.Context, propertyTypeVal *ent.PropertyTypeValue) ([]*ent.PropertyTypeValue, error) {
-	variable, err := propertyTypeVal.PropTypeValue(ctx)
+func (propertyTypeValueResolver) PropertyTypeValues(ctx context.Context, propertyTypeValue *ent.PropertyTypeValue) ([]*ent.PropertyTypeValue, error) {
+	variable, err := propertyTypeValue.PropertyTypeValue(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
 }
 
-func (propertyTypeValueResolver) PropertyType(ctx context.Context, propertyTypeVal *ent.PropertyTypeValue) (*ent.PropertyType, error) {
-	variable, err := propertyTypeVal.PropertyType(ctx)
+func (propertyTypeValueResolver) PropertyType(ctx context.Context, propertyTypeValue *ent.PropertyTypeValue) (*ent.PropertyType, error) {
+	variable, err := propertyTypeValue.PropertyType(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
@@ -61,7 +61,7 @@ func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmod
 			for _, propertyTypeV := range input.PropertyTypeValues {
 				_, err1 := client.PropertyTypeValue.Create().
 					SetName(propertyTypeV.Name).
-					SetNillableProTypValID(&typ.ID).
+					SetNillablePropertyTypeValueDependenceID(&typ.ID).
 					Save(ctx)
 				if err1 != nil {
 					if ent.IsConstraintError(err) {
@@ -75,7 +75,7 @@ func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmod
 	} else {
 		typ, err := client.PropertyTypeValue.Create().
 			SetName(input.Name).
-			SetNillableProTypValID(input.PropertyTypeValue).
+			SetNillablePropertyTypeValueDependenceID(input.PropertyTypeValue).
 			Save(ctx)
 
 		if err != nil {
@@ -104,10 +104,9 @@ func (r mutationResolver) AddPropertyTypeValueWithID(ctx context.Context, input 
 
 	if len(input.PropertyTypeValues) > 0 {
 		for _, propertyTypeV := range input.PropertyTypeValues {
-			fmt.Println("Ingreso AddPropertyTypeV", propertyTypeV.Name)
 			_, err1 := client.PropertyTypeValue.Create().
 				SetName(propertyTypeV.Name).
-				SetNillableProTypValID(&typ.ID).
+				SetNillablePropertyTypeValueDependenceID(&typ.ID).
 				Save(ctx)
 			if err1 != nil {
 				if ent.IsConstraintError(err) {

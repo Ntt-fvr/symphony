@@ -66,6 +66,12 @@ const (
 	EdgeUserValue = "user_value"
 	// EdgeProjectValue holds the string denoting the project_value edge name in mutations.
 	EdgeProjectValue = "project_value"
+	// EdgePropertyValue holds the string denoting the property_value edge name in mutations.
+	EdgePropertyValue = "property_value"
+	// EdgePropertyDependence holds the string denoting the property_dependence edge name in mutations.
+	EdgePropertyDependence = "property_dependence"
+	// EdgeProperty holds the string denoting the property edge name in mutations.
+	EdgeProperty = "property"
 
 	// Table holds the table name of the property in the database.
 	Table = "properties"
@@ -167,6 +173,21 @@ const (
 	ProjectValueInverseTable = "projects"
 	// ProjectValueColumn is the table column denoting the project_value relation/edge.
 	ProjectValueColumn = "property_project_value"
+	// PropertyValueTable is the table the holds the property_value relation/edge.
+	PropertyValueTable = "property_values"
+	// PropertyValueInverseTable is the table name for the PropertyValue entity.
+	// It exists in this package in order to avoid circular dependency with the "propertyvalue" package.
+	PropertyValueInverseTable = "property_values"
+	// PropertyValueColumn is the table column denoting the property_value relation/edge.
+	PropertyValueColumn = "property_property_value"
+	// PropertyDependenceTable is the table the holds the property_dependence relation/edge.
+	PropertyDependenceTable = "properties"
+	// PropertyDependenceColumn is the table column denoting the property_dependence relation/edge.
+	PropertyDependenceColumn = "property_property"
+	// PropertyTable is the table the holds the property relation/edge.
+	PropertyTable = "properties"
+	// PropertyColumn is the table column denoting the property relation/edge.
+	PropertyColumn = "property_property"
 )
 
 // Columns holds all SQL columns for property fields.
@@ -198,6 +219,7 @@ var ForeignKeys = []string{
 	"property_work_order_value",
 	"property_user_value",
 	"property_project_value",
+	"property_property",
 	"service_properties",
 	"work_order_properties",
 }

@@ -36,14 +36,9 @@ def add_organization(
 
     .. code-block:: python
 
-        new_organizationes = client.add_organization(name="new_organization")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_organization = client.add_organization(
-            name="organization",
+            name="organization_1",
+            description="organization"
 
         )
     """
@@ -67,19 +62,15 @@ def edit_organization(
     :return: none object
     :rtype: :class:`~psym.common.data_class.organization`
 
+
     **Example 1**
-
-    .. code-block:: python
-
-        organization_edited = client.edit_organization(organization=organization ,new_name="new_organization")
-
-    **Example 2**
 
     .. code-block:: python
 
         new_organization = client.edit_organization(
             organization=organization,
-            new_name="organization",
+            new_name="new_name",
+            new_description="organization"
 
         )
     """
@@ -135,7 +126,7 @@ def get_organization_by_name(client: SymphonyClient, name: str) -> organization:
 
     .. code-block:: python
 
-        organization_name:client.get_organization_by_name(name="test"
+        organization_name:client.get_organization_by_name(name="test")
         print(organization_name)
     """
     organization_name = get_organizations(client=client)
@@ -156,7 +147,7 @@ def remove_organization(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_organization(organization)
+        client.remove_organization(id=123456789)
     """
     removeOrganization.execute(client, id=id)
 
