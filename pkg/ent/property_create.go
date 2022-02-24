@@ -432,23 +432,53 @@ func (pc *PropertyCreate) SetProjectValue(p *Project) *PropertyCreate {
 	return pc.SetProjectValueID(p.ID)
 }
 
-// SetPropertyValueID sets the property_value edge to PropertyValue by id.
-func (pc *PropertyCreate) SetPropertyValueID(id int) *PropertyCreate {
-	pc.mutation.SetPropertyValueID(id)
+// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
+func (pc *PropertyCreate) AddPropertyValueIDs(ids ...int) *PropertyCreate {
+	pc.mutation.AddPropertyValueIDs(ids...)
 	return pc
 }
 
-// SetNillablePropertyValueID sets the property_value edge to PropertyValue by id if the given value is not nil.
-func (pc *PropertyCreate) SetNillablePropertyValueID(id *int) *PropertyCreate {
+// AddPropertyValue adds the property_value edges to PropertyValue.
+func (pc *PropertyCreate) AddPropertyValue(p ...*PropertyValue) *PropertyCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pc.AddPropertyValueIDs(ids...)
+}
+
+// SetPropertyDependenceID sets the property_dependence edge to Property by id.
+func (pc *PropertyCreate) SetPropertyDependenceID(id int) *PropertyCreate {
+	pc.mutation.SetPropertyDependenceID(id)
+	return pc
+}
+
+// SetNillablePropertyDependenceID sets the property_dependence edge to Property by id if the given value is not nil.
+func (pc *PropertyCreate) SetNillablePropertyDependenceID(id *int) *PropertyCreate {
 	if id != nil {
-		pc = pc.SetPropertyValueID(*id)
+		pc = pc.SetPropertyDependenceID(*id)
 	}
 	return pc
 }
 
-// SetPropertyValue sets the property_value edge to PropertyValue.
-func (pc *PropertyCreate) SetPropertyValue(p *PropertyValue) *PropertyCreate {
-	return pc.SetPropertyValueID(p.ID)
+// SetPropertyDependence sets the property_dependence edge to Property.
+func (pc *PropertyCreate) SetPropertyDependence(p *Property) *PropertyCreate {
+	return pc.SetPropertyDependenceID(p.ID)
+}
+
+// AddPropertyIDs adds the property edge to Property by ids.
+func (pc *PropertyCreate) AddPropertyIDs(ids ...int) *PropertyCreate {
+	pc.mutation.AddPropertyIDs(ids...)
+	return pc
+}
+
+// AddProperty adds the property edges to Property.
+func (pc *PropertyCreate) AddProperty(p ...*Property) *PropertyCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pc.AddPropertyIDs(ids...)
 }
 
 // Mutation returns the PropertyMutation object of the builder.
@@ -899,7 +929,7 @@ func (pc *PropertyCreate) createSpec() (*Property, *sqlgraph.CreateSpec) {
 	}
 	if nodes := pc.mutation.PropertyValueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   property.PropertyValueTable,
 			Columns: []string{property.PropertyValueColumn},
@@ -908,6 +938,44 @@ func (pc *PropertyCreate) createSpec() (*Property, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertyvalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.PropertyDependenceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   property.PropertyDependenceTable,
+			Columns: []string{property.PropertyDependenceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   property.PropertyTable,
+			Columns: []string{property.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
 				},
 			},
 		}

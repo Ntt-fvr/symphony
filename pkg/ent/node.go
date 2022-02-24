@@ -5037,7 +5037,7 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pr.ID,
 		Type:   "Property",
 		Fields: make([]*Field, 10),
-		Edges:  make([]*Edge, 15),
+		Edges:  make([]*Edge, 17),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pr.CreateTime); err != nil {
@@ -5266,6 +5266,26 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[14].IDs, err = pr.QueryPropertyValue().
 		Select(propertyvalue.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[15] = &Edge{
+		Type: "Property",
+		Name: "property_dependence",
+	}
+	node.Edges[15].IDs, err = pr.QueryPropertyDependence().
+		Select(property.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[16] = &Edge{
+		Type: "Property",
+		Name: "property",
+	}
+	node.Edges[16].IDs, err = pr.QueryProperty().
+		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

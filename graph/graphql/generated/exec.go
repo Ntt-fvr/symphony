@@ -1507,18 +1507,20 @@ type ComplexityRoot struct {
 	}
 
 	Property struct {
-		BoolVal      func(childComplexity int) int
-		FloatVal     func(childComplexity int) int
-		ID           func(childComplexity int) int
-		IntVal       func(childComplexity int) int
-		LatitudeVal  func(childComplexity int) int
-		LongitudeVal func(childComplexity int) int
-		NodeValue    func(childComplexity int) int
-		RangeFromVal func(childComplexity int) int
-		RangeToVal   func(childComplexity int) int
-		RawValue     func(childComplexity int) int
-		StringVal    func(childComplexity int) int
-		Type         func(childComplexity int) int
+		BoolVal              func(childComplexity int) int
+		DependenceProperties func(childComplexity int) int
+		FloatVal             func(childComplexity int) int
+		ID                   func(childComplexity int) int
+		IntVal               func(childComplexity int) int
+		LatitudeVal          func(childComplexity int) int
+		LongitudeVal         func(childComplexity int) int
+		NodeValue            func(childComplexity int) int
+		PropertyValues       func(childComplexity int) int
+		RangeFromVal         func(childComplexity int) int
+		RangeToVal           func(childComplexity int) int
+		RawValue             func(childComplexity int) int
+		StringVal            func(childComplexity int) int
+		Type                 func(childComplexity int) int
 	}
 
 	PropertyCategory struct {
@@ -1598,12 +1600,12 @@ type ComplexityRoot struct {
 	}
 
 	PropertyValue struct {
-		ID                func(childComplexity int) int
-		Name              func(childComplexity int) int
-		Property          func(childComplexity int) int
-		PropertyTypeValue func(childComplexity int) int
-		PropertyValue     func(childComplexity int) int
-		PropertyValues    func(childComplexity int) int
+		DependencePropertyValues func(childComplexity int) int
+		ID                       func(childComplexity int) int
+		Name                     func(childComplexity int) int
+		Property                 func(childComplexity int) int
+		PropertyTypeValue        func(childComplexity int) int
+		PropertyValue            func(childComplexity int) int
 	}
 
 	PropertyValueConnection struct {
@@ -2688,6 +2690,8 @@ type ProjectTypeResolver interface {
 type PropertyResolver interface {
 	NodeValue(ctx context.Context, obj *ent.Property) (models.NamedNode, error)
 	RawValue(ctx context.Context, obj *ent.Property) (*string, error)
+	DependenceProperties(ctx context.Context, obj *ent.Property) ([]*ent.Property, error)
+	PropertyValues(ctx context.Context, obj *ent.Property) ([]*ent.PropertyValue, error)
 }
 type PropertyCategoryResolver interface {
 	NumberOfProperties(ctx context.Context, obj *ent.PropertyCategory) (*int, error)
@@ -2703,7 +2707,7 @@ type PropertyTypeValueResolver interface {
 }
 type PropertyValueResolver interface {
 	PropertyValue(ctx context.Context, obj *ent.PropertyValue) (*ent.PropertyValue, error)
-	PropertyValues(ctx context.Context, obj *ent.PropertyValue) ([]*ent.PropertyValue, error)
+	DependencePropertyValues(ctx context.Context, obj *ent.PropertyValue) ([]*ent.PropertyValue, error)
 }
 type QueryResolver interface {
 	Me(ctx context.Context) (viewer.Viewer, error)
@@ -10035,6 +10039,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Property.BoolVal(childComplexity), true
 
+	case "Property.dependenceProperties":
+		if e.complexity.Property.DependenceProperties == nil {
+			break
+		}
+
+		return e.complexity.Property.DependenceProperties(childComplexity), true
+
 	case "Property.floatValue":
 		if e.complexity.Property.FloatVal == nil {
 			break
@@ -10076,6 +10087,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Property.NodeValue(childComplexity), true
+
+	case "Property.propertyValues":
+		if e.complexity.Property.PropertyValues == nil {
+			break
+		}
+
+		return e.complexity.Property.PropertyValues(childComplexity), true
 
 	case "Property.rangeFromValue":
 		if e.complexity.Property.RangeFromVal == nil {
@@ -10455,6 +10473,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyTypeValueEdge.Node(childComplexity), true
 
+	case "PropertyValue.dependencePropertyValues":
+		if e.complexity.PropertyValue.DependencePropertyValues == nil {
+			break
+		}
+
+		return e.complexity.PropertyValue.DependencePropertyValues(childComplexity), true
+
 	case "PropertyValue.id":
 		if e.complexity.PropertyValue.ID == nil {
 			break
@@ -10489,13 +10514,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PropertyValue.PropertyValue(childComplexity), true
-
-	case "PropertyValue.propertyValues":
-		if e.complexity.PropertyValue.PropertyValues == nil {
-			break
-		}
-
-		return e.complexity.PropertyValue.PropertyValues(childComplexity), true
 
 	case "PropertyValueConnection.edges":
 		if e.complexity.PropertyValueConnection.Edges == nil {
@@ -15994,6 +16012,8 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
+  dependenceProperties: [Property!]
+  propertyValues: [PropertyValue!]
 }
 
 input PropertyInput {
@@ -16010,6 +16030,8 @@ input PropertyInput {
   nodeIDValue: ID
   isEditable: Boolean
   isInstanceProperty: Boolean
+  dependenceProperties: [PropertyInput!]
+  propertyValues: [AddPropertyValueInput!]
 }
 
 """
@@ -23184,18 +23206,18 @@ type PropertyValue implements Node {
   id: ID!
   name: String!
   property: Property
-  propertyTypeValue: PropertyTypeValue
+  propertyTypeValue: PropertyTypeValue!
   propertyValue: PropertyValue
-  propertyValues: [PropertyValue]
+  dependencePropertyValues: [PropertyValue!]
 }
 
 input AddPropertyValueInput {
   id: ID
   name: String!
   property: ID
-  propertyTypeValue: ID
+  propertyTypeValue: ID!
   propertyValue: ID
-  propertyValues: [AddPropertyValueInput]
+  dependencePropertyValues: [AddPropertyValueInput]
 }
 
 input EditPropertyValueInput {
@@ -23203,7 +23225,7 @@ input EditPropertyValueInput {
   name: String!
   property: ID
   propertyValue: ID
-  propertyValues: [EditPropertyValueInput]
+  dependencePropertyValues: [EditPropertyValueInput]
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -64145,6 +64167,70 @@ func (ec *executionContext) _Property_rawValue(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Property_dependenceProperties(ctx context.Context, field graphql.CollectedField, obj *ent.Property) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Property",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Property().DependenceProperties(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Property)
+	fc.Result = res
+	return ec.marshalOProperty2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Property_propertyValues(ctx context.Context, field graphql.CollectedField, obj *ent.Property) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Property",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Property().PropertyValues(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PropertyValue)
+	fc.Result = res
+	return ec.marshalOPropertyValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValueᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PropertyCategory_id(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -65888,11 +65974,14 @@ func (ec *executionContext) _PropertyValue_propertyTypeValue(ctx context.Context
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*ent.PropertyTypeValue)
 	fc.Result = res
-	return ec.marshalOPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, field.Selections, res)
+	return ec.marshalNPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PropertyValue_propertyValue(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyValue) (ret graphql.Marshaler) {
@@ -65927,7 +66016,7 @@ func (ec *executionContext) _PropertyValue_propertyValue(ctx context.Context, fi
 	return ec.marshalOPropertyValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValue(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PropertyValue_propertyValues(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyValue) (ret graphql.Marshaler) {
+func (ec *executionContext) _PropertyValue_dependencePropertyValues(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyValue) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -65945,7 +66034,7 @@ func (ec *executionContext) _PropertyValue_propertyValues(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.PropertyValue().PropertyValues(rctx, obj)
+		return ec.resolvers.PropertyValue().DependencePropertyValues(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -65956,7 +66045,7 @@ func (ec *executionContext) _PropertyValue_propertyValues(ctx context.Context, f
 	}
 	res := resTmp.([]*ent.PropertyValue)
 	fc.Result = res
-	return ec.marshalOPropertyValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValue(ctx, field.Selections, res)
+	return ec.marshalOPropertyValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValueᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PropertyValueConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyValueConnection) (ret graphql.Marshaler) {
@@ -86081,7 +86170,7 @@ func (ec *executionContext) unmarshalInputAddPropertyValueInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypeValue"))
-			it.PropertyTypeValue, err = ec.unmarshalOID2ᚖint(ctx, v)
+			it.PropertyTypeValue, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -86093,11 +86182,11 @@ func (ec *executionContext) unmarshalInputAddPropertyValueInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-		case "propertyValues":
+		case "dependencePropertyValues":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValues"))
-			it.PropertyValues, err = ec.unmarshalOAddPropertyValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPropertyValueInput(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dependencePropertyValues"))
+			it.DependencePropertyValues, err = ec.unmarshalOAddPropertyValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPropertyValueInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -90443,11 +90532,11 @@ func (ec *executionContext) unmarshalInputEditPropertyValueInput(ctx context.Con
 			if err != nil {
 				return it, err
 			}
-		case "propertyValues":
+		case "dependencePropertyValues":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValues"))
-			it.PropertyValues, err = ec.unmarshalOEditPropertyValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditPropertyValueInput(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dependencePropertyValues"))
+			it.DependencePropertyValues, err = ec.unmarshalOEditPropertyValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditPropertyValueInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -94160,6 +94249,22 @@ func (ec *executionContext) unmarshalInputPropertyInput(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isInstanceProperty"))
 			it.IsInstanceProperty, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "dependenceProperties":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dependenceProperties"))
+			it.DependenceProperties, err = ec.unmarshalOPropertyInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyValues":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValues"))
+			it.PropertyValues, err = ec.unmarshalOAddPropertyValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPropertyValueInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -107137,6 +107242,28 @@ func (ec *executionContext) _Property(ctx context.Context, sel ast.SelectionSet,
 				res = ec._Property_rawValue(ctx, field, obj)
 				return res
 			})
+		case "dependenceProperties":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Property_dependenceProperties(ctx, field, obj)
+				return res
+			})
+		case "propertyValues":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Property_propertyValues(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -107605,6 +107732,9 @@ func (ec *executionContext) _PropertyValue(ctx context.Context, sel ast.Selectio
 					}
 				}()
 				res = ec._PropertyValue_propertyTypeValue(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "propertyValue":
@@ -107618,7 +107748,7 @@ func (ec *executionContext) _PropertyValue(ctx context.Context, sel ast.Selectio
 				res = ec._PropertyValue_propertyValue(ctx, field, obj)
 				return res
 			})
-		case "propertyValues":
+		case "dependencePropertyValues":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -107626,7 +107756,7 @@ func (ec *executionContext) _PropertyValue(ctx context.Context, sel ast.Selectio
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._PropertyValue_propertyValues(ctx, field, obj)
+				res = ec._PropertyValue_dependencePropertyValues(ctx, field, obj)
 				return res
 			})
 		default:
@@ -113401,6 +113531,11 @@ func (ec *executionContext) unmarshalNAddProjectTypeInput2githubᚗcomᚋfaceboo
 func (ec *executionContext) unmarshalNAddPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐAddPropertyTypeValueInput(ctx context.Context, v interface{}) (models1.AddPropertyTypeValueInput, error) {
 	res, err := ec.unmarshalInputAddPropertyTypeValueInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddPropertyValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPropertyValueInput(ctx context.Context, v interface{}) (*models.AddPropertyValueInput, error) {
+	res, err := ec.unmarshalInputAddPropertyValueInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNAddRecommendationsCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsCategoryInput(ctx context.Context, v interface{}) (models.AddRecommendationsCategoryInput, error) {
@@ -119460,6 +119595,16 @@ func (ec *executionContext) marshalNPropertyTypeValueFilterType2githubᚗcomᚋf
 	return v
 }
 
+func (ec *executionContext) marshalNPropertyValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValue(ctx context.Context, sel ast.SelectionSet, v *ent.PropertyValue) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PropertyValue(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNPropertyValueConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValueConnection(ctx context.Context, sel ast.SelectionSet, v ent.PropertyValueConnection) graphql.Marshaler {
 	return ec._PropertyValueConnection(ctx, sel, &v)
 }
@@ -122635,6 +122780,30 @@ func (ec *executionContext) unmarshalOAddPropertyValueInput2ᚕᚖgithubᚗcom�
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
 		res[i], err = ec.unmarshalOAddPropertyValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPropertyValueInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOAddPropertyValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPropertyValueInputᚄ(ctx context.Context, v interface{}) ([]*models.AddPropertyValueInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.AddPropertyValueInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAddPropertyValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPropertyValueInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -125940,6 +126109,46 @@ func (ec *executionContext) marshalOProperty2ᚕᚖgithubᚗcomᚋfacebookincuba
 	return ret
 }
 
+func (ec *executionContext) marshalOProperty2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Property) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProperty2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProperty(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalOProperty2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProperty(ctx context.Context, sel ast.SelectionSet, v *ent.Property) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -126335,7 +126544,7 @@ func (ec *executionContext) marshalOPropertyTypeValueOrderField2ᚖgithubᚗcom�
 	return v
 }
 
-func (ec *executionContext) marshalOPropertyValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValue(ctx context.Context, sel ast.SelectionSet, v []*ent.PropertyValue) graphql.Marshaler {
+func (ec *executionContext) marshalOPropertyValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValueᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.PropertyValue) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -126362,7 +126571,7 @@ func (ec *executionContext) marshalOPropertyValue2ᚕᚖgithubᚗcomᚋfacebooki
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOPropertyValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValue(ctx, sel, v[i])
+			ret[i] = ec.marshalNPropertyValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyValue(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

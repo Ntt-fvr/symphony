@@ -266,8 +266,10 @@ func (Property) Edges() []ent.Edge {
 			Unique(),
 		edge.To("project_value", Project.Type).
 			Unique(),
-		edge.To("property_value", PropertyValue.Type).
-			Unique(),
+		edge.To("property_value", PropertyValue.Type),
+		edge.To("property", Property.Type).
+			Annotations(entgql.Bind()).From("property_dependence").
+			Unique().Annotations(entgql.MapsTo("property_dependence")),
 	}
 }
 

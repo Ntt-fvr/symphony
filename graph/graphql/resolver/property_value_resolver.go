@@ -33,7 +33,7 @@ func (propertyValueResolver) PropertyValue(ctx context.Context, propertyValue *e
 	return variable, nil
 }
 
-func (propertyValueResolver) PropertyValues(ctx context.Context, propertyValue *ent.PropertyValue) ([]*ent.PropertyValue, error) {
+func (propertyValueResolver) DependencePropertyValues(ctx context.Context, propertyValue *ent.PropertyValue) ([]*ent.PropertyValue, error) {
 	variable, err := propertyValue.PropertyValue(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
@@ -51,57 +51,26 @@ func (propertyValueResolver) Property(ctx context.Context, propertyValue *ent.Pr
 
 func (r mutationResolver) AddPropertyValue(ctx context.Context, input models.AddPropertyValueInput) (*ent.PropertyValue, error) {
 	client := r.ClientFrom(ctx)
-	if *input.PropertyTypeValue != 0 {
-		typ, err := client.PropertyValue.Create().
-			SetName(input.Name).
-			SetNillablePropertyID(input.PropertyTypeValue).
-			Save(ctx)
 
-		if err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
-			return nil, fmt.Errorf("has occurred error on process: %w", err)
-		}
+	propertytypevalue := input.PropertyTypeValue
+	property := input.Property
 
-		if len(input.PropertyValues) > 0 {
-			for _, propertyV := range input.PropertyValues {
-				_, err1 := client.PropertyValue.Create().
-					SetName(propertyV.Name).
-					SetNillablePropertyValueDependenceID(&typ.ID).
-					Save(ctx)
-				if err1 != nil {
-					if ent.IsConstraintError(err) {
-						return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-					}
-					return nil, fmt.Errorf("has occurred error on process: %w", err)
-				}
-			}
-		}
-		return typ, nil
-	} else {
-		typ, err := client.PropertyValue.Create().
-			SetName(input.Name).
-			SetNillablePropertyValueDependenceID(input.PropertyValue).
-			Save(ctx)
-
-		if err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
-			return nil, fmt.Errorf("has occurred error on process: %w", err)
-		}
-		return typ, nil
+	_, errtyp := client.PropertyTypeValue.Get(ctx, propertytypevalue)
+	if errtyp != nil {
+		return nil, gqlerror.Errorf("this template has not found: %v", propertytypevalue)
 	}
 
-}
+	_, errproperty := client.Property.Get(ctx, *property)
+	if errproperty != nil {
+		return nil, gqlerror.Errorf("this property has not found: %v", property)
+	}
 
-func (r mutationResolver) AddPropertyValueWithID(ctx context.Context, input models.AddPropertyValueInput, property int) (*ent.PropertyValue, error) {
-	client := r.ClientFrom(ctx)
-	typ, err := client.PropertyValue.Create().
+	propertyvaluesaved, err := client.PropertyValue.Create().
 		SetName(input.Name).
-		SetNillablePropertyID(input.PropertyTypeValue).
+		SetPropertyTypeValueID(propertytypevalue).
+		SetNillablePropertyID(property).
 		Save(ctx)
+
 	if err != nil {
 		if ent.IsConstraintError(err) {
 			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
@@ -109,21 +78,77 @@ func (r mutationResolver) AddPropertyValueWithID(ctx context.Context, input mode
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 
-	if len(input.PropertyValues) > 0 {
-		for _, propertyV := range input.PropertyValues {
-			_, err1 := client.PropertyValue.Create().
-				SetName(propertyV.Name).
-				SetNillablePropertyValueDependenceID(&typ.ID).
+	if len(input.DependencePropertyValues) > 0 {
+		for _, propertyvaluedependence := range input.DependencePropertyValues {
+			propertytypevaluedepence := propertyvaluedependence.PropertyTypeValue
+
+			_, errtyp := client.PropertyTypeValue.Get(ctx, propertytypevaluedepence)
+			if errtyp != nil {
+				return nil, gqlerror.Errorf("this template has not found: %v", propertytypevaluedepence)
+			}
+
+			//objcreated, errdependence := client.PropertyValue.Create().
+			_, errdependence := client.PropertyValue.Create().
+				SetName(propertyvaluedependence.Name).
+				SetPropertyTypeValueID(propertytypevaluedepence).
+				SetNillablePropertyValueDependenceID(&propertyvaluesaved.ID).
 				Save(ctx)
-			if err1 != nil {
-				if ent.IsConstraintError(err) {
-					return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-				}
-				return nil, fmt.Errorf("has occurred error on process: %w", err)
+			if errdependence != nil {
+				return nil, fmt.Errorf("has occurred error on process: %w", errdependence)
 			}
 		}
 	}
-	return typ, nil
+	return propertyvaluesaved, nil
+}
+
+func (r mutationResolver) AddPropertyValueWithID(ctx context.Context, input models.AddPropertyValueInput, property int) (*ent.PropertyValue, error) {
+	client := r.ClientFrom(ctx)
+
+	propertytypevalue := input.PropertyTypeValue
+
+	_, errtyp := client.PropertyTypeValue.Get(ctx, propertytypevalue)
+	if errtyp != nil {
+		return nil, gqlerror.Errorf("this template has not found: %v", propertytypevalue)
+	}
+
+	_, errproperty := client.Property.Get(ctx, property)
+	if errproperty != nil {
+		return nil, gqlerror.Errorf("this property has not found: %v", property)
+	}
+
+	propertyvaluesaved, err := client.PropertyValue.Create().
+		SetName(input.Name).
+		SetPropertyTypeValueID(propertytypevalue).
+		SetNillablePropertyID(&property).
+		Save(ctx)
+
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
+		}
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+
+	if len(input.DependencePropertyValues) > 0 {
+		for _, propertyvaluedependence := range input.DependencePropertyValues {
+			propertytypevaluedepence := propertyvaluedependence.PropertyTypeValue
+
+			_, errtyp := client.PropertyTypeValue.Get(ctx, propertytypevaluedepence)
+			if errtyp != nil {
+				return nil, gqlerror.Errorf("this template has not found: %v", propertytypevaluedepence)
+			}
+
+			_, errdependence := client.PropertyValue.Create().
+				SetName(propertyvaluedependence.Name).
+				SetPropertyTypeValueID(propertytypevaluedepence).
+				SetNillablePropertyValueDependenceID(&propertyvaluesaved.ID).
+				Save(ctx)
+			if errdependence != nil {
+				return nil, fmt.Errorf("has occurred error on process: %w", errdependence)
+			}
+		}
+	}
+	return propertyvaluesaved, nil
 }
 
 func (r mutationResolver) RemovePropertyValue(ctx context.Context, id int) (int, error) {
@@ -143,7 +168,7 @@ func (r mutationResolver) RemovePropertyValue(ctx context.Context, id int) (int,
 	return id, nil
 }
 
-func (r mutationResolver) EditPropertyValue(ctx context.Context, input models.EditPropertyValueInput) (*ent.PropertyValue, error) {
+/*func (r mutationResolver) EditPropertyValue(ctx context.Context, input models.EditPropertyValueInput) (*ent.PropertyValue, error) {
 	client := r.ClientFrom(ctx)
 	et, err := client.PropertyValue.Get(ctx, *input.ID)
 	if err != nil {
@@ -193,3 +218,4 @@ func (r mutationResolver) EditPropertyValue(ctx context.Context, input models.Ed
 
 	return et, nil
 }
+*/

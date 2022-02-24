@@ -19,7 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -65,6 +64,7 @@ type Property struct {
 	property_work_order_value *int
 	property_user_value       *int
 	property_project_value    *int
+	property_property         *int
 	service_properties        *int
 	work_order_properties     *int
 }
@@ -100,10 +100,14 @@ type PropertyEdges struct {
 	// ProjectValue holds the value of the project_value edge.
 	ProjectValue *Project
 	// PropertyValue holds the value of the property_value edge.
-	PropertyValue *PropertyValue
+	PropertyValue []*PropertyValue
+	// PropertyDependence holds the value of the property_dependence edge.
+	PropertyDependence *Property
+	// Property holds the value of the property edge.
+	Property []*Property
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [15]bool
+	loadedTypes [17]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -303,17 +307,35 @@ func (e PropertyEdges) ProjectValueOrErr() (*Project, error) {
 }
 
 // PropertyValueOrErr returns the PropertyValue value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PropertyEdges) PropertyValueOrErr() (*PropertyValue, error) {
+// was not loaded in eager-loading.
+func (e PropertyEdges) PropertyValueOrErr() ([]*PropertyValue, error) {
 	if e.loadedTypes[14] {
-		if e.PropertyValue == nil {
-			// The edge property_value was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: propertyvalue.Label}
-		}
 		return e.PropertyValue, nil
 	}
 	return nil, &NotLoadedError{edge: "property_value"}
+}
+
+// PropertyDependenceOrErr returns the PropertyDependence value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PropertyEdges) PropertyDependenceOrErr() (*Property, error) {
+	if e.loadedTypes[15] {
+		if e.PropertyDependence == nil {
+			// The edge property_dependence was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: property.Label}
+		}
+		return e.PropertyDependence, nil
+	}
+	return nil, &NotLoadedError{edge: "property_dependence"}
+}
+
+// PropertyOrErr returns the Property value or an error if the edge
+// was not loaded in eager-loading.
+func (e PropertyEdges) PropertyOrErr() ([]*Property, error) {
+	if e.loadedTypes[16] {
+		return e.Property, nil
+	}
+	return nil, &NotLoadedError{edge: "property"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -348,6 +370,7 @@ func (*Property) fkValues() []interface{} {
 		&sql.NullInt64{}, // property_work_order_value
 		&sql.NullInt64{}, // property_user_value
 		&sql.NullInt64{}, // property_project_value
+		&sql.NullInt64{}, // property_property
 		&sql.NullInt64{}, // service_properties
 		&sql.NullInt64{}, // work_order_properties
 	}
@@ -498,12 +521,18 @@ func (pr *Property) assignValues(values ...interface{}) error {
 			*pr.property_project_value = int(value.Int64)
 		}
 		if value, ok := values[12].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field property_property", value)
+		} else if value.Valid {
+			pr.property_property = new(int)
+			*pr.property_property = int(value.Int64)
+		}
+		if value, ok := values[13].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field service_properties", value)
 		} else if value.Valid {
 			pr.service_properties = new(int)
 			*pr.service_properties = int(value.Int64)
 		}
-		if value, ok := values[13].(*sql.NullInt64); !ok {
+		if value, ok := values[14].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_properties", value)
 		} else if value.Valid {
 			pr.work_order_properties = new(int)
@@ -586,6 +615,16 @@ func (pr *Property) QueryProjectValue() *ProjectQuery {
 // QueryPropertyValue queries the property_value edge of the Property.
 func (pr *Property) QueryPropertyValue() *PropertyValueQuery {
 	return (&PropertyClient{config: pr.config}).QueryPropertyValue(pr)
+}
+
+// QueryPropertyDependence queries the property_dependence edge of the Property.
+func (pr *Property) QueryPropertyDependence() *PropertyQuery {
+	return (&PropertyClient{config: pr.config}).QueryPropertyDependence(pr)
+}
+
+// QueryProperty queries the property edge of the Property.
+func (pr *Property) QueryProperty() *PropertyQuery {
+	return (&PropertyClient{config: pr.config}).QueryProperty(pr)
 }
 
 // Update returns a builder for updating this Property.

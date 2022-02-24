@@ -341,12 +341,12 @@ type AddProjectTypeInput struct {
 }
 
 type AddPropertyValueInput struct {
-	ID                *int                     `json:"id"`
-	Name              string                   `json:"name"`
-	Property          *int                     `json:"property"`
-	PropertyTypeValue *int                     `json:"propertyTypeValue"`
-	PropertyValue     *int                     `json:"propertyValue"`
-	PropertyValues    []*AddPropertyValueInput `json:"propertyValues"`
+	ID                       *int                     `json:"id"`
+	Name                     string                   `json:"name"`
+	Property                 *int                     `json:"property"`
+	PropertyTypeValue        int                      `json:"propertyTypeValue"`
+	PropertyValue            *int                     `json:"propertyValue"`
+	DependencePropertyValues []*AddPropertyValueInput `json:"dependencePropertyValues"`
 }
 
 type AddRecommendationsCategoryInput struct {
@@ -937,11 +937,11 @@ type EditPropertyTypeValueInput struct {
 }
 
 type EditPropertyValueInput struct {
-	ID             *int                      `json:"id"`
-	Name           string                    `json:"name"`
-	Property       *int                      `json:"property"`
-	PropertyValue  *int                      `json:"propertyValue"`
-	PropertyValues []*EditPropertyValueInput `json:"propertyValues"`
+	ID                       *int                      `json:"id"`
+	Name                     string                    `json:"name"`
+	Property                 *int                      `json:"property"`
+	PropertyValue            *int                      `json:"propertyValue"`
+	DependencePropertyValues []*EditPropertyValueInput `json:"dependencePropertyValues"`
 }
 
 type EditRecommendationsCategoryInput struct {
@@ -1367,19 +1367,21 @@ type PropertiesByCategories struct {
 }
 
 type PropertyInput struct {
-	ID                 *int     `json:"id"`
-	PropertyTypeID     int      `json:"propertyTypeID"`
-	StringValue        *string  `json:"stringValue"`
-	IntValue           *int     `json:"intValue"`
-	BooleanValue       *bool    `json:"booleanValue"`
-	FloatValue         *float64 `json:"floatValue"`
-	LatitudeValue      *float64 `json:"latitudeValue"`
-	LongitudeValue     *float64 `json:"longitudeValue"`
-	RangeFromValue     *float64 `json:"rangeFromValue"`
-	RangeToValue       *float64 `json:"rangeToValue"`
-	NodeIDValue        *int     `json:"nodeIDValue"`
-	IsEditable         *bool    `json:"isEditable"`
-	IsInstanceProperty *bool    `json:"isInstanceProperty"`
+	ID                   *int                     `json:"id"`
+	PropertyTypeID       int                      `json:"propertyTypeID"`
+	StringValue          *string                  `json:"stringValue"`
+	IntValue             *int                     `json:"intValue"`
+	BooleanValue         *bool                    `json:"booleanValue"`
+	FloatValue           *float64                 `json:"floatValue"`
+	LatitudeValue        *float64                 `json:"latitudeValue"`
+	LongitudeValue       *float64                 `json:"longitudeValue"`
+	RangeFromValue       *float64                 `json:"rangeFromValue"`
+	RangeToValue         *float64                 `json:"rangeToValue"`
+	NodeIDValue          *int                     `json:"nodeIDValue"`
+	IsEditable           *bool                    `json:"isEditable"`
+	IsInstanceProperty   *bool                    `json:"isInstanceProperty"`
+	DependenceProperties []*PropertyInput         `json:"dependenceProperties"`
+	PropertyValues       []*AddPropertyValueInput `json:"propertyValues"`
 }
 
 type PropertyTypeValueFilterInput struct {

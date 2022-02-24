@@ -263,7 +263,7 @@ func (pvc *PropertyValueCreate) createSpec() (*PropertyValue, *sqlgraph.CreateSp
 	}
 	if nodes := pvc.mutation.PropertyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   propertyvalue.PropertyTable,
 			Columns: []string{propertyvalue.PropertyColumn},

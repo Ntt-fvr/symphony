@@ -204,6 +204,10 @@ func (r mutationResolver) AddProperty(
 }
 
 func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args resolverutil.AddPropertyArgs) ([]*ent.Property, error) {
+	var (
+		client = r.ClientFrom(args)
+	)
+
 	builders := make([]*ent.PropertyCreate, 0, len(inputs))
 	for _, input := range inputs {
 		builder, err := r.AddProperty(input, args)
@@ -221,6 +225,51 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 				zap.Error(err),
 			)
 	}
+
+	for i, property := range inputs {
+		idPropType := properties[i]
+		if len(property.DependenceProperties) > 0 {
+			var internalproperties = property.DependenceProperties
+			for _, internalproperty := range internalproperties {
+				pro, err1 := client.Property.Create().
+					SetTypeID(internalproperty.PropertyTypeID).
+					SetNillableStringVal(internalproperty.StringValue).
+					SetNillableIntVal(internalproperty.IntValue).
+					SetNillableBoolVal(internalproperty.BooleanValue).
+					SetNillableFloatVal(internalproperty.FloatValue).
+					SetNillableLatitudeVal(internalproperty.LatitudeValue).
+					SetNillableLongitudeVal(internalproperty.LongitudeValue).
+					SetNillableRangeFromVal(internalproperty.RangeFromValue).
+					SetNillableRangeToVal(internalproperty.RangeToValue).
+					SetPropertyDependenceID(idPropType.ID).
+					Save(args)
+
+				if err1 != nil {
+					return nil, gqlerror.Errorf("has occurred error on process: %v", err1)
+				}
+
+				var values = internalproperty.PropertyValues
+				if len(internalproperty.PropertyValues) > 0 {
+					for _, value := range values {
+						_, err2 := r.AddPropertyValueWithID(args, *value, pro.ID)
+						if err2 != nil {
+							return nil, gqlerror.Errorf("has occurred error on process: %v", err2)
+						}
+					}
+				}
+			}
+
+		} else if len(property.PropertyValues) > 0 {
+			propertyVal := properties[i]
+			for _, value := range property.PropertyValues {
+				_, err2 := r.AddPropertyValueWithID(args, *value, propertyVal.ID)
+				if err2 != nil {
+					return nil, gqlerror.Errorf("has occurred error on process: %v", err2)
+				}
+			}
+		}
+	}
+
 	return properties, err
 }
 

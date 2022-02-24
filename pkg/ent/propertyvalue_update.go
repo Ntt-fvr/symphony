@@ -264,7 +264,7 @@ func (pvu *PropertyValueUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if pvu.mutation.PropertyCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   propertyvalue.PropertyTable,
 			Columns: []string{propertyvalue.PropertyColumn},
@@ -280,7 +280,7 @@ func (pvu *PropertyValueUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if nodes := pvu.mutation.PropertyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   propertyvalue.PropertyTable,
 			Columns: []string{propertyvalue.PropertyColumn},
@@ -669,7 +669,7 @@ func (pvuo *PropertyValueUpdateOne) sqlSave(ctx context.Context) (_node *Propert
 	}
 	if pvuo.mutation.PropertyCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   propertyvalue.PropertyTable,
 			Columns: []string{propertyvalue.PropertyColumn},
@@ -685,7 +685,7 @@ func (pvuo *PropertyValueUpdateOne) sqlSave(ctx context.Context) (_node *Propert
 	}
 	if nodes := pvuo.mutation.PropertyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   propertyvalue.PropertyTable,
 			Columns: []string{propertyvalue.PropertyColumn},

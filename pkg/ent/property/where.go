@@ -1410,7 +1410,7 @@ func HasPropertyValue() predicate.Property {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(PropertyValueTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, PropertyValueTable, PropertyValueColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyValueTable, PropertyValueColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1422,7 +1422,63 @@ func HasPropertyValueWith(preds ...predicate.PropertyValue) predicate.Property {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(PropertyValueInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, PropertyValueTable, PropertyValueColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyValueTable, PropertyValueColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPropertyDependence applies the HasEdge predicate on the "property_dependence" edge.
+func HasPropertyDependence() predicate.Property {
+	return predicate.Property(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyDependenceTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyDependenceTable, PropertyDependenceColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPropertyDependenceWith applies the HasEdge predicate on the "property_dependence" edge with a given conditions (other predicates).
+func HasPropertyDependenceWith(preds ...predicate.Property) predicate.Property {
+	return predicate.Property(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PropertyDependenceTable, PropertyDependenceColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasProperty applies the HasEdge predicate on the "property" edge.
+func HasProperty() predicate.Property {
+	return predicate.Property(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTable, PropertyColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPropertyWith applies the HasEdge predicate on the "property" edge with a given conditions (other predicates).
+func HasPropertyWith(preds ...predicate.Property) predicate.Property {
+	return predicate.Property(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTable, PropertyColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

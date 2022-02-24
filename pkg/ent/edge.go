@@ -1528,12 +1528,28 @@ func (pr *Property) ProjectValue(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
-func (pr *Property) PropertyValue(ctx context.Context) (*PropertyValue, error) {
+func (pr *Property) PropertyValue(ctx context.Context) ([]*PropertyValue, error) {
 	result, err := pr.Edges.PropertyValueOrErr()
 	if IsNotLoaded(err) {
-		result, err = pr.QueryPropertyValue().Only(ctx)
+		result, err = pr.QueryPropertyValue().All(ctx)
+	}
+	return result, err
+}
+
+func (pr *Property) PropertyDependence(ctx context.Context) (*Property, error) {
+	result, err := pr.Edges.PropertyDependenceOrErr()
+	if IsNotLoaded(err) {
+		result, err = pr.QueryPropertyDependence().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (pr *Property) Property(ctx context.Context) ([]*Property, error) {
+	result, err := pr.Edges.PropertyOrErr()
+	if IsNotLoaded(err) {
+		result, err = pr.QueryProperty().All(ctx)
+	}
+	return result, err
 }
 
 func (pc *PropertyCategory) PropertiesType(ctx context.Context) ([]*PropertyType, error) {

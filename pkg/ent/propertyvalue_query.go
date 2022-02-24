@@ -79,7 +79,7 @@ func (pvq *PropertyValueQuery) QueryProperty() *PropertyQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertyvalue.Table, propertyvalue.FieldID, selector),
 			sqlgraph.To(property.Table, property.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, propertyvalue.PropertyTable, propertyvalue.PropertyColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertyvalue.PropertyTable, propertyvalue.PropertyColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pvq.driver.Dialect(), step)
 		return fromU, nil

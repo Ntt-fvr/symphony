@@ -9231,7 +9231,39 @@ func (c *PropertyClient) QueryPropertyValue(pr *Property) *PropertyValueQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(property.Table, property.FieldID, id),
 			sqlgraph.To(propertyvalue.Table, propertyvalue.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, property.PropertyValueTable, property.PropertyValueColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, property.PropertyValueTable, property.PropertyValueColumn),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPropertyDependence queries the property_dependence edge of a Property.
+func (c *PropertyClient) QueryPropertyDependence(pr *Property) *PropertyQuery {
+	query := &PropertyQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(property.Table, property.FieldID, id),
+			sqlgraph.To(property.Table, property.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, property.PropertyDependenceTable, property.PropertyDependenceColumn),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProperty queries the property edge of a Property.
+func (c *PropertyClient) QueryProperty(pr *Property) *PropertyQuery {
+	query := &PropertyQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(property.Table, property.FieldID, id),
+			sqlgraph.To(property.Table, property.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, property.PropertyTable, property.PropertyColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 		return fromV, nil
@@ -9939,7 +9971,7 @@ func (c *PropertyValueClient) QueryProperty(pv *PropertyValue) *PropertyQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertyvalue.Table, propertyvalue.FieldID, id),
 			sqlgraph.To(property.Table, property.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, propertyvalue.PropertyTable, propertyvalue.PropertyColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertyvalue.PropertyTable, propertyvalue.PropertyColumn),
 		)
 		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
 		return fromV, nil

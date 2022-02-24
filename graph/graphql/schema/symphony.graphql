@@ -1740,6 +1740,8 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
+  dependenceProperties: [Property!]
+  propertyValues: [PropertyValue!]
 }
 
 input PropertyInput {
@@ -1756,6 +1758,8 @@ input PropertyInput {
   nodeIDValue: ID
   isEditable: Boolean
   isInstanceProperty: Boolean
+  dependenceProperties: [PropertyInput!]
+  propertyValues: [AddPropertyValueInput!]
 }
 
 """
@@ -8930,18 +8934,18 @@ type PropertyValue implements Node {
   id: ID!
   name: String!
   property: Property
-  propertyTypeValue: PropertyTypeValue
+  propertyTypeValue: PropertyTypeValue!
   propertyValue: PropertyValue
-  propertyValues: [PropertyValue]
+  dependencePropertyValues: [PropertyValue!]
 }
 
 input AddPropertyValueInput {
   id: ID
   name: String!
   property: ID
-  propertyTypeValue: ID
+  propertyTypeValue: ID!
   propertyValue: ID
-  propertyValues: [AddPropertyValueInput]
+  dependencePropertyValues: [AddPropertyValueInput]
 }
 
 input EditPropertyValueInput {
@@ -8949,5 +8953,5 @@ input EditPropertyValueInput {
   name: String!
   property: ID
   propertyValue: ID
-  propertyValues: [EditPropertyValueInput]
+  dependencePropertyValues: [EditPropertyValueInput]
 }

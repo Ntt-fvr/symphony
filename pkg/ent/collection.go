@@ -1235,6 +1235,14 @@ func (pr *PropertyQuery) collectField(ctx *graphql.OperationContext, field graph
 			pr = pr.WithLocation(func(query *LocationQuery) {
 				query.collectField(ctx, field)
 			})
+		case "property":
+			pr = pr.WithProperty(func(query *PropertyQuery) {
+				query.collectField(ctx, field)
+			})
+		case "property_dependence":
+			pr = pr.WithPropertyDependence(func(query *PropertyQuery) {
+				query.collectField(ctx, field)
+			})
 		case "serviceValue":
 			pr = pr.WithService(func(query *ServiceQuery) {
 				query.collectField(ctx, field)
