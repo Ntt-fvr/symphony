@@ -53,10 +53,20 @@ const useStyles = makeStyles(() => ({
 
 const RelationshipsTypesQuery = graphql`
   query RelationshipsTypesQuery {
-    resourceRelationships {
+    resourceTypeRelationships {
       edges {
         node {
           id
+          resourceRelationshipType
+          resourceRelationshipMultiplicity
+          resourceTypeA {
+            id
+            name
+          }
+          resourceTypeB {
+            id
+            name
+          }
         }
       }
     }
@@ -66,7 +76,7 @@ const RelationshipsTypesQuery = graphql`
 const RelationshipsTypes = () => {
   const classes = useStyles();
   const [relationships, setRelationships] = useState({});
-
+  // console.log('TYPES ', relationships);
   useEffect(() => {
     isCompleted();
   }, []);
@@ -100,7 +110,7 @@ const RelationshipsTypes = () => {
       <Grid item xs={12} lg={9}>
         <TitleTextCardsRelationships />
         <List disablePadding className={classes.listContainer}>
-          {relationships.resourceRelationships?.edges.map((item, index) => (
+          {relationships.resourceTypeRelationships?.edges.map((item, index) => (
             <RelationshipsTypeItemList
               key={index}
               handleRemove={() => handleRemove(item.node.id)}
