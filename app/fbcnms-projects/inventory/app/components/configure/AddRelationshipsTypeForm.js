@@ -109,19 +109,6 @@ const AddRelationshipsTypeForm = (props: Props) => {
   const [relationships, setRelationships] = useState<Relationship>({data: {}});
   const [resourceTypeA, setResourceTypeA] = useState({data: {}});
   const [resourceTypeB, setResourceTypeB] = useState({data: {}});
-  // const [filter, setFilter] = useState({});
-  console.log('relationships  ', relationships);
-  // console.log(relationships.data.resourceTypeA === undefined);
-
-  // useEffect(() => {
-  //   data();
-  // }, []);
-
-  // const data = () => {
-  //   fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {}).then(data => {
-  //     setFilter(data);
-  //   });
-  // };
 
   const filterClassA = baseTypeA => {
     fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {
@@ -186,8 +173,6 @@ const AddRelationshipsTypeForm = (props: Props) => {
       ? true
       : false;
 
-  console.log('handleHasError', handleHasError);
-
   const helperText = !relationships.data.resourceTypeA
     ? ''
     : relationships.data.resourceTypeA === relationships.data.resourceTypeB
@@ -199,8 +184,6 @@ const AddRelationshipsTypeForm = (props: Props) => {
     6,
     handleHasError,
   );
-
-  console.log('handleDisable', handleDisable);
 
   const setReturn = () => {
     setShowChecking(false);

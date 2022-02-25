@@ -7,12 +7,12 @@
  * @flow
  * @format
  */
-import type {RemoveResourceRelationshipMutationVariables} from '../../mutations/__generated__/RemoveResourceRelationshipMutation.graphql';
+import type {RemoveResourceTypeRelationshipMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeRelationshipMutation.graphql';
 
 import ConfigureTitle from '../assurance/common/ConfigureTitle';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import RemoveResourceRelationshipMutation from '../../mutations/RemoveResourceRelationshipMutation';
+import RemoveResourceTypeRelationshipMutation from '../../mutations/RemoveResourceTypeRelationshipMutation';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddRelationshipsTypeForm} from './AddRelationshipsTypeForm';
@@ -76,7 +76,7 @@ const RelationshipsTypesQuery = graphql`
 const RelationshipsTypes = () => {
   const classes = useStyles();
   const [relationships, setRelationships] = useState({});
-  // console.log('TYPES ', relationships);
+
   useEffect(() => {
     isCompleted();
   }, []);
@@ -88,10 +88,10 @@ const RelationshipsTypes = () => {
   }, [setRelationships]);
 
   const handleRemove = id => {
-    const variables: RemoveResourceRelationshipMutationVariables = {
+    const variables: RemoveResourceTypeRelationshipMutationVariables = {
       id: id,
     };
-    RemoveResourceRelationshipMutation(variables, {
+    RemoveResourceTypeRelationshipMutation(variables, {
       onCompleted: () => isCompleted(),
     });
   };
