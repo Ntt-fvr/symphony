@@ -118,9 +118,9 @@ const KqiSourceFormEdit = (props: Props) => {
 
   const inputFilter = () => {
     return (
-        kqiSourcesNames?.filter(
-            item => item === name.value.trim() && item !== formValues.name.trim(),
-        ) || []
+      kqiSourcesNames?.filter(
+        item => item === name.value.trim() && item !== formValues.name.trim(),
+      ) || []
     );
   };
 
@@ -145,67 +145,67 @@ const KqiSourceFormEdit = (props: Props) => {
   };
 
   return (
-      <div className={classes.root}>
-        <Grid
-            className={classes.header}
-            container
-            direction="row"
-            justify="flex-end"
-            alignItems="center">
-          <Grid item xs>
-            <Text variant="h6" weight={'bold'}>
-              {fbt('Edit KQI Source', ' ')}
-            </Text>
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete
-                variant="outlined"
-                onClick={() => hideKqiSourceFormEdit()}>
-              Cancel
-            </ButtonSaveDelete>
-          </Grid>
-          <Grid>
-            <ButtonSaveDelete
-                onClick={() => {
-                  hideKqiSourceFormEdit();
-                  handleClick();
-                }}
-                disabled={handleDisable}>
-              Save
-            </ButtonSaveDelete>
-          </Grid>
-        </Grid>
+    <div className={classes.root}>
+      <Grid
+        className={classes.header}
+        container
+        direction="row"
+        justify="flex-end"
+        alignItems="center">
         <Grid item xs>
-          <Card>
-            <Grid container className={classes.formField} spacing={2}>
-              <Grid item xs={12} lg={6}>
-                <TextField
-                    required
-                    className={classes.textInput}
-                    label="Name"
-                    variant="outlined"
-                    name="name"
-                    fullWidth
-                    {...name}
-                    {...validationName}
-                />
-              </Grid>
-              <Grid item xs={12} lg={6}>
-                <TextField
-                    required
-                    disabled
-                    className={classes.textInput}
-                    label="ID"
-                    variant="outlined"
-                    name="iD"
-                    fullWidth
-                    {...id}
-                />
-              </Grid>
-            </Grid>
-          </Card>
+          <Text variant="h6" weight={'bold'}>
+            {fbt('Edit KQI Source', ' ')}
+          </Text>
         </Grid>
-      </div>
+        <Grid>
+          <ButtonSaveDelete
+            variant="outlined"
+            onClick={() => hideKqiSourceFormEdit()}>
+            Cancel
+          </ButtonSaveDelete>
+        </Grid>
+        <Grid>
+          <ButtonSaveDelete
+            onClick={() => {
+              hideKqiSourceFormEdit();
+              handleClick();
+            }}
+            disabled={handleDisable}>
+            Save
+          </ButtonSaveDelete>
+        </Grid>
+      </Grid>
+      <Grid item xs>
+        <Card>
+          <Grid container className={classes.formField} spacing={2}>
+            <Grid item xs={12} lg={6}>
+              <TextField
+                required
+                className={classes.textInput}
+                label="Name"
+                variant="outlined"
+                name="name"
+                fullWidth
+                {...name}
+                {...validationName}
+              />
+            </Grid>
+            <Grid item xs={12} lg={6}>
+              <TextField
+                required
+                disabled
+                className={classes.textInput}
+                label="ID"
+                variant="outlined"
+                name="iD"
+                fullWidth
+                {...id}
+              />
+            </Grid>
+          </Grid>
+        </Card>
+      </Grid>
+    </div>
   );
 };
 export default KqiSourceFormEdit;
