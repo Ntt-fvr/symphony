@@ -2261,7 +2261,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "available", Type: field.TypeBool, Nullable: true},
-		{Name: "resource_specification_resource_rspecification", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_specification_resource_specification_r", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourcesTable holds the schema information for the "resources" table.
 	ResourcesTable = &schema.Table{
@@ -2270,7 +2270,7 @@ var (
 		PrimaryKey: []*schema.Column{ResourcesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "resources_resource_specifications_resource_rspecification",
+				Symbol:  "resources_resource_specifications_resource_specification_r",
 				Columns: []*schema.Column{ResourcesColumns[5]},
 
 				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},

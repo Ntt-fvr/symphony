@@ -1800,10 +1800,10 @@ func (rs *ResourceSpecification) ResourceSpecificationItems(ctx context.Context)
 	return result, err
 }
 
-func (rs *ResourceSpecification) ResourceRspecification(ctx context.Context) ([]*Resource, error) {
-	result, err := rs.Edges.ResourceRspecificationOrErr()
+func (rs *ResourceSpecification) ResourceSpecificationR(ctx context.Context) ([]*Resource, error) {
+	result, err := rs.Edges.ResourceSpecificationROrErr()
 	if IsNotLoaded(err) {
-		result, err = rs.QueryResourceRspecification().All(ctx)
+		result, err = rs.QueryResourceSpecificationR().All(ctx)
 	}
 	return result, err
 }
