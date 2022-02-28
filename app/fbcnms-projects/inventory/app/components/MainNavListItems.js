@@ -13,6 +13,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import MapIcon from '@material-ui/icons/Map';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
+import PieChartIcon from '@material-ui/icons/PieChart';
 import React, {useContext} from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ViewListIcon from '@material-ui/icons/ViewList';
@@ -68,6 +69,15 @@ export default function MainNavListItems() {
         ServerLogger.info(LogEvents.SERVICES_NAV_CLICKED);
       }}
       hidden={!servicesEnabled}
+    />,
+    <NavListItem
+      key={6}
+      label="Change"
+      path={relativeUrl('/change_request')}
+      icon={<PieChartIcon />}
+      onClick={() => {
+        ServerLogger.info(LogEvents.CHANGE_NAV_CLICKED);
+      }}
     />,
   ];
 }
