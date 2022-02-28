@@ -31,8 +31,8 @@ type Resource struct {
 	Available *bool `json:"available,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceQuery when eager-loading is set.
-	Edges                                          ResourceEdges `json:"edges"`
-	resource_specification_resource_rspecification *int
+	Edges                                           ResourceEdges `json:"edges"`
+	resource_specification_resource_specification_r *int
 }
 
 // ResourceEdges holds the relations/edges for other nodes in the graph.
@@ -94,7 +94,7 @@ func (*Resource) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Resource) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // resource_specification_resource_rspecification
+		&sql.NullInt64{}, // resource_specification_resource_specification_r
 	}
 }
 
@@ -134,10 +134,10 @@ func (r *Resource) assignValues(values ...interface{}) error {
 	values = values[4:]
 	if len(values) == len(resource.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resource_specification_resource_rspecification", value)
+			return fmt.Errorf("unexpected type %T for edge-field resource_specification_resource_specification_r", value)
 		} else if value.Valid {
-			r.resource_specification_resource_rspecification = new(int)
-			*r.resource_specification_resource_rspecification = int(value.Int64)
+			r.resource_specification_resource_specification_r = new(int)
+			*r.resource_specification_resource_specification_r = int(value.Int64)
 		}
 	}
 	return nil
