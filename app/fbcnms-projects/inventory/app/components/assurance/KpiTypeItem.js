@@ -117,7 +117,7 @@ const KpiTypeItem = (props: Props) => {
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
 
   const filterFormulaTableById = dataFormulaTable?.filter(
-      kpiData => kpiData?.kpiFk?.id === id,
+    kpiData => kpiData?.kpiFk?.id === id,
   );
 
   const handleClick = event => {
@@ -141,142 +141,142 @@ const KpiTypeItem = (props: Props) => {
   };
 
   return (
-      <div className={classes.root}>
-        <Accordion className={classes.container}>
-          <AccordionSummary
-              xs={12}
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header">
-            <Grid container item xs={12}>
-              <Grid
-                  container
-                  alignItems="center"
-                  className={classes.switch}
-                  item
-                  xs={4}
-                  md={3}>
-                <Switch
-                    title={''}
-                    checked={status}
-                    onChange={setChecked}
-                    onClick={handleClick}
-                />
-                <Text
-                    useEllipsis={true}
-                    className={classes.nameKpi}
-                    weight={'bold'}>
-                  {name}
-                </Text>
-              </Grid>
-
-              <Grid
-                  item
-                  xs={3}
-                  md={4}
-                  container
-                  alignItems="center"
-                  justify="flex-start">
-                <Button variant="text">
-                  <Text useEllipsis={true} color="primary" weight="regular">
-                    {domainFk?.name}
-                  </Text>
-                </Button>
-              </Grid>
-
-              <Grid
-                  item
-                  xs={3}
-                  md={3}
-                  lg={3}
-                  xl={4}
-                  container
-                  alignItems="center"
-                  justify="flex-start">
-                <Button variant="text">
-                  <Text useEllipsis={true} color="primary" weight="regular">
-                    {kpiCategoryFK?.name}
-                  </Text>
-                </Button>
-              </Grid>
-              <Grid
-                  item
-                  xs={2}
-                  md={2}
-                  lg={2}
-                  xl={1}
-                  container
-                  justify="flex-end"
-                  alignItems="center">
-                <DeleteOutlinedIcon
-                    className={classes.deleteIcon}
-                    onClick={handleDelete}
-                />
-                <IconButton icon={EditIcon} onClick={edit} />
-              </Grid>
+    <div className={classes.root}>
+      <Accordion className={classes.container}>
+        <AccordionSummary
+          xs={12}
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header">
+          <Grid container item xs={12}>
+            <Grid
+              container
+              alignItems="center"
+              className={classes.switch}
+              item
+              xs={4}
+              md={3}>
+              <Switch
+                title={''}
+                checked={status}
+                onChange={setChecked}
+                onClick={handleClick}
+              />
+              <Text
+                useEllipsis={true}
+                className={classes.nameKpi}
+                weight={'bold'}>
+                {name}
+              </Text>
             </Grid>
-          </AccordionSummary>
 
-          <AccordionDetails>
-            <Grid container spacing={1}>
-              <Grid item xs={3}>
-                <Grid container spacing={1}>
-                  <Grid item xs={12}>
-                    <Text
-                        style={{
-                          color: symphony.palette.D600,
-                          paddingRight: '0.5rem',
-                        }}>
-                      Associated threshold:
+            <Grid
+              item
+              xs={3}
+              md={4}
+              container
+              alignItems="center"
+              justify="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true} color="primary" weight="regular">
+                  {domainFk?.name}
+                </Text>
+              </Button>
+            </Grid>
+
+            <Grid
+              item
+              xs={3}
+              md={3}
+              lg={3}
+              xl={4}
+              container
+              alignItems="center"
+              justify="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true} color="primary" weight="regular">
+                  {kpiCategoryFK?.name}
+                </Text>
+              </Button>
+            </Grid>
+            <Grid
+              item
+              xs={2}
+              md={2}
+              lg={2}
+              xl={1}
+              container
+              justify="flex-end"
+              alignItems="center">
+              <DeleteOutlinedIcon
+                className={classes.deleteIcon}
+                onClick={handleDelete}
+              />
+              <IconButton icon={EditIcon} onClick={edit} />
+            </Grid>
+          </Grid>
+        </AccordionSummary>
+
+        <AccordionDetails>
+          <Grid container spacing={1}>
+            <Grid item xs={3}>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                      paddingRight: '0.5rem',
+                    }}>
+                    Associated threshold:
+                  </Text>
+                  <Button variant="text">
+                    <Text color="primary" weight="bold">
+                      {thresholdFromKpi === undefined
+                        ? 'none'
+                        : thresholdFromKpi.node.name}
                     </Text>
-                    <Button variant="text">
-                      <Text color="primary" weight="bold">
-                        {thresholdFromKpi === undefined
-                            ? 'none'
-                            : thresholdFromKpi.node.name}
-                      </Text>
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Text
-                        style={{
-                          color: symphony.palette.D600,
-                        }}>
-                      ID:
-                    </Text>
-                    {`  ${id}`}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Text
-                        style={{
-                          color: symphony.palette.D600,
-                        }}>
-                      Description:
-                    </Text>
-                    {` ${description === '' ? 'No description' : description}`}
-                  </Grid>
+                  </Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                    }}>
+                    ID:
+                  </Text>
+                  {`  ${id}`}
+                </Grid>
+                <Grid item xs={12}>
+                  <Text
+                    style={{
+                      color: symphony.palette.D600,
+                    }}>
+                    Description:
+                  </Text>
+                  {` ${description === '' ? 'No description' : description}`}
                 </Grid>
               </Grid>
-              <Grid item xs={9}>
-                <TableFormulas
-                    formulas={filterFormulaTableById}
-                    handleEditFormulaClick={handleEditFormulaClick}
-                    parentEditCallback={parentEditCallback}
-                    isCompleted={isCompleted}
-                />
-              </Grid>
             </Grid>
-          </AccordionDetails>
-        </Accordion>
-        {dialogOpen && (
-            <DialogConfirmDelete
-                name={'kpi'}
-                open={dialogOpen}
-                onClose={() => setDialogOpen(false)}
-                deleteItem={deleteItem}
-            />
-        )}
-      </div>
+            <Grid item xs={9}>
+              <TableFormulas
+                formulas={filterFormulaTableById}
+                handleEditFormulaClick={handleEditFormulaClick}
+                parentEditCallback={parentEditCallback}
+                isCompleted={isCompleted}
+              />
+            </Grid>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+      {dialogOpen && (
+        <DialogConfirmDelete
+          name={'kpi'}
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          deleteItem={deleteItem}
+        />
+      )}
+    </div>
   );
 };
 export default KpiTypeItem;
