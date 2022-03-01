@@ -60,10 +60,7 @@ const ConfigurationsTypes = () => {
       <Grid className={classes.titleCounter} item xs={12}>
         <ConfigureTitle
           title={fbt('Configurations', '')}
-          subtitle={fbt(
-            'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-            'xxxxx yyyyy zzzzzz',
-          )}
+          subtitle={fbt('', '  ')}
         />
       </Grid>
     </Grid>

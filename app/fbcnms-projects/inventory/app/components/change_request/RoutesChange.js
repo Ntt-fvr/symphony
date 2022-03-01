@@ -12,14 +12,11 @@ import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
-import {ChangeRequestTypes} from '../../components/change_request/ChangeRequestTypes';
-import {ConfigurationsTypes} from '../../components/change_request/ConfigurationsTypes';
-// import LocationTypes from '../components/configure/LocationTypes';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
-// import ServiceTypes from '../components/configure/ServiceTypes';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
-// import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
+import {ChangeRequestTypes} from '../../components/change_request/ChangeRequestTypes';
+import {ConfigurationsTypes} from '../../components/change_request/ConfigurationsTypes';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
@@ -61,9 +58,9 @@ export default function Configure() {
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
-  const servicesEnabled =
-    useContext(AppContext).isFeatureEnabled('change_request');
-  // const equipmentPortsFlag = useFeatureFlag('equipment_&_ports_module');
+  const servicesEnabled = useContext(AppContext).isFeatureEnabled(
+    'change_request',
+  );
   const tabBars: Array<RouteTab> = useMemo(
     () => [
       {

@@ -15,7 +15,6 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   addCounter: {
-    marginRight: '1.5rem',
     width: '98px',
     height: '36px',
     alignSelf: 'flex-end',
