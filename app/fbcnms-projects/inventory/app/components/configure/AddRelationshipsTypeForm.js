@@ -18,7 +18,7 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
@@ -114,9 +114,9 @@ const AddRelationshipsTypeForm = (props: Props) => {
     fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {
       filterBy: [
         {
-          filterType: 'RESOURCE_TYPE_BASE_TYPE',
+          filterType: 'RESOURCE_TYPE_CLASS',
           operator: 'IS',
-          typeBaseTypeValue: baseTypeA.target.value,
+          typeClassValue: baseTypeA.target.value,
         },
       ],
     }).then(data => {
@@ -127,9 +127,9 @@ const AddRelationshipsTypeForm = (props: Props) => {
     fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {
       filterBy: [
         {
-          filterType: 'RESOURCE_TYPE_BASE_TYPE',
+          filterType: 'RESOURCE_TYPE_CLASS',
           operator: 'IS',
-          typeBaseTypeValue: baseTypeB.target.value,
+          typeClassValue: baseTypeB.target.value,
         },
       ],
     }).then(data => {
@@ -169,9 +169,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
     relationships.data.resourceTypeA === undefined &&
     relationships.data.resourceTypeB === undefined
       ? false
-      : relationships.data.resourceTypeA === relationships.data.resourceTypeB
-      ? true
-      : false;
+      : relationships.data.resourceTypeA === relationships.data.resourceTypeB;
 
   const helperText = !relationships.data.resourceTypeA
     ? ''
