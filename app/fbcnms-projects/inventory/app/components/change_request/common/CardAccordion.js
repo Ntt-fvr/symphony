@@ -14,6 +14,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Text from '@symphony/design-system/components/Text';
+
 // import symphony from '@symphony/design-system/theme/symphony';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
@@ -33,16 +34,17 @@ export type Props = $ReadOnly<{|
   className?: string,
   children?: React.Node,
   title: string,
+  defaultExpanded?: boolean,
 |}>;
 
 const CardAccordion = (props: Props) => {
-  const {children, title, className} = props;
+  const {children, title, className, defaultExpanded = true} = props;
   const classes = useStyles();
 
   return (
     <div
       className={classNames(classes.root, classes.accordionSummary, className)}>
-      <Accordion className={className}>
+      <Accordion defaultExpanded={defaultExpanded} className={className}>
         <AccordionSummary className={className} expandIcon={<ExpandMoreIcon />}>
           <Text variant={'subtitle1'} weight={'bold'}>
             {title}

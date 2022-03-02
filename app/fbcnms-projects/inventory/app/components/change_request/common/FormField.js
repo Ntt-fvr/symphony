@@ -9,6 +9,7 @@
  */
 
 import * as React from 'react';
+import classNames from 'classnames';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
@@ -49,12 +50,14 @@ export type Props = $ReadOnly<{|
 |}>;
 
 const FormField = (props: Props) => {
-  const {children} = props;
+  const {children, className} = props;
   const classes = useStyles();
 
   return (
     <div style={{width: '100%'}}>
-      <form className={classes.formField} autoComplete="off">
+      <form
+        className={classNames(classes.formField, className)}
+        autoComplete="off">
         {children}
       </form>
     </div>

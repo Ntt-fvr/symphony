@@ -9,7 +9,12 @@
  */
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import ConfigureTitle from './common/ConfigureTitle';
-import React from 'react';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
+// import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
+import Divider from '@material-ui/core/Divider';
+import React, {useState} from 'react';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -87,10 +92,46 @@ const useStyles = makeStyles(() => ({
       borderRadius: '4px',
     },
   },
+  fieldComment: {
+    '& .MuiFormControl-root': {
+      margin: 0,
+    },
+  },
+  comment: {
+    '& .MuiOutlinedInput-multiline': {
+      padding: '7.5px 14px',
+    },
+  },
 }));
 
 const ChangeRequestTypes = () => {
+  const [checked, setChecked] = useState(false);
+  const [notes, setNotes] = useState([]);
+  console.log('NOTAS-> ', notes);
   const classes = useStyles();
+
+  const handleChecked = () => {
+    setChecked(prevState => !prevState);
+  };
+  const handleKeyPress = e => {
+    if (e.key === 'Enter') {
+      // e.preventDefault();
+      setNotes([...notes, e.target.value]);
+      console.log('enter press here!********* ');
+    }
+    console.log(e.target.value);
+    // if (e.keyCode === 13 && !e.shiftKey) {
+    //   console.log('enter press here!********* ');
+    // }
+    // console.log(e.key);
+    // console.log(e.keyCode);
+  };
+  // const pulsar = e => {
+  //   if (e.keyCode === 13 && !e.shiftKey) {
+  //     e.preventDefault();
+  //     console.log(e);
+  //   }
+  // };
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -155,8 +196,89 @@ const ChangeRequestTypes = () => {
           <CardAccordion title={'Target parameters'}>
             <Tabla valuesTable={valuesTable} />
           </CardAccordion>
+          <CardAccordion title={'Suggested change request schedule'}>
+            <Grid container>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  style={{padding: '0 0 0 40px'}}
+                  onClick={() => handleChecked()}
+                  checked={checked}
+                  value="approved"
+                  control={<Radio color="primary" />}
+                  label="As soon as approved "
+                />
+                <FormControlLabel
+                  onClick={() => handleChecked()}
+                  checked={checked}
+                  value="approval"
+                  control={<Radio color="primary" />}
+                  label="Schedule with approval"
+                />
+                <Divider />
+              </Grid>
+              <Grid item xs={12}>
+                <Text
+                  style={{padding: '33px 0 0 40px'}}
+                  useEllipsis={true}
+                  weight={'regular'}
+                  color={'gray'}>
+                  Choose date and time for change execution after approval
+                </Text>
+              </Grid>
+              <FormField>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <TextField
+                      style={{width: '100%'}}
+                      id="id"
+                      label="Id"
+                      variant="outlined"
+                      name="name"
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      style={{width: '100%'}}
+                      id="resource_type"
+                      label="Resource type"
+                      variant="outlined"
+                      name="name"
+                    />
+                  </Grid>
+                </Grid>
+              </FormField>
+            </Grid>
+          </CardAccordion>
         </Grid>
-        <Grid style={{border: '1px solid blue'}} item xs={3} />
+        <Grid style={{border: '1px solid blue'}} item xs={3}>
+          <CardAccordion title={'Activity & Comments'}>
+            <Grid container>
+              <Grid item xs={12}>
+                <ul>
+                  {notes.map(nota => (
+                    <li key={nota}>{nota}</li>
+                  ))}
+                </ul>
+              </Grid>
+              <Grid item xs={12}>
+                <FormField className={classes.fieldComment}>
+                  <TextField
+                    className={classes.comment}
+                    onKeyPress={handleKeyPress}
+                    style={{width: '100%'}}
+                    id="comment"
+                    label="Write a comment..."
+                    defaultValue=""
+                    variant="outlined"
+                    name="comment"
+                    multiline
+                    helperText="Press Enter to post comment"
+                  />
+                </FormField>
+              </Grid>
+            </Grid>
+          </CardAccordion>
+        </Grid>
       </Grid>
     </Grid>
   );
