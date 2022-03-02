@@ -77,7 +77,7 @@ const useStyles = makeStyles(() => ({
     padding: '30px',
     margin: '0',
   },
-  titleCounter: {
+  titleModule: {
     margin: '0 0 40px 0',
     display: 'flex',
     justifyContent: 'space-between',
@@ -90,34 +90,12 @@ const useStyles = makeStyles(() => ({
       padding: '9px 16px 0px ',
     },
   },
-  listContainer: {
-    overflow: 'auto',
-    paddingRight: '9px',
-    maxHeight: 'calc(95vh - 156px)',
-    '&::-webkit-scrollbar': {
-      width: '9px',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      background: symphony.palette.D300,
-      borderRadius: '4px',
-    },
-    '&::-webkit-scrollbar-thumb:active': {
-      background: symphony.palette.D200,
-    },
-    '&::-webkit-scrollbar-thumb:hover': {
-      background: symphony.palette.D400,
-    },
-    '&::-webkit-scrollbar-track': {
-      background: symphony.palette.D100,
-      borderRadius: '4px',
-    },
-  },
   fieldComment: {
     '& .MuiFormControl-root': {
       margin: 0,
     },
   },
-  comment: {
+  inputComment: {
     '& .MuiOutlinedInput-multiline': {
       padding: '7.5px 14px',
     },
@@ -157,7 +135,7 @@ const ChangeRequestTypes = () => {
 
   return (
     <Grid className={classes.root} container spacing={0}>
-      <Grid className={classes.titleCounter} item xs={12}>
+      <Grid className={classes.titleModule} item xs={12}>
         <ConfigureTitle
           title={fbt('Change Request', '')}
           subtitle={fbt('', '  ')}
@@ -170,7 +148,7 @@ const ChangeRequestTypes = () => {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid style={{border: '1px solid red'}} item xs={9}>
+        <Grid item xs={9}>
           <CardAccordion className={classes.accordionDetails} title={'Details'}>
             <FormField>
               <Grid container spacing={1}>
@@ -290,7 +268,7 @@ const ChangeRequestTypes = () => {
             </Grid>
           </CardAccordion>
         </Grid>
-        <Grid style={{border: '1px solid blue'}} item xs={3}>
+        <Grid item xs={3}>
           <CardAccordion title={'Activity & Comments'}>
             <Grid container>
               <Grid item xs={12}>
@@ -312,7 +290,7 @@ const ChangeRequestTypes = () => {
                   onSubmit={handleSubmit}
                   className={classes.fieldComment}>
                   <TextField
-                    className={classes.comment}
+                    className={classes.inputComment}
                     onKeyPress={handleKeyPress}
                     onChange={e => setValue(e.target.value)}
                     style={{width: '100%'}}

@@ -44,10 +44,6 @@ const useStyles = makeStyles(() => ({
   container: {
     maxHeight: '100%',
   },
-  id: {},
-  asTarget: {
-    textAlign: 'center',
-  },
 }));
 
 type Values = {

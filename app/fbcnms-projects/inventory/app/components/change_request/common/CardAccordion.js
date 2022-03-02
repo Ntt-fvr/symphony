@@ -14,8 +14,6 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Text from '@symphony/design-system/components/Text';
-
-// import symphony from '@symphony/design-system/theme/symphony';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 
