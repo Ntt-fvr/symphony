@@ -341,7 +341,6 @@ type AddProjectTypeInput struct {
 }
 
 type AddPropertyValueInput struct {
-	ID                       *int                     `json:"id"`
 	Name                     string                   `json:"name"`
 	Property                 *int                     `json:"property"`
 	PropertyTypeValue        int                      `json:"propertyTypeValue"`
