@@ -23212,7 +23212,6 @@ type PropertyValue implements Node {
 }
 
 input AddPropertyValueInput {
-  id: ID
   name: String!
   property: ID
   propertyTypeValue: ID!
@@ -86142,14 +86141,6 @@ func (ec *executionContext) unmarshalInputAddPropertyValueInput(ctx context.Cont
 
 	for k, v := range asMap {
 		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "name":
 			var err error
 

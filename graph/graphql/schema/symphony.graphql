@@ -8940,7 +8940,6 @@ type PropertyValue implements Node {
 }
 
 input AddPropertyValueInput {
-  id: ID
   name: String!
   property: ID
   propertyTypeValue: ID!
