@@ -12,7 +12,12 @@ import ConfigureTitle from './common/ConfigureTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 // import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
+import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import MomentUtils from '@date-io/moment';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
@@ -21,6 +26,11 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {CardAccordion} from './common/CardAccordion';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
+import {
+  KeyboardTimePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
+import {MenuItem} from '@material-ui/core';
 import {Tabla} from './common/Tabla';
 import {makeStyles} from '@material-ui/styles';
 
@@ -49,6 +59,16 @@ const valuesTable = [
     currentValue: '3960004',
     newValue: '183004',
   },
+];
+
+const days = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
 ];
 
 const useStyles = makeStyles(() => ({
@@ -108,6 +128,9 @@ const ChangeRequestTypes = () => {
   const [checked, setChecked] = useState(false);
   const [notes, setNotes] = useState([]);
   const [value, setValue] = useState('');
+  const [selectedDate, setSelectedDate] = React.useState(
+    new Date('2022-03-02T24:00:00'),
+  );
 
   console.log('NOTAS-> ', notes);
   const classes = useStyles();
@@ -115,17 +138,21 @@ const ChangeRequestTypes = () => {
   const handleChecked = () => {
     setChecked(prevState => !prevState);
   };
+  const date = new Date();
   const handleKeyPress = e => {
     if (e.key === 'Enter') {
       // e.preventDefault();
-      setNotes([...notes, e.target.value]);
-      console.log('enter press here!********* ');
+      setNotes([...notes, {[e.target.name]: e.target.value, date}]);
     }
     console.log(e.target.value);
   };
   const handleSubmit = e => {
     setValue('');
     e.preventDefault();
+  };
+
+  const handleDateChange = date => {
+    setSelectedDate(date);
   };
 
   return (
@@ -211,7 +238,7 @@ const ChangeRequestTypes = () => {
                 />
                 <Divider />
               </Grid>
-              <Grid item xs={12}>
+              <Grid style={{margin: '0 0 20px 0'}} item xs={12}>
                 <Text
                   style={{padding: '33px 0 0 40px'}}
                   useEllipsis={true}
@@ -222,23 +249,41 @@ const ChangeRequestTypes = () => {
               </Grid>
               <FormField>
                 <Grid container>
-                  <Grid item xs={6}>
+                  <Grid item xs={5}>
                     <TextField
-                      style={{width: '100%'}}
-                      id="id"
-                      label="Id"
-                      variant="outlined"
-                      name="name"
-                    />
+                      required
+                      id="outlined-select-family"
+                      select
+                      style={{
+                        padding: '6px 0 0 0 ',
+                        marginLeft: '40px',
+                        width: '70%',
+                      }}
+                      label="Family name"
+                      name="family"
+                      defaultValue=""
+                      variant="outlined">
+                      {days.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </TextField>
                   </Grid>
                   <Grid item xs={6}>
-                    <TextField
-                      style={{width: '100%'}}
-                      id="resource_type"
-                      label="Resource type"
-                      variant="outlined"
-                      name="name"
-                    />
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <KeyboardTimePicker
+                        margin="dense"
+                        variant="outline"
+                        id="time-picker"
+                        label="Time picker"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                          'aria-label': 'change time',
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
                   </Grid>
                 </Grid>
               </FormField>
@@ -249,13 +294,18 @@ const ChangeRequestTypes = () => {
           <CardAccordion title={'Activity & Comments'}>
             <Grid container>
               <Grid item xs={12}>
-                <ul>
+                <List>
                   {notes.map(nota => (
-                    <li key={nota}>
-                      <Text useEllipsis={true}>{nota}</Text>
-                    </li>
+                    <ListItem key={nota.comment}>
+                      <CreateOutlinedIcon color="disabled" />
+                      <ListItemText
+                        style={{overflowWrap: 'anywhere'}}
+                        primary={nota.comment}
+                        secondary={nota.date.toString()}
+                      />
+                    </ListItem>
                   ))}
-                </ul>
+                </List>
               </Grid>
               <Grid item xs={12}>
                 <FormField
