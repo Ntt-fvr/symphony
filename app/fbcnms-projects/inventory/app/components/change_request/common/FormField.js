@@ -47,17 +47,19 @@ const useStyles = makeStyles(() => ({
 export type Props = $ReadOnly<{|
   className?: string,
   children: React.Node,
+  onSubmit?: void => void,
 |}>;
 
 const FormField = (props: Props) => {
-  const {children, className} = props;
+  const {children, className, onSubmit} = props;
   const classes = useStyles();
 
   return (
     <div style={{width: '100%'}}>
       <form
         className={classNames(classes.formField, className)}
-        autoComplete="off">
+        autoComplete="off"
+        onSubmit={onSubmit}>
         {children}
       </form>
     </div>

@@ -107,6 +107,8 @@ const useStyles = makeStyles(() => ({
 const ChangeRequestTypes = () => {
   const [checked, setChecked] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [value, setValue] = useState('');
+
   console.log('NOTAS-> ', notes);
   const classes = useStyles();
 
@@ -120,18 +122,11 @@ const ChangeRequestTypes = () => {
       console.log('enter press here!********* ');
     }
     console.log(e.target.value);
-    // if (e.keyCode === 13 && !e.shiftKey) {
-    //   console.log('enter press here!********* ');
-    // }
-    // console.log(e.key);
-    // console.log(e.keyCode);
   };
-  // const pulsar = e => {
-  //   if (e.keyCode === 13 && !e.shiftKey) {
-  //     e.preventDefault();
-  //     console.log(e);
-  //   }
-  // };
+  const handleSubmit = e => {
+    setValue('');
+    e.preventDefault();
+  };
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -256,22 +251,26 @@ const ChangeRequestTypes = () => {
               <Grid item xs={12}>
                 <ul>
                   {notes.map(nota => (
-                    <li key={nota}>{nota}</li>
+                    <li key={nota}>
+                      <Text useEllipsis={true}>{nota}</Text>
+                    </li>
                   ))}
                 </ul>
               </Grid>
               <Grid item xs={12}>
-                <FormField className={classes.fieldComment}>
+                <FormField
+                  onSubmit={handleSubmit}
+                  className={classes.fieldComment}>
                   <TextField
                     className={classes.comment}
                     onKeyPress={handleKeyPress}
+                    onChange={e => setValue(e.target.value)}
                     style={{width: '100%'}}
                     id="comment"
                     label="Write a comment..."
-                    defaultValue=""
+                    value={value}
                     variant="outlined"
                     name="comment"
-                    multiline
                     helperText="Press Enter to post comment"
                   />
                 </FormField>
