@@ -7,10 +7,12 @@
  * @flow
  * @format
  */
+import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import ConfigureTitle from './common/ConfigureTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
+// import {ButtonAlarmStatus} from './common/ButtonAlarmStatus';
 // import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import Divider from '@material-ui/core/Divider';
@@ -110,20 +112,20 @@ const ChangeRequestTypes = () => {
     new Date('2022-03-02T24:00:00'),
   );
 
-  console.log('NOTAS-> ', notes);
   const classes = useStyles();
 
   const handleChecked = () => {
     setChecked(prevState => !prevState);
   };
+
   const date = new Date();
+
   const handleKeyPress = e => {
     if (e.key === 'Enter') {
-      // e.preventDefault();
       setNotes([...notes, {[e.target.name]: e.target.value, date}]);
     }
-    console.log(e.target.value);
   };
+
   const handleSubmit = e => {
     setValue('');
     e.preventDefault();
@@ -146,6 +148,9 @@ const ChangeRequestTypes = () => {
           </ButtonSaveDelete>
           <ButtonSaveDelete>Save</ButtonSaveDelete>
         </Grid>
+      </Grid>
+      <Grid>
+        <ButtonAlarmStatus skin={'red'}>Status: Rejected</ButtonAlarmStatus>
       </Grid>
       <Grid container spacing={2}>
         <Grid item xs={9}>
