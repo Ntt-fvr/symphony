@@ -40,6 +40,7 @@ const useStyles = makeStyles(() => ({
   root: {
     width: '100%',
     boxShadow: symphony.shadows.DP2,
+    marginBottom: '20px',
   },
   container: {
     maxHeight: '100%',
