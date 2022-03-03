@@ -64,6 +64,7 @@ const useStyles = makeStyles(_theme => ({
   greenSkin: {},
   violetSkin: {},
   yellowSkin: {},
+  disabled: {},
   containedVariant: {
     height: '36px',
     minWidth: '88px',
@@ -172,157 +173,20 @@ const useStyles = makeStyles(_theme => ({
         backgroundColor: '#f5f7fc',
       },
     },
+    //DISABLED
+    '&$disabled': {
+      backgroundColor: symphony.palette.disabled,
+      border: 'none',
+      '& $buttonText, $icon': {
+        color: symphony.palette.white,
+        fill: symphony.palette.white,
+      },
+    },
   },
   buttonText: {
     maxHeight: '100%',
     display: 'flex',
   },
-  /*textVariant: {
-    display: 'inline-flex',
-    textAlign: 'left',
-    background: 'none',
-    padding: 0,
-    height: '24px',
-    maxWidth: '100%',
-    '&$primarySkin': {
-      '&:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.primary,
-          fill: symphony.palette.primary,
-        },
-      },
-      '&:hover:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.B700,
-          fill: symphony.palette.B700,
-        },
-      },
-      '&:active:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.B700,
-          fill: symphony.palette.B700,
-        },
-      },
-    },
-    '&$redSkin': {
-      '&:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.R600,
-          fill: symphony.palette.R600,
-        },
-      },
-      '&:hover:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-      '&:active:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-    },
-    '&$regularSkin': {
-      '&:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.secondary,
-          fill: symphony.palette.secondary,
-        },
-      },
-      '&:hover:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-      '&:active:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-    },
-    '&$graySkin': {
-      '&:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.D500,
-          fill: symphony.palette.D500,
-        },
-      },
-      '&:hover:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.primary,
-          fill: symphony.palette.primary,
-        },
-      },
-      '&:active:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.primary,
-          fill: symphony.palette.primary,
-        },
-      },
-    },
-    '&$secondaryGraySkin': {
-      '&:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.D500,
-          fill: symphony.palette.D500,
-        },
-      },
-      '&:hover:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.D900,
-          fill: symphony.palette.D900,
-        },
-      },
-      '&:active:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.primary,
-          fill: symphony.palette.primary,
-        },
-      },
-    },
-    '&$darkGraySkin': {
-      '&:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.D700,
-          fill: symphony.palette.D700,
-        },
-      },
-      '&:hover:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-      '&:active:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-    },
-    '&$brightGraySkin': {
-      '&:not($disabled)': {
-        '& $buttonText, $icon': {
-          color: symphony.palette.D300,
-          fill: symphony.palette.D300,
-        },
-      },
-      '&:hover:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-      '&:active:not($disabled)': {
-        '& $buttonText, $icon': {
-          opacity: 0.75,
-        },
-      },
-    },
-    '&$disabled': {
-      '& $buttonText, $icon': {
-        color: symphony.palette.disabled,
-        fill: symphony.palette.disabled,
-      },
-    },
-  },*/
 }));
 
 export type ButtonVariant = 'contained' | 'text';
@@ -330,10 +194,7 @@ export type ButtonSkin =
   | 'primary'
   | 'violet'
   | 'red'
-  | 'gray'
   | 'yellow'
-  | 'darkGray'
-  | 'brightGray'
   | 'orange'
   | 'green';
 export type SvgIconComponent =

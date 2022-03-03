@@ -20,6 +20,11 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     marginBottom: '10px',
+    '& .MuiPaper-elevation1': {
+      boxShadow: 'none',
+    },
+    boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
+    borderRadius: '5px',
   },
   accordionSummary: {
     '& .MuiAccordionSummary-root': {

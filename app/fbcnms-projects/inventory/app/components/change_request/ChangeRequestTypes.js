@@ -10,21 +10,18 @@
 import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import ConfigureTitle from './common/ConfigureTitle';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Radio from '@material-ui/core/Radio';
-// import {ButtonAlarmStatus} from './common/ButtonAlarmStatus';
-// import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
-import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
+import CreateIcon from '@material-ui/icons/Create';
 import Divider from '@material-ui/core/Divider';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import MomentUtils from '@date-io/moment';
+import Radio from '@material-ui/core/Radio';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
-import symphony from '@symphony/design-system/theme/symphony';
 import {CardAccordion} from './common/CardAccordion';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
@@ -73,6 +70,8 @@ const days = [
   'Sunday',
 ];
 
+const status = ['Approve', 'Reject'];
+
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
@@ -89,7 +88,25 @@ const useStyles = makeStyles(() => ({
   },
   accordionDetails: {
     '&.MuiAccordionDetails-root': {
-      padding: '9px 16px 0px ',
+      padding: '0 16px 0px ',
+    },
+  },
+  listComment: {
+    '& .MuiAccordionDetails-root': {
+      padding: '0 16px 16px',
+    },
+  },
+  ulComment: {
+    '&.MuiList-padding': {
+      paddingTop: '0px',
+    },
+  },
+  liComment: {
+    '&.MuiListItem-root': {
+      paddingTop: '0px',
+    },
+    '&.MuiListItem-gutters': {
+      paddingLeft: '0px',
     },
   },
   fieldComment: {
@@ -108,6 +125,7 @@ const ChangeRequestTypes = () => {
   const [checked, setChecked] = useState(false);
   const [notes, setNotes] = useState([]);
   const [value, setValue] = useState('');
+  const [statusAlarm, setStatusAlarm] = useState('Pending for approval');
   const [selectedDate, setSelectedDate] = React.useState(
     new Date('2022-03-02T24:00:00'),
   );
@@ -149,11 +167,34 @@ const ChangeRequestTypes = () => {
           <ButtonSaveDelete>Save</ButtonSaveDelete>
         </Grid>
       </Grid>
-      <Grid>
-        <ButtonAlarmStatus skin={'red'}>Status: Rejected</ButtonAlarmStatus>
+      <Grid style={{display: 'flex'}}>
+        <ButtonAlarmStatus skin={'red'}>
+          Status: {statusAlarm}{' '}
+        </ButtonAlarmStatus>
+        <FormField>
+          <TextField
+            required
+            id="outlined-select-action"
+            select
+            style={{
+              padding: '0',
+              marginLeft: '40px',
+              width: '250px',
+            }}
+            label="Action"
+            name="action"
+            defaultValue=""
+            variant="outlined">
+            {status.map((item, index) => (
+              <MenuItem key={index} value={item}>
+                {item}
+              </MenuItem>
+            ))}
+          </TextField>
+        </FormField>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <CardAccordion className={classes.accordionDetails} title={'Details'}>
             <FormField>
               <Grid container spacing={1}>
@@ -238,7 +279,7 @@ const ChangeRequestTypes = () => {
                       id="outlined-select-family"
                       select
                       style={{
-                        padding: '6px 0 0 0 ',
+                        padding: '0',
                         marginLeft: '40px',
                         width: '70%',
                       }}
@@ -273,14 +314,19 @@ const ChangeRequestTypes = () => {
             </Grid>
           </CardAccordion>
         </Grid>
-        <Grid item xs={3}>
-          <CardAccordion title={'Activity & Comments'}>
+        <Grid item xs={4}>
+          <CardAccordion
+            className={classes.listComment}
+            title={'Activity & Comments'}>
             <Grid container>
               <Grid item xs={12}>
-                <List>
+                <List className={classes.ulComment}>
                   {notes.map(nota => (
-                    <ListItem key={nota.comment}>
-                      <CreateOutlinedIcon color="disabled" />
+                    <ListItem className={classes.liComment} key={nota.comment}>
+                      <CreateIcon
+                        style={{margin: '0 12px 12px 0'}}
+                        color="disabled"
+                      />
                       <ListItemText
                         style={{overflowWrap: 'anywhere'}}
                         primary={nota.comment}
