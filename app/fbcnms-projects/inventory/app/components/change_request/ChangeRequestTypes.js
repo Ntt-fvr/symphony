@@ -9,6 +9,7 @@
  */
 import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
+import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
 import CreateIcon from '@material-ui/icons/Create';
 import Divider from '@material-ui/core/Divider';
@@ -118,6 +119,13 @@ const useStyles = makeStyles(() => ({
     '& .MuiOutlinedInput-multiline': {
       padding: '7.5px 14px',
     },
+  },
+  inExpandingPanelFix: {
+    paddingLeft: '16px',
+    paddingRight: '40px',
+  },
+  commentsLog: {
+    maxHeight: '400px',
   },
 }));
 
@@ -318,7 +326,7 @@ const ChangeRequestTypes = () => {
           <CardAccordion
             className={classes.listComment}
             title={'Activity & Comments'}>
-            <Grid container>
+            {/* <Grid container>
               <Grid item xs={12}>
                 <List className={classes.ulComment}>
                   {notes.map(nota => (
@@ -354,7 +362,17 @@ const ChangeRequestTypes = () => {
                   />
                 </FormField>
               </Grid>
-            </Grid>
+            </Grid> */}
+
+            <CommentsActivitiesBox
+              boxElementsClass={classes.inExpandingPanelFix}
+              commentsLogClass={classes.commentsLog}
+              relatedEntityId={'1'}
+              relatedEntityType="PROJECT"
+              // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+              comments={[{}, {}, {}]}
+              activities={{}}
+            />
           </CardAccordion>
         </Grid>
       </Grid>
