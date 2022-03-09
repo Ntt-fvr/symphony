@@ -171,6 +171,7 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
+  console.log(propsWorkOrder);
   const [loading, setLoading] = useState<boolean>(false);
 
   const locationTypeID = workOrder.location?.locationType.id;

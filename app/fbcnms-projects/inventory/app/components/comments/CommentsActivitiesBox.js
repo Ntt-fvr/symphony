@@ -37,6 +37,7 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
+    border: '1px solid red',
   },
 }));
 
@@ -74,13 +75,13 @@ export default withAlert(
     createFragmentContainer(CommentsActivitiesBox, {
       comments: graphql`
         fragment CommentsActivitiesBox_comments on Comment
-          @relay(plural: true) {
+        @relay(plural: true) {
           ...CommentsActivitiesLog_comments
         }
       `,
       activities: graphql`
         fragment CommentsActivitiesBox_activities on Activity
-          @relay(plural: true) {
+        @relay(plural: true) {
           ...CommentsActivitiesLog_activities
         }
       `,
