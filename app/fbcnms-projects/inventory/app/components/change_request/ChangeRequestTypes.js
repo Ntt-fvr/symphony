@@ -11,12 +11,8 @@ import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
-import CreateIcon from '@material-ui/icons/Create';
 import Divider from '@material-ui/core/Divider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import MomentUtils from '@date-io/moment';
 import Radio from '@material-ui/core/Radio';
 import React, {useState} from 'react';
@@ -94,7 +90,8 @@ const useStyles = makeStyles(() => ({
   },
   listComment: {
     '& .MuiAccordionDetails-root': {
-      padding: '0 16px 16px',
+      padding: '0 0 16px 0',
+      width: '100%',
     },
   },
   ulComment: {
@@ -122,7 +119,7 @@ const useStyles = makeStyles(() => ({
   },
   inExpandingPanelFix: {
     paddingLeft: '16px',
-    paddingRight: '40px',
+    paddingRight: '16px',
   },
   commentsLog: {
     maxHeight: '400px',
@@ -131,9 +128,7 @@ const useStyles = makeStyles(() => ({
 
 const ChangeRequestTypes = () => {
   const [checked, setChecked] = useState(false);
-  const [notes, setNotes] = useState([]);
-  const [value, setValue] = useState('');
-  const [statusAlarm, setStatusAlarm] = useState('Pending for approval');
+  const [statusAlarm] = useState('Pending for approval');
   const [selectedDate, setSelectedDate] = React.useState(
     new Date('2022-03-02T24:00:00'),
   );
@@ -142,19 +137,6 @@ const ChangeRequestTypes = () => {
 
   const handleChecked = () => {
     setChecked(prevState => !prevState);
-  };
-
-  const date = new Date();
-
-  const handleKeyPress = e => {
-    if (e.key === 'Enter') {
-      setNotes([...notes, {[e.target.name]: e.target.value, date}]);
-    }
-  };
-
-  const handleSubmit = e => {
-    setValue('');
-    e.preventDefault();
   };
 
   const handleDateChange = date => {
@@ -326,53 +308,18 @@ const ChangeRequestTypes = () => {
           <CardAccordion
             className={classes.listComment}
             title={'Activity & Comments'}>
-            {/* <Grid container>
-              <Grid item xs={12}>
-                <List className={classes.ulComment}>
-                  {notes.map(nota => (
-                    <ListItem className={classes.liComment} key={nota.comment}>
-                      <CreateIcon
-                        style={{margin: '0 12px 12px 0'}}
-                        color="disabled"
-                      />
-                      <ListItemText
-                        style={{overflowWrap: 'anywhere'}}
-                        primary={nota.comment}
-                        secondary={nota.date.toString()}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Grid>
-              <Grid item xs={12}>
-                <FormField
-                  onSubmit={handleSubmit}
-                  className={classes.fieldComment}>
-                  <TextField
-                    className={classes.inputComment}
-                    onKeyPress={handleKeyPress}
-                    onChange={e => setValue(e.target.value)}
-                    style={{width: '100%'}}
-                    id="comment"
-                    label="Write a comment..."
-                    value={value}
-                    variant="outlined"
-                    name="comment"
-                    helperText="Press Enter to post comment"
-                  />
-                </FormField>
-              </Grid>
-            </Grid> */}
-
-            <CommentsActivitiesBox
-              boxElementsClass={classes.inExpandingPanelFix}
-              commentsLogClass={classes.commentsLog}
-              relatedEntityId={'1'}
-              relatedEntityType="PROJECT"
-              // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-              comments={[{}, {}, {}]}
-              activities={{}}
-            />
+            <Grid item xs={12}>
+              <CommentsActivitiesBox
+                boxElementsClass={classes.inExpandingPanelFix}
+                commentsLogClass={classes.commentsLog}
+                relatedEntityId={''}
+                //Change type entity from back
+                relatedEntityType="%future added value"
+                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                activities={[]}
+                comments={[]}
+              />
+            </Grid>
           </CardAccordion>
         </Grid>
       </Grid>
