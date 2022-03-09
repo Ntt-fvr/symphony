@@ -37,7 +37,6 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    border: '1px solid red',
   },
 }));
 
