@@ -69,12 +69,8 @@ type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
-    resourceTypeClass: {
-      name: string,
-    },
-    resourceTypeBaseType: {
-      name: string,
-    },
+    resourceTypeClass: string,
+    resourceTypeBaseType: string,
   },
   edit: () => void,
   handleRemove: void => void,
@@ -84,23 +80,19 @@ type Props = $ReadOnly<{|
 export default function ResourceTypeItem(props: Props) {
   const {edit, handleRemove, formValues, resourceDataLenght} = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
 
   const filterDataById = resourceDataLenght
     .map(item => item.node)
     .filter(rsData => rsData?.resourceType?.id === formValues.id);
 
-  function handleOpen(event) {
+  const handleDelete = event => {
     event.stopPropagation();
-    setOpen(!open);
-  }
+    handleRemove();
+  };
 
   return (
     <div className={classes.root}>
-      <Accordion
-        className={classes.container}
-        expanded={open}
-        onChange={handleOpen}>
+      <Accordion className={classes.container}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -130,7 +122,7 @@ export default function ResourceTypeItem(props: Props) {
             <Grid item xs={2} container justify="flex-end" alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={handleRemove}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>
@@ -147,12 +139,12 @@ export default function ResourceTypeItem(props: Props) {
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Class: </span>
               <br />
-              <strong>{formValues.resourceTypeBaseType.name}</strong>
+              <strong>{formValues.resourceTypeClass.toLowerCase()}</strong>
             </Grid>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Resource type class:</span>
               <br />
-              <strong>{formValues.resourceTypeClass.name}</strong>
+              <strong>{formValues.resourceTypeBaseType.toLowerCase()}</strong>
             </Grid>
           </Grid>
         </AccordionDetails>

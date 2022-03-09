@@ -127,19 +127,19 @@ func (rsc *ResourceSpecificationCreate) AddResourceSpecificationItems(r ...*Reso
 	return rsc.AddResourceSpecificationItemIDs(ids...)
 }
 
-// AddResourceRspecificationIDs adds the resource_rspecification edge to Resource by ids.
-func (rsc *ResourceSpecificationCreate) AddResourceRspecificationIDs(ids ...int) *ResourceSpecificationCreate {
-	rsc.mutation.AddResourceRspecificationIDs(ids...)
+// AddResourceSpecificationRIDs adds the resource_specification_r edge to Resource by ids.
+func (rsc *ResourceSpecificationCreate) AddResourceSpecificationRIDs(ids ...int) *ResourceSpecificationCreate {
+	rsc.mutation.AddResourceSpecificationRIDs(ids...)
 	return rsc
 }
 
-// AddResourceRspecification adds the resource_rspecification edges to Resource.
-func (rsc *ResourceSpecificationCreate) AddResourceRspecification(r ...*Resource) *ResourceSpecificationCreate {
+// AddResourceSpecificationR adds the resource_specification_r edges to Resource.
+func (rsc *ResourceSpecificationCreate) AddResourceSpecificationR(r ...*Resource) *ResourceSpecificationCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return rsc.AddResourceRspecificationIDs(ids...)
+	return rsc.AddResourceSpecificationRIDs(ids...)
 }
 
 // Mutation returns the ResourceSpecificationMutation object of the builder.
@@ -347,12 +347,12 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rsc.mutation.ResourceRspecificationIDs(); len(nodes) > 0 {
+	if nodes := rsc.mutation.ResourceSpecificationRIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.ResourceRspecificationTable,
-			Columns: []string{resourcespecification.ResourceRspecificationColumn},
+			Table:   resourcespecification.ResourceSpecificationRTable,
+			Columns: []string{resourcespecification.ResourceSpecificationRColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

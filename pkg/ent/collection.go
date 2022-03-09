@@ -1399,16 +1399,16 @@ func (rs *ResourceSpecificationQuery) collectField(ctx *graphql.OperationContext
 			rs = rs.WithPropertyType(func(query *PropertyTypeQuery) {
 				query.collectField(ctx, field)
 			})
-		case "resourcespec":
-			rs = rs.WithResourceRspecification(func(query *ResourceQuery) {
-				query.collectField(ctx, field)
-			})
 		case "resourcespecification":
 			rs = rs.WithResourceSpecification(func(query *ResourceSpecificationRelationshipQuery) {
 				query.collectField(ctx, field)
 			})
 		case "resourcespecificationitems":
 			rs = rs.WithResourceSpecificationItems(func(query *ResourceSpecificationItemsQuery) {
+				query.collectField(ctx, field)
+			})
+		case "resourcespecificationr":
+			rs = rs.WithResourceSpecificationR(func(query *ResourceQuery) {
 				query.collectField(ctx, field)
 			})
 		}

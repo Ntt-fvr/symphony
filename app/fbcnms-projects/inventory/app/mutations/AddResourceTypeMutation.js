@@ -23,6 +23,8 @@ const mutation = graphql`
   mutation AddResourceTypeMutation($input: AddResourceTypeInput!) {
     addResourceType(input: $input) {
       name
+      resourceTypeBaseType
+      resourceTypeClass
     }
   }
 `;

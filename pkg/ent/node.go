@@ -6170,9 +6170,9 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 	}
 	node.Edges[4] = &Edge{
 		Type: "Resource",
-		Name: "resource_rspecification",
+		Name: "resource_specification_r",
 	}
-	node.Edges[4].IDs, err = rs.QueryResourceRspecification().
+	node.Edges[4].IDs, err = rs.QueryResourceSpecificationR().
 		Select(resource.FieldID).
 		Ints(ctx)
 	if err != nil {

@@ -26,14 +26,8 @@ const mutation = graphql`
     editResourceType(input: $input) {
       id
       name
-      resourceTypeBaseType {
-        id
-        name
-      }
-      resourceTypeClass {
-        id
-        name
-      }
+      resourceTypeBaseType
+      resourceTypeClass
     }
   }
 `;
