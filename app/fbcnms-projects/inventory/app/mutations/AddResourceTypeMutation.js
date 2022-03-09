@@ -22,8 +22,9 @@ import {commitMutation, graphql} from 'react-relay';
 const mutation = graphql`
   mutation AddResourceTypeMutation($input: AddResourceTypeInput!) {
     addResourceType(input: $input) {
-      id
       name
+      resourceTypeBaseType
+      resourceTypeClass
     }
   }
 `;

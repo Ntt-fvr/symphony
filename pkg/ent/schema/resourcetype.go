@@ -24,17 +24,17 @@ func (ResourceType) Fields() []ent.Field {
 			Annotations(entgql.OrderField("NAME")),
 		field.Enum("ResourceTypeClass").
 			Values(
-				"LOGICAL_RESOURCE",
-				"PHYSICAL_RESOURCE",
-				"VIRTUAL_RESOURCE",
-			).Annotations(entgql.OrderField("RESOURCE_TYPE_CLASS")),
-		field.Enum("ResourceTypeBaseType").
-			Values(
 				"EQUIPMENT",
 				"SLOT",
 				"RACK",
 				"PORT",
 				"CARD",
+			).Annotations(entgql.OrderField("RESOURCE_TYPE_CLASS")),
+		field.Enum("ResourceTypeBaseType").
+			Values(
+				"LOGICAL_RESOURCE",
+				"PHYSICAL_RESOURCE",
+				"VIRTUAL_RESOURCE",
 			).Annotations(entgql.OrderField("RESOURCE_TYPE_BASE_TYPE")),
 	}
 }

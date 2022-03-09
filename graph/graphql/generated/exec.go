@@ -24240,20 +24240,20 @@ enum ResourceTypeClassKind
   @goModel(
   model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeClass"
   ) {
-  LOGICAL_RESOURCE
-	PHYSICAL_RESOURCE
-	VIRTUAL_RESOURCE
+  EQUIPMENT
+	SLOT
+	RACK
+	PORT
+	CARD
 }
 
 enum ResourceTypeBaseTypeKind
   @goModel(
   model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeBaseType"
   ) {
-  EQUIPMENT
-	SLOT
-	RACK
-	PORT
-	CARD
+  LOGICAL_RESOURCE
+	PHYSICAL_RESOURCE
+	VIRTUAL_RESOURCE
 }
 
 type ResourceType implements Node {

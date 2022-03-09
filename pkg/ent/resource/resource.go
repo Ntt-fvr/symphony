@@ -41,7 +41,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "resourcespecification" package.
 	ResourcespecInverseTable = "resource_specifications"
 	// ResourcespecColumn is the table column denoting the resourcespec relation/edge.
-	ResourcespecColumn = "resource_specification_resource_rspecification"
+	ResourcespecColumn = "resource_specification_resource_specification_r"
 	// ResourceATable is the table the holds the resource_a relation/edge.
 	ResourceATable = "resource_relationships"
 	// ResourceAInverseTable is the table name for the ResourceRelationship entity.
@@ -69,7 +69,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Resource type.
 var ForeignKeys = []string{
-	"resource_specification_resource_rspecification",
+	"resource_specification_resource_specification_r",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

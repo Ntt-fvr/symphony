@@ -56647,9 +56647,9 @@ type ResourceSpecificationMutation struct {
 	resource_specification_items        map[int]struct{}
 	removedresource_specification_items map[int]struct{}
 	clearedresource_specification_items bool
-	resource_rspecification             map[int]struct{}
-	removedresource_rspecification      map[int]struct{}
-	clearedresource_rspecification      bool
+	resource_specification_r            map[int]struct{}
+	removedresource_specification_r     map[int]struct{}
+	clearedresource_specification_r     bool
 	done                                bool
 	oldValue                            func(context.Context) (*ResourceSpecification, error)
 	predicates                          []predicate.ResourceSpecification
@@ -57043,57 +57043,57 @@ func (m *ResourceSpecificationMutation) ResetResourceSpecificationItems() {
 	m.removedresource_specification_items = nil
 }
 
-// AddResourceRspecificationIDs adds the resource_rspecification edge to Resource by ids.
-func (m *ResourceSpecificationMutation) AddResourceRspecificationIDs(ids ...int) {
-	if m.resource_rspecification == nil {
-		m.resource_rspecification = make(map[int]struct{})
+// AddResourceSpecificationRIDs adds the resource_specification_r edge to Resource by ids.
+func (m *ResourceSpecificationMutation) AddResourceSpecificationRIDs(ids ...int) {
+	if m.resource_specification_r == nil {
+		m.resource_specification_r = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.resource_rspecification[ids[i]] = struct{}{}
+		m.resource_specification_r[ids[i]] = struct{}{}
 	}
 }
 
-// ClearResourceRspecification clears the resource_rspecification edge to Resource.
-func (m *ResourceSpecificationMutation) ClearResourceRspecification() {
-	m.clearedresource_rspecification = true
+// ClearResourceSpecificationR clears the resource_specification_r edge to Resource.
+func (m *ResourceSpecificationMutation) ClearResourceSpecificationR() {
+	m.clearedresource_specification_r = true
 }
 
-// ResourceRspecificationCleared returns if the edge resource_rspecification was cleared.
-func (m *ResourceSpecificationMutation) ResourceRspecificationCleared() bool {
-	return m.clearedresource_rspecification
+// ResourceSpecificationRCleared returns if the edge resource_specification_r was cleared.
+func (m *ResourceSpecificationMutation) ResourceSpecificationRCleared() bool {
+	return m.clearedresource_specification_r
 }
 
-// RemoveResourceRspecificationIDs removes the resource_rspecification edge to Resource by ids.
-func (m *ResourceSpecificationMutation) RemoveResourceRspecificationIDs(ids ...int) {
-	if m.removedresource_rspecification == nil {
-		m.removedresource_rspecification = make(map[int]struct{})
+// RemoveResourceSpecificationRIDs removes the resource_specification_r edge to Resource by ids.
+func (m *ResourceSpecificationMutation) RemoveResourceSpecificationRIDs(ids ...int) {
+	if m.removedresource_specification_r == nil {
+		m.removedresource_specification_r = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedresource_rspecification[ids[i]] = struct{}{}
+		m.removedresource_specification_r[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedResourceRspecification returns the removed ids of resource_rspecification.
-func (m *ResourceSpecificationMutation) RemovedResourceRspecificationIDs() (ids []int) {
-	for id := range m.removedresource_rspecification {
+// RemovedResourceSpecificationR returns the removed ids of resource_specification_r.
+func (m *ResourceSpecificationMutation) RemovedResourceSpecificationRIDs() (ids []int) {
+	for id := range m.removedresource_specification_r {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResourceRspecificationIDs returns the resource_rspecification ids in the mutation.
-func (m *ResourceSpecificationMutation) ResourceRspecificationIDs() (ids []int) {
-	for id := range m.resource_rspecification {
+// ResourceSpecificationRIDs returns the resource_specification_r ids in the mutation.
+func (m *ResourceSpecificationMutation) ResourceSpecificationRIDs() (ids []int) {
+	for id := range m.resource_specification_r {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetResourceRspecification reset all changes of the "resource_rspecification" edge.
-func (m *ResourceSpecificationMutation) ResetResourceRspecification() {
-	m.resource_rspecification = nil
-	m.clearedresource_rspecification = false
-	m.removedresource_rspecification = nil
+// ResetResourceSpecificationR reset all changes of the "resource_specification_r" edge.
+func (m *ResourceSpecificationMutation) ResetResourceSpecificationR() {
+	m.resource_specification_r = nil
+	m.clearedresource_specification_r = false
+	m.removedresource_specification_r = nil
 }
 
 // Op returns the operation name.
@@ -57258,8 +57258,8 @@ func (m *ResourceSpecificationMutation) AddedEdges() []string {
 	if m.resource_specification_items != nil {
 		edges = append(edges, resourcespecification.EdgeResourceSpecificationItems)
 	}
-	if m.resource_rspecification != nil {
-		edges = append(edges, resourcespecification.EdgeResourceRspecification)
+	if m.resource_specification_r != nil {
+		edges = append(edges, resourcespecification.EdgeResourceSpecificationR)
 	}
 	return edges
 }
@@ -57290,9 +57290,9 @@ func (m *ResourceSpecificationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case resourcespecification.EdgeResourceRspecification:
-		ids := make([]ent.Value, 0, len(m.resource_rspecification))
-		for id := range m.resource_rspecification {
+	case resourcespecification.EdgeResourceSpecificationR:
+		ids := make([]ent.Value, 0, len(m.resource_specification_r))
+		for id := range m.resource_specification_r {
 			ids = append(ids, id)
 		}
 		return ids
@@ -57313,8 +57313,8 @@ func (m *ResourceSpecificationMutation) RemovedEdges() []string {
 	if m.removedresource_specification_items != nil {
 		edges = append(edges, resourcespecification.EdgeResourceSpecificationItems)
 	}
-	if m.removedresource_rspecification != nil {
-		edges = append(edges, resourcespecification.EdgeResourceRspecification)
+	if m.removedresource_specification_r != nil {
+		edges = append(edges, resourcespecification.EdgeResourceSpecificationR)
 	}
 	return edges
 }
@@ -57341,9 +57341,9 @@ func (m *ResourceSpecificationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case resourcespecification.EdgeResourceRspecification:
-		ids := make([]ent.Value, 0, len(m.removedresource_rspecification))
-		for id := range m.removedresource_rspecification {
+	case resourcespecification.EdgeResourceSpecificationR:
+		ids := make([]ent.Value, 0, len(m.removedresource_specification_r))
+		for id := range m.removedresource_specification_r {
 			ids = append(ids, id)
 		}
 		return ids
@@ -57367,8 +57367,8 @@ func (m *ResourceSpecificationMutation) ClearedEdges() []string {
 	if m.clearedresource_specification_items {
 		edges = append(edges, resourcespecification.EdgeResourceSpecificationItems)
 	}
-	if m.clearedresource_rspecification {
-		edges = append(edges, resourcespecification.EdgeResourceRspecification)
+	if m.clearedresource_specification_r {
+		edges = append(edges, resourcespecification.EdgeResourceSpecificationR)
 	}
 	return edges
 }
@@ -57385,8 +57385,8 @@ func (m *ResourceSpecificationMutation) EdgeCleared(name string) bool {
 		return m.clearedresource_specification
 	case resourcespecification.EdgeResourceSpecificationItems:
 		return m.clearedresource_specification_items
-	case resourcespecification.EdgeResourceRspecification:
-		return m.clearedresource_rspecification
+	case resourcespecification.EdgeResourceSpecificationR:
+		return m.clearedresource_specification_r
 	}
 	return false
 }
@@ -57419,8 +57419,8 @@ func (m *ResourceSpecificationMutation) ResetEdge(name string) error {
 	case resourcespecification.EdgeResourceSpecificationItems:
 		m.ResetResourceSpecificationItems()
 		return nil
-	case resourcespecification.EdgeResourceRspecification:
-		m.ResetResourceRspecification()
+	case resourcespecification.EdgeResourceSpecificationR:
+		m.ResetResourceSpecificationR()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecification edge %s", name)
