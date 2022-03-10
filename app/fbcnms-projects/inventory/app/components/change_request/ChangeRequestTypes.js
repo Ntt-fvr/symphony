@@ -7,25 +7,18 @@
  * @flow
  * @format
  */
+
 import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
-import Divider from '@material-ui/core/Divider';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import MomentUtils from '@date-io/moment';
-import Radio from '@material-ui/core/Radio';
 import React, {useState} from 'react';
-import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {CardAccordion} from './common/CardAccordion';
+import {CardSuggested} from './common/CardSuggested';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
-import {
-  KeyboardTimePicker,
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
 import {Tabla} from './common/Tabla';
 import {makeStyles} from '@material-ui/styles';
@@ -57,16 +50,6 @@ const valuesTable = [
   },
 ];
 
-const days = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
-
 const status = ['Approve', 'Reject'];
 
 const useStyles = makeStyles(() => ({
@@ -94,29 +77,6 @@ const useStyles = makeStyles(() => ({
       width: '100%',
     },
   },
-  ulComment: {
-    '&.MuiList-padding': {
-      paddingTop: '0px',
-    },
-  },
-  liComment: {
-    '&.MuiListItem-root': {
-      paddingTop: '0px',
-    },
-    '&.MuiListItem-gutters': {
-      paddingLeft: '0px',
-    },
-  },
-  fieldComment: {
-    '& .MuiFormControl-root': {
-      margin: 0,
-    },
-  },
-  inputComment: {
-    '& .MuiOutlinedInput-multiline': {
-      padding: '7.5px 14px',
-    },
-  },
   inExpandingPanelFix: {
     paddingLeft: '16px',
     paddingRight: '16px',
@@ -127,21 +87,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ChangeRequestTypes = () => {
-  const [checked, setChecked] = useState(false);
-  const [statusAlarm] = useState('Pending for approval');
-  const [selectedDate, setSelectedDate] = React.useState(
-    new Date('2022-03-02T24:00:00'),
-  );
-
   const classes = useStyles();
 
-  const handleChecked = () => {
-    setChecked(prevState => !prevState);
-  };
-
-  const handleDateChange = date => {
-    setSelectedDate(date);
-  };
+  const [statusAlarm] = useState('Pending for approval');
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -233,75 +181,7 @@ const ChangeRequestTypes = () => {
             <Tabla valuesTable={valuesTable} />
           </CardAccordion>
           <CardAccordion title={'Suggested change request schedule'}>
-            <Grid container>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  style={{padding: '0 0 0 40px'}}
-                  onClick={() => handleChecked()}
-                  checked={checked}
-                  value="approved"
-                  control={<Radio color="primary" />}
-                  label="As soon as approved "
-                />
-                <FormControlLabel
-                  onClick={() => handleChecked()}
-                  checked={checked}
-                  value="approval"
-                  control={<Radio color="primary" />}
-                  label="Schedule with approval"
-                />
-                <Divider />
-              </Grid>
-              <Grid style={{margin: '0 0 20px 0'}} item xs={12}>
-                <Text
-                  style={{padding: '33px 0 0 40px'}}
-                  useEllipsis={true}
-                  weight={'regular'}
-                  color={'gray'}>
-                  Choose date and time for change execution after approval
-                </Text>
-              </Grid>
-              <FormField>
-                <Grid container>
-                  <Grid item xs={5}>
-                    <TextField
-                      required
-                      id="outlined-select-family"
-                      select
-                      style={{
-                        padding: '0',
-                        marginLeft: '40px',
-                        width: '70%',
-                      }}
-                      label="Family name"
-                      name="family"
-                      defaultValue=""
-                      variant="outlined">
-                      {days.map((item, index) => (
-                        <MenuItem key={index} value={item}>
-                          {item}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <MuiPickersUtilsProvider utils={MomentUtils}>
-                      <KeyboardTimePicker
-                        margin="dense"
-                        variant="outline"
-                        id="time-picker"
-                        label="Time picker"
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                        KeyboardButtonProps={{
-                          'aria-label': 'change time',
-                        }}
-                      />
-                    </MuiPickersUtilsProvider>
-                  </Grid>
-                </Grid>
-              </FormField>
-            </Grid>
+            <CardSuggested />
           </CardAccordion>
         </Grid>
         <Grid item xs={4}>
