@@ -21,6 +21,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import CardPlusDnD from '../CardPlusDnD';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Divider from '@material-ui/core/Divider';
 import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
@@ -377,6 +378,17 @@ export const EditResourceTypeItem = (props: Props) => {
           </Grid>
         </Card>
       </Grid>
+      <Card margins="none">
+        <CardHeader className={classes.cardHeader}>
+          Parameters to changed
+        </CardHeader>
+        <Grid
+          container
+          direction="column"
+          style={{padding: '0 49px 35px 49px'}}>
+          <CardPlusDnD />
+        </Grid>
+      </Card>
       {dialogOpen && (
         <SaveDialogConfirm
           open={dialogOpen}
