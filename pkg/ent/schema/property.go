@@ -132,8 +132,8 @@ func (PropertyType) Edges() []ent.Edge {
 		edge.To("property_type_values", PropertyTypeValue.Type).
 			Annotations(entgql.MapsTo("property_type_values")),
 		edge.To("property_type", PropertyType.Type).
-			Annotations(entgql.Bind()).From("property_type_dependence").
-			Unique().Annotations(entgql.MapsTo("property_type_dependence")),
+			Annotations(entgql.Bind()).From("parent_property_type").
+			Unique().Annotations(entgql.MapsTo("parent_property_type")),
 		edge.From("property_category", PropertyCategory.Type).
 			Ref("properties_type").
 			Unique().
@@ -266,10 +266,12 @@ func (Property) Edges() []ent.Edge {
 			Unique(),
 		edge.To("project_value", Project.Type).
 			Unique(),
-		edge.To("property_value", PropertyValue.Type),
 		edge.To("property", Property.Type).
 			Annotations(entgql.Bind()).From("property_dependence").
 			Unique().Annotations(entgql.MapsTo("property_dependence")),
+		edge.From("property_type_value", PropertyTypeValue.Type).
+			Unique().
+			Ref("property"),
 	}
 }
 

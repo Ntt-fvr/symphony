@@ -231,7 +231,7 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 		if len(property.DependenceProperties) > 0 {
 			var internalproperties = property.DependenceProperties
 			for _, internalproperty := range internalproperties {
-				pro, err1 := client.Property.Create().
+				_, err1 := client.Property.Create().
 					SetTypeID(internalproperty.PropertyTypeID).
 					SetNillableStringVal(internalproperty.StringValue).
 					SetNillableIntVal(internalproperty.IntValue).
@@ -248,7 +248,7 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 					return nil, gqlerror.Errorf("has occurred error on process: %v", err1)
 				}
 
-				var values = internalproperty.PropertyValues
+				/*var values = internalproperty.PropertyValues
 				if len(internalproperty.PropertyValues) > 0 {
 					for _, value := range values {
 						_, err2 := r.AddPropertyValueWithID(args, *value, pro.ID)
@@ -256,10 +256,10 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 							return nil, gqlerror.Errorf("has occurred error on process: %v", err2)
 						}
 					}
-				}
+				}*/
 			}
 
-		} else if len(property.PropertyValues) > 0 {
+		} /*else if len(property.PropertyValues) > 0 {
 			propertyVal := properties[i]
 			for _, value := range property.PropertyValues {
 				_, err2 := r.AddPropertyValueWithID(args, *value, propertyVal.ID)
@@ -267,7 +267,7 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 					return nil, gqlerror.Errorf("has occurred error on process: %v", err2)
 				}
 			}
-		}
+		}*/
 	}
 
 	return properties, err
@@ -277,8 +277,8 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 	var (
 		client   = r.ClientFrom(ctx)
 		builders = make([]*ent.PropertyTypeCreate, len(inputs))
+		//listPropType = make([]*ent.PropertyType, len(inputs))
 	)
-
 	for i, propertyType := range inputs {
 		builders[i] = client.PropertyType.Create().
 			SetName(propertyType.Name).
@@ -301,24 +301,67 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 			SetNillableDeleted(propertyType.IsDeleted).
 			SetNillableListable(propertyType.IsListable)
 		parentSetter(builders[i])
+		/*buildersfan := client.PropertyType.Create().
+			SetName(propertyType.Name).
+			SetType(propertyType.Type).
+			SetNillableNodeType(propertyType.NodeType).
+			SetNillableExternalID(propertyType.ExternalID).
+			SetNillableIndex(propertyType.Index).
+			SetNillableCategory(propertyType.Category).
+			SetNillableStringVal(propertyType.StringValue).
+			SetNillableIntVal(propertyType.IntValue).
+			SetNillableBoolVal(propertyType.BooleanValue).
+			SetNillableFloatVal(propertyType.FloatValue).
+			SetNillableLatitudeVal(propertyType.LatitudeValue).
+			SetNillableLongitudeVal(propertyType.LongitudeValue).
+			SetNillableIsInstanceProperty(propertyType.IsInstanceProperty).
+			SetNillableRangeFromVal(propertyType.RangeFromValue).
+			SetNillableRangeToVal(propertyType.RangeToValue).
+			SetNillableEditable(propertyType.IsEditable).
+			SetNillableMandatory(propertyType.IsMandatory).
+			SetNillableDeleted(propertyType.IsDeleted).
+			SetNillableListable(propertyType.IsListable)
+		parentSetter(buildersfan)
+
+		test, errsave := client.PropertyType.CreateBulk(buildersfan).Save(ctx)
+
+		if errsave != nil {
+			r.logger.For(ctx).Error("cannot create property types", zap.Error(errsave))
+			return errsave
+		}
+		listPropType = append(listPropType, test[0])*/
 	}
 
 	listPropType, err := client.PropertyType.CreateBulk(builders...).Save(ctx)
 
 	if err != nil {
-		r.logger.For(ctx).
-			Error("cannot create property types",
-				zap.Error(err),
-			)
+		r.logger.For(ctx).Error("cannot create property types", zap.Error(err))
 		return err
+	}
+
+	for i, propertyType := range inputs {
+		idPropType := listPropType[i]
+		if len(propertyType.PropertyTypeValues) > 0 {
+			for _, propValue := range propertyType.PropertyTypeValues {
+				propValueSend := pkgmodels.AddPropertyTypeValueInput{
+					Name:         propValue.Name,
+					PropertyType: idPropType.ID,
+				}
+				_, err2 := r.AddPropertyTypeValue(ctx, propValueSend)
+				if err2 != nil {
+					return gqlerror.Errorf("has occurred error on process: %v", err2)
+				}
+			}
+		}
 	}
 
 	for i, propertyType := range inputs {
 		idPropType := listPropType[i]
 		if len(propertyType.DependencePropertyTypes) > 0 {
 			var propsTypes = propertyType.DependencePropertyTypes
-			for _, propType := range propsTypes {
-				pro, err1 := client.PropertyType.Create().
+			var builderson = make([]*ent.PropertyTypeCreate, len(propsTypes))
+			for j, propType := range propsTypes {
+				builderson[j] = client.PropertyType.Create().
 					SetName(propType.Name).
 					SetType(propType.Type).
 					SetNillableNodeType(propType.NodeType).
@@ -338,47 +381,45 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 					SetNillableMandatory(propType.IsMandatory).
 					SetNillableDeleted(propType.IsDeleted).
 					SetNillableListable(propType.IsListable).
-					SetNillablePropertyTypeDependenceID(&idPropType.ID).
-					Save(ctx)
+					SetParentPropertyTypeID(idPropType.ID)
+					//SetPropertyTypeDependenceID(idPropType.ID)
+				parentSetter(builderson[j])
+			}
 
-				if err1 != nil {
-					if ent.IsConstraintError(err1) {
-						return gqlerror.Errorf("has occurred error on process: %v", err1)
-					}
-					return gqlerror.Errorf("has occurred error on process: %v", err1)
-				}
+			listPropTypeInt, errint := client.PropertyType.CreateBulk(builderson...).Save(ctx)
+			if errint != nil {
+				r.logger.For(ctx).Error("cannot create property types", zap.Error(errint))
+				return errint
+			}
 
-				var values = propType.PropertyTypeValues
-				if len(propType.PropertyTypeValues) > 0 {
+			for j, propertyTypeInt := range propertyType.DependencePropertyTypes {
+				idPropTypeInt := listPropTypeInt[j]
 
-					for _, value := range values {
-
-						_, err2 := r.AddPropertyTypeValueWithID(ctx, *value, pro.ID)
-
-						if err2 != nil {
-							if ent.IsConstraintError(err2) {
-								return gqlerror.Errorf("has occurred error on process: %v", err2)
+				if len(propertyTypeInt.PropertyTypeValues) > 0 {
+					for _, propValue := range propertyTypeInt.PropertyTypeValues {
+						var parentPropertyTypeList []pkgmodels.ParentPropertyValueInput
+						for _, propertyTypeValueName := range propValue.ParentPropertyTypeValue {
+							parentPropertyTypeObj := pkgmodels.ParentPropertyValueInput{
+								ParentPropertyType:      idPropType.ID,
+								ParentPropertyTypeValue: propertyTypeValueName,
 							}
+							parentPropertyTypeList = append(parentPropertyTypeList, parentPropertyTypeObj)
+						}
+
+						propValueSend := pkgmodels.AddPropertyTypeValueInput{
+							Name:               propValue.Name,
+							PropertyType:       idPropTypeInt.ID,
+							ParentPropertyType: parentPropertyTypeList,
+						}
+						_, err2 := r.AddPropertyTypeValue(ctx, propValueSend)
+						if err2 != nil {
 							return gqlerror.Errorf("has occurred error on process: %v", err2)
 						}
 					}
 				}
 			}
-
-		} else if len(propertyType.PropertyTypeValues) > 0 {
-			proTyVal := listPropType[i]
-			for _, value := range propertyType.PropertyTypeValues {
-				_, err2 := r.AddPropertyTypeValueWithID(ctx, *value, proTyVal.ID)
-				if err2 != nil {
-					if ent.IsConstraintError(err2) {
-						return gqlerror.Errorf("has occurred error on process: %v", err2)
-					}
-					return gqlerror.Errorf("has occurred error on process: %v", err2)
-				}
-			}
 		}
 	}
-
 	return nil
 }
 
@@ -3291,61 +3332,105 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 					return errors.Wrap(err, "updating property type")
 				}
 
-				if len(propertyTypes.PropertyTypeValues) > 0 {
-					for _, propertyTypeValue := range propertyTypes.PropertyTypeValues {
-						if propertyTypeValue.ID == nil {
-							ptv := pkgmodels.AddPropertyTypeValueInput{
-								Name:               propertyTypeValue.Name,
-								PropertyTypeValues: propertyTypeValue.PropertyTypeValues,
-							}
-							_, err1 := r.AddPropertyTypeValueWithID(ctx, ptv, *propertyTypes.ID)
+				/*
 
-							if err1 != nil {
-								if ent.IsConstraintError(err1) {
-									return gqlerror.Errorf("has occurred error on process: %v", err1)
-								}
-								return gqlerror.Errorf("has occurred error on process: %v", err1)
+								for _, p := range input.Properties {
+						var edited []*pkgmodels.PropertyTypeInput
+						if p.ID == nil {
+							edited = append(edited, p)
+							if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
+								ptc.SetWorkOrderTypeID(wot.ID)
+							}, edited); err != nil {
+								return nil, err
 							}
-						} else {
-							var arrayEdit []*models.EditPropertyTypeValueInput
-							for _, proTyV := range propertyTypeValue.PropertyTypeValues {
-								var arrayEditSon []*models.EditPropertyTypeValueInput
-								for _, proSon := range proTyV.PropertyTypeValues {
-									editSon := models.EditPropertyTypeValueInput{
-										ID:   proSon.ID,
-										Name: proSon.Name,
-									}
-									arrayEditSon = append(arrayEditSon, &editSon)
-								}
-								edit := models.EditPropertyTypeValueInput{
-									ID:                 proTyV.ID,
-									Name:               proTyV.Name,
-									PropertyTypeValues: arrayEditSon,
-								}
-								arrayEdit = append(arrayEdit, &edit)
-							}
-							ptv := models.EditPropertyTypeValueInput{
-								ID:                 propertyTypeValue.ID,
-								Name:               propertyTypeValue.Name,
-								PropertyTypeValues: arrayEdit,
-							}
-							_, err1 := r.EditPropertyTypeValue(ctx, ptv)
-
-							if err1 != nil {
-								if ent.IsConstraintError(err1) {
-									return gqlerror.Errorf("has occurred error on process: %v", err1)
-								}
-								return gqlerror.Errorf("has occurred error on process: %v", err1)
-							}
+						} else if err := r.updatePropType(ctx, p); err != nil {
+							return nil, err
 						}
-
 					}
-				}
+
+
+
+								if len(propertyTypes.PropertyTypeValues) > 0 {
+									for _, propertyTypeValue := range propertyTypes.PropertyTypeValues {
+										if propertyTypeValue.ID == nil {
+											parentPropertyTypeObj := pkgmodels.ParentPropertyValueInput{
+												ParentPropertyType:      idPropType.ID,
+												ParentPropertyTypeValue: propValue.ParentPropertyTypeValue,
+											}
+											propValueSend := pkgmodels.AddPropertyTypeValueInput{
+												Name:               propValue.Name,
+												PropertyType:       idPropTypeInt.ID,
+												ParentPropertyType: parentPropertyTypeObj,
+											}
+
+											ptv := pkgmodels.AddPropertyTypeValueInput{
+												Name:         propertyTypeValue.Name,
+												PropertyType: *propertyTypes.ID,
+											}
+											_, err1 := r.AddPropertyTypeValue(ctx, ptv)
+
+											if err1 != nil {
+												return gqlerror.Errorf("has occurred error on process: %v", err1)
+											}
+										}
+									}
+								}
+								/*if len(propertyTypes.PropertyTypeValues) > 0 {
+									for _, propertyTypeValue := range propertyTypes.PropertyTypeValues {
+										if propertyTypeValue.ID == nil {
+											ptv := pkgmodels.AddPropertyTypeValueInput{
+												Name:               propertyTypeValue.Name,
+												PropertyTypeValues: propertyTypeValue.PropertyTypeValues,
+											}
+											_, err1 := r.AddPropertyTypeValueWithID(ctx, ptv, *propertyTypes.ID)
+
+											if err1 != nil {
+												if ent.IsConstraintError(err1) {
+													return gqlerror.Errorf("has occurred error on process: %v", err1)
+												}
+												return gqlerror.Errorf("has occurred error on process: %v", err1)
+											}
+										} else {
+											var arrayEdit []*models.EditPropertyTypeValueInput
+											for _, proTyV := range propertyTypeValue.PropertyTypeValues {
+												var arrayEditSon []*models.EditPropertyTypeValueInput
+												for _, proSon := range proTyV.PropertyTypeValues {
+													editSon := models.EditPropertyTypeValueInput{
+														ID:   proSon.ID,
+														Name: proSon.Name,
+													}
+													arrayEditSon = append(arrayEditSon, &editSon)
+												}
+												edit := models.EditPropertyTypeValueInput{
+													ID:                 proTyV.ID,
+													Name:               proTyV.Name,
+													PropertyTypeValues: arrayEditSon,
+												}
+												arrayEdit = append(arrayEdit, &edit)
+											}
+											ptv := models.EditPropertyTypeValueInput{
+												ID:                 propertyTypeValue.ID,
+												Name:               propertyTypeValue.Name,
+												PropertyTypeValues: arrayEdit,
+											}
+											_, err1 := r.EditPropertyTypeValue(ctx, ptv)
+
+											if err1 != nil {
+												if ent.IsConstraintError(err1) {
+													return gqlerror.Errorf("has occurred error on process: %v", err1)
+												}
+												return gqlerror.Errorf("has occurred error on process: %v", err1)
+											}
+										}
+
+									}
+								}*/
 			} else {
 				var arrayProperties []*pkgmodels.PropertyTypeInput
 				arrayProperties = append(arrayProperties, propertyTypes)
 				err2 := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-					ptc.SetPropertyTypeDependenceID(*input.ID)
+					ptc.SetParentPropertyTypeID(*input.ID)
+					//ptc.SetPropertyTypeDependenceID(*input.ID)
 				}, arrayProperties)
 				if err2 != nil {
 					if ent.IsConstraintError(err2) {

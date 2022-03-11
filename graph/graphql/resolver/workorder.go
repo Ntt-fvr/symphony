@@ -181,10 +181,12 @@ func (r mutationResolver) internalAddWorkOrder(
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("aqui van los valores de: input.Properties ", input.Properties)
 	tPropInputs, err := r.convertToTemplatePropertyInputs(ctx, tmpl, input.Properties)
 	if err != nil {
 		return nil, fmt.Errorf("convert to template property inputs: %w", err)
 	}
+	fmt.Println("aqui van los valores de: tPropInputs ", tPropInputs)
 	skipMandatoryPropertiesCheck = skipMandatoryPropertiesCheck || viewer.FromContext(ctx).Features().Enabled(viewer.FeatureMandatoryPropertiesOnWorkOrderClose)
 	propInput, err := r.validatedPropertyInputsFromTemplate(ctx, tPropInputs, tmpl.ID, enum.PropertyEntityWorkOrder, skipMandatoryPropertiesCheck)
 	if err != nil {

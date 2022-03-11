@@ -115,8 +115,8 @@ type PropertyTypeEdges struct {
 	WorkerType *WorkerType
 	// PropertyTypeValues holds the value of the property_type_values edge.
 	PropertyTypeValues []*PropertyTypeValue
-	// PropertyTypeDependence holds the value of the property_type_dependence edge.
-	PropertyTypeDependence *PropertyType
+	// ParentPropertyType holds the value of the parent_property_type edge.
+	ParentPropertyType *PropertyType
 	// PropertyType holds the value of the property_type edge.
 	PropertyType []*PropertyType
 	// PropertyCategory holds the value of the property_category edge.
@@ -284,18 +284,18 @@ func (e PropertyTypeEdges) PropertyTypeValuesOrErr() ([]*PropertyTypeValue, erro
 	return nil, &NotLoadedError{edge: "property_type_values"}
 }
 
-// PropertyTypeDependenceOrErr returns the PropertyTypeDependence value or an error if the edge
+// ParentPropertyTypeOrErr returns the ParentPropertyType value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e PropertyTypeEdges) PropertyTypeDependenceOrErr() (*PropertyType, error) {
+func (e PropertyTypeEdges) ParentPropertyTypeOrErr() (*PropertyType, error) {
 	if e.loadedTypes[12] {
-		if e.PropertyTypeDependence == nil {
-			// The edge property_type_dependence was loaded in eager-loading,
+		if e.ParentPropertyType == nil {
+			// The edge parent_property_type was loaded in eager-loading,
 			// but was not found.
 			return nil, &NotFoundError{label: propertytype.Label}
 		}
-		return e.PropertyTypeDependence, nil
+		return e.ParentPropertyType, nil
 	}
-	return nil, &NotLoadedError{edge: "property_type_dependence"}
+	return nil, &NotLoadedError{edge: "parent_property_type"}
 }
 
 // PropertyTypeOrErr returns the PropertyType value or an error if the edge
@@ -630,9 +630,9 @@ func (pt *PropertyType) QueryPropertyTypeValues() *PropertyTypeValueQuery {
 	return (&PropertyTypeClient{config: pt.config}).QueryPropertyTypeValues(pt)
 }
 
-// QueryPropertyTypeDependence queries the property_type_dependence edge of the PropertyType.
-func (pt *PropertyType) QueryPropertyTypeDependence() *PropertyTypeQuery {
-	return (&PropertyTypeClient{config: pt.config}).QueryPropertyTypeDependence(pt)
+// QueryParentPropertyType queries the parent_property_type edge of the PropertyType.
+func (pt *PropertyType) QueryParentPropertyType() *PropertyTypeQuery {
+	return (&PropertyTypeClient{config: pt.config}).QueryParentPropertyType(pt)
 }
 
 // QueryPropertyType queries the property_type edge of the PropertyType.

@@ -5,9 +5,10 @@
 package models
 
 type AddPropertyTypeValueInput struct {
-	ID                 *int                         `json:"id"`
-	Name               string                       `json:"name"`
-	PropertyType       int                          `json:"propertyType"`
-	PropertyTypeValue  *int                         `json:"propertyTypeValue"`
-	PropertyTypeValues []*AddPropertyTypeValueInput `json:"propertyTypeValues"`
+	ID                      *int                       `json:"id"`
+	Name                    string                     `json:"name"`
+	IsDeleted               *bool                      `json:"isDeleted"`
+	PropertyType            int                        `json:"propertyType"`
+	ParentPropertyTypeValue []string                   `json:"parentPropertyTypeValue"`
+	ParentPropertyType      []ParentPropertyValueInput `json:"parentPropertyType"`
 }

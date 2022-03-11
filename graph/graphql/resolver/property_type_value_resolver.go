@@ -10,113 +10,48 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type propertyTypeValueResolver struct{}
-
-func (propertyTypeValueResolver) PropertyTypeValue(ctx context.Context, propertyTypeValue *ent.PropertyTypeValue) (*ent.PropertyTypeValue, error) {
-	variable, err := propertyTypeValue.PropertyTypeValueDependence(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has occurred error on process: %w", err)
-	}
-	return variable, nil
-}
-
-func (propertyTypeValueResolver) PropertyTypeValues(ctx context.Context, propertyTypeValue *ent.PropertyTypeValue) ([]*ent.PropertyTypeValue, error) {
-	variable, err := propertyTypeValue.PropertyTypeValue(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has occurred error on process: %w", err)
-	}
-	return variable, nil
-}
-
-func (propertyTypeValueResolver) PropertyType(ctx context.Context, propertyTypeValue *ent.PropertyTypeValue) (*ent.PropertyType, error) {
-	variable, err := propertyTypeValue.PropertyType(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has occurred error on process: %w", err)
-	}
-	return variable, nil
-}
-
 func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmodels.AddPropertyTypeValueInput) (*ent.PropertyTypeValue, error) {
 	client := r.ClientFrom(ctx)
-	if input.PropertyType != 0 {
+	if len(input.ParentPropertyType) > 0 {
+		var parentPropertyValueList []int
+		for _, parentPropertyTypeTraveled := range input.ParentPropertyType {
+			parentPropertyValue, _ := client.PropertyTypeValue.Query().Where(
+				propertytypevalue.NameEQ(parentPropertyTypeTraveled.ParentPropertyTypeValue),
+				propertytypevalue.HasPropertyTypeWith(propertytype.ID(parentPropertyTypeTraveled.ParentPropertyType)),
+			).Only(ctx)
+			parentPropertyValueList = append(parentPropertyValueList, parentPropertyValue.ID)
+		}
 		typ, err := client.PropertyTypeValue.Create().
 			SetName(input.Name).
+			SetPropertyTypeID(input.PropertyType).
+			SetNillableDeleted(input.IsDeleted).
+			AddParentPropertyTypeValueIDs(parentPropertyValueList...).
+			Save(ctx)
+
+		if err != nil {
+			return nil, fmt.Errorf("has occurred error on process: %w", err)
+		}
+		return typ, nil
+
+	} else {
+		typ, err := client.PropertyTypeValue.Create().
+			SetName(input.Name).
+			SetNillableDeleted(input.IsDeleted).
 			SetPropertyTypeID(input.PropertyType).
 			Save(ctx)
 
 		if err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
-			return nil, fmt.Errorf("has occurred error on process: %w", err)
-		}
-
-		if len(input.PropertyTypeValues) > 0 {
-			for _, propertyTypeV := range input.PropertyTypeValues {
-				_, err1 := client.PropertyTypeValue.Create().
-					SetName(propertyTypeV.Name).
-					SetNillablePropertyTypeValueDependenceID(&typ.ID).
-					Save(ctx)
-				if err1 != nil {
-					if ent.IsConstraintError(err) {
-						return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-					}
-					return nil, fmt.Errorf("has occurred error on process: %w", err)
-				}
-			}
-		}
-		return typ, nil
-	} else {
-		typ, err := client.PropertyTypeValue.Create().
-			SetName(input.Name).
-			SetNillablePropertyTypeValueDependenceID(input.PropertyTypeValue).
-			Save(ctx)
-
-		if err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
 			return nil, fmt.Errorf("has occurred error on process: %w", err)
 		}
 		return typ, nil
 	}
-
-}
-
-func (r mutationResolver) AddPropertyTypeValueWithID(ctx context.Context, input pkgmodels.AddPropertyTypeValueInput, propertyType int) (*ent.PropertyTypeValue, error) {
-	client := r.ClientFrom(ctx)
-	typ, err := client.PropertyTypeValue.Create().
-		SetName(input.Name).
-		SetPropertyTypeID(propertyType).
-		Save(ctx)
-	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-		}
-		return nil, fmt.Errorf("has occurred error on process: %w", err)
-	}
-
-	if len(input.PropertyTypeValues) > 0 {
-		for _, propertyTypeV := range input.PropertyTypeValues {
-			_, err1 := client.PropertyTypeValue.Create().
-				SetName(propertyTypeV.Name).
-				SetNillablePropertyTypeValueDependenceID(&typ.ID).
-				Save(ctx)
-			if err1 != nil {
-				if ent.IsConstraintError(err) {
-					return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-				}
-				return nil, fmt.Errorf("has occurred error on process: %w", err)
-			}
-		}
-	}
-	return typ, nil
 }
 
 func (r mutationResolver) RemovePropertyTypeValue(ctx context.Context, id int) (int, error) {
@@ -140,49 +75,17 @@ func (r mutationResolver) EditPropertyTypeValue(ctx context.Context, input model
 	client := r.ClientFrom(ctx)
 	et, err := client.PropertyTypeValue.Get(ctx, *input.ID)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-		}
-		return nil, errors.Wrapf(err, "updating propertyTypeValue: id=%q", *input.ID)
+		return nil, errors.Wrapf(err, "not found propertyTypeValue: id=%q", *input.ID)
 	}
 
-	if input.Name != et.Name {
-		if et, err = client.PropertyTypeValue.UpdateOne(et).
-			SetName(input.Name).
-			Save(ctx); err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
-			return nil, errors.Wrap(err, "has occurred error on process: %v")
-		}
-	}
-	if len(input.PropertyTypeValues) > 0 {
-		for _, propertyTypeValue := range input.PropertyTypeValues {
-			if propertyTypeValue.ID != nil {
-				_, err1 := r.EditPropertyTypeValue(ctx, *propertyTypeValue)
-				if err1 != nil {
-					if ent.IsConstraintError(err1) {
-						return nil, gqlerror.Errorf("has occurred error on process: %v", err1)
-					}
-					return nil, gqlerror.Errorf("has occurred error on process: %v", err1)
-				}
+	etupdated, errupdated := client.PropertyTypeValue.UpdateOne(et).
+		SetName(input.Name).
+		SetDeleted(*input.IsDeleted).
+		Save(ctx)
 
-			} else {
-				ptv := pkgmodels.AddPropertyTypeValueInput{
-					Name:              propertyTypeValue.Name,
-					PropertyTypeValue: input.ID,
-				}
-				_, err1 := r.AddPropertyTypeValue(ctx, ptv)
-				if err1 != nil {
-					if ent.IsConstraintError(err1) {
-						return nil, gqlerror.Errorf("has occurred error on process: %v", err1)
-					}
-					return nil, gqlerror.Errorf("has occurred error on process: %v", err1)
-				}
-
-			}
-		}
+	if errupdated != nil {
+		return nil, gqlerror.Errorf("has occurred error on process: %v", errupdated)
 	}
 
-	return et, nil
+	return etupdated, nil
 }

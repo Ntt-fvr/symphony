@@ -14,9 +14,9 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
-	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 )
 
 // PropertyTypeValueUpdate is the builder for updating PropertyTypeValue entities.
@@ -35,6 +35,20 @@ func (ptvu *PropertyTypeValueUpdate) Where(ps ...predicate.PropertyTypeValue) *P
 // SetName sets the name field.
 func (ptvu *PropertyTypeValueUpdate) SetName(s string) *PropertyTypeValueUpdate {
 	ptvu.mutation.SetName(s)
+	return ptvu
+}
+
+// SetDeleted sets the deleted field.
+func (ptvu *PropertyTypeValueUpdate) SetDeleted(b bool) *PropertyTypeValueUpdate {
+	ptvu.mutation.SetDeleted(b)
+	return ptvu
+}
+
+// SetNillableDeleted sets the deleted field if the given value is not nil.
+func (ptvu *PropertyTypeValueUpdate) SetNillableDeleted(b *bool) *PropertyTypeValueUpdate {
+	if b != nil {
+		ptvu.SetDeleted(*b)
+	}
 	return ptvu
 }
 
@@ -57,38 +71,19 @@ func (ptvu *PropertyTypeValueUpdate) SetPropertyType(p *PropertyType) *PropertyT
 	return ptvu.SetPropertyTypeID(p.ID)
 }
 
-// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
-func (ptvu *PropertyTypeValueUpdate) AddPropertyValueIDs(ids ...int) *PropertyTypeValueUpdate {
-	ptvu.mutation.AddPropertyValueIDs(ids...)
+// AddParentPropertyTypeValueIDs adds the parent_property_type_value edge to PropertyTypeValue by ids.
+func (ptvu *PropertyTypeValueUpdate) AddParentPropertyTypeValueIDs(ids ...int) *PropertyTypeValueUpdate {
+	ptvu.mutation.AddParentPropertyTypeValueIDs(ids...)
 	return ptvu
 }
 
-// AddPropertyValue adds the property_value edges to PropertyValue.
-func (ptvu *PropertyTypeValueUpdate) AddPropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdate {
+// AddParentPropertyTypeValue adds the parent_property_type_value edges to PropertyTypeValue.
+func (ptvu *PropertyTypeValueUpdate) AddParentPropertyTypeValue(p ...*PropertyTypeValue) *PropertyTypeValueUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptvu.AddPropertyValueIDs(ids...)
-}
-
-// SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
-func (ptvu *PropertyTypeValueUpdate) SetPropertyTypeValueDependenceID(id int) *PropertyTypeValueUpdate {
-	ptvu.mutation.SetPropertyTypeValueDependenceID(id)
-	return ptvu
-}
-
-// SetNillablePropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id if the given value is not nil.
-func (ptvu *PropertyTypeValueUpdate) SetNillablePropertyTypeValueDependenceID(id *int) *PropertyTypeValueUpdate {
-	if id != nil {
-		ptvu = ptvu.SetPropertyTypeValueDependenceID(*id)
-	}
-	return ptvu
-}
-
-// SetPropertyTypeValueDependence sets the property_type_value_dependence edge to PropertyTypeValue.
-func (ptvu *PropertyTypeValueUpdate) SetPropertyTypeValueDependence(p *PropertyTypeValue) *PropertyTypeValueUpdate {
-	return ptvu.SetPropertyTypeValueDependenceID(p.ID)
+	return ptvu.AddParentPropertyTypeValueIDs(ids...)
 }
 
 // AddPropertyTypeValueIDs adds the property_type_value edge to PropertyTypeValue by ids.
@@ -106,6 +101,21 @@ func (ptvu *PropertyTypeValueUpdate) AddPropertyTypeValue(p ...*PropertyTypeValu
 	return ptvu.AddPropertyTypeValueIDs(ids...)
 }
 
+// AddPropertyIDs adds the property edge to Property by ids.
+func (ptvu *PropertyTypeValueUpdate) AddPropertyIDs(ids ...int) *PropertyTypeValueUpdate {
+	ptvu.mutation.AddPropertyIDs(ids...)
+	return ptvu
+}
+
+// AddProperty adds the property edges to Property.
+func (ptvu *PropertyTypeValueUpdate) AddProperty(p ...*Property) *PropertyTypeValueUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvu.AddPropertyIDs(ids...)
+}
+
 // Mutation returns the PropertyTypeValueMutation object of the builder.
 func (ptvu *PropertyTypeValueUpdate) Mutation() *PropertyTypeValueMutation {
 	return ptvu.mutation
@@ -117,31 +127,25 @@ func (ptvu *PropertyTypeValueUpdate) ClearPropertyType() *PropertyTypeValueUpdat
 	return ptvu
 }
 
-// ClearPropertyValue clears all "property_value" edges to type PropertyValue.
-func (ptvu *PropertyTypeValueUpdate) ClearPropertyValue() *PropertyTypeValueUpdate {
-	ptvu.mutation.ClearPropertyValue()
+// ClearParentPropertyTypeValue clears all "parent_property_type_value" edges to type PropertyTypeValue.
+func (ptvu *PropertyTypeValueUpdate) ClearParentPropertyTypeValue() *PropertyTypeValueUpdate {
+	ptvu.mutation.ClearParentPropertyTypeValue()
 	return ptvu
 }
 
-// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
-func (ptvu *PropertyTypeValueUpdate) RemovePropertyValueIDs(ids ...int) *PropertyTypeValueUpdate {
-	ptvu.mutation.RemovePropertyValueIDs(ids...)
+// RemoveParentPropertyTypeValueIDs removes the parent_property_type_value edge to PropertyTypeValue by ids.
+func (ptvu *PropertyTypeValueUpdate) RemoveParentPropertyTypeValueIDs(ids ...int) *PropertyTypeValueUpdate {
+	ptvu.mutation.RemoveParentPropertyTypeValueIDs(ids...)
 	return ptvu
 }
 
-// RemovePropertyValue removes property_value edges to PropertyValue.
-func (ptvu *PropertyTypeValueUpdate) RemovePropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdate {
+// RemoveParentPropertyTypeValue removes parent_property_type_value edges to PropertyTypeValue.
+func (ptvu *PropertyTypeValueUpdate) RemoveParentPropertyTypeValue(p ...*PropertyTypeValue) *PropertyTypeValueUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptvu.RemovePropertyValueIDs(ids...)
-}
-
-// ClearPropertyTypeValueDependence clears the "property_type_value_dependence" edge to type PropertyTypeValue.
-func (ptvu *PropertyTypeValueUpdate) ClearPropertyTypeValueDependence() *PropertyTypeValueUpdate {
-	ptvu.mutation.ClearPropertyTypeValueDependence()
-	return ptvu
+	return ptvu.RemoveParentPropertyTypeValueIDs(ids...)
 }
 
 // ClearPropertyTypeValue clears all "property_type_value" edges to type PropertyTypeValue.
@@ -163,6 +167,27 @@ func (ptvu *PropertyTypeValueUpdate) RemovePropertyTypeValue(p ...*PropertyTypeV
 		ids[i] = p[i].ID
 	}
 	return ptvu.RemovePropertyTypeValueIDs(ids...)
+}
+
+// ClearProperty clears all "property" edges to type Property.
+func (ptvu *PropertyTypeValueUpdate) ClearProperty() *PropertyTypeValueUpdate {
+	ptvu.mutation.ClearProperty()
+	return ptvu
+}
+
+// RemovePropertyIDs removes the property edge to Property by ids.
+func (ptvu *PropertyTypeValueUpdate) RemovePropertyIDs(ids ...int) *PropertyTypeValueUpdate {
+	ptvu.mutation.RemovePropertyIDs(ids...)
+	return ptvu
+}
+
+// RemoveProperty removes property edges to Property.
+func (ptvu *PropertyTypeValueUpdate) RemoveProperty(p ...*Property) *PropertyTypeValueUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvu.RemovePropertyIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -273,6 +298,13 @@ func (ptvu *PropertyTypeValueUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: propertytypevalue.FieldName,
 		})
 	}
+	if value, ok := ptvu.mutation.Deleted(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytypevalue.FieldDeleted,
+		})
+	}
 	if ptvu.mutation.PropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -308,66 +340,12 @@ func (ptvu *PropertyTypeValueUpdate) sqlSave(ctx context.Context) (n int, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ptvu.mutation.PropertyValueCleared() {
+	if ptvu.mutation.ParentPropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytypevalue.PropertyValueTable,
-			Columns: []string{propertytypevalue.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ptvu.mutation.RemovedPropertyValueIDs(); len(nodes) > 0 && !ptvu.mutation.PropertyValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytypevalue.PropertyValueTable,
-			Columns: []string{propertytypevalue.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ptvu.mutation.PropertyValueIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytypevalue.PropertyValueTable,
-			Columns: []string{propertytypevalue.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if ptvu.mutation.PropertyTypeValueDependenceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   propertytypevalue.PropertyTypeValueDependenceTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueDependenceColumn},
+			Table:   propertytypevalue.ParentPropertyTypeValueTable,
+			Columns: propertytypevalue.ParentPropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -378,12 +356,31 @@ func (ptvu *PropertyTypeValueUpdate) sqlSave(ctx context.Context) (n int, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ptvu.mutation.PropertyTypeValueDependenceIDs(); len(nodes) > 0 {
+	if nodes := ptvu.mutation.RemovedParentPropertyTypeValueIDs(); len(nodes) > 0 && !ptvu.mutation.ParentPropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   propertytypevalue.PropertyTypeValueDependenceTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueDependenceColumn},
+			Table:   propertytypevalue.ParentPropertyTypeValueTable,
+			Columns: propertytypevalue.ParentPropertyTypeValuePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvu.mutation.ParentPropertyTypeValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   propertytypevalue.ParentPropertyTypeValueTable,
+			Columns: propertytypevalue.ParentPropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -399,10 +396,10 @@ func (ptvu *PropertyTypeValueUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if ptvu.mutation.PropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   propertytypevalue.PropertyTypeValueTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
+			Columns: propertytypevalue.PropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -415,10 +412,10 @@ func (ptvu *PropertyTypeValueUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if nodes := ptvu.mutation.RemovedPropertyTypeValueIDs(); len(nodes) > 0 && !ptvu.mutation.PropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   propertytypevalue.PropertyTypeValueTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
+			Columns: propertytypevalue.PropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -434,15 +431,69 @@ func (ptvu *PropertyTypeValueUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if nodes := ptvu.mutation.PropertyTypeValueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   propertytypevalue.PropertyTypeValueTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
+			Columns: propertytypevalue.PropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptvu.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyTable,
+			Columns: []string{propertytypevalue.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvu.mutation.RemovedPropertyIDs(); len(nodes) > 0 && !ptvu.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyTable,
+			Columns: []string{propertytypevalue.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvu.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyTable,
+			Columns: []string{propertytypevalue.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
 				},
 			},
 		}
@@ -475,6 +526,20 @@ func (ptvuo *PropertyTypeValueUpdateOne) SetName(s string) *PropertyTypeValueUpd
 	return ptvuo
 }
 
+// SetDeleted sets the deleted field.
+func (ptvuo *PropertyTypeValueUpdateOne) SetDeleted(b bool) *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.SetDeleted(b)
+	return ptvuo
+}
+
+// SetNillableDeleted sets the deleted field if the given value is not nil.
+func (ptvuo *PropertyTypeValueUpdateOne) SetNillableDeleted(b *bool) *PropertyTypeValueUpdateOne {
+	if b != nil {
+		ptvuo.SetDeleted(*b)
+	}
+	return ptvuo
+}
+
 // SetPropertyTypeID sets the property_type edge to PropertyType by id.
 func (ptvuo *PropertyTypeValueUpdateOne) SetPropertyTypeID(id int) *PropertyTypeValueUpdateOne {
 	ptvuo.mutation.SetPropertyTypeID(id)
@@ -494,38 +559,19 @@ func (ptvuo *PropertyTypeValueUpdateOne) SetPropertyType(p *PropertyType) *Prope
 	return ptvuo.SetPropertyTypeID(p.ID)
 }
 
-// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
-func (ptvuo *PropertyTypeValueUpdateOne) AddPropertyValueIDs(ids ...int) *PropertyTypeValueUpdateOne {
-	ptvuo.mutation.AddPropertyValueIDs(ids...)
+// AddParentPropertyTypeValueIDs adds the parent_property_type_value edge to PropertyTypeValue by ids.
+func (ptvuo *PropertyTypeValueUpdateOne) AddParentPropertyTypeValueIDs(ids ...int) *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.AddParentPropertyTypeValueIDs(ids...)
 	return ptvuo
 }
 
-// AddPropertyValue adds the property_value edges to PropertyValue.
-func (ptvuo *PropertyTypeValueUpdateOne) AddPropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdateOne {
+// AddParentPropertyTypeValue adds the parent_property_type_value edges to PropertyTypeValue.
+func (ptvuo *PropertyTypeValueUpdateOne) AddParentPropertyTypeValue(p ...*PropertyTypeValue) *PropertyTypeValueUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptvuo.AddPropertyValueIDs(ids...)
-}
-
-// SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
-func (ptvuo *PropertyTypeValueUpdateOne) SetPropertyTypeValueDependenceID(id int) *PropertyTypeValueUpdateOne {
-	ptvuo.mutation.SetPropertyTypeValueDependenceID(id)
-	return ptvuo
-}
-
-// SetNillablePropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id if the given value is not nil.
-func (ptvuo *PropertyTypeValueUpdateOne) SetNillablePropertyTypeValueDependenceID(id *int) *PropertyTypeValueUpdateOne {
-	if id != nil {
-		ptvuo = ptvuo.SetPropertyTypeValueDependenceID(*id)
-	}
-	return ptvuo
-}
-
-// SetPropertyTypeValueDependence sets the property_type_value_dependence edge to PropertyTypeValue.
-func (ptvuo *PropertyTypeValueUpdateOne) SetPropertyTypeValueDependence(p *PropertyTypeValue) *PropertyTypeValueUpdateOne {
-	return ptvuo.SetPropertyTypeValueDependenceID(p.ID)
+	return ptvuo.AddParentPropertyTypeValueIDs(ids...)
 }
 
 // AddPropertyTypeValueIDs adds the property_type_value edge to PropertyTypeValue by ids.
@@ -543,6 +589,21 @@ func (ptvuo *PropertyTypeValueUpdateOne) AddPropertyTypeValue(p ...*PropertyType
 	return ptvuo.AddPropertyTypeValueIDs(ids...)
 }
 
+// AddPropertyIDs adds the property edge to Property by ids.
+func (ptvuo *PropertyTypeValueUpdateOne) AddPropertyIDs(ids ...int) *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.AddPropertyIDs(ids...)
+	return ptvuo
+}
+
+// AddProperty adds the property edges to Property.
+func (ptvuo *PropertyTypeValueUpdateOne) AddProperty(p ...*Property) *PropertyTypeValueUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvuo.AddPropertyIDs(ids...)
+}
+
 // Mutation returns the PropertyTypeValueMutation object of the builder.
 func (ptvuo *PropertyTypeValueUpdateOne) Mutation() *PropertyTypeValueMutation {
 	return ptvuo.mutation
@@ -554,31 +615,25 @@ func (ptvuo *PropertyTypeValueUpdateOne) ClearPropertyType() *PropertyTypeValueU
 	return ptvuo
 }
 
-// ClearPropertyValue clears all "property_value" edges to type PropertyValue.
-func (ptvuo *PropertyTypeValueUpdateOne) ClearPropertyValue() *PropertyTypeValueUpdateOne {
-	ptvuo.mutation.ClearPropertyValue()
+// ClearParentPropertyTypeValue clears all "parent_property_type_value" edges to type PropertyTypeValue.
+func (ptvuo *PropertyTypeValueUpdateOne) ClearParentPropertyTypeValue() *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.ClearParentPropertyTypeValue()
 	return ptvuo
 }
 
-// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
-func (ptvuo *PropertyTypeValueUpdateOne) RemovePropertyValueIDs(ids ...int) *PropertyTypeValueUpdateOne {
-	ptvuo.mutation.RemovePropertyValueIDs(ids...)
+// RemoveParentPropertyTypeValueIDs removes the parent_property_type_value edge to PropertyTypeValue by ids.
+func (ptvuo *PropertyTypeValueUpdateOne) RemoveParentPropertyTypeValueIDs(ids ...int) *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.RemoveParentPropertyTypeValueIDs(ids...)
 	return ptvuo
 }
 
-// RemovePropertyValue removes property_value edges to PropertyValue.
-func (ptvuo *PropertyTypeValueUpdateOne) RemovePropertyValue(p ...*PropertyValue) *PropertyTypeValueUpdateOne {
+// RemoveParentPropertyTypeValue removes parent_property_type_value edges to PropertyTypeValue.
+func (ptvuo *PropertyTypeValueUpdateOne) RemoveParentPropertyTypeValue(p ...*PropertyTypeValue) *PropertyTypeValueUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptvuo.RemovePropertyValueIDs(ids...)
-}
-
-// ClearPropertyTypeValueDependence clears the "property_type_value_dependence" edge to type PropertyTypeValue.
-func (ptvuo *PropertyTypeValueUpdateOne) ClearPropertyTypeValueDependence() *PropertyTypeValueUpdateOne {
-	ptvuo.mutation.ClearPropertyTypeValueDependence()
-	return ptvuo
+	return ptvuo.RemoveParentPropertyTypeValueIDs(ids...)
 }
 
 // ClearPropertyTypeValue clears all "property_type_value" edges to type PropertyTypeValue.
@@ -600,6 +655,27 @@ func (ptvuo *PropertyTypeValueUpdateOne) RemovePropertyTypeValue(p ...*PropertyT
 		ids[i] = p[i].ID
 	}
 	return ptvuo.RemovePropertyTypeValueIDs(ids...)
+}
+
+// ClearProperty clears all "property" edges to type Property.
+func (ptvuo *PropertyTypeValueUpdateOne) ClearProperty() *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.ClearProperty()
+	return ptvuo
+}
+
+// RemovePropertyIDs removes the property edge to Property by ids.
+func (ptvuo *PropertyTypeValueUpdateOne) RemovePropertyIDs(ids ...int) *PropertyTypeValueUpdateOne {
+	ptvuo.mutation.RemovePropertyIDs(ids...)
+	return ptvuo
+}
+
+// RemoveProperty removes property edges to Property.
+func (ptvuo *PropertyTypeValueUpdateOne) RemoveProperty(p ...*Property) *PropertyTypeValueUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvuo.RemovePropertyIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -708,6 +784,13 @@ func (ptvuo *PropertyTypeValueUpdateOne) sqlSave(ctx context.Context) (_node *Pr
 			Column: propertytypevalue.FieldName,
 		})
 	}
+	if value, ok := ptvuo.mutation.Deleted(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytypevalue.FieldDeleted,
+		})
+	}
 	if ptvuo.mutation.PropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -743,66 +826,12 @@ func (ptvuo *PropertyTypeValueUpdateOne) sqlSave(ctx context.Context) (_node *Pr
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ptvuo.mutation.PropertyValueCleared() {
+	if ptvuo.mutation.ParentPropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytypevalue.PropertyValueTable,
-			Columns: []string{propertytypevalue.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ptvuo.mutation.RemovedPropertyValueIDs(); len(nodes) > 0 && !ptvuo.mutation.PropertyValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytypevalue.PropertyValueTable,
-			Columns: []string{propertytypevalue.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ptvuo.mutation.PropertyValueIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytypevalue.PropertyValueTable,
-			Columns: []string{propertytypevalue.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if ptvuo.mutation.PropertyTypeValueDependenceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   propertytypevalue.PropertyTypeValueDependenceTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueDependenceColumn},
+			Table:   propertytypevalue.ParentPropertyTypeValueTable,
+			Columns: propertytypevalue.ParentPropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -813,12 +842,31 @@ func (ptvuo *PropertyTypeValueUpdateOne) sqlSave(ctx context.Context) (_node *Pr
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ptvuo.mutation.PropertyTypeValueDependenceIDs(); len(nodes) > 0 {
+	if nodes := ptvuo.mutation.RemovedParentPropertyTypeValueIDs(); len(nodes) > 0 && !ptvuo.mutation.ParentPropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   propertytypevalue.PropertyTypeValueDependenceTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueDependenceColumn},
+			Table:   propertytypevalue.ParentPropertyTypeValueTable,
+			Columns: propertytypevalue.ParentPropertyTypeValuePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvuo.mutation.ParentPropertyTypeValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   propertytypevalue.ParentPropertyTypeValueTable,
+			Columns: propertytypevalue.ParentPropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -834,10 +882,10 @@ func (ptvuo *PropertyTypeValueUpdateOne) sqlSave(ctx context.Context) (_node *Pr
 	}
 	if ptvuo.mutation.PropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   propertytypevalue.PropertyTypeValueTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
+			Columns: propertytypevalue.PropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -850,10 +898,10 @@ func (ptvuo *PropertyTypeValueUpdateOne) sqlSave(ctx context.Context) (_node *Pr
 	}
 	if nodes := ptvuo.mutation.RemovedPropertyTypeValueIDs(); len(nodes) > 0 && !ptvuo.mutation.PropertyTypeValueCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   propertytypevalue.PropertyTypeValueTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
+			Columns: propertytypevalue.PropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -869,15 +917,69 @@ func (ptvuo *PropertyTypeValueUpdateOne) sqlSave(ctx context.Context) (_node *Pr
 	}
 	if nodes := ptvuo.mutation.PropertyTypeValueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   propertytypevalue.PropertyTypeValueTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
+			Columns: propertytypevalue.PropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptvuo.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyTable,
+			Columns: []string{propertytypevalue.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvuo.mutation.RemovedPropertyIDs(); len(nodes) > 0 && !ptvuo.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyTable,
+			Columns: []string{propertytypevalue.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptvuo.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyTable,
+			Columns: []string{propertytypevalue.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
 				},
 			},
 		}

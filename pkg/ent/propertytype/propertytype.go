@@ -87,8 +87,8 @@ const (
 	EdgeWorkerType = "worker_type"
 	// EdgePropertyTypeValues holds the string denoting the property_type_values edge name in mutations.
 	EdgePropertyTypeValues = "property_type_values"
-	// EdgePropertyTypeDependence holds the string denoting the property_type_dependence edge name in mutations.
-	EdgePropertyTypeDependence = "property_type_dependence"
+	// EdgeParentPropertyType holds the string denoting the parent_property_type edge name in mutations.
+	EdgeParentPropertyType = "parent_property_type"
 	// EdgePropertyType holds the string denoting the property_type edge name in mutations.
 	EdgePropertyType = "property_type"
 	// EdgePropertyCategory holds the string denoting the property_category edge name in mutations.
@@ -180,10 +180,10 @@ const (
 	PropertyTypeValuesInverseTable = "property_type_values"
 	// PropertyTypeValuesColumn is the table column denoting the property_type_values relation/edge.
 	PropertyTypeValuesColumn = "property_type_property_type_values"
-	// PropertyTypeDependenceTable is the table the holds the property_type_dependence relation/edge.
-	PropertyTypeDependenceTable = "property_types"
-	// PropertyTypeDependenceColumn is the table column denoting the property_type_dependence relation/edge.
-	PropertyTypeDependenceColumn = "property_type_property_type"
+	// ParentPropertyTypeTable is the table the holds the parent_property_type relation/edge.
+	ParentPropertyTypeTable = "property_types"
+	// ParentPropertyTypeColumn is the table column denoting the parent_property_type relation/edge.
+	ParentPropertyTypeColumn = "property_type_property_type"
 	// PropertyTypeTable is the table the holds the property_type relation/edge.
 	PropertyTypeTable = "property_types"
 	// PropertyTypeColumn is the table column denoting the property_type relation/edge.

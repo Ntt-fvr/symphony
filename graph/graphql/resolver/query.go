@@ -1283,26 +1283,6 @@ func (r queryResolver) PropertyTypeValues(
 		)
 }
 
-func (r queryResolver) PropertyValues(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.PropertyValueOrder,
-	filterBy []*models.PropertyValueFilterInput,
-) (*ent.PropertyValueConnection, error) {
-	return r.ClientFrom(ctx).
-		PropertyValue.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithPropertyValueOrder(orderBy),
-			ent.WithPropertyValueFilter(
-				func(query *ent.PropertyValueQuery) (*ent.PropertyValueQuery, error) {
-					return resolverutil.PropertyValueFilter(query, filterBy)
-				},
-			),
-		)
-}
-
 func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*pkgmodels.PropertiesByCategoryFilterInput) ([]*models.PropertiesByCategories, error) {
 	client := r.ClientFrom(ctx)
 	var (

@@ -23,15 +23,17 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldDeleted holds the string denoting the deleted field in the database.
+	FieldDeleted = "deleted"
 
 	// EdgePropertyType holds the string denoting the property_type edge name in mutations.
 	EdgePropertyType = "property_type"
-	// EdgePropertyValue holds the string denoting the property_value edge name in mutations.
-	EdgePropertyValue = "property_value"
-	// EdgePropertyTypeValueDependence holds the string denoting the property_type_value_dependence edge name in mutations.
-	EdgePropertyTypeValueDependence = "property_type_value_dependence"
+	// EdgeParentPropertyTypeValue holds the string denoting the parent_property_type_value edge name in mutations.
+	EdgeParentPropertyTypeValue = "parent_property_type_value"
 	// EdgePropertyTypeValue holds the string denoting the property_type_value edge name in mutations.
 	EdgePropertyTypeValue = "property_type_value"
+	// EdgeProperty holds the string denoting the property edge name in mutations.
+	EdgeProperty = "property"
 
 	// Table holds the table name of the propertytypevalue in the database.
 	Table = "property_type_values"
@@ -42,21 +44,17 @@ const (
 	PropertyTypeInverseTable = "property_types"
 	// PropertyTypeColumn is the table column denoting the property_type relation/edge.
 	PropertyTypeColumn = "property_type_property_type_values"
-	// PropertyValueTable is the table the holds the property_value relation/edge.
-	PropertyValueTable = "property_values"
-	// PropertyValueInverseTable is the table name for the PropertyValue entity.
-	// It exists in this package in order to avoid circular dependency with the "propertyvalue" package.
-	PropertyValueInverseTable = "property_values"
-	// PropertyValueColumn is the table column denoting the property_value relation/edge.
-	PropertyValueColumn = "property_type_value_property_value"
-	// PropertyTypeValueDependenceTable is the table the holds the property_type_value_dependence relation/edge.
-	PropertyTypeValueDependenceTable = "property_type_values"
-	// PropertyTypeValueDependenceColumn is the table column denoting the property_type_value_dependence relation/edge.
-	PropertyTypeValueDependenceColumn = "property_type_value_property_type_value"
-	// PropertyTypeValueTable is the table the holds the property_type_value relation/edge.
-	PropertyTypeValueTable = "property_type_values"
-	// PropertyTypeValueColumn is the table column denoting the property_type_value relation/edge.
-	PropertyTypeValueColumn = "property_type_value_property_type_value"
+	// ParentPropertyTypeValueTable is the table the holds the parent_property_type_value relation/edge. The primary key declared below.
+	ParentPropertyTypeValueTable = "property_type_value_property_type_value"
+	// PropertyTypeValueTable is the table the holds the property_type_value relation/edge. The primary key declared below.
+	PropertyTypeValueTable = "property_type_value_property_type_value"
+	// PropertyTable is the table the holds the property relation/edge.
+	PropertyTable = "properties"
+	// PropertyInverseTable is the table name for the Property entity.
+	// It exists in this package in order to avoid circular dependency with the "property" package.
+	PropertyInverseTable = "properties"
+	// PropertyColumn is the table column denoting the property relation/edge.
+	PropertyColumn = "property_type_value_property"
 )
 
 // Columns holds all SQL columns for propertytypevalue fields.
@@ -65,13 +63,22 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
+	FieldDeleted,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the PropertyTypeValue type.
 var ForeignKeys = []string{
 	"property_type_property_type_values",
-	"property_type_value_property_type_value",
 }
+
+var (
+	// ParentPropertyTypeValuePrimaryKey and ParentPropertyTypeValueColumn2 are the table columns denoting the
+	// primary key for the parent_property_type_value relation (M2M).
+	ParentPropertyTypeValuePrimaryKey = []string{"property_type_value_id", "parent_property_type_value_id"}
+	// PropertyTypeValuePrimaryKey and PropertyTypeValueColumn2 are the table columns denoting the
+	// primary key for the property_type_value relation (M2M).
+	PropertyTypeValuePrimaryKey = []string{"property_type_value_id", "parent_property_type_value_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -105,4 +112,6 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultDeleted holds the default value on creation for the deleted field.
+	DefaultDeleted bool
 )

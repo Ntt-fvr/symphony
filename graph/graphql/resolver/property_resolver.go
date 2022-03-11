@@ -35,7 +35,11 @@ func (propertyTypeResolver) PropertyTypeValues(ctx context.Context, propertyType
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
+}
 
+func (propertyTypeResolver) PropertyType(ctx context.Context, propertyType *ent.PropertyType) (*ent.PropertyType, error) {
+	variable, _ := propertyType.QueryParentPropertyType().Only(ctx)
+	return variable, nil
 }
 
 type propertyResolver struct{}
@@ -48,8 +52,8 @@ func (propertyResolver) DependenceProperties(ctx context.Context, property *ent.
 	return variable, nil
 }
 
-func (propertyResolver) PropertyValues(ctx context.Context, property *ent.Property) ([]*ent.PropertyValue, error) {
-	variable, err := property.PropertyValue(ctx)
+func (propertyResolver) PropertyTypeValueID(ctx context.Context, property *ent.Property) (*ent.PropertyTypeValue, error) {
+	variable, err := property.PropertyTypeValue(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}

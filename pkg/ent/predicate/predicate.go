@@ -202,9 +202,6 @@ type PropertyType func(*sql.Selector)
 // PropertyTypeValue is the predicate function for propertytypevalue builders.
 type PropertyTypeValue func(*sql.Selector)
 
-// PropertyValue is the predicate function for propertyvalue builders.
-type PropertyValue func(*sql.Selector)
-
 // Recommendations is the predicate function for recommendations builders.
 type Recommendations func(*sql.Selector)
 
