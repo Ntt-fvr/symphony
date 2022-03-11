@@ -277,7 +277,6 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 	var (
 		client   = r.ClientFrom(ctx)
 		builders = make([]*ent.PropertyTypeCreate, len(inputs))
-		//listPropType = make([]*ent.PropertyType, len(inputs))
 	)
 	for i, propertyType := range inputs {
 		builders[i] = client.PropertyType.Create().
@@ -301,35 +300,6 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 			SetNillableDeleted(propertyType.IsDeleted).
 			SetNillableListable(propertyType.IsListable)
 		parentSetter(builders[i])
-		/*buildersfan := client.PropertyType.Create().
-			SetName(propertyType.Name).
-			SetType(propertyType.Type).
-			SetNillableNodeType(propertyType.NodeType).
-			SetNillableExternalID(propertyType.ExternalID).
-			SetNillableIndex(propertyType.Index).
-			SetNillableCategory(propertyType.Category).
-			SetNillableStringVal(propertyType.StringValue).
-			SetNillableIntVal(propertyType.IntValue).
-			SetNillableBoolVal(propertyType.BooleanValue).
-			SetNillableFloatVal(propertyType.FloatValue).
-			SetNillableLatitudeVal(propertyType.LatitudeValue).
-			SetNillableLongitudeVal(propertyType.LongitudeValue).
-			SetNillableIsInstanceProperty(propertyType.IsInstanceProperty).
-			SetNillableRangeFromVal(propertyType.RangeFromValue).
-			SetNillableRangeToVal(propertyType.RangeToValue).
-			SetNillableEditable(propertyType.IsEditable).
-			SetNillableMandatory(propertyType.IsMandatory).
-			SetNillableDeleted(propertyType.IsDeleted).
-			SetNillableListable(propertyType.IsListable)
-		parentSetter(buildersfan)
-
-		test, errsave := client.PropertyType.CreateBulk(buildersfan).Save(ctx)
-
-		if errsave != nil {
-			r.logger.For(ctx).Error("cannot create property types", zap.Error(errsave))
-			return errsave
-		}
-		listPropType = append(listPropType, test[0])*/
 	}
 
 	listPropType, err := client.PropertyType.CreateBulk(builders...).Save(ctx)
@@ -382,7 +352,6 @@ func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter fun
 					SetNillableDeleted(propType.IsDeleted).
 					SetNillableListable(propType.IsListable).
 					SetParentPropertyTypeID(idPropType.ID)
-					//SetPropertyTypeDependenceID(idPropType.ID)
 				parentSetter(builderson[j])
 			}
 
@@ -2442,7 +2411,9 @@ func (r mutationResolver) EditServiceType(ctx context.Context, data models.Servi
 			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, s); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetServiceTypeID(typ.ID)
+		}, s); err != nil {
 			return nil, err
 		}
 	}
@@ -2778,7 +2749,9 @@ func (r mutationResolver) EditLocationType(
 			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, l); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetLocationType(typ)
+		}, l); err != nil {
 			return nil, err
 		}
 	}
@@ -2917,7 +2890,9 @@ func (r mutationResolver) EditEquipmentType(
 			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, e); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetEquipmentTypeID(et.ID)
+		}, e); err != nil {
 			return nil, err
 		}
 	}
@@ -3032,7 +3007,9 @@ func (r mutationResolver) EditEquipmentPortType(
 				Only(ctx); err != nil {
 				return nil, gqlerror.Errorf("%v error querying property type %v (id: %v)", err, input.Name, input.ID)
 			}
-			if err := r.updatePropType(ctx, e); err != nil {
+			if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+				ptc.SetEquipmentPortTypeID(pt.ID)
+			}, e); err != nil {
 				return nil, err
 			}
 		}
@@ -3056,7 +3033,9 @@ func (r mutationResolver) EditEquipmentPortType(
 				Only(ctx); err != nil {
 				return nil, gqlerror.Errorf("%v error querying link property type %v (id: %v)", err, input.Name, input.ID)
 			}
-			if err := r.updatePropType(ctx, link); err != nil {
+			if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+				ptc.SetLinkEquipmentPortTypeID(pt.ID)
+			}, link); err != nil {
 				return nil, err
 			}
 		}
@@ -3190,7 +3169,7 @@ func (r mutationResolver) EditIsListable(ctx context.Context, input models.EditI
 	return et, nil
 }
 
-func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.PropertyTypeInput) error {
+func (r mutationResolver) updatePropType(ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), input *pkgmodels.PropertyTypeInput) error {
 	var (
 		client = r.ClientFrom(ctx)
 	)
@@ -3261,189 +3240,46 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 	if err := et.Exec(ctx); err != nil {
 		return errors.Wrap(err, "updating property type")
 	}
-	if len(input.DependencePropertyTypes) > 0 {
-		for _, propertyTypes := range input.DependencePropertyTypes {
-			if propertyTypes.ID != nil {
-				pt := client.PropertyType.
-					UpdateOneID(*propertyTypes.ID).
-					SetName(propertyTypes.Name).
-					SetType(propertyTypes.Type).
-					SetNillableNodeType(propertyTypes.NodeType).
-					SetNillableIndex(propertyTypes.Index).
-					SetNillableExternalID(propertyTypes.ExternalID).
-					SetNillableIsInstanceProperty(propertyTypes.IsInstanceProperty).
-					SetNillableEditable(propertyTypes.IsEditable).
-					SetNillableMandatory(propertyTypes.IsMandatory).
-					SetNillableDeleted(propertyTypes.IsDeleted).
-					SetNillableListable(propertyTypes.IsListable)
-				switch propertyTypes.Type {
-				case propertytype.TypeDate,
-					propertytype.TypeEmail,
-					propertytype.TypeString,
-					propertytype.TypeEnum,
-					propertytype.TypeDatetimeLocal:
-					if propertyTypes.StringValue != nil {
-						pt.SetStringVal(*propertyTypes.StringValue)
-					} else {
-						pt.ClearStringVal()
-					}
-				case propertytype.TypeInt:
-					if propertyTypes.IntValue != nil {
-						pt.SetIntVal(*propertyTypes.IntValue)
-					} else {
-						pt.ClearIntVal()
-					}
-				case propertytype.TypeBool:
-					if propertyTypes.BooleanValue != nil {
-						pt.SetBoolVal(*propertyTypes.BooleanValue)
-					} else {
-						pt.ClearBoolVal()
-					}
-				case propertytype.TypeFloat:
-					if propertyTypes.FloatValue != nil {
-						pt.SetFloatVal(*propertyTypes.FloatValue)
-					} else {
-						pt.ClearFloatVal()
-					}
-				case propertytype.TypeGpsLocation:
-					if propertyTypes.LatitudeValue != nil {
-						pt.SetLatitudeVal(*propertyTypes.LatitudeValue)
-					} else {
-						pt.ClearLatitudeVal()
-					}
-					if propertyTypes.LongitudeValue != nil {
-						pt.SetLongitudeVal(*propertyTypes.LongitudeValue)
-					} else {
-						pt.ClearLongitudeVal()
-					}
-				case propertytype.TypeRange:
-					if propertyTypes.RangeFromValue != nil {
-						pt.SetRangeFromVal(*propertyTypes.RangeFromValue)
-					} else {
-						pt.ClearRangeFromVal()
-					}
-					if propertyTypes.RangeToValue != nil {
-						pt.SetRangeToVal(*propertyTypes.RangeToValue)
-					} else {
-						pt.ClearRangeToVal()
-					}
+	if len(input.PropertyTypeValues) > 0 {
+		for _, propTypeValue := range input.PropertyTypeValues {
+			if propTypeValue.ID != nil {
+				editPropertyTypeObj := models.EditPropertyTypeValueInput{
+					ID:        propTypeValue.ID,
+					Name:      propTypeValue.Name,
+					IsDeleted: propTypeValue.IsDeleted,
 				}
-				if err := pt.Exec(ctx); err != nil {
-					return errors.Wrap(err, "updating property type")
+				_, errEdit := r.EditPropertyTypeValue(ctx, editPropertyTypeObj)
+				if errEdit != nil {
+					return gqlerror.Errorf("error updating propertytypevalue, detail: %v", errEdit)
 				}
-
-				/*
-
-								for _, p := range input.Properties {
-						var edited []*pkgmodels.PropertyTypeInput
-						if p.ID == nil {
-							edited = append(edited, p)
-							if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-								ptc.SetWorkOrderTypeID(wot.ID)
-							}, edited); err != nil {
-								return nil, err
-							}
-						} else if err := r.updatePropType(ctx, p); err != nil {
-							return nil, err
-						}
-					}
-
-
-
-								if len(propertyTypes.PropertyTypeValues) > 0 {
-									for _, propertyTypeValue := range propertyTypes.PropertyTypeValues {
-										if propertyTypeValue.ID == nil {
-											parentPropertyTypeObj := pkgmodels.ParentPropertyValueInput{
-												ParentPropertyType:      idPropType.ID,
-												ParentPropertyTypeValue: propValue.ParentPropertyTypeValue,
-											}
-											propValueSend := pkgmodels.AddPropertyTypeValueInput{
-												Name:               propValue.Name,
-												PropertyType:       idPropTypeInt.ID,
-												ParentPropertyType: parentPropertyTypeObj,
-											}
-
-											ptv := pkgmodels.AddPropertyTypeValueInput{
-												Name:         propertyTypeValue.Name,
-												PropertyType: *propertyTypes.ID,
-											}
-											_, err1 := r.AddPropertyTypeValue(ctx, ptv)
-
-											if err1 != nil {
-												return gqlerror.Errorf("has occurred error on process: %v", err1)
-											}
-										}
-									}
-								}
-								/*if len(propertyTypes.PropertyTypeValues) > 0 {
-									for _, propertyTypeValue := range propertyTypes.PropertyTypeValues {
-										if propertyTypeValue.ID == nil {
-											ptv := pkgmodels.AddPropertyTypeValueInput{
-												Name:               propertyTypeValue.Name,
-												PropertyTypeValues: propertyTypeValue.PropertyTypeValues,
-											}
-											_, err1 := r.AddPropertyTypeValueWithID(ctx, ptv, *propertyTypes.ID)
-
-											if err1 != nil {
-												if ent.IsConstraintError(err1) {
-													return gqlerror.Errorf("has occurred error on process: %v", err1)
-												}
-												return gqlerror.Errorf("has occurred error on process: %v", err1)
-											}
-										} else {
-											var arrayEdit []*models.EditPropertyTypeValueInput
-											for _, proTyV := range propertyTypeValue.PropertyTypeValues {
-												var arrayEditSon []*models.EditPropertyTypeValueInput
-												for _, proSon := range proTyV.PropertyTypeValues {
-													editSon := models.EditPropertyTypeValueInput{
-														ID:   proSon.ID,
-														Name: proSon.Name,
-													}
-													arrayEditSon = append(arrayEditSon, &editSon)
-												}
-												edit := models.EditPropertyTypeValueInput{
-													ID:                 proTyV.ID,
-													Name:               proTyV.Name,
-													PropertyTypeValues: arrayEditSon,
-												}
-												arrayEdit = append(arrayEdit, &edit)
-											}
-											ptv := models.EditPropertyTypeValueInput{
-												ID:                 propertyTypeValue.ID,
-												Name:               propertyTypeValue.Name,
-												PropertyTypeValues: arrayEdit,
-											}
-											_, err1 := r.EditPropertyTypeValue(ctx, ptv)
-
-											if err1 != nil {
-												if ent.IsConstraintError(err1) {
-													return gqlerror.Errorf("has occurred error on process: %v", err1)
-												}
-												return gqlerror.Errorf("has occurred error on process: %v", err1)
-											}
-										}
-
-									}
-								}*/
 			} else {
-				var arrayProperties []*pkgmodels.PropertyTypeInput
-				arrayProperties = append(arrayProperties, propertyTypes)
-				err2 := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-					ptc.SetParentPropertyTypeID(*input.ID)
-					//ptc.SetPropertyTypeDependenceID(*input.ID)
-				}, arrayProperties)
-				if err2 != nil {
-					if ent.IsConstraintError(err2) {
-						return gqlerror.Errorf("has occurred error on process: %v", err2)
+				var propertyType *ent.PropertyType
+				propertyType, err := client.PropertyType.Get(ctx, *input.ID)
+				if err != nil {
+					return gqlerror.Errorf("property not found, detail: %v", err)
+				}
+				parentPropertyTypeSearch, _ := propertyType.QueryParentPropertyType().Only(ctx)
+				var parentPropertyTypeList []pkgmodels.ParentPropertyValueInput
+				for _, propertyTypeValueName := range propTypeValue.ParentPropertyTypeValue {
+					parentPropertyTypeObj := pkgmodels.ParentPropertyValueInput{
+						ParentPropertyType:      parentPropertyTypeSearch.ID,
+						ParentPropertyTypeValue: propertyTypeValueName,
 					}
-					return gqlerror.Errorf("has occurred error on process: %v", err2)
+					parentPropertyTypeList = append(parentPropertyTypeList, parentPropertyTypeObj)
+				}
+				addPropertyTypeObj := pkgmodels.AddPropertyTypeValueInput{
+					PropertyType:       *input.ID,
+					Name:               propTypeValue.Name,
+					IsDeleted:          propTypeValue.IsDeleted,
+					ParentPropertyType: parentPropertyTypeList,
+				}
+				_, errAdd := r.AddPropertyTypeValue(ctx, addPropertyTypeObj)
+				if errAdd != nil {
+					return gqlerror.Errorf("error creating propertytypevalue, detail: %v", errAdd)
 				}
 			}
-
 		}
-
 	}
-
 	return nil
 }
 

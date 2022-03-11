@@ -19,6 +19,15 @@ import (
 
 func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmodels.AddPropertyTypeValueInput) (*ent.PropertyTypeValue, error) {
 	client := r.ClientFrom(ctx)
+	propertyValueSearch, _ := client.PropertyTypeValue.Query().Where(
+		propertytypevalue.NameEQ(input.Name),
+		propertytypevalue.HasPropertyTypeWith(propertytype.ID(input.PropertyType)),
+	).Only(ctx)
+
+	if propertyValueSearch != nil {
+		return nil, fmt.Errorf("it is not possible to duplicate the name of a property for the same propertytype")
+	}
+
 	if len(input.ParentPropertyType) > 0 {
 		var parentPropertyValueList []int
 		for _, parentPropertyTypeTraveled := range input.ParentPropertyType {
@@ -36,7 +45,7 @@ func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmod
 			Save(ctx)
 
 		if err != nil {
-			return nil, fmt.Errorf("has occurred error on process: %w", err)
+			return nil, err
 		}
 		return typ, nil
 
@@ -48,7 +57,7 @@ func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmod
 			Save(ctx)
 
 		if err != nil {
-			return nil, fmt.Errorf("has occurred error on process: %w", err)
+			return nil, err
 		}
 		return typ, nil
 	}

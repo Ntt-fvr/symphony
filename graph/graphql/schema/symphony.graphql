@@ -7817,7 +7817,7 @@ input AddPropertyTypeValueInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.AddPropertyTypeValueInput"
   ) {
-  ID: ID
+  id: ID
   name: String!
   isDeleted: Boolean
   propertyType: ID

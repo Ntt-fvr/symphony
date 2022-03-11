@@ -21977,7 +21977,7 @@ input AddPropertyTypeValueInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.AddPropertyTypeValueInput"
   ) {
-  ID: ID
+  id: ID
   name: String!
   isDeleted: Boolean
   propertyType: ID
@@ -85364,10 +85364,10 @@ func (ec *executionContext) unmarshalInputAddPropertyTypeValueInput(ctx context.
 
 	for k, v := range asMap {
 		switch k {
-		case "ID":
+		case "id":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err

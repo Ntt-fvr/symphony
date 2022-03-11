@@ -99,7 +99,9 @@ func (r mutationResolver) EditProjectType(
 			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, p); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetProjectTypeID(pt.ID)
+		}, p); err != nil {
 			return nil, err
 		}
 	}

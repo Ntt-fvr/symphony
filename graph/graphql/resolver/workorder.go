@@ -631,7 +631,9 @@ func (r mutationResolver) EditWorkOrderType(
 			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, p); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetWorkOrderTypeID(wot.ID)
+		}, p); err != nil {
 			return nil, err
 		}
 	}
