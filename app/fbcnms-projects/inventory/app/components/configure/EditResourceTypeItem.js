@@ -378,17 +378,6 @@ export const EditResourceTypeItem = (props: Props) => {
           </Grid>
         </Card>
       </Grid>
-      <Card margins="none">
-        <CardHeader className={classes.cardHeader}>
-          Parameters to changed
-        </CardHeader>
-        <Grid
-          container
-          direction="column"
-          style={{padding: '0 49px 35px 49px'}}>
-          <CardPlusDnD />
-        </Grid>
-      </Card>
       {dialogOpen && (
         <SaveDialogConfirm
           open={dialogOpen}
