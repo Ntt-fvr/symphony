@@ -29,6 +29,7 @@ import React from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
+import {CardSuggested} from '../components/CardSuggested';
 import {InventoryAPIUrls} from '../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {extractEntityIdFromUrl} from '../common/RouterUtils';
@@ -240,6 +241,7 @@ class Inventory extends React.Component<Props, State> {
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
               <CardPlusDnD />
+              <CardSuggested />
               {card.type == 'location' && (
                 <LocationCard
                   mode={card.mode}
