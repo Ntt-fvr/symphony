@@ -25,7 +25,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../common/theme';
-import symphony from '@symphony/design-system/theme/symphony';
 import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
@@ -48,54 +47,11 @@ const useStyles = makeStyles(() => ({
     marginBottom: '0px',
     width: '100%',
   },
-  formField: {
-    width: '100%',
-    padding: '0 12px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: symphony.palette.D200,
-    },
-    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: symphony.palette.B600,
-    },
-    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.85)',
-    },
-    '& .MuiFormControl-root': {
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: symphony.palette.B600,
-      },
-    },
-    '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
-      fontSize: '14px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    '& label': {
-      fontSize: '14px',
-      lineHeight: '8px',
-    },
-  },
-  selectField: {
-    width: '100%',
-  },
   checkbox: {
     textAlign: 'center',
     '& div': {
       justifyContent: 'center',
     },
-  },
-  mapping: {
-    cursor: 'pointer',
-    color: '#8895AD',
-  },
-  dragIndicatorIcon: {
-    '&&': {
-      fontSize: '15px',
-    },
-    cursor: '-webkit-grabbing',
-    cursor: 'grabbing',
   },
 }));
 
