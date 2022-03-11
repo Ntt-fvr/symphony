@@ -46,54 +46,58 @@ const userSearchByAppointmentQuery = graphql`
 `;
 
 export type appointmentsFilters = {
-    slotStartDate: Date,
-    slotEndDate: Date,
-    duration: string,
+  slotStartDate: Date,
+  slotEndDate: Date,
+  duration: string,
 };
 
 const searchCallback = (searchTerm: string, filters: appointmentsFilters) => {
-    const {slotStartDate, slotEndDate, duration} = filters;
-    return fetchQuery<UserSearchByAppointmentContextQuery>(
-        RelayEnvironment,
-        userSearchByAppointmentQuery,
+  const {slotStartDate, slotEndDate, duration} = filters;
+  return fetchQuery<UserSearchByAppointmentContextQuery>(
+    RelayEnvironment,
+    userSearchByAppointmentQuery,
+    {
+      filterBy: [
         {
-            filterBy: [
-                {
-                    filterType: 'USER_NAME',
-                    operator: 'CONTAINS',
-                    stringValue: searchTerm,
-                },
-                {
-                    filterType: 'USER_STATUS',
-                    operator: 'IS',
-                    statusValue: USER_STATUSES.ACTIVE.key,
-                },
-            ],
-            slottedBy: {
-                slotStartDate,
-                slotEndDate,
-            },
-            workday: {
-                workdayStartHour: 8,
-                workdayStartMinute: 0,
-                workdayEndHour: 22,
-                workdayEndMinute: 0,
-            },
-            duration: duration,
+          filterType: 'USER_NAME',
+          operator: 'CONTAINS',
+          stringValue: searchTerm,
         },
-    ).then(response => {
-        if (response.usersAvailability.length < 1) {
-            return [];
-        }
-        return response.usersAvailability.map(user => user.user).filter(Boolean);
-    });
+        {
+          filterType: 'USER_STATUS',
+          operator: 'IS',
+          statusValue: USER_STATUSES.ACTIVE.key,
+        },
+      ],
+      slottedBy: {
+        slotStartDate,
+        slotEndDate,
+      },
+      workday: {
+        workdayStartHour: 8,
+        workdayStartMinute: 0,
+        workdayEndHour: 22,
+        workdayEndMinute: 0,
+      },
+      duration: duration,
+    },
+  ).then(response => {
+    if (response.usersAvailability.length < 1) {
+      return [];
+    }
+    return response.usersAvailability
+      .map(user => {
+        return {...user.user, timeAvailability: user.slotStartDate};
+      })
+      .filter(Boolean);
+  });
 };
 
 const {
-    SearchContext: UserSearchByAppointmentContext,
-    SearchContextProvider,
-    useSearchContext,
-    useSearchWithFilters,
+  SearchContext: UserSearchByAppointmentContext,
+  SearchContextProvider,
+  useSearchContext,
+  useSearchWithFilters,
 } = createSearchWithFiltersContext<User>(searchCallback);
 
 export const UserSearchByAppointmentContextProvider = SearchContextProvider;
