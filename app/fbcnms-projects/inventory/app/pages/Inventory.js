@@ -19,6 +19,7 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AddToLocationDialog from '../components/AddToLocationDialog';
+import CardPlusDnD from '../components/CardPlusDnD';
 import EquipmentCard from '../components/EquipmentCard';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventoryTopBar from '../components/InventoryTopBar';
@@ -238,6 +239,7 @@ class Inventory extends React.Component<Props, State> {
           />
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
+              <CardPlusDnD />
               {card.type == 'location' && (
                 <LocationCard
                   mode={card.mode}

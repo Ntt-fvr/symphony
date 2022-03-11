@@ -10,6 +10,8 @@
 
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DraggableTableRow from './draggable/DraggableTableRow';
 import DroppableTableBody from './draggable/DroppableTableBody';
@@ -24,6 +26,7 @@ import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
+import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
@@ -31,6 +34,9 @@ import {useState} from 'react';
 const useStyles = makeStyles(() => ({
   container: {
     overflowX: 'auto',
+  },
+  cardHeader: {
+    margin: '20px 43px 22px 30px',
   },
   root: {
     marginBottom: '12px',
@@ -141,85 +147,98 @@ const CardPlusDnD = (props: Props) => {
 
   return (
     <div className={classes.container}>
-      <Table component="div" className={classes.root}>
-        <TableHead component="div">
-          <TableRow component="div">
-            <TableCell component="div" />
-            <TableCell component="div">
-              <fbt desc="">Parameter name</fbt>
-            </TableCell>
-            <TableCell component="div">
-              <fbt desc="">Current value</fbt>
-            </TableCell>
-            <TableCell component="div">
-              <fbt desc="">New Value</fbt>
-            </TableCell>
-            <TableCell className={classes.checkbox} component="div">
-              <fbt desc="">Delete</fbt>
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <DroppableTableBody onDragEnd={onDragEnd}>
-          {parameters.map((item, i) => (
-            <DraggableTableRow id={item.id} index={i} key={`${i}.${item.id}`}>
-              <TableCell style={{width: '30%'}} component="div" scope="row">
-                <FormField>
-                  <TextInput
-                    autoFocus={true}
-                    placeholder="Parameter name"
-                    autoComplete="off"
-                    value={item.id}
-                    className={classes.input}
-                    onChange={nameChange}
-                  />
-                </FormField>
-              </TableCell>
-              <TableCell style={{width: '30%'}} component="div" scope="row">
-                <FormField>
-                  <TextInput
-                    autoFocus={true}
-                    placeholder="Current value"
-                    autoComplete="off"
-                    value={item.id}
-                    className={classes.input}
-                    onChange={nameChange}
-                  />
-                </FormField>
-              </TableCell>
-              <TableCell style={{width: '30%'}} component="div" scope="row">
-                <FormField>
-                  <TextInput
-                    autoFocus={true}
-                    placeholder="New Value"
-                    autoComplete="off"
-                    value={item.id}
-                    className={classes.input}
-                    onChange={nameChange}
-                  />
-                </FormField>
-              </TableCell>
-              <TableCell className={classes.checkbox} component="div">
-                <FormAction>
-                  <IconButton aria-label="delete">
-                    <DeleteOutlinedIcon
-                      color="primary"
-                      onClick={() => handleDelete()}
-                    />
-                  </IconButton>
-                </FormAction>
-              </TableCell>
-            </DraggableTableRow>
-          ))}
-        </DroppableTableBody>
-      </Table>
-      <FormAction>
-        <Button
-          variant="text"
-          onClick={handleAddParameters}
-          leftIcon={PlusIcon}>
-          <fbt desc="">Add Property</fbt>
-        </Button>
-      </FormAction>
+      <Card margins="none">
+        <CardHeader className={classes.cardHeader}>
+          Parameters to changed
+        </CardHeader>
+        <Grid
+          container
+          direction="column"
+          style={{padding: '0 49px 35px 49px'}}>
+          <Table component="div" className={classes.root}>
+            <TableHead component="div">
+              <TableRow component="div">
+                <TableCell component="div" />
+                <TableCell component="div">
+                  <fbt desc="">Parameter name</fbt>
+                </TableCell>
+                <TableCell component="div">
+                  <fbt desc="">Current value</fbt>
+                </TableCell>
+                <TableCell component="div">
+                  <fbt desc="">New Value</fbt>
+                </TableCell>
+                <TableCell className={classes.checkbox} component="div">
+                  <fbt desc="">Delete</fbt>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <DroppableTableBody onDragEnd={onDragEnd}>
+              {parameters.map((item, i) => (
+                <DraggableTableRow
+                  id={item.id}
+                  index={i}
+                  key={`${i}.${item.id}`}>
+                  <TableCell style={{width: '30%'}} component="div" scope="row">
+                    <FormField>
+                      <TextInput
+                        autoFocus={true}
+                        placeholder="Parameter name"
+                        autoComplete="off"
+                        value={item.id}
+                        className={classes.input}
+                        onChange={nameChange}
+                      />
+                    </FormField>
+                  </TableCell>
+                  <TableCell style={{width: '30%'}} component="div" scope="row">
+                    <FormField>
+                      <TextInput
+                        autoFocus={true}
+                        placeholder="Current value"
+                        autoComplete="off"
+                        value={item.id}
+                        className={classes.input}
+                        onChange={nameChange}
+                      />
+                    </FormField>
+                  </TableCell>
+                  <TableCell style={{width: '30%'}} component="div" scope="row">
+                    <FormField>
+                      <TextInput
+                        autoFocus={true}
+                        placeholder="New Value"
+                        autoComplete="off"
+                        value={item.id}
+                        className={classes.input}
+                        onChange={nameChange}
+                      />
+                    </FormField>
+                  </TableCell>
+                  <TableCell className={classes.checkbox} component="div">
+                    <FormAction>
+                      <IconButton aria-label="delete">
+                        <DeleteOutlinedIcon
+                          color="primary"
+                          onClick={() => handleDelete()}
+                        />
+                      </IconButton>
+                    </FormAction>
+                  </TableCell>
+                </DraggableTableRow>
+              ))}
+            </DroppableTableBody>
+          </Table>
+          <FormAction>
+            <Button
+              variant="text"
+              onClick={handleAddParameters}
+              leftIcon={PlusIcon}>
+              <fbt desc="">Add Property</fbt>
+            </Button>
+          </FormAction>
+        </Grid>
+      </Card>
     </div>
   );
 };
