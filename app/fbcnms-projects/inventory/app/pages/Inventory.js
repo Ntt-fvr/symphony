@@ -19,8 +19,10 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AddToLocationDialog from '../components/AddToLocationDialog';
+import Button from '@material-ui/core/Button';
 import CardPlusDnD from '../components/CardPlusDnD';
 import EquipmentCard from '../components/EquipmentCard';
+import Grid from '@material-ui/core/Grid';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
@@ -63,6 +65,13 @@ const styles = {
   },
   tabsContainer: {
     padding: '20px',
+  },
+  header: {
+    marginBottom: '1rem',
+  },
+  buttons: {
+    height: '36px',
+    width: '111px',
   },
 };
 
@@ -113,9 +122,10 @@ class Inventory extends React.Component<Props, State> {
       selectedLocationType: null,
       selectedWorkOrderId: null,
       openLocationHierarchy: [],
+      dialogOpen: false,
     };
+    console.log(this.state);
   }
-
   navigateToLocation(selectedLocationId: ?string, source: ?string) {
     ServerLogger.info(LogEvents.NAVIGATE_TO_LOCATION, {
       locationId: selectedLocationId,
@@ -177,6 +187,10 @@ class Inventory extends React.Component<Props, State> {
   render() {
     const {classes} = this.props;
     const {card} = this.state;
+
+    const handelModal = () => {
+      this.setState({dialogOpen: true});
+    };
 
     const queryLocationId = extractEntityIdFromUrl(
       'location',
@@ -240,6 +254,36 @@ class Inventory extends React.Component<Props, State> {
           />
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
+              <Grid
+                className={classes.header}
+                container
+                direction="row"
+                justify="flex-end"
+                alignItems="center">
+                <Grid>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    className={classes.buttons}
+                    style={{marginRight: '1rem'}}
+                    // onClick={() => hideEditResourceTypeForm()}
+                  >
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Button
+                    style={{marginRight: '2px'}}
+                    variant="contained"
+                    color="primary"
+                    className={classes.buttons}
+                    onClick={handelModal}
+                    // disabled={handleDisable}
+                  >
+                    Submit
+                  </Button>
+                </Grid>
+              </Grid>
               <CardPlusDnD />
               <CardSuggested />
               {card.type == 'location' && (
