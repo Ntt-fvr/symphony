@@ -341,33 +341,19 @@ export default createFragmentContainer(withAlert(AddEditWorkOrderTypeCard), {
         isInstanceProperty
         isDeleted
         category
-        dependencePropertyTypes {
+        propertyTypeValues {
+          id
+          isDeleted
+          name
+          parentPropertyTypeValue {
+            id
+            isDeleted
+            name
+          }
+        }
+        parentPropertyType {
           id
           name
-          type
-          nodeType
-          index
-          stringValue
-          intValue
-          booleanValue
-          floatValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
-          isEditable
-          isMandatory
-          isInstanceProperty
-          isDeleted
-          category
-          propertyTypeValues {
-            id
-            name
-            propertyTypeValues {
-              id
-              name
-            }
-          }
         }
       }
       checkListCategoryDefinitions {

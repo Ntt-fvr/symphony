@@ -49,9 +49,14 @@ export type PropertyTypeInput = {|
 export type AddPropertyTypeValueInput = {|
   id?: ?string,
   name: string,
+  isDeleted?: ?boolean,
   propertyType?: ?string,
-  propertyTypeValue?: ?string,
-  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
+|};
+export type ParentPropertyTypeValueInput = {|
+  parentPropertyTypeValue?: ?string,
+  parentPropertyType?: ?string,
 |};
 export type AddWorkerTypeMutationVariables = {|
   input: AddWorkerTypeInput
@@ -101,6 +106,10 @@ fragment AddEditWorkerTypeCard_workerType on WorkerType {
     isInstanceProperty
     isDeleted
     category
+    parentPropertyType {
+      id
+      name
+    }
     dependencePropertyTypes {
       id
       name
@@ -122,9 +131,11 @@ fragment AddEditWorkerTypeCard_workerType on WorkerType {
       category
       propertyTypeValues {
         id
+        isDeleted
         name
-        propertyTypeValues {
+        parentPropertyTypeValue {
           id
+          isDeleted
           name
         }
       }
@@ -355,6 +366,19 @@ return {
                 "args": null,
                 "concreteType": "PropertyType",
                 "kind": "LinkedField",
+                "name": "parentPropertyType",
+                "plural": false,
+                "selections": [
+                  (v2/*: any*/),
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "PropertyType",
+                "kind": "LinkedField",
                 "name": "dependencePropertyTypes",
                 "plural": true,
                 "selections": [
@@ -385,16 +409,18 @@ return {
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
+                      (v18/*: any*/),
                       (v3/*: any*/),
                       {
                         "alias": null,
                         "args": null,
                         "concreteType": "PropertyTypeValue",
                         "kind": "LinkedField",
-                        "name": "propertyTypeValues",
+                        "name": "parentPropertyTypeValue",
                         "plural": true,
                         "selections": [
                           (v2/*: any*/),
+                          (v18/*: any*/),
                           (v3/*: any*/)
                         ],
                         "storageKey": null
@@ -414,12 +440,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e136a09d30845ee890bd3b90259cba02",
+    "cacheID": "9e9e60dbfc07ef7e6831b775a3e538d4",
     "id": null,
     "metadata": {},
     "name": "AddWorkerTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation AddWorkerTypeMutation(\n  $input: AddWorkerTypeInput!\n) {\n  addWorkerType(input: $input) {\n    ...AddEditWorkerTypeCard_workerType\n    id\n  }\n}\n\nfragment AddEditWorkerTypeCard_workerType on WorkerType {\n  id\n  name\n  description\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        name\n        propertyTypeValues {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation AddWorkerTypeMutation(\n  $input: AddWorkerTypeInput!\n) {\n  addWorkerType(input: $input) {\n    ...AddEditWorkerTypeCard_workerType\n    id\n  }\n}\n\nfragment AddEditWorkerTypeCard_workerType on WorkerType {\n  id\n  name\n  description\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    parentPropertyType {\n      id\n      name\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

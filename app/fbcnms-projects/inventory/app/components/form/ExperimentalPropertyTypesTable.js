@@ -232,7 +232,7 @@ const ExperimentalPropertyTypesTable = ({
                         skin="primary"
                         onClick={() =>
                           dispatch({
-                            type: 'REMOVE_PROPERTY_TYPE',
+                            type: 'DELETE_PROPERTY_TYPE',
                             id: property.id,
                           })
                         }

@@ -277,6 +277,10 @@ export default createFragmentContainer(withAlert(AddEditWorkerTypeCard), {
         isInstanceProperty
         isDeleted
         category
+        parentPropertyType {
+          id
+          name
+        }
         dependencePropertyTypes {
           id
           name
@@ -298,9 +302,11 @@ export default createFragmentContainer(withAlert(AddEditWorkerTypeCard), {
           category
           propertyTypeValues {
             id
+            isDeleted
             name
-            propertyTypeValues {
+            parentPropertyTypeValue {
               id
+              isDeleted
               name
             }
           }

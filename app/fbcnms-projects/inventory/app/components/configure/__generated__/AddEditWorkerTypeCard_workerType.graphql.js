@@ -41,6 +41,10 @@ export type AddEditWorkerTypeCard_workerType = {|
     +isInstanceProperty: ?boolean,
     +isDeleted: ?boolean,
     +category: ?string,
+    +parentPropertyType: ?{|
+      +id: string,
+      +name: string,
+    |},
     +dependencePropertyTypes: $ReadOnlyArray<?{|
       +id: string,
       +name: string,
@@ -62,9 +66,11 @@ export type AddEditWorkerTypeCard_workerType = {|
       +category: ?string,
       +propertyTypeValues: ?$ReadOnlyArray<{|
         +id: string,
+        +isDeleted: ?boolean,
         +name: string,
-        +propertyTypeValues: ?$ReadOnlyArray<?{|
+        +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
           +id: string,
+          +isDeleted: ?boolean,
           +name: string,
         |}>,
       |}>,
@@ -254,6 +260,19 @@ return {
           "args": null,
           "concreteType": "PropertyType",
           "kind": "LinkedField",
+          "name": "parentPropertyType",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/),
+            (v1/*: any*/)
+          ],
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "PropertyType",
+          "kind": "LinkedField",
           "name": "dependencePropertyTypes",
           "plural": true,
           "selections": [
@@ -284,16 +303,18 @@ return {
               "plural": true,
               "selections": [
                 (v0/*: any*/),
+                (v16/*: any*/),
                 (v1/*: any*/),
                 {
                   "alias": null,
                   "args": null,
                   "concreteType": "PropertyTypeValue",
                   "kind": "LinkedField",
-                  "name": "propertyTypeValues",
+                  "name": "parentPropertyTypeValue",
                   "plural": true,
                   "selections": [
                     (v0/*: any*/),
+                    (v16/*: any*/),
                     (v1/*: any*/)
                   ],
                   "storageKey": null
@@ -313,6 +334,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3e4e77396388f4365d2d07e597e1e030';
+(node/*: any*/).hash = 'f527563d8a42fd4ab2d784e42e36644b';
 
 module.exports = node;

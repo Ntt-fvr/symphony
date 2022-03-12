@@ -78,6 +78,10 @@ fragment AddEditWorkerTypeCard_workerType on WorkerType {
     isInstanceProperty
     isDeleted
     category
+    parentPropertyType {
+      id
+      name
+    }
     dependencePropertyTypes {
       id
       name
@@ -99,9 +103,11 @@ fragment AddEditWorkerTypeCard_workerType on WorkerType {
       category
       propertyTypeValues {
         id
+        isDeleted
         name
-        propertyTypeValues {
+        parentPropertyTypeValue {
           id
+          isDeleted
           name
         }
       }
@@ -409,6 +415,19 @@ return {
                         "args": null,
                         "concreteType": "PropertyType",
                         "kind": "LinkedField",
+                        "name": "parentPropertyType",
+                        "plural": false,
+                        "selections": [
+                          (v0/*: any*/),
+                          (v1/*: any*/)
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "PropertyType",
+                        "kind": "LinkedField",
                         "name": "dependencePropertyTypes",
                         "plural": true,
                         "selections": [
@@ -439,16 +458,18 @@ return {
                             "plural": true,
                             "selections": [
                               (v0/*: any*/),
+                              (v21/*: any*/),
                               (v1/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
                                 "concreteType": "PropertyTypeValue",
                                 "kind": "LinkedField",
-                                "name": "propertyTypeValues",
+                                "name": "parentPropertyTypeValue",
                                 "plural": true,
                                 "selections": [
                                   (v0/*: any*/),
+                                  (v21/*: any*/),
                                   (v1/*: any*/)
                                 ],
                                 "storageKey": null
@@ -486,7 +507,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "80079a9098d56256b54cac6cf6b639f1",
+    "cacheID": "fd7c2f500a58e152c6bd32c62895ae55",
     "id": null,
     "metadata": {
       "connection": [
@@ -502,7 +523,7 @@ return {
     },
     "name": "WorkerTypesQuery",
     "operationKind": "query",
-    "text": "query WorkerTypesQuery {\n  workerTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkerTypeCard_workerType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkerTypeCard_workerType on WorkerType {\n  id\n  name\n  description\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        name\n        propertyTypeValues {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query WorkerTypesQuery {\n  workerTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkerTypeCard_workerType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkerTypeCard_workerType on WorkerType {\n  id\n  name\n  description\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    parentPropertyType {\n      id\n      name\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

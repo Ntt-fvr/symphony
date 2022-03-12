@@ -59,9 +59,14 @@ export type PropertyTypeInput = {|
 export type AddPropertyTypeValueInput = {|
   id?: ?string,
   name: string,
+  isDeleted?: ?boolean,
   propertyType?: ?string,
-  propertyTypeValue?: ?string,
-  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
+|};
+export type ParentPropertyTypeValueInput = {|
+  parentPropertyTypeValue?: ?string,
+  parentPropertyType?: ?string,
 |};
 export type UserSearchContextQueryVariables = {|
   filters: $ReadOnlyArray<UserFilterInput>

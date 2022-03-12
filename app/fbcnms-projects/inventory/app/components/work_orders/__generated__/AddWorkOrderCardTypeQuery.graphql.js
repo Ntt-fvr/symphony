@@ -45,6 +45,10 @@ export type AddWorkOrderCardTypeQueryResponse = {|
       +isInstanceProperty: ?boolean,
       +isDeleted: ?boolean,
       +category: ?string,
+      +parentPropertyType: ?{|
+        +id: string,
+        +name: string,
+      |},
       +dependencePropertyTypes: $ReadOnlyArray<?{|
         +id: string,
         +name: string,
@@ -64,13 +68,29 @@ export type AddWorkOrderCardTypeQueryResponse = {|
         +isInstanceProperty: ?boolean,
         +isDeleted: ?boolean,
         +category: ?string,
-        +propertyTypeValues: ?$ReadOnlyArray<{|
+        +parentPropertyType: ?{|
           +id: string,
           +name: string,
-          +propertyTypeValues: ?$ReadOnlyArray<?{|
+        |},
+        +propertyTypeValues: ?$ReadOnlyArray<{|
+          +id: string,
+          +isDeleted: ?boolean,
+          +name: string,
+          +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
             +id: string,
+            +isDeleted: ?boolean,
             +name: string,
           |}>,
+        |}>,
+      |}>,
+      +propertyTypeValues: ?$ReadOnlyArray<{|
+        +id: string,
+        +isDeleted: ?boolean,
+        +name: string,
+        +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+          +id: string,
+          +isDeleted: ?boolean,
+          +name: string,
         |}>,
       |}>,
     |}>,
@@ -131,6 +151,10 @@ query AddWorkOrderCardTypeQuery(
         isInstanceProperty
         isDeleted
         category
+        parentPropertyType {
+          id
+          name
+        }
         dependencePropertyTypes {
           id
           name
@@ -150,13 +174,29 @@ query AddWorkOrderCardTypeQuery(
           isInstanceProperty
           isDeleted
           category
-          propertyTypeValues {
+          parentPropertyType {
             id
             name
-            propertyTypeValues {
+          }
+          propertyTypeValues {
+            id
+            isDeleted
+            name
+            parentPropertyTypeValue {
               id
+              isDeleted
               name
             }
+          }
+        }
+        propertyTypeValues {
+          id
+          isDeleted
+          name
+          parentPropertyTypeValue {
+            id
+            isDeleted
+            name
           }
         }
       }
@@ -341,6 +381,47 @@ v22 = {
   "args": null,
   "concreteType": "PropertyType",
   "kind": "LinkedField",
+  "name": "parentPropertyType",
+  "plural": false,
+  "selections": [
+    (v3/*: any*/),
+    (v4/*: any*/)
+  ],
+  "storageKey": null
+},
+v23 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v3/*: any*/),
+    (v20/*: any*/),
+    (v4/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v3/*: any*/),
+        (v20/*: any*/),
+        (v4/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v24 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyType",
+  "kind": "LinkedField",
   "name": "propertyTypes",
   "plural": true,
   "selections": [
@@ -362,6 +443,7 @@ v22 = {
     (v19/*: any*/),
     (v20/*: any*/),
     (v21/*: any*/),
+    (v22/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -388,46 +470,23 @@ v22 = {
         (v19/*: any*/),
         (v20/*: any*/),
         (v21/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "PropertyTypeValue",
-          "kind": "LinkedField",
-          "name": "propertyTypeValues",
-          "plural": true,
-          "selections": [
-            (v3/*: any*/),
-            (v4/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "PropertyTypeValue",
-              "kind": "LinkedField",
-              "name": "propertyTypeValues",
-              "plural": true,
-              "selections": [
-                (v3/*: any*/),
-                (v4/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
+        (v22/*: any*/),
+        (v23/*: any*/)
       ],
       "storageKey": null
-    }
+    },
+    (v23/*: any*/)
   ],
   "storageKey": null
 },
-v23 = {
+v25 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "title",
   "storageKey": null
 },
-v24 = {
+v26 = {
   "alias": null,
   "args": null,
   "concreteType": "CheckListCategoryDefinition",
@@ -436,7 +495,7 @@ v24 = {
   "plural": true,
   "selections": [
     (v3/*: any*/),
-    (v23/*: any*/),
+    (v25/*: any*/),
     (v5/*: any*/),
     {
       "alias": null,
@@ -447,7 +506,7 @@ v24 = {
       "plural": true,
       "selections": [
         (v3/*: any*/),
-        (v23/*: any*/),
+        (v25/*: any*/),
         (v6/*: any*/),
         (v8/*: any*/),
         (v18/*: any*/),
@@ -500,8 +559,8 @@ return {
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v22/*: any*/),
-              (v24/*: any*/)
+              (v24/*: any*/),
+              (v26/*: any*/)
             ],
             "type": "WorkOrderType",
             "abstractKey": null
@@ -534,8 +593,8 @@ return {
             "selections": [
               (v4/*: any*/),
               (v5/*: any*/),
-              (v22/*: any*/),
-              (v24/*: any*/)
+              (v24/*: any*/),
+              (v26/*: any*/)
             ],
             "type": "WorkOrderType",
             "abstractKey": null
@@ -546,16 +605,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a1665af0c48f0a892ccffd3d6bdb50e8",
+    "cacheID": "519a0a00d5e59966edf534afc9e11ae9",
     "id": null,
     "metadata": {},
     "name": "AddWorkOrderCardTypeQuery",
     "operationKind": "query",
-    "text": "query AddWorkOrderCardTypeQuery(\n  $workOrderTypeId: ID!\n) {\n  workOrderType: node(id: $workOrderTypeId) {\n    __typename\n    ... on WorkOrderType {\n      id\n      name\n      description\n      propertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n        isDeleted\n        category\n        dependencePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n          propertyTypeValues {\n            id\n            name\n            propertyTypeValues {\n              id\n              name\n            }\n          }\n        }\n      }\n      checkListCategoryDefinitions {\n        id\n        title\n        description\n        checklistItemDefinitions {\n          id\n          title\n          type\n          index\n          isMandatory\n          enumValues\n          enumSelectionMode\n          helpText\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query AddWorkOrderCardTypeQuery(\n  $workOrderTypeId: ID!\n) {\n  workOrderType: node(id: $workOrderTypeId) {\n    __typename\n    ... on WorkOrderType {\n      id\n      name\n      description\n      propertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n        isDeleted\n        category\n        parentPropertyType {\n          id\n          name\n        }\n        dependencePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n          parentPropertyType {\n            id\n            name\n          }\n          propertyTypeValues {\n            id\n            isDeleted\n            name\n            parentPropertyTypeValue {\n              id\n              isDeleted\n              name\n            }\n          }\n        }\n        propertyTypeValues {\n          id\n          isDeleted\n          name\n          parentPropertyTypeValue {\n            id\n            isDeleted\n            name\n          }\n        }\n      }\n      checkListCategoryDefinitions {\n        id\n        title\n        description\n        checklistItemDefinitions {\n          id\n          title\n          type\n          index\n          isMandatory\n          enumValues\n          enumSelectionMode\n          helpText\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7b2a5ac4a5b0a5d2e09c5cfd0f4afbd3';
+(node/*: any*/).hash = '67734988768c1593f79eb3d3296172b7';
 
 module.exports = node;

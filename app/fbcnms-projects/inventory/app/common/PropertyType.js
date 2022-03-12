@@ -49,6 +49,7 @@ export type PropertyType = {|
 export type PropertyTypeValues = {|
   id: string,
   name: string,
+  parentPropertyTypeValue: string[],
   propertyType?: PropertyType,
   propertyTypeValues?: ?(PropertyTypeValues[]),
   propertyTypeValues?: PropertyTypeValues,

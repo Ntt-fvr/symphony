@@ -16,7 +16,6 @@ import {
   getInitialPropertyFromType,
   toMutablePropertyType,
 } from '../../../common/PropertyType';
-import {isTempId} from '../../../common/EntUtils';
 import {sortPropertiesByIndex} from '../../../common/Property';
 
 const extractNameOfArray = array => {
@@ -28,6 +27,24 @@ export const getDependencePropertyType = (propertyType: PropertyType) => {
     ? propertyType.dependencePropertyTypes[0]
     : null;
 };
+
+export const createPropertyTypeValuesJson = (propertyType: PropertyType) => {
+  const temporalPropertyValue = JSON.parse(propertyType.stringValue);
+  return temporalPropertyValue?.map(propertyTypeValue => ({
+    name: propertyTypeValue,
+  }));
+};
+
+export const getPropertyTypesValuesInString = (propertyType: PropertyType) => {
+  const allInputValuesWithOnlyName = extractNameOfArray(
+    propertyType.propertyTypeValues,
+  );
+  return allInputValuesWithOnlyName
+    ? JSON.stringify(allInputValuesWithOnlyName)
+    : null;
+};
+
+//COmprobados
 
 export const isDependentProperty = (propertyType: PropertyType) => {
   return !!propertyType.propertyTypeValues;
@@ -47,23 +64,6 @@ export const getAllInputValuesDependentProperty = (
   return dependentPropertyType?.propertyTypeValues?.reduce(reducer, []);
 };
 
-export const getAllInputValuesDependentPropertyInString = (
-  propertyType: PropertyType,
-  isDependentProperty = false,
-) => {
-  const allInputValuesDependentProperty = getAllInputValuesDependentProperty(
-    propertyType,
-    isDependentProperty,
-  );
-  const allInputValuesWithOnlyName = extractNameOfArray(
-    allInputValuesDependentProperty,
-  );
-
-  return allInputValuesWithOnlyName
-    ? JSON.stringify(allInputValuesWithOnlyName)
-    : null;
-};
-
 export const getAllInputValuesEnumPropertyInString = (
   propertyTypeValues: [],
 ) => {
@@ -77,19 +77,6 @@ export const getPropertiesWithoutActualProperty = (
   return propertyTypeValues.filter(
     propertyTypeValue => propertyTypeValue.id !== property.id,
   );
-};
-
-export const getPropertyTypeValuesToReducer = (propertyType: PropertyType) => {
-  const temporalPropertyValue = JSON.parse(propertyType.stringValue);
-  const createdPropertyValue = getDependencePropertyType(propertyType)
-    ?.propertyTypeValues;
-  const finalPropertyValues = isTempId(propertyType.id)
-    ? temporalPropertyValue?.map(propertyTypeValue => ({
-        name: propertyTypeValue,
-      })) || []
-    : createdPropertyValue;
-
-  return finalPropertyValues || [];
 };
 
 export const getAllInitialProperties = (

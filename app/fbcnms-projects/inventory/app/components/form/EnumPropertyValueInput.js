@@ -19,8 +19,8 @@ import update from 'immutability-helper';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {MultipleSelectionIcon} from '@symphony/design-system/icons';
 import {
-  getAllInputValuesDependentPropertyInString,
   getAllInputValuesEnumPropertyInString,
+  getPropertyTypesValuesInString,
 } from '../work_orders/property_combo/PropertyComboHelpers';
 import {isJSON} from '@symphony/design-system/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
@@ -60,9 +60,12 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
   const allowPropertyCombo = showPropertyCombo && propertyComboFeatureFlag;
   const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
 
+  // Probado
   const dependentPropertyValues = isDependentProperty
-    ? getAllInputValuesDependentPropertyInString(property, isDependentProperty)
+    ? getPropertyTypesValuesInString(property, isDependentProperty)
     : null;
+
+  // Falta ver esto enumPropertyValues
 
   const enumPropertyValues =
     isPropertyComboEnum && property.propertyTypeValues?.length > 0
@@ -123,18 +126,27 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
             onClick={showDialog}
             icon={MultipleSelectionIcon}
             disabled={
-              propertyTypes.length <= 1 || !!property.dependencePropertyTypes
+              propertyTypes.length <= 1 ||
+              !!property.dependencePropertyTypes ||
+              tokens.length < 1
             }
           />
           <PropertyComboPrincipalDialog
             open={viewDialogProperty}
             onClose={hideDialog}
             property={property}
-            onSave={propertyTypes => {
+            //Acá añadir los properti Type Values
+            onSave={propertyComboInfo => {
               onChange(
                 update(property, {
                   dependencePropertyTypes: {
-                    $set: propertyTypes,
+                    $set: propertyComboInfo.dependencePropertyTypes,
+                  },
+                  propertyTypeValues: {
+                    $set: propertyComboInfo.propertyTypeValues,
+                  },
+                  stringValue: {
+                    $set: null,
                   },
                 }),
               );

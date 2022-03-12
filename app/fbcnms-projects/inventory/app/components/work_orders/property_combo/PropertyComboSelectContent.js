@@ -26,9 +26,9 @@ import {
 } from './DependentPropertyTypesReducer';
 import {PropertyType} from '../../../common/PropertyType';
 import {
+  createPropertyTypeValuesJson,
   getDependencePropertyType,
   getPropertiesWithoutActualProperty,
-  getPropertyTypeValuesToReducer,
 } from './PropertyComboHelpers';
 import {isTempId} from '../../../common/EntUtils';
 
@@ -46,14 +46,13 @@ const PropertyComboSelectContent = (props: Props) => {
     PropertyTypesTableDispatcher,
   );
 
+  const propertyTypeValuesPrincipal = createPropertyTypeValuesJson(property);
   const dependentPropertyInitial = getDependencePropertyType(property);
-  const propertyTypesFinal = [...propertyTypes];
-  dependentPropertyInitial && propertyTypesFinal.push(dependentPropertyInitial);
 
   const DependentPropertyTypesInitialState = {
-    propertyTypeValues: getPropertyTypeValuesToReducer(property),
     dependentPropertyInitial,
   };
+
   const [state, dispatch] = useReducer(
     DependentPropertyTypesReducer,
     DependentPropertyTypesInitialState,
@@ -75,7 +74,10 @@ const PropertyComboSelectContent = (props: Props) => {
       id: state.id,
     });
     isTempId(state.id) && delete state.id;
-    onSave([state]);
+    onSave({
+      dependencePropertyTypes: [state],
+      propertyTypeValues: propertyTypeValuesPrincipal,
+    });
   };
 
   return (
@@ -122,7 +124,7 @@ const PropertyComboSelectContent = (props: Props) => {
             <Select
               options={getPropertiesWithoutActualProperty(
                 property,
-                propertyTypesFinal,
+                propertyTypes,
               ).map(property => {
                 return {
                   key: property.id,
@@ -139,16 +141,18 @@ const PropertyComboSelectContent = (props: Props) => {
         </Grid>
         <PropertyComboList
           classes={classes}
-          propertyTypeValues={state.propertyTypeValues}
+          propertyTypeValues={propertyTypeValuesPrincipal}
           dispatch={dispatch}
-          disabled={!!property.dependencePropertyTypes}
+          disabled={!!property.dependencePropertyTypes || !state.id}
         />
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
         <Button onClick={onClose} skin="primary-outlined">
           {Strings.common.cancelButton}
         </Button>
-        <Button onClick={saveButtonClicked}>{Strings.common.saveButton}</Button>
+        <Button onClick={saveButtonClicked} disabled={!state.id}>
+          {Strings.common.saveButton}
+        </Button>
       </DialogActions>
     </>
   );

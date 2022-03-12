@@ -27,14 +27,18 @@ type Props = $ReadOnly<{|
 const PropertyComboList = (props: Props) => {
   const {classes, propertyTypeValues, dispatch, disabled} = props;
 
-  const handlePropertyTypeValues = propertyTypeValue => {
-    const indexProperty = propertyTypeValues.findIndex(
-      property => propertyTypeValue.name === property.name,
+  const handlePropertyTypeValues = propertyTypeValueFromEnum => {
+    const dependencePropertyValues = propertyTypeValueFromEnum.propertyTypeValues.map(
+      propertyTypeValue => ({
+        ...propertyTypeValue,
+      }),
     );
-    propertyTypeValues.splice(indexProperty, 1, propertyTypeValue);
     const action = {
       type: DependentPropertyTypesReducerTypes.updatePropertyTypesValue,
-      payload: propertyTypeValues,
+      payload: {
+        dependencePropertyValues,
+        parentPropertyTypeValue: propertyTypeValueFromEnum.name,
+      },
     };
     dispatch(action);
   };

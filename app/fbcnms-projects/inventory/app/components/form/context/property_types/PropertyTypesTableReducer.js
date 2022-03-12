@@ -39,6 +39,16 @@ function editPropertyType<T: PropertyTypesTableState>(
   ];
 }
 
+function removePropertyType<T: PropertyTypesTableState>(
+  state: T,
+  deletedPropertyTypeId: string,
+): T {
+  const newState = state.filter(
+    propertyType => deletedPropertyTypeId !== propertyType.id,
+  );
+  return [...newState];
+}
+
 export function reducer(
   state: PropertyTypesTableState,
   action: PropertyTypeTableDispatcherActionType,
@@ -46,11 +56,13 @@ export function reducer(
   switch (action.type) {
     case 'ADD_PROPERTY_TYPE':
       return [...state, getInitialPropertyType(state.length)];
-    case 'REMOVE_PROPERTY_TYPE':
+    case 'DELETE_PROPERTY_TYPE':
       return editPropertyType(state, action.id, pt => ({
         ...pt,
         isDeleted: true,
       }));
+    case 'REMOVE_PROPERTY_TYPE':
+      return removePropertyType(state, action.id);
     case 'UPDATE_PROPERTY_TYPE_NAME':
       return editPropertyType(state, action.id, pt => ({
         ...pt,
