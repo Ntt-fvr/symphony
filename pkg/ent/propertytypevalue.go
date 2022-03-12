@@ -18,7 +18,7 @@ import (
 
 // PropertyTypeValue is the model entity for the PropertyTypeValue schema.
 type PropertyTypeValue struct {
-	config `json:"-"`
+	config `gqlgen:"-" json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
@@ -27,23 +27,24 @@ type PropertyTypeValue struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Deleted holds the value of the "deleted" field.
+	Deleted bool `json:"deleted,omitempty" gqlgen:"isDeleted"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PropertyTypeValueQuery when eager-loading is set.
-	Edges                                   PropertyTypeValueEdges `json:"edges"`
-	property_type_property_type_values      *int
-	property_type_value_property_type_value *int
+	Edges                              PropertyTypeValueEdges `json:"edges"`
+	property_type_property_type_values *int
 }
 
 // PropertyTypeValueEdges holds the relations/edges for other nodes in the graph.
 type PropertyTypeValueEdges struct {
 	// PropertyType holds the value of the property_type edge.
 	PropertyType *PropertyType
-	// PropertyValue holds the value of the property_value edge.
-	PropertyValue []*PropertyValue
-	// PropertyTypeValueDependence holds the value of the property_type_value_dependence edge.
-	PropertyTypeValueDependence *PropertyTypeValue
+	// ParentPropertyTypeValue holds the value of the parent_property_type_value edge.
+	ParentPropertyTypeValue []*PropertyTypeValue
 	// PropertyTypeValue holds the value of the property_type_value edge.
 	PropertyTypeValue []*PropertyTypeValue
+	// Property holds the value of the property edge.
+	Property []*Property
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [4]bool
@@ -63,36 +64,31 @@ func (e PropertyTypeValueEdges) PropertyTypeOrErr() (*PropertyType, error) {
 	return nil, &NotLoadedError{edge: "property_type"}
 }
 
-// PropertyValueOrErr returns the PropertyValue value or an error if the edge
+// ParentPropertyTypeValueOrErr returns the ParentPropertyTypeValue value or an error if the edge
 // was not loaded in eager-loading.
-func (e PropertyTypeValueEdges) PropertyValueOrErr() ([]*PropertyValue, error) {
+func (e PropertyTypeValueEdges) ParentPropertyTypeValueOrErr() ([]*PropertyTypeValue, error) {
 	if e.loadedTypes[1] {
-		return e.PropertyValue, nil
+		return e.ParentPropertyTypeValue, nil
 	}
-	return nil, &NotLoadedError{edge: "property_value"}
-}
-
-// PropertyTypeValueDependenceOrErr returns the PropertyTypeValueDependence value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PropertyTypeValueEdges) PropertyTypeValueDependenceOrErr() (*PropertyTypeValue, error) {
-	if e.loadedTypes[2] {
-		if e.PropertyTypeValueDependence == nil {
-			// The edge property_type_value_dependence was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: propertytypevalue.Label}
-		}
-		return e.PropertyTypeValueDependence, nil
-	}
-	return nil, &NotLoadedError{edge: "property_type_value_dependence"}
+	return nil, &NotLoadedError{edge: "parent_property_type_value"}
 }
 
 // PropertyTypeValueOrErr returns the PropertyTypeValue value or an error if the edge
 // was not loaded in eager-loading.
 func (e PropertyTypeValueEdges) PropertyTypeValueOrErr() ([]*PropertyTypeValue, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.PropertyTypeValue, nil
 	}
 	return nil, &NotLoadedError{edge: "property_type_value"}
+}
+
+// PropertyOrErr returns the Property value or an error if the edge
+// was not loaded in eager-loading.
+func (e PropertyTypeValueEdges) PropertyOrErr() ([]*Property, error) {
+	if e.loadedTypes[3] {
+		return e.Property, nil
+	}
+	return nil, &NotLoadedError{edge: "property"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -102,6 +98,7 @@ func (*PropertyTypeValue) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+		&sql.NullBool{},   // deleted
 	}
 }
 
@@ -109,7 +106,6 @@ func (*PropertyTypeValue) scanValues() []interface{} {
 func (*PropertyTypeValue) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // property_type_property_type_values
-		&sql.NullInt64{}, // property_type_value_property_type_value
 	}
 }
 
@@ -140,19 +136,18 @@ func (ptv *PropertyTypeValue) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		ptv.Name = value.String
 	}
-	values = values[3:]
+	if value, ok := values[3].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field deleted", values[3])
+	} else if value.Valid {
+		ptv.Deleted = value.Bool
+	}
+	values = values[4:]
 	if len(values) == len(propertytypevalue.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field property_type_property_type_values", value)
 		} else if value.Valid {
 			ptv.property_type_property_type_values = new(int)
 			*ptv.property_type_property_type_values = int(value.Int64)
-		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field property_type_value_property_type_value", value)
-		} else if value.Valid {
-			ptv.property_type_value_property_type_value = new(int)
-			*ptv.property_type_value_property_type_value = int(value.Int64)
 		}
 	}
 	return nil
@@ -163,19 +158,19 @@ func (ptv *PropertyTypeValue) QueryPropertyType() *PropertyTypeQuery {
 	return (&PropertyTypeValueClient{config: ptv.config}).QueryPropertyType(ptv)
 }
 
-// QueryPropertyValue queries the property_value edge of the PropertyTypeValue.
-func (ptv *PropertyTypeValue) QueryPropertyValue() *PropertyValueQuery {
-	return (&PropertyTypeValueClient{config: ptv.config}).QueryPropertyValue(ptv)
-}
-
-// QueryPropertyTypeValueDependence queries the property_type_value_dependence edge of the PropertyTypeValue.
-func (ptv *PropertyTypeValue) QueryPropertyTypeValueDependence() *PropertyTypeValueQuery {
-	return (&PropertyTypeValueClient{config: ptv.config}).QueryPropertyTypeValueDependence(ptv)
+// QueryParentPropertyTypeValue queries the parent_property_type_value edge of the PropertyTypeValue.
+func (ptv *PropertyTypeValue) QueryParentPropertyTypeValue() *PropertyTypeValueQuery {
+	return (&PropertyTypeValueClient{config: ptv.config}).QueryParentPropertyTypeValue(ptv)
 }
 
 // QueryPropertyTypeValue queries the property_type_value edge of the PropertyTypeValue.
 func (ptv *PropertyTypeValue) QueryPropertyTypeValue() *PropertyTypeValueQuery {
 	return (&PropertyTypeValueClient{config: ptv.config}).QueryPropertyTypeValue(ptv)
+}
+
+// QueryProperty queries the property edge of the PropertyTypeValue.
+func (ptv *PropertyTypeValue) QueryProperty() *PropertyQuery {
+	return (&PropertyTypeValueClient{config: ptv.config}).QueryProperty(ptv)
 }
 
 // Update returns a builder for updating this PropertyTypeValue.
@@ -207,6 +202,8 @@ func (ptv *PropertyTypeValue) String() string {
 	builder.WriteString(ptv.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(ptv.Name)
+	builder.WriteString(", deleted=")
+	builder.WriteString(fmt.Sprintf("%v", ptv.Deleted))
 	builder.WriteByte(')')
 	return builder.String()
 }

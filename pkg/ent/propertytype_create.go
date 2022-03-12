@@ -534,23 +534,23 @@ func (ptc *PropertyTypeCreate) AddPropertyTypeValues(p ...*PropertyTypeValue) *P
 	return ptc.AddPropertyTypeValueIDs(ids...)
 }
 
-// SetPropertyTypeDependenceID sets the property_type_dependence edge to PropertyType by id.
-func (ptc *PropertyTypeCreate) SetPropertyTypeDependenceID(id int) *PropertyTypeCreate {
-	ptc.mutation.SetPropertyTypeDependenceID(id)
+// SetParentPropertyTypeID sets the parent_property_type edge to PropertyType by id.
+func (ptc *PropertyTypeCreate) SetParentPropertyTypeID(id int) *PropertyTypeCreate {
+	ptc.mutation.SetParentPropertyTypeID(id)
 	return ptc
 }
 
-// SetNillablePropertyTypeDependenceID sets the property_type_dependence edge to PropertyType by id if the given value is not nil.
-func (ptc *PropertyTypeCreate) SetNillablePropertyTypeDependenceID(id *int) *PropertyTypeCreate {
+// SetNillableParentPropertyTypeID sets the parent_property_type edge to PropertyType by id if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillableParentPropertyTypeID(id *int) *PropertyTypeCreate {
 	if id != nil {
-		ptc = ptc.SetPropertyTypeDependenceID(*id)
+		ptc = ptc.SetParentPropertyTypeID(*id)
 	}
 	return ptc
 }
 
-// SetPropertyTypeDependence sets the property_type_dependence edge to PropertyType.
-func (ptc *PropertyTypeCreate) SetPropertyTypeDependence(p *PropertyType) *PropertyTypeCreate {
-	return ptc.SetPropertyTypeDependenceID(p.ID)
+// SetParentPropertyType sets the parent_property_type edge to PropertyType.
+func (ptc *PropertyTypeCreate) SetParentPropertyType(p *PropertyType) *PropertyTypeCreate {
+	return ptc.SetParentPropertyTypeID(p.ID)
 }
 
 // AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
@@ -1126,12 +1126,12 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptc.mutation.PropertyTypeDependenceIDs(); len(nodes) > 0 {
+	if nodes := ptc.mutation.ParentPropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   propertytype.PropertyTypeDependenceTable,
-			Columns: []string{propertytype.PropertyTypeDependenceColumn},
+			Table:   propertytype.ParentPropertyTypeTable,
+			Columns: []string{propertytype.ParentPropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

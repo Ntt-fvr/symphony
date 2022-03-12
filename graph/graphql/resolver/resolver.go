@@ -288,14 +288,6 @@ func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
 
-func (r resolver) PropertyTypeValue() generated.PropertyTypeValueResolver {
-	return propertyTypeValueResolver{}
-}
-
 func (r resolver) PropertyCategory() generated.PropertyCategoryResolver {
 	return propertyCategoryResolver{}
-}
-
-func (r resolver) PropertyValue() generated.PropertyValueResolver {
-	return propertyValueResolver{}
 }

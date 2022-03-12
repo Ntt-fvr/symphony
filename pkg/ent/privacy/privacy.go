@@ -1704,30 +1704,6 @@ func (f PropertyTypeValueMutationRuleFunc) EvalMutation(ctx context.Context, m e
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PropertyTypeValueMutation", m)
 }
 
-// The PropertyValueQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type PropertyValueQueryRuleFunc func(context.Context, *ent.PropertyValueQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f PropertyValueQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.PropertyValueQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PropertyValueQuery", q)
-}
-
-// The PropertyValueMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type PropertyValueMutationRuleFunc func(context.Context, *ent.PropertyValueMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f PropertyValueMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.PropertyValueMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PropertyValueMutation", m)
-}
-
 // The RecommendationsQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RecommendationsQueryRuleFunc func(context.Context, *ent.RecommendationsQuery) error

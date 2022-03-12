@@ -72,7 +72,9 @@ func (r mutationResolver) EditWorkerType(ctx context.Context, input models.EditW
 			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, input); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetWorkerTypeID(et.ID)
+		}, input); err != nil {
 			return nil, err
 		}
 	}

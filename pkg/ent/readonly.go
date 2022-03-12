@@ -86,7 +86,6 @@ func (c *Client) ReadOnly() *Client {
 		PropertyCategory:            NewPropertyCategoryClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
 		PropertyTypeValue:           NewPropertyTypeValueClient(cfg),
-		PropertyValue:               NewPropertyValueClient(cfg),
 		Recommendations:             NewRecommendationsClient(cfg),
 		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),

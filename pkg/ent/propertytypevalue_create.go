@@ -14,9 +14,9 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
-	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
 )
 
 // PropertyTypeValueCreate is the builder for creating a PropertyTypeValue entity.
@@ -60,6 +60,20 @@ func (ptvc *PropertyTypeValueCreate) SetName(s string) *PropertyTypeValueCreate 
 	return ptvc
 }
 
+// SetDeleted sets the deleted field.
+func (ptvc *PropertyTypeValueCreate) SetDeleted(b bool) *PropertyTypeValueCreate {
+	ptvc.mutation.SetDeleted(b)
+	return ptvc
+}
+
+// SetNillableDeleted sets the deleted field if the given value is not nil.
+func (ptvc *PropertyTypeValueCreate) SetNillableDeleted(b *bool) *PropertyTypeValueCreate {
+	if b != nil {
+		ptvc.SetDeleted(*b)
+	}
+	return ptvc
+}
+
 // SetPropertyTypeID sets the property_type edge to PropertyType by id.
 func (ptvc *PropertyTypeValueCreate) SetPropertyTypeID(id int) *PropertyTypeValueCreate {
 	ptvc.mutation.SetPropertyTypeID(id)
@@ -79,38 +93,19 @@ func (ptvc *PropertyTypeValueCreate) SetPropertyType(p *PropertyType) *PropertyT
 	return ptvc.SetPropertyTypeID(p.ID)
 }
 
-// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
-func (ptvc *PropertyTypeValueCreate) AddPropertyValueIDs(ids ...int) *PropertyTypeValueCreate {
-	ptvc.mutation.AddPropertyValueIDs(ids...)
+// AddParentPropertyTypeValueIDs adds the parent_property_type_value edge to PropertyTypeValue by ids.
+func (ptvc *PropertyTypeValueCreate) AddParentPropertyTypeValueIDs(ids ...int) *PropertyTypeValueCreate {
+	ptvc.mutation.AddParentPropertyTypeValueIDs(ids...)
 	return ptvc
 }
 
-// AddPropertyValue adds the property_value edges to PropertyValue.
-func (ptvc *PropertyTypeValueCreate) AddPropertyValue(p ...*PropertyValue) *PropertyTypeValueCreate {
+// AddParentPropertyTypeValue adds the parent_property_type_value edges to PropertyTypeValue.
+func (ptvc *PropertyTypeValueCreate) AddParentPropertyTypeValue(p ...*PropertyTypeValue) *PropertyTypeValueCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return ptvc.AddPropertyValueIDs(ids...)
-}
-
-// SetPropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id.
-func (ptvc *PropertyTypeValueCreate) SetPropertyTypeValueDependenceID(id int) *PropertyTypeValueCreate {
-	ptvc.mutation.SetPropertyTypeValueDependenceID(id)
-	return ptvc
-}
-
-// SetNillablePropertyTypeValueDependenceID sets the property_type_value_dependence edge to PropertyTypeValue by id if the given value is not nil.
-func (ptvc *PropertyTypeValueCreate) SetNillablePropertyTypeValueDependenceID(id *int) *PropertyTypeValueCreate {
-	if id != nil {
-		ptvc = ptvc.SetPropertyTypeValueDependenceID(*id)
-	}
-	return ptvc
-}
-
-// SetPropertyTypeValueDependence sets the property_type_value_dependence edge to PropertyTypeValue.
-func (ptvc *PropertyTypeValueCreate) SetPropertyTypeValueDependence(p *PropertyTypeValue) *PropertyTypeValueCreate {
-	return ptvc.SetPropertyTypeValueDependenceID(p.ID)
+	return ptvc.AddParentPropertyTypeValueIDs(ids...)
 }
 
 // AddPropertyTypeValueIDs adds the property_type_value edge to PropertyTypeValue by ids.
@@ -126,6 +121,21 @@ func (ptvc *PropertyTypeValueCreate) AddPropertyTypeValue(p ...*PropertyTypeValu
 		ids[i] = p[i].ID
 	}
 	return ptvc.AddPropertyTypeValueIDs(ids...)
+}
+
+// AddPropertyIDs adds the property edge to Property by ids.
+func (ptvc *PropertyTypeValueCreate) AddPropertyIDs(ids ...int) *PropertyTypeValueCreate {
+	ptvc.mutation.AddPropertyIDs(ids...)
+	return ptvc
+}
+
+// AddProperty adds the property edges to Property.
+func (ptvc *PropertyTypeValueCreate) AddProperty(p ...*Property) *PropertyTypeValueCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptvc.AddPropertyIDs(ids...)
 }
 
 // Mutation returns the PropertyTypeValueMutation object of the builder.
@@ -188,6 +198,10 @@ func (ptvc *PropertyTypeValueCreate) defaults() {
 		v := propertytypevalue.DefaultUpdateTime()
 		ptvc.mutation.SetUpdateTime(v)
 	}
+	if _, ok := ptvc.mutation.Deleted(); !ok {
+		v := propertytypevalue.DefaultDeleted
+		ptvc.mutation.SetDeleted(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -205,6 +219,9 @@ func (ptvc *PropertyTypeValueCreate) check() error {
 		if err := propertytypevalue.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
+	}
+	if _, ok := ptvc.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New("ent: missing required field \"deleted\"")}
 	}
 	return nil
 }
@@ -257,6 +274,14 @@ func (ptvc *PropertyTypeValueCreate) createSpec() (*PropertyTypeValue, *sqlgraph
 		})
 		_node.Name = value
 	}
+	if value, ok := ptvc.mutation.Deleted(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: propertytypevalue.FieldDeleted,
+		})
+		_node.Deleted = value
+	}
 	if nodes := ptvc.mutation.PropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -276,31 +301,12 @@ func (ptvc *PropertyTypeValueCreate) createSpec() (*PropertyTypeValue, *sqlgraph
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptvc.mutation.PropertyValueIDs(); len(nodes) > 0 {
+	if nodes := ptvc.mutation.ParentPropertyTypeValueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytypevalue.PropertyValueTable,
-			Columns: []string{propertytypevalue.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ptvc.mutation.PropertyTypeValueDependenceIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   propertytypevalue.PropertyTypeValueDependenceTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueDependenceColumn},
+			Table:   propertytypevalue.ParentPropertyTypeValueTable,
+			Columns: propertytypevalue.ParentPropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -316,15 +322,34 @@ func (ptvc *PropertyTypeValueCreate) createSpec() (*PropertyTypeValue, *sqlgraph
 	}
 	if nodes := ptvc.mutation.PropertyTypeValueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   propertytypevalue.PropertyTypeValueTable,
-			Columns: []string{propertytypevalue.PropertyTypeValueColumn},
+			Columns: propertytypevalue.PropertyTypeValuePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ptvc.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertytypevalue.PropertyTable,
+			Columns: []string{propertytypevalue.PropertyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
 				},
 			},
 		}

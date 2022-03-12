@@ -118,6 +118,13 @@ func Name(v string) predicate.PropertyTypeValue {
 	})
 }
 
+// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
+func Deleted(v bool) predicate.PropertyTypeValue {
+	return predicate.PropertyTypeValue(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDeleted), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.PropertyTypeValue {
 	return predicate.PropertyTypeValue(func(s *sql.Selector) {
@@ -381,6 +388,20 @@ func NameContainsFold(v string) predicate.PropertyTypeValue {
 	})
 }
 
+// DeletedEQ applies the EQ predicate on the "deleted" field.
+func DeletedEQ(v bool) predicate.PropertyTypeValue {
+	return predicate.PropertyTypeValue(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDeleted), v))
+	})
+}
+
+// DeletedNEQ applies the NEQ predicate on the "deleted" field.
+func DeletedNEQ(v bool) predicate.PropertyTypeValue {
+	return predicate.PropertyTypeValue(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDeleted), v))
+	})
+}
+
 // HasPropertyType applies the HasEdge predicate on the "property_type" edge.
 func HasPropertyType() predicate.PropertyTypeValue {
 	return predicate.PropertyTypeValue(func(s *sql.Selector) {
@@ -409,53 +430,25 @@ func HasPropertyTypeWith(preds ...predicate.PropertyType) predicate.PropertyType
 	})
 }
 
-// HasPropertyValue applies the HasEdge predicate on the "property_value" edge.
-func HasPropertyValue() predicate.PropertyTypeValue {
+// HasParentPropertyTypeValue applies the HasEdge predicate on the "parent_property_type_value" edge.
+func HasParentPropertyTypeValue() predicate.PropertyTypeValue {
 	return predicate.PropertyTypeValue(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropertyValueTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropertyValueTable, PropertyValueColumn),
+			sqlgraph.To(ParentPropertyTypeValueTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, ParentPropertyTypeValueTable, ParentPropertyTypeValuePrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasPropertyValueWith applies the HasEdge predicate on the "property_value" edge with a given conditions (other predicates).
-func HasPropertyValueWith(preds ...predicate.PropertyValue) predicate.PropertyTypeValue {
-	return predicate.PropertyTypeValue(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropertyValueInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropertyValueTable, PropertyValueColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasPropertyTypeValueDependence applies the HasEdge predicate on the "property_type_value_dependence" edge.
-func HasPropertyTypeValueDependence() predicate.PropertyTypeValue {
-	return predicate.PropertyTypeValue(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PropertyTypeValueDependenceTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PropertyTypeValueDependenceTable, PropertyTypeValueDependenceColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasPropertyTypeValueDependenceWith applies the HasEdge predicate on the "property_type_value_dependence" edge with a given conditions (other predicates).
-func HasPropertyTypeValueDependenceWith(preds ...predicate.PropertyTypeValue) predicate.PropertyTypeValue {
+// HasParentPropertyTypeValueWith applies the HasEdge predicate on the "parent_property_type_value" edge with a given conditions (other predicates).
+func HasParentPropertyTypeValueWith(preds ...predicate.PropertyTypeValue) predicate.PropertyTypeValue {
 	return predicate.PropertyTypeValue(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PropertyTypeValueDependenceTable, PropertyTypeValueDependenceColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, ParentPropertyTypeValueTable, ParentPropertyTypeValuePrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -471,7 +464,7 @@ func HasPropertyTypeValue() predicate.PropertyTypeValue {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(PropertyTypeValueTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTypeValueTable, PropertyTypeValueColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, PropertyTypeValueTable, PropertyTypeValuePrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -483,7 +476,35 @@ func HasPropertyTypeValueWith(preds ...predicate.PropertyTypeValue) predicate.Pr
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTypeValueTable, PropertyTypeValueColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, PropertyTypeValueTable, PropertyTypeValuePrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasProperty applies the HasEdge predicate on the "property" edge.
+func HasProperty() predicate.PropertyTypeValue {
+	return predicate.PropertyTypeValue(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTable, PropertyColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPropertyWith applies the HasEdge predicate on the "property" edge with a given conditions (other predicates).
+func HasPropertyWith(preds ...predicate.Property) predicate.PropertyTypeValue {
+	return predicate.PropertyTypeValue(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PropertyInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PropertyTable, PropertyColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

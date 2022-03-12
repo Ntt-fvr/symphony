@@ -1797,6 +1797,7 @@ var (
 		{Name: "property_user_value", Type: field.TypeInt, Nullable: true},
 		{Name: "property_project_value", Type: field.TypeInt, Nullable: true},
 		{Name: "property_property", Type: field.TypeInt, Nullable: true},
+		{Name: "property_type_value_property", Type: field.TypeInt, Nullable: true},
 		{Name: "service_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_properties", Type: field.TypeInt, Nullable: true},
 	}
@@ -1898,15 +1899,22 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "properties_services_properties",
+				Symbol:  "properties_property_type_values_property",
 				Columns: []*schema.Column{PropertiesColumns[24]},
+
+				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "properties_services_properties",
+				Columns: []*schema.Column{PropertiesColumns[25]},
 
 				RefColumns: []*schema.Column{ServicesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "properties_work_orders_properties",
-				Columns: []*schema.Column{PropertiesColumns[25]},
+				Columns: []*schema.Column{PropertiesColumns[26]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1926,7 +1934,7 @@ var (
 			{
 				Name:    "property_property_type_service_properties",
 				Unique:  true,
-				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[24]},
+				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[25]},
 			},
 			{
 				Name:    "property_property_type_equipment_port_properties",
@@ -1941,7 +1949,7 @@ var (
 			{
 				Name:    "property_property_type_work_order_properties",
 				Unique:  true,
-				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[25]},
+				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[26]},
 			},
 			{
 				Name:    "property_property_type_project_properties",
@@ -2153,8 +2161,8 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
+		{Name: "deleted", Type: field.TypeBool},
 		{Name: "property_type_property_type_values", Type: field.TypeInt, Nullable: true},
-		{Name: "property_type_value_property_type_value", Type: field.TypeInt, Nullable: true},
 	}
 	// PropertyTypeValuesTable holds the schema information for the "property_type_values" table.
 	PropertyTypeValuesTable = &schema.Table{
@@ -2164,55 +2172,9 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "property_type_values_property_types_property_type_values",
-				Columns: []*schema.Column{PropertyTypeValuesColumns[4]},
-
-				RefColumns: []*schema.Column{PropertyTypesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "property_type_values_property_type_values_property_type_value",
 				Columns: []*schema.Column{PropertyTypeValuesColumns[5]},
 
-				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// PropertyValuesColumns holds the columns for the "property_values" table.
-	PropertyValuesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString},
-		{Name: "property_property_value", Type: field.TypeInt, Nullable: true},
-		{Name: "property_type_value_property_value", Type: field.TypeInt, Nullable: true},
-		{Name: "property_value_property_value", Type: field.TypeInt, Nullable: true},
-	}
-	// PropertyValuesTable holds the schema information for the "property_values" table.
-	PropertyValuesTable = &schema.Table{
-		Name:       "property_values",
-		Columns:    PropertyValuesColumns,
-		PrimaryKey: []*schema.Column{PropertyValuesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:  "property_values_properties_property_value",
-				Columns: []*schema.Column{PropertyValuesColumns[4]},
-
-				RefColumns: []*schema.Column{PropertiesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "property_values_property_type_values_property_value",
-				Columns: []*schema.Column{PropertyValuesColumns[5]},
-
-				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "property_values_property_values_property_value",
-				Columns: []*schema.Column{PropertyValuesColumns[6]},
-
-				RefColumns: []*schema.Column{PropertyValuesColumns[0]},
+				RefColumns: []*schema.Column{PropertyTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -3188,6 +3150,33 @@ var (
 			},
 		},
 	}
+	// PropertyTypeValuePropertyTypeValueColumns holds the columns for the "property_type_value_property_type_value" table.
+	PropertyTypeValuePropertyTypeValueColumns = []*schema.Column{
+		{Name: "property_type_value_id", Type: field.TypeInt},
+		{Name: "parent_property_type_value_id", Type: field.TypeInt},
+	}
+	// PropertyTypeValuePropertyTypeValueTable holds the schema information for the "property_type_value_property_type_value" table.
+	PropertyTypeValuePropertyTypeValueTable = &schema.Table{
+		Name:       "property_type_value_property_type_value",
+		Columns:    PropertyTypeValuePropertyTypeValueColumns,
+		PrimaryKey: []*schema.Column{PropertyTypeValuePropertyTypeValueColumns[0], PropertyTypeValuePropertyTypeValueColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "property_type_value_property_type_value_property_type_value_id",
+				Columns: []*schema.Column{PropertyTypeValuePropertyTypeValueColumns[0]},
+
+				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "property_type_value_property_type_value_parent_property_type_value_id",
+				Columns: []*schema.Column{PropertyTypeValuePropertyTypeValueColumns[1]},
+
+				RefColumns: []*schema.Column{PropertyTypeValuesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// ServiceUpstreamColumns holds the columns for the "service_upstream" table.
 	ServiceUpstreamColumns = []*schema.Column{
 		{Name: "service_id", Type: field.TypeInt},
@@ -3470,7 +3459,6 @@ var (
 		PropertyCategoriesTable,
 		PropertyTypesTable,
 		PropertyTypeValuesTable,
-		PropertyValuesTable,
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
 		RecommendationsSourcesTable,
@@ -3501,6 +3489,7 @@ var (
 		EquipmentPortDefinitionConnectedPortsTable,
 		ExitPointNextEntryPointsTable,
 		OrganizationPoliciesTable,
+		PropertyTypeValuePropertyTypeValueTable,
 		ServiceUpstreamTable,
 		ServiceLinksTable,
 		ServicePortsTable,
@@ -3607,8 +3596,9 @@ func init() {
 	PropertiesTable.ForeignKeys[10].RefTable = UsersTable
 	PropertiesTable.ForeignKeys[11].RefTable = ProjectsTable
 	PropertiesTable.ForeignKeys[12].RefTable = PropertiesTable
-	PropertiesTable.ForeignKeys[13].RefTable = ServicesTable
-	PropertiesTable.ForeignKeys[14].RefTable = WorkOrdersTable
+	PropertiesTable.ForeignKeys[13].RefTable = PropertyTypeValuesTable
+	PropertiesTable.ForeignKeys[14].RefTable = ServicesTable
+	PropertiesTable.ForeignKeys[15].RefTable = WorkOrdersTable
 	PropertyCategoriesTable.ForeignKeys[0].RefTable = ParameterCatalogsTable
 	PropertyTypesTable.ForeignKeys[0].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[1].RefTable = EquipmentPortTypesTable
@@ -3623,10 +3613,6 @@ func init() {
 	PropertyTypesTable.ForeignKeys[10].RefTable = WorkOrderTypesTable
 	PropertyTypesTable.ForeignKeys[11].RefTable = WorkerTypesTable
 	PropertyTypeValuesTable.ForeignKeys[0].RefTable = PropertyTypesTable
-	PropertyTypeValuesTable.ForeignKeys[1].RefTable = PropertyTypeValuesTable
-	PropertyValuesTable.ForeignKeys[0].RefTable = PropertiesTable
-	PropertyValuesTable.ForeignKeys[1].RefTable = PropertyTypeValuesTable
-	PropertyValuesTable.ForeignKeys[2].RefTable = PropertyValuesTable
 	RecommendationsTable.ForeignKeys[0].RefTable = RecommendationsCategoriesTable
 	RecommendationsTable.ForeignKeys[1].RefTable = RecommendationsSourcesTable
 	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable
@@ -3674,6 +3660,8 @@ func init() {
 	ExitPointNextEntryPointsTable.ForeignKeys[1].RefTable = EntryPointsTable
 	OrganizationPoliciesTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationPoliciesTable.ForeignKeys[1].RefTable = PermissionsPoliciesTable
+	PropertyTypeValuePropertyTypeValueTable.ForeignKeys[0].RefTable = PropertyTypeValuesTable
+	PropertyTypeValuePropertyTypeValueTable.ForeignKeys[1].RefTable = PropertyTypeValuesTable
 	ServiceUpstreamTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[0].RefTable = ServicesTable

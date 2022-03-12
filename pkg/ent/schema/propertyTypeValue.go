@@ -22,6 +22,9 @@ func (PropertyTypeValue) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().
 			Annotations(entgql.OrderField("NAME")),
+		field.Bool("deleted").
+			StructTag(`gqlgen:"isDeleted"`).
+			Default(false),
 	}
 }
 
@@ -29,11 +32,12 @@ func (PropertyTypeValue) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("property_type", PropertyType.Type).
 			Ref("property_type_values").Unique(),
-		edge.To("property_value", PropertyValue.Type).
-			Annotations(entgql.MapsTo("propertyvalue")),
 		edge.To("property_type_value", PropertyTypeValue.Type).
-			Annotations(entgql.Bind()).From("property_type_value_dependence").
-			Unique().Annotations(entgql.MapsTo("property_type_value_dependence")),
+			Annotations(entgql.Bind()).
+			From("parent_property_type_value").
+			Annotations(entgql.MapsTo("parent_property_type_value")),
+		edge.To("property", Property.Type).
+			Annotations(entgql.MapsTo("property")),
 	}
 }
 

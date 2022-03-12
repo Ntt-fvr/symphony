@@ -340,14 +340,6 @@ type AddProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
-type AddPropertyValueInput struct {
-	Name                     string                   `json:"name"`
-	Property                 *int                     `json:"property"`
-	PropertyTypeValue        int                      `json:"propertyTypeValue"`
-	PropertyValue            *int                     `json:"propertyValue"`
-	DependencePropertyValues []*AddPropertyValueInput `json:"dependencePropertyValues"`
-}
-
 type AddRecommendationsCategoryInput struct {
 	Name string `json:"name"`
 }
@@ -929,18 +921,9 @@ type EditPropertyCategoryInput struct {
 }
 
 type EditPropertyTypeValueInput struct {
-	ID                 *int                          `json:"id"`
-	Name               string                        `json:"name"`
-	PropertyTypeValue  *int                          `json:"propertyTypeValue"`
-	PropertyTypeValues []*EditPropertyTypeValueInput `json:"propertyTypeValues"`
-}
-
-type EditPropertyValueInput struct {
-	ID                       *int                      `json:"id"`
-	Name                     string                    `json:"name"`
-	Property                 *int                      `json:"property"`
-	PropertyValue            *int                      `json:"propertyValue"`
-	DependencePropertyValues []*EditPropertyValueInput `json:"dependencePropertyValues"`
+	ID        *int   `json:"id"`
+	Name      string `json:"name"`
+	IsDeleted *bool  `json:"isDeleted"`
 }
 
 type EditRecommendationsCategoryInput struct {
@@ -1366,21 +1349,21 @@ type PropertiesByCategories struct {
 }
 
 type PropertyInput struct {
-	ID                   *int                     `json:"id"`
-	PropertyTypeID       int                      `json:"propertyTypeID"`
-	StringValue          *string                  `json:"stringValue"`
-	IntValue             *int                     `json:"intValue"`
-	BooleanValue         *bool                    `json:"booleanValue"`
-	FloatValue           *float64                 `json:"floatValue"`
-	LatitudeValue        *float64                 `json:"latitudeValue"`
-	LongitudeValue       *float64                 `json:"longitudeValue"`
-	RangeFromValue       *float64                 `json:"rangeFromValue"`
-	RangeToValue         *float64                 `json:"rangeToValue"`
-	NodeIDValue          *int                     `json:"nodeIDValue"`
-	IsEditable           *bool                    `json:"isEditable"`
-	IsInstanceProperty   *bool                    `json:"isInstanceProperty"`
-	DependenceProperties []*PropertyInput         `json:"dependenceProperties"`
-	PropertyValues       []*AddPropertyValueInput `json:"propertyValues"`
+	ID                   *int             `json:"id"`
+	PropertyTypeID       int              `json:"propertyTypeID"`
+	StringValue          *string          `json:"stringValue"`
+	IntValue             *int             `json:"intValue"`
+	BooleanValue         *bool            `json:"booleanValue"`
+	FloatValue           *float64         `json:"floatValue"`
+	LatitudeValue        *float64         `json:"latitudeValue"`
+	LongitudeValue       *float64         `json:"longitudeValue"`
+	RangeFromValue       *float64         `json:"rangeFromValue"`
+	RangeToValue         *float64         `json:"rangeToValue"`
+	NodeIDValue          *int             `json:"nodeIDValue"`
+	IsEditable           *bool            `json:"isEditable"`
+	IsInstanceProperty   *bool            `json:"isInstanceProperty"`
+	DependenceProperties []*PropertyInput `json:"dependenceProperties"`
+	PropertyTypeValueID  *int             `json:"propertyTypeValueID"`
 }
 
 type PropertyTypeValueFilterInput struct {
@@ -1390,15 +1373,6 @@ type PropertyTypeValueFilterInput struct {
 	IDSet       []int                       `json:"idSet"`
 	MaxDepth    *int                        `json:"maxDepth"`
 	StringSet   []string                    `json:"stringSet"`
-}
-
-type PropertyValueFilterInput struct {
-	FilterType  PropertyValueFilterType `json:"filterType"`
-	Operator    enum.FilterOperator     `json:"operator"`
-	StringValue *string                 `json:"stringValue"`
-	IDSet       []int                   `json:"idSet"`
-	MaxDepth    *int                    `json:"maxDepth"`
-	StringSet   []string                `json:"stringSet"`
 }
 
 type PublishFlowInput struct {
@@ -2875,45 +2849,6 @@ func (e *PropertyTypeValueFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e PropertyTypeValueFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type PropertyValueFilterType string
-
-const (
-	PropertyValueFilterTypeName PropertyValueFilterType = "NAME"
-)
-
-var AllPropertyValueFilterType = []PropertyValueFilterType{
-	PropertyValueFilterTypeName,
-}
-
-func (e PropertyValueFilterType) IsValid() bool {
-	switch e {
-	case PropertyValueFilterTypeName:
-		return true
-	}
-	return false
-}
-
-func (e PropertyValueFilterType) String() string {
-	return string(e)
-}
-
-func (e *PropertyValueFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = PropertyValueFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PropertyValueFilterType", str)
-	}
-	return nil
-}
-
-func (e PropertyValueFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

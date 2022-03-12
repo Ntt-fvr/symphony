@@ -1663,6 +1663,7 @@ type PropertyType implements Node {
   isDeleted: Boolean
   propertyCategory: PropertyCategory
   isListable: Boolean
+  parentPropertyType: PropertyType @goField(name: "PropertyType") 
   dependencePropertyTypes: [PropertyType]!
   propertyTypeValues: [PropertyTypeValue!]
 }
@@ -1741,7 +1742,7 @@ type Property implements Node {
   nodeValue: NamedNode
   rawValue: String
   dependenceProperties: [Property!]
-  propertyValues: [PropertyValue!]
+  propertyTypeValue: PropertyTypeValue
 }
 
 input PropertyInput {
@@ -1759,7 +1760,7 @@ input PropertyInput {
   isEditable: Boolean
   isInstanceProperty: Boolean
   dependenceProperties: [PropertyInput!]
-  propertyValues: [AddPropertyValueInput!]
+  propertyTypeValueID: ID
 }
 
 """
@@ -4277,86 +4278,6 @@ type PropertyTypeValueEdge {
   A cursor for use in pagination.
   """
   cursor: Cursor!
-}
-
-"""
-Properties by which PropertyValues connections can be ordered.
-"""
-enum PropertyValueOrderField {
-  """
-  Order propertyValue by name.
-  """
-  NAME
-
-  """
-  Order propertyValue by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order propertyValue by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for propertyValues connections.
-"""
-input PropertyValueOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order PropertyValue by.
-  """
-  field: PropertyValueOrderField
-}
-
-"""
-A connection to a list of PropertyValue.
-"""
-type PropertyValueConnection {
-  """
-  Total PropertyValue of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of PropertyValue edges.
-  """
-  edges: [PropertyValueEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A property value edge in a connection.
-"""
-type PropertyValueEdge {
-  """
-  The property value at the end of the edge.
-  """
-  node: PropertyValue
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-enum PropertyValueFilterType {
-  NAME
-}
-
-input PropertyValueFilterInput {
-  filterType: PropertyValueFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
 }
 
 """
@@ -7279,41 +7200,6 @@ type Query {
   ): PropertyTypeValueConnection!
   
   """
-  A list of propertyValue.
-  """
-  propertyValues(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned networkTypes.
-    """
-    orderBy: PropertyValueOrder
-
-    """
-    Filtering options for the returned networkTypes.
-    """
-    filterBy: [PropertyValueFilterInput!]
-  ): PropertyValueConnection!
-
-  """
   A list of techs.
   """
   techs(
@@ -7922,9 +7808,9 @@ input DomainFilterInput {
 type PropertyTypeValue implements Node {
   id: ID!
   name: String!
+  isDeleted: Boolean
   propertyType: PropertyType
-  propertyTypeValue: PropertyTypeValue
-  propertyTypeValues: [PropertyTypeValue]
+  parentPropertyTypeValue: [PropertyTypeValue]
 }
 
 input AddPropertyTypeValueInput
@@ -7933,17 +7819,24 @@ input AddPropertyTypeValueInput
   ) {
   id: ID
   name: String!
+  isDeleted: Boolean
   propertyType: ID
-  propertyTypeValue: ID
-  propertyTypeValues: [AddPropertyTypeValueInput]
+  parentPropertyTypeValue: [String]
+  parentPropertyType: [ParentPropertyTypeValueInput]
+}
+
+input ParentPropertyTypeValueInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ParentPropertyValueInput"
+  ) {
+  parentPropertyTypeValue: String
+  parentPropertyType: ID
 }
 
 input EditPropertyTypeValueInput {
   id: ID
   name: String!
-  propertyTypeValue: ID
-  propertyTypeValues: [EditPropertyTypeValueInput]
-
+  isDeleted: Boolean
 }
 
 enum PropertyTypeValueFilterType {
@@ -8928,29 +8821,4 @@ enum AppointmentStatus
   ) {
   ACTIVE
   CANCELED
-}
-
-type PropertyValue implements Node {
-  id: ID!
-  name: String!
-  property: Property
-  propertyTypeValue: PropertyTypeValue!
-  propertyValue: PropertyValue
-  dependencePropertyValues: [PropertyValue!]
-}
-
-input AddPropertyValueInput {
-  name: String!
-  property: ID
-  propertyTypeValue: ID!
-  propertyValue: ID
-  dependencePropertyValues: [AddPropertyValueInput]
-}
-
-input EditPropertyValueInput {
-  id: ID
-  name: String!
-  property: ID
-  propertyValue: ID
-  dependencePropertyValues: [EditPropertyValueInput]
 }

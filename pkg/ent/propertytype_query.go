@@ -41,22 +41,22 @@ type PropertyTypeQuery struct {
 	unique     []string
 	predicates []predicate.PropertyType
 	// eager-loading edges.
-	withProperties             *PropertyQuery
-	withLocationType           *LocationTypeQuery
-	withEquipmentPortType      *EquipmentPortTypeQuery
-	withLinkEquipmentPortType  *EquipmentPortTypeQuery
-	withEquipmentType          *EquipmentTypeQuery
-	withServiceType            *ServiceTypeQuery
-	withWorkOrderType          *WorkOrderTypeQuery
-	withWorkOrderTemplate      *WorkOrderTemplateQuery
-	withProjectType            *ProjectTypeQuery
-	withProjectTemplate        *ProjectTemplateQuery
-	withWorkerType             *WorkerTypeQuery
-	withPropertyTypeValues     *PropertyTypeValueQuery
-	withPropertyTypeDependence *PropertyTypeQuery
-	withPropertyType           *PropertyTypeQuery
-	withPropertyCategory       *PropertyCategoryQuery
-	withFKs                    bool
+	withProperties            *PropertyQuery
+	withLocationType          *LocationTypeQuery
+	withEquipmentPortType     *EquipmentPortTypeQuery
+	withLinkEquipmentPortType *EquipmentPortTypeQuery
+	withEquipmentType         *EquipmentTypeQuery
+	withServiceType           *ServiceTypeQuery
+	withWorkOrderType         *WorkOrderTypeQuery
+	withWorkOrderTemplate     *WorkOrderTemplateQuery
+	withProjectType           *ProjectTypeQuery
+	withProjectTemplate       *ProjectTemplateQuery
+	withWorkerType            *WorkerTypeQuery
+	withPropertyTypeValues    *PropertyTypeValueQuery
+	withParentPropertyType    *PropertyTypeQuery
+	withPropertyType          *PropertyTypeQuery
+	withPropertyCategory      *PropertyCategoryQuery
+	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -350,8 +350,8 @@ func (ptq *PropertyTypeQuery) QueryPropertyTypeValues() *PropertyTypeValueQuery 
 	return query
 }
 
-// QueryPropertyTypeDependence chains the current query on the property_type_dependence edge.
-func (ptq *PropertyTypeQuery) QueryPropertyTypeDependence() *PropertyTypeQuery {
+// QueryParentPropertyType chains the current query on the parent_property_type edge.
+func (ptq *PropertyTypeQuery) QueryParentPropertyType() *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: ptq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ptq.prepareQuery(ctx); err != nil {
@@ -364,7 +364,7 @@ func (ptq *PropertyTypeQuery) QueryPropertyTypeDependence() *PropertyTypeQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.PropertyTypeDependenceTable, propertytype.PropertyTypeDependenceColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ParentPropertyTypeTable, propertytype.ParentPropertyTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
 		return fromU, nil
@@ -586,27 +586,27 @@ func (ptq *PropertyTypeQuery) Clone() *PropertyTypeQuery {
 		return nil
 	}
 	return &PropertyTypeQuery{
-		config:                     ptq.config,
-		limit:                      ptq.limit,
-		offset:                     ptq.offset,
-		order:                      append([]OrderFunc{}, ptq.order...),
-		unique:                     append([]string{}, ptq.unique...),
-		predicates:                 append([]predicate.PropertyType{}, ptq.predicates...),
-		withProperties:             ptq.withProperties.Clone(),
-		withLocationType:           ptq.withLocationType.Clone(),
-		withEquipmentPortType:      ptq.withEquipmentPortType.Clone(),
-		withLinkEquipmentPortType:  ptq.withLinkEquipmentPortType.Clone(),
-		withEquipmentType:          ptq.withEquipmentType.Clone(),
-		withServiceType:            ptq.withServiceType.Clone(),
-		withWorkOrderType:          ptq.withWorkOrderType.Clone(),
-		withWorkOrderTemplate:      ptq.withWorkOrderTemplate.Clone(),
-		withProjectType:            ptq.withProjectType.Clone(),
-		withProjectTemplate:        ptq.withProjectTemplate.Clone(),
-		withWorkerType:             ptq.withWorkerType.Clone(),
-		withPropertyTypeValues:     ptq.withPropertyTypeValues.Clone(),
-		withPropertyTypeDependence: ptq.withPropertyTypeDependence.Clone(),
-		withPropertyType:           ptq.withPropertyType.Clone(),
-		withPropertyCategory:       ptq.withPropertyCategory.Clone(),
+		config:                    ptq.config,
+		limit:                     ptq.limit,
+		offset:                    ptq.offset,
+		order:                     append([]OrderFunc{}, ptq.order...),
+		unique:                    append([]string{}, ptq.unique...),
+		predicates:                append([]predicate.PropertyType{}, ptq.predicates...),
+		withProperties:            ptq.withProperties.Clone(),
+		withLocationType:          ptq.withLocationType.Clone(),
+		withEquipmentPortType:     ptq.withEquipmentPortType.Clone(),
+		withLinkEquipmentPortType: ptq.withLinkEquipmentPortType.Clone(),
+		withEquipmentType:         ptq.withEquipmentType.Clone(),
+		withServiceType:           ptq.withServiceType.Clone(),
+		withWorkOrderType:         ptq.withWorkOrderType.Clone(),
+		withWorkOrderTemplate:     ptq.withWorkOrderTemplate.Clone(),
+		withProjectType:           ptq.withProjectType.Clone(),
+		withProjectTemplate:       ptq.withProjectTemplate.Clone(),
+		withWorkerType:            ptq.withWorkerType.Clone(),
+		withPropertyTypeValues:    ptq.withPropertyTypeValues.Clone(),
+		withParentPropertyType:    ptq.withParentPropertyType.Clone(),
+		withPropertyType:          ptq.withPropertyType.Clone(),
+		withPropertyCategory:      ptq.withPropertyCategory.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,
@@ -745,14 +745,14 @@ func (ptq *PropertyTypeQuery) WithPropertyTypeValues(opts ...func(*PropertyTypeV
 	return ptq
 }
 
-//  WithPropertyTypeDependence tells the query-builder to eager-loads the nodes that are connected to
-// the "property_type_dependence" edge. The optional arguments used to configure the query builder of the edge.
-func (ptq *PropertyTypeQuery) WithPropertyTypeDependence(opts ...func(*PropertyTypeQuery)) *PropertyTypeQuery {
+//  WithParentPropertyType tells the query-builder to eager-loads the nodes that are connected to
+// the "parent_property_type" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithParentPropertyType(opts ...func(*PropertyTypeQuery)) *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: ptq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	ptq.withPropertyTypeDependence = query
+	ptq.withParentPropertyType = query
 	return ptq
 }
 
@@ -861,12 +861,12 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			ptq.withProjectTemplate != nil,
 			ptq.withWorkerType != nil,
 			ptq.withPropertyTypeValues != nil,
-			ptq.withPropertyTypeDependence != nil,
+			ptq.withParentPropertyType != nil,
 			ptq.withPropertyType != nil,
 			ptq.withPropertyCategory != nil,
 		}
 	)
-	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withPropertyTypeDependence != nil || ptq.withPropertyCategory != nil {
+	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withParentPropertyType != nil || ptq.withPropertyCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -1204,7 +1204,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		}
 	}
 
-	if query := ptq.withPropertyTypeDependence; query != nil {
+	if query := ptq.withParentPropertyType; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PropertyType)
 		for i := range nodes {
@@ -1224,7 +1224,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 				return nil, fmt.Errorf(`unexpected foreign-key "property_type_property_type" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.PropertyTypeDependence = n
+				nodes[i].Edges.ParentPropertyType = n
 			}
 		}
 	}

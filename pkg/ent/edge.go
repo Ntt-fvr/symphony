@@ -1528,14 +1528,6 @@ func (pr *Property) ProjectValue(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
-func (pr *Property) PropertyValue(ctx context.Context) ([]*PropertyValue, error) {
-	result, err := pr.Edges.PropertyValueOrErr()
-	if IsNotLoaded(err) {
-		result, err = pr.QueryPropertyValue().All(ctx)
-	}
-	return result, err
-}
-
 func (pr *Property) PropertyDependence(ctx context.Context) (*Property, error) {
 	result, err := pr.Edges.PropertyDependenceOrErr()
 	if IsNotLoaded(err) {
@@ -1550,6 +1542,14 @@ func (pr *Property) Property(ctx context.Context) ([]*Property, error) {
 		result, err = pr.QueryProperty().All(ctx)
 	}
 	return result, err
+}
+
+func (pr *Property) PropertyTypeValue(ctx context.Context) (*PropertyTypeValue, error) {
+	result, err := pr.Edges.PropertyTypeValueOrErr()
+	if IsNotLoaded(err) {
+		result, err = pr.QueryPropertyTypeValue().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (pc *PropertyCategory) PropertiesType(ctx context.Context) ([]*PropertyType, error) {
@@ -1664,10 +1664,10 @@ func (pt *PropertyType) PropertyTypeValues(ctx context.Context) ([]*PropertyType
 	return result, err
 }
 
-func (pt *PropertyType) PropertyTypeDependence(ctx context.Context) (*PropertyType, error) {
-	result, err := pt.Edges.PropertyTypeDependenceOrErr()
+func (pt *PropertyType) ParentPropertyType(ctx context.Context) (*PropertyType, error) {
+	result, err := pt.Edges.ParentPropertyTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = pt.QueryPropertyTypeDependence().Only(ctx)
+		result, err = pt.QueryParentPropertyType().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -1696,20 +1696,12 @@ func (ptv *PropertyTypeValue) PropertyType(ctx context.Context) (*PropertyType, 
 	return result, MaskNotFound(err)
 }
 
-func (ptv *PropertyTypeValue) PropertyValue(ctx context.Context) ([]*PropertyValue, error) {
-	result, err := ptv.Edges.PropertyValueOrErr()
+func (ptv *PropertyTypeValue) ParentPropertyTypeValue(ctx context.Context) ([]*PropertyTypeValue, error) {
+	result, err := ptv.Edges.ParentPropertyTypeValueOrErr()
 	if IsNotLoaded(err) {
-		result, err = ptv.QueryPropertyValue().All(ctx)
+		result, err = ptv.QueryParentPropertyTypeValue().All(ctx)
 	}
 	return result, err
-}
-
-func (ptv *PropertyTypeValue) PropertyTypeValueDependence(ctx context.Context) (*PropertyTypeValue, error) {
-	result, err := ptv.Edges.PropertyTypeValueDependenceOrErr()
-	if IsNotLoaded(err) {
-		result, err = ptv.QueryPropertyTypeValueDependence().Only(ctx)
-	}
-	return result, MaskNotFound(err)
 }
 
 func (ptv *PropertyTypeValue) PropertyTypeValue(ctx context.Context) ([]*PropertyTypeValue, error) {
@@ -1720,34 +1712,10 @@ func (ptv *PropertyTypeValue) PropertyTypeValue(ctx context.Context) ([]*Propert
 	return result, err
 }
 
-func (pv *PropertyValue) Property(ctx context.Context) (*Property, error) {
-	result, err := pv.Edges.PropertyOrErr()
+func (ptv *PropertyTypeValue) Property(ctx context.Context) ([]*Property, error) {
+	result, err := ptv.Edges.PropertyOrErr()
 	if IsNotLoaded(err) {
-		result, err = pv.QueryProperty().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (pv *PropertyValue) PropertyTypeValue(ctx context.Context) (*PropertyTypeValue, error) {
-	result, err := pv.Edges.PropertyTypeValueOrErr()
-	if IsNotLoaded(err) {
-		result, err = pv.QueryPropertyTypeValue().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (pv *PropertyValue) PropertyValueDependence(ctx context.Context) (*PropertyValue, error) {
-	result, err := pv.Edges.PropertyValueDependenceOrErr()
-	if IsNotLoaded(err) {
-		result, err = pv.QueryPropertyValueDependence().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (pv *PropertyValue) PropertyValue(ctx context.Context) ([]*PropertyValue, error) {
-	result, err := pv.Edges.PropertyValueOrErr()
-	if IsNotLoaded(err) {
-		result, err = pv.QueryPropertyValue().All(ctx)
+		result, err = ptv.QueryProperty().All(ctx)
 	}
 	return result, err
 }

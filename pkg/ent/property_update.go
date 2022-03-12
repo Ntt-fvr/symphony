@@ -22,7 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/propertyvalue"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -501,21 +501,6 @@ func (pu *PropertyUpdate) SetProjectValue(p *Project) *PropertyUpdate {
 	return pu.SetProjectValueID(p.ID)
 }
 
-// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
-func (pu *PropertyUpdate) AddPropertyValueIDs(ids ...int) *PropertyUpdate {
-	pu.mutation.AddPropertyValueIDs(ids...)
-	return pu
-}
-
-// AddPropertyValue adds the property_value edges to PropertyValue.
-func (pu *PropertyUpdate) AddPropertyValue(p ...*PropertyValue) *PropertyUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return pu.AddPropertyValueIDs(ids...)
-}
-
 // SetPropertyDependenceID sets the property_dependence edge to Property by id.
 func (pu *PropertyUpdate) SetPropertyDependenceID(id int) *PropertyUpdate {
 	pu.mutation.SetPropertyDependenceID(id)
@@ -548,6 +533,25 @@ func (pu *PropertyUpdate) AddProperty(p ...*Property) *PropertyUpdate {
 		ids[i] = p[i].ID
 	}
 	return pu.AddPropertyIDs(ids...)
+}
+
+// SetPropertyTypeValueID sets the property_type_value edge to PropertyTypeValue by id.
+func (pu *PropertyUpdate) SetPropertyTypeValueID(id int) *PropertyUpdate {
+	pu.mutation.SetPropertyTypeValueID(id)
+	return pu
+}
+
+// SetNillablePropertyTypeValueID sets the property_type_value edge to PropertyTypeValue by id if the given value is not nil.
+func (pu *PropertyUpdate) SetNillablePropertyTypeValueID(id *int) *PropertyUpdate {
+	if id != nil {
+		pu = pu.SetPropertyTypeValueID(*id)
+	}
+	return pu
+}
+
+// SetPropertyTypeValue sets the property_type_value edge to PropertyTypeValue.
+func (pu *PropertyUpdate) SetPropertyTypeValue(p *PropertyTypeValue) *PropertyUpdate {
+	return pu.SetPropertyTypeValueID(p.ID)
 }
 
 // Mutation returns the PropertyMutation object of the builder.
@@ -639,27 +643,6 @@ func (pu *PropertyUpdate) ClearProjectValue() *PropertyUpdate {
 	return pu
 }
 
-// ClearPropertyValue clears all "property_value" edges to type PropertyValue.
-func (pu *PropertyUpdate) ClearPropertyValue() *PropertyUpdate {
-	pu.mutation.ClearPropertyValue()
-	return pu
-}
-
-// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
-func (pu *PropertyUpdate) RemovePropertyValueIDs(ids ...int) *PropertyUpdate {
-	pu.mutation.RemovePropertyValueIDs(ids...)
-	return pu
-}
-
-// RemovePropertyValue removes property_value edges to PropertyValue.
-func (pu *PropertyUpdate) RemovePropertyValue(p ...*PropertyValue) *PropertyUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return pu.RemovePropertyValueIDs(ids...)
-}
-
 // ClearPropertyDependence clears the "property_dependence" edge to type Property.
 func (pu *PropertyUpdate) ClearPropertyDependence() *PropertyUpdate {
 	pu.mutation.ClearPropertyDependence()
@@ -685,6 +668,12 @@ func (pu *PropertyUpdate) RemoveProperty(p ...*Property) *PropertyUpdate {
 		ids[i] = p[i].ID
 	}
 	return pu.RemovePropertyIDs(ids...)
+}
+
+// ClearPropertyTypeValue clears the "property_type_value" edge to type PropertyTypeValue.
+func (pu *PropertyUpdate) ClearPropertyTypeValue() *PropertyUpdate {
+	pu.mutation.ClearPropertyTypeValue()
+	return pu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1422,60 +1411,6 @@ func (pu *PropertyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if pu.mutation.PropertyValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   property.PropertyValueTable,
-			Columns: []string{property.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pu.mutation.RemovedPropertyValueIDs(); len(nodes) > 0 && !pu.mutation.PropertyValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   property.PropertyValueTable,
-			Columns: []string{property.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pu.mutation.PropertyValueIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   property.PropertyValueTable,
-			Columns: []string{property.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if pu.mutation.PropertyDependenceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -1557,6 +1492,41 @@ func (pu *PropertyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: property.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pu.mutation.PropertyTypeValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   property.PropertyTypeValueTable,
+			Columns: []string{property.PropertyTypeValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.PropertyTypeValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   property.PropertyTypeValueTable,
+			Columns: []string{property.PropertyTypeValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
 				},
 			},
 		}
@@ -2043,21 +2013,6 @@ func (puo *PropertyUpdateOne) SetProjectValue(p *Project) *PropertyUpdateOne {
 	return puo.SetProjectValueID(p.ID)
 }
 
-// AddPropertyValueIDs adds the property_value edge to PropertyValue by ids.
-func (puo *PropertyUpdateOne) AddPropertyValueIDs(ids ...int) *PropertyUpdateOne {
-	puo.mutation.AddPropertyValueIDs(ids...)
-	return puo
-}
-
-// AddPropertyValue adds the property_value edges to PropertyValue.
-func (puo *PropertyUpdateOne) AddPropertyValue(p ...*PropertyValue) *PropertyUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return puo.AddPropertyValueIDs(ids...)
-}
-
 // SetPropertyDependenceID sets the property_dependence edge to Property by id.
 func (puo *PropertyUpdateOne) SetPropertyDependenceID(id int) *PropertyUpdateOne {
 	puo.mutation.SetPropertyDependenceID(id)
@@ -2090,6 +2045,25 @@ func (puo *PropertyUpdateOne) AddProperty(p ...*Property) *PropertyUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return puo.AddPropertyIDs(ids...)
+}
+
+// SetPropertyTypeValueID sets the property_type_value edge to PropertyTypeValue by id.
+func (puo *PropertyUpdateOne) SetPropertyTypeValueID(id int) *PropertyUpdateOne {
+	puo.mutation.SetPropertyTypeValueID(id)
+	return puo
+}
+
+// SetNillablePropertyTypeValueID sets the property_type_value edge to PropertyTypeValue by id if the given value is not nil.
+func (puo *PropertyUpdateOne) SetNillablePropertyTypeValueID(id *int) *PropertyUpdateOne {
+	if id != nil {
+		puo = puo.SetPropertyTypeValueID(*id)
+	}
+	return puo
+}
+
+// SetPropertyTypeValue sets the property_type_value edge to PropertyTypeValue.
+func (puo *PropertyUpdateOne) SetPropertyTypeValue(p *PropertyTypeValue) *PropertyUpdateOne {
+	return puo.SetPropertyTypeValueID(p.ID)
 }
 
 // Mutation returns the PropertyMutation object of the builder.
@@ -2181,27 +2155,6 @@ func (puo *PropertyUpdateOne) ClearProjectValue() *PropertyUpdateOne {
 	return puo
 }
 
-// ClearPropertyValue clears all "property_value" edges to type PropertyValue.
-func (puo *PropertyUpdateOne) ClearPropertyValue() *PropertyUpdateOne {
-	puo.mutation.ClearPropertyValue()
-	return puo
-}
-
-// RemovePropertyValueIDs removes the property_value edge to PropertyValue by ids.
-func (puo *PropertyUpdateOne) RemovePropertyValueIDs(ids ...int) *PropertyUpdateOne {
-	puo.mutation.RemovePropertyValueIDs(ids...)
-	return puo
-}
-
-// RemovePropertyValue removes property_value edges to PropertyValue.
-func (puo *PropertyUpdateOne) RemovePropertyValue(p ...*PropertyValue) *PropertyUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return puo.RemovePropertyValueIDs(ids...)
-}
-
 // ClearPropertyDependence clears the "property_dependence" edge to type Property.
 func (puo *PropertyUpdateOne) ClearPropertyDependence() *PropertyUpdateOne {
 	puo.mutation.ClearPropertyDependence()
@@ -2227,6 +2180,12 @@ func (puo *PropertyUpdateOne) RemoveProperty(p ...*Property) *PropertyUpdateOne 
 		ids[i] = p[i].ID
 	}
 	return puo.RemovePropertyIDs(ids...)
+}
+
+// ClearPropertyTypeValue clears the "property_type_value" edge to type PropertyTypeValue.
+func (puo *PropertyUpdateOne) ClearPropertyTypeValue() *PropertyUpdateOne {
+	puo.mutation.ClearPropertyTypeValue()
+	return puo
 }
 
 // Save executes the query and returns the updated entity.
@@ -2962,60 +2921,6 @@ func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (_node *Property, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if puo.mutation.PropertyValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   property.PropertyValueTable,
-			Columns: []string{property.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := puo.mutation.RemovedPropertyValueIDs(); len(nodes) > 0 && !puo.mutation.PropertyValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   property.PropertyValueTable,
-			Columns: []string{property.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := puo.mutation.PropertyValueIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   property.PropertyValueTable,
-			Columns: []string{property.PropertyValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertyvalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if puo.mutation.PropertyDependenceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -3097,6 +3002,41 @@ func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (_node *Property, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: property.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.PropertyTypeValueCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   property.PropertyTypeValueTable,
+			Columns: []string{property.PropertyTypeValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.PropertyTypeValueIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   property.PropertyTypeValueTable,
+			Columns: []string{property.PropertyTypeValueColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytypevalue.FieldID,
 				},
 			},
 		}
