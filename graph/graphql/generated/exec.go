@@ -1513,7 +1513,7 @@ type ComplexityRoot struct {
 		LatitudeVal          func(childComplexity int) int
 		LongitudeVal         func(childComplexity int) int
 		NodeValue            func(childComplexity int) int
-		PropertyTypeValueID  func(childComplexity int) int
+		PropertyTypeValue    func(childComplexity int) int
 		RangeFromVal         func(childComplexity int) int
 		RangeToVal           func(childComplexity int) int
 		RawValue             func(childComplexity int) int
@@ -2669,7 +2669,6 @@ type PropertyResolver interface {
 	NodeValue(ctx context.Context, obj *ent.Property) (models.NamedNode, error)
 	RawValue(ctx context.Context, obj *ent.Property) (*string, error)
 	DependenceProperties(ctx context.Context, obj *ent.Property) ([]*ent.Property, error)
-	PropertyTypeValueID(ctx context.Context, obj *ent.Property) (*ent.PropertyTypeValue, error)
 }
 type PropertyCategoryResolver interface {
 	NumberOfProperties(ctx context.Context, obj *ent.PropertyCategory) (*int, error)
@@ -10058,12 +10057,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Property.NodeValue(childComplexity), true
 
-	case "Property.propertyTypeValueID":
-		if e.complexity.Property.PropertyTypeValueID == nil {
+	case "Property.propertyTypeValue":
+		if e.complexity.Property.PropertyTypeValue == nil {
 			break
 		}
 
-		return e.complexity.Property.PropertyTypeValueID(childComplexity), true
+		return e.complexity.Property.PropertyTypeValue(childComplexity), true
 
 	case "Property.rangeFromValue":
 		if e.complexity.Property.RangeFromVal == nil {
@@ -15902,7 +15901,7 @@ type Property implements Node {
   nodeValue: NamedNode
   rawValue: String
   dependenceProperties: [Property!]
-  propertyTypeValueID: PropertyTypeValue
+  propertyTypeValue: PropertyTypeValue
 }
 
 input PropertyInput {
@@ -63856,7 +63855,7 @@ func (ec *executionContext) _Property_dependenceProperties(ctx context.Context, 
 	return ec.marshalOProperty2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Property_propertyTypeValueID(ctx context.Context, field graphql.CollectedField, obj *ent.Property) (ret graphql.Marshaler) {
+func (ec *executionContext) _Property_propertyTypeValue(ctx context.Context, field graphql.CollectedField, obj *ent.Property) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -63868,13 +63867,13 @@ func (ec *executionContext) _Property_propertyTypeValueID(ctx context.Context, f
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Property().PropertyTypeValueID(rctx, obj)
+		return obj.PropertyTypeValue(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -106346,7 +106345,7 @@ func (ec *executionContext) _Property(ctx context.Context, sel ast.SelectionSet,
 				res = ec._Property_dependenceProperties(ctx, field, obj)
 				return res
 			})
-		case "propertyTypeValueID":
+		case "propertyTypeValue":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -106354,7 +106353,7 @@ func (ec *executionContext) _Property(ctx context.Context, sel ast.SelectionSet,
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Property_propertyTypeValueID(ctx, field, obj)
+				res = ec._Property_propertyTypeValue(ctx, field, obj)
 				return res
 			})
 		default:

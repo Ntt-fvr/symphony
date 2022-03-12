@@ -1742,7 +1742,7 @@ type Property implements Node {
   nodeValue: NamedNode
   rawValue: String
   dependenceProperties: [Property!]
-  propertyTypeValueID: PropertyTypeValue
+  propertyTypeValue: PropertyTypeValue
 }
 
 input PropertyInput {
