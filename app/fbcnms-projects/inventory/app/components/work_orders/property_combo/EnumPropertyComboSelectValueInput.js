@@ -16,8 +16,8 @@ import React from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import classNames from 'classnames';
 import update from 'immutability-helper';
-import {PropertyTypeValues} from '../../../common/PropertyType';
 import {getPropertyValue} from '../../../common/Property';
+import {getValidPropertyValuesFromParent} from './PropertyComboHelpers';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -43,29 +43,24 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   onChange: () => void,
-  property: PropertyType,
+  property: Property,
   className: any,
   required: boolean,
-  masterPropertySelected: PropertyTypeValues,
-  isDependentProperty: false,
+  parentProperty: Property,
 |}>;
 
-const EnumDependentPropertySelectValueInput = <T: Property | PropertyType>({
+const EnumPropertyComboSelectValueInput = <T: Property | PropertyType>({
   onChange,
   property,
   className,
   required,
-  masterPropertySelected,
-  isDependentProperty = false,
+  parentProperty,
   ...restButtonProps
 }: Props<T>) => {
   const classes = useStyles();
-
-  const options = !isDependentProperty
-    ? property.dependencePropertyTypes[0].propertyTypeValues
-    : property.propertyTypeValues.find(
-        value => value.id === masterPropertySelected?.id,
-      )?.propertyTypeValues;
+  const options = parentProperty
+    ? getValidPropertyValuesFromParent(parentProperty, property)
+    : property.propertyType.propertyTypeValues;
   const optionsArr = Array.isArray(options) ? options : [];
 
   const getPropertySelected = name =>
@@ -124,4 +119,4 @@ const EnumDependentPropertySelectValueInput = <T: Property | PropertyType>({
   );
 };
 
-export default EnumDependentPropertySelectValueInput;
+export default EnumPropertyComboSelectValueInput;

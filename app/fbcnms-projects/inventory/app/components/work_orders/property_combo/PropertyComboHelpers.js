@@ -12,6 +12,9 @@ import type {PropertyType} from '../../../common/PropertyType';
 
 import type {AddWorkOrderCardTypeQueryResponse} from '../__generated__/AddWorkOrderCardTypeQuery.graphql';
 
+import type {Property} from '../../../common/Property';
+
+import {WorkOrder} from '../../../common/WorkOrder';
 import {
   getInitialPropertyFromType,
   toMutablePropertyType,
@@ -44,6 +47,53 @@ export const getPropertyTypesValuesInString = (propertyType: PropertyType) => {
     : null;
 };
 
+export const isPropertyWithDependenceRelation = (property: Property) => {
+  return property.propertyType.propertyTypeValues?.length > 0;
+};
+
+export const getDependentPropertyFromWorkOrder = (
+  workOrder: WorkOrder,
+  property: Property,
+) => {
+  if (
+    !property.propertyType?.dependencePropertyTypes ||
+    property.propertyType?.dependencePropertyTypes?.length < 1
+  ) {
+    return null;
+  }
+  return workOrder.properties?.find(
+    propertyWorkOrder =>
+      propertyWorkOrder.propertyType.parentPropertyType?.id ===
+      property.propertyType.id,
+  );
+};
+
+export const getParentPropertyFromWorkOrder = (
+  workOrder: WorkOrder,
+  property: Property,
+) => {
+  if (!property.propertyType?.parentPropertyType) {
+    return null;
+  }
+  return workOrder.properties?.find(
+    propertyWorkOrder =>
+      propertyWorkOrder.propertyType?.id ===
+      property.propertyType.parentPropertyType?.id,
+  );
+};
+
+export const getValidPropertyValuesFromParent = (
+  parentProperty: Property,
+  dependentProperty: Property,
+) => {
+  return dependentProperty.propertyType.propertyTypeValues?.filter(
+    propertyValue =>
+      !!propertyValue.parentPropertyTypeValue?.find(
+        parentPropertyType =>
+          parentPropertyType.name === parentProperty.stringValue,
+      ),
+  );
+};
 //COmprobados
 
 export const isDependentProperty = (propertyType: PropertyType) => {
@@ -83,21 +133,10 @@ export const getAllInitialProperties = (
   workOrderType: AddWorkOrderCardTypeQueryResponse,
 ) => {
   const reducer = (previousValue, currentValue) => {
-    return currentValue.dependencePropertyTypes.length < 1
-      ? [
-          ...previousValue,
-          getInitialPropertyFromType(toMutablePropertyType(currentValue)),
-        ]
-      : [
-          ...previousValue,
-          getInitialPropertyFromType(toMutablePropertyType(currentValue)),
-          getInitialPropertyFromType(
-            toMutablePropertyType(
-              currentValue.dependencePropertyTypes[0],
-              currentValue.index,
-            ),
-          ),
-        ];
+    return [
+      ...previousValue,
+      getInitialPropertyFromType(toMutablePropertyType(currentValue)),
+    ];
   };
 
   return (
@@ -106,14 +145,5 @@ export const getAllInitialProperties = (
       .filter(propertyType => !propertyType.isDeleted)
       .reduce(reducer, [])
       .sort(sortPropertiesByIndex) ?? []
-  );
-};
-
-export const isPropertyWithDependenceRelation = (
-  propertyType: PropertyType,
-) => {
-  return (
-    !!getDependencePropertyType(propertyType) ||
-    isDependentProperty(propertyType)
   );
 };

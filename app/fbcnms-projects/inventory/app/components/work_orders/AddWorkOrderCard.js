@@ -593,7 +593,6 @@ const AddWorkOrderCard = (props: Props) => {
                               classes={classes}
                               index={index}
                               _propertyChangedHandler={_propertyChangedHandler}
-                              nextProperty={workOrder.properties[index + 1]}
                             />
                           ))}
                       </Grid>

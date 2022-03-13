@@ -10,15 +10,15 @@
 
 import type {PropertyType} from '../../common/PropertyType';
 
-import EnumDependentPropertySelectValueInput from './property_combo/EnumDependentPropertySelectValueInput';
+import EnumPropertyComboSelectValueInput from './property_combo/EnumPropertyComboSelectValueInput';
 import Grid from '@material-ui/core/Grid';
 import PropertyValueInput from '../form/PropertyValueInput';
-import React, {useState} from 'react';
+import React from 'react';
 import classNames from 'classnames';
-import {AppointmentData} from './SelectAvailabilityAssignee';
 import {WorkOrder} from '../../common/WorkOrder';
 import {
-  isDependentProperty,
+  getDependentPropertyFromWorkOrder,
+  getParentPropertyFromWorkOrder,
   isPropertyWithDependenceRelation,
 } from './property_combo/PropertyComboHelpers';
 import {useStatusValues} from '../../common/FilterTypes';
@@ -41,47 +41,35 @@ const PropertyTypeInput = (props: Props) => {
     classes,
     index = 0,
     _propertyChangedHandler,
-    nextProperty,
   } = props;
-
-  const [
-    masterPropertySelected,
-    setMasterPropertySelected,
-  ] = useState<AppointmentData>(null);
 
   const {closedStatus} = useStatusValues();
 
-  const onMasterChange = (prop, masterProperty) => {
-    setMasterPropertySelected(masterProperty);
+  const dependentProperty = getDependentPropertyFromWorkOrder(
+    workOrder,
+    property,
+  );
+
+  const onPropertyComboChange = prop => {
+    if (dependentProperty) {
+      (dependentProperty.stringValue = ''),
+        _propertyChangedHandler(dependentProperty.propertyType.index)(
+          dependentProperty,
+        );
+    }
     _propertyChangedHandler(index)(prop);
-    nextProperty.stringValue = '';
-    _propertyChangedHandler(index + 1)(nextProperty);
   };
 
-  const onDependentChange = prop => _propertyChangedHandler(index + 1)(prop);
-
   if (isPropertyWithDependenceRelation(property)) {
-    return isDependentProperty(property) ? null : (
+    return (
       <>
         <Grid item xs={12} sm={6} lg={4} xl={4}>
-          <EnumDependentPropertySelectValueInput
+          <EnumPropertyComboSelectValueInput
             className={classNames(classes.input, classes.gridInput)}
             property={property}
-            onChange={onMasterChange}
+            onChange={onPropertyComboChange}
             disabled={!property.propertyType.isInstanceProperty}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={4}>
-          <EnumDependentPropertySelectValueInput
-            className={classNames(classes.input, classes.gridInput)}
-            property={nextProperty}
-            onChange={onDependentChange}
-            disabled={
-              !property.propertyType.isInstanceProperty ||
-              !masterPropertySelected
-            }
-            isDependentProperty={true}
-            masterPropertySelected={masterPropertySelected}
+            parentProperty={getParentPropertyFromWorkOrder(workOrder, property)}
           />
         </Grid>
       </>
