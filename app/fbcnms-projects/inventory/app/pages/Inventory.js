@@ -21,6 +21,7 @@ import type {WithStyles} from '@material-ui/core';
 import AddToLocationDialog from '../components/AddToLocationDialog';
 import Button from '@material-ui/core/Button';
 import CardPlusDnD from '../components/CardPlusDnD';
+import DialogStatus from '../components/configure/DialogStatus';
 import EquipmentCard from '../components/EquipmentCard';
 import Grid from '@material-ui/core/Grid';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
@@ -124,7 +125,6 @@ class Inventory extends React.Component<Props, State> {
       openLocationHierarchy: [],
       dialogOpen: false,
     };
-    console.log(this.state);
   }
   navigateToLocation(selectedLocationId: ?string, source: ?string) {
     ServerLogger.info(LogEvents.NAVIGATE_TO_LOCATION, {
@@ -265,9 +265,7 @@ class Inventory extends React.Component<Props, State> {
                     variant="outlined"
                     color="primary"
                     className={classes.buttons}
-                    style={{marginRight: '1rem'}}
-                    // onClick={() => hideEditResourceTypeForm()}
-                  >
+                    style={{marginRight: '1rem'}}>
                     Cancel
                   </Button>
                 </Grid>
@@ -277,8 +275,8 @@ class Inventory extends React.Component<Props, State> {
                     variant="contained"
                     color="primary"
                     className={classes.buttons}
-                    onClick={handelModal}
-                    // disabled={handleDisable}
+                    onClick={() => handelModal()}
+                    // disabled={handleDisable} onClick={() => openModal()}
                   >
                     Submit
                   </Button>
@@ -348,6 +346,12 @@ class Inventory extends React.Component<Props, State> {
             </InventoryErrorBoundary>
           </div>
         </div>
+        {this.state.dialogOpen === true && (
+          <DialogStatus
+            open={this.state.dialogOpen}
+            onClose={this.hideOpenModal}
+          />
+        )}
         <AddToLocationDialog
           key={`add_to_location_${this.state.dialogMode}`}
           show={
@@ -385,6 +389,8 @@ class Inventory extends React.Component<Props, State> {
     this.setState({dialogMode});
   };
   hideDialog = () => this.setState({dialogMode: 'hidden'});
+
+  hideOpenModal = () => this.setState({dialogOpen: false});
 
   onEquipmentCancel = () => {
     this.setState(state => ({
