@@ -3025,6 +3025,7 @@ func (r mutationResolver) updatePropValues(ctx context.Context, input *models.Pr
 	if err != nil {
 		return fmt.Errorf("failed to get property type: %w", err)
 	}
+	pu.SetNillablePropertyTypeValueID(input.PropertyTypeValueID)
 	switch pType.Type {
 	case propertytype.TypeDate,
 		propertytype.TypeEmail,
