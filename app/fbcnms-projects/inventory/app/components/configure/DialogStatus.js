@@ -34,13 +34,6 @@ const useStyles = makeStyles(() => ({
       padding: '0px',
     },
   },
-  icon: {
-    fontsize: '10px',
-  },
-  dialogContent: {
-    padding: '2rem',
-    height: '250px',
-  },
   dialogActions: {
     padding: '0 24px',
     marginBottom: '30px',
@@ -50,9 +43,6 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     zIndex: 2,
-  },
-  time: {
-    marginTop: '2rem',
   },
   option: {
     width: '111px',
