@@ -89,12 +89,6 @@ const useStyles = makeStyles(() => ({
       backgroundColor: symphony.palette.B50,
     },
   },
-  buttonEdit: {
-    // '&.MuiButtonBase-root:hover': {
-    //   // backgroundColor: 'transparent',
-    //   color: symphony.palette.B600,
-    // },
-  },
 }));
 
 type Resource = {
