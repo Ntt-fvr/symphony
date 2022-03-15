@@ -153,7 +153,7 @@ const DialogStatus = (props: Props) => {
           className={classes.option}
           variant="contained"
           color="primary">
-          Delete
+          Save
         </Button>
       </DialogActions>
     </Dialog>
