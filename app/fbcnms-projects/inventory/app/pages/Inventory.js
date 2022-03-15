@@ -25,6 +25,7 @@ import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
 import LocationsTree from '../components/LocationsTree';
 import React from 'react';
+import ResourceCard from '../components/ResourceCard';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
@@ -259,6 +260,7 @@ class Inventory extends React.Component<Props, State> {
                   onLocationRemoved={this.onDeleteLocation}
                 />
               )}
+              <ResourceCard />
               {card.type == 'equipment' && (
                 <EquipmentCard
                   mode={card.mode}
@@ -300,6 +302,7 @@ class Inventory extends React.Component<Props, State> {
             </InventoryErrorBoundary>
           </div>
         </div>
+
         <AddToLocationDialog
           key={`add_to_location_${this.state.dialogMode}`}
           show={

@@ -57,7 +57,6 @@ type State = {
 
 const styles = theme => ({
   root: {
-    height: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -194,7 +193,7 @@ class LocationPropertiesCard extends React.Component<Props, State> {
       <InventoryQueryRenderer
         query={locationsPropertiesCardQuery}
         variables={{
-          locationId: locationId
+          locationId: locationId,
         }}
         render={props => {
           const location = props.location;

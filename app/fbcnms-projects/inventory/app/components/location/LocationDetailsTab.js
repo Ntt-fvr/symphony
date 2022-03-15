@@ -13,7 +13,6 @@ import type {Location} from '../../common/Location.js';
 
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
 import DynamicPropertyCategoriesTable from '../DynamicPropertyCategoriesTable';
 import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';
@@ -51,8 +50,7 @@ const LocationDetailsTab = (props: Props) => {
       <LocationDetailsCard className={classes.card} location={location} />
       <Card className={classes.card}>
         <CardHeader>Properties</CardHeader>
-        <DynamicPropertyCategoriesTable
-        />
+        <DynamicPropertyCategoriesTable />
       </Card>
       <LocationEquipmentCard
         className={classes.card}
