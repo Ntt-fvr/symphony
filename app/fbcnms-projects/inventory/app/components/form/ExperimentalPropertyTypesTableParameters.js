@@ -119,6 +119,10 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const [changeInput, setChangeInput] = useState('TXT');
   const classes = useStyles();
 
+  const typeInput = {
+    mc: 'MC',
+    txt: 'TXT',
+  };
   const handleChecked = () => {
     setChecked(!checked);
   };
@@ -136,8 +140,8 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
     target.value;
   };
   const handleOption = mc => {
-    mc === 'MC' && setChangeInput('MC');
-    mc === 'TXT' && setChangeInput('TXT');
+    mc === typeInput.mc && setChangeInput(typeInput.mc);
+    mc === typeInput.txt && setChangeInput(typeInput.txt);
   };
   const drag = result => {
     {
@@ -246,12 +250,12 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                               name="status"
                               variant="outlined">
                               <MenuItem
-                                onClick={() => handleOption('MC')}
+                                onClick={() => handleOption(typeInput.mc)}
                                 value={'Multiple Choice'}>
                                 Multiple Choice
                               </MenuItem>
                               <MenuItem
-                                onClick={() => handleOption('TXT')}
+                                onClick={() => handleOption(typeInput.txt)}
                                 value={'Text'}>
                                 Text
                               </MenuItem>
@@ -262,10 +266,10 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                           style={{width: '20%'}}
                           component="div"
                           scope="row">
-                          {changeInput === 'MC' && (
+                          {changeInput === typeInput.mc && (
                             <EnumPropertyValueInput property={parameter} />
                           )}
-                          {changeInput === 'TXT' && (
+                          {changeInput === typeInput.txt && (
                             <TextInput
                               autoFocus={true}
                               placeholder={'Text'}
