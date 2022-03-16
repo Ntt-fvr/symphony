@@ -8,17 +8,19 @@
  * @format
  */
 
-import type {PropertyType} from '../../../common/PropertyType';
-
 import type {AddWorkOrderCardTypeQueryResponse} from '../__generated__/AddWorkOrderCardTypeQuery.graphql';
-
 import type {Property} from '../../../common/Property';
+import type {
+  PropertyType,
+  PropertyTypeValues,
+} from '../../../common/PropertyType';
 
 import {WorkOrder} from '../../../common/WorkOrder';
 import {
   getInitialPropertyFromType,
   toMutablePropertyType,
 } from '../../../common/PropertyType';
+import {isTempId} from '../../../common/EntUtils';
 import {sortPropertiesByIndex} from '../../../common/Property';
 
 const extractNameOfArray = array => {
@@ -38,13 +40,37 @@ export const createPropertyTypeValuesJson = (propertyType: PropertyType) => {
   }));
 };
 
-export const getPropertyTypesValuesInString = (propertyType: PropertyType) => {
+export const getAllPropertyTypesValuesInString = (
+  propertyType: PropertyType,
+) => {
   const allInputValuesWithOnlyName = extractNameOfArray(
     propertyType.propertyTypeValues,
   );
   return allInputValuesWithOnlyName
     ? JSON.stringify(allInputValuesWithOnlyName)
     : null;
+};
+
+export const getValidDependencePropertyTypeValueInString = (
+  property: PropertyType,
+  dependencePropertyTypeValues: PropertyType[],
+) => {
+  const a = dependencePropertyTypeValues.filter(
+    dependencePropertyTypeValue =>
+      !!dependencePropertyTypeValue.parentPropertyTypeValue?.find(
+        parentPropertyType => parentPropertyType.id === property.id,
+      ),
+  );
+
+  return JSON.stringify(extractNameOfArray(a));
+};
+
+export const isPropertyTypeWithDependenceRelation = (
+  propertyType: PropertyType,
+) => {
+  return (
+    propertyType.propertyTypeValues?.length > 0 && !isTempId(propertyType.id)
+  );
 };
 
 export const isPropertyWithDependenceRelation = (property: Property) => {
@@ -94,39 +120,46 @@ export const getValidPropertyValuesFromParent = (
       ),
   );
 };
-//COmprobados
 
-export const isDependentProperty = (propertyType: PropertyType) => {
-  return !!propertyType.propertyTypeValues;
+const extractParentInformationFromPropertyTypeValues = (
+  propertyTypeValues: PropertyTypeValues[],
+) => {
+  return propertyTypeValues.map(propertyTypeValue => {
+    return {
+      ...propertyTypeValue,
+      parentPropertyTypeValue: undefined,
+    };
+  });
 };
 
-export const getAllInputValuesDependentProperty = (
-  propertyType: PropertyType,
-  isDependentProperty: boolean = false,
+export const getPropertyTypesWithoutParentsInformation = (
+  propertyTypes: PropertyType[],
 ) => {
-  const dependentPropertyType = isDependentProperty
-    ? propertyType
-    : getDependencePropertyType(propertyType);
-  const reducer = (previousValue, currentValue) => {
-    if (!Array.isArray(currentValue?.propertyTypeValues)) return;
-    return [...previousValue, ...currentValue.propertyTypeValues];
-  };
-  return dependentPropertyType?.propertyTypeValues?.reduce(reducer, []);
-};
-
-export const getAllInputValuesEnumPropertyInString = (
-  propertyTypeValues: [],
-) => {
-  return JSON.stringify(extractNameOfArray(propertyTypeValues));
-};
-
-export const getPropertiesWithoutActualProperty = (
-  property: PropertyType,
-  propertyTypeValues: [],
-) => {
-  return propertyTypeValues.filter(
-    propertyTypeValue => propertyTypeValue.id !== property.id,
-  );
+  return propertyTypes.map(propertyType => {
+    const newDependencePropertyTypeWithoutParentInformation =
+      propertyType.dependencePropertyTypes?.length > 0
+        ? [
+            {
+              ...propertyType.dependencePropertyTypes[0],
+              propertyTypeValues: extractParentInformationFromPropertyTypeValues(
+                propertyType.dependencePropertyTypes[0].propertyTypeValues,
+              ),
+            },
+          ]
+        : [];
+    const newPropertyTypeValues =
+      propertyType.propertyTypeValues?.length > 0
+        ? extractParentInformationFromPropertyTypeValues(
+            propertyType.propertyTypeValues,
+          )
+        : undefined;
+    return {
+      ...propertyType,
+      parentPropertyType: undefined,
+      propertyTypeValues: newPropertyTypeValues,
+      dependencePropertyTypes: newDependencePropertyTypeWithoutParentInformation,
+    };
+  });
 };
 
 export const getAllInitialProperties = (
@@ -146,4 +179,41 @@ export const getAllInitialProperties = (
       .reduce(reducer, [])
       .sort(sortPropertiesByIndex) ?? []
   );
+};
+
+export const getPropertiesWithoutActualProperty = (
+  property: PropertyType,
+  propertyTypeValues: [],
+) => {
+  return propertyTypeValues.filter(
+    propertyTypeValue => propertyTypeValue.id !== property.id,
+  );
+};
+
+export const orderPropertyTypesIndex = (propertyTypes: PropertyType[]) => {
+  let dependentPropertiesCount = 0;
+  const newOrderPropertyTypes = propertyTypes.map((propertyType, index) => {
+    const newDependencePropertyType = propertyType.dependencePropertyTypes?.map(
+      dependencePropertyType => {
+        dependentPropertiesCount += 1;
+        return {
+          ...dependencePropertyType,
+          index: index + 1 + (dependentPropertiesCount - 1),
+        };
+      },
+    );
+    const newIndex =
+      !propertyType.dependencePropertyTypes ||
+      propertyType.dependencePropertyTypes?.length < 1
+        ? index + dependentPropertiesCount
+        : dependentPropertiesCount > 1
+        ? index + (dependentPropertiesCount - 1)
+        : index;
+    return {
+      ...propertyType,
+      dependencePropertyTypes: newDependencePropertyType,
+      index: newIndex,
+    };
+  });
+  return newOrderPropertyTypes;
 };

@@ -19,13 +19,20 @@ import {PropertyTypeValues} from '../../../common/PropertyType';
 
 type Props = $ReadOnly<{|
   propertyTypeValues: PropertyTypeValues[],
+  dependencePropertyTypeValues: PropertyTypeValues[],
   classes: any,
   dispatch: () => void,
   disabled: boolean,
 |}>;
 
 const PropertyComboList = (props: Props) => {
-  const {classes, propertyTypeValues, dispatch, disabled} = props;
+  const {
+    classes,
+    propertyTypeValues,
+    dispatch,
+    disabled,
+    dependencePropertyTypeValues,
+  } = props;
 
   const handlePropertyTypeValues = propertyTypeValueFromEnum => {
     const dependencePropertyValues = propertyTypeValueFromEnum.propertyTypeValues.map(
@@ -71,6 +78,7 @@ const PropertyComboList = (props: Props) => {
               onChange={handlePropertyTypeValues}
               isPropertyComboEnum={true}
               disabled={disabled}
+              dependencePropertyTypeValues={dependencePropertyTypeValues}
             />
           </Grid>
         </>

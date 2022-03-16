@@ -46,7 +46,10 @@ const PropertyComboSelectContent = (props: Props) => {
     PropertyTypesTableDispatcher,
   );
 
-  const propertyTypeValuesPrincipal = createPropertyTypeValuesJson(property);
+  const propertyTypeValuesPrincipal =
+    property.propertyTypeValues?.length > 0
+      ? property.propertyTypeValues
+      : createPropertyTypeValuesJson(property);
   const dependentPropertyInitial = getDependencePropertyType(property);
 
   const DependentPropertyTypesInitialState = {
@@ -144,13 +147,16 @@ const PropertyComboSelectContent = (props: Props) => {
           propertyTypeValues={propertyTypeValuesPrincipal}
           dispatch={dispatch}
           disabled={!!property.dependencePropertyTypes || !state.id}
+          dependencePropertyTypeValues={state.propertyTypeValues}
         />
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
         <Button onClick={onClose} skin="primary-outlined">
           {Strings.common.cancelButton}
         </Button>
-        <Button onClick={saveButtonClicked} disabled={!state.id}>
+        <Button
+          onClick={saveButtonClicked}
+          disabled={!state.id || !!dependentPropertyInitial}>
           {Strings.common.saveButton}
         </Button>
       </DialogActions>

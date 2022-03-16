@@ -18,18 +18,26 @@ const DependentPropertyTypesReducerTypes = {
 const DependentPropertyTypesReducerInit: function = ({
   dependentPropertyInitial,
 }) => {
+  const propertyTypeValues = !!dependentPropertyInitial
+    ? dependentPropertyInitial.propertyTypeValues
+    : [];
   return {
     ...dependentPropertyInitial,
     type: 'enum',
     stringValue: null,
-    propertyTypeValues: [],
+    propertyTypeValues,
   };
 };
 
 const DependentPropertyTypesReducer = (state, action) => {
   switch (action.type) {
     case DependentPropertyTypesReducerTypes.updateDependenceProperty:
-      return {...state, ...action.payload, type: 'enum', stringValue: null};
+      return {
+        ...state,
+        ...action.payload,
+        type: 'enum',
+        stringValue: null,
+      };
     case DependentPropertyTypesReducerTypes.updatePropertyTypesValue:
       const propertyTypeValues = getPropertyTypeValuesToReducer(
         state.propertyTypeValues,

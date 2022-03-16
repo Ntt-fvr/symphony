@@ -25,10 +25,11 @@ type Props = $ReadOnly<{|
   dependentProperty: PropertyType,
   classes: any,
   supportMandatory: boolean,
+  showPropertyCombo: boolean,
 |}>;
 
 const PropertyComboTableItem = (props: Props) => {
-  const {dependentProperty, classes, supportMandatory} = props;
+  const {property, classes, supportMandatory, showPropertyCombo} = props;
 
   return (
     <TableRow>
@@ -40,17 +41,14 @@ const PropertyComboTableItem = (props: Props) => {
             autoFocus={true}
             placeholder="Name"
             className={classes.input}
-            value={dependentProperty.name}
+            value={property.name}
             disabled={true}
           />
         </FormField>
       </TableCell>
       <TableCell className={classes.cell} component="div" scope="row">
         <FormField>
-          <PropertyTypeSelect
-            propertyType={dependentProperty}
-            disabled={true}
-          />
+          <PropertyTypeSelect propertyType={property} disabled={true} />
         </FormField>
       </TableCell>
       <TableCell className={classes.cell} component="div" scope="row">
@@ -58,15 +56,16 @@ const PropertyComboTableItem = (props: Props) => {
           label={null}
           className={classes.input}
           inputType="PropertyType"
-          property={dependentProperty}
+          property={property}
           disabled={true}
           isDependentProperty={true}
+          showPropertyCombo={showPropertyCombo}
         />
       </TableCell>
       <TableCell padding="checkbox" component="div">
         <FormField>
           <Checkbox
-            checked={!dependentProperty.isInstanceProperty}
+            checked={!property.isInstanceProperty}
             title={null}
             disabled={true}
           />
@@ -76,7 +75,7 @@ const PropertyComboTableItem = (props: Props) => {
         <TableCell padding="checkbox" component="div">
           <FormField>
             <Checkbox
-              checked={!!dependentProperty.isMandatory}
+              checked={!!property.isMandatory}
               title={null}
               disabled={true}
             />

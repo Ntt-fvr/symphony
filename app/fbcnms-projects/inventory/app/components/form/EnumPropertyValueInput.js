@@ -8,7 +8,7 @@
  * @format
  */
 import type {Property} from '../../common/Property';
-import type {PropertyType} from '../../common/PropertyType';
+import type {PropertyType, PropertyTypeValues} from '../../common/PropertyType';
 
 import IconButton from '@symphony/design-system/components/IconButton';
 import PropertyComboPrincipalDialog from '../work_orders/property_combo/PropertyComboPrincipalDialog';
@@ -19,10 +19,11 @@ import update from 'immutability-helper';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {MultipleSelectionIcon} from '@symphony/design-system/icons';
 import {
-  getAllInputValuesEnumPropertyInString,
-  getPropertyTypesValuesInString,
+  getAllPropertyTypesValuesInString,
+  getValidDependencePropertyTypeValueInString,
 } from '../work_orders/property_combo/PropertyComboHelpers';
 import {isJSON} from '@symphony/design-system/utils/displayUtils';
+import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -35,7 +36,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props<T: Property | PropertyType> = $ReadOnly<{|
+type Props<T: Property | PropertyType | PropertyTypeValues> = $ReadOnly<{|
   property: T,
   onBlur?: ?() => void,
   onChange: T => void,
@@ -43,6 +44,7 @@ type Props<T: Property | PropertyType> = $ReadOnly<{|
   showPropertyCombo?: ?boolean,
   isPropertyComboEnum?: ?boolean,
   isDependentProperty?: boolean,
+  dependencePropertyTypeValues?: PropertyTypeValues[],
 |}>;
 
 function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
@@ -54,26 +56,34 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
     showPropertyCombo = false,
     isPropertyComboEnum = false,
     isDependentProperty = false,
+    dependencePropertyTypeValues = [],
   } = props;
 
   const propertyComboFeatureFlag = useFeatureFlag('property_combo');
-  const allowPropertyCombo = showPropertyCombo && propertyComboFeatureFlag;
+  const allowPropertyCombo =
+    showPropertyCombo &&
+    propertyComboFeatureFlag &&
+    !property.parentPropertyType;
   const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
 
-  // Probado
-  const dependentPropertyValues = isDependentProperty
-    ? getPropertyTypesValuesInString(property, isDependentProperty)
-    : null;
-
-  // Falta ver esto enumPropertyValues
-
-  const enumPropertyValues =
-    isPropertyComboEnum && property.propertyTypeValues?.length > 0
-      ? getAllInputValuesEnumPropertyInString(property.propertyTypeValues)
+  const allDependentPropertyValues =
+    isDependentProperty ||
+    (isTempId(property.id) && property.dependencePropertyTypes?.length > 0)
+      ? getAllPropertyTypesValuesInString(property, isDependentProperty)
       : null;
 
+  const validDependencePropertyTypeValue = isPropertyComboEnum
+    ? getValidDependencePropertyTypeValueInString(
+        property,
+        dependencePropertyTypeValues,
+      )
+    : null;
+
   const jsonStr =
-    dependentPropertyValues || enumPropertyValues || property.stringValue || [];
+    allDependentPropertyValues ||
+    validDependencePropertyTypeValue ||
+    property.stringValue ||
+    [];
 
   const options = isJSON(jsonStr) ? JSON.parse(jsonStr) : [];
   const optionsArr = Array.isArray(options) ? options : [];
@@ -93,7 +103,11 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
       <Tokenizer
         searchSource="UserInput"
         tokens={tokens}
-        disabled={disabled}
+        disabled={
+          disabled ||
+          (isTempId(property.id) &&
+            property.dependencePropertyTypes?.length > 0)
+        }
         onEntriesRequested={() => {}}
         placeholder="Press Enter after each value"
         onChange={newEntries => {
@@ -125,17 +139,12 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
             skin="primary"
             onClick={showDialog}
             icon={MultipleSelectionIcon}
-            disabled={
-              propertyTypes.length <= 1 ||
-              !!property.dependencePropertyTypes ||
-              tokens.length < 1
-            }
+            disabled={propertyTypes.length <= 1 || tokens.length < 1}
           />
           <PropertyComboPrincipalDialog
             open={viewDialogProperty}
             onClose={hideDialog}
             property={property}
-            //Acá añadir los properti Type Values
             onSave={propertyComboInfo => {
               onChange(
                 update(property, {

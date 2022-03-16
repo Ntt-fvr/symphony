@@ -15,7 +15,6 @@ import type {PropertyTypesTableState} from './PropertyTypesTableState';
 import {getInitialPropertyType} from './PropertyTypesTableState';
 import {reorder} from '../../../draggable/DraggableUtils';
 import {sortByIndex} from '../../../draggable/DraggableUtils';
-
 export function getInitialState(
   propertyTypes: Array<PropertyType>,
 ): PropertyTypesTableState {
@@ -91,10 +90,18 @@ export function reducer(
           action.sourceIndex,
           action.destinationIndex,
         ).map((p, index) => {
-          return {
-            ...p,
-            index,
-          };
+          return p.dependencePropertyTypes?.length > 0
+            ? {
+                ...p,
+                index,
+                dependencePropertyTypes: [
+                  {...p.dependencePropertyTypes[0], index: index + 1},
+                ],
+              }
+            : {
+                ...p,
+                index,
+              };
         }),
         ...state.filter(pt => pt.isDeleted),
       ];
