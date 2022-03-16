@@ -135,10 +135,27 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const nameChange = ({target}) => {
     target.value;
   };
-  const chip = () => {};
   const handleOption = mc => {
     mc === 'MC' && setChangeInput('MC');
     mc === 'TXT' && setChangeInput('TXT');
+  };
+  const drag = result => {
+    {
+      const {source, destination} = result;
+      if (!destination) {
+        return;
+      }
+      if (
+        source.index === destination.index &&
+        source.droppableId === destination.droppableId
+      ) {
+        return;
+      }
+
+      setParameters(parameters =>
+        reorder(parameters, source.index, destination.index),
+      );
+    }
   };
 
   return (
@@ -172,30 +189,17 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
             </TableCell>
           </TableRow>
         </TableHead>
-        <DragDropContext
-          onDragEnd={result => {
-            const {source, destination} = result;
-            if (!destination) {
-              return;
-            }
-            if (
-              source.index === destination.index &&
-              source.droppableId === destination.droppableId
-            ) {
-              return;
-            }
-
-            setParameters(parameters =>
-              reorder(parameters, source.index, destination.index),
-            );
-          }}>
+        <DragDropContext onDragEnd={drag}>
           <Droppable droppableId={'1'}>
             {droppableProvided => (
               <TableBody
                 ref={droppableProvided.innerRef}
                 {...droppableProvided.droppableProps}>
-                {parameters.map((item, i) => (
-                  <Draggable key={item.id} draggableId={item.id} index={i}>
+                {parameters.map((parameter, i) => (
+                  <Draggable
+                    key={parameter.id}
+                    draggableId={parameter.id}
+                    index={i}>
                     {draggableProvided => (
                       <TableRow
                         {...draggableProvided.draggableProps}
@@ -259,10 +263,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                           component="div"
                           scope="row">
                           {changeInput === 'MC' && (
-                            <EnumPropertyValueInput
-                              onChange={() => chip()}
-                              property={item}
-                            />
+                            <EnumPropertyValueInput property={parameter} />
                           )}
                           {changeInput === 'TXT' && (
                             <TextInput
@@ -279,10 +280,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                           component="div"
                           scope="row">
                           <FormField>
-                            <EnumPropertyValueInput
-                              onChange={chip}
-                              property={item}
-                            />
+                            <EnumPropertyValueInput property={parameter} />
                           </FormField>
                         </TableCell>
                         <TableCell className={classes.checkbox} component="div">
@@ -307,7 +305,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                             <IconButton aria-label="delete">
                               <DeleteOutlinedIcon
                                 color="primary"
-                                onClick={() => handleDelete(i, item.id)}
+                                onClick={() => handleDelete(i, parameter.id)}
                               />
                             </IconButton>
                           </FormAction>
