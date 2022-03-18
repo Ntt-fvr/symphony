@@ -170,8 +170,6 @@ export const EditResourceTypeItem = (props: Props) => {
 
   const validationName = useValidationEdit(inputFilter, 'Resource type');
 
-  console.log(name.value);
-
   const handleEdit = () => {
     const variables: EditResourceTypeMutationVariables = {
       input: {
