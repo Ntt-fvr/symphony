@@ -7,6 +7,7 @@ from enum import Enum
 class FilterOperator(Enum):
     IS = "IS"
     IS_NIL = "IS_NIL"
+    IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN = "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN"
     CONTAINS = "CONTAINS"
     IS_ONE_OF = "IS_ONE_OF"
     IS_NOT_ONE_OF = "IS_NOT_ONE_OF"
