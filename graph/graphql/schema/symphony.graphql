@@ -1640,6 +1640,23 @@ enum PropertyKind
   node
 }
 
+enum ResourcePropertyKind
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype.Type"
+  ) {
+  string
+  int
+  bool
+  float
+  date
+  enum
+  range
+  email
+  gps_location
+  datetime_local
+  node
+}
+
 type PropertyType implements Node {
   id: ID!
   externalId: String
@@ -9527,20 +9544,18 @@ type ResourceSpecification implements Node {
   id: ID!
   name: String!  
   resourceType: ResourceType
-  propertyTypes: [PropertyType]!  
+  resourcePropertyTypes: [ResourcePropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
   resourceType: ID!
-  propertyTypes: [PropertyTypeInput!]
-    @uniqueField(typ: "property type", field: "Name")
+  resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 input EditResourceSpecificationInput {
   id: ID!
   name: String!
   resourceType: ID 
-  propertyTypes: [PropertyTypeInput!]
-    @uniqueField(typ: "property type", field: "Name")
+  resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 enum ResourceSpecificationFilterType {
   NAME  
@@ -9698,3 +9713,54 @@ input ResourceRelationshipFilterInput {
   maxDepth: Int = 5
 }
 
+type ResourcePropertyType implements Node {
+  id: ID!
+  externalId: String
+  name: String!
+  type: ResourcePropertyKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  propertyCategory: PropertyCategory
+  isListable: Boolean
+  resourceSpecification: ResourceSpecification!
+}
+
+input AddResourcePropertyTypeInput {
+  id: ID
+  externalId: String
+  name: String!
+  type: ResourcePropertyKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  propertyCategory: ID
+  isListable: Boolean
+  resourceSpecification: ID
+}

@@ -96,6 +96,7 @@ type hooks struct {
 	RecommendationsSources            []ent.Hook
 	ReportFilter                      []ent.Hook
 	Resource                          []ent.Hook
+	ResourcePropertyType              []ent.Hook
 	ResourceRelationship              []ent.Hook
 	ResourceSpecification             []ent.Hook
 	ResourceSpecificationItems        []ent.Hook

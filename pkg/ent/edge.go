@@ -1552,6 +1552,14 @@ func (pc *PropertyCategory) PropertiesType(ctx context.Context) ([]*PropertyType
 	return result, err
 }
 
+func (pc *PropertyCategory) ResourcePropertiesType(ctx context.Context) ([]*ResourcePropertyType, error) {
+	result, err := pc.Edges.ResourcePropertiesTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryResourcePropertiesType().All(ctx)
+	}
+	return result, err
+}
+
 func (pc *PropertyCategory) ParameterCatalog(ctx context.Context) (*ParameterCatalog, error) {
 	result, err := pc.Edges.ParameterCatalogOrErr()
 	if IsNotLoaded(err) {
@@ -1648,14 +1656,6 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	return result, MaskNotFound(err)
 }
 
-func (pt *PropertyType) Resourcespecification(ctx context.Context) (*ResourceSpecification, error) {
-	result, err := pt.Edges.ResourcespecificationOrErr()
-	if IsNotLoaded(err) {
-		result, err = pt.QueryResourcespecification().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
 func (pt *PropertyType) PropertyCategory(ctx context.Context) (*PropertyCategory, error) {
 	result, err := pt.Edges.PropertyCategoryOrErr()
 	if IsNotLoaded(err) {
@@ -1744,6 +1744,22 @@ func (r *Resource) ResourceB(ctx context.Context) ([]*ResourceRelationship, erro
 	return result, err
 }
 
+func (rpt *ResourcePropertyType) ResourceSpecification(ctx context.Context) (*ResourceSpecification, error) {
+	result, err := rpt.Edges.ResourceSpecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = rpt.QueryResourceSpecification().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rpt *ResourcePropertyType) PropertyCategory(ctx context.Context) (*PropertyCategory, error) {
+	result, err := rpt.Edges.PropertyCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = rpt.QueryPropertyCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (rr *ResourceRelationship) Resourcea(ctx context.Context) (*Resource, error) {
 	result, err := rr.Edges.ResourceaOrErr()
 	if IsNotLoaded(err) {
@@ -1776,10 +1792,10 @@ func (rs *ResourceSpecification) Resourcetype(ctx context.Context) (*ResourceTyp
 	return result, MaskNotFound(err)
 }
 
-func (rs *ResourceSpecification) PropertyType(ctx context.Context) ([]*PropertyType, error) {
-	result, err := rs.Edges.PropertyTypeOrErr()
+func (rs *ResourceSpecification) ResourcePropertyType(ctx context.Context) ([]*ResourcePropertyType, error) {
+	result, err := rs.Edges.ResourcePropertyTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = rs.QueryPropertyType().All(ctx)
+		result, err = rs.QueryResourcePropertyType().All(ctx)
 	}
 	return result, err
 }
