@@ -28,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
@@ -106,6 +107,7 @@ type ResolverRoot interface {
 	Recommendations() RecommendationsResolver
 	ReportFilter() ReportFilterResolver
 	Resource() ResourceResolver
+	ResourcePropertyType() ResourcePropertyTypeResolver
 	ResourceRelationship() ResourceRelationshipResolver
 	ResourceSpecification() ResourceSpecificationResolver
 	ResourceSpecificationItems() ResourceSpecificationItemsResolver
@@ -1773,6 +1775,32 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	ResourcePropertyType struct {
+		BoolVal               func(childComplexity int) int
+		Category              func(childComplexity int) int
+		Deleted               func(childComplexity int) int
+		Editable              func(childComplexity int) int
+		ExternalID            func(childComplexity int) int
+		FloatVal              func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Index                 func(childComplexity int) int
+		IntVal                func(childComplexity int) int
+		IsInstanceProperty    func(childComplexity int) int
+		LatitudeVal           func(childComplexity int) int
+		Listable              func(childComplexity int) int
+		LongitudeVal          func(childComplexity int) int
+		Mandatory             func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		NodeType              func(childComplexity int) int
+		PropertyCategory      func(childComplexity int) int
+		RangeFromVal          func(childComplexity int) int
+		RangeToVal            func(childComplexity int) int
+		RawValue              func(childComplexity int) int
+		ResourceSpecification func(childComplexity int) int
+		StringVal             func(childComplexity int) int
+		Type                  func(childComplexity int) int
+	}
+
 	ResourceRelationship struct {
 		ID                        func(childComplexity int) int
 		Location                  func(childComplexity int) int
@@ -1793,10 +1821,10 @@ type ComplexityRoot struct {
 	}
 
 	ResourceSpecification struct {
-		ID            func(childComplexity int) int
-		Name          func(childComplexity int) int
-		PropertyTypes func(childComplexity int) int
-		Resourcetype  func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		ResourcePropertyTypes func(childComplexity int) int
+		Resourcetype          func(childComplexity int) int
 	}
 
 	ResourceSpecificationConnection struct {
@@ -2918,11 +2946,14 @@ type ReportFilterResolver interface {
 type ResourceResolver interface {
 	ResourceSpecification(ctx context.Context, obj *ent.Resource) (*ent.ResourceSpecification, error)
 }
+type ResourcePropertyTypeResolver interface {
+	RawValue(ctx context.Context, obj *ent.ResourcePropertyType) (*string, error)
+}
 type ResourceRelationshipResolver interface {
 	Location(ctx context.Context, obj *ent.ResourceRelationship) (*ent.Location, error)
 }
 type ResourceSpecificationResolver interface {
-	PropertyTypes(ctx context.Context, obj *ent.ResourceSpecification) ([]*ent.PropertyType, error)
+	ResourcePropertyTypes(ctx context.Context, obj *ent.ResourceSpecification) ([]*ent.ResourcePropertyType, error)
 }
 type ResourceSpecificationItemsResolver interface {
 	ResourceSpecification(ctx context.Context, obj *ent.ResourceSpecificationItems) (*ent.ResourceSpecification, error)
@@ -11986,6 +12017,167 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceEdge.Node(childComplexity), true
 
+	case "ResourcePropertyType.booleanValue":
+		if e.complexity.ResourcePropertyType.BoolVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.BoolVal(childComplexity), true
+
+	case "ResourcePropertyType.category":
+		if e.complexity.ResourcePropertyType.Category == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Category(childComplexity), true
+
+	case "ResourcePropertyType.isDeleted":
+		if e.complexity.ResourcePropertyType.Deleted == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Deleted(childComplexity), true
+
+	case "ResourcePropertyType.isEditable":
+		if e.complexity.ResourcePropertyType.Editable == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Editable(childComplexity), true
+
+	case "ResourcePropertyType.externalId":
+		if e.complexity.ResourcePropertyType.ExternalID == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.ExternalID(childComplexity), true
+
+	case "ResourcePropertyType.floatValue":
+		if e.complexity.ResourcePropertyType.FloatVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.FloatVal(childComplexity), true
+
+	case "ResourcePropertyType.id":
+		if e.complexity.ResourcePropertyType.ID == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.ID(childComplexity), true
+
+	case "ResourcePropertyType.index":
+		if e.complexity.ResourcePropertyType.Index == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Index(childComplexity), true
+
+	case "ResourcePropertyType.intValue":
+		if e.complexity.ResourcePropertyType.IntVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.IntVal(childComplexity), true
+
+	case "ResourcePropertyType.isInstanceProperty":
+		if e.complexity.ResourcePropertyType.IsInstanceProperty == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.IsInstanceProperty(childComplexity), true
+
+	case "ResourcePropertyType.latitudeValue":
+		if e.complexity.ResourcePropertyType.LatitudeVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.LatitudeVal(childComplexity), true
+
+	case "ResourcePropertyType.isListable":
+		if e.complexity.ResourcePropertyType.Listable == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Listable(childComplexity), true
+
+	case "ResourcePropertyType.longitudeValue":
+		if e.complexity.ResourcePropertyType.LongitudeVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.LongitudeVal(childComplexity), true
+
+	case "ResourcePropertyType.isMandatory":
+		if e.complexity.ResourcePropertyType.Mandatory == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Mandatory(childComplexity), true
+
+	case "ResourcePropertyType.name":
+		if e.complexity.ResourcePropertyType.Name == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Name(childComplexity), true
+
+	case "ResourcePropertyType.nodeType":
+		if e.complexity.ResourcePropertyType.NodeType == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.NodeType(childComplexity), true
+
+	case "ResourcePropertyType.propertyCategory":
+		if e.complexity.ResourcePropertyType.PropertyCategory == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.PropertyCategory(childComplexity), true
+
+	case "ResourcePropertyType.rangeFromValue":
+		if e.complexity.ResourcePropertyType.RangeFromVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.RangeFromVal(childComplexity), true
+
+	case "ResourcePropertyType.rangeToValue":
+		if e.complexity.ResourcePropertyType.RangeToVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.RangeToVal(childComplexity), true
+
+	case "ResourcePropertyType.rawValue":
+		if e.complexity.ResourcePropertyType.RawValue == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.RawValue(childComplexity), true
+
+	case "ResourcePropertyType.resourceSpecification":
+		if e.complexity.ResourcePropertyType.ResourceSpecification == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.ResourceSpecification(childComplexity), true
+
+	case "ResourcePropertyType.stringValue":
+		if e.complexity.ResourcePropertyType.StringVal == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.StringVal(childComplexity), true
+
+	case "ResourcePropertyType.type":
+		if e.complexity.ResourcePropertyType.Type == nil {
+			break
+		}
+
+		return e.complexity.ResourcePropertyType.Type(childComplexity), true
+
 	case "ResourceRelationship.id":
 		if e.complexity.ResourceRelationship.ID == nil {
 			break
@@ -12070,12 +12262,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceSpecification.Name(childComplexity), true
 
-	case "ResourceSpecification.propertyTypes":
-		if e.complexity.ResourceSpecification.PropertyTypes == nil {
+	case "ResourceSpecification.resourcePropertyTypes":
+		if e.complexity.ResourceSpecification.ResourcePropertyTypes == nil {
 			break
 		}
 
-		return e.complexity.ResourceSpecification.PropertyTypes(childComplexity), true
+		return e.complexity.ResourceSpecification.ResourcePropertyTypes(childComplexity), true
 
 	case "ResourceSpecification.resourceType":
 		if e.complexity.ResourceSpecification.Resourcetype == nil {
@@ -16596,6 +16788,23 @@ type ServiceTypeEdge {
 enum PropertyKind
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/propertytype.Type"
+  ) {
+  string
+  int
+  bool
+  float
+  date
+  enum
+  range
+  email
+  gps_location
+  datetime_local
+  node
+}
+
+enum ResourcePropertyKind
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype.Type"
   ) {
   string
   int
@@ -24497,20 +24706,18 @@ type ResourceSpecification implements Node {
   id: ID!
   name: String!  
   resourceType: ResourceType
-  propertyTypes: [PropertyType]!  
+  resourcePropertyTypes: [ResourcePropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
   resourceType: ID!
-  propertyTypes: [PropertyTypeInput!]
-    @uniqueField(typ: "property type", field: "Name")
+  resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 input EditResourceSpecificationInput {
   id: ID!
   name: String!
   resourceType: ID 
-  propertyTypes: [PropertyTypeInput!]
-    @uniqueField(typ: "property type", field: "Name")
+  resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 enum ResourceSpecificationFilterType {
   NAME  
@@ -24668,6 +24875,57 @@ input ResourceRelationshipFilterInput {
   maxDepth: Int = 5
 }
 
+type ResourcePropertyType implements Node {
+  id: ID!
+  externalId: String
+  name: String!
+  type: ResourcePropertyKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  propertyCategory: PropertyCategory
+  isListable: Boolean
+  resourceSpecification: ResourceSpecification!
+}
+
+input AddResourcePropertyTypeInput {
+  id: ID
+  externalId: String
+  name: String!
+  type: ResourcePropertyKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  propertyCategory: ID
+  isListable: Boolean
+  resourceSpecification: ID
+}
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -73338,6 +73596,754 @@ func (ec *executionContext) _ResourceEdge_cursor(ctx context.Context, field grap
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ResourcePropertyType_id(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_externalId(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExternalID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_name(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_type(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(resourcepropertytype.Type)
+	fc.Result = res
+	return ec.marshalNResourcePropertyKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcepropertytypeᚐType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_nodeType(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NodeType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_index(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Index, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_category(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Category, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_rawValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ResourcePropertyType().RawValue(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_stringValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StringVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_intValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IntVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_booleanValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BoolVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_floatValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FloatVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_latitudeValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LatitudeVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_longitudeValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LongitudeVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_rangeFromValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RangeFromVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_rangeToValue(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RangeToVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_isEditable(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Editable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_isInstanceProperty(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsInstanceProperty, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_isMandatory(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mandatory, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_isDeleted(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Deleted, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_propertyCategory(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyCategory(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyCategory)
+	fc.Result = res
+	return ec.marshalOPropertyCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_isListable(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Listable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourcePropertyType_resourceSpecification(ctx context.Context, field graphql.CollectedField, obj *ent.ResourcePropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourcePropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceSpecification(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ResourceSpecification)
+	fc.Result = res
+	return ec.marshalNResourceSpecification2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ResourceRelationship_id(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceRelationship) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -73781,7 +74787,7 @@ func (ec *executionContext) _ResourceSpecification_resourceType(ctx context.Cont
 	return ec.marshalOResourceType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ResourceSpecification_propertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
+func (ec *executionContext) _ResourceSpecification_resourcePropertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -73799,7 +74805,7 @@ func (ec *executionContext) _ResourceSpecification_propertyTypes(ctx context.Con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ResourceSpecification().PropertyTypes(rctx, obj)
+		return ec.resolvers.ResourceSpecification().ResourcePropertyTypes(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -73811,9 +74817,9 @@ func (ec *executionContext) _ResourceSpecification_propertyTypes(ctx context.Con
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*ent.PropertyType)
+	res := resTmp.([]*ent.ResourcePropertyType)
 	fc.Result = res
-	return ec.marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+	return ec.marshalNResourcePropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourcePropertyType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceSpecificationConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationConnection) (ret graphql.Marshaler) {
@@ -90884,6 +91890,202 @@ func (ec *executionContext) unmarshalInputAddResourceInput(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddResourcePropertyTypeInput(ctx context.Context, obj interface{}) (models.AddResourcePropertyTypeInput, error) {
+	var it models.AddResourcePropertyTypeInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "externalId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalId"))
+			it.ExternalID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNResourcePropertyKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcepropertytypeᚐType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nodeType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nodeType"))
+			it.NodeType, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "index":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
+			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "category":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+			it.Category, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rawValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rawValue"))
+			it.RawValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "intValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intValue"))
+			it.IntValue, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "booleanValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("booleanValue"))
+			it.BooleanValue, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "floatValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("floatValue"))
+			it.FloatValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "latitudeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latitudeValue"))
+			it.LatitudeValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "longitudeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("longitudeValue"))
+			it.LongitudeValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rangeFromValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rangeFromValue"))
+			it.RangeFromValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rangeToValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rangeToValue"))
+			it.RangeToValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isEditable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEditable"))
+			it.IsEditable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isInstanceProperty":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isInstanceProperty"))
+			it.IsInstanceProperty, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isMandatory":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isMandatory"))
+			it.IsMandatory, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isDeleted":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDeleted"))
+			it.IsDeleted, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyCategory":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyCategory"))
+			it.PropertyCategory, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isListable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isListable"))
+			it.IsListable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "resourceSpecification":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
+			it.ResourceSpecification, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddResourceRelationshipInput(ctx context.Context, obj interface{}) (models.AddResourceRelationshipInput, error) {
 	var it models.AddResourceRelationshipInput
 	var asMap = obj.(map[string]interface{})
@@ -90950,39 +92152,13 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationInput(ctx cont
 			if err != nil {
 				return it, err
 			}
-		case "propertyTypes":
+		case "resourcePropertyTypes":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
-			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
-			}
-			directive1 := func(ctx context.Context) (interface{}, error) {
-				typ, err := ec.unmarshalNString2string(ctx, "property type")
-				if err != nil {
-					return nil, err
-				}
-				field, err := ec.unmarshalNString2string(ctx, "Name")
-				if err != nil {
-					return nil, err
-				}
-				if ec.directives.UniqueField == nil {
-					return nil, errors.New("directive uniqueField is not implemented")
-				}
-				return ec.directives.UniqueField(ctx, obj, directive0, typ, field)
-			}
-
-			tmp, err := directive1(ctx)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourcePropertyTypes"))
+			it.ResourcePropertyTypes, err = ec.unmarshalOAddResourcePropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourcePropertyTypeInput(ctx, v)
 			if err != nil {
-				return it, graphql.ErrorOnPath(ctx, err)
-			}
-			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.PropertyTypes = data
-			} else if tmp == nil {
-				it.PropertyTypes = nil
-			} else {
-				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
-				return it, graphql.ErrorOnPath(ctx, err)
+				return it, err
 			}
 		}
 	}
@@ -95566,39 +96742,13 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationInput(ctx con
 			if err != nil {
 				return it, err
 			}
-		case "propertyTypes":
+		case "resourcePropertyTypes":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
-			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
-			}
-			directive1 := func(ctx context.Context) (interface{}, error) {
-				typ, err := ec.unmarshalNString2string(ctx, "property type")
-				if err != nil {
-					return nil, err
-				}
-				field, err := ec.unmarshalNString2string(ctx, "Name")
-				if err != nil {
-					return nil, err
-				}
-				if ec.directives.UniqueField == nil {
-					return nil, errors.New("directive uniqueField is not implemented")
-				}
-				return ec.directives.UniqueField(ctx, obj, directive0, typ, field)
-			}
-
-			tmp, err := directive1(ctx)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourcePropertyTypes"))
+			it.ResourcePropertyTypes, err = ec.unmarshalOAddResourcePropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourcePropertyTypeInput(ctx, v)
 			if err != nil {
-				return it, graphql.ErrorOnPath(ctx, err)
-			}
-			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.PropertyTypes = data
-			} else if tmp == nil {
-				it.PropertyTypes = nil
-			} else {
-				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
-				return it, graphql.ErrorOnPath(ctx, err)
+				return it, err
 			}
 		}
 	}
@@ -103695,6 +104845,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._ResourceRelationship(ctx, sel, obj)
+	case *ent.ResourcePropertyType:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ResourcePropertyType(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -114728,6 +115883,113 @@ func (ec *executionContext) _ResourceEdge(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var resourcePropertyTypeImplementors = []string{"ResourcePropertyType", "Node"}
+
+func (ec *executionContext) _ResourcePropertyType(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourcePropertyType) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, resourcePropertyTypeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ResourcePropertyType")
+		case "id":
+			out.Values[i] = ec._ResourcePropertyType_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "externalId":
+			out.Values[i] = ec._ResourcePropertyType_externalId(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._ResourcePropertyType_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "type":
+			out.Values[i] = ec._ResourcePropertyType_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "nodeType":
+			out.Values[i] = ec._ResourcePropertyType_nodeType(ctx, field, obj)
+		case "index":
+			out.Values[i] = ec._ResourcePropertyType_index(ctx, field, obj)
+		case "category":
+			out.Values[i] = ec._ResourcePropertyType_category(ctx, field, obj)
+		case "rawValue":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourcePropertyType_rawValue(ctx, field, obj)
+				return res
+			})
+		case "stringValue":
+			out.Values[i] = ec._ResourcePropertyType_stringValue(ctx, field, obj)
+		case "intValue":
+			out.Values[i] = ec._ResourcePropertyType_intValue(ctx, field, obj)
+		case "booleanValue":
+			out.Values[i] = ec._ResourcePropertyType_booleanValue(ctx, field, obj)
+		case "floatValue":
+			out.Values[i] = ec._ResourcePropertyType_floatValue(ctx, field, obj)
+		case "latitudeValue":
+			out.Values[i] = ec._ResourcePropertyType_latitudeValue(ctx, field, obj)
+		case "longitudeValue":
+			out.Values[i] = ec._ResourcePropertyType_longitudeValue(ctx, field, obj)
+		case "rangeFromValue":
+			out.Values[i] = ec._ResourcePropertyType_rangeFromValue(ctx, field, obj)
+		case "rangeToValue":
+			out.Values[i] = ec._ResourcePropertyType_rangeToValue(ctx, field, obj)
+		case "isEditable":
+			out.Values[i] = ec._ResourcePropertyType_isEditable(ctx, field, obj)
+		case "isInstanceProperty":
+			out.Values[i] = ec._ResourcePropertyType_isInstanceProperty(ctx, field, obj)
+		case "isMandatory":
+			out.Values[i] = ec._ResourcePropertyType_isMandatory(ctx, field, obj)
+		case "isDeleted":
+			out.Values[i] = ec._ResourcePropertyType_isDeleted(ctx, field, obj)
+		case "propertyCategory":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourcePropertyType_propertyCategory(ctx, field, obj)
+				return res
+			})
+		case "isListable":
+			out.Values[i] = ec._ResourcePropertyType_isListable(ctx, field, obj)
+		case "resourceSpecification":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourcePropertyType_resourceSpecification(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var resourceRelationshipImplementors = []string{"ResourceRelationship", "Node"}
 
 func (ec *executionContext) _ResourceRelationship(ctx context.Context, sel ast.SelectionSet, obj *ent.ResourceRelationship) graphql.Marshaler {
@@ -114894,7 +116156,7 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 				res = ec._ResourceSpecification_resourceType(ctx, field, obj)
 				return res
 			})
-		case "propertyTypes":
+		case "resourcePropertyTypes":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -114902,7 +116164,7 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceSpecification_propertyTypes(ctx, field, obj)
+				res = ec._ResourceSpecification_resourcePropertyTypes(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -126238,6 +127500,53 @@ func (ec *executionContext) marshalNResourceFilterType2githubᚗcomᚋfacebookin
 	return v
 }
 
+func (ec *executionContext) unmarshalNResourcePropertyKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcepropertytypeᚐType(ctx context.Context, v interface{}) (resourcepropertytype.Type, error) {
+	var res resourcepropertytype.Type
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNResourcePropertyKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcepropertytypeᚐType(ctx context.Context, sel ast.SelectionSet, v resourcepropertytype.Type) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNResourcePropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourcePropertyType(ctx context.Context, sel ast.SelectionSet, v []*ent.ResourcePropertyType) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOResourcePropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourcePropertyType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalNResourceRelationship2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceRelationship(ctx context.Context, sel ast.SelectionSet, v ent.ResourceRelationship) graphql.Marshaler {
 	return ec._ResourceRelationship(ctx, sel, &v)
 }
@@ -129513,6 +130822,38 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAddResourcePropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourcePropertyTypeInput(ctx context.Context, v interface{}) ([]*models.AddResourcePropertyTypeInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.AddResourcePropertyTypeInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOAddResourcePropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourcePropertyTypeInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOAddResourcePropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourcePropertyTypeInput(ctx context.Context, v interface{}) (*models.AddResourcePropertyTypeInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddResourcePropertyTypeInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -133258,6 +134599,13 @@ func (ec *executionContext) marshalOResourceOrderField2ᚖgithubᚗcomᚋfaceboo
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOResourcePropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourcePropertyType(ctx context.Context, sel ast.SelectionSet, v *ent.ResourcePropertyType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ResourcePropertyType(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOResourceRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceRelationship(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceRelationship) graphql.Marshaler {
