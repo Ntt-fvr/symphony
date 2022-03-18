@@ -81,7 +81,7 @@ type Props = $ReadOnly<{|
 const RelationshipsTypeItemList = (props: Props) => {
   const {handleRemove, item} = props;
   const classes = useStyles();
-  console.log(item);
+
   return (
     <div className={classes.root}>
       <Card>
