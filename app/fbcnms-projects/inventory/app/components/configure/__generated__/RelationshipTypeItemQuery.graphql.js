@@ -14,19 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type ResourceSpecificationRelationshipFilterType = "NAME" | "RESOURCE_SPECIFICATION" | "%future added value";
-export type ResourceSpecificationRelationshipFilterInput = {|
-  filterType: ResourceSpecificationRelationshipFilterType,
-  operator: FilterOperator,
-  stringValue?: ?string,
-  idSet?: ?$ReadOnlyArray<string>,
-  maxDepth?: ?number,
-  stringSet?: ?$ReadOnlyArray<string>,
-|};
-export type RelationshipTypeItemQueryVariables = {|
-  filterBy?: ?$ReadOnlyArray<ResourceSpecificationRelationshipFilterInput>
-|};
+export type RelationshipTypeItemQueryVariables = {||};
 export type RelationshipTypeItemQueryResponse = {|
   +resourceSpecificationRelationships: {|
     +edges: $ReadOnlyArray<{|
@@ -49,10 +37,8 @@ export type RelationshipTypeItemQuery = {|
 
 
 /*
-query RelationshipTypeItemQuery(
-  $filterBy: [ResourceSpecificationRelationshipFilterInput!]
-) {
-  resourceSpecificationRelationships(filterBy: $filterBy) {
+query RelationshipTypeItemQuery {
+  resourceSpecificationRelationships {
     edges {
       node {
         id
@@ -68,37 +54,24 @@ query RelationshipTypeItemQuery(
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filterBy"
-  }
-],
-v1 = {
+var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = {
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v3 = [
+v2 = [
   {
     "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filterBy",
-        "variableName": "filterBy"
-      }
-    ],
+    "args": null,
     "concreteType": "ResourceSpecificationRelationshipConnection",
     "kind": "LinkedField",
     "name": "resourceSpecificationRelationships",
@@ -120,8 +93,8 @@ v3 = [
             "name": "node",
             "plural": false,
             "selections": [
+              (v0/*: any*/),
               (v1/*: any*/),
-              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -130,8 +103,8 @@ v3 = [
                 "name": "resourceSpecification",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/)
+                  (v0/*: any*/),
+                  (v1/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -147,32 +120,32 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "RelationshipTypeItemQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "RelationshipTypeItemQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "4671f51b75d155ed993ef8093ab9c943",
+    "cacheID": "957d85dec7564ee441da27af11edf566",
     "id": null,
     "metadata": {},
     "name": "RelationshipTypeItemQuery",
     "operationKind": "query",
-    "text": "query RelationshipTypeItemQuery(\n  $filterBy: [ResourceSpecificationRelationshipFilterInput!]\n) {\n  resourceSpecificationRelationships(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RelationshipTypeItemQuery {\n  resourceSpecificationRelationships {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eb7e641466da50795de86078845dee74';
+(node/*: any*/).hash = '020ff37fce8b6a2910bc13114b2207d1';
 
 module.exports = node;
