@@ -308,3 +308,7 @@ func (r resolver) Resource() generated.ResourceResolver {
 func (r resolver) ResourceRelationship() generated.ResourceRelationshipResolver {
 	return resourceRelationshipResolver{}
 }
+
+func (r resolver) ResourcePropertyType() generated.ResourcePropertyTypeResolver {
+	return resourcePropertyTypeResolver{}
+}

@@ -17,8 +17,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resource"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
@@ -35,7 +35,7 @@ type ResourceSpecificationQuery struct {
 	predicates []predicate.ResourceSpecification
 	// eager-loading edges.
 	withResourcetype               *ResourceTypeQuery
-	withPropertyType               *PropertyTypeQuery
+	withResourcePropertyType       *ResourcePropertyTypeQuery
 	withResourceSpecification      *ResourceSpecificationRelationshipQuery
 	withResourceSpecificationItems *ResourceSpecificationItemsQuery
 	withResourceSpecificationR     *ResourceQuery
@@ -91,9 +91,9 @@ func (rsq *ResourceSpecificationQuery) QueryResourcetype() *ResourceTypeQuery {
 	return query
 }
 
-// QueryPropertyType chains the current query on the property_type edge.
-func (rsq *ResourceSpecificationQuery) QueryPropertyType() *PropertyTypeQuery {
-	query := &PropertyTypeQuery{config: rsq.config}
+// QueryResourcePropertyType chains the current query on the resource_property_type edge.
+func (rsq *ResourceSpecificationQuery) QueryResourcePropertyType() *ResourcePropertyTypeQuery {
+	query := &ResourcePropertyTypeQuery{config: rsq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rsq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -104,8 +104,8 @@ func (rsq *ResourceSpecificationQuery) QueryPropertyType() *PropertyTypeQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
-			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.PropertyTypeTable, resourcespecification.PropertyTypeColumn),
+			sqlgraph.To(resourcepropertytype.Table, resourcepropertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourcePropertyTypeTable, resourcespecification.ResourcePropertyTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
 		return fromU, nil
@@ -356,7 +356,7 @@ func (rsq *ResourceSpecificationQuery) Clone() *ResourceSpecificationQuery {
 		unique:                         append([]string{}, rsq.unique...),
 		predicates:                     append([]predicate.ResourceSpecification{}, rsq.predicates...),
 		withResourcetype:               rsq.withResourcetype.Clone(),
-		withPropertyType:               rsq.withPropertyType.Clone(),
+		withResourcePropertyType:       rsq.withResourcePropertyType.Clone(),
 		withResourceSpecification:      rsq.withResourceSpecification.Clone(),
 		withResourceSpecificationItems: rsq.withResourceSpecificationItems.Clone(),
 		withResourceSpecificationR:     rsq.withResourceSpecificationR.Clone(),
@@ -377,14 +377,14 @@ func (rsq *ResourceSpecificationQuery) WithResourcetype(opts ...func(*ResourceTy
 	return rsq
 }
 
-//  WithPropertyType tells the query-builder to eager-loads the nodes that are connected to
-// the "property_type" edge. The optional arguments used to configure the query builder of the edge.
-func (rsq *ResourceSpecificationQuery) WithPropertyType(opts ...func(*PropertyTypeQuery)) *ResourceSpecificationQuery {
-	query := &PropertyTypeQuery{config: rsq.config}
+//  WithResourcePropertyType tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_property_type" edge. The optional arguments used to configure the query builder of the edge.
+func (rsq *ResourceSpecificationQuery) WithResourcePropertyType(opts ...func(*ResourcePropertyTypeQuery)) *ResourceSpecificationQuery {
+	query := &ResourcePropertyTypeQuery{config: rsq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rsq.withPropertyType = query
+	rsq.withResourcePropertyType = query
 	return rsq
 }
 
@@ -493,7 +493,7 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		_spec       = rsq.querySpec()
 		loadedTypes = [5]bool{
 			rsq.withResourcetype != nil,
-			rsq.withPropertyType != nil,
+			rsq.withResourcePropertyType != nil,
 			rsq.withResourceSpecification != nil,
 			rsq.withResourceSpecificationItems != nil,
 			rsq.withResourceSpecificationR != nil,
@@ -554,32 +554,32 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		}
 	}
 
-	if query := rsq.withPropertyType; query != nil {
+	if query := rsq.withResourcePropertyType; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*ResourceSpecification)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.PropertyType = []*PropertyType{}
+			nodes[i].Edges.ResourcePropertyType = []*ResourcePropertyType{}
 		}
 		query.withFKs = true
-		query.Where(predicate.PropertyType(func(s *sql.Selector) {
-			s.Where(sql.InValues(resourcespecification.PropertyTypeColumn, fks...))
+		query.Where(predicate.ResourcePropertyType(func(s *sql.Selector) {
+			s.Where(sql.InValues(resourcespecification.ResourcePropertyTypeColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.resource_specification_property_type
+			fk := n.resource_specification_resource_property_type
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "resource_specification_property_type" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "resource_specification_resource_property_type" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_property_type" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_resource_property_type" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.PropertyType = append(node.Edges.PropertyType, n)
+			node.Edges.ResourcePropertyType = append(node.Edges.ResourcePropertyType, n)
 		}
 	}
 

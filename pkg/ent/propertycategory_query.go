@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 )
 
 // PropertyCategoryQuery is the builder for querying PropertyCategory entities.
@@ -31,9 +32,10 @@ type PropertyCategoryQuery struct {
 	unique     []string
 	predicates []predicate.PropertyCategory
 	// eager-loading edges.
-	withPropertiesType   *PropertyTypeQuery
-	withParameterCatalog *ParameterCatalogQuery
-	withFKs              bool
+	withPropertiesType         *PropertyTypeQuery
+	withResourcePropertiesType *ResourcePropertyTypeQuery
+	withParameterCatalog       *ParameterCatalogQuery
+	withFKs                    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,6 +80,28 @@ func (pcq *PropertyCategoryQuery) QueryPropertiesType() *PropertyTypeQuery {
 			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.PropertiesTypeTable, propertycategory.PropertiesTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pcq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryResourcePropertiesType chains the current query on the resource_properties_type edge.
+func (pcq *PropertyCategoryQuery) QueryResourcePropertiesType() *ResourcePropertyTypeQuery {
+	query := &ResourcePropertyTypeQuery{config: pcq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pcq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pcq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, selector),
+			sqlgraph.To(resourcepropertytype.Table, resourcepropertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.ResourcePropertiesTypeTable, propertycategory.ResourcePropertiesTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pcq.driver.Dialect(), step)
 		return fromU, nil
@@ -277,14 +301,15 @@ func (pcq *PropertyCategoryQuery) Clone() *PropertyCategoryQuery {
 		return nil
 	}
 	return &PropertyCategoryQuery{
-		config:               pcq.config,
-		limit:                pcq.limit,
-		offset:               pcq.offset,
-		order:                append([]OrderFunc{}, pcq.order...),
-		unique:               append([]string{}, pcq.unique...),
-		predicates:           append([]predicate.PropertyCategory{}, pcq.predicates...),
-		withPropertiesType:   pcq.withPropertiesType.Clone(),
-		withParameterCatalog: pcq.withParameterCatalog.Clone(),
+		config:                     pcq.config,
+		limit:                      pcq.limit,
+		offset:                     pcq.offset,
+		order:                      append([]OrderFunc{}, pcq.order...),
+		unique:                     append([]string{}, pcq.unique...),
+		predicates:                 append([]predicate.PropertyCategory{}, pcq.predicates...),
+		withPropertiesType:         pcq.withPropertiesType.Clone(),
+		withResourcePropertiesType: pcq.withResourcePropertiesType.Clone(),
+		withParameterCatalog:       pcq.withParameterCatalog.Clone(),
 		// clone intermediate query.
 		sql:  pcq.sql.Clone(),
 		path: pcq.path,
@@ -299,6 +324,17 @@ func (pcq *PropertyCategoryQuery) WithPropertiesType(opts ...func(*PropertyTypeQ
 		opt(query)
 	}
 	pcq.withPropertiesType = query
+	return pcq
+}
+
+//  WithResourcePropertiesType tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_properties_type" edge. The optional arguments used to configure the query builder of the edge.
+func (pcq *PropertyCategoryQuery) WithResourcePropertiesType(opts ...func(*ResourcePropertyTypeQuery)) *PropertyCategoryQuery {
+	query := &ResourcePropertyTypeQuery{config: pcq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pcq.withResourcePropertiesType = query
 	return pcq
 }
 
@@ -383,8 +419,9 @@ func (pcq *PropertyCategoryQuery) sqlAll(ctx context.Context) ([]*PropertyCatego
 		nodes       = []*PropertyCategory{}
 		withFKs     = pcq.withFKs
 		_spec       = pcq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			pcq.withPropertiesType != nil,
+			pcq.withResourcePropertiesType != nil,
 			pcq.withParameterCatalog != nil,
 		}
 	)
@@ -444,6 +481,35 @@ func (pcq *PropertyCategoryQuery) sqlAll(ctx context.Context) ([]*PropertyCatego
 				return nil, fmt.Errorf(`unexpected foreign-key "property_category_properties_type" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.PropertiesType = append(node.Edges.PropertiesType, n)
+		}
+	}
+
+	if query := pcq.withResourcePropertiesType; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*PropertyCategory)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.ResourcePropertiesType = []*ResourcePropertyType{}
+		}
+		query.withFKs = true
+		query.Where(predicate.ResourcePropertyType(func(s *sql.Selector) {
+			s.Where(sql.InValues(propertycategory.ResourcePropertiesTypeColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.property_category_resource_properties_type
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "property_category_resource_properties_type" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "property_category_resource_properties_type" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.ResourcePropertiesType = append(node.Edges.ResourcePropertiesType, n)
 		}
 	}
 
