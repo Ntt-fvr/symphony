@@ -214,6 +214,9 @@ type ReportFilter func(*sql.Selector)
 // Resource is the predicate function for resource builders.
 type Resource func(*sql.Selector)
 
+// ResourcePropertyType is the predicate function for resourcepropertytype builders.
+type ResourcePropertyType func(*sql.Selector)
+
 // ResourceRelationship is the predicate function for resourcerelationship builders.
 type ResourceRelationship func(*sql.Selector)
 
