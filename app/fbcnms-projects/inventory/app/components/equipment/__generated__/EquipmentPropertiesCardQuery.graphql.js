@@ -448,6 +448,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
       }
       properties {
         id
+        propertyTypeValue {
+          id
+          name
+        }
         propertyType {
           id
           name
@@ -467,6 +471,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
           isMandatory
           category
           isDeleted
+          parentPropertyType {
+            id
+            name
+          }
+          propertyTypeValues {
+            id
+            isDeleted
+            name
+          }
+          dependencePropertyTypes {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isMandatory
+            isInstanceProperty
+            isDeleted
+            category
+            propertyTypeValues {
+              id
+              isDeleted
+              name
+              parentPropertyTypeValue {
+                id
+                isDeleted
+                name
+              }
+            }
+          }
         }
         stringValue
         intValue
@@ -489,6 +532,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
     }
     properties {
       id
+      propertyTypeValue {
+        id
+        name
+      }
       propertyType {
         id
         name
@@ -508,6 +555,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
         isMandatory
         category
         isDeleted
+        parentPropertyType {
+          id
+          name
+        }
+        propertyTypeValues {
+          id
+          isDeleted
+          name
+        }
+        dependencePropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isMandatory
+          isInstanceProperty
+          isDeleted
+          category
+          propertyTypeValues {
+            id
+            isDeleted
+            name
+            parentPropertyTypeValue {
+              id
+              isDeleted
+              name
+            }
+          }
+        }
       }
       stringValue
       intValue
@@ -660,6 +746,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
           }
           properties {
             id
+            propertyTypeValue {
+              id
+              name
+            }
             propertyType {
               id
               name
@@ -679,6 +769,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
               isMandatory
               category
               isDeleted
+              parentPropertyType {
+                id
+                name
+              }
+              propertyTypeValues {
+                id
+                isDeleted
+                name
+              }
+              dependencePropertyTypes {
+                id
+                name
+                type
+                nodeType
+                index
+                stringValue
+                intValue
+                booleanValue
+                floatValue
+                latitudeValue
+                longitudeValue
+                rangeFromValue
+                rangeToValue
+                isEditable
+                isMandatory
+                isInstanceProperty
+                isDeleted
+                category
+                propertyTypeValues {
+                  id
+                  isDeleted
+                  name
+                  parentPropertyTypeValue {
+                    id
+                    isDeleted
+                    name
+                  }
+                }
+              }
             }
             stringValue
             intValue
@@ -701,6 +830,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
         }
         properties {
           id
+          propertyTypeValue {
+            id
+            name
+          }
           propertyType {
             id
             name
@@ -720,6 +853,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
             isMandatory
             category
             isDeleted
+            parentPropertyType {
+              id
+              name
+            }
+            propertyTypeValues {
+              id
+              isDeleted
+              name
+            }
+            dependencePropertyTypes {
+              id
+              name
+              type
+              nodeType
+              index
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isEditable
+              isMandatory
+              isInstanceProperty
+              isDeleted
+              category
+              propertyTypeValues {
+                id
+                isDeleted
+                name
+                parentPropertyTypeValue {
+                  id
+                  isDeleted
+                  name
+                }
+              }
+            }
           }
           stringValue
           intValue
@@ -881,6 +1053,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
               }
               properties {
                 id
+                propertyTypeValue {
+                  id
+                  name
+                }
                 propertyType {
                   id
                   name
@@ -900,6 +1076,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
                   isMandatory
                   category
                   isDeleted
+                  parentPropertyType {
+                    id
+                    name
+                  }
+                  propertyTypeValues {
+                    id
+                    isDeleted
+                    name
+                  }
+                  dependencePropertyTypes {
+                    id
+                    name
+                    type
+                    nodeType
+                    index
+                    stringValue
+                    intValue
+                    booleanValue
+                    floatValue
+                    latitudeValue
+                    longitudeValue
+                    rangeFromValue
+                    rangeToValue
+                    isEditable
+                    isMandatory
+                    isInstanceProperty
+                    isDeleted
+                    category
+                    propertyTypeValues {
+                      id
+                      isDeleted
+                      name
+                      parentPropertyTypeValue {
+                        id
+                        isDeleted
+                        name
+                      }
+                    }
+                  }
                 }
                 stringValue
                 intValue
@@ -922,6 +1137,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
             }
             properties {
               id
+              propertyTypeValue {
+                id
+                name
+              }
               propertyType {
                 id
                 name
@@ -941,6 +1160,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
                 isMandatory
                 category
                 isDeleted
+                parentPropertyType {
+                  id
+                  name
+                }
+                propertyTypeValues {
+                  id
+                  isDeleted
+                  name
+                }
+                dependencePropertyTypes {
+                  id
+                  name
+                  type
+                  nodeType
+                  index
+                  stringValue
+                  intValue
+                  booleanValue
+                  floatValue
+                  latitudeValue
+                  longitudeValue
+                  rangeFromValue
+                  rangeToValue
+                  isEditable
+                  isMandatory
+                  isInstanceProperty
+                  isDeleted
+                  category
+                  propertyTypeValues {
+                    id
+                    isDeleted
+                    name
+                    parentPropertyTypeValue {
+                      id
+                      isDeleted
+                      name
+                    }
+                  }
+                }
               }
               stringValue
               intValue
@@ -1102,6 +1360,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
                   }
                   properties {
                     id
+                    propertyTypeValue {
+                      id
+                      name
+                    }
                     propertyType {
                       id
                       name
@@ -1121,6 +1383,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
                       isMandatory
                       category
                       isDeleted
+                      parentPropertyType {
+                        id
+                        name
+                      }
+                      propertyTypeValues {
+                        id
+                        isDeleted
+                        name
+                      }
+                      dependencePropertyTypes {
+                        id
+                        name
+                        type
+                        nodeType
+                        index
+                        stringValue
+                        intValue
+                        booleanValue
+                        floatValue
+                        latitudeValue
+                        longitudeValue
+                        rangeFromValue
+                        rangeToValue
+                        isEditable
+                        isMandatory
+                        isInstanceProperty
+                        isDeleted
+                        category
+                        propertyTypeValues {
+                          id
+                          isDeleted
+                          name
+                          parentPropertyTypeValue {
+                            id
+                            isDeleted
+                            name
+                          }
+                        }
+                      }
                     }
                     stringValue
                     intValue
@@ -1143,6 +1444,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
                 }
                 properties {
                   id
+                  propertyTypeValue {
+                    id
+                    name
+                  }
                   propertyType {
                     id
                     name
@@ -1162,6 +1467,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
                     isMandatory
                     category
                     isDeleted
+                    parentPropertyType {
+                      id
+                      name
+                    }
+                    propertyTypeValues {
+                      id
+                      isDeleted
+                      name
+                    }
+                    dependencePropertyTypes {
+                      id
+                      name
+                      type
+                      nodeType
+                      index
+                      stringValue
+                      intValue
+                      booleanValue
+                      floatValue
+                      latitudeValue
+                      longitudeValue
+                      rangeFromValue
+                      rangeToValue
+                      isEditable
+                      isMandatory
+                      isInstanceProperty
+                      isDeleted
+                      category
+                      propertyTypeValues {
+                        id
+                        isDeleted
+                        name
+                        parentPropertyTypeValue {
+                          id
+                          isDeleted
+                          name
+                        }
+                      }
+                    }
                   }
                   stringValue
                   intValue
@@ -1323,6 +1667,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
                       }
                       properties {
                         id
+                        propertyTypeValue {
+                          id
+                          name
+                        }
                         propertyType {
                           id
                           name
@@ -1342,6 +1690,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
                           isMandatory
                           category
                           isDeleted
+                          parentPropertyType {
+                            id
+                            name
+                          }
+                          propertyTypeValues {
+                            id
+                            isDeleted
+                            name
+                          }
+                          dependencePropertyTypes {
+                            id
+                            name
+                            type
+                            nodeType
+                            index
+                            stringValue
+                            intValue
+                            booleanValue
+                            floatValue
+                            latitudeValue
+                            longitudeValue
+                            rangeFromValue
+                            rangeToValue
+                            isEditable
+                            isMandatory
+                            isInstanceProperty
+                            isDeleted
+                            category
+                            propertyTypeValues {
+                              id
+                              isDeleted
+                              name
+                              parentPropertyTypeValue {
+                                id
+                                isDeleted
+                                name
+                              }
+                            }
+                          }
                         }
                         stringValue
                         intValue
@@ -1364,6 +1751,10 @@ fragment EquipmentPortsTable_equipment on Equipment {
                     }
                     properties {
                       id
+                      propertyTypeValue {
+                        id
+                        name
+                      }
                       propertyType {
                         id
                         name
@@ -1383,6 +1774,45 @@ fragment EquipmentPortsTable_equipment on Equipment {
                         isMandatory
                         category
                         isDeleted
+                        parentPropertyType {
+                          id
+                          name
+                        }
+                        propertyTypeValues {
+                          id
+                          isDeleted
+                          name
+                        }
+                        dependencePropertyTypes {
+                          id
+                          name
+                          type
+                          nodeType
+                          index
+                          stringValue
+                          intValue
+                          booleanValue
+                          floatValue
+                          latitudeValue
+                          longitudeValue
+                          rangeFromValue
+                          rangeToValue
+                          isEditable
+                          isMandatory
+                          isInstanceProperty
+                          isDeleted
+                          category
+                          propertyTypeValues {
+                            id
+                            isDeleted
+                            name
+                            parentPropertyTypeValue {
+                              id
+                              isDeleted
+                              name
+                            }
+                          }
+                        }
                       }
                       stringValue
                       intValue
@@ -1516,6 +1946,10 @@ fragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefini
 
 fragment PropertyFormField_property on Property {
   id
+  propertyTypeValue {
+    id
+    name
+  }
   propertyType {
     id
     name
@@ -1535,6 +1969,45 @@ fragment PropertyFormField_property on Property {
     isMandatory
     category
     isDeleted
+    parentPropertyType {
+      id
+      name
+    }
+    propertyTypeValues {
+      id
+      isDeleted
+      name
+    }
+    dependencePropertyTypes {
+      id
+      name
+      type
+      nodeType
+      index
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isEditable
+      isMandatory
+      isInstanceProperty
+      isDeleted
+      category
+      propertyTypeValues {
+        id
+        isDeleted
+        name
+        parentPropertyTypeValue {
+          id
+          isDeleted
+          name
+        }
+      }
+    }
   }
   stringValue
   intValue
@@ -1671,142 +2144,148 @@ v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "stringValue",
+  "name": "type",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "intValue",
+  "name": "nodeType",
   "storageKey": null
 },
 v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "booleanValue",
+  "name": "stringValue",
   "storageKey": null
 },
 v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "floatValue",
+  "name": "intValue",
   "storageKey": null
 },
 v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "latitudeValue",
+  "name": "booleanValue",
   "storageKey": null
 },
 v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "longitudeValue",
+  "name": "floatValue",
   "storageKey": null
 },
 v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rangeFromValue",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rangeToValue",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v21 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "rangeFromValue",
+  "storageKey": null
+},
+v22 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
+  "storageKey": null
+},
+v23 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isEditable",
+  "storageKey": null
+},
+v24 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isInstanceProperty",
+  "storageKey": null
+},
+v25 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isMandatory",
+  "storageKey": null
+},
+v26 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "category",
   "storageKey": null
 },
-v22 = [
+v27 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isDeleted",
+  "storageKey": null
+},
+v28 = [
   (v2/*: any*/),
   (v3/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "type",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "nodeType",
-    "storageKey": null
-  },
-  (v11/*: any*/),
   (v13/*: any*/),
   (v14/*: any*/),
+  (v11/*: any*/),
   (v15/*: any*/),
   (v16/*: any*/),
   (v17/*: any*/),
   (v18/*: any*/),
   (v19/*: any*/),
   (v20/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "isEditable",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "isInstanceProperty",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "isMandatory",
-    "storageKey": null
-  },
   (v21/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "isDeleted",
-    "storageKey": null
-  }
+  (v22/*: any*/),
+  (v23/*: any*/),
+  (v24/*: any*/),
+  (v25/*: any*/),
+  (v26/*: any*/),
+  (v27/*: any*/)
 ],
-v23 = {
+v29 = {
   "alias": null,
   "args": null,
   "concreteType": "PropertyType",
   "kind": "LinkedField",
   "name": "propertyTypes",
   "plural": true,
-  "selections": (v22/*: any*/),
+  "selections": (v28/*: any*/),
   "storageKey": null
 },
-v24 = {
+v30 = {
   "alias": null,
   "args": null,
   "concreteType": "PropertyType",
   "kind": "LinkedField",
   "name": "linkPropertyTypes",
   "plural": true,
-  "selections": (v22/*: any*/),
+  "selections": (v28/*: any*/),
   "storageKey": null
 },
-v25 = [
+v31 = [
   (v2/*: any*/),
   (v3/*: any*/),
   (v11/*: any*/),
@@ -1821,19 +2300,19 @@ v25 = [
     "selections": [
       (v2/*: any*/),
       (v3/*: any*/),
-      (v23/*: any*/),
-      (v24/*: any*/)
+      (v29/*: any*/),
+      (v30/*: any*/)
     ],
     "storageKey": null
   }
 ],
-v26 = [
+v32 = [
   (v2/*: any*/),
   (v3/*: any*/),
   (v11/*: any*/),
   (v12/*: any*/)
 ],
-v27 = {
+v33 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentType",
@@ -1843,7 +2322,7 @@ v27 = {
   "selections": (v5/*: any*/),
   "storageKey": null
 },
-v28 = {
+v34 = {
   "alias": null,
   "args": null,
   "concreteType": "Equipment",
@@ -1853,22 +2332,22 @@ v28 = {
   "selections": [
     (v2/*: any*/),
     (v3/*: any*/),
-    (v27/*: any*/)
+    (v33/*: any*/)
   ],
   "storageKey": null
 },
-v29 = {
+v35 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "futureState",
   "storageKey": null
 },
-v30 = [
+v36 = [
   (v3/*: any*/),
   (v2/*: any*/)
 ],
-v31 = {
+v37 = {
   "alias": null,
   "args": null,
   "concreteType": "Location",
@@ -1885,13 +2364,13 @@ v31 = {
       "kind": "LinkedField",
       "name": "locationType",
       "plural": false,
-      "selections": (v30/*: any*/),
+      "selections": (v36/*: any*/),
       "storageKey": null
     }
   ],
   "storageKey": null
 },
-v32 = {
+v38 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentPosition",
@@ -1914,11 +2393,11 @@ v32 = {
       ],
       "storageKey": null
     },
-    (v28/*: any*/)
+    (v34/*: any*/)
   ],
   "storageKey": null
 },
-v33 = {
+v39 = {
   "alias": null,
   "args": null,
   "concreteType": "ServiceEndpoint",
@@ -1952,14 +2431,19 @@ v33 = {
       "kind": "LinkedField",
       "name": "service",
       "plural": false,
-      "selections": (v30/*: any*/),
+      "selections": (v36/*: any*/),
       "storageKey": null
     },
     (v2/*: any*/)
   ],
   "storageKey": null
 },
-v34 = {
+v40 = [
+  (v2/*: any*/),
+  (v27/*: any*/),
+  (v3/*: any*/)
+],
+v41 = {
   "alias": null,
   "args": null,
   "concreteType": "Property",
@@ -1971,21 +2455,123 @@ v34 = {
     {
       "alias": null,
       "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "propertyTypeValue",
+      "plural": false,
+      "selections": (v5/*: any*/),
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "PropertyType",
       "kind": "LinkedField",
       "name": "propertyType",
       "plural": false,
-      "selections": (v22/*: any*/),
+      "selections": [
+        (v2/*: any*/),
+        (v3/*: any*/),
+        (v13/*: any*/),
+        (v14/*: any*/),
+        (v11/*: any*/),
+        (v15/*: any*/),
+        (v16/*: any*/),
+        (v17/*: any*/),
+        (v18/*: any*/),
+        (v19/*: any*/),
+        (v20/*: any*/),
+        (v21/*: any*/),
+        (v22/*: any*/),
+        (v23/*: any*/),
+        (v24/*: any*/),
+        (v25/*: any*/),
+        (v26/*: any*/),
+        (v27/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "PropertyType",
+          "kind": "LinkedField",
+          "name": "parentPropertyType",
+          "plural": false,
+          "selections": (v5/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "PropertyTypeValue",
+          "kind": "LinkedField",
+          "name": "propertyTypeValues",
+          "plural": true,
+          "selections": (v40/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "PropertyType",
+          "kind": "LinkedField",
+          "name": "dependencePropertyTypes",
+          "plural": true,
+          "selections": [
+            (v2/*: any*/),
+            (v3/*: any*/),
+            (v13/*: any*/),
+            (v14/*: any*/),
+            (v11/*: any*/),
+            (v15/*: any*/),
+            (v16/*: any*/),
+            (v17/*: any*/),
+            (v18/*: any*/),
+            (v19/*: any*/),
+            (v20/*: any*/),
+            (v21/*: any*/),
+            (v22/*: any*/),
+            (v23/*: any*/),
+            (v25/*: any*/),
+            (v24/*: any*/),
+            (v27/*: any*/),
+            (v26/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "PropertyTypeValue",
+              "kind": "LinkedField",
+              "name": "propertyTypeValues",
+              "plural": true,
+              "selections": [
+                (v2/*: any*/),
+                (v27/*: any*/),
+                (v3/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PropertyTypeValue",
+                  "kind": "LinkedField",
+                  "name": "parentPropertyTypeValue",
+                  "plural": true,
+                  "selections": (v40/*: any*/),
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
-    (v13/*: any*/),
-    (v14/*: any*/),
-    (v16/*: any*/),
     (v15/*: any*/),
-    (v17/*: any*/),
+    (v16/*: any*/),
     (v18/*: any*/),
+    (v17/*: any*/),
     (v19/*: any*/),
     (v20/*: any*/),
+    (v21/*: any*/),
+    (v22/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -2003,7 +2589,7 @@ v34 = {
   ],
   "storageKey": null
 },
-v35 = {
+v42 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentPort",
@@ -2019,10 +2605,10 @@ v35 = {
       "kind": "LinkedField",
       "name": "definition",
       "plural": false,
-      "selections": (v25/*: any*/),
+      "selections": (v31/*: any*/),
       "storageKey": null
     },
-    (v28/*: any*/),
+    (v34/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -2032,7 +2618,7 @@ v35 = {
       "plural": false,
       "selections": [
         (v2/*: any*/),
-        (v29/*: any*/),
+        (v35/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -2061,7 +2647,7 @@ v35 = {
                   "name": "portType",
                   "plural": false,
                   "selections": [
-                    (v24/*: any*/),
+                    (v30/*: any*/),
                     (v2/*: any*/)
                   ],
                   "storageKey": null
@@ -2079,14 +2665,14 @@ v35 = {
               "selections": [
                 (v2/*: any*/),
                 (v3/*: any*/),
-                (v29/*: any*/),
-                (v27/*: any*/),
-                (v31/*: any*/),
-                (v32/*: any*/)
+                (v35/*: any*/),
+                (v33/*: any*/),
+                (v37/*: any*/),
+                (v38/*: any*/)
               ],
               "storageKey": null
             },
-            (v33/*: any*/)
+            (v39/*: any*/)
           ],
           "storageKey": null
         },
@@ -2109,7 +2695,7 @@ v35 = {
           ],
           "storageKey": null
         },
-        (v34/*: any*/),
+        (v41/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -2123,12 +2709,12 @@ v35 = {
       ],
       "storageKey": null
     },
-    (v34/*: any*/),
-    (v33/*: any*/)
+    (v41/*: any*/),
+    (v39/*: any*/)
   ],
   "storageKey": null
 },
-v36 = {
+v43 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentType",
@@ -2161,7 +2747,7 @@ v36 = {
   ],
   "storageKey": null
 },
-v37 = {
+v44 = {
   "alias": null,
   "args": null,
   "concreteType": "DocumentCategory",
@@ -2171,7 +2757,7 @@ v37 = {
   "selections": (v5/*: any*/),
   "storageKey": null
 },
-v38 = [
+v45 = [
   (v2/*: any*/),
   {
     "alias": null,
@@ -2180,7 +2766,7 @@ v38 = [
     "name": "fileName",
     "storageKey": null
   },
-  (v21/*: any*/),
+  (v26/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -2216,7 +2802,7 @@ v38 = [
     "name": "annotation",
     "storageKey": null
   },
-  (v37/*: any*/)
+  (v44/*: any*/)
 ];
 return {
   "fragment": {
@@ -2460,10 +3046,10 @@ return {
                     "kind": "LinkedField",
                     "name": "portDefinitions",
                     "plural": true,
-                    "selections": (v25/*: any*/),
+                    "selections": (v31/*: any*/),
                     "storageKey": null
                   },
-                  (v23/*: any*/),
+                  (v29/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -2471,13 +3057,13 @@ return {
                     "kind": "LinkedField",
                     "name": "positionDefinitions",
                     "plural": true,
-                    "selections": (v26/*: any*/),
+                    "selections": (v32/*: any*/),
                     "storageKey": null
                   }
                 ],
                 "storageKey": null
               },
-              (v35/*: any*/),
+              (v42/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -2496,8 +3082,8 @@ return {
                     "selections": [
                       (v2/*: any*/),
                       (v3/*: any*/),
-                      (v35/*: any*/),
-                      (v36/*: any*/),
+                      (v42/*: any*/),
+                      (v43/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -2516,8 +3102,8 @@ return {
                             "selections": [
                               (v2/*: any*/),
                               (v3/*: any*/),
-                              (v35/*: any*/),
-                              (v36/*: any*/),
+                              (v42/*: any*/),
+                              (v43/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -2536,8 +3122,8 @@ return {
                                     "selections": [
                                       (v2/*: any*/),
                                       (v3/*: any*/),
-                                      (v35/*: any*/),
-                                      (v36/*: any*/),
+                                      (v42/*: any*/),
+                                      (v43/*: any*/),
                                       {
                                         "alias": null,
                                         "args": null,
@@ -2556,8 +3142,8 @@ return {
                                             "selections": [
                                               (v2/*: any*/),
                                               (v3/*: any*/),
-                                              (v35/*: any*/),
-                                              (v36/*: any*/)
+                                              (v42/*: any*/),
+                                              (v43/*: any*/)
                                             ],
                                             "storageKey": null
                                           },
@@ -2579,7 +3165,7 @@ return {
                         ],
                         "storageKey": null
                       },
-                      (v29/*: any*/),
+                      (v35/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -2601,15 +3187,15 @@ return {
                     "kind": "LinkedField",
                     "name": "definition",
                     "plural": false,
-                    "selections": (v26/*: any*/),
+                    "selections": (v32/*: any*/),
                     "storageKey": null
                   },
                   (v7/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v31/*: any*/),
-              (v32/*: any*/),
+              (v37/*: any*/),
+              (v38/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -2670,7 +3256,7 @@ return {
                 ],
                 "storageKey": null
               },
-              (v34/*: any*/),
+              (v41/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -2689,7 +3275,7 @@ return {
                     "kind": "LinkedField",
                     "name": "customer",
                     "plural": false,
-                    "selections": (v30/*: any*/),
+                    "selections": (v36/*: any*/),
                     "storageKey": null
                   },
                   (v9/*: any*/)
@@ -2703,7 +3289,7 @@ return {
                 "kind": "LinkedField",
                 "name": "images",
                 "plural": true,
-                "selections": (v38/*: any*/),
+                "selections": (v45/*: any*/),
                 "storageKey": null
               },
               {
@@ -2713,7 +3299,7 @@ return {
                 "kind": "LinkedField",
                 "name": "files",
                 "plural": true,
-                "selections": (v38/*: any*/),
+                "selections": (v45/*: any*/),
                 "storageKey": null
               },
               {
@@ -2725,7 +3311,7 @@ return {
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
-                  (v21/*: any*/),
+                  (v26/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -2747,7 +3333,7 @@ return {
                     "name": "createTime",
                     "storageKey": null
                   },
-                  (v37/*: any*/)
+                  (v44/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -2761,12 +3347,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "17444d22906933fa0af43f6d08f5cfd2",
+    "cacheID": "1115aa1bb3ae60b88b3d40fca7acc7ed",
     "id": null,
     "metadata": {},
     "name": "EquipmentPropertiesCardQuery",
     "operationKind": "query",
-    "text": "query EquipmentPropertiesCardQuery(\n  $equipmentId: ID!\n) {\n  equipment: node(id: $equipmentId) {\n    __typename\n    ... on Equipment {\n      id\n      name\n      ...EquipmentPortsTable_equipment\n      equipmentType {\n        id\n        name\n        propertyTypes {\n          ...PropertyTypeFormField_propertyType\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n        positionDefinitions {\n          id\n          ...PositionDefinitionsTable_positionDefinitions\n        }\n        portDefinitions {\n          id\n        }\n      }\n      ...EquipmentBreadcrumbs_equipment\n      parentLocation {\n        id\n        name\n      }\n      parentPosition {\n        parentEquipment {\n          parentLocation {\n            id\n          }\n          id\n        }\n        id\n      }\n      ...EquipmentPositionsGrid_equipment\n      positions {\n        parentEquipment {\n          id\n        }\n        id\n      }\n      properties {\n        ...PropertyFormField_property\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n      services {\n        id\n        name\n        externalId\n        customer {\n          name\n          id\n        }\n        serviceType {\n          id\n          name\n        }\n      }\n      ...EquipmentDocumentsCard_equipment\n    }\n    id\n  }\n}\n\nfragment AddToEquipmentDialog_parentEquipment on Equipment {\n  id\n  locationHierarchy {\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment EquipmentDocumentsCard_equipment on Equipment {\n  id\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n  parentLocation {\n    locationType {\n      documentCategories {\n        id\n        name\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment EquipmentPortsTable_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n    portDefinitions {\n      id\n      name\n      index\n      visibleLabel\n      portType {\n        id\n        name\n        propertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n      }\n    }\n  }\n  ports {\n    id\n    definition {\n      id\n      name\n      index\n      visibleLabel\n      portType {\n        id\n        name\n        propertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n      }\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n    link {\n      id\n      futureState\n      ports {\n        id\n        definition {\n          id\n          name\n          visibleLabel\n          portType {\n            linkPropertyTypes {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n            }\n            id\n          }\n        }\n        parentEquipment {\n          id\n          name\n          futureState\n          equipmentType {\n            id\n            name\n          }\n          ...EquipmentBreadcrumbs_equipment\n        }\n        serviceEndpoints {\n          definition {\n            role\n            id\n          }\n          service {\n            name\n            id\n          }\n          id\n        }\n      }\n      workOrder {\n        id\n        status\n      }\n      properties {\n        id\n        propertyType {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        nodeValue {\n          __typename\n          id\n          name\n        }\n      }\n      services {\n        id\n        name\n      }\n    }\n    properties {\n      id\n      propertyType {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isInstanceProperty\n        isMandatory\n        category\n        isDeleted\n      }\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      nodeValue {\n        __typename\n        id\n        name\n      }\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  positions {\n    attachedEquipment {\n      id\n      name\n      ports {\n        id\n        definition {\n          id\n          name\n          index\n          visibleLabel\n          portType {\n            id\n            name\n            propertyTypes {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n            }\n            linkPropertyTypes {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n            }\n          }\n        }\n        parentEquipment {\n          id\n          name\n          equipmentType {\n            id\n            name\n          }\n        }\n        link {\n          id\n          futureState\n          ports {\n            id\n            definition {\n              id\n              name\n              visibleLabel\n              portType {\n                linkPropertyTypes {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                }\n                id\n              }\n            }\n            parentEquipment {\n              id\n              name\n              futureState\n              equipmentType {\n                id\n                name\n              }\n              ...EquipmentBreadcrumbs_equipment\n            }\n            serviceEndpoints {\n              definition {\n                role\n                id\n              }\n              service {\n                name\n                id\n              }\n              id\n            }\n          }\n          workOrder {\n            id\n            status\n          }\n          properties {\n            id\n            propertyType {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n            }\n            stringValue\n            intValue\n            floatValue\n            booleanValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            nodeValue {\n              __typename\n              id\n              name\n            }\n          }\n          services {\n            id\n            name\n          }\n        }\n        properties {\n          id\n          propertyType {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isInstanceProperty\n            isMandatory\n            category\n            isDeleted\n          }\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          nodeValue {\n            __typename\n            id\n            name\n          }\n        }\n        serviceEndpoints {\n          definition {\n            role\n            id\n          }\n          service {\n            name\n            id\n          }\n          id\n        }\n      }\n      equipmentType {\n        portDefinitions {\n          id\n          name\n          visibleLabel\n          bandwidth\n        }\n        id\n      }\n      positions {\n        attachedEquipment {\n          id\n          name\n          ports {\n            id\n            definition {\n              id\n              name\n              index\n              visibleLabel\n              portType {\n                id\n                name\n                propertyTypes {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                }\n                linkPropertyTypes {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                }\n              }\n            }\n            parentEquipment {\n              id\n              name\n              equipmentType {\n                id\n                name\n              }\n            }\n            link {\n              id\n              futureState\n              ports {\n                id\n                definition {\n                  id\n                  name\n                  visibleLabel\n                  portType {\n                    linkPropertyTypes {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                    }\n                    id\n                  }\n                }\n                parentEquipment {\n                  id\n                  name\n                  futureState\n                  equipmentType {\n                    id\n                    name\n                  }\n                  ...EquipmentBreadcrumbs_equipment\n                }\n                serviceEndpoints {\n                  definition {\n                    role\n                    id\n                  }\n                  service {\n                    name\n                    id\n                  }\n                  id\n                }\n              }\n              workOrder {\n                id\n                status\n              }\n              properties {\n                id\n                propertyType {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                }\n                stringValue\n                intValue\n                floatValue\n                booleanValue\n                latitudeValue\n                longitudeValue\n                rangeFromValue\n                rangeToValue\n                nodeValue {\n                  __typename\n                  id\n                  name\n                }\n              }\n              services {\n                id\n                name\n              }\n            }\n            properties {\n              id\n              propertyType {\n                id\n                name\n                type\n                nodeType\n                index\n                stringValue\n                intValue\n                booleanValue\n                floatValue\n                latitudeValue\n                longitudeValue\n                rangeFromValue\n                rangeToValue\n                isEditable\n                isInstanceProperty\n                isMandatory\n                category\n                isDeleted\n              }\n              stringValue\n              intValue\n              floatValue\n              booleanValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              nodeValue {\n                __typename\n                id\n                name\n              }\n            }\n            serviceEndpoints {\n              definition {\n                role\n                id\n              }\n              service {\n                name\n                id\n              }\n              id\n            }\n          }\n          equipmentType {\n            portDefinitions {\n              id\n              name\n              visibleLabel\n              bandwidth\n            }\n            id\n          }\n          positions {\n            attachedEquipment {\n              id\n              name\n              ports {\n                id\n                definition {\n                  id\n                  name\n                  index\n                  visibleLabel\n                  portType {\n                    id\n                    name\n                    propertyTypes {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                    }\n                    linkPropertyTypes {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                    }\n                  }\n                }\n                parentEquipment {\n                  id\n                  name\n                  equipmentType {\n                    id\n                    name\n                  }\n                }\n                link {\n                  id\n                  futureState\n                  ports {\n                    id\n                    definition {\n                      id\n                      name\n                      visibleLabel\n                      portType {\n                        linkPropertyTypes {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                        }\n                        id\n                      }\n                    }\n                    parentEquipment {\n                      id\n                      name\n                      futureState\n                      equipmentType {\n                        id\n                        name\n                      }\n                      ...EquipmentBreadcrumbs_equipment\n                    }\n                    serviceEndpoints {\n                      definition {\n                        role\n                        id\n                      }\n                      service {\n                        name\n                        id\n                      }\n                      id\n                    }\n                  }\n                  workOrder {\n                    id\n                    status\n                  }\n                  properties {\n                    id\n                    propertyType {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                    }\n                    stringValue\n                    intValue\n                    floatValue\n                    booleanValue\n                    latitudeValue\n                    longitudeValue\n                    rangeFromValue\n                    rangeToValue\n                    nodeValue {\n                      __typename\n                      id\n                      name\n                    }\n                  }\n                  services {\n                    id\n                    name\n                  }\n                }\n                properties {\n                  id\n                  propertyType {\n                    id\n                    name\n                    type\n                    nodeType\n                    index\n                    stringValue\n                    intValue\n                    booleanValue\n                    floatValue\n                    latitudeValue\n                    longitudeValue\n                    rangeFromValue\n                    rangeToValue\n                    isEditable\n                    isInstanceProperty\n                    isMandatory\n                    category\n                    isDeleted\n                  }\n                  stringValue\n                  intValue\n                  floatValue\n                  booleanValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  nodeValue {\n                    __typename\n                    id\n                    name\n                  }\n                }\n                serviceEndpoints {\n                  definition {\n                    role\n                    id\n                  }\n                  service {\n                    name\n                    id\n                  }\n                  id\n                }\n              }\n              equipmentType {\n                portDefinitions {\n                  id\n                  name\n                  visibleLabel\n                  bandwidth\n                }\n                id\n              }\n              positions {\n                attachedEquipment {\n                  id\n                  name\n                  ports {\n                    id\n                    definition {\n                      id\n                      name\n                      index\n                      visibleLabel\n                      portType {\n                        id\n                        name\n                        propertyTypes {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                        }\n                        linkPropertyTypes {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                        }\n                      }\n                    }\n                    parentEquipment {\n                      id\n                      name\n                      equipmentType {\n                        id\n                        name\n                      }\n                    }\n                    link {\n                      id\n                      futureState\n                      ports {\n                        id\n                        definition {\n                          id\n                          name\n                          visibleLabel\n                          portType {\n                            linkPropertyTypes {\n                              id\n                              name\n                              type\n                              nodeType\n                              index\n                              stringValue\n                              intValue\n                              booleanValue\n                              floatValue\n                              latitudeValue\n                              longitudeValue\n                              rangeFromValue\n                              rangeToValue\n                              isEditable\n                              isInstanceProperty\n                              isMandatory\n                              category\n                              isDeleted\n                            }\n                            id\n                          }\n                        }\n                        parentEquipment {\n                          id\n                          name\n                          futureState\n                          equipmentType {\n                            id\n                            name\n                          }\n                          ...EquipmentBreadcrumbs_equipment\n                        }\n                        serviceEndpoints {\n                          definition {\n                            role\n                            id\n                          }\n                          service {\n                            name\n                            id\n                          }\n                          id\n                        }\n                      }\n                      workOrder {\n                        id\n                        status\n                      }\n                      properties {\n                        id\n                        propertyType {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                        }\n                        stringValue\n                        intValue\n                        floatValue\n                        booleanValue\n                        latitudeValue\n                        longitudeValue\n                        rangeFromValue\n                        rangeToValue\n                        nodeValue {\n                          __typename\n                          id\n                          name\n                        }\n                      }\n                      services {\n                        id\n                        name\n                      }\n                    }\n                    properties {\n                      id\n                      propertyType {\n                        id\n                        name\n                        type\n                        nodeType\n                        index\n                        stringValue\n                        intValue\n                        booleanValue\n                        floatValue\n                        latitudeValue\n                        longitudeValue\n                        rangeFromValue\n                        rangeToValue\n                        isEditable\n                        isInstanceProperty\n                        isMandatory\n                        category\n                        isDeleted\n                      }\n                      stringValue\n                      intValue\n                      floatValue\n                      booleanValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      nodeValue {\n                        __typename\n                        id\n                        name\n                      }\n                    }\n                    serviceEndpoints {\n                      definition {\n                        role\n                        id\n                      }\n                      service {\n                        name\n                        id\n                      }\n                      id\n                    }\n                  }\n                  equipmentType {\n                    portDefinitions {\n                      id\n                      name\n                      visibleLabel\n                      bandwidth\n                    }\n                    id\n                  }\n                }\n                id\n              }\n            }\n            id\n          }\n        }\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment EquipmentPositionsGrid_equipment on Equipment {\n  id\n  ...AddToEquipmentDialog_parentEquipment\n  positions {\n    id\n    definition {\n      id\n      name\n      index\n      visibleLabel\n    }\n    attachedEquipment {\n      id\n      name\n      futureState\n      services {\n        id\n      }\n    }\n    parentEquipment {\n      id\n    }\n  }\n  equipmentType {\n    positionDefinitions {\n      id\n      name\n      index\n      visibleLabel\n    }\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  documentCategory {\n    id\n    name\n  }\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  documentCategory {\n    id\n    name\n  }\n  ...HyperlinkTableMenu_hyperlink\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {\n  id\n  name\n  index\n  visibleLabel\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
+    "text": "query EquipmentPropertiesCardQuery(\n  $equipmentId: ID!\n) {\n  equipment: node(id: $equipmentId) {\n    __typename\n    ... on Equipment {\n      id\n      name\n      ...EquipmentPortsTable_equipment\n      equipmentType {\n        id\n        name\n        propertyTypes {\n          ...PropertyTypeFormField_propertyType\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n        positionDefinitions {\n          id\n          ...PositionDefinitionsTable_positionDefinitions\n        }\n        portDefinitions {\n          id\n        }\n      }\n      ...EquipmentBreadcrumbs_equipment\n      parentLocation {\n        id\n        name\n      }\n      parentPosition {\n        parentEquipment {\n          parentLocation {\n            id\n          }\n          id\n        }\n        id\n      }\n      ...EquipmentPositionsGrid_equipment\n      positions {\n        parentEquipment {\n          id\n        }\n        id\n      }\n      properties {\n        ...PropertyFormField_property\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n      services {\n        id\n        name\n        externalId\n        customer {\n          name\n          id\n        }\n        serviceType {\n          id\n          name\n        }\n      }\n      ...EquipmentDocumentsCard_equipment\n    }\n    id\n  }\n}\n\nfragment AddToEquipmentDialog_parentEquipment on Equipment {\n  id\n  locationHierarchy {\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment EquipmentDocumentsCard_equipment on Equipment {\n  id\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n  parentLocation {\n    locationType {\n      documentCategories {\n        id\n        name\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment EquipmentPortsTable_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n    portDefinitions {\n      id\n      name\n      index\n      visibleLabel\n      portType {\n        id\n        name\n        propertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n      }\n    }\n  }\n  ports {\n    id\n    definition {\n      id\n      name\n      index\n      visibleLabel\n      portType {\n        id\n        name\n        propertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n      }\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n    link {\n      id\n      futureState\n      ports {\n        id\n        definition {\n          id\n          name\n          visibleLabel\n          portType {\n            linkPropertyTypes {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n            }\n            id\n          }\n        }\n        parentEquipment {\n          id\n          name\n          futureState\n          equipmentType {\n            id\n            name\n          }\n          ...EquipmentBreadcrumbs_equipment\n        }\n        serviceEndpoints {\n          definition {\n            role\n            id\n          }\n          service {\n            name\n            id\n          }\n          id\n        }\n      }\n      workOrder {\n        id\n        status\n      }\n      properties {\n        id\n        propertyTypeValue {\n          id\n          name\n        }\n        propertyType {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n          parentPropertyType {\n            id\n            name\n          }\n          propertyTypeValues {\n            id\n            isDeleted\n            name\n          }\n          dependencePropertyTypes {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isMandatory\n            isInstanceProperty\n            isDeleted\n            category\n            propertyTypeValues {\n              id\n              isDeleted\n              name\n              parentPropertyTypeValue {\n                id\n                isDeleted\n                name\n              }\n            }\n          }\n        }\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        nodeValue {\n          __typename\n          id\n          name\n        }\n      }\n      services {\n        id\n        name\n      }\n    }\n    properties {\n      id\n      propertyTypeValue {\n        id\n        name\n      }\n      propertyType {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isInstanceProperty\n        isMandatory\n        category\n        isDeleted\n        parentPropertyType {\n          id\n          name\n        }\n        propertyTypeValues {\n          id\n          isDeleted\n          name\n        }\n        dependencePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n          propertyTypeValues {\n            id\n            isDeleted\n            name\n            parentPropertyTypeValue {\n              id\n              isDeleted\n              name\n            }\n          }\n        }\n      }\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      nodeValue {\n        __typename\n        id\n        name\n      }\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  positions {\n    attachedEquipment {\n      id\n      name\n      ports {\n        id\n        definition {\n          id\n          name\n          index\n          visibleLabel\n          portType {\n            id\n            name\n            propertyTypes {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n            }\n            linkPropertyTypes {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n            }\n          }\n        }\n        parentEquipment {\n          id\n          name\n          equipmentType {\n            id\n            name\n          }\n        }\n        link {\n          id\n          futureState\n          ports {\n            id\n            definition {\n              id\n              name\n              visibleLabel\n              portType {\n                linkPropertyTypes {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                }\n                id\n              }\n            }\n            parentEquipment {\n              id\n              name\n              futureState\n              equipmentType {\n                id\n                name\n              }\n              ...EquipmentBreadcrumbs_equipment\n            }\n            serviceEndpoints {\n              definition {\n                role\n                id\n              }\n              service {\n                name\n                id\n              }\n              id\n            }\n          }\n          workOrder {\n            id\n            status\n          }\n          properties {\n            id\n            propertyTypeValue {\n              id\n              name\n            }\n            propertyType {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isInstanceProperty\n              isMandatory\n              category\n              isDeleted\n              parentPropertyType {\n                id\n                name\n              }\n              propertyTypeValues {\n                id\n                isDeleted\n                name\n              }\n              dependencePropertyTypes {\n                id\n                name\n                type\n                nodeType\n                index\n                stringValue\n                intValue\n                booleanValue\n                floatValue\n                latitudeValue\n                longitudeValue\n                rangeFromValue\n                rangeToValue\n                isEditable\n                isMandatory\n                isInstanceProperty\n                isDeleted\n                category\n                propertyTypeValues {\n                  id\n                  isDeleted\n                  name\n                  parentPropertyTypeValue {\n                    id\n                    isDeleted\n                    name\n                  }\n                }\n              }\n            }\n            stringValue\n            intValue\n            floatValue\n            booleanValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            nodeValue {\n              __typename\n              id\n              name\n            }\n          }\n          services {\n            id\n            name\n          }\n        }\n        properties {\n          id\n          propertyTypeValue {\n            id\n            name\n          }\n          propertyType {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isInstanceProperty\n            isMandatory\n            category\n            isDeleted\n            parentPropertyType {\n              id\n              name\n            }\n            propertyTypeValues {\n              id\n              isDeleted\n              name\n            }\n            dependencePropertyTypes {\n              id\n              name\n              type\n              nodeType\n              index\n              stringValue\n              intValue\n              booleanValue\n              floatValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              isEditable\n              isMandatory\n              isInstanceProperty\n              isDeleted\n              category\n              propertyTypeValues {\n                id\n                isDeleted\n                name\n                parentPropertyTypeValue {\n                  id\n                  isDeleted\n                  name\n                }\n              }\n            }\n          }\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          nodeValue {\n            __typename\n            id\n            name\n          }\n        }\n        serviceEndpoints {\n          definition {\n            role\n            id\n          }\n          service {\n            name\n            id\n          }\n          id\n        }\n      }\n      equipmentType {\n        portDefinitions {\n          id\n          name\n          visibleLabel\n          bandwidth\n        }\n        id\n      }\n      positions {\n        attachedEquipment {\n          id\n          name\n          ports {\n            id\n            definition {\n              id\n              name\n              index\n              visibleLabel\n              portType {\n                id\n                name\n                propertyTypes {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                }\n                linkPropertyTypes {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                }\n              }\n            }\n            parentEquipment {\n              id\n              name\n              equipmentType {\n                id\n                name\n              }\n            }\n            link {\n              id\n              futureState\n              ports {\n                id\n                definition {\n                  id\n                  name\n                  visibleLabel\n                  portType {\n                    linkPropertyTypes {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                    }\n                    id\n                  }\n                }\n                parentEquipment {\n                  id\n                  name\n                  futureState\n                  equipmentType {\n                    id\n                    name\n                  }\n                  ...EquipmentBreadcrumbs_equipment\n                }\n                serviceEndpoints {\n                  definition {\n                    role\n                    id\n                  }\n                  service {\n                    name\n                    id\n                  }\n                  id\n                }\n              }\n              workOrder {\n                id\n                status\n              }\n              properties {\n                id\n                propertyTypeValue {\n                  id\n                  name\n                }\n                propertyType {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isInstanceProperty\n                  isMandatory\n                  category\n                  isDeleted\n                  parentPropertyType {\n                    id\n                    name\n                  }\n                  propertyTypeValues {\n                    id\n                    isDeleted\n                    name\n                  }\n                  dependencePropertyTypes {\n                    id\n                    name\n                    type\n                    nodeType\n                    index\n                    stringValue\n                    intValue\n                    booleanValue\n                    floatValue\n                    latitudeValue\n                    longitudeValue\n                    rangeFromValue\n                    rangeToValue\n                    isEditable\n                    isMandatory\n                    isInstanceProperty\n                    isDeleted\n                    category\n                    propertyTypeValues {\n                      id\n                      isDeleted\n                      name\n                      parentPropertyTypeValue {\n                        id\n                        isDeleted\n                        name\n                      }\n                    }\n                  }\n                }\n                stringValue\n                intValue\n                floatValue\n                booleanValue\n                latitudeValue\n                longitudeValue\n                rangeFromValue\n                rangeToValue\n                nodeValue {\n                  __typename\n                  id\n                  name\n                }\n              }\n              services {\n                id\n                name\n              }\n            }\n            properties {\n              id\n              propertyTypeValue {\n                id\n                name\n              }\n              propertyType {\n                id\n                name\n                type\n                nodeType\n                index\n                stringValue\n                intValue\n                booleanValue\n                floatValue\n                latitudeValue\n                longitudeValue\n                rangeFromValue\n                rangeToValue\n                isEditable\n                isInstanceProperty\n                isMandatory\n                category\n                isDeleted\n                parentPropertyType {\n                  id\n                  name\n                }\n                propertyTypeValues {\n                  id\n                  isDeleted\n                  name\n                }\n                dependencePropertyTypes {\n                  id\n                  name\n                  type\n                  nodeType\n                  index\n                  stringValue\n                  intValue\n                  booleanValue\n                  floatValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  isEditable\n                  isMandatory\n                  isInstanceProperty\n                  isDeleted\n                  category\n                  propertyTypeValues {\n                    id\n                    isDeleted\n                    name\n                    parentPropertyTypeValue {\n                      id\n                      isDeleted\n                      name\n                    }\n                  }\n                }\n              }\n              stringValue\n              intValue\n              floatValue\n              booleanValue\n              latitudeValue\n              longitudeValue\n              rangeFromValue\n              rangeToValue\n              nodeValue {\n                __typename\n                id\n                name\n              }\n            }\n            serviceEndpoints {\n              definition {\n                role\n                id\n              }\n              service {\n                name\n                id\n              }\n              id\n            }\n          }\n          equipmentType {\n            portDefinitions {\n              id\n              name\n              visibleLabel\n              bandwidth\n            }\n            id\n          }\n          positions {\n            attachedEquipment {\n              id\n              name\n              ports {\n                id\n                definition {\n                  id\n                  name\n                  index\n                  visibleLabel\n                  portType {\n                    id\n                    name\n                    propertyTypes {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                    }\n                    linkPropertyTypes {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                    }\n                  }\n                }\n                parentEquipment {\n                  id\n                  name\n                  equipmentType {\n                    id\n                    name\n                  }\n                }\n                link {\n                  id\n                  futureState\n                  ports {\n                    id\n                    definition {\n                      id\n                      name\n                      visibleLabel\n                      portType {\n                        linkPropertyTypes {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                        }\n                        id\n                      }\n                    }\n                    parentEquipment {\n                      id\n                      name\n                      futureState\n                      equipmentType {\n                        id\n                        name\n                      }\n                      ...EquipmentBreadcrumbs_equipment\n                    }\n                    serviceEndpoints {\n                      definition {\n                        role\n                        id\n                      }\n                      service {\n                        name\n                        id\n                      }\n                      id\n                    }\n                  }\n                  workOrder {\n                    id\n                    status\n                  }\n                  properties {\n                    id\n                    propertyTypeValue {\n                      id\n                      name\n                    }\n                    propertyType {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isInstanceProperty\n                      isMandatory\n                      category\n                      isDeleted\n                      parentPropertyType {\n                        id\n                        name\n                      }\n                      propertyTypeValues {\n                        id\n                        isDeleted\n                        name\n                      }\n                      dependencePropertyTypes {\n                        id\n                        name\n                        type\n                        nodeType\n                        index\n                        stringValue\n                        intValue\n                        booleanValue\n                        floatValue\n                        latitudeValue\n                        longitudeValue\n                        rangeFromValue\n                        rangeToValue\n                        isEditable\n                        isMandatory\n                        isInstanceProperty\n                        isDeleted\n                        category\n                        propertyTypeValues {\n                          id\n                          isDeleted\n                          name\n                          parentPropertyTypeValue {\n                            id\n                            isDeleted\n                            name\n                          }\n                        }\n                      }\n                    }\n                    stringValue\n                    intValue\n                    floatValue\n                    booleanValue\n                    latitudeValue\n                    longitudeValue\n                    rangeFromValue\n                    rangeToValue\n                    nodeValue {\n                      __typename\n                      id\n                      name\n                    }\n                  }\n                  services {\n                    id\n                    name\n                  }\n                }\n                properties {\n                  id\n                  propertyTypeValue {\n                    id\n                    name\n                  }\n                  propertyType {\n                    id\n                    name\n                    type\n                    nodeType\n                    index\n                    stringValue\n                    intValue\n                    booleanValue\n                    floatValue\n                    latitudeValue\n                    longitudeValue\n                    rangeFromValue\n                    rangeToValue\n                    isEditable\n                    isInstanceProperty\n                    isMandatory\n                    category\n                    isDeleted\n                    parentPropertyType {\n                      id\n                      name\n                    }\n                    propertyTypeValues {\n                      id\n                      isDeleted\n                      name\n                    }\n                    dependencePropertyTypes {\n                      id\n                      name\n                      type\n                      nodeType\n                      index\n                      stringValue\n                      intValue\n                      booleanValue\n                      floatValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      isEditable\n                      isMandatory\n                      isInstanceProperty\n                      isDeleted\n                      category\n                      propertyTypeValues {\n                        id\n                        isDeleted\n                        name\n                        parentPropertyTypeValue {\n                          id\n                          isDeleted\n                          name\n                        }\n                      }\n                    }\n                  }\n                  stringValue\n                  intValue\n                  floatValue\n                  booleanValue\n                  latitudeValue\n                  longitudeValue\n                  rangeFromValue\n                  rangeToValue\n                  nodeValue {\n                    __typename\n                    id\n                    name\n                  }\n                }\n                serviceEndpoints {\n                  definition {\n                    role\n                    id\n                  }\n                  service {\n                    name\n                    id\n                  }\n                  id\n                }\n              }\n              equipmentType {\n                portDefinitions {\n                  id\n                  name\n                  visibleLabel\n                  bandwidth\n                }\n                id\n              }\n              positions {\n                attachedEquipment {\n                  id\n                  name\n                  ports {\n                    id\n                    definition {\n                      id\n                      name\n                      index\n                      visibleLabel\n                      portType {\n                        id\n                        name\n                        propertyTypes {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                        }\n                        linkPropertyTypes {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                        }\n                      }\n                    }\n                    parentEquipment {\n                      id\n                      name\n                      equipmentType {\n                        id\n                        name\n                      }\n                    }\n                    link {\n                      id\n                      futureState\n                      ports {\n                        id\n                        definition {\n                          id\n                          name\n                          visibleLabel\n                          portType {\n                            linkPropertyTypes {\n                              id\n                              name\n                              type\n                              nodeType\n                              index\n                              stringValue\n                              intValue\n                              booleanValue\n                              floatValue\n                              latitudeValue\n                              longitudeValue\n                              rangeFromValue\n                              rangeToValue\n                              isEditable\n                              isInstanceProperty\n                              isMandatory\n                              category\n                              isDeleted\n                            }\n                            id\n                          }\n                        }\n                        parentEquipment {\n                          id\n                          name\n                          futureState\n                          equipmentType {\n                            id\n                            name\n                          }\n                          ...EquipmentBreadcrumbs_equipment\n                        }\n                        serviceEndpoints {\n                          definition {\n                            role\n                            id\n                          }\n                          service {\n                            name\n                            id\n                          }\n                          id\n                        }\n                      }\n                      workOrder {\n                        id\n                        status\n                      }\n                      properties {\n                        id\n                        propertyTypeValue {\n                          id\n                          name\n                        }\n                        propertyType {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isInstanceProperty\n                          isMandatory\n                          category\n                          isDeleted\n                          parentPropertyType {\n                            id\n                            name\n                          }\n                          propertyTypeValues {\n                            id\n                            isDeleted\n                            name\n                          }\n                          dependencePropertyTypes {\n                            id\n                            name\n                            type\n                            nodeType\n                            index\n                            stringValue\n                            intValue\n                            booleanValue\n                            floatValue\n                            latitudeValue\n                            longitudeValue\n                            rangeFromValue\n                            rangeToValue\n                            isEditable\n                            isMandatory\n                            isInstanceProperty\n                            isDeleted\n                            category\n                            propertyTypeValues {\n                              id\n                              isDeleted\n                              name\n                              parentPropertyTypeValue {\n                                id\n                                isDeleted\n                                name\n                              }\n                            }\n                          }\n                        }\n                        stringValue\n                        intValue\n                        floatValue\n                        booleanValue\n                        latitudeValue\n                        longitudeValue\n                        rangeFromValue\n                        rangeToValue\n                        nodeValue {\n                          __typename\n                          id\n                          name\n                        }\n                      }\n                      services {\n                        id\n                        name\n                      }\n                    }\n                    properties {\n                      id\n                      propertyTypeValue {\n                        id\n                        name\n                      }\n                      propertyType {\n                        id\n                        name\n                        type\n                        nodeType\n                        index\n                        stringValue\n                        intValue\n                        booleanValue\n                        floatValue\n                        latitudeValue\n                        longitudeValue\n                        rangeFromValue\n                        rangeToValue\n                        isEditable\n                        isInstanceProperty\n                        isMandatory\n                        category\n                        isDeleted\n                        parentPropertyType {\n                          id\n                          name\n                        }\n                        propertyTypeValues {\n                          id\n                          isDeleted\n                          name\n                        }\n                        dependencePropertyTypes {\n                          id\n                          name\n                          type\n                          nodeType\n                          index\n                          stringValue\n                          intValue\n                          booleanValue\n                          floatValue\n                          latitudeValue\n                          longitudeValue\n                          rangeFromValue\n                          rangeToValue\n                          isEditable\n                          isMandatory\n                          isInstanceProperty\n                          isDeleted\n                          category\n                          propertyTypeValues {\n                            id\n                            isDeleted\n                            name\n                            parentPropertyTypeValue {\n                              id\n                              isDeleted\n                              name\n                            }\n                          }\n                        }\n                      }\n                      stringValue\n                      intValue\n                      floatValue\n                      booleanValue\n                      latitudeValue\n                      longitudeValue\n                      rangeFromValue\n                      rangeToValue\n                      nodeValue {\n                        __typename\n                        id\n                        name\n                      }\n                    }\n                    serviceEndpoints {\n                      definition {\n                        role\n                        id\n                      }\n                      service {\n                        name\n                        id\n                      }\n                      id\n                    }\n                  }\n                  equipmentType {\n                    portDefinitions {\n                      id\n                      name\n                      visibleLabel\n                      bandwidth\n                    }\n                    id\n                  }\n                }\n                id\n              }\n            }\n            id\n          }\n        }\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment EquipmentPositionsGrid_equipment on Equipment {\n  id\n  ...AddToEquipmentDialog_parentEquipment\n  positions {\n    id\n    definition {\n      id\n      name\n      index\n      visibleLabel\n    }\n    attachedEquipment {\n      id\n      name\n      futureState\n      services {\n        id\n      }\n    }\n    parentEquipment {\n      id\n    }\n  }\n  equipmentType {\n    positionDefinitions {\n      id\n      name\n      index\n      visibleLabel\n    }\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  documentCategory {\n    id\n    name\n  }\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  documentCategory {\n    id\n    name\n  }\n  ...HyperlinkTableMenu_hyperlink\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {\n  id\n  name\n  index\n  visibleLabel\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyTypeValue {\n    id\n    name\n  }\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n    parentPropertyType {\n      id\n      name\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
   }
 };
 })();

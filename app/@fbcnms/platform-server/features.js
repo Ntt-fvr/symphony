@@ -271,7 +271,7 @@ export const arrayConfigs = [
   },
   {
     id: 'property_combo',
-    title: 'Combo de Propiedades',
+    title: 'Property Combo',
     enabledByDefault: false,
   },
 ];

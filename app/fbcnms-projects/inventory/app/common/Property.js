@@ -105,6 +105,7 @@ export const toPropertyInput = (properties: Array<Property>): Array<any> => {
     .map(property => ({
       ...property,
       propertyTypeID: property.propertyType.id,
+      propertyTypeValue: undefined,
     }))
     .map(propInput => {
       const {propertyType: _, ...newPropInput} = propInput;
@@ -139,7 +140,7 @@ export const toMutableProperty = (
   longitudeValue: immutableProperty.longitudeValue,
   rangeFromValue: immutableProperty.rangeFromValue,
   rangeToValue: immutableProperty.rangeToValue,
-  propertyTypeValues: immutableProperty.propertyTypeValues,
+  propertyTypeValue: immutableProperty.propertyTypeValue,
   nodeValue:
     immutableProperty.nodeValue != null
       ? {
