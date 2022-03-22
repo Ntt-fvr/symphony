@@ -36,4 +36,4 @@ class AddWorkOrderInput(DataClassJsonMixin):
     priority: Optional[WorkOrderPriority] = None
     duration: Optional[Number] = None
     dueDate: Optional[datetime] = None
-    scheduledAt: Optional[datetime] = None
+    #scheduledAt: Optional[datetime] = None

@@ -14,24 +14,24 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type RemoveResourceRelationshipMutationVariables = {|
+export type RemoveResourceTypeRelationshipMutationVariables = {|
   id: string
 |};
-export type RemoveResourceRelationshipMutationResponse = {|
-  +removeResourceRelationship: string
+export type RemoveResourceTypeRelationshipMutationResponse = {|
+  +removeResourceTypeRelationship: string
 |};
-export type RemoveResourceRelationshipMutation = {|
-  variables: RemoveResourceRelationshipMutationVariables,
-  response: RemoveResourceRelationshipMutationResponse,
+export type RemoveResourceTypeRelationshipMutation = {|
+  variables: RemoveResourceTypeRelationshipMutationVariables,
+  response: RemoveResourceTypeRelationshipMutationResponse,
 |};
 */
 
 
 /*
-mutation RemoveResourceRelationshipMutation(
+mutation RemoveResourceTypeRelationshipMutation(
   $id: ID!
 ) {
-  removeResourceRelationship(id: $id)
+  removeResourceTypeRelationship(id: $id)
 }
 */
 
@@ -54,7 +54,7 @@ v1 = [
       }
     ],
     "kind": "ScalarField",
-    "name": "removeResourceRelationship",
+    "name": "removeResourceTypeRelationship",
     "storageKey": null
   }
 ];
@@ -63,7 +63,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RemoveResourceRelationshipMutation",
+    "name": "RemoveResourceTypeRelationshipMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -72,20 +72,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RemoveResourceRelationshipMutation",
+    "name": "RemoveResourceTypeRelationshipMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a2a5fad03fca13e3a752c8c1637a54d2",
+    "cacheID": "8490e3c0bbfcc4579b4b48a00e87e5a8",
     "id": null,
     "metadata": {},
-    "name": "RemoveResourceRelationshipMutation",
+    "name": "RemoveResourceTypeRelationshipMutation",
     "operationKind": "mutation",
-    "text": "mutation RemoveResourceRelationshipMutation(\n  $id: ID!\n) {\n  removeResourceRelationship(id: $id)\n}\n"
+    "text": "mutation RemoveResourceTypeRelationshipMutation(\n  $id: ID!\n) {\n  removeResourceTypeRelationship(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'fe9056aec6940d02cd186a2997358e0d';
+(node/*: any*/).hash = '076c206f6fba81fb56f89b0de7b3272c';
 
 module.exports = node;

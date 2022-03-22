@@ -16,7 +16,16 @@ This is template for release notes
 -->
 
 ***
-## 2.4.14 - release date 02.02.2022
+## 2.5.14 - release date 02.02.2022
+### Bugs fixed
+- Recommendations Sources:
+    -`get_recommendation_sources`.
+
+***
+
+
+***
+## 2.5.14 - release date 02.02.2022
 ### Changes
 - Document category:
     -`get_document_category_by_names`.

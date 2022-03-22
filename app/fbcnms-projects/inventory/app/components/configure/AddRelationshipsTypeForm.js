@@ -8,15 +8,17 @@
  * @format
  */
 
-import type {AddResourceRelationshipsMutationVariables} from '../../mutations/__generated__/AddResourceRelationshipsMutation.graphql';
+import type {AddResourceTypeRelationshipMutationVariables} from '../../mutations/__generated__/AddResourceTypeRelationshipMutation.graphql';
 
-import AddResourceRelationshipsMutation from '../../mutations/AddResourceRelationshipsMutation';
+import _ from 'lodash';
+
+import AddResourceTypeRelationshipMutation from '../../mutations/AddResourceTypeRelationshipMutation';
 import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMessage';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
@@ -79,6 +81,8 @@ const addRelationshipsTypeForm = graphql`
         node {
           id
           name
+          resourceTypeBaseType
+          resourceTypeClass
         }
       }
     }
@@ -105,38 +109,27 @@ const AddRelationshipsTypeForm = (props: Props) => {
   const [relationships, setRelationships] = useState<Relationship>({data: {}});
   const [resourceTypeA, setResourceTypeA] = useState({data: {}});
   const [resourceTypeB, setResourceTypeB] = useState({data: {}});
-  const [filter, setFilter] = useState({});
 
-  useEffect(() => {
-    data();
-  }, []);
-
-  const data = () => {
-    fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {}).then(data => {
-      setFilter(data);
-    });
-  };
-
-  const filterClassA = id => {
+  const filterClassA = baseTypeA => {
     fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {
       filterBy: [
         {
           filterType: 'RESOURCE_TYPE_CLASS',
-          operator: 'IS_ONE_OF',
-          idSet: [id],
+          operator: 'IS',
+          typeClassValue: baseTypeA.target.value,
         },
       ],
     }).then(data => {
       setResourceTypeA(data);
     });
   };
-  const filterClassB = id => {
+  const filterClassB = baseTypeB => {
     fetchQuery(RelayEnvironment, addRelationshipsTypeForm, {
       filterBy: [
         {
           filterType: 'RESOURCE_TYPE_CLASS',
-          operator: 'IS_ONE_OF',
-          idSet: [id],
+          operator: 'IS',
+          typeClassValue: baseTypeB.target.value,
         },
       ],
     }).then(data => {
@@ -154,7 +147,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
   }
 
   function handleClick() {
-    const variables: AddResourceRelationshipsMutationVariables = {
+    const variables: AddResourceTypeRelationshipMutationVariables = {
       input: {
         resourceRelationshipType: relationships.data.resourceRelationshipTypes,
         resourceRelationshipMultiplicity:
@@ -164,7 +157,7 @@ const AddRelationshipsTypeForm = (props: Props) => {
       },
     };
     setShowChecking(true);
-    AddResourceRelationshipsMutation(variables, {
+    AddResourceTypeRelationshipMutation(variables, {
       onCompleted: () => {
         isCompleted();
         setRelationships({data: {}});
@@ -173,20 +166,22 @@ const AddRelationshipsTypeForm = (props: Props) => {
   }
 
   const handleHasError =
-    relationships?.data?.resourceTypeA === undefined &&
-    relationships?.data?.resourceTypeB === undefined;
+    relationships.data.resourceTypeA === undefined &&
+    relationships.data.resourceTypeB === undefined
+      ? false
+      : relationships.data.resourceTypeA === relationships.data.resourceTypeB;
+
+  const helperText = !relationships.data.resourceTypeA
+    ? ''
+    : relationships.data.resourceTypeA === relationships.data.resourceTypeB
+    ? 'Relationship same'
+    : '';
 
   const handleDisable = useDisabledButtonSelect(
     relationships.data,
-    4,
+    6,
     handleHasError,
   );
-
-  const helperText = !relationships?.data?.resourceTypeA
-    ? ''
-    : relationships?.data?.resourceTypeA === relationships?.data?.resourceTypeB
-    ? 'Relationship same'
-    : '';
 
   const setReturn = () => {
     setShowChecking(false);
@@ -213,17 +208,16 @@ const AddRelationshipsTypeForm = (props: Props) => {
           select
           className={classes.selectForm}
           label="Select resource class type A"
+          onChange={handleChange}
+          onClick={filterClassA}
           name="classTypeA"
           variant="outlined"
           defaultValue="">
-          {filter.resourceTypes?.edges.map((item, index) => (
-            <MenuItem
-              key={index}
-              value={item.node.resourceTypeClass.id}
-              onClick={() => filterClassA(item.node.resourceTypeClass.id)}>
-              {item.node.resourceTypeClass.name}
-            </MenuItem>
-          ))}
+          <MenuItem value={'EQUIPMENT'}>EQUIPMENT</MenuItem>
+          <MenuItem value={'SLOT'}>SLOT</MenuItem>
+          <MenuItem value={'RACK'}>RACK</MenuItem>
+          <MenuItem value={'PORT'}>PORT</MenuItem>
+          <MenuItem value={'CARD'}>CARD</MenuItem>
         </TextField>
 
         <TextField
@@ -281,17 +275,16 @@ const AddRelationshipsTypeForm = (props: Props) => {
           select
           className={classes.selectForm}
           label="Select resource class type B"
+          onChange={handleChange}
+          onClick={filterClassB}
           name="classTypeB"
           variant="outlined"
           defaultValue="">
-          {filter.resourceTypes?.edges.map((item, index) => (
-            <MenuItem
-              key={index}
-              value={item.node.resourceTypeClass.id}
-              onClick={() => filterClassB(item.node.resourceTypeClass.id)}>
-              {item.node.resourceTypeClass.name}
-            </MenuItem>
-          ))}
+          <MenuItem value={'EQUIPMENT'}>EQUIPMENT</MenuItem>
+          <MenuItem value={'SLOT'}>SLOT</MenuItem>
+          <MenuItem value={'RACK'}>RACK</MenuItem>
+          <MenuItem value={'PORT'}>PORT</MenuItem>
+          <MenuItem value={'CARD'}>CARD</MenuItem>
         </TextField>
 
         <TextField

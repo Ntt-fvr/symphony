@@ -148,13 +148,13 @@ class PsymClient(SymphonyClient):
     from.api.recommendation_category import (
             add_recommendations_category,
             edit_recommendations_category,
-            get_recommendations_categoryes,
+            get_recommendations_categories,
             remove_recommendations_category,
         )
     from.api.recommendation_sources import (
             add_recommendations_sources,
             edit_recommendations_sources,
-            get_recommendations_sourceses,
+            get_recommendations_sources,
             remove_recommendations_sources,
         )
     from.api.recommendations import (
