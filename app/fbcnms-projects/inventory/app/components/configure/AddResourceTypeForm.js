@@ -31,7 +31,7 @@ import type {DataSelector} from './ResourceTypes';
 import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 
-import {useDisabledButton} from './../assurance/common/useDisabledButton';
+import {useDisabledButton} from '../assurance/common/useDisabledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -99,7 +99,7 @@ type Props = $ReadOnly<{|
 type Resources = {
   data: {
     name: string,
-    resourceTypeclass: ResourceTypeClassKind,
+    resourceTypeClass: ResourceTypeClassKind,
     resourceTypeBaseType: ResourceTypeBaseTypeKind,
   },
 };
@@ -132,7 +132,7 @@ export default function AddResourceTypeForm(props: Props) {
     const variables: AddResourceTypeMutationVariables = {
       input: {
         name: resources.data.name,
-        resourceTypeClass: resources.data.resourceTypeclass,
+        resourceTypeClass: resources.data.resourceTypeClass,
         resourceTypeBaseType: resources.data.resourceTypeBaseType,
       },
     };
@@ -186,7 +186,7 @@ export default function AddResourceTypeForm(props: Props) {
           className={classes.select}
           label="Class"
           onChange={handleChange}
-          name="resourceTypeclass"
+          name="resourceTypeClass"
           variant="outlined"
           defaultValue="">
           {dataSelector.resourceTypeClass.map((item, index) => (
