@@ -15,8 +15,8 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type ResourceTypeBaseTypeKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "%future added value";
-export type ResourceTypeClassKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
+export type ResourceTypeBaseTypeKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
+export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "%future added value";
 export type ResourceTypeFilterType = "NAME" | "RESOURCE_TYPE_BASE_TYPE" | "RESOURCE_TYPE_CLASS" | "%future added value";
 export type ResourceTypeFilterInput = {|
   filterType: ResourceTypeFilterType,
@@ -37,6 +37,8 @@ export type AddRelationshipsTypeFormQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
+        +resourceTypeBaseType: ResourceTypeBaseTypeKind,
+        +resourceTypeClass: ResourceTypeClassKind,
       |}
     |}>
   |}
@@ -57,6 +59,8 @@ query AddRelationshipsTypeFormQuery(
       node {
         id
         name
+        resourceTypeBaseType
+        resourceTypeClass
       }
     }
   }
@@ -115,6 +119,20 @@ v1 = [
                 "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourceTypeBaseType",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourceTypeClass",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -144,16 +162,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ebee6a04a5063053da33016e56dc3ab9",
+    "cacheID": "c3379105ea468abfabd458aafeb52fa4",
     "id": null,
     "metadata": {},
     "name": "AddRelationshipsTypeFormQuery",
     "operationKind": "query",
-    "text": "query AddRelationshipsTypeFormQuery(\n  $filterBy: [ResourceTypeFilterInput!]\n) {\n  resourceTypes(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddRelationshipsTypeFormQuery(\n  $filterBy: [ResourceTypeFilterInput!]\n) {\n  resourceTypes(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'dd1e63a8cbe12ea791cb9e3527bc3fea';
+(node/*: any*/).hash = '4ac5c8098df428dda91129d1d1e3f455';
 
 module.exports = node;

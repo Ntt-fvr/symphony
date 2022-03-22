@@ -78,6 +78,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resource"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
@@ -1966,6 +1967,49 @@ func init() {
 	resourceDescName := resourceFields[0].Descriptor()
 	// resource.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	resource.NameValidator = resourceDescName.Validators[0].(func(string) error)
+	resourcepropertytypeMixin := schema.ResourcePropertyType{}.Mixin()
+	resourcepropertytype.Policy = privacy.NewPolicies(schema.ResourcePropertyType{})
+	resourcepropertytype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := resourcepropertytype.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	resourcepropertytypeMixinFields0 := resourcepropertytypeMixin[0].Fields()
+	resourcepropertytypeFields := schema.ResourcePropertyType{}.Fields()
+	_ = resourcepropertytypeFields
+	// resourcepropertytypeDescCreateTime is the schema descriptor for create_time field.
+	resourcepropertytypeDescCreateTime := resourcepropertytypeMixinFields0[0].Descriptor()
+	// resourcepropertytype.DefaultCreateTime holds the default value on creation for the create_time field.
+	resourcepropertytype.DefaultCreateTime = resourcepropertytypeDescCreateTime.Default.(func() time.Time)
+	// resourcepropertytypeDescUpdateTime is the schema descriptor for update_time field.
+	resourcepropertytypeDescUpdateTime := resourcepropertytypeMixinFields0[1].Descriptor()
+	// resourcepropertytype.DefaultUpdateTime holds the default value on creation for the update_time field.
+	resourcepropertytype.DefaultUpdateTime = resourcepropertytypeDescUpdateTime.Default.(func() time.Time)
+	// resourcepropertytype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	resourcepropertytype.UpdateDefaultUpdateTime = resourcepropertytypeDescUpdateTime.UpdateDefault.(func() time.Time)
+	// resourcepropertytypeDescIsInstanceProperty is the schema descriptor for is_instance_property field.
+	resourcepropertytypeDescIsInstanceProperty := resourcepropertytypeFields[13].Descriptor()
+	// resourcepropertytype.DefaultIsInstanceProperty holds the default value on creation for the is_instance_property field.
+	resourcepropertytype.DefaultIsInstanceProperty = resourcepropertytypeDescIsInstanceProperty.Default.(bool)
+	// resourcepropertytypeDescEditable is the schema descriptor for editable field.
+	resourcepropertytypeDescEditable := resourcepropertytypeFields[14].Descriptor()
+	// resourcepropertytype.DefaultEditable holds the default value on creation for the editable field.
+	resourcepropertytype.DefaultEditable = resourcepropertytypeDescEditable.Default.(bool)
+	// resourcepropertytypeDescMandatory is the schema descriptor for mandatory field.
+	resourcepropertytypeDescMandatory := resourcepropertytypeFields[15].Descriptor()
+	// resourcepropertytype.DefaultMandatory holds the default value on creation for the mandatory field.
+	resourcepropertytype.DefaultMandatory = resourcepropertytypeDescMandatory.Default.(bool)
+	// resourcepropertytypeDescDeleted is the schema descriptor for deleted field.
+	resourcepropertytypeDescDeleted := resourcepropertytypeFields[16].Descriptor()
+	// resourcepropertytype.DefaultDeleted holds the default value on creation for the deleted field.
+	resourcepropertytype.DefaultDeleted = resourcepropertytypeDescDeleted.Default.(bool)
+	// resourcepropertytypeDescListable is the schema descriptor for listable field.
+	resourcepropertytypeDescListable := resourcepropertytypeFields[17].Descriptor()
+	// resourcepropertytype.DefaultListable holds the default value on creation for the listable field.
+	resourcepropertytype.DefaultListable = resourcepropertytypeDescListable.Default.(bool)
 	resourcerelationshipMixin := schema.ResourceRelationship{}.Mixin()
 	resourcerelationship.Policy = privacy.NewPolicies(schema.ResourceRelationship{})
 	resourcerelationship.Hooks[0] = func(next ent.Mutator) ent.Mutator {

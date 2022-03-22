@@ -26,8 +26,8 @@ const (
 
 	// EdgeResourcetype holds the string denoting the resourcetype edge name in mutations.
 	EdgeResourcetype = "resourcetype"
-	// EdgePropertyType holds the string denoting the property_type edge name in mutations.
-	EdgePropertyType = "property_type"
+	// EdgeResourcePropertyType holds the string denoting the resource_property_type edge name in mutations.
+	EdgeResourcePropertyType = "resource_property_type"
 	// EdgeResourceSpecification holds the string denoting the resource_specification edge name in mutations.
 	EdgeResourceSpecification = "resource_specification"
 	// EdgeResourceSpecificationItems holds the string denoting the resource_specification_items edge name in mutations.
@@ -44,13 +44,13 @@ const (
 	ResourcetypeInverseTable = "resource_types"
 	// ResourcetypeColumn is the table column denoting the resourcetype relation/edge.
 	ResourcetypeColumn = "resource_type_resource_specification"
-	// PropertyTypeTable is the table the holds the property_type relation/edge.
-	PropertyTypeTable = "property_types"
-	// PropertyTypeInverseTable is the table name for the PropertyType entity.
-	// It exists in this package in order to avoid circular dependency with the "propertytype" package.
-	PropertyTypeInverseTable = "property_types"
-	// PropertyTypeColumn is the table column denoting the property_type relation/edge.
-	PropertyTypeColumn = "resource_specification_property_type"
+	// ResourcePropertyTypeTable is the table the holds the resource_property_type relation/edge.
+	ResourcePropertyTypeTable = "resource_property_types"
+	// ResourcePropertyTypeInverseTable is the table name for the ResourcePropertyType entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcepropertytype" package.
+	ResourcePropertyTypeInverseTable = "resource_property_types"
+	// ResourcePropertyTypeColumn is the table column denoting the resource_property_type relation/edge.
+	ResourcePropertyTypeColumn = "resource_specification_resource_property_type"
 	// ResourceSpecificationTable is the table the holds the resource_specification relation/edge.
 	ResourceSpecificationTable = "resource_specification_relationships"
 	// ResourceSpecificationInverseTable is the table name for the ResourceSpecificationRelationship entity.
