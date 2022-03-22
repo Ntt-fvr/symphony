@@ -45,9 +45,6 @@ const useStyles = makeStyles(() => ({
     padding: '24px 25px 34px 34px',
     margin: '0',
   },
-  relationship: {
-    margin: '32px 0',
-  },
   formField: {
     margin: '0 22px',
     '& .MuiOutlinedInput-notchedOutline': {
@@ -283,13 +280,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       </Card>
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
-          {/* <PropertyTypesTableDispatcher.Provider
-            value={propertyTypesDispatcher}> */}
-          <ExperimentalPropertyTypesTableParameters
-          // supportDelete={true}
-          // propertyTypes={propertyTypes}
-          />
-          {/* </PropertyTypesTableDispatcher.Provider> */}
+          <ExperimentalPropertyTypesTableParameters />
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (

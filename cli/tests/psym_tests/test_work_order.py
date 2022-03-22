@@ -5,7 +5,6 @@
 import random
 import string
 import time
-from build.lib.psym.common.data_class import organization
 from psym.api.organization import add_organization
 
 from psym.api.user import add_user, get_user_by_email

@@ -118,6 +118,10 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const [changeInput, setChangeInput] = useState('TXT');
   const classes = useStyles();
 
+  const typeInput = {
+    mc: 'MC',
+    txt: 'TXT',
+  };
   const handleChecked = () => {
     setChecked(!checked);
   };
@@ -134,10 +138,27 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const nameChange = ({target}) => {
     target.value;
   };
-  const chip = () => {};
   const handleOption = mc => {
-    mc === 'MC' && setChangeInput('MC');
-    mc === 'TXT' && setChangeInput('TXT');
+    mc === typeInput.mc && setChangeInput(typeInput.mc);
+    mc === typeInput.txt && setChangeInput(typeInput.txt);
+  };
+  const drag = result => {
+    {
+      const {source, destination} = result;
+      if (!destination) {
+        return;
+      }
+      if (
+        source.index === destination.index &&
+        source.droppableId === destination.droppableId
+      ) {
+        return;
+      }
+
+      setParameters(parameters =>
+        reorder(parameters, source.index, destination.index),
+      );
+    }
   };
   const onDragEnd = result => {
     {
@@ -189,15 +210,18 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
           </TableRow>
         </TableHead>
         <DroppableTableBody onDragEnd={onDragEnd}>
-          {parameters.map((item, i) => (
-            <DraggableTableRow id={item.id} index={i} key={`${i}.${item.id}`}>
+          {parameters.map((parameter, i) => (
+            <DraggableTableRow
+              id={parameter.id}
+              index={i}
+              key={`${i}.${parameter.id}`}>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
                   <TextInput
                     autoFocus={true}
                     placeholder="Name"
                     autoComplete="off"
-                    value={item.id}
+                    value={parameter.id}
                     className={classes.input}
                     onChange={nameChange}
                   />
@@ -231,7 +255,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                 {changeInput === 'MC' && (
                   <EnumPropertyValueInput
                     onChange={() => chip()}
-                    property={item}
+                    property={parameter}
                   />
                 )}
                 {changeInput === 'TXT' && (
@@ -246,7 +270,10 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
-                  <EnumPropertyValueInput onChange={chip} property={item} />
+                  <EnumPropertyValueInput
+                    onChange={chip}
+                    property={parameter}
+                  />
                 </FormField>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">

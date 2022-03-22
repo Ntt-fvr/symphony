@@ -90,12 +90,6 @@ const useStyles = makeStyles(() => ({
       backgroundColor: symphony.palette.B50,
     },
   },
-  buttonEdit: {
-    // '&.MuiButtonBase-root:hover': {
-    //   // backgroundColor: 'transparent',
-    //   color: symphony.palette.B600,
-    // },
-  },
 }));
 
 type Resource = {
@@ -145,9 +139,9 @@ export const EditResourceTypeItem = (props: Props) => {
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
-
   const resourceTypeBaseType = useFormInput(formValues.resourceTypeBaseType);
   const resourceTypeClass = useFormInput(formValues.resourceTypeClass);
+
   const resourcesNames = resources?.map(item => item.name);
 
   const dataInputsObject = [
@@ -279,10 +273,10 @@ export const EditResourceTypeItem = (props: Props) => {
                   select
                   label="Class"
                   variant="outlined"
-                  name="resourceTypeBaseType"
+                  name="resourceTypeClass"
                   fullWidth
-                  {...resourceTypeBaseType}>
-                  {dataSelector.resourceTypeBaseType.map((item, index) => (
+                  {...resourceTypeClass}>
+                  {dataSelector.resourceTypeClass.map((item, index) => (
                     <MenuItem key={index} value={item.name}>
                       {item.name.toLowerCase()}
                     </MenuItem>
@@ -297,11 +291,11 @@ export const EditResourceTypeItem = (props: Props) => {
                   select
                   label="Resource type base type"
                   variant="outlined"
-                  name="resourceTypeClass"
+                  name="resourceTypeBaseType"
                   type="string"
                   fullWidth
-                  {...resourceTypeClass}>
-                  {dataSelector.resourceTypeClass.map((item, index) => (
+                  {...resourceTypeBaseType}>
+                  {dataSelector.resourceTypeBaseType.map((item, index) => (
                     <MenuItem key={index} value={item.name}>
                       {item.name.toLowerCase()}
                     </MenuItem>

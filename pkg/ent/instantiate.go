@@ -415,6 +415,12 @@ func (c *ResourceClient) Instantiate(r *Resource) *Resource {
 }
 
 // Instantiate entity configuration.
+func (c *ResourcePropertyTypeClient) Instantiate(rpt *ResourcePropertyType) *ResourcePropertyType {
+	rpt.config = c.config
+	return rpt
+}
+
+// Instantiate entity configuration.
 func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *ResourceRelationship {
 	rr.config = c.config
 	return rr

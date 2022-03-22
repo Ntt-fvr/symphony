@@ -111,7 +111,7 @@ const DialogConfirmDelete = (props: Props) => {
             }}
             useEllipsis={true}
             color={'primary'}>
-            nombre del parameter
+            arfcndu
           </Text>
         </Grid>
         <Text
@@ -146,7 +146,6 @@ const DialogConfirmDelete = (props: Props) => {
             name="text_in"
             className={classes.textarea}
             inputProps={{maxLength: 200}}
-            // onChange={handleChange}
           />
         </Grid>
         <Grid>
@@ -169,7 +168,6 @@ const DialogConfirmDelete = (props: Props) => {
           name="text_out"
           className={classes.textarea}
           inputProps={{maxLength: 200}}
-          // onChange={handleChange}
         />
         <Grid />
       </Card>
@@ -189,7 +187,7 @@ const DialogConfirmDelete = (props: Props) => {
           className={classes.option}
           variant="contained"
           color="primary">
-          Delete
+          Save
         </Button>
       </DialogActions>
     </Dialog>
