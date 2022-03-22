@@ -37,8 +37,8 @@ type ResourceSpecification struct {
 type ResourceSpecificationEdges struct {
 	// Resourcetype holds the value of the resourcetype edge.
 	Resourcetype *ResourceType
-	// PropertyType holds the value of the property_type edge.
-	PropertyType []*PropertyType
+	// ResourcePropertyType holds the value of the resource_property_type edge.
+	ResourcePropertyType []*ResourcePropertyType
 	// ResourceSpecification holds the value of the resource_specification edge.
 	ResourceSpecification []*ResourceSpecificationRelationship
 	// ResourceSpecificationItems holds the value of the resource_specification_items edge.
@@ -64,13 +64,13 @@ func (e ResourceSpecificationEdges) ResourcetypeOrErr() (*ResourceType, error) {
 	return nil, &NotLoadedError{edge: "resourcetype"}
 }
 
-// PropertyTypeOrErr returns the PropertyType value or an error if the edge
+// ResourcePropertyTypeOrErr returns the ResourcePropertyType value or an error if the edge
 // was not loaded in eager-loading.
-func (e ResourceSpecificationEdges) PropertyTypeOrErr() ([]*PropertyType, error) {
+func (e ResourceSpecificationEdges) ResourcePropertyTypeOrErr() ([]*ResourcePropertyType, error) {
 	if e.loadedTypes[1] {
-		return e.PropertyType, nil
+		return e.ResourcePropertyType, nil
 	}
-	return nil, &NotLoadedError{edge: "property_type"}
+	return nil, &NotLoadedError{edge: "resource_property_type"}
 }
 
 // ResourceSpecificationOrErr returns the ResourceSpecification value or an error if the edge
@@ -161,9 +161,9 @@ func (rs *ResourceSpecification) QueryResourcetype() *ResourceTypeQuery {
 	return (&ResourceSpecificationClient{config: rs.config}).QueryResourcetype(rs)
 }
 
-// QueryPropertyType queries the property_type edge of the ResourceSpecification.
-func (rs *ResourceSpecification) QueryPropertyType() *PropertyTypeQuery {
-	return (&ResourceSpecificationClient{config: rs.config}).QueryPropertyType(rs)
+// QueryResourcePropertyType queries the resource_property_type edge of the ResourceSpecification.
+func (rs *ResourceSpecification) QueryResourcePropertyType() *ResourcePropertyTypeQuery {
+	return (&ResourceSpecificationClient{config: rs.config}).QueryResourcePropertyType(rs)
 }
 
 // QueryResourceSpecification queries the resource_specification edge of the ResourceSpecification.

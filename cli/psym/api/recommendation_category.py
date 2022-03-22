@@ -75,7 +75,7 @@ def edit_recommendations_category(
         editRecommendationsCategory.execute(client, input=EditRecommendationsCategoryInput(id=recommendation_category.id, name=new_name))
 
 
-def get_recommendations_categoryes(client: SymphonyClient) -> Iterator[RecommendationsCategory]:
+def get_recommendations_categories(client: SymphonyClient) -> Iterator[RecommendationsCategory]:
     """ this funtion Get Recommendations Categories
 
 

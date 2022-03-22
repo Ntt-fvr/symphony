@@ -7,12 +7,12 @@
  * @flow
  * @format
  */
-import type {RemoveResourceRelationshipMutationVariables} from '../../mutations/__generated__/RemoveResourceRelationshipMutation.graphql';
+import type {RemoveResourceTypeRelationshipMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeRelationshipMutation.graphql';
 
 import ConfigureTitle from '../assurance/common/ConfigureTitle';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import RemoveResourceRelationshipMutation from '../../mutations/RemoveResourceRelationshipMutation';
+import RemoveResourceTypeRelationshipMutation from '../../mutations/RemoveResourceTypeRelationshipMutation';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddRelationshipsTypeForm} from './AddRelationshipsTypeForm';
@@ -53,10 +53,20 @@ const useStyles = makeStyles(() => ({
 
 const RelationshipsTypesQuery = graphql`
   query RelationshipsTypesQuery {
-    resourceRelationships {
+    resourceTypeRelationships {
       edges {
         node {
           id
+          resourceRelationshipType
+          resourceRelationshipMultiplicity
+          resourceTypeA {
+            id
+            name
+          }
+          resourceTypeB {
+            id
+            name
+          }
         }
       }
     }
@@ -78,10 +88,10 @@ const RelationshipsTypes = () => {
   }, [setRelationships]);
 
   const handleRemove = id => {
-    const variables: RemoveResourceRelationshipMutationVariables = {
+    const variables: RemoveResourceTypeRelationshipMutationVariables = {
       id: id,
     };
-    RemoveResourceRelationshipMutation(variables, {
+    RemoveResourceTypeRelationshipMutation(variables, {
       onCompleted: () => isCompleted(),
     });
   };
@@ -100,7 +110,7 @@ const RelationshipsTypes = () => {
       <Grid item xs={12} lg={9}>
         <TitleTextCardsRelationships />
         <List disablePadding className={classes.listContainer}>
-          {relationships.resourceRelationships?.edges.map((item, index) => (
+          {relationships.resourceTypeRelationships?.edges.map((item, index) => (
             <RelationshipsTypeItemList
               key={index}
               handleRemove={() => handleRemove(item.node.id)}

@@ -8,7 +8,7 @@ import json
 from psym.api.recommendation_sources import (
     add_recommendations_sources,
     edit_recommendations_sources,
-    get_recommendations_sourceses,
+    get_recommendations_sources,
     remove_recommendations_sources,
 )
 
@@ -53,22 +53,22 @@ class TestRecommendationsSources(BaseTest):
  
 
     def test_get_recommendation_sourceses(self) -> None:
-        recommendation_sourceses_ = list(get_recommendations_sourceses(client=self.client))
+        recommendation_sourceses_ = list(get_recommendations_sources(client=self.client))
         self.assertEqual(len(recommendation_sourceses_), 2)
         add_recommendations_sources(
             client=self.client,
             name="RecommendationsSources_3"
         )
-        recommendation_sourceses_= list(get_recommendations_sourceses(client=self.client))
+        recommendation_sourceses_= list(get_recommendations_sources(client=self.client))
         self.assertEqual(len(recommendation_sourceses_), 3)
 
     
 
     def test_delete_RecommendationsSources(self) -> None:
-        recommendation_sourceses_ = list(get_recommendations_sourceses(client=self.client))
+        recommendation_sourceses_ = list(get_recommendations_sources(client=self.client))
         self.assertEqual(len(recommendation_sourceses_), 2)
         remove_recommendations_sources(client=self.client, id=self.test_recommendation_sources_created_2.id)
-        recommendation_sourceses_ = list(get_recommendations_sourceses(client=self.client))
+        recommendation_sourceses_ = list(get_recommendations_sources(client=self.client))
         self.assertEqual(len(recommendation_sourceses_), 1)
  
 

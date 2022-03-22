@@ -39,11 +39,13 @@ type PropertyCategory struct {
 type PropertyCategoryEdges struct {
 	// PropertiesType holds the value of the properties_type edge.
 	PropertiesType []*PropertyType
+	// ResourcePropertiesType holds the value of the resource_properties_type edge.
+	ResourcePropertiesType []*ResourcePropertyType
 	// ParameterCatalog holds the value of the parameter_catalog edge.
 	ParameterCatalog *ParameterCatalog
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // PropertiesTypeOrErr returns the PropertiesType value or an error if the edge
@@ -55,10 +57,19 @@ func (e PropertyCategoryEdges) PropertiesTypeOrErr() ([]*PropertyType, error) {
 	return nil, &NotLoadedError{edge: "properties_type"}
 }
 
+// ResourcePropertiesTypeOrErr returns the ResourcePropertiesType value or an error if the edge
+// was not loaded in eager-loading.
+func (e PropertyCategoryEdges) ResourcePropertiesTypeOrErr() ([]*ResourcePropertyType, error) {
+	if e.loadedTypes[1] {
+		return e.ResourcePropertiesType, nil
+	}
+	return nil, &NotLoadedError{edge: "resource_properties_type"}
+}
+
 // ParameterCatalogOrErr returns the ParameterCatalog value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e PropertyCategoryEdges) ParameterCatalogOrErr() (*ParameterCatalog, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.ParameterCatalog == nil {
 			// The edge parameter_catalog was loaded in eager-loading,
 			// but was not found.
@@ -134,6 +145,11 @@ func (pc *PropertyCategory) assignValues(values ...interface{}) error {
 // QueryPropertiesType queries the properties_type edge of the PropertyCategory.
 func (pc *PropertyCategory) QueryPropertiesType() *PropertyTypeQuery {
 	return (&PropertyCategoryClient{config: pc.config}).QueryPropertiesType(pc)
+}
+
+// QueryResourcePropertiesType queries the resource_properties_type edge of the PropertyCategory.
+func (pc *PropertyCategory) QueryResourcePropertiesType() *ResourcePropertyTypeQuery {
+	return (&PropertyCategoryClient{config: pc.config}).QueryResourcePropertiesType(pc)
 }
 
 // QueryParameterCatalog queries the parameter_catalog edge of the PropertyCategory.

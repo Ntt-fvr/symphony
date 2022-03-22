@@ -34,4 +34,5 @@ class PropertyTypeInput(DataClassJsonMixin):
     isInstanceProperty: Optional[bool] = None
     isMandatory: Optional[bool] = None
     isDeleted: Optional[bool] = None
+    propertyCategoryID: Optional[str] = None
     isListable: Optional[bool] = None

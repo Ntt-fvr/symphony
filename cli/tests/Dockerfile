@@ -4,7 +4,7 @@
 
 FROM python:3.8
 
-RUN pip install unittest-xml-reporting websocket-client, requests-toolbelt
+RUN pip install unittest-xml-reporting websocket-client requests-toolbelt
 
 COPY cli/ ./
 RUN python setup.py -q install
