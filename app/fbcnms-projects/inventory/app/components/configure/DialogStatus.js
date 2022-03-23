@@ -133,7 +133,6 @@ const DialogStatus = (props: Props) => {
           name="text_out"
           className={classes.textarea}
           inputProps={{maxLength: 200}}
-          // onChange={handleChange}
         />
         <Grid />
       </Card>

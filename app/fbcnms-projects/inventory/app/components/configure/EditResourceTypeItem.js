@@ -21,7 +21,6 @@ import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import CardPlusDnD from '../CardPlusDnD';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Divider from '@material-ui/core/Divider';
 import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
