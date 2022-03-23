@@ -275,9 +275,7 @@ class Inventory extends React.Component<Props, State> {
                     variant="contained"
                     color="primary"
                     className={classes.buttons}
-                    onClick={() => handelModal()}
-                    // disabled={handleDisable} onClick={() => openModal()}
-                  >
+                    onClick={() => handelModal()}>
                     Submit
                   </Button>
                 </Grid>

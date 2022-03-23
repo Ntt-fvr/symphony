@@ -9,10 +9,9 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
-import AppContext from '@fbcnms/ui/context/AppContext';
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
 import {ChangeRequestTypes} from '../../components/configuration_management/ChangeRequestTypes';
@@ -58,9 +57,7 @@ export default function Configure() {
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
-  const servicesEnabled = useContext(AppContext).isFeatureEnabled(
-    'configuration_management',
-  );
+
   const tabBars: Array<RouteTab> = useMemo(
     () => [
       {
@@ -79,7 +76,7 @@ export default function Configure() {
         path: 'change_request_types',
       },
     ],
-    [servicesEnabled],
+    [],
   );
   const tabMatch = location.pathname.match(/([^\/]*)\/*$/);
   const tabIndex =

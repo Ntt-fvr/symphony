@@ -193,7 +193,6 @@ const ChangeRequestTypes = () => {
                 boxElementsClass={classes.inExpandingPanelFix}
                 commentsLogClass={classes.commentsLog}
                 relatedEntityId={''}
-                //Change type entity from back
                 relatedEntityType="%future added value"
                 // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                 activities={[]}

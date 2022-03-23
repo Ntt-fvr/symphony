@@ -19,7 +19,7 @@ import MomentUtils from '@date-io/moment';
 import Radio from '@material-ui/core/Radio';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {FormField} from './change_request/common/FormField';
+import {FormField} from './configuration_management/common/FormField';
 import {Grid} from '@material-ui/core';
 import {
   KeyboardTimePicker,
