@@ -2371,6 +2371,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "quantity", Type: field.TypeInt, Unique: true},
 		{Name: "resource_type_resource_specification", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceSpecificationsTable holds the schema information for the "resource_specifications" table.
@@ -2381,7 +2382,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "resource_specifications_resource_types_resource_specification",
-				Columns: []*schema.Column{ResourceSpecificationsColumns[4]},
+				Columns: []*schema.Column{ResourceSpecificationsColumns[5]},
 
 				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2447,7 +2448,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "resource_type_class", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "SLOT", "RACK", "PORT", "CARD"}},
+		{Name: "resource_type_class", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "SLOT", "RACK", "PORT", "CARD", "VLAN"}},
 		{Name: "resource_type_base_type", Type: field.TypeEnum, Enums: []string{"LOGICAL_RESOURCE", "PHYSICAL_RESOURCE", "VIRTUAL_RESOURCE"}},
 	}
 	// ResourceTypesTable holds the schema information for the "resource_types" table.

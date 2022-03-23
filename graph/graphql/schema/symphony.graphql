@@ -9292,6 +9292,7 @@ enum ResourceTypeClassKind
 	RACK
 	PORT
 	CARD
+  VLAN
 }
 
 enum ResourceTypeBaseTypeKind
@@ -9543,17 +9544,20 @@ enum AppointmentStatus
 type ResourceSpecification implements Node {
   id: ID!
   name: String!  
+  quantity: Int
   resourceType: ResourceType
   resourcePropertyTypes: [ResourcePropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
+  quantity: Int
   resourceType: ID!
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 input EditResourceSpecificationInput {
   id: ID!
   name: String!
+  quantity: Int
   resourceType: ID 
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }

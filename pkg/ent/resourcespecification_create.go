@@ -63,6 +63,12 @@ func (rsc *ResourceSpecificationCreate) SetName(s string) *ResourceSpecification
 	return rsc
 }
 
+// SetQuantity sets the quantity field.
+func (rsc *ResourceSpecificationCreate) SetQuantity(i int) *ResourceSpecificationCreate {
+	rsc.mutation.SetQuantity(i)
+	return rsc
+}
+
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
 func (rsc *ResourceSpecificationCreate) SetResourcetypeID(id int) *ResourceSpecificationCreate {
 	rsc.mutation.SetResourcetypeID(id)
@@ -220,6 +226,9 @@ func (rsc *ResourceSpecificationCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := rsc.mutation.Quantity(); !ok {
+		return &ValidationError{Name: "quantity", err: errors.New("ent: missing required field \"quantity\"")}
+	}
 	return nil
 }
 
@@ -270,6 +279,14 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 			Column: resourcespecification.FieldName,
 		})
 		_node.Name = value
+	}
+	if value, ok := rsc.mutation.Quantity(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+		_node.Quantity = value
 	}
 	if nodes := rsc.mutation.ResourcetypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

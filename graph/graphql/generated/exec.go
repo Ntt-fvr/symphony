@@ -1823,6 +1823,7 @@ type ComplexityRoot struct {
 	ResourceSpecification struct {
 		ID                    func(childComplexity int) int
 		Name                  func(childComplexity int) int
+		Quantity              func(childComplexity int) int
 		ResourcePropertyTypes func(childComplexity int) int
 		Resourcetype          func(childComplexity int) int
 	}
@@ -12261,6 +12262,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResourceSpecification.Name(childComplexity), true
+
+	case "ResourceSpecification.quantity":
+		if e.complexity.ResourceSpecification.Quantity == nil {
+			break
+		}
+
+		return e.complexity.ResourceSpecification.Quantity(childComplexity), true
 
 	case "ResourceSpecification.resourcePropertyTypes":
 		if e.complexity.ResourceSpecification.ResourcePropertyTypes == nil {
@@ -24454,6 +24462,7 @@ enum ResourceTypeClassKind
 	RACK
 	PORT
 	CARD
+  VLAN
 }
 
 enum ResourceTypeBaseTypeKind
@@ -24705,17 +24714,20 @@ enum AppointmentStatus
 type ResourceSpecification implements Node {
   id: ID!
   name: String!  
+  quantity: Int
   resourceType: ResourceType
   resourcePropertyTypes: [ResourcePropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
+  quantity: Int
   resourceType: ID!
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 input EditResourceSpecificationInput {
   id: ID!
   name: String!
+  quantity: Int
   resourceType: ID 
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
@@ -74755,6 +74767,38 @@ func (ec *executionContext) _ResourceSpecification_name(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ResourceSpecification_quantity(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourceSpecification",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Quantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ResourceSpecification_resourceType(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -92144,6 +92188,14 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationInput(ctx cont
 			if err != nil {
 				return it, err
 			}
+		case "quantity":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
+			it.Quantity, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "resourceType":
 			var err error
 
@@ -96731,6 +96783,14 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationInput(ctx con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "quantity":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
+			it.Quantity, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -116145,6 +116205,8 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "quantity":
+			out.Values[i] = ec._ResourceSpecification_quantity(ctx, field, obj)
 		case "resourceType":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {

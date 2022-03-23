@@ -58654,6 +58654,8 @@ type ResourceSpecificationMutation struct {
 	create_time                         *time.Time
 	update_time                         *time.Time
 	name                                *string
+	quantity                            *int
+	addquantity                         *int
 	clearedFields                       map[string]struct{}
 	resourcetype                        *int
 	clearedresourcetype                 bool
@@ -58862,6 +58864,63 @@ func (m *ResourceSpecificationMutation) OldName(ctx context.Context) (v string, 
 // ResetName reset all changes of the "name" field.
 func (m *ResourceSpecificationMutation) ResetName() {
 	m.name = nil
+}
+
+// SetQuantity sets the quantity field.
+func (m *ResourceSpecificationMutation) SetQuantity(i int) {
+	m.quantity = &i
+	m.addquantity = nil
+}
+
+// Quantity returns the quantity value in the mutation.
+func (m *ResourceSpecificationMutation) Quantity() (r int, exists bool) {
+	v := m.quantity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQuantity returns the old quantity value of the ResourceSpecification.
+// If the ResourceSpecification object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceSpecificationMutation) OldQuantity(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldQuantity is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldQuantity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQuantity: %w", err)
+	}
+	return oldValue.Quantity, nil
+}
+
+// AddQuantity adds i to quantity.
+func (m *ResourceSpecificationMutation) AddQuantity(i int) {
+	if m.addquantity != nil {
+		*m.addquantity += i
+	} else {
+		m.addquantity = &i
+	}
+}
+
+// AddedQuantity returns the value that was added to the quantity field in this mutation.
+func (m *ResourceSpecificationMutation) AddedQuantity() (r int, exists bool) {
+	v := m.addquantity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetQuantity reset all changes of the "quantity" field.
+func (m *ResourceSpecificationMutation) ResetQuantity() {
+	m.quantity = nil
+	m.addquantity = nil
 }
 
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
@@ -59129,7 +59188,7 @@ func (m *ResourceSpecificationMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ResourceSpecificationMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.create_time != nil {
 		fields = append(fields, resourcespecification.FieldCreateTime)
 	}
@@ -59138,6 +59197,9 @@ func (m *ResourceSpecificationMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, resourcespecification.FieldName)
+	}
+	if m.quantity != nil {
+		fields = append(fields, resourcespecification.FieldQuantity)
 	}
 	return fields
 }
@@ -59153,6 +59215,8 @@ func (m *ResourceSpecificationMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case resourcespecification.FieldName:
 		return m.Name()
+	case resourcespecification.FieldQuantity:
+		return m.Quantity()
 	}
 	return nil, false
 }
@@ -59168,6 +59232,8 @@ func (m *ResourceSpecificationMutation) OldField(ctx context.Context, name strin
 		return m.OldUpdateTime(ctx)
 	case resourcespecification.FieldName:
 		return m.OldName(ctx)
+	case resourcespecification.FieldQuantity:
+		return m.OldQuantity(ctx)
 	}
 	return nil, fmt.Errorf("unknown ResourceSpecification field %s", name)
 }
@@ -59198,6 +59264,13 @@ func (m *ResourceSpecificationMutation) SetField(name string, value ent.Value) e
 		}
 		m.SetName(v)
 		return nil
+	case resourcespecification.FieldQuantity:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQuantity(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecification field %s", name)
 }
@@ -59205,13 +59278,21 @@ func (m *ResourceSpecificationMutation) SetField(name string, value ent.Value) e
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *ResourceSpecificationMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addquantity != nil {
+		fields = append(fields, resourcespecification.FieldQuantity)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *ResourceSpecificationMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case resourcespecification.FieldQuantity:
+		return m.AddedQuantity()
+	}
 	return nil, false
 }
 
@@ -59220,6 +59301,13 @@ func (m *ResourceSpecificationMutation) AddedField(name string) (ent.Value, bool
 // type mismatch the field type.
 func (m *ResourceSpecificationMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case resourcespecification.FieldQuantity:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddQuantity(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecification numeric field %s", name)
 }
@@ -59256,6 +59344,9 @@ func (m *ResourceSpecificationMutation) ResetField(name string) error {
 		return nil
 	case resourcespecification.FieldName:
 		m.ResetName()
+		return nil
+	case resourcespecification.FieldQuantity:
+		m.ResetQuantity()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecification field %s", name)

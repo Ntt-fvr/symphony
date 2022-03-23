@@ -23,6 +23,7 @@ func (ResourceSpecification) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
+		field.Int("quantity").Unique(),
 	}
 }
 

@@ -41,6 +41,19 @@ func (rsu *ResourceSpecificationUpdate) SetName(s string) *ResourceSpecification
 	return rsu
 }
 
+// SetQuantity sets the quantity field.
+func (rsu *ResourceSpecificationUpdate) SetQuantity(i int) *ResourceSpecificationUpdate {
+	rsu.mutation.ResetQuantity()
+	rsu.mutation.SetQuantity(i)
+	return rsu
+}
+
+// AddQuantity adds i to quantity.
+func (rsu *ResourceSpecificationUpdate) AddQuantity(i int) *ResourceSpecificationUpdate {
+	rsu.mutation.AddQuantity(i)
+	return rsu
+}
+
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
 func (rsu *ResourceSpecificationUpdate) SetResourcetypeID(id int) *ResourceSpecificationUpdate {
 	rsu.mutation.SetResourcetypeID(id)
@@ -323,6 +336,20 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 			Column: resourcespecification.FieldName,
 		})
 	}
+	if value, ok := rsu.mutation.Quantity(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
+	if value, ok := rsu.mutation.AddedQuantity(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
 	if rsu.mutation.ResourcetypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -595,6 +622,19 @@ type ResourceSpecificationUpdateOne struct {
 // SetName sets the name field.
 func (rsuo *ResourceSpecificationUpdateOne) SetName(s string) *ResourceSpecificationUpdateOne {
 	rsuo.mutation.SetName(s)
+	return rsuo
+}
+
+// SetQuantity sets the quantity field.
+func (rsuo *ResourceSpecificationUpdateOne) SetQuantity(i int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ResetQuantity()
+	rsuo.mutation.SetQuantity(i)
+	return rsuo
+}
+
+// AddQuantity adds i to quantity.
+func (rsuo *ResourceSpecificationUpdateOne) AddQuantity(i int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.AddQuantity(i)
 	return rsuo
 }
 
@@ -876,6 +916,20 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: resourcespecification.FieldName,
+		})
+	}
+	if value, ok := rsuo.mutation.Quantity(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
+	if value, ok := rsuo.mutation.AddedQuantity(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
 		})
 	}
 	if rsuo.mutation.ResourcetypeCleared() {
