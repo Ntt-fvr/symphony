@@ -72,8 +72,8 @@ export default function MainNavListItems() {
     />,
     <NavListItem
       key={6}
-      label="Change"
-      path={relativeUrl('/change_request')}
+      label="Configuration management"
+      path={relativeUrl('/configuration_management')}
       icon={<PieChartIcon />}
       onClick={() => {
         ServerLogger.info(LogEvents.CHANGE_NAV_CLICKED);

@@ -106,7 +106,7 @@ const ChangeRequestTypes = () => {
         </Grid>
       </Grid>
       <Grid style={{display: 'flex'}}>
-        <ButtonAlarmStatus skin={'red'}>
+        <ButtonAlarmStatus skin={'yellow'}>
           Status: {statusAlarm}{' '}
         </ButtonAlarmStatus>
         <FormField>

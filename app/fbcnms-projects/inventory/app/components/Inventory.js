@@ -22,7 +22,7 @@ import LocationsMap from './map/LocationsMap';
 import MainNavListItems from './MainNavListItems';
 import PerformanceCatalog from './assurance/PerformanceCatalog';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import RoutesChange from './change_request/RoutesChange';
+import RoutesChange from './configuration_management/RoutesChange';
 import ServicesMain from './services/ServicesMain';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {Redirect, Route, Switch} from 'react-router-dom';
@@ -42,8 +42,9 @@ const useStyles = makeStyles(() => ({
 
 function Index() {
   const classes = useStyles();
-  const {isExpandButtonShown, expand, collapse, isExpanded} =
-    useContext(ExpandButtonContext);
+  const {isExpandButtonShown, expand, collapse, isExpanded} = useContext(
+    ExpandButtonContext,
+  );
 
   const {tabs, ssoEnabled, isFeatureEnabled} = useContext(AppContext);
   const relativeUrl = useRelativeUrl();
@@ -71,7 +72,7 @@ function Index() {
         <Switch>
           <Route path={relativeUrl('/configure')} component={Configure} />
           <Route
-            path={relativeUrl('/change_request')}
+            path={relativeUrl('/configuration_management')}
             component={RoutesChange}
           />
           <Route

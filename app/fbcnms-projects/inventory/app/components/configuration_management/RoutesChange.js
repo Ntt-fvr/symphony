@@ -15,8 +15,8 @@ import InventorySuspense from '../../common/InventorySuspense';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
-import {ChangeRequestTypes} from '../../components/change_request/ChangeRequestTypes';
-import {ConfigurationsTypes} from '../../components/change_request/ConfigurationsTypes';
+import {ChangeRequestTypes} from '../../components/configuration_management/ChangeRequestTypes';
+import {ConfigurationsTypes} from '../../components/configuration_management/ConfigurationsTypes';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
@@ -59,7 +59,7 @@ export default function Configure() {
   const location = useLocation();
   const classes = useStyles();
   const servicesEnabled = useContext(AppContext).isFeatureEnabled(
-    'change_request',
+    'configuration_management',
   );
   const tabBars: Array<RouteTab> = useMemo(
     () => [
@@ -92,7 +92,9 @@ export default function Configure() {
     ServerLogger.info(LogEvents.CHANGE_REQUEST_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-    history.push(`/inventory/change_request/${tabBars[activeTabBar].path}`);
+    history.push(
+      `/inventory/configuration_management/${tabBars[activeTabBar].path}`,
+    );
   }, [tabBars, activeTabBar, history]);
 
   return (
