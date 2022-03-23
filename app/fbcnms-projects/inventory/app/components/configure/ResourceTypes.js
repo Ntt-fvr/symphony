@@ -53,7 +53,7 @@ const ResourceTypesQuery = graphql`
           resourceType {
             id
           }
-          propertyTypes {
+          resourcePropertyTypes {
             id
             name
             type

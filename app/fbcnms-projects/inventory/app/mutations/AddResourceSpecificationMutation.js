@@ -20,11 +20,13 @@ import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddResourceSpecificationMutation($input: AddResourceSpecificationInput!) {
+  mutation AddResourceSpecificationMutation(
+    $input: AddResourceSpecificationInput!
+  ) {
     addResourceSpecification(input: $input) {
       id
       name
-      propertyTypes{
+      resourcePropertyTypes {
         externalId
         name
         type

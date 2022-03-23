@@ -21,24 +21,38 @@ import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DragIndicatorIcon from '@fbcnms/ui/icons/DragIndicatorIcon';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormField from '@symphony/design-system/components/FormField/FormField';
-import Select from '@symphony/design-system/components/Select/Select';
 import Text from '@symphony/design-system/components/Text';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import symphony from '@symphony/design-system/theme/symphony';
-import {Grid} from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import {Grid, MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const ResourceSpecificationRelationshipsQuery = graphql`
-  query RelationshipTypeItemQuery {
-    resourceSpecificationRelationships {
+  query RelationshipTypeItemQuery(
+    $filterBy: [ResourceSpecificationFilterInput!]!
+    $filterBy2: [ResourceTypeRelationshipFilterInput!]!
+  ) {
+    resourceSpecifications(filterBy: $filterBy) {
+      totalCount
       edges {
         node {
           id
           name
-          resourceSpecification {
+        }
+      }
+    }
+    resourceTypeRelationships(filterBy: $filterBy2) {
+      totalCount
+      edges {
+        node {
+          id
+          resourceRelationshipType
+          resourceTypeA {
+            id
+            name
+          }
+          resourceTypeB {
             id
             name
           }
@@ -67,46 +81,34 @@ const useStyles = makeStyles(() => ({
       padding: '0 28px 28px 28px',
     },
   },
-  nameRS: {
-    paddingLeft: '49px',
-  },
-  buttonAdd: {
-    '&.MuiButtonBase-root:hover': {
-      backgroundColor: 'transparent',
-      color: symphony.palette.B700,
+  formField: {
+    margin: '0 30px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
     },
-  },
-  titleRs: {
-    margin: '5px 0px 0px 0px',
-    paddingBottom: '10px',
-    borderBottom: '1px solid #D2DAE7',
-  },
-  inputsRs: {
-    padding: '20px 0px 20px 0px',
-    borderBottom: '1px solid #D2DAE7',
-  },
-  inputNameRs: {
-    display: 'flex',
-    alignItems: 'center',
-    '& svg': {
-      fontSize: '15px',
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
     },
-  },
-  inputName: {
-    width: '1110px',
-    marginLeft: '20px',
-  },
-  selectNameRs: {
-    display: 'flex',
-    '& .MuiButton-text': {
-      padding: 0,
-      '& .MuiButton-startIcon': {
-        margin: 0,
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.75)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
       },
     },
-  },
-  specification: {
-    paddingLeft: '20px',
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
 }));
 
@@ -118,14 +120,26 @@ export default function RelationshipTypeItem(props: Props) {
   const {dataForm} = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const data = useLazyLoadQuery<RelationshipTypeItemQuery>(
-    ResourceSpecificationRelationshipsQuery,
-    {},
-  );
 
-  const filterRelationshipsById = data.resourceSpecificationRelationships.edges
-    .filter(item => item.node?.resourceSpecification.id === dataForm.id)
-    .map(item => item.node);
+  const response = useLazyLoadQuery<RelationshipTypeItemQuery>(
+    ResourceSpecificationRelationshipsQuery,
+    {
+      filterBy: [
+        {
+          filterType: 'RESOURCE_TYPE',
+          operator: 'IS_ONE_OF',
+          idSet: [dataForm.resourceType.id],
+        },
+      ],
+      filterBy2: [
+        {
+          filterType: 'RESOURCE_RELATIONSHIP_RESOURCE',
+          operator: 'IS_ONE_OF',
+          idSet: [dataForm.resourceType.id],
+        },
+      ],
+    },
+  );
 
   function handleOpen(event) {
     event.stopPropagation();
@@ -143,107 +157,88 @@ export default function RelationshipTypeItem(props: Props) {
 
   return (
     <>
-      {filterRelationshipsById.map((item, index) => (
-        <div className={classes.root}>
-          <Accordion
-            className={classes.container}
-            expanded={open}
-            onChange={handleOpen}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header">
-              <Grid container item xs={12}>
-                <Grid
-                  item
-                  xs={4}
-                  container
-                  justify="flex-start"
-                  alignItems="center">
-                  <Text key={index} useEllipsis={true} weight="bold">
-                    {item?.name}
-                  </Text>
+      <div className={classes.root}>
+        <Accordion
+          className={classes.container}
+          expanded={open}
+          onChange={handleOpen}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header">
+            <Grid item xs={12}>
+              <Text color="primary" useEllipsis={true} weight="bold">
+                Slots Definitions: {options.length + ' Relationships'}
+              </Text>
+            </Grid>
+          </AccordionSummary>
+
+          <AccordionDetails>
+            <Grid container item xs={12}>
+              <Grid container>
+                <Grid item xs={5}>
+                  <Text>Name</Text>
                 </Grid>
-                <Grid
-                  item
-                  xs={8}
-                  container
-                  justify="flex-start"
-                  alignItems="center">
-                  <Text useEllipsis={true} weight="bold">
-                    {options.length + ' Relationships'}
-                  </Text>
+                <Grid item xs={5}>
+                  <Text>Specification</Text>
+                </Grid>
+                <Grid container justify="flex-end" item xs={2}>
+                  <Text>Delete</Text>
                 </Grid>
               </Grid>
-            </AccordionSummary>
-
-            <AccordionDetails>
               <Grid container item xs={12}>
-                <Grid className={classes.titleRs} container>
-                  <Grid className={classes.nameRS} item xs={6}>
-                    <Text>Name</Text>
-                  </Grid>
-                  <Grid className={classes.specification} item xs={5}>
-                    <Text>Specification</Text>
-                  </Grid>
-                  <Grid container justify="flex-end" item xs={1}>
-                    <Text>Delete</Text>
+                <Grid justify="center" align="center" container item xs={5}>
+                  <DragIndicatorIcon />
+                  <Grid item xs>
+                    <form className={classes.formField} autoComplete="off">
+                      <TextField
+                        label="Slot"
+                        variant="outlined"
+                        name="name"
+                        fullWidth
+                      />
+                    </form>
                   </Grid>
                 </Grid>
-                <Grid container item xs={12}>
-                  {options.map((item, index) => (
-                    <Grid key={index}>
-                      <Grid className={classes.inputsRs} container item xs={12}>
-                        <Grid className={classes.inputNameRs} item xs={6}>
-                          <DragIndicatorIcon />
-                          <TextInput
-                            className={classes.inputName}
-                            placeholder={'Name'}
-                            value={item.name}
-                            key={item.id}
-                          />
-                        </Grid>
-                        <Grid className={classes.selectNameRs} item xs={6}>
-                          <FormField className={classes.inputName}>
-                            <Select
-                              useEllipsis={false}
-                              options={options.map(location => ({
-                                key: location.id,
-                                label: location.name,
-                                value: location.id,
-                              }))}
-                              size="full"
-                              onChange={() => {}}
-                            />
-                          </FormField>
-                          <Button
-                            children
-                            color="primary"
-                            disableRipple
-                            startIcon={<DeleteOutlinedIcon />}
-                          />
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  ))}
+                <Grid item xs={5}>
+                  <form className={classes.formField} autoComplete="off">
+                    <TextField
+                      required
+                      select
+                      label="Class"
+                      variant="outlined"
+                      name="resourceTypeClass"
+                      fullWidth>
+                      {options.map((item, index) => (
+                        <MenuItem key={index} value={item.name}>
+                          {item.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
                 </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  style={{marginTop: '30px', marginBottom: '5px'}}>
+                <Grid container justify="flex-end" item xs={2}>
                   <Button
+                    children
                     color="primary"
                     disableRipple
-                    startIcon={<AddIcon />}
-                    className={classes.buttonAdd}>
-                    Add Resource Specification
-                  </Button>
+                    startIcon={<DeleteOutlinedIcon />}
+                  />
                 </Grid>
               </Grid>
-            </AccordionDetails>
-          </Accordion>
-        </div>
-      ))}
+
+              <Grid
+                item
+                xs={12}
+                style={{marginTop: '30px', marginBottom: '5px'}}>
+                <Button color="primary" disableRipple startIcon={<AddIcon />}>
+                  Add Relationships
+                </Button>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+      </div>
     </>
   );
 }
