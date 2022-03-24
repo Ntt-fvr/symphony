@@ -353,6 +353,7 @@ const (
 	ProjectFilterTypeProjectCreator         ProjectFilterType = "PROJECT_CREATOR"
 	ProjectFilterTypeLocationInst           ProjectFilterType = "LOCATION_INST"
 	ProjectFilterTypeLocationInstExternalID ProjectFilterType = "LOCATION_INST_EXTERNAL_ID"
+	ProjectFilterTypeProjectCreationDate    ProjectFilterType = "PROJECT_CREATION_DATE"
 )
 
 func (p ProjectFilterType) IsValid() bool {
