@@ -69,6 +69,14 @@ func (rsc *ResourceSpecificationCreate) SetQuantity(i int) *ResourceSpecificatio
 	return rsc
 }
 
+// SetNillableQuantity sets the quantity field if the given value is not nil.
+func (rsc *ResourceSpecificationCreate) SetNillableQuantity(i *int) *ResourceSpecificationCreate {
+	if i != nil {
+		rsc.SetQuantity(*i)
+	}
+	return rsc
+}
+
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
 func (rsc *ResourceSpecificationCreate) SetResourcetypeID(id int) *ResourceSpecificationCreate {
 	rsc.mutation.SetResourcetypeID(id)
@@ -225,9 +233,6 @@ func (rsc *ResourceSpecificationCreate) check() error {
 		if err := resourcespecification.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
-	}
-	if _, ok := rsc.mutation.Quantity(); !ok {
-		return &ValidationError{Name: "quantity", err: errors.New("ent: missing required field \"quantity\"")}
 	}
 	return nil
 }

@@ -58917,10 +58917,24 @@ func (m *ResourceSpecificationMutation) AddedQuantity() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearQuantity clears the value of quantity.
+func (m *ResourceSpecificationMutation) ClearQuantity() {
+	m.quantity = nil
+	m.addquantity = nil
+	m.clearedFields[resourcespecification.FieldQuantity] = struct{}{}
+}
+
+// QuantityCleared returns if the field quantity was cleared in this mutation.
+func (m *ResourceSpecificationMutation) QuantityCleared() bool {
+	_, ok := m.clearedFields[resourcespecification.FieldQuantity]
+	return ok
+}
+
 // ResetQuantity reset all changes of the "quantity" field.
 func (m *ResourceSpecificationMutation) ResetQuantity() {
 	m.quantity = nil
 	m.addquantity = nil
+	delete(m.clearedFields, resourcespecification.FieldQuantity)
 }
 
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
@@ -59315,7 +59329,11 @@ func (m *ResourceSpecificationMutation) AddField(name string, value ent.Value) e
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
 func (m *ResourceSpecificationMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(resourcespecification.FieldQuantity) {
+		fields = append(fields, resourcespecification.FieldQuantity)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicates if this field was
@@ -59328,6 +59346,11 @@ func (m *ResourceSpecificationMutation) FieldCleared(name string) bool {
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ResourceSpecificationMutation) ClearField(name string) error {
+	switch name {
+	case resourcespecification.FieldQuantity:
+		m.ClearQuantity()
+		return nil
+	}
 	return fmt.Errorf("unknown ResourceSpecification nullable field %s", name)
 }
 

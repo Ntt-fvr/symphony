@@ -2371,7 +2371,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "quantity", Type: field.TypeInt, Unique: true},
+		{Name: "quantity", Type: field.TypeInt, Nullable: true},
 		{Name: "resource_type_resource_specification", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceSpecificationsTable holds the schema information for the "resource_specifications" table.

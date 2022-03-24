@@ -464,6 +464,20 @@ func QuantityLTE(v int) predicate.ResourceSpecification {
 	})
 }
 
+// QuantityIsNil applies the IsNil predicate on the "quantity" field.
+func QuantityIsNil() predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldQuantity)))
+	})
+}
+
+// QuantityNotNil applies the NotNil predicate on the "quantity" field.
+func QuantityNotNil() predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldQuantity)))
+	})
+}
+
 // HasResourcetype applies the HasEdge predicate on the "resourcetype" edge.
 func HasResourcetype() predicate.ResourceSpecification {
 	return predicate.ResourceSpecification(func(s *sql.Selector) {

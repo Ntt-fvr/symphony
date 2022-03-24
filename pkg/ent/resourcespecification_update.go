@@ -48,9 +48,23 @@ func (rsu *ResourceSpecificationUpdate) SetQuantity(i int) *ResourceSpecificatio
 	return rsu
 }
 
+// SetNillableQuantity sets the quantity field if the given value is not nil.
+func (rsu *ResourceSpecificationUpdate) SetNillableQuantity(i *int) *ResourceSpecificationUpdate {
+	if i != nil {
+		rsu.SetQuantity(*i)
+	}
+	return rsu
+}
+
 // AddQuantity adds i to quantity.
 func (rsu *ResourceSpecificationUpdate) AddQuantity(i int) *ResourceSpecificationUpdate {
 	rsu.mutation.AddQuantity(i)
+	return rsu
+}
+
+// ClearQuantity clears the value of quantity.
+func (rsu *ResourceSpecificationUpdate) ClearQuantity() *ResourceSpecificationUpdate {
+	rsu.mutation.ClearQuantity()
 	return rsu
 }
 
@@ -350,6 +364,12 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 			Column: resourcespecification.FieldQuantity,
 		})
 	}
+	if rsu.mutation.QuantityCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
 	if rsu.mutation.ResourcetypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -632,9 +652,23 @@ func (rsuo *ResourceSpecificationUpdateOne) SetQuantity(i int) *ResourceSpecific
 	return rsuo
 }
 
+// SetNillableQuantity sets the quantity field if the given value is not nil.
+func (rsuo *ResourceSpecificationUpdateOne) SetNillableQuantity(i *int) *ResourceSpecificationUpdateOne {
+	if i != nil {
+		rsuo.SetQuantity(*i)
+	}
+	return rsuo
+}
+
 // AddQuantity adds i to quantity.
 func (rsuo *ResourceSpecificationUpdateOne) AddQuantity(i int) *ResourceSpecificationUpdateOne {
 	rsuo.mutation.AddQuantity(i)
+	return rsuo
+}
+
+// ClearQuantity clears the value of quantity.
+func (rsuo *ResourceSpecificationUpdateOne) ClearQuantity() *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ClearQuantity()
 	return rsuo
 }
 
@@ -929,6 +963,12 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
+	if rsuo.mutation.QuantityCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
 			Column: resourcespecification.FieldQuantity,
 		})
 	}
