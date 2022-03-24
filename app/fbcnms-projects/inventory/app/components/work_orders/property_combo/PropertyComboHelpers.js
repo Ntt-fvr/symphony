@@ -27,12 +27,6 @@ const extractNameOfArray = array => {
   return array?.map(value => value.name);
 };
 
-export const getDependencePropertyType = (propertyType: PropertyType) => {
-  return propertyType.dependencePropertyTypes
-    ? propertyType.dependencePropertyTypes[0]
-    : null;
-};
-
 export const createPropertyTypeValuesJson = (propertyType: PropertyType) => {
   const temporalPropertyValue = JSON.parse(propertyType.stringValue);
   return temporalPropertyValue?.map(propertyTypeValue => ({
@@ -138,15 +132,21 @@ export const getPropertyTypesWithoutParentsInformation = (
   return propertyTypes.map(propertyType => {
     const newDependencePropertyTypeWithoutParentInformation =
       propertyType.dependencePropertyTypes?.length > 0
-        ? [
-            {
-              ...propertyType.dependencePropertyTypes[0],
-              propertyTypeValues: extractParentInformationFromPropertyTypeValues(
-                propertyType.dependencePropertyTypes[0].propertyTypeValues,
-              ),
-            },
-          ]
-        : [];
+        ? propertyType.dependencePropertyTypes.map(propertyType => ({
+            ...propertyType,
+            propertyTypeValues: extractParentInformationFromPropertyTypeValues(
+              propertyType.propertyTypeValues,
+            ),
+          }))
+        : // [
+          //   {
+          //     ...propertyType.dependencePropertyTypes[0],
+          //     propertyTypeValues: extractParentInformationFromPropertyTypeValues(
+          //       propertyType.dependencePropertyTypes[0].propertyTypeValues,
+          //     ),
+          //   },
+          // ]
+          [];
     const newPropertyTypeValues =
       propertyType.propertyTypeValues?.length > 0
         ? extractParentInformationFromPropertyTypeValues(
@@ -207,7 +207,9 @@ export const orderPropertyTypesIndex = (propertyTypes: PropertyType[]) => {
       propertyType.dependencePropertyTypes?.length < 1
         ? index + dependentPropertiesCount
         : dependentPropertiesCount > 1
-        ? index + (dependentPropertiesCount - 1)
+        ? index +
+          (dependentPropertiesCount -
+            propertyType.dependencePropertyTypes?.length)
         : index;
     return {
       ...propertyType,
@@ -216,4 +218,14 @@ export const orderPropertyTypesIndex = (propertyTypes: PropertyType[]) => {
     };
   });
   return newOrderPropertyTypes;
+};
+
+const getNumberOfPropertyTypesWithDependence = (
+  propertyTypes: PropertyType[],
+) => {
+  const propertyTypesWithDependence = propertyTypes.filter(
+    propertyType => propertyType.dependencePropertyTypes?.length > 0,
+  );
+
+  return propertyTypesWithDependence.length;
 };

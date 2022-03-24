@@ -94,9 +94,12 @@ export function reducer(
             ? {
                 ...p,
                 index,
-                dependencePropertyTypes: [
-                  {...p.dependencePropertyTypes[0], index: index + 1},
-                ],
+                dependencePropertyTypes: p.dependencePropertyTypes.map(
+                  (propertyType, i) => ({
+                    ...propertyType,
+                    index: index + i + 1,
+                  }),
+                ),
               }
             : {
                 ...p,

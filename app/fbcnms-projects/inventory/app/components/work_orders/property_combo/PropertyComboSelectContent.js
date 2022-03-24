@@ -27,7 +27,6 @@ import {
 import {PropertyType} from '../../../common/PropertyType';
 import {
   createPropertyTypeValuesJson,
-  getDependencePropertyType,
   getPropertiesWithoutActualProperty,
 } from './PropertyComboHelpers';
 import {isTempId} from '../../../common/EntUtils';
@@ -37,11 +36,19 @@ type Props = $ReadOnly<{|
   onClose: () => void,
   onSave: () => void,
   property: PropertyType,
+  isNewDependenceProperty: boolean,
   setShowCompleteMessage: () => void,
 |}>;
 
 const PropertyComboSelectContent = (props: Props) => {
-  const {onClose, classes, property, setShowCompleteMessage, onSave} = props;
+  const {
+    onClose,
+    classes,
+    property,
+    setShowCompleteMessage,
+    onSave,
+    isNewDependenceProperty = true,
+  } = props;
   const {propertyTypes, dispatch: propertyTypesDispatch} = useContext(
     PropertyTypesTableDispatcher,
   );
@@ -50,7 +57,7 @@ const PropertyComboSelectContent = (props: Props) => {
     property.propertyTypeValues?.length > 0
       ? property.propertyTypeValues
       : createPropertyTypeValuesJson(property);
-  const dependentPropertyInitial = getDependencePropertyType(property);
+  const dependentPropertyInitial = !isNewDependenceProperty && property;
 
   const DependentPropertyTypesInitialState = {
     dependentPropertyInitial,
@@ -70,6 +77,8 @@ const PropertyComboSelectContent = (props: Props) => {
     dispatch(action);
   };
 
+  console.log('state', state);
+
   const saveButtonClicked = () => {
     setShowCompleteMessage(true);
     propertyTypesDispatch({
@@ -77,8 +86,12 @@ const PropertyComboSelectContent = (props: Props) => {
       id: state.id,
     });
     isTempId(state.id) && delete state.id;
+    const dependencePropertyTypes =
+      property.dependencePropertyTypes?.length > 0
+        ? [...property.dependencePropertyTypes, state]
+        : [state];
     onSave({
-      dependencePropertyTypes: [state],
+      dependencePropertyTypes,
       propertyTypeValues: propertyTypeValuesPrincipal,
     });
   };
@@ -146,7 +159,7 @@ const PropertyComboSelectContent = (props: Props) => {
           classes={classes}
           propertyTypeValues={propertyTypeValuesPrincipal}
           dispatch={dispatch}
-          disabled={!!property.dependencePropertyTypes || !state.id}
+          disabled={!state.id}
           dependencePropertyTypeValues={state.propertyTypeValues}
         />
       </DialogContent>
@@ -156,7 +169,11 @@ const PropertyComboSelectContent = (props: Props) => {
         </Button>
         <Button
           onClick={saveButtonClicked}
-          disabled={!state.id || !!dependentPropertyInitial}>
+          disabled={
+            !state.id ||
+            !state.propertyTypeValues ||
+            state.propertyTypeValues?.length < 1
+          }>
           {Strings.common.saveButton}
         </Button>
       </DialogActions>
