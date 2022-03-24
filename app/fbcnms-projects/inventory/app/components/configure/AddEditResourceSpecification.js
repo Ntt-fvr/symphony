@@ -29,6 +29,7 @@ import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecifi
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
+import ExperimentalPropertyTypesTableParameters from '../form/ExperimentalPropertyTypesTableParameters';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
@@ -43,9 +44,6 @@ const useStyles = makeStyles(() => ({
   root: {
     padding: '24px 25px 34px 34px',
     margin: '0',
-  },
-  relationship: {
-    margin: '32px 0',
   },
   formField: {
     margin: '0 22px',
@@ -280,6 +278,11 @@ export const AddEditResourceSpecification = (props: Props) => {
           </PropertyTypesTableDispatcher.Provider>
         </ExpandingPanel>
       </Card>
+      <Card margins="none">
+        <ExpandingPanel title="Configuration parameters">
+          <ExperimentalPropertyTypesTableParameters />
+        </ExpandingPanel>
+      </Card>
       {dialogSaveForm && (
         <SaveDialogConfirm
           open={dialogSaveForm}
@@ -318,11 +321,6 @@ export const AddEditResourceSpecification = (props: Props) => {
           }
         />
       )}
-      <Grid className={classes.relationship} item xs={12}>
-        <Text weight={'bold'} variant={'h6'}>
-          Relationship types definition
-        </Text>
-      </Grid>
       <RelationshipTypeItem dataForm={dataForm} />
     </div>
   );

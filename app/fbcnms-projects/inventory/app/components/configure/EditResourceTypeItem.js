@@ -24,9 +24,11 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Divider from '@material-ui/core/Divider';
 import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
+import IconButton from '@symphony/design-system/components/IconButton';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddEditResourceSpecification} from './AddEditResourceSpecification';
 import {Grid, MenuItem} from '@material-ui/core';
@@ -36,6 +38,7 @@ import {useValidationEdit} from '../assurance/common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
+    flexGrow: 1,
     padding: '24px 25px 34px 34px',
     margin: '0',
   },
@@ -78,15 +81,12 @@ const useStyles = makeStyles(() => ({
     height: '36px',
     width: '111px',
   },
+  iconVisibility: {
+    marginRight: '40px',
+  },
   buttonAdd: {
     '&.MuiButtonBase-root:hover': {
       backgroundColor: symphony.palette.B50,
-    },
-  },
-  buttonEdit: {
-    '&.MuiButtonBase-root:hover': {
-      backgroundColor: 'transparent',
-      color: symphony.palette.B600,
     },
   },
 }));
@@ -309,26 +309,56 @@ export const EditResourceTypeItem = (props: Props) => {
             Resource specification
           </CardHeader>
           <Grid container direction="column" style={{padding: '0 49px'}}>
-            <Text
-              style={{padding: '0 0 15px 15px'}}
-              color="primary"
-              variant="body2">
-              Name
-            </Text>
+            <Grid container>
+              <Grid item xs={10}>
+                <Text
+                  style={{padding: '0 0 15px 30px'}}
+                  useEllipsis={true}
+                  color="primary"
+                  variant="subtitle2">
+                  Name
+                </Text>
+              </Grid>
+              <Grid
+                style={{display: 'flex', justifyContent: 'flex-end'}}
+                item
+                xs={2}>
+                <Text
+                  style={{padding: '0 30px 15px 0'}}
+                  useEllipsis={true}
+                  color="primary"
+                  variant="subtitle2">
+                  Details
+                </Text>
+              </Grid>
+            </Grid>
             <Divider />
             {filterDataById.map((item, index) => (
-              <Grid item key={index}>
-                <Button
-                  className={classes.buttonEdit}
-                  disableRipple
-                  style={{padding: '11px'}}
-                  onClick={() => showEditFormData({item})}>
-                  {item?.name}
-                </Button>
+              <Grid xs={12} key={index}>
+                <Grid
+                  style={{
+                    margin: '13px 0 ',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      marginLeft: '30px',
+                    }}>
+                    {item?.name}
+                  </Text>
+
+                  <IconButton
+                    className={classes.iconVisibility}
+                    skin="gray"
+                    icon={VisibilityIcon}
+                    onClick={() => showEditFormData({item})}
+                  />
+                </Grid>
                 <Divider />
               </Grid>
             ))}
-            <Grid item style={{marginTop: '10px', marginBottom: '40px'}}>
+            <Grid item style={{margin: '10px 0 40px 30px'}}>
               <Button
                 color="primary"
                 disableRipple
