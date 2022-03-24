@@ -4788,6 +4788,7 @@ enum ProjectFilterType {
   LOCATION_INST
   PROJECT_PRIORITY
   PROPERTY
+  PROJECT_CREATION_DATE
 }
 
 input ProjectFilterInput {
@@ -4798,6 +4799,7 @@ input ProjectFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: PropertyTypeInput
+  timeValue: Time
 }
 
 enum CounterFilterType {
