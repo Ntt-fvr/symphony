@@ -44,8 +44,8 @@ def add_alarm_status(
 
         new_alarm_status = client.add_alarm_status(
             name="alarm_status",
-
         )
+        print(new_alarm_status)
     """
     alarm_status_input = AddAlarmStatusInput(name=name)
     result = addAlarmStatus.execute(client, input=alarm_status_input)
@@ -86,8 +86,8 @@ def edit_alarm_status(
     if new_name is not None:
         params.update({"_name_": new_name})
     if new_name is not None:
-        editAlarmStatus.execute(client, input=EditAlarmStatusInput(id=alarm_status.id, name=new_name))
-
+        result=editAlarmStatus.execute(client, input=EditAlarmStatusInput(id=alarm_status.id, name=new_name))
+    return alarmStatus(name=result.name, id=result.id)
 
 def get_alarm_statuses(client: SymphonyClient) -> Iterator[alarmStatus]:
     """ this funtion Get Alarm statuses
@@ -133,6 +133,6 @@ def remove_alarm_status(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_alarm_status(alarmStatus)
+        remove_alarm_status=client.remove_alarm_status(id=123456789)
     """
     removeAlarmStatus.execute(client, id=id)

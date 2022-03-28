@@ -83,11 +83,13 @@ type hooks struct {
 	LocationType                []ent.Hook
 	NetworkType                 []ent.Hook
 	Organization                []ent.Hook
+	ParameterCatalog            []ent.Hook
 	PermissionsPolicy           []ent.Hook
 	Project                     []ent.Hook
 	ProjectTemplate             []ent.Hook
 	ProjectType                 []ent.Hook
 	Property                    []ent.Hook
+	PropertyCategory            []ent.Hook
 	PropertyType                []ent.Hook
 	Recommendations             []ent.Hook
 	RecommendationsCategory     []ent.Hook

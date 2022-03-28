@@ -41,12 +41,65 @@ def add_counter_formula(
 
     .. code-block:: python
 
+        counter_family = client.add_counter_family(
+            name="counter_family",
+        )
+
+        new_vendor = client.add_vendor(
+            name="vendor",
+        )
+
+        counter = client.add_counter(
+            name="counter",
+            externalID="new counter",
+            networkManagerSystem="counter",
+            counterFamily=counter_family.id,
+            vendor= vendor.id
+        )
+
+        domain = client.add_domain(
+            name="domain",
+        )
+        kpi_category = client.add_kpi_category(
+            name="kpi_category",
+        )
+
+        Kpi = client.add_Kpi(
+            name="Kpi_2",
+            description="new kpi",
+            status=True,
+            domain=domain.id,
+            kpiCategory=kpi_category.id
+        )
+
+        domain = client.add_domain(
+            name="domain",
+        )
+        
+        new_Tech = client.add_Tech(
+            name="new_Tech", 
+            domain=domain.id
+            )
+
+        network_type = client.add_network_type(
+            name="network_type",
+        )
+
+        new_formula = client.add_formula(
+            textFormula="formula_1",
+            status=True,
+            kpi=Kpi_created.id,
+            tech=tech_created.id,
+            networkType=network_type.id
+        )
+
         new_counter_formula = client.add_counter_formula(
             name="counter_formula",
             mandatory=True,
             counter=counter.id,
             formula=formula.id
         )
+        print(new_counter_formula)
     """
     domain_input = AddCounterFormulaInput(
     mandatory=mandatory,

@@ -162,7 +162,7 @@ export default function AddFormulaItemForm(props: Props) {
     parentCallback(formula);
   }
 
-  function handleOpen (event) {
+  function handleOpen(event) {
     event.stopPropagation();
     setOpen(!open);
   }

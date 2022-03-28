@@ -49,6 +49,7 @@ setuptools.setup(
         "tqdm>=4.32.2",
         "unicodecsv>=0.14.1",
         "requests>=2.22.0",
+        "requests-toolbelt>=0.9.1",
         "filetype>=1.0.5",
         "jsonschema",
         "pandas>=0.24.2",

@@ -218,12 +218,14 @@ class PsymClient(SymphonyClient):
         get_organization_by_name,
         )
     from .api.file import add_location_image, delete_document, add_file, add_files
+    from .api.document_category import get_document_category_by_names
     from .api.location_type import (
         add_location_type,
         add_property_types_to_location_type,
         delete_location_type,
         get_location_types,
         get_location_type_by_id,
+        get_location_type_by_name,
         edit_location_type,
         delete_locations_by_location_type,
         delete_location_type_with_locations,

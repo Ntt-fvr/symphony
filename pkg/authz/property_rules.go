@@ -115,6 +115,23 @@ func PropertyTypeCreatePolicyRule() privacy.MutationRule {
 	})
 }
 
+// PropertyTypeReadPolicyRule grants read permission to property type based on policy.
+func PropertyTypeReadPolicyRule() privacy.QueryRule {
+	return privacy.PropertyTypeQueryRuleFunc(func(ctx context.Context, q *ent.PropertyTypeQuery) error {
+		var predicates []predicate.PropertyType
+		propCategoryPredicate := PropertyCategoryReadPredicate(ctx)
+		if propCategoryPredicate != nil {
+			predicates = append(predicates,
+				propertytype.Or(
+					propertytype.Not(propertytype.HasPropertyCategory()),
+					propertytype.HasPropertyCategoryWith(propCategoryPredicate)),
+			)
+		}
+		q.Where(predicates...)
+		return privacy.Skip
+	})
+}
+
 // PropertyWritePolicyRule grants write permission to property based on policy.
 // nolint: dupl
 func PropertyWritePolicyRule() privacy.MutationRule {
@@ -241,6 +258,14 @@ func PropertyReadPolicyRule() privacy.QueryRule {
 				property.Or(
 					property.Not(property.HasProject()),
 					property.HasProjectWith(projectPredicate)))
+		}
+		propCategoryPredicate := PropertyCategoryReadPredicate(ctx)
+		if propCategoryPredicate != nil {
+			predicates = append(predicates,
+				property.Or(
+					property.Not(property.HasTypeWith(propertytype.HasPropertyCategory())),
+					property.HasTypeWith(propertytype.HasPropertyCategoryWith(propCategoryPredicate))),
+			)
 		}
 		q.Where(predicates...)
 		return privacy.Skip

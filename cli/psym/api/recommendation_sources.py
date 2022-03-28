@@ -34,16 +34,10 @@ def add_recommendations_sources(
 
     .. code-block:: python
 
-        new_recommendations_sourceses = client.add_recommendations_sources(name="new_recommendations_sources")
-
-    **Example 2**
-
-    .. code-block:: python
-
         new_recommendations_sources = client.add_recommendations_sources(
             name="recommendations_sources",
-
         )
+        print(new_recommendations_sources)
     """
     recommendations_sources_input = AddRecommendationsSourcesInput(name=name)
     result = addRecommendationsSources.execute(client, input=recommendations_sources_input)
@@ -68,17 +62,11 @@ def edit_recommendations_sources(
 
     .. code-block:: python
 
-        recommendations_sources_edited = client.edit_recommendations_sources(recommendations_sources=recommendationsSources ,new_name="new_recommendations_sources")
-
-    **Example 2**
-
-    .. code-block:: python
-
-        new_recommendations_sources = client.edit_recommendations_sources(
+        new_recommendations_sources_edited = client.edit_recommendations_sources(
             recommendations_sources=recommendationsSources,
-            new_name="recommendations_sources",
-
+            new_name="recommendations_sources_edited",
         )
+
     """
     params: Dict[str, Any] = {}
     if new_name is not None:
@@ -87,7 +75,7 @@ def edit_recommendations_sources(
         editRecommendationsSources.execute(client, input=EditRecommendationsSourcesInput(id=recommendation_sources.id, name=new_name))
 
 
-def get_recommendations_sourceses(client: SymphonyClient) -> Iterator[RecommendationsSources]:
+def get_recommendations_sources(client: SymphonyClient) -> Iterator[RecommendationsSources]:
     """ this funtion Get recommendations Sourceses
 
 
@@ -98,8 +86,8 @@ def get_recommendations_sourceses(client: SymphonyClient) -> Iterator[Recommenda
 
     .. code-block:: python
 
-        recommendations_sourceses = client.get_recommendations_sourceses()
-        for recommendations_sources in recommendations_sourceses:
+        recommendations_sources = client.get_recommendations_sources()
+        for recommendations_sources in recommendations_sources:
             print(recommendations_sources.name)
     """
     recommendations_sourcesess_ = RecommendationsSources.execute(client, first=PAGINATION_STEP)
@@ -131,7 +119,7 @@ def remove_recommendations_sources(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
-        client.delete_recommendations_sources(recommendationsSources)
+        client.remove_recommendations_sources(id=123456789)
     """
     removeRecommendationSources.execute(client, id=id)
 

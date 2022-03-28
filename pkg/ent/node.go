@@ -72,11 +72,13 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
@@ -4597,6 +4599,67 @@ func (o *Organization) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (pc *ParameterCatalog) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     pc.ID,
+		Type:   "ParameterCatalog",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(pc.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pc.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pc.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pc.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "int",
+		Name:  "index",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pc.Disabled); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "bool",
+		Name:  "disabled",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "PropertyCategory",
+		Name: "property_categories",
+	}
+	node.Edges[0].IDs, err = pc.QueryPropertyCategories().
+		Select(propertycategory.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
@@ -5206,12 +5269,75 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (pc *PropertyCategory) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     pc.ID,
+		Type:   "PropertyCategory",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(pc.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pc.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pc.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pc.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "int",
+		Name:  "index",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "properties_type",
+	}
+	node.Edges[0].IDs, err = pc.QueryPropertiesType().
+		Select(propertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ParameterCatalog",
+		Name: "parameter_catalog",
+	}
+	node.Edges[1].IDs, err = pc.QueryParameterCatalog().
+		Select(parametercatalog.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
 		Type:   "PropertyType",
 		Fields: make([]*Field, 21),
-		Edges:  make([]*Edge, 11),
+		Edges:  make([]*Edge, 12),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pt.CreateTime); err != nil {
@@ -5488,6 +5614,16 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[10].IDs, err = pt.QueryWorkerType().
 		Select(workertype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[11] = &Edge{
+		Type: "PropertyCategory",
+		Name: "property_category",
+	}
+	node.Edges[11].IDs, err = pt.QueryPropertyCategory().
+		Select(propertycategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -8828,6 +8964,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case parametercatalog.Table:
+		n, err := c.ParameterCatalog.Query().
+			Where(parametercatalog.ID(id)).
+			CollectFields(ctx, "ParameterCatalog").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case permissionspolicy.Table:
 		n, err := c.PermissionsPolicy.Query().
 			Where(permissionspolicy.ID(id)).
@@ -8868,6 +9013,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Property.Query().
 			Where(property.ID(id)).
 			CollectFields(ctx, "Property").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case propertycategory.Table:
+		n, err := c.PropertyCategory.Query().
+			Where(propertycategory.ID(id)).
+			CollectFields(ctx, "PropertyCategory").
 			Only(ctx)
 		if err != nil {
 			return nil, err

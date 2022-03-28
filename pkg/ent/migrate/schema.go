@@ -1623,6 +1623,22 @@ var (
 		PrimaryKey:  []*schema.Column{OrganizationsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ParameterCatalogsColumns holds the columns for the "parameter_catalogs" table.
+	ParameterCatalogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "index", Type: field.TypeInt},
+		{Name: "disabled", Type: field.TypeBool},
+	}
+	// ParameterCatalogsTable holds the schema information for the "parameter_catalogs" table.
+	ParameterCatalogsTable = &schema.Table{
+		Name:        "parameter_catalogs",
+		Columns:     ParameterCatalogsColumns,
+		PrimaryKey:  []*schema.Column{ParameterCatalogsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// PermissionsPoliciesColumns holds the columns for the "permissions_policies" table.
 	PermissionsPoliciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1927,6 +1943,37 @@ var (
 			},
 		},
 	}
+	// PropertyCategoriesColumns holds the columns for the "property_categories" table.
+	PropertyCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "index", Type: field.TypeInt},
+		{Name: "parameter_catalog_property_categories", Type: field.TypeInt, Nullable: true},
+	}
+	// PropertyCategoriesTable holds the schema information for the "property_categories" table.
+	PropertyCategoriesTable = &schema.Table{
+		Name:       "property_categories",
+		Columns:    PropertyCategoriesColumns,
+		PrimaryKey: []*schema.Column{PropertyCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "property_categories_parameter_catalogs_property_categories",
+				Columns: []*schema.Column{PropertyCategoriesColumns[5]},
+
+				RefColumns: []*schema.Column{ParameterCatalogsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "propertycategory_name",
+				Unique:  false,
+				Columns: []*schema.Column{PropertyCategoriesColumns[3]},
+			},
+		},
+	}
 	// PropertyTypesColumns holds the columns for the "property_types" table.
 	PropertyTypesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1957,6 +2004,7 @@ var (
 		{Name: "location_type_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "project_template_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "project_type_properties", Type: field.TypeInt, Nullable: true},
+		{Name: "property_category_properties_type", Type: field.TypeInt, Nullable: true},
 		{Name: "service_type_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type_property_types", Type: field.TypeInt, Nullable: true},
@@ -2011,29 +2059,36 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "property_types_service_types_property_types",
+				Symbol:  "property_types_property_categories_properties_type",
 				Columns: []*schema.Column{PropertyTypesColumns[28]},
+
+				RefColumns: []*schema.Column{PropertyCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "property_types_service_types_property_types",
+				Columns: []*schema.Column{PropertyTypesColumns[29]},
 
 				RefColumns: []*schema.Column{ServiceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_templates_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[29]},
+				Columns: []*schema.Column{PropertyTypesColumns[30]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[30]},
+				Columns: []*schema.Column{PropertyTypesColumns[31]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_worker_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[31]},
+				Columns: []*schema.Column{PropertyTypesColumns[32]},
 
 				RefColumns: []*schema.Column{WorkerTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2063,12 +2118,17 @@ var (
 			{
 				Name:    "propertytype_name_work_order_type_property_types",
 				Unique:  true,
-				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[30]},
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[31]},
 			},
 			{
 				Name:    "propertytype_name_worker_type_property_types",
 				Unique:  true,
-				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[31]},
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[32]},
+			},
+			{
+				Name:    "propertytype_name_property_category_properties_type",
+				Unique:  false,
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[28]},
 			},
 		},
 	}
@@ -3316,11 +3376,13 @@ var (
 		LocationTypesTable,
 		NetworkTypesTable,
 		OrganizationsTable,
+		ParameterCatalogsTable,
 		PermissionsPoliciesTable,
 		ProjectsTable,
 		ProjectTemplatesTable,
 		ProjectTypesTable,
 		PropertiesTable,
+		PropertyCategoriesTable,
 		PropertyTypesTable,
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
@@ -3459,16 +3521,18 @@ func init() {
 	PropertiesTable.ForeignKeys[11].RefTable = ProjectsTable
 	PropertiesTable.ForeignKeys[12].RefTable = ServicesTable
 	PropertiesTable.ForeignKeys[13].RefTable = WorkOrdersTable
+	PropertyCategoriesTable.ForeignKeys[0].RefTable = ParameterCatalogsTable
 	PropertyTypesTable.ForeignKeys[0].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[1].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[2].RefTable = EquipmentTypesTable
 	PropertyTypesTable.ForeignKeys[3].RefTable = LocationTypesTable
 	PropertyTypesTable.ForeignKeys[4].RefTable = ProjectTemplatesTable
 	PropertyTypesTable.ForeignKeys[5].RefTable = ProjectTypesTable
-	PropertyTypesTable.ForeignKeys[6].RefTable = ServiceTypesTable
-	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTemplatesTable
-	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTypesTable
-	PropertyTypesTable.ForeignKeys[9].RefTable = WorkerTypesTable
+	PropertyTypesTable.ForeignKeys[6].RefTable = PropertyCategoriesTable
+	PropertyTypesTable.ForeignKeys[7].RefTable = ServiceTypesTable
+	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTemplatesTable
+	PropertyTypesTable.ForeignKeys[9].RefTable = WorkOrderTypesTable
+	PropertyTypesTable.ForeignKeys[10].RefTable = WorkerTypesTable
 	RecommendationsTable.ForeignKeys[0].RefTable = RecommendationsCategoriesTable
 	RecommendationsTable.ForeignKeys[1].RefTable = RecommendationsSourcesTable
 	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable

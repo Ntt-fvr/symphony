@@ -76,6 +76,21 @@ def add_recommendations(
 
     .. code-block:: python
 
+<<<<<<< HEAD
+=======
+        recommendations_sources = client.add_recommendations_sources(
+            name="recommendations_sources",
+        )
+        recommendations_category = client.add_recommendations_category(
+            name="recommendations_category",
+        )
+        vendor = client.add_vendor(
+            name="vendor",
+        )
+
+        user_created=client.get_user_by_email(email="user@nttdata.com")
+
+>>>>>>> origin/development
         new_recommendations = client.add_recommendations(
             externalID="new_externalID",
             resource="resoruce",
@@ -90,9 +105,16 @@ def add_recommendations(
             vendor=vendor.id,
             RecomendationSources=recommendation_sources.id,
             RecomendationsCategory=recommendation_category.id,
+<<<<<<< HEAD
             userCreated=user.id,
             userApproved=user.id
         )
+=======
+            userCreated=user_created.id,
+            userApproved=user_created.id
+        )
+        print(new_recommendations)
+>>>>>>> origin/development
     """
     recommendations_input = AddRecommendationsInput(
     externalID=externalID,
@@ -163,7 +185,29 @@ def edit_recommendations(
 
     .. code-block:: python
 
+<<<<<<< HEAD
         recommendations_edited = client.edit_recommendations(recommendations=recommendations ,new_name="new_recommendations")
+=======
+        recommendations_edited = client.edit_recommendations(
+            recommendations=recommendations 
+            new_externalID=new_externalID,
+            resource="resoruce_2",
+            alarmType="alarmType_2",
+            LongDescription="LongDescription_2",
+            shortDescription="shortDescription_2",
+            command="command_2",
+            runbook="runbook_2",
+            priority=2,
+            status=False,
+            used=2,
+            vendor=vendor.id,
+            RecomendationSources=recommendation_sources.id,
+            RecomendationsCategory=recommendation_category.id,
+            userCreated=user_created.id,
+            userApproved=user_created.id
+            
+            )
+>>>>>>> origin/development
     """
     params: Dict[str, Any] = {}
     if new_externalID is not None:
@@ -187,7 +231,7 @@ def edit_recommendations(
             userApprobed=userApproved))
 
 def get_recommendations(client: SymphonyClient) -> Iterator[recommendations]:
-    """Get the list of Recommendations)
+    """Get the list of Recommendations
     :raises:
         FailedOperationException: Internal symphony error
     :return: Users Iterator
@@ -235,6 +279,10 @@ def remove_recommendations(client: SymphonyClient, id: str) -> None:
 
     .. code-block:: python
 
+<<<<<<< HEAD
         client.delete_recommendations(recommendations)
+=======
+        client.remove_recommendations(id=123456789)
+>>>>>>> origin/development
     """	
     removeRecommendations.execute(client, id=id)

@@ -32,6 +32,24 @@ export type UserManagementUtils_policies = {|
     +read: {|
       +isAllowed: PermissionValue
     |},
+    +propertyCategory: {|
+      +read: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +create: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +update: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+      +delete: ?{|
+        +isAllowed: PermissionValue,
+        +propertyCategoryIds: ?$ReadOnlyArray<string>,
+      |},
+    |},
     +documentCategory: {|
       +locationTypeID: ?number,
       +read: ?{|
@@ -188,6 +206,24 @@ export type UserManagementUtils_policies = {|
         +__typename: "InventoryPolicy",
         +read: {|
           +isAllowed: PermissionValue
+        |},
+        +propertyCategory: {|
+          +read: ?{|
+            +isAllowed: PermissionValue,
+            +propertyCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +create: ?{|
+            +isAllowed: PermissionValue,
+            +propertyCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +update: ?{|
+            +isAllowed: PermissionValue,
+            +propertyCategoryIds: ?$ReadOnlyArray<string>,
+          |},
+          +delete: ?{|
+            +isAllowed: PermissionValue,
+            +propertyCategoryIds: ?$ReadOnlyArray<string>,
+          |},
         |},
         +documentCategory: {|
           +locationTypeID: ?number,
@@ -381,10 +417,23 @@ v7 = [
     "alias": null,
     "args": null,
     "kind": "ScalarField",
+    "name": "propertyCategoryIds",
+    "storageKey": null
+  }
+],
+<<<<<<< HEAD
+=======
+v7 = [
+  (v4/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "documentCategoryIds",
     "storageKey": null
   }
 ],
+>>>>>>> origin/development
 v8 = [
   {
     "alias": null,
@@ -443,6 +492,57 @@ v9 = {
           "name": "read",
           "plural": false,
           "selections": (v6/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "PropertyCategoryCUD",
+          "kind": "LinkedField",
+          "name": "propertyCategory",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "PropertyCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "read",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "PropertyCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "create",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "PropertyCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "update",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "PropertyCategoryPermissionRule",
+              "kind": "LinkedField",
+              "name": "delete",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         },
         {
@@ -738,7 +838,10 @@ return {
     (v1/*: any*/),
     (v2/*: any*/),
     (v3/*: any*/),
+<<<<<<< HEAD
     (v4/*: any*/),
+=======
+>>>>>>> origin/development
     (v9/*: any*/),
     {
       "alias": null,
@@ -826,7 +929,10 @@ return {
             (v1/*: any*/),
             (v2/*: any*/),
             (v3/*: any*/),
+<<<<<<< HEAD
             (v4/*: any*/),
+=======
+>>>>>>> origin/development
             (v9/*: any*/)
           ],
           "storageKey": null

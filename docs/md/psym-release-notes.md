@@ -16,17 +16,29 @@ This is template for release notes
 -->
 
 ***
-## 2.4.14 - release date 06.01.2022
+## 2.5.14 - release date 02.02.2022
 ### Changes
 - CounterFormula
     - `edit_counter_formula`
     - `remove_counter_formula`
 - Documentation: New documentation pertaining to entities is added, in addition to notices on the entities.
-### Bug fixes
+### Bugs fixed
+- Recommendations Sources:
+    -`get_recommendation_sources`.
+
 ***
 - RuleLimit: Fixed an issue with a sign that caused an ident error in the remove_rule_limit function.
     - `remove_rule_limit`
 
+***
+## 2.5.14 - release date 02.02.2022
+### Changes
+- Document category:
+    -`get_document_category_by_names`.
+
+### Features
+-Add document category to a location type
+***
 
 ***
 ## 2.3.14 - release date 04.01.2022

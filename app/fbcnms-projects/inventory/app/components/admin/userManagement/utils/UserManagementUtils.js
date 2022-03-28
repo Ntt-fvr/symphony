@@ -80,6 +80,24 @@ graphql`
     read {
       isAllowed
     }
+    propertyCategory {
+      read {
+        isAllowed
+        propertyCategoryIds
+      }
+      create {
+        isAllowed
+        propertyCategoryIds
+      }
+      update {
+        isAllowed
+        propertyCategoryIds
+      }
+      delete {
+        isAllowed
+        propertyCategoryIds
+      }
+    }
     documentCategory {
       locationTypeID
       read {

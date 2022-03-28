@@ -48,6 +48,14 @@ func newDocumentCategoryPermissionRule(allowed bool) *models.DocumentCategoryPer
 	return &models.DocumentCategoryPermissionRule{IsAllowed: rule}
 }
 
+func newPropertyCategoryPermissionRule(allowed bool) *models.PropertyCategoryPermissionRule {
+	rule := models.PermissionValueNo
+	if allowed {
+		rule = models.PermissionValueYes
+	}
+	return &models.PropertyCategoryPermissionRule{IsAllowed: rule}
+}
+
 func newWorkforcePermissionRule(allowed bool) *models.WorkforcePermissionRule {
 	rule := models.PermissionValueNo
 	if allowed {
@@ -81,6 +89,15 @@ func newDocumentCategoryCUD(allowed bool) *models.DocumentCategoryCud {
 	}
 }
 
+func newPropertyCategoryCUD(allowed bool) *models.PropertyCategoryCud {
+	return &models.PropertyCategoryCud{
+		Read:   newPropertyCategoryPermissionRule(allowed),
+		Create: newPropertyCategoryPermissionRule(allowed),
+		Update: newPropertyCategoryPermissionRule(allowed),
+		Delete: newPropertyCategoryPermissionRule(allowed),
+	}
+}
+
 func newWorkforceCUD(allowed bool) *models.WorkforceCud {
 	return &models.WorkforceCud{
 		Create:            newWorkforcePermissionRule(allowed),
@@ -97,6 +114,7 @@ func NewInventoryPolicy(writeAllowed bool) *models.InventoryPolicy {
 		Read:             newBasicPermissionRule(true),
 		Location:         newLocationCUD(writeAllowed),
 		DocumentCategory: newDocumentCategoryCUD(writeAllowed),
+		PropertyCategory: newPropertyCategoryCUD(writeAllowed),
 		Equipment:        newCUD(writeAllowed),
 		EquipmentType:    newCUD(writeAllowed),
 		LocationType:     newCUD(writeAllowed),
@@ -189,6 +207,24 @@ func appendDocCategoryPermissionRule(rule *models.DocumentCategoryPermissionRule
 	return rule
 }
 
+func appendPropertyCategoryPermissionRule(rule *models.PropertyCategoryPermissionRule, addRule *models.PropertyCategoryPermissionRuleInput) *models.PropertyCategoryPermissionRule {
+	if addRule == nil {
+		return rule
+	}
+	if allowedEnums[addRule.IsAllowed] >= allowedEnums[rule.IsAllowed] {
+		rule.IsAllowed = addRule.IsAllowed
+	}
+	switch rule.IsAllowed {
+	case models.PermissionValueYes:
+		rule.PropertyCategoryIds = nil
+	case models.PermissionValueNo:
+		rule.PropertyCategoryIds = nil
+	case models.PermissionValueByCondition:
+		rule.PropertyCategoryIds = append(rule.PropertyCategoryIds, addRule.PropertyCategoryIds...)
+	}
+	return rule
+}
+
 func appendTopLevelWorkforcePermissionRuleInput(
 	rule *models.WorkforcePermissionRuleInput, bottomRule *models.BasicPermissionRuleInput) *models.WorkforcePermissionRuleInput {
 	if bottomRule == nil || bottomRule.IsAllowed == models.PermissionValueNo {
@@ -259,6 +295,17 @@ func appendDocCategoryCUD(cud *models.DocumentCategoryCud, addCUD *models.Docume
 	return cud
 }
 
+func appendPropertyCategoryCUD(cud *models.PropertyCategoryCud, addCUD *models.PropertyCategoryCUDInput) *models.PropertyCategoryCud {
+	if addCUD == nil {
+		return cud
+	}
+	cud.Read = appendPropertyCategoryPermissionRule(cud.Read, addCUD.Read)
+	cud.Create = appendPropertyCategoryPermissionRule(cud.Create, addCUD.Create)
+	cud.Update = appendPropertyCategoryPermissionRule(cud.Update, addCUD.Update)
+	cud.Delete = appendPropertyCategoryPermissionRule(cud.Delete, addCUD.Delete)
+	return cud
+}
+
 func appendWorkforceCUD(cud *models.WorkforceCud, readRule *models.WorkforcePermissionRuleInput, addCUD *models.WorkforceCUDInput) *models.WorkforceCud {
 	if addCUD == nil {
 		return cud
@@ -286,6 +333,7 @@ func AppendInventoryPolicies(policy *models.InventoryPolicy, inputs ...*models.I
 		policy.PortType = appendCUD(policy.PortType, input.PortType)
 		policy.ServiceType = appendCUD(policy.ServiceType, input.ServiceType)
 		policy.DocumentCategory = appendDocCategoryCUD(policy.DocumentCategory, input.DocumentCategory)
+		policy.PropertyCategory = appendPropertyCategoryCUD(policy.PropertyCategory, input.PropertyCategory)
 	}
 	return policy
 }
