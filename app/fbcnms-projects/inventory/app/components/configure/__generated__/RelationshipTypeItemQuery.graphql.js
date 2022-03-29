@@ -19,7 +19,7 @@ export type ResourceRelationshipMultiplicityKind = "MANY_TO_MANY" | "MANY_TO_ONE
 export type ResourceRelationshipTypeKind = "BELONGS_TO" | "CROSS_CONNECTION" | "LOCATED_IN" | "LOGICAL_LINK" | "PHYSICAL_LINK" | "%future added value";
 export type ResourceSpecificationFilterType = "NAME" | "RESOURCE_TYPE" | "%future added value";
 export type ResourceTypeBaseTypeKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
-export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "%future added value";
+export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
 export type ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_LOCATION_TYPE" | "RESOURCE_RELATIONSHIP_MULTIPLICITY" | "RESOURCE_RELATIONSHIP_RESOURCE" | "RESOURCE_RELATIONSHIP_TYPE" | "%future added value";
 export type ResourceSpecificationFilterInput = {|
   filterType: ResourceSpecificationFilterType,
