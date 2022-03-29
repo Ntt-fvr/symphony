@@ -22,6 +22,7 @@ This is template for release notes
     - `edit_counter_formula`
     - `remove_counter_formula`
 - Documentation: New documentation pertaining to entities is added, in addition to notices on the entities.
+
 ### Bugs fixed
 - Recommendations Sources:
     -`get_recommendation_sources`.
