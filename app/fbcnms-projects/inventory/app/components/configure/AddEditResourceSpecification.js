@@ -329,7 +329,7 @@ export const AddEditResourceSpecification = (props: Props) => {
           Relationship types definition
         </Text>
       </Grid>
-      <RelationshipTypeItem dataForm={dataForm} />
+      <RelationshipTypeItem dataForm={formValues} />
     </div>
   );
 };
