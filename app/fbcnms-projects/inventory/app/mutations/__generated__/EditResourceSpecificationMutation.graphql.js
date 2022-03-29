@@ -18,6 +18,7 @@ export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" 
 export type EditResourceSpecificationInput = {|
   id: string,
   name: string,
+  quantity?: ?number,
   resourceType?: ?string,
   resourcePropertyTypes?: ?$ReadOnlyArray<?AddResourcePropertyTypeInput>,
 |};
