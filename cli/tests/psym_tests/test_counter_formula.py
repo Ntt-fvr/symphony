@@ -15,8 +15,7 @@ from psym.api.formula import (add_formula,)
 from psym.api.counter_family import (add_counter_family,)
 from psym.api.vendor import (add_vendor,)
 from psym.api.counter import (add_counter,)
-from psym.api.counter_formula import (add_counter_formula, edit_counter_formula,)
-from psym.common.data_class import counterFormula
+from psym.api.counter_formula import (add_counter_formula,)
 
 from ..utils.base_test import BaseTest
 import unittest
@@ -40,14 +39,14 @@ class TestCounterFormula(BaseTest):
             name="Kpi_1",
             description="new kpi_1",
             status=True,
-            domain=self.test_domain_created_1.id,
-            kpiCategory=self.test_kpi_category_created_1.id
+            domainId=self.test_domain_created_1.id,
+            kpiCategoryId=self.test_kpi_category_created_1.id
         )
 
         self.test_tech_created_1 = add_tech(
             client=self.client,
             name="tech_1",
-            domain=self.test_domain_created_1.id
+            domainId=self.test_domain_created_1.id
 
         )
 
@@ -58,11 +57,11 @@ class TestCounterFormula(BaseTest):
 
         self.test_formula_created = add_formula(
             client=self.client,
-            textFormula="formula_1",
+            textformula="formula_1",
             status=True,
-            kpi=self.test_Kpi_created_1.id,
-            tech=self.test_tech_created_1.id,
-            networkType=self.test_network_type_created_1.id
+            kpiFk=self.test_Kpi_created_1.id,
+            techFk=self.test_tech_created_1.id,
+            networkTypeFk=self.test_network_type_created_1.id
             
         )
 
@@ -81,8 +80,8 @@ class TestCounterFormula(BaseTest):
             name="counter_1",
             externalID="new counter_1",
             networkManagerSystem="counter",
-            counterFamily=self.test_counter_family_created.id,
-            vendor= self.test_vendor_created.id
+            counterFamilyFk=self.test_counter_family_created.id,
+            vendorFk= self.test_vendor_created.id
         )
     
         self.test_counter_formula_created = add_counter_formula(

@@ -27,8 +27,7 @@ This is template for release notes
     -`get_recommendation_sources`.
 
 ***
-- RuleLimit: Fixed an issue with a sign that caused an ident error in the remove_rule_limit function.
-    - `remove_rule_limit`
+
 
 ***
 ## 2.5.14 - release date 02.02.2022

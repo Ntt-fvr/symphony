@@ -136,7 +136,7 @@ def edit_counter_formula(
 
     .. code-block:: python
 
-        counter_formula_edited = client.edit_Kpi(
+        counter_formula_edited = client.edit_counter_formula(
             CounterFormula=CounterFormula,
             new_mandatory=new_mandatory,
             counter=counter.id,

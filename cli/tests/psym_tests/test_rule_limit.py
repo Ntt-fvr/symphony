@@ -16,7 +16,8 @@ from psym.api.rule import (add_rule,)
 from psym.api.comparator import (add_comparator,)
 from psym.api.rule_limit import (
     add_rule_limit,
-    edit_rule_limit,)
+    edit_rule_limit,
+    remove_rule_limit,)
 from ..utils.base_test import BaseTest
 import unittest
 

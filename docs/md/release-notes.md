@@ -17,6 +17,10 @@ title: Release Notes
     * RecommendationSource
         * **[Python API]** **[Assurance]**		Fixed the name of get_recommendation_sources
 
+* 02/03/2022
+    * LocatioType
+        * **[Python API]** **[Assurance]**		Add document category to a location type.
+
 
 * 04/01/2022
     * Documentation

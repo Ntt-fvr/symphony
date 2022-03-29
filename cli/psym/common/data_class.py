@@ -655,8 +655,8 @@ class counterFormula (NamedTuple):
 
     id: str
     mandatory: bool
-    counter: str
-    formula: str
+    counterFk: str
+    formulaFk: str
 
 class eventSeverity (NamedTuple):
     """
