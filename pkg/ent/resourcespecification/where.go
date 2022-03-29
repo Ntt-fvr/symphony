@@ -118,6 +118,13 @@ func Name(v string) predicate.ResourceSpecification {
 	})
 }
 
+// Quantity applies equality check predicate on the "quantity" field. It's identical to QuantityEQ.
+func Quantity(v int) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldQuantity), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.ResourceSpecification {
 	return predicate.ResourceSpecification(func(s *sql.Selector) {
@@ -378,6 +385,96 @@ func NameEqualFold(v string) predicate.ResourceSpecification {
 func NameContainsFold(v string) predicate.ResourceSpecification {
 	return predicate.ResourceSpecification(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// QuantityEQ applies the EQ predicate on the "quantity" field.
+func QuantityEQ(v int) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldQuantity), v))
+	})
+}
+
+// QuantityNEQ applies the NEQ predicate on the "quantity" field.
+func QuantityNEQ(v int) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldQuantity), v))
+	})
+}
+
+// QuantityIn applies the In predicate on the "quantity" field.
+func QuantityIn(vs ...int) predicate.ResourceSpecification {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldQuantity), v...))
+	})
+}
+
+// QuantityNotIn applies the NotIn predicate on the "quantity" field.
+func QuantityNotIn(vs ...int) predicate.ResourceSpecification {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldQuantity), v...))
+	})
+}
+
+// QuantityGT applies the GT predicate on the "quantity" field.
+func QuantityGT(v int) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldQuantity), v))
+	})
+}
+
+// QuantityGTE applies the GTE predicate on the "quantity" field.
+func QuantityGTE(v int) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldQuantity), v))
+	})
+}
+
+// QuantityLT applies the LT predicate on the "quantity" field.
+func QuantityLT(v int) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldQuantity), v))
+	})
+}
+
+// QuantityLTE applies the LTE predicate on the "quantity" field.
+func QuantityLTE(v int) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldQuantity), v))
+	})
+}
+
+// QuantityIsNil applies the IsNil predicate on the "quantity" field.
+func QuantityIsNil() predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldQuantity)))
+	})
+}
+
+// QuantityNotNil applies the NotNil predicate on the "quantity" field.
+func QuantityNotNil() predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldQuantity)))
 	})
 }
 

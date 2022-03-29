@@ -63,6 +63,20 @@ func (rsc *ResourceSpecificationCreate) SetName(s string) *ResourceSpecification
 	return rsc
 }
 
+// SetQuantity sets the quantity field.
+func (rsc *ResourceSpecificationCreate) SetQuantity(i int) *ResourceSpecificationCreate {
+	rsc.mutation.SetQuantity(i)
+	return rsc
+}
+
+// SetNillableQuantity sets the quantity field if the given value is not nil.
+func (rsc *ResourceSpecificationCreate) SetNillableQuantity(i *int) *ResourceSpecificationCreate {
+	if i != nil {
+		rsc.SetQuantity(*i)
+	}
+	return rsc
+}
+
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
 func (rsc *ResourceSpecificationCreate) SetResourcetypeID(id int) *ResourceSpecificationCreate {
 	rsc.mutation.SetResourcetypeID(id)
@@ -270,6 +284,14 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 			Column: resourcespecification.FieldName,
 		})
 		_node.Name = value
+	}
+	if value, ok := rsc.mutation.Quantity(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+		_node.Quantity = value
 	}
 	if nodes := rsc.mutation.ResourcetypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

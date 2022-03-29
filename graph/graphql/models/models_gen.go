@@ -415,6 +415,7 @@ type AddResourceRelationshipInput struct {
 
 type AddResourceSpecificationInput struct {
 	Name                  string                          `json:"name"`
+	Quantity              *int                            `json:"quantity"`
 	ResourceType          int                             `json:"resourceType"`
 	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
 }
@@ -1049,6 +1050,7 @@ type EditResourceRelationshipInput struct {
 type EditResourceSpecificationInput struct {
 	ID                    int                             `json:"id"`
 	Name                  string                          `json:"name"`
+	Quantity              *int                            `json:"quantity"`
 	ResourceType          *int                            `json:"resourceType"`
 	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
 }

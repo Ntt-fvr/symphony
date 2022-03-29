@@ -69,6 +69,7 @@ func (r mutationResolver) AddResourceSpecification(ctx context.Context, input mo
 	typ, err := client.
 		ResourceSpecification.Create().
 		SetName(input.Name).
+		SetNillableQuantity(input.Quantity).
 		SetResourcetypeID(input.ResourceType).
 		Save(ctx)
 	if err != nil {
@@ -133,6 +134,7 @@ func (r mutationResolver) EditResourceSpecification(ctx context.Context, input m
 		if et, err = client.ResourceSpecification.
 			UpdateOne(et).
 			SetName(input.Name).
+			SetNillableQuantity(input.Quantity).
 			SetNillableResourcetypeID(input.ResourceType).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {

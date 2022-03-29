@@ -23,6 +23,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldQuantity holds the string denoting the quantity field in the database.
+	FieldQuantity = "quantity"
 
 	// EdgeResourcetype holds the string denoting the resourcetype edge name in mutations.
 	EdgeResourcetype = "resourcetype"
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
+	FieldQuantity,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceSpecification type.

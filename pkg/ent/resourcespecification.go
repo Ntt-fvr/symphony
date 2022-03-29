@@ -27,6 +27,8 @@ type ResourceSpecification struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Quantity holds the value of the "quantity" field.
+	Quantity int `json:"quantity,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceSpecificationQuery when eager-loading is set.
 	Edges                                ResourceSpecificationEdges `json:"edges"`
@@ -107,6 +109,7 @@ func (*ResourceSpecification) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+		&sql.NullInt64{},  // quantity
 	}
 }
 
@@ -144,7 +147,12 @@ func (rs *ResourceSpecification) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rs.Name = value.String
 	}
-	values = values[3:]
+	if value, ok := values[3].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field quantity", values[3])
+	} else if value.Valid {
+		rs.Quantity = int(value.Int64)
+	}
+	values = values[4:]
 	if len(values) == len(resourcespecification.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_specification", value)
@@ -210,6 +218,8 @@ func (rs *ResourceSpecification) String() string {
 	builder.WriteString(rs.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(rs.Name)
+	builder.WriteString(", quantity=")
+	builder.WriteString(fmt.Sprintf("%v", rs.Quantity))
 	builder.WriteByte(')')
 	return builder.String()
 }
