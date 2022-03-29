@@ -1644,6 +1644,10 @@ func init() {
 	permissionspolicyDescIsGlobal := permissionspolicyFields[2].Descriptor()
 	// permissionspolicy.DefaultIsGlobal holds the default value on creation for the is_global field.
 	permissionspolicy.DefaultIsGlobal = permissionspolicyDescIsGlobal.Default.(bool)
+	// permissionspolicyDescIsMulticontractor is the schema descriptor for is_multicontractor field.
+	permissionspolicyDescIsMulticontractor := permissionspolicyFields[3].Descriptor()
+	// permissionspolicy.DefaultIsMulticontractor holds the default value on creation for the is_multicontractor field.
+	permissionspolicy.DefaultIsMulticontractor = permissionspolicyDescIsMulticontractor.Default.(bool)
 	projectMixin := schema.Project{}.Mixin()
 	project.Policy = privacy.NewPolicies(schema.Project{})
 	project.Hooks[0] = func(next ent.Mutator) ent.Mutator {

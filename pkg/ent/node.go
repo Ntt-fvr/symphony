@@ -4664,7 +4664,7 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
 		Type:   "PermissionsPolicy",
-		Fields: make([]*Field, 9),
+		Fields: make([]*Field, 10),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -4708,10 +4708,18 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "is_global",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(pp.InventoryPolicy); err != nil {
+	if buf, err = json.Marshal(pp.IsMulticontractor); err != nil {
 		return nil, err
 	}
 	node.Fields[5] = &Field{
+		Type:  "bool",
+		Name:  "is_multicontractor",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pp.InventoryPolicy); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
 		Type:  "*models.InventoryPolicyInput",
 		Name:  "inventory_policy",
 		Value: string(buf),
@@ -4719,7 +4727,7 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(pp.WorkforcePolicy); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "*models.WorkforcePolicyInput",
 		Name:  "workforce_policy",
 		Value: string(buf),
@@ -4727,7 +4735,7 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(pp.AutomationPolicy); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "*models.AutomationPolicyInput",
 		Name:  "automation_policy",
 		Value: string(buf),
@@ -4735,7 +4743,7 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(pp.AssurancePolicy); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[9] = &Field{
 		Type:  "*models.AssurancePolicyInput",
 		Name:  "assurance_policy",
 		Value: string(buf),

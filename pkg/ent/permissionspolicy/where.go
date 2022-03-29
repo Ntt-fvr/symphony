@@ -132,6 +132,13 @@ func IsGlobal(v bool) predicate.PermissionsPolicy {
 	})
 }
 
+// IsMulticontractor applies equality check predicate on the "is_multicontractor" field. It's identical to IsMulticontractorEQ.
+func IsMulticontractor(v bool) predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsMulticontractor), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.PermissionsPolicy {
 	return predicate.PermissionsPolicy(func(s *sql.Selector) {
@@ -545,6 +552,34 @@ func IsGlobalIsNil() predicate.PermissionsPolicy {
 func IsGlobalNotNil() predicate.PermissionsPolicy {
 	return predicate.PermissionsPolicy(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldIsGlobal)))
+	})
+}
+
+// IsMulticontractorEQ applies the EQ predicate on the "is_multicontractor" field.
+func IsMulticontractorEQ(v bool) predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsMulticontractor), v))
+	})
+}
+
+// IsMulticontractorNEQ applies the NEQ predicate on the "is_multicontractor" field.
+func IsMulticontractorNEQ(v bool) predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIsMulticontractor), v))
+	})
+}
+
+// IsMulticontractorIsNil applies the IsNil predicate on the "is_multicontractor" field.
+func IsMulticontractorIsNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIsMulticontractor)))
+	})
+}
+
+// IsMulticontractorNotNil applies the NotNil predicate on the "is_multicontractor" field.
+func IsMulticontractorNotNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIsMulticontractor)))
 	})
 }
 
