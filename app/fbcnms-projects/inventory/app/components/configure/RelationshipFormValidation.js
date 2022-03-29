@@ -19,6 +19,11 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DragIndicatorIcon from '@fbcnms/ui/icons/DragIndicatorIcon';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {Grid, MenuItem} from '@material-ui/core';
@@ -29,11 +34,11 @@ const useStyles = makeStyles(() => ({
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
-    marginBottom: '12px',
+    marginBottom: '20px',
   },
   container: {
     '& .MuiAccordionSummary-root': {
-      padding: '11px 24px 11px 36px',
+      padding: '5px 24px',
     },
     align: 'center',
     '&.MuiPaper-elevation1': {
@@ -54,7 +59,6 @@ const useStyles = makeStyles(() => ({
       transform: 'translate(14px, -3px) scale(0.75)',
     },
     '& .MuiFormControl-root': {
-      marginBottom: '41px',
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3984FF',
       },
@@ -121,52 +125,71 @@ export default function RelationshipTypeItem(props: Props) {
           </AccordionSummary>
 
           <AccordionDetails>
-            <Grid container item xs={12}>
-              <Grid container item xs={12}>
-                <DragIndicatorIcon className={classes.dragIndicatorIcon} />
-                {nameForm === 'Cards' ? null : (
-                  <Grid item xs={5}>
-                    <Text>{nameForm} Name</Text>
-                    <form className={classes.formField} autoComplete="off">
-                      <TextField
-                        label={nameForm}
-                        variant="outlined"
-                        name="name"
-                        fullWidth
-                      />
-                    </form>
-                  </Grid>
-                )}
-                <Grid item xs={5}>
-                  <Text>{nameForm} Specification</Text>
-                  <form className={classes.formField} autoComplete="off">
-                    <TextField
-                      required
-                      select
-                      label={'Select ' + nameForm + ' Specifications'}
-                      variant="outlined"
-                      name={nameForm + 'specification'}
-                      defaultValue=""
-                      fullWidth>
-                      {options.map((item, index) => (
-                        <MenuItem key={index} value={item.name}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </form>
-                </Grid>
-                <Grid container item xs>
-                  <Text>Delete</Text>
-                  <IconButton color="primary">
-                    <DeleteOutlinedIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                style={{marginTop: '30px', marginBottom: '5px'}}>
+            <Grid item container xs>
+              <Table aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell />
+                    {nameForm === 'Cards' ? null : (
+                      <TableCell>{nameForm} Name</TableCell>
+                    )}
+                    <TableCell>{nameForm} Specification</TableCell>
+                    <TableCell>Delete</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow
+                    sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                    <TableCell
+                      style={{minWidth: '35px', width: '35px'}}
+                      size="small"
+                      padding="none"
+                      component="div">
+                      <div>
+                        <DragIndicatorIcon
+                          className={classes.dragIndicatorIcon}
+                        />
+                      </div>
+                    </TableCell>
+                    {nameForm === 'Cards' ? null : (
+                      <TableCell>
+                        <form className={classes.formField} autoComplete="off">
+                          <TextField
+                            label={nameForm}
+                            variant="outlined"
+                            name="name"
+                            fullWidth
+                          />
+                        </form>
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <form className={classes.formField} autoComplete="off">
+                        <TextField
+                          required
+                          select
+                          label={'Select ' + nameForm + ' Specifications'}
+                          variant="outlined"
+                          name={nameForm + 'specification'}
+                          defaultValue=""
+                          fullWidth>
+                          {options.map((item, index) => (
+                            <MenuItem key={index} value={item.name}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </form>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton color="primary">
+                        <DeleteOutlinedIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <Grid item xs={12} style={{marginTop: '8px'}}>
                 <Button color="primary" disableRipple startIcon={<AddIcon />}>
                   Add Relationships
                 </Button>
