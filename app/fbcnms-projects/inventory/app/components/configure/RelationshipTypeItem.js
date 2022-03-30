@@ -106,6 +106,9 @@ export default function RelationshipTypeItem(props: Props) {
       {getdataAllRelationShips.includes('SLOT') && (
         <RelationshipFormValidation nameForm="Slots" />
       )}
+      {getdataAllRelationShips.includes('VLAN') && (
+        <RelationshipFormValidation nameForm="Vlan" />
+      )}
     </>
   );
 }

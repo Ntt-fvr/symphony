@@ -19,8 +19,6 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DragIndicatorIcon from '@fbcnms/ui/icons/DragIndicatorIcon';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
-import MultipleChoiceCheckListItemDefinition from '../checklist/checklistDefinition/MultipleChoiceCheckListItemDefinition';
-import MultipleChoiceCheckListItemFilling from '../checklist/checklistFilling/MultipleChoiceCheckListItemFilling';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -30,6 +28,7 @@ import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {Grid, MenuItem} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+
 const useStyles = makeStyles(() => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
