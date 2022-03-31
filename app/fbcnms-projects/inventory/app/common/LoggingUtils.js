@@ -42,10 +42,13 @@ export const LogEvents = {
   CONFIGURE_NAV_CLICKED: 'configure_nav_clicked',
   SERVICES_NAV_CLICKED: 'services_nav_clicked',
   INVENTORY_NAV_CLICKED: 'inventory_nav_clicked',
+  CHANGE_NAV_CLICKED: 'change_nav_clicked',
   MAP_NAV_CLICKED: 'map_nav_clicked',
   SEARCH_NAV_CLICKED: 'search_nav_clicked',
   WORK_ORDERS_NAV_CLICKED: 'work_orders_nav_clicked',
   CONFIGURE_TAB_NAVIGATION_CLICKED: 'configure_tab_navigation_clicked',
+  CHANGE_REQUEST_TAB_NAVIGATION_CLICKED:
+    'change_request_tab_navigation_clicked',
   EQUIPMENT_CARD_LOCATION_BREADCRUMB_CLICKED:
     'equipment_card_location_breadcrumb_clicked',
   EQUIPMENT_CARD_EQUIPMENT_BREADCRUMB_CLICKED:
