@@ -84,15 +84,15 @@ export default function RelationshipTypeItem(props: Props) {
       ],
     },
   );
-  const getDataReltionShipsA = response.resourceTypeRelationships.edges.map(
+  const getDataRelationShipsA = response.resourceTypeRelationships.edges.map(
     item => item.node?.resourceTypeA?.resourceTypeClass,
   );
-  const getDataReltionShipsB = response.resourceTypeRelationships.edges.map(
+  const getDataRelationShipsB = response.resourceTypeRelationships.edges.map(
     item => item.node?.resourceTypeB?.resourceTypeClass,
   );
   const getdataAllRelationShips = [
-    ...getDataReltionShipsA,
-    ...getDataReltionShipsB,
+    ...getDataRelationShipsA,
+    ...getDataRelationShipsB,
   ];
 
   return (
