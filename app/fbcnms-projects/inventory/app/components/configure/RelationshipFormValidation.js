@@ -17,6 +17,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DragIndicatorIcon from '@fbcnms/ui/icons/DragIndicatorIcon';
+import EnumPropertyValueInput from '../form/EnumPropertyValueInput';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
 import Table from '@material-ui/core/Table';
@@ -167,22 +168,30 @@ export default function RelationshipTypeItem(props: Props) {
                       </TableCell>
                     )}
                     <TableCell>
-                      <form className={classes.formField} autoComplete="off">
-                        <TextField
-                          required
-                          select
-                          label={'Select ' + nameForm + ' Specifications'}
-                          variant="outlined"
-                          name={nameForm + 'specification'}
-                          defaultValue=""
-                          fullWidth>
-                          {options.map((item, index) => (
-                            <MenuItem key={index} value={item.name}>
-                              {item.name}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </form>
+                      {nameForm !== 'Cards' ? (
+                        <form className={classes.formField} autoComplete="off">
+                          <TextField
+                            required
+                            select
+                            label={'Select ' + nameForm + ' Specifications'}
+                            variant="outlined"
+                            name={nameForm + 'specification'}
+                            defaultValue=""
+                            fullWidth>
+                            {options.map((item, index) => (
+                              <MenuItem key={index} value={item.name}>
+                                {item.name}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </form>
+                      ) : (
+                        <EnumPropertyValueInput
+                          property={'property'}
+                          onChange={'onChange'}
+                          disabled={false}
+                        />
+                      )}
                     </TableCell>
                     {nameForm === 'Vlan' && (
                       <TableCell>

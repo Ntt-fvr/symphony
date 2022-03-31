@@ -97,6 +97,9 @@ const objectSelectors = {
       {
         name: 'CARD',
       },
+      {
+        name: 'VLAN',
+      },
     ],
 
     resourceTypeBaseType: [
