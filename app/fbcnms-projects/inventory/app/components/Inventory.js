@@ -12,7 +12,6 @@ import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
-import PerformanceCatalog from './assurance/PerformanceCatalog';
 import Configure from '../pages/Configure';
 import EquipmentComparisonView from './comparison_view/EquipmentComparisonView';
 import ExpandButtonContext from './context/ExpandButtonContext';
@@ -21,7 +20,9 @@ import InventoryComparisonView from './comparison_view/InventoryComparisonView';
 import InventorySuspense from '../common/InventorySuspense';
 import LocationsMap from './map/LocationsMap';
 import MainNavListItems from './MainNavListItems';
+import PerformanceCatalog from './assurance/PerformanceCatalog';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
+import RoutesChange from './configuration_management/RoutesChange';
 import ServicesMain from './services/ServicesMain';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {Redirect, Route, Switch} from 'react-router-dom';
@@ -70,7 +71,14 @@ function Index() {
       <AppContent>
         <Switch>
           <Route path={relativeUrl('/configure')} component={Configure} />
-          <Route path={relativeUrl('/assurance')} component={PerformanceCatalog} />
+          <Route
+            path={relativeUrl('/configuration_management')}
+            component={RoutesChange}
+          />
+          <Route
+            path={relativeUrl('/assurance')}
+            component={PerformanceCatalog}
+          />
           <Route path={relativeUrl('/inventory')} component={Inventory} />
           <Route path={relativeUrl('/map')} component={LocationsMap} />
           <Route

@@ -19,7 +19,11 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AddToLocationDialog from '../components/AddToLocationDialog';
+import Button from '@material-ui/core/Button';
+import CardPlusDnD from '../components/CardPlusDnD';
+import DialogStatus from '../components/configure/DialogStatus';
 import EquipmentCard from '../components/EquipmentCard';
+import Grid from '@material-ui/core/Grid';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
@@ -28,6 +32,7 @@ import React from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
+import {CardSuggested} from '../components/CardSuggested';
 import {InventoryAPIUrls} from '../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {extractEntityIdFromUrl} from '../common/RouterUtils';
@@ -61,6 +66,13 @@ const styles = {
   },
   tabsContainer: {
     padding: '20px',
+  },
+  header: {
+    marginBottom: '1rem',
+  },
+  buttons: {
+    height: '36px',
+    width: '111px',
   },
 };
 
@@ -111,9 +123,9 @@ class Inventory extends React.Component<Props, State> {
       selectedLocationType: null,
       selectedWorkOrderId: null,
       openLocationHierarchy: [],
+      dialogOpen: false,
     };
   }
-
   navigateToLocation(selectedLocationId: ?string, source: ?string) {
     ServerLogger.info(LogEvents.NAVIGATE_TO_LOCATION, {
       locationId: selectedLocationId,
@@ -175,6 +187,10 @@ class Inventory extends React.Component<Props, State> {
   render() {
     const {classes} = this.props;
     const {card} = this.state;
+
+    const handelModal = () => {
+      this.setState({dialogOpen: true});
+    };
 
     const queryLocationId = extractEntityIdFromUrl(
       'location',
@@ -238,6 +254,34 @@ class Inventory extends React.Component<Props, State> {
           />
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
+              <Grid
+                className={classes.header}
+                container
+                direction="row"
+                justify="flex-end"
+                alignItems="center">
+                <Grid>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    className={classes.buttons}
+                    style={{marginRight: '1rem'}}>
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Button
+                    style={{marginRight: '2px'}}
+                    variant="contained"
+                    color="primary"
+                    className={classes.buttons}
+                    onClick={() => handelModal()}>
+                    Submit
+                  </Button>
+                </Grid>
+              </Grid>
+              <CardPlusDnD />
+              <CardSuggested />
               {card.type == 'location' && (
                 <LocationCard
                   mode={card.mode}
@@ -300,6 +344,12 @@ class Inventory extends React.Component<Props, State> {
             </InventoryErrorBoundary>
           </div>
         </div>
+        {this.state.dialogOpen === true && (
+          <DialogStatus
+            open={this.state.dialogOpen}
+            onClose={this.hideOpenModal}
+          />
+        )}
         <AddToLocationDialog
           key={`add_to_location_${this.state.dialogMode}`}
           show={
@@ -337,6 +387,8 @@ class Inventory extends React.Component<Props, State> {
     this.setState({dialogMode});
   };
   hideDialog = () => this.setState({dialogMode: 'hidden'});
+
+  hideOpenModal = () => this.setState({dialogOpen: false});
 
   onEquipmentCancel = () => {
     this.setState(state => ({
