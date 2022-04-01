@@ -61,11 +61,7 @@ const EnumPropertyComboSelectValueInput = <T: Property | PropertyType>({
   const options = parentProperty
     ? getValidPropertyValuesFromParent(parentProperty, property)
     : property.propertyType.propertyTypeValues;
-  const optionsArr = !!property.propertyTypeValue
-    ? [property.propertyTypeValue]
-    : Array.isArray(options)
-    ? options
-    : [];
+  const optionsArr = Array.isArray(options) ? options : [];
 
   const getPropertySelected = name =>
     optionsArr.find(value => value.name === name);
@@ -114,9 +110,7 @@ const EnumPropertyComboSelectValueInput = <T: Property | PropertyType>({
           value: getPropertyValue(property),
           required,
         });
-        return !!property.propertyTypeValue ? (
-          <>{input}</>
-        ) : (
+        return (
           <FormField
             required={required}
             hasError={!!errorText}

@@ -77,6 +77,11 @@ export default createFragmentContainer(PropertyFormField, {
           id
           isDeleted
           name
+          parentPropertyTypeValue {
+            id
+            isDeleted
+            name
+          }
         }
         dependencePropertyTypes {
           id

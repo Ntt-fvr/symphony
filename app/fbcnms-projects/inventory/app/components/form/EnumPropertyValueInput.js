@@ -17,7 +17,7 @@ import React, {useContext, useState} from 'react';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import update from 'immutability-helper';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
-import {MultipleSelectionIcon} from '@symphony/design-system/icons';
+import {Launch, PlaylistAdd} from '@material-ui/icons';
 import {
   getAllPropertyTypesValuesInString,
   getValidDependencePropertyTypeValueInString,
@@ -60,10 +60,9 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
   } = props;
 
   const propertyComboFeatureFlag = useFeatureFlag('property_combo');
-  const allowPropertyCombo =
-    showPropertyCombo &&
-    propertyComboFeatureFlag &&
-    !property.parentPropertyType;
+  const allowPropertyCombo = showPropertyCombo && propertyComboFeatureFlag;
+
+  const propertyTypeIcon = !property.parentPropertyType ? PlaylistAdd : Launch;
   const {propertyTypes} = useContext(PropertyTypesTableDispatcher);
 
   const allDependentPropertyValues =
@@ -138,8 +137,12 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
           <IconButton
             skin="primary"
             onClick={showDialog}
-            icon={MultipleSelectionIcon}
-            disabled={propertyTypes.length <= 1 || tokens.length < 1}
+            icon={propertyTypeIcon}
+            disabled={
+              propertyTypes.length <= 1 ||
+              tokens.length < 1 ||
+              !isTempId(property.id)
+            }
           />
           <PropertyComboPrincipalDialog
             open={viewDialogProperty}

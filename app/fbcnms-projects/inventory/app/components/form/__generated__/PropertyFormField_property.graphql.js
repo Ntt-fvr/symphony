@@ -51,6 +51,11 @@ export type PropertyFormField_property = {|
       +id: string,
       +isDeleted: ?boolean,
       +name: string,
+      +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+        +id: string,
+        +isDeleted: ?boolean,
+        +name: string,
+      |}>,
     |}>,
     +dependencePropertyTypes: $ReadOnlyArray<?{|
       +id: string,
@@ -237,11 +242,34 @@ v18 = {
   "name": "isDeleted",
   "storageKey": null
 },
-v19 = [
-  (v0/*: any*/),
-  (v18/*: any*/),
-  (v1/*: any*/)
-];
+v19 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v0/*: any*/),
+    (v18/*: any*/),
+    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        (v18/*: any*/),
+        (v1/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
@@ -295,16 +323,7 @@ return {
           "selections": (v2/*: any*/),
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "PropertyTypeValue",
-          "kind": "LinkedField",
-          "name": "propertyTypeValues",
-          "plural": true,
-          "selections": (v19/*: any*/),
-          "storageKey": null
-        },
+        (v19/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -331,30 +350,7 @@ return {
             (v15/*: any*/),
             (v18/*: any*/),
             (v17/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "PropertyTypeValue",
-              "kind": "LinkedField",
-              "name": "propertyTypeValues",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/),
-                (v18/*: any*/),
-                (v1/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "PropertyTypeValue",
-                  "kind": "LinkedField",
-                  "name": "parentPropertyTypeValue",
-                  "plural": true,
-                  "selections": (v19/*: any*/),
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
+            (v19/*: any*/)
           ],
           "storageKey": null
         }
@@ -385,6 +381,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'e9bde01a69f05db20d45bc0a99f97a57';
+(node/*: any*/).hash = '4a97a27644cba53328ccc4ce158b65c2';
 
 module.exports = node;

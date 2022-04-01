@@ -353,6 +353,11 @@ fragment PropertyFormField_property on Property {
       id
       isDeleted
       name
+      parentPropertyTypeValue {
+        id
+        isDeleted
+        name
+      }
     }
     dependencePropertyTypes {
       id
@@ -645,11 +650,34 @@ v30 = [
   (v2/*: any*/),
   (v3/*: any*/)
 ],
-v31 = [
-  (v2/*: any*/),
-  (v29/*: any*/),
-  (v3/*: any*/)
-],
+v31 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v2/*: any*/),
+    (v29/*: any*/),
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v2/*: any*/),
+        (v29/*: any*/),
+        (v3/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
 v32 = {
   "alias": null,
   "args": null,
@@ -1092,16 +1120,7 @@ return {
                         "selections": (v30/*: any*/),
                         "storageKey": null
                       },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "PropertyTypeValue",
-                        "kind": "LinkedField",
-                        "name": "propertyTypeValues",
-                        "plural": true,
-                        "selections": (v31/*: any*/),
-                        "storageKey": null
-                      },
+                      (v31/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1128,30 +1147,7 @@ return {
                           (v26/*: any*/),
                           (v29/*: any*/),
                           (v28/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "PropertyTypeValue",
-                            "kind": "LinkedField",
-                            "name": "propertyTypeValues",
-                            "plural": true,
-                            "selections": [
-                              (v2/*: any*/),
-                              (v29/*: any*/),
-                              (v3/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "PropertyTypeValue",
-                                "kind": "LinkedField",
-                                "name": "parentPropertyTypeValue",
-                                "plural": true,
-                                "selections": (v31/*: any*/),
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
+                          (v31/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -1292,12 +1288,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bc52df7c6e50acbc890d4f903981c378",
+    "cacheID": "d721ca0ccd9e76362f6c34d2a1aa02f1",
     "id": null,
     "metadata": {},
     "name": "LocationPropertiesCardQuery",
     "operationKind": "query",
-    "text": "query LocationPropertiesCardQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      id\n      name\n      latitude\n      longitude\n      externalId\n      locationType {\n        id\n        name\n        mapType\n        mapZoomLevel\n        propertyTypes {\n          ...PropertyTypeFormField_propertyType\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n      }\n      ...LocationBreadcrumbsTitle_locationDetails\n      parentLocation {\n        id\n      }\n      children {\n        id\n      }\n      equipments {\n        ...EquipmentTable_equipments\n        id\n      }\n      properties {\n        ...PropertyFormField_property\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n      images {\n        id\n      }\n      files {\n        id\n      }\n      hyperlinks {\n        id\n      }\n      parentCoords {\n        latitude\n        longitude\n      }\n      ...LocationDocumentsCard_location\n      ...LocationFloorPlansTab_location\n      ...LocationMenu_location\n    }\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  documentCategory {\n    id\n    name\n  }\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  documentCategory {\n    id\n    name\n  }\n  ...HyperlinkTableMenu_hyperlink\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment LocationDocumentsCard_location on Location {\n  id\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n  locationType {\n    documentCategories {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment LocationFloorPlansTab_location on Location {\n  id\n  floorPlans {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment LocationMenu_location on Location {\n  id\n  name\n  locationType {\n    id\n  }\n  parentLocation {\n    id\n  }\n  children {\n    id\n  }\n  equipments {\n    id\n  }\n  images {\n    id\n  }\n  files {\n    id\n  }\n  surveys {\n    id\n  }\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyTypeValue {\n    id\n    name\n  }\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n    parentPropertyType {\n      id\n      name\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
+    "text": "query LocationPropertiesCardQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      id\n      name\n      latitude\n      longitude\n      externalId\n      locationType {\n        id\n        name\n        mapType\n        mapZoomLevel\n        propertyTypes {\n          ...PropertyTypeFormField_propertyType\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n      }\n      ...LocationBreadcrumbsTitle_locationDetails\n      parentLocation {\n        id\n      }\n      children {\n        id\n      }\n      equipments {\n        ...EquipmentTable_equipments\n        id\n      }\n      properties {\n        ...PropertyFormField_property\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n      images {\n        id\n      }\n      files {\n        id\n      }\n      hyperlinks {\n        id\n      }\n      parentCoords {\n        latitude\n        longitude\n      }\n      ...LocationDocumentsCard_location\n      ...LocationFloorPlansTab_location\n      ...LocationMenu_location\n    }\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  documentCategory {\n    id\n    name\n  }\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  documentCategory {\n    id\n    name\n  }\n  ...HyperlinkTableMenu_hyperlink\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment LocationDocumentsCard_location on Location {\n  id\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n  locationType {\n    documentCategories {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment LocationFloorPlansTab_location on Location {\n  id\n  floorPlans {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment LocationMenu_location on Location {\n  id\n  name\n  locationType {\n    id\n  }\n  parentLocation {\n    id\n  }\n  children {\n    id\n  }\n  equipments {\n    id\n  }\n  images {\n    id\n  }\n  files {\n    id\n  }\n  surveys {\n    id\n  }\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyTypeValue {\n    id\n    name\n  }\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n    parentPropertyType {\n      id\n      name\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n      parentPropertyTypeValue {\n        id\n        isDeleted\n        name\n      }\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
   }
 };
 })();

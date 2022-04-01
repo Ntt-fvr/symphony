@@ -226,6 +226,11 @@ export type EquipmentPortsTable_equipment = {|
             +id: string,
             +isDeleted: ?boolean,
             +name: string,
+            +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+              +id: string,
+              +isDeleted: ?boolean,
+              +name: string,
+            |}>,
           |}>,
           +dependencePropertyTypes: $ReadOnlyArray<?{|
             +id: string,
@@ -309,6 +314,11 @@ export type EquipmentPortsTable_equipment = {|
           +id: string,
           +isDeleted: ?boolean,
           +name: string,
+          +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+            +id: string,
+            +isDeleted: ?boolean,
+            +name: string,
+          |}>,
         |}>,
         +dependencePropertyTypes: $ReadOnlyArray<?{|
           +id: string,
@@ -515,6 +525,11 @@ export type EquipmentPortsTable_equipment = {|
                 +id: string,
                 +isDeleted: ?boolean,
                 +name: string,
+                +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                  +id: string,
+                  +isDeleted: ?boolean,
+                  +name: string,
+                |}>,
               |}>,
               +dependencePropertyTypes: $ReadOnlyArray<?{|
                 +id: string,
@@ -598,6 +613,11 @@ export type EquipmentPortsTable_equipment = {|
               +id: string,
               +isDeleted: ?boolean,
               +name: string,
+              +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                +id: string,
+                +isDeleted: ?boolean,
+                +name: string,
+              |}>,
             |}>,
             +dependencePropertyTypes: $ReadOnlyArray<?{|
               +id: string,
@@ -812,6 +832,11 @@ export type EquipmentPortsTable_equipment = {|
                     +id: string,
                     +isDeleted: ?boolean,
                     +name: string,
+                    +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                      +id: string,
+                      +isDeleted: ?boolean,
+                      +name: string,
+                    |}>,
                   |}>,
                   +dependencePropertyTypes: $ReadOnlyArray<?{|
                     +id: string,
@@ -895,6 +920,11 @@ export type EquipmentPortsTable_equipment = {|
                   +id: string,
                   +isDeleted: ?boolean,
                   +name: string,
+                  +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                    +id: string,
+                    +isDeleted: ?boolean,
+                    +name: string,
+                  |}>,
                 |}>,
                 +dependencePropertyTypes: $ReadOnlyArray<?{|
                   +id: string,
@@ -1109,6 +1139,11 @@ export type EquipmentPortsTable_equipment = {|
                         +id: string,
                         +isDeleted: ?boolean,
                         +name: string,
+                        +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                          +id: string,
+                          +isDeleted: ?boolean,
+                          +name: string,
+                        |}>,
                       |}>,
                       +dependencePropertyTypes: $ReadOnlyArray<?{|
                         +id: string,
@@ -1192,6 +1227,11 @@ export type EquipmentPortsTable_equipment = {|
                       +id: string,
                       +isDeleted: ?boolean,
                       +name: string,
+                      +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                        +id: string,
+                        +isDeleted: ?boolean,
+                        +name: string,
+                      |}>,
                     |}>,
                     +dependencePropertyTypes: $ReadOnlyArray<?{|
                       +id: string,
@@ -1406,6 +1446,11 @@ export type EquipmentPortsTable_equipment = {|
                             +id: string,
                             +isDeleted: ?boolean,
                             +name: string,
+                            +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                              +id: string,
+                              +isDeleted: ?boolean,
+                              +name: string,
+                            |}>,
                           |}>,
                           +dependencePropertyTypes: $ReadOnlyArray<?{|
                             +id: string,
@@ -1489,6 +1534,11 @@ export type EquipmentPortsTable_equipment = {|
                           +id: string,
                           +isDeleted: ?boolean,
                           +name: string,
+                          +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+                            +id: string,
+                            +isDeleted: ?boolean,
+                            +name: string,
+                          |}>,
                         |}>,
                         +dependencePropertyTypes: $ReadOnlyArray<?{|
                           +id: string,
@@ -1826,11 +1876,34 @@ v25 = {
   ],
   "storageKey": null
 },
-v26 = [
-  (v0/*: any*/),
-  (v18/*: any*/),
-  (v1/*: any*/)
-],
+v26 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v0/*: any*/),
+    (v18/*: any*/),
+    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        (v18/*: any*/),
+        (v1/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
 v27 = {
   "alias": null,
   "args": null,
@@ -1886,16 +1959,7 @@ v27 = {
           "selections": (v22/*: any*/),
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "PropertyTypeValue",
-          "kind": "LinkedField",
-          "name": "propertyTypeValues",
-          "plural": true,
-          "selections": (v26/*: any*/),
-          "storageKey": null
-        },
+        (v26/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -1922,30 +1986,7 @@ v27 = {
             (v15/*: any*/),
             (v18/*: any*/),
             (v17/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "PropertyTypeValue",
-              "kind": "LinkedField",
-              "name": "propertyTypeValues",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/),
-                (v18/*: any*/),
-                (v1/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "PropertyTypeValue",
-                  "kind": "LinkedField",
-                  "name": "parentPropertyTypeValue",
-                  "plural": true,
-                  "selections": (v26/*: any*/),
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
+            (v26/*: any*/)
           ],
           "storageKey": null
         }

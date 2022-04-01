@@ -132,6 +132,11 @@ export type EditLinkMutationResponse = {|
           +id: string,
           +isDeleted: ?boolean,
           +name: string,
+          +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+            +id: string,
+            +isDeleted: ?boolean,
+            +name: string,
+          |}>,
         |}>,
         +dependencePropertyTypes: $ReadOnlyArray<?{|
           +id: string,
@@ -286,6 +291,11 @@ mutation EditLinkMutation(
           id
           isDeleted
           name
+          parentPropertyTypeValue {
+            id
+            isDeleted
+            name
+          }
         }
         dependencePropertyTypes {
           id
@@ -607,11 +617,34 @@ v27 = {
   "selections": (v23/*: any*/),
   "storageKey": null
 },
-v28 = [
-  (v2/*: any*/),
-  (v21/*: any*/),
-  (v4/*: any*/)
-],
+v28 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v2/*: any*/),
+    (v21/*: any*/),
+    (v4/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v2/*: any*/),
+        (v21/*: any*/),
+        (v4/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
 v29 = {
   "alias": null,
   "args": null,
@@ -648,16 +681,7 @@ v29 = {
       "selections": (v23/*: any*/),
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "PropertyTypeValue",
-      "kind": "LinkedField",
-      "name": "propertyTypeValues",
-      "plural": true,
-      "selections": (v28/*: any*/),
-      "storageKey": null
-    },
+    (v28/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -684,30 +708,7 @@ v29 = {
         (v18/*: any*/),
         (v21/*: any*/),
         (v20/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "PropertyTypeValue",
-          "kind": "LinkedField",
-          "name": "propertyTypeValues",
-          "plural": true,
-          "selections": [
-            (v2/*: any*/),
-            (v21/*: any*/),
-            (v4/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "PropertyTypeValue",
-              "kind": "LinkedField",
-              "name": "parentPropertyTypeValue",
-              "plural": true,
-              "selections": (v28/*: any*/),
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
+        (v28/*: any*/)
       ],
       "storageKey": null
     }
@@ -1097,12 +1098,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a7177291949db04400b7b7e3486bb3fa",
+    "cacheID": "0774f268e0f2bd40357282f9c00053c2",
     "id": null,
     "metadata": {},
     "name": "EditLinkMutation",
     "operationKind": "mutation",
-    "text": "mutation EditLinkMutation(\n  $input: EditLinkInput!\n) {\n  editLink(input: $input) {\n    id\n    futureState\n    ports {\n      id\n      definition {\n        id\n        name\n        visibleLabel\n        portType {\n          linkPropertyTypes {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isInstanceProperty\n            isMandatory\n            category\n            isDeleted\n          }\n          id\n        }\n      }\n      parentEquipment {\n        id\n        name\n        futureState\n        equipmentType {\n          id\n          name\n        }\n        ...EquipmentBreadcrumbs_equipment\n      }\n      serviceEndpoints {\n        definition {\n          role\n          id\n        }\n        service {\n          name\n          id\n        }\n        id\n      }\n    }\n    workOrder {\n      id\n      status\n    }\n    properties {\n      id\n      propertyTypeValue {\n        id\n        name\n      }\n      propertyType {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isInstanceProperty\n        isMandatory\n        category\n        isDeleted\n        parentPropertyType {\n          id\n          name\n        }\n        propertyTypeValues {\n          id\n          isDeleted\n          name\n        }\n        dependencePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n          propertyTypeValues {\n            id\n            isDeleted\n            name\n            parentPropertyTypeValue {\n              id\n              isDeleted\n              name\n            }\n          }\n        }\n      }\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      nodeValue {\n        __typename\n        id\n        name\n      }\n    }\n    services {\n      id\n      name\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "mutation EditLinkMutation(\n  $input: EditLinkInput!\n) {\n  editLink(input: $input) {\n    id\n    futureState\n    ports {\n      id\n      definition {\n        id\n        name\n        visibleLabel\n        portType {\n          linkPropertyTypes {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isInstanceProperty\n            isMandatory\n            category\n            isDeleted\n          }\n          id\n        }\n      }\n      parentEquipment {\n        id\n        name\n        futureState\n        equipmentType {\n          id\n          name\n        }\n        ...EquipmentBreadcrumbs_equipment\n      }\n      serviceEndpoints {\n        definition {\n          role\n          id\n        }\n        service {\n          name\n          id\n        }\n        id\n      }\n    }\n    workOrder {\n      id\n      status\n    }\n    properties {\n      id\n      propertyTypeValue {\n        id\n        name\n      }\n      propertyType {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isInstanceProperty\n        isMandatory\n        category\n        isDeleted\n        parentPropertyType {\n          id\n          name\n        }\n        propertyTypeValues {\n          id\n          isDeleted\n          name\n          parentPropertyTypeValue {\n            id\n            isDeleted\n            name\n          }\n        }\n        dependencePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n          propertyTypeValues {\n            id\n            isDeleted\n            name\n            parentPropertyTypeValue {\n              id\n              isDeleted\n              name\n            }\n          }\n        }\n      }\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      nodeValue {\n        __typename\n        id\n        name\n      }\n    }\n    services {\n      id\n      name\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();

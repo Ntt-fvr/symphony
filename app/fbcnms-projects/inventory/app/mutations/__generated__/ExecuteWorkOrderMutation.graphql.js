@@ -182,6 +182,11 @@ fragment EquipmentPortsTable_link on Link {
         id
         isDeleted
         name
+        parentPropertyTypeValue {
+          id
+          isDeleted
+          name
+        }
       }
       dependencePropertyTypes {
         id
@@ -458,11 +463,34 @@ v27 = [
   (v5/*: any*/),
   (v4/*: any*/)
 ],
-v28 = [
-  (v4/*: any*/),
-  (v26/*: any*/),
-  (v5/*: any*/)
-];
+v28 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v4/*: any*/),
+    (v26/*: any*/),
+    (v5/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v4/*: any*/),
+        (v26/*: any*/),
+        (v5/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -814,16 +842,7 @@ return {
                         "selections": (v7/*: any*/),
                         "storageKey": null
                       },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "PropertyTypeValue",
-                        "kind": "LinkedField",
-                        "name": "propertyTypeValues",
-                        "plural": true,
-                        "selections": (v28/*: any*/),
-                        "storageKey": null
-                      },
+                      (v28/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -850,30 +869,7 @@ return {
                           (v23/*: any*/),
                           (v26/*: any*/),
                           (v25/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "PropertyTypeValue",
-                            "kind": "LinkedField",
-                            "name": "propertyTypeValues",
-                            "plural": true,
-                            "selections": [
-                              (v4/*: any*/),
-                              (v26/*: any*/),
-                              (v5/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "PropertyTypeValue",
-                                "kind": "LinkedField",
-                                "name": "parentPropertyTypeValue",
-                                "plural": true,
-                                "selections": (v28/*: any*/),
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
+                          (v28/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -932,12 +928,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c9c7ca8a8d1eb73bc68de2572932889d",
+    "cacheID": "97256bc00a5f149f835cb7a24b03db0d",
     "id": null,
     "metadata": {},
     "name": "ExecuteWorkOrderMutation",
     "operationKind": "mutation",
-    "text": "mutation ExecuteWorkOrderMutation(\n  $id: ID!\n) {\n  executeWorkOrder(id: $id) {\n    equipmentAdded {\n      ...EquipmentTable_equipments\n      id\n    }\n    equipmentRemoved\n    linkAdded {\n      ...EquipmentPortsTable_link\n      id\n    }\n    linkRemoved\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment EquipmentPortsTable_link on Link {\n  id\n  futureState\n  ports {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n      portType {\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        id\n      }\n    }\n    parentEquipment {\n      id\n      name\n      futureState\n      equipmentType {\n        id\n        name\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  workOrder {\n    id\n    status\n  }\n  properties {\n    id\n    propertyTypeValue {\n      id\n      name\n    }\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n      parentPropertyType {\n        id\n        name\n      }\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n      }\n      dependencePropertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n        isDeleted\n        category\n        propertyTypeValues {\n          id\n          isDeleted\n          name\n          parentPropertyTypeValue {\n            id\n            isDeleted\n            name\n          }\n        }\n      }\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  services {\n    id\n    name\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n"
+    "text": "mutation ExecuteWorkOrderMutation(\n  $id: ID!\n) {\n  executeWorkOrder(id: $id) {\n    equipmentAdded {\n      ...EquipmentTable_equipments\n      id\n    }\n    equipmentRemoved\n    linkAdded {\n      ...EquipmentPortsTable_link\n      id\n    }\n    linkRemoved\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment EquipmentPortsTable_link on Link {\n  id\n  futureState\n  ports {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n      portType {\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        id\n      }\n    }\n    parentEquipment {\n      id\n      name\n      futureState\n      equipmentType {\n        id\n        name\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  workOrder {\n    id\n    status\n  }\n  properties {\n    id\n    propertyTypeValue {\n      id\n      name\n    }\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n      parentPropertyType {\n        id\n        name\n      }\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n      dependencePropertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n        isDeleted\n        category\n        propertyTypeValues {\n          id\n          isDeleted\n          name\n          parentPropertyTypeValue {\n            id\n            isDeleted\n            name\n          }\n        }\n      }\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  services {\n    id\n    name\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n"
   }
 };
 })();

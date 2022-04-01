@@ -68,7 +68,7 @@ export const isPropertyTypeWithDependenceRelation = (
 };
 
 export const isPropertyWithDependenceRelation = (property: Property) => {
-  return property.propertyType.propertyTypeValues?.length > 0;
+  return property.propertyType?.propertyTypeValues?.length > 0;
 };
 
 export const getDependentPropertyFromWorkOrder = (
@@ -81,7 +81,7 @@ export const getDependentPropertyFromWorkOrder = (
   ) {
     return null;
   }
-  return workOrder.properties?.find(
+  return workOrder.properties?.filter(
     propertyWorkOrder =>
       propertyWorkOrder.propertyType.parentPropertyType?.id ===
       property.propertyType.id,

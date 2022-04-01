@@ -172,6 +172,11 @@ export type EquipmentPortsTable_positionAttachedEquipment = {|
             +id: string,
             +isDeleted: ?boolean,
             +name: string,
+            +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+              +id: string,
+              +isDeleted: ?boolean,
+              +name: string,
+            |}>,
           |}>,
           +dependencePropertyTypes: $ReadOnlyArray<?{|
             +id: string,
@@ -255,6 +260,11 @@ export type EquipmentPortsTable_positionAttachedEquipment = {|
           +id: string,
           +isDeleted: ?boolean,
           +name: string,
+          +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+            +id: string,
+            +isDeleted: ?boolean,
+            +name: string,
+          |}>,
         |}>,
         +dependencePropertyTypes: $ReadOnlyArray<?{|
           +id: string,
@@ -554,11 +564,34 @@ v24 = {
   ],
   "storageKey": null
 },
-v25 = [
-  (v0/*: any*/),
-  (v18/*: any*/),
-  (v1/*: any*/)
-],
+v25 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v0/*: any*/),
+    (v18/*: any*/),
+    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        (v18/*: any*/),
+        (v1/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
 v26 = {
   "alias": null,
   "args": null,
@@ -614,16 +647,7 @@ v26 = {
           "selections": (v21/*: any*/),
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "PropertyTypeValue",
-          "kind": "LinkedField",
-          "name": "propertyTypeValues",
-          "plural": true,
-          "selections": (v25/*: any*/),
-          "storageKey": null
-        },
+        (v25/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -650,30 +674,7 @@ v26 = {
             (v15/*: any*/),
             (v18/*: any*/),
             (v17/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "PropertyTypeValue",
-              "kind": "LinkedField",
-              "name": "propertyTypeValues",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/),
-                (v18/*: any*/),
-                (v1/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "PropertyTypeValue",
-                  "kind": "LinkedField",
-                  "name": "parentPropertyTypeValue",
-                  "plural": true,
-                  "selections": (v25/*: any*/),
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
+            (v25/*: any*/)
           ],
           "storageKey": null
         }

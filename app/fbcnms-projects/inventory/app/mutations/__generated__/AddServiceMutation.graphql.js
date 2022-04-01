@@ -126,6 +126,11 @@ fragment PropertyFormField_property on Property {
       id
       isDeleted
       name
+      parentPropertyTypeValue {
+        id
+        isDeleted
+        name
+      }
     }
     dependencePropertyTypes {
       id
@@ -366,11 +371,34 @@ v20 = {
   "name": "isDeleted",
   "storageKey": null
 },
-v21 = [
-  (v2/*: any*/),
-  (v20/*: any*/),
-  (v3/*: any*/)
-];
+v21 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v2/*: any*/),
+    (v20/*: any*/),
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v2/*: any*/),
+        (v20/*: any*/),
+        (v3/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -543,16 +571,7 @@ return {
                     "selections": (v4/*: any*/),
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "PropertyTypeValue",
-                    "kind": "LinkedField",
-                    "name": "propertyTypeValues",
-                    "plural": true,
-                    "selections": (v21/*: any*/),
-                    "storageKey": null
-                  },
+                  (v21/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -579,30 +598,7 @@ return {
                       (v17/*: any*/),
                       (v20/*: any*/),
                       (v19/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "PropertyTypeValue",
-                        "kind": "LinkedField",
-                        "name": "propertyTypeValues",
-                        "plural": true,
-                        "selections": [
-                          (v2/*: any*/),
-                          (v20/*: any*/),
-                          (v3/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "PropertyTypeValue",
-                            "kind": "LinkedField",
-                            "name": "parentPropertyTypeValue",
-                            "plural": true,
-                            "selections": (v21/*: any*/),
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
+                      (v21/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -646,12 +642,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dee4803cd9ed3261f28a46554b774479",
+    "cacheID": "d8a411257b53cec05899523c3c590683",
     "id": null,
     "metadata": {},
     "name": "AddServiceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddServiceMutation(\n  $data: ServiceCreateData!\n) {\n  addService(data: $data) {\n    id\n    ...ServicesView_service\n  }\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyTypeValue {\n    id\n    name\n  }\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n    parentPropertyType {\n      id\n      name\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n\nfragment ServicesView_service on Service {\n  id\n  name\n  externalId\n  status\n  customer {\n    id\n    name\n  }\n  serviceType {\n    id\n    name\n    discoveryMethod\n    propertyTypes {\n      ...PropertyTypeFormField_propertyType\n      ...DynamicPropertiesGrid_propertyTypes\n      id\n    }\n  }\n  properties {\n    ...PropertyFormField_property\n    ...DynamicPropertiesGrid_properties\n    id\n  }\n}\n"
+    "text": "mutation AddServiceMutation(\n  $data: ServiceCreateData!\n) {\n  addService(data: $data) {\n    id\n    ...ServicesView_service\n  }\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyTypeValue {\n    id\n    name\n  }\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n    parentPropertyType {\n      id\n      name\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n      parentPropertyTypeValue {\n        id\n        isDeleted\n        name\n      }\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n\nfragment ServicesView_service on Service {\n  id\n  name\n  externalId\n  status\n  customer {\n    id\n    name\n  }\n  serviceType {\n    id\n    name\n    discoveryMethod\n    propertyTypes {\n      ...PropertyTypeFormField_propertyType\n      ...DynamicPropertiesGrid_propertyTypes\n      id\n    }\n  }\n  properties {\n    ...PropertyFormField_property\n    ...DynamicPropertiesGrid_properties\n    id\n  }\n}\n"
   }
 };
 })();

@@ -145,6 +145,11 @@ fragment PropertyFormField_property on Property {
       id
       isDeleted
       name
+      parentPropertyTypeValue {
+        id
+        isDeleted
+        name
+      }
     }
     dependencePropertyTypes {
       id
@@ -345,11 +350,34 @@ v21 = {
   "name": "isDeleted",
   "storageKey": null
 },
-v22 = [
-  (v2/*: any*/),
-  (v21/*: any*/),
-  (v3/*: any*/)
-];
+v22 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v2/*: any*/),
+    (v21/*: any*/),
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v2/*: any*/),
+        (v21/*: any*/),
+        (v3/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -569,16 +597,7 @@ return {
                         "selections": (v17/*: any*/),
                         "storageKey": null
                       },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "PropertyTypeValue",
-                        "kind": "LinkedField",
-                        "name": "propertyTypeValues",
-                        "plural": true,
-                        "selections": (v22/*: any*/),
-                        "storageKey": null
-                      },
+                      (v22/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -605,30 +624,7 @@ return {
                           (v6/*: any*/),
                           (v21/*: any*/),
                           (v20/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "PropertyTypeValue",
-                            "kind": "LinkedField",
-                            "name": "propertyTypeValues",
-                            "plural": true,
-                            "selections": [
-                              (v2/*: any*/),
-                              (v21/*: any*/),
-                              (v3/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "PropertyTypeValue",
-                                "kind": "LinkedField",
-                                "name": "parentPropertyTypeValue",
-                                "plural": true,
-                                "selections": (v22/*: any*/),
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
+                          (v22/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -670,12 +666,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b486f7d30cb229510d78061d119ac5bc",
+    "cacheID": "9f350c89ac489ed6d37993c3d7bef12c",
     "id": null,
     "metadata": {},
     "name": "LocationPopoutQuery",
     "operationKind": "query",
-    "text": "query LocationPopoutQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      id\n      name\n      locationType {\n        name\n        id\n        propertyTypes {\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n      }\n      ...LocationBreadcrumbsTitle_locationDetails\n      properties {\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyTypeValue {\n    id\n    name\n  }\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n    parentPropertyType {\n      id\n      name\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n"
+    "text": "query LocationPopoutQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      id\n      name\n      locationType {\n        name\n        id\n        propertyTypes {\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n      }\n      ...LocationBreadcrumbsTitle_locationDetails\n      properties {\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyTypeValue {\n    id\n    name\n  }\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n    parentPropertyType {\n      id\n      name\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n      parentPropertyTypeValue {\n        id\n        isDeleted\n        name\n      }\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n"
   }
 };
 })();

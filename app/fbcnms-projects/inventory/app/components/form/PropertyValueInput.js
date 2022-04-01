@@ -14,7 +14,6 @@ import type {PropertyType} from '../../common/PropertyType';
 import type {WithStyles} from '@material-ui/core';
 
 import * as React from 'react';
-import EnumPropertyComboSelectValueInput from '../work_orders/property_combo/EnumPropertyComboSelectValueInput';
 import EnumPropertySelectValueInput from './EnumPropertySelectValueInput';
 import EnumPropertyValueInput from './EnumPropertyValueInput';
 import FormContext from '../../common/FormContext';
@@ -115,13 +114,6 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
             disabled={disabled}
             showPropertyCombo={showPropertyCombo}
             isDependentProperty={isDependentProperty}
-          />
-        ) : !!property.propertyTypeValue ? (
-          <EnumPropertyComboSelectValueInput
-            className={classNames(classes.input, className)}
-            property={property}
-            onChange={onChange}
-            disabled={true}
           />
         ) : (
           <EnumPropertySelectValueInput

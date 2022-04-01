@@ -45,17 +45,19 @@ const PropertyTypeInput = (props: Props) => {
 
   const {closedStatus} = useStatusValues();
 
-  const dependentProperty = getDependentPropertyFromWorkOrder(
+  const dependentPropertyList = getDependentPropertyFromWorkOrder(
     workOrder,
     property,
   );
 
   const onPropertyComboChange = prop => {
-    if (dependentProperty) {
-      (dependentProperty.stringValue = ''),
+    if (dependentPropertyList?.length > 0) {
+      dependentPropertyList.forEach(dependentProperty => {
+        const newDependentProperty = {...dependentProperty, stringValue: ''};
         _propertyChangedHandler(dependentProperty.propertyType.index)(
-          dependentProperty,
+          newDependentProperty,
         );
+      });
     }
     _propertyChangedHandler(index)(prop);
   };

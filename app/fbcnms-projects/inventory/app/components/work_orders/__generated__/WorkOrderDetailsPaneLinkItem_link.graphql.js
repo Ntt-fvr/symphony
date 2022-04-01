@@ -109,6 +109,11 @@ export type WorkOrderDetailsPaneLinkItem_link = {|
         +id: string,
         +isDeleted: ?boolean,
         +name: string,
+        +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+          +id: string,
+          +isDeleted: ?boolean,
+          +name: string,
+        |}>,
       |}>,
       +dependencePropertyTypes: $ReadOnlyArray<?{|
         +id: string,
@@ -307,11 +312,34 @@ v19 = [
   (v0/*: any*/),
   (v2/*: any*/)
 ],
-v20 = [
-  (v0/*: any*/),
-  (v18/*: any*/),
-  (v2/*: any*/)
-];
+v20 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v0/*: any*/),
+    (v18/*: any*/),
+    (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        (v18/*: any*/),
+        (v2/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
@@ -536,16 +564,7 @@ return {
               "selections": (v19/*: any*/),
               "storageKey": null
             },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "PropertyTypeValue",
-              "kind": "LinkedField",
-              "name": "propertyTypeValues",
-              "plural": true,
-              "selections": (v20/*: any*/),
-              "storageKey": null
-            },
+            (v20/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -572,30 +591,7 @@ return {
                 (v15/*: any*/),
                 (v18/*: any*/),
                 (v17/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "PropertyTypeValue",
-                  "kind": "LinkedField",
-                  "name": "propertyTypeValues",
-                  "plural": true,
-                  "selections": [
-                    (v0/*: any*/),
-                    (v18/*: any*/),
-                    (v2/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "PropertyTypeValue",
-                      "kind": "LinkedField",
-                      "name": "parentPropertyTypeValue",
-                      "plural": true,
-                      "selections": (v20/*: any*/),
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                }
+                (v20/*: any*/)
               ],
               "storageKey": null
             }
