@@ -18773,6 +18773,7 @@ enum ProjectFilterType {
   LOCATION_INST
   PROJECT_PRIORITY
   PROPERTY
+  PROJECT_CREATION_DATE
 }
 
 input ProjectFilterInput {
@@ -18783,6 +18784,7 @@ input ProjectFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: PropertyTypeInput
+  timeValue: Time
 }
 
 enum CounterFilterType {
@@ -91916,6 +91918,14 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValue"))
 			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "timeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timeValue"))
+			it.TimeValue, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
