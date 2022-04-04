@@ -22,16 +22,15 @@ func createTemplatePropertyType(
 	client *ent.Client,
 	pt []*ent.PropertyType,
 	id int,
-) (*ent.PropertyType, error) {
-	var result *ent.PropertyType
-	var err error
+) ([]*ent.PropertyType, error) {
+	var results []*ent.PropertyType
 	for _, propertyType := range pt {
 		prop, err1 := propertyType.ParentPropertyType(ctx)
 		if err1 != nil {
-			return nil, err1
+			return nil, fmt.Errorf("error querying the ParentPropertyType: %w", err1)
 		}
 		if prop == nil {
-			result, err = client.PropertyType.Create().
+			result, err := client.PropertyType.Create().
 				SetName(propertyType.Name).
 				SetType(propertyType.Type).
 				SetNodeType(propertyType.NodeType).
@@ -52,7 +51,7 @@ func createTemplatePropertyType(
 				SetProjectTemplateID(id).
 				Save(ctx)
 			if err != nil {
-				return nil, fmt.Errorf("creating property type: %w", err)
+				return nil, fmt.Errorf("error creating property type: %w", err)
 			}
 			propertyTypeValues := client.PropertyTypeValue.Query().Where(
 				propertytypevalue.HasPropertyTypeWith(propertytype.ID(propertyType.ID)),
@@ -66,7 +65,9 @@ func createTemplatePropertyType(
 							propertytypevalue.NameEQ(propValueTraveled.Name),
 							propertytypevalue.HasPropertyTypeWith(propertytype.ID(result.ID)),
 						).Only(ctx)
-						parentDePropertyValueList = append(parentDePropertyValueList, parentDePropertyValues.ID)
+						if parentDePropertyValues != nil {
+							parentDePropertyValueList = append(parentDePropertyValueList, parentDePropertyValues.ID)
+						}
 					}
 					_, err3 := client.PropertyTypeValue.Create().
 						SetName(propValue.Name).
@@ -75,11 +76,22 @@ func createTemplatePropertyType(
 						AddParentPropertyTypeValueIDs(parentDePropertyValueList...).
 						Save(ctx)
 					if err3 != nil {
-						return nil, err
+						return nil, fmt.Errorf("error creating property type values: %w", err3)
 					}
 				}
 			}
+			results = append(results, result)
 		} else if prop != nil {
+			var propertyOriginal *ent.PropertyType
+			for _, dependenceProp := range results {
+				propertyOriginal, _ = client.Debug().PropertyType.Query().Where(
+					propertytype.NameEQ(prop.Name),
+					propertytype.ID(dependenceProp.ID),
+				).Only(ctx)
+				if propertyOriginal != nil {
+					break
+				}
+			}
 			dependenceProperty := client.PropertyType.Create().
 				SetName(propertyType.Name).
 				SetType(propertyType.Type).
@@ -98,27 +110,28 @@ func createTemplatePropertyType(
 				SetEditable(propertyType.Editable).
 				SetMandatory(propertyType.Mandatory).
 				SetDeleted(propertyType.Deleted).
-				SetParentPropertyTypeID(result.ID).
+				SetParentPropertyTypeID(propertyOriginal.ID).
 				SetProjectTemplateID(id)
 			resultDependence, err := dependenceProperty.Save(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("creating property type: %w", err)
 			}
 
-			propertyTypeValues, err2 := propertyType.PropertyTypeValues(ctx)
-			if err2 != nil {
-				return nil, err2
-			}
+			propertyTypeValues := client.PropertyTypeValue.Query().Where(
+				propertytypevalue.HasPropertyTypeWith(propertytype.ID(propertyType.ID)),
+			).AllX(ctx)
 			if len(propertyTypeValues) > 0 {
 				for _, propValue := range propertyTypeValues {
 					p2 := propValue.QueryParentPropertyTypeValue().AllX(ctx)
 					var parentDePropertyValueList []int
 					for _, propValueTraveled := range p2 {
-						parentDePropertyValues, _ := client.PropertyTypeValue.Query().Where(
+						parentDePropertyValues, _ := client.Debug().PropertyTypeValue.Query().Where(
 							propertytypevalue.NameEQ(propValueTraveled.Name),
-							propertytypevalue.HasPropertyTypeWith(propertytype.ID(result.ID)),
+							propertytypevalue.HasPropertyTypeWith(propertytype.ID(propertyOriginal.ID)),
 						).Only(ctx)
-						parentDePropertyValueList = append(parentDePropertyValueList, parentDePropertyValues.ID)
+						if parentDePropertyValues != nil {
+							parentDePropertyValueList = append(parentDePropertyValueList, parentDePropertyValues.ID)
+						}
 					}
 					_, err3 := client.PropertyTypeValue.Create().
 						SetName(propValue.Name).
@@ -127,7 +140,7 @@ func createTemplatePropertyType(
 						AddParentPropertyTypeValueIDs(parentDePropertyValueList...).
 						Save(ctx)
 					if err3 != nil {
-						return nil, err
+						return nil, fmt.Errorf("error creating property type values: %w", err3)
 					}
 				}
 			}
@@ -135,7 +148,7 @@ func createTemplatePropertyType(
 
 	}
 
-	return result, nil
+	return results, nil
 }
 
 // AddProjectTemplate adds project template to existing project

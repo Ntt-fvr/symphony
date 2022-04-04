@@ -8,6 +8,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
@@ -17,6 +18,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 )
+
+func prepareBasicPropertyType(ctx context.Context, t *testing.T, mr generated.MutationResolver) *ent.PropertyType {
+	propertyType1 := pkgmodels.PropertyTypeInput{
+		Name: "Criticidad_test_1",
+		Type: "string",
+	}
+	propTypeInputs := []*pkgmodels.PropertyTypeInput{&propertyType1}
+
+	project1, err := mr.CreateProjectType(ctx, models.AddProjectTypeInput{
+		Name:        "Project_test_1",
+		Description: new(string),
+		Properties:  propTypeInputs,
+		WorkOrders:  []*models.WorkOrderDefinitionInput{},
+	})
+	require.NoError(t, err)
+
+	propertyTypeID, err := project1.QueryProperties().Only(ctx)
+	require.NoError(t, err)
+
+	return propertyTypeID
+}
 
 func TestAddRemovePropertyTypeValue(t *testing.T) {
 	r := newTestResolver(t)
@@ -30,34 +52,18 @@ func TestAddRemovePropertyTypeValue(t *testing.T) {
 	RemovePropertyTypeValueTest(ctx, t, mr, id1, id2)
 }
 func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
-	propertyType1 := pkgmodels.PropertyTypeInput{
-		Name: "Criticidad",
-		Type: "string",
-	}
-	propTypeInputs := []*pkgmodels.PropertyTypeInput{&propertyType1}
 
-	project1, err := mr.CreateProjectType(ctx, models.AddProjectTypeInput{
-		Name:        "Project_test_1",
-		Description: new(string),
-		Properties:  propTypeInputs,
-		WorkOrders:  []*models.WorkOrderDefinitionInput{},
-	})
-	require.NoError(t, err)
-
-	propertyTypeID := project1.QueryProperties()
-
-	id, err := propertyTypeID.FirstID(ctx)
-	require.NoError(t, err)
+	propertyType := prepareBasicPropertyType(ctx, t, mr)
 
 	propertyTypeValue1, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_1",
-		PropertyType: id,
+		PropertyType: propertyType.ID,
 	})
 	require.NoError(t, err)
 
 	propertyTypeValue2, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_2",
-		PropertyType: id,
+		PropertyType: propertyType.ID,
 	})
 	require.NoError(t, err)
 	id1, id2 := propertyTypeValue1.ID, propertyTypeValue2.ID
