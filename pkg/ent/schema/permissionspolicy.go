@@ -28,6 +28,9 @@ func (PermissionsPolicy) Fields() []ent.Field {
 		field.Bool("is_global").
 			Optional().
 			Default(false),
+		field.Bool("is_multicontractor").
+			Optional().
+			Default(false),
 		field.JSON("inventory_policy", &models.InventoryPolicyInput{}).
 			Optional(),
 		field.JSON("workforce_policy", &models.WorkforcePolicyInput{}).

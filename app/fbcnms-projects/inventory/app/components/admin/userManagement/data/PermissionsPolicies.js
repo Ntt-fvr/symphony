@@ -216,6 +216,7 @@ function permissionsPolicy2PermissionsPolicyInput(
         : null,
     isGlobal: policy.isGlobal,
     groups: policy.groups.map(group => group.id),
+    isMulticontractor: policy.isMulticontractor,
   };
 }
 
@@ -501,6 +502,7 @@ export const WORKORDER_SYSTEM_POLICY = {
   )}`,
   type: POLICY_TYPES.WorkforcePolicy.key,
   policy: EMPTY_POLICY,
+  isMulticontractor: false,
   isGlobal: true,
   groups: [],
   isSystemDefault: true,
