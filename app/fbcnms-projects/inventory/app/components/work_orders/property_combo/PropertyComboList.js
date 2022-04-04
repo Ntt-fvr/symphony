@@ -35,6 +35,9 @@ const PropertyComboList = (props: Props) => {
   } = props;
 
   const handlePropertyTypeValues = propertyTypeValueFromEnum => {
+    if (propertyTypeValueFromEnum.propertyTypeValues.length < 1) {
+      return;
+    }
     const dependencePropertyValues = propertyTypeValueFromEnum.propertyTypeValues.map(
       propertyTypeValue => ({
         ...propertyTypeValue,

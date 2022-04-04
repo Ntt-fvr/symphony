@@ -49,14 +49,16 @@ export const getValidDependencePropertyTypeValueInString = (
   property: PropertyType,
   dependencePropertyTypeValues: PropertyType[],
 ) => {
-  const a = dependencePropertyTypeValues.filter(
+  const dependencePropertyTypeValueInString = dependencePropertyTypeValues.filter(
     dependencePropertyTypeValue =>
       !!dependencePropertyTypeValue.parentPropertyTypeValue?.find(
         parentPropertyType => parentPropertyType.id === property.id,
       ),
   );
 
-  return JSON.stringify(extractNameOfArray(a));
+  return JSON.stringify(
+    extractNameOfArray(dependencePropertyTypeValueInString),
+  );
 };
 
 export const isPropertyTypeWithDependenceRelation = (
@@ -138,15 +140,7 @@ export const getPropertyTypesWithoutParentsInformation = (
               propertyType.propertyTypeValues,
             ),
           }))
-        : // [
-          //   {
-          //     ...propertyType.dependencePropertyTypes[0],
-          //     propertyTypeValues: extractParentInformationFromPropertyTypeValues(
-          //       propertyType.dependencePropertyTypes[0].propertyTypeValues,
-          //     ),
-          //   },
-          // ]
-          [];
+        : [];
     const newPropertyTypeValues =
       propertyType.propertyTypeValues?.length > 0
         ? extractParentInformationFromPropertyTypeValues(
@@ -186,7 +180,9 @@ export const getPropertiesWithoutActualProperty = (
   propertyTypeValues: [],
 ) => {
   return propertyTypeValues.filter(
-    propertyTypeValue => propertyTypeValue.id !== property.id,
+    propertyTypeValue =>
+      propertyTypeValue.id !== property.id &&
+      !propertyTypeValue.dependencePropertyTypes,
   );
 };
 
@@ -218,14 +214,4 @@ export const orderPropertyTypesIndex = (propertyTypes: PropertyType[]) => {
     };
   });
   return newOrderPropertyTypes;
-};
-
-const getNumberOfPropertyTypesWithDependence = (
-  propertyTypes: PropertyType[],
-) => {
-  const propertyTypesWithDependence = propertyTypes.filter(
-    propertyType => propertyType.dependencePropertyTypes?.length > 0,
-  );
-
-  return propertyTypesWithDependence.length;
 };

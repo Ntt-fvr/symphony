@@ -102,6 +102,9 @@ const addNewPropertyTypeValue: PropertyTypeValues = (
   propertyTypeValue: PropertyTypeValues,
   parentPropertyTypeValue: string,
 ) => {
+  if (!propertyTypeValue) {
+    return;
+  }
   const finalParentPropertyTypeValue =
     propertyTypeValue.parentPropertyTypeValue?.length > 0
       ? [...propertyTypeValue.parentPropertyTypeValue, parentPropertyTypeValue]

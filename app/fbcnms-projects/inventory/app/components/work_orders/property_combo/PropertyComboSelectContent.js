@@ -77,8 +77,6 @@ const PropertyComboSelectContent = (props: Props) => {
     dispatch(action);
   };
 
-  console.log('state', state);
-
   const saveButtonClicked = () => {
     setShowCompleteMessage(true);
     propertyTypesDispatch({
