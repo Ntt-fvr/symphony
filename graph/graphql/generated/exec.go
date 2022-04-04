@@ -15864,6 +15864,7 @@ type ParameterCatalog implements Node {
   propertyCategories: [PropertyCategory]!
 }
 
+
 input PropertyTypeInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
