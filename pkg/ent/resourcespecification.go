@@ -45,11 +45,9 @@ type ResourceSpecificationEdges struct {
 	ResourceSpecification []*ResourceSpecificationRelationship
 	// ResourceSpecificationItems holds the value of the resource_specification_items edge.
 	ResourceSpecificationItems []*ResourceSpecificationItems
-	// ResourceSpecificationR holds the value of the resource_specification_r edge.
-	ResourceSpecificationR []*Resource
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 }
 
 // ResourcetypeOrErr returns the Resourcetype value or an error if the edge
@@ -91,15 +89,6 @@ func (e ResourceSpecificationEdges) ResourceSpecificationItemsOrErr() ([]*Resour
 		return e.ResourceSpecificationItems, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_specification_items"}
-}
-
-// ResourceSpecificationROrErr returns the ResourceSpecificationR value or an error if the edge
-// was not loaded in eager-loading.
-func (e ResourceSpecificationEdges) ResourceSpecificationROrErr() ([]*Resource, error) {
-	if e.loadedTypes[4] {
-		return e.ResourceSpecificationR, nil
-	}
-	return nil, &NotLoadedError{edge: "resource_specification_r"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -182,11 +171,6 @@ func (rs *ResourceSpecification) QueryResourceSpecification() *ResourceSpecifica
 // QueryResourceSpecificationItems queries the resource_specification_items edge of the ResourceSpecification.
 func (rs *ResourceSpecification) QueryResourceSpecificationItems() *ResourceSpecificationItemsQuery {
 	return (&ResourceSpecificationClient{config: rs.config}).QueryResourceSpecificationItems(rs)
-}
-
-// QueryResourceSpecificationR queries the resource_specification_r edge of the ResourceSpecification.
-func (rs *ResourceSpecification) QueryResourceSpecificationR() *ResourceQuery {
-	return (&ResourceSpecificationClient{config: rs.config}).QueryResourceSpecificationR(rs)
 }
 
 // Update returns a builder for updating this ResourceSpecification.

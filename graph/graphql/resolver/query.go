@@ -1234,46 +1234,6 @@ func (r queryResolver) Appointments(
 		)
 }
 
-func (r queryResolver) Resources(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceOrder,
-	filterBy []*models.ResourceFilterInput,
-) (*ent.ResourceConnection, error) {
-	return r.ClientFrom(ctx).
-		Resource.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceOrder(orderBy),
-			ent.WithResourceFilter(
-				func(query *ent.ResourceQuery) (*ent.ResourceQuery, error) {
-					return resolverutil.ResourceFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) ResourceRelationships(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceRelationshipOrder,
-	filterBy []*models.ResourceRelationshipFilterInput,
-) (*ent.ResourceRelationshipConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceRelationship.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceRelationshipOrder(orderBy),
-			ent.WithResourceRelationshipFilter(
-				func(query *ent.ResourceRelationshipQuery) (*ent.ResourceRelationshipQuery, error) {
-					return resolverutil.ResourceRelationshipFilter(query, filterBy)
-				},
-			),
-		)
-}
-
 // nolint: funlen
 func (r queryResolver) UsersAvailability(
 	ctx context.Context,
