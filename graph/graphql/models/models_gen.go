@@ -1340,6 +1340,7 @@ type ProjectFilterInput struct {
 	MaxDepth      *int                      `json:"maxDepth"`
 	StringSet     []string                  `json:"stringSet"`
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
+	TimeValue     *time.Time                `json:"timeValue"`
 }
 
 // Model for properties group by property categories
@@ -2769,12 +2770,13 @@ func (e PermissionsPolicyFilterType) MarshalGQL(w io.Writer) {
 type ProjectFilterType string
 
 const (
-	ProjectFilterTypeProjectName     ProjectFilterType = "PROJECT_NAME"
-	ProjectFilterTypeProjectOwnedBy  ProjectFilterType = "PROJECT_OWNED_BY"
-	ProjectFilterTypeProjectType     ProjectFilterType = "PROJECT_TYPE"
-	ProjectFilterTypeLocationInst    ProjectFilterType = "LOCATION_INST"
-	ProjectFilterTypeProjectPriority ProjectFilterType = "PROJECT_PRIORITY"
-	ProjectFilterTypeProperty        ProjectFilterType = "PROPERTY"
+	ProjectFilterTypeProjectName         ProjectFilterType = "PROJECT_NAME"
+	ProjectFilterTypeProjectOwnedBy      ProjectFilterType = "PROJECT_OWNED_BY"
+	ProjectFilterTypeProjectType         ProjectFilterType = "PROJECT_TYPE"
+	ProjectFilterTypeLocationInst        ProjectFilterType = "LOCATION_INST"
+	ProjectFilterTypeProjectPriority     ProjectFilterType = "PROJECT_PRIORITY"
+	ProjectFilterTypeProperty            ProjectFilterType = "PROPERTY"
+	ProjectFilterTypeProjectCreationDate ProjectFilterType = "PROJECT_CREATION_DATE"
 )
 
 var AllProjectFilterType = []ProjectFilterType{
@@ -2784,11 +2786,12 @@ var AllProjectFilterType = []ProjectFilterType{
 	ProjectFilterTypeLocationInst,
 	ProjectFilterTypeProjectPriority,
 	ProjectFilterTypeProperty,
+	ProjectFilterTypeProjectCreationDate,
 }
 
 func (e ProjectFilterType) IsValid() bool {
 	switch e {
-	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst, ProjectFilterTypeProjectPriority, ProjectFilterTypeProperty:
+	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst, ProjectFilterTypeProjectPriority, ProjectFilterTypeProperty, ProjectFilterTypeProjectCreationDate:
 		return true
 	}
 	return false
