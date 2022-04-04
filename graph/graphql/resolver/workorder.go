@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
@@ -598,7 +599,7 @@ func (r mutationResolver) AddWorkOrderType(
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetWorkOrderTypeID(typ.ID)
-	}, input.Properties...); err != nil {
+	}, input.Properties); err != nil {
 		return nil, err
 	}
 	err = r.addWorkOrderTypeCategoryDefinitions(ctx, input, typ.ID)
@@ -620,11 +621,17 @@ func (r mutationResolver) EditWorkOrderType(
 		return nil, errors.Wrapf(err, "updating work order template: id=%q", input.ID)
 	}
 	for _, p := range input.Properties {
+		var edited []*pkgmodels.PropertyTypeInput
 		if p.ID == nil {
-			if err := r.AddPropertyTypes(ctx, func(b *ent.PropertyTypeCreate) { b.SetWorkOrderTypeID(input.ID) }, p); err != nil {
+			edited = append(edited, p)
+			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
+				ptc.SetWorkOrderTypeID(wot.ID)
+			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, p); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetWorkOrderTypeID(wot.ID)
+		}, p); err != nil {
 			return nil, err
 		}
 	}

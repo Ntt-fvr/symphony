@@ -62,19 +62,21 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 		ExternalID: pointer.ToString("111"),
 	})
 
+	propStr := pkgmodels.PropertyTypeInput{
+		Name:        "propStr",
+		Type:        "string",
+		StringValue: pointer.ToString("t1"),
+	}
+
+	connected := pkgmodels.PropertyTypeInput{
+		Name: "connected_date",
+		Type: propertytype.TypeDate,
+	}
+	linkProperties := []*pkgmodels.PropertyTypeInput{&propStr, &connected}
+
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
-		Name: "portType1",
-		LinkProperties: []*pkgmodels.PropertyTypeInput{
-			{
-				Name:        "propStr",
-				Type:        "string",
-				StringValue: pointer.ToString("t1"),
-			},
-			{
-				Name: "connected_date",
-				Type: propertytype.TypeDate,
-			},
-		},
+		Name:           "portType1",
+		LinkProperties: linkProperties,
 	})
 
 	equType, _ := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
@@ -286,15 +288,6 @@ func TestSearchLinksFutureState(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	data := prepareLinkData(ctx, r, nil)
-	/*
-		helper: data now is of type:
-		(loc1) link1 :
-			e1(pos1, type1) <--> e3 (pos1, type2)
-			state: PENDING
-		(loc1) link2 :
-			e2(pos2, type1) <--> e4 (pos2, type2)
-			state: DONE
-	*/
 	qr := r.Query()
 	limit := 100
 	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
@@ -302,11 +295,21 @@ func TestSearchLinksFutureState(t *testing.T) {
 	require.Len(t, all.Edges, 2)
 	require.Equal(t, all.TotalCount, 2)
 	maxDepth := 2
+
+	strPropType := pkgmodels.PropertyTypeInput{
+		Name:        "str_prop",
+		Type:        propertytype.TypeString,
+		StringValue: pointer.ToString("Foo"),
+	}
+
 	f1 := pkgmodels.LinkFilterInput{
-		FilterType: enum.LinkFilterTypeLinkFutureStatus,
-		Operator:   enum.FilterOperatorIsOneOf,
-		StringSet:  []string{enum.FutureStateRemove.String()},
-		MaxDepth:   &maxDepth,
+		FilterType:    enum.LinkFilterTypeLinkFutureStatus,
+		Operator:      enum.FilterOperatorIsOneOf,
+		StringValue:   new(string),
+		PropertyValue: &strPropType,
+		IDSet:         []int{},
+		StringSet:     []string{enum.FutureStateRemove.String()},
+		MaxDepth:      &maxDepth,
 	}
 	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)

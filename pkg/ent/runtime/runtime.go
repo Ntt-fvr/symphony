@@ -73,6 +73,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
@@ -1828,6 +1829,37 @@ func init() {
 	propertytypeDescListable := propertytypeFields[17].Descriptor()
 	// propertytype.DefaultListable holds the default value on creation for the listable field.
 	propertytype.DefaultListable = propertytypeDescListable.Default.(bool)
+	propertytypevalueMixin := schema.PropertyTypeValue{}.Mixin()
+	propertytypevalue.Policy = privacy.NewPolicies(schema.PropertyTypeValue{})
+	propertytypevalue.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := propertytypevalue.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	propertytypevalueMixinFields0 := propertytypevalueMixin[0].Fields()
+	propertytypevalueFields := schema.PropertyTypeValue{}.Fields()
+	_ = propertytypevalueFields
+	// propertytypevalueDescCreateTime is the schema descriptor for create_time field.
+	propertytypevalueDescCreateTime := propertytypevalueMixinFields0[0].Descriptor()
+	// propertytypevalue.DefaultCreateTime holds the default value on creation for the create_time field.
+	propertytypevalue.DefaultCreateTime = propertytypevalueDescCreateTime.Default.(func() time.Time)
+	// propertytypevalueDescUpdateTime is the schema descriptor for update_time field.
+	propertytypevalueDescUpdateTime := propertytypevalueMixinFields0[1].Descriptor()
+	// propertytypevalue.DefaultUpdateTime holds the default value on creation for the update_time field.
+	propertytypevalue.DefaultUpdateTime = propertytypevalueDescUpdateTime.Default.(func() time.Time)
+	// propertytypevalue.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	propertytypevalue.UpdateDefaultUpdateTime = propertytypevalueDescUpdateTime.UpdateDefault.(func() time.Time)
+	// propertytypevalueDescName is the schema descriptor for name field.
+	propertytypevalueDescName := propertytypevalueFields[0].Descriptor()
+	// propertytypevalue.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	propertytypevalue.NameValidator = propertytypevalueDescName.Validators[0].(func(string) error)
+	// propertytypevalueDescDeleted is the schema descriptor for deleted field.
+	propertytypevalueDescDeleted := propertytypevalueFields[1].Descriptor()
+	// propertytypevalue.DefaultDeleted holds the default value on creation for the deleted field.
+	propertytypevalue.DefaultDeleted = propertytypevalueDescDeleted.Default.(bool)
 	recommendationsMixin := schema.Recommendations{}.Mixin()
 	recommendations.Policy = privacy.NewPolicies(schema.Recommendations{})
 	recommendations.Hooks[0] = func(next ent.Mutator) ent.Mutator {

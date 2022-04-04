@@ -80,6 +80,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
@@ -5043,7 +5044,7 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pr.ID,
 		Type:   "Property",
 		Fields: make([]*Field, 10),
-		Edges:  make([]*Edge, 14),
+		Edges:  make([]*Edge, 17),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pr.CreateTime); err != nil {
@@ -5266,6 +5267,36 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[14] = &Edge{
+		Type: "Property",
+		Name: "property_dependence",
+	}
+	node.Edges[14].IDs, err = pr.QueryPropertyDependence().
+		Select(property.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[15] = &Edge{
+		Type: "Property",
+		Name: "property",
+	}
+	node.Edges[15].IDs, err = pr.QueryProperty().
+		Select(property.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[16] = &Edge{
+		Type: "PropertyTypeValue",
+		Name: "property_type_value",
+	}
+	node.Edges[16].IDs, err = pr.QueryPropertyTypeValue().
+		Select(propertytypevalue.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -5337,7 +5368,7 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pt.ID,
 		Type:   "PropertyType",
 		Fields: make([]*Field, 21),
-		Edges:  make([]*Edge, 12),
+		Edges:  make([]*Edge, 15),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pt.CreateTime); err != nil {
@@ -5619,11 +5650,124 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[11] = &Edge{
+		Type: "PropertyTypeValue",
+		Name: "property_type_values",
+	}
+	node.Edges[11].IDs, err = pt.QueryPropertyTypeValues().
+		Select(propertytypevalue.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[12] = &Edge{
+		Type: "PropertyType",
+		Name: "parent_property_type",
+	}
+	node.Edges[12].IDs, err = pt.QueryParentPropertyType().
+		Select(propertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[13] = &Edge{
+		Type: "PropertyType",
+		Name: "property_type",
+	}
+	node.Edges[13].IDs, err = pt.QueryPropertyType().
+		Select(propertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[14] = &Edge{
 		Type: "PropertyCategory",
 		Name: "property_category",
 	}
-	node.Edges[11].IDs, err = pt.QueryPropertyCategory().
+	node.Edges[14].IDs, err = pt.QueryPropertyCategory().
 		Select(propertycategory.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (ptv *PropertyTypeValue) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ptv.ID,
+		Type:   "PropertyTypeValue",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 4),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ptv.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ptv.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ptv.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ptv.Deleted); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "bool",
+		Name:  "deleted",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "property_type",
+	}
+	node.Edges[0].IDs, err = ptv.QueryPropertyType().
+		Select(propertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "PropertyTypeValue",
+		Name: "parent_property_type_value",
+	}
+	node.Edges[1].IDs, err = ptv.QueryParentPropertyTypeValue().
+		Select(propertytypevalue.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "PropertyTypeValue",
+		Name: "property_type_value",
+	}
+	node.Edges[2].IDs, err = ptv.QueryPropertyTypeValue().
+		Select(propertytypevalue.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "Property",
+		Name: "property",
+	}
+	node.Edges[3].IDs, err = ptv.QueryProperty().
+		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -9031,6 +9175,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.PropertyType.Query().
 			Where(propertytype.ID(id)).
 			CollectFields(ctx, "PropertyType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case propertytypevalue.Table:
+		n, err := c.PropertyTypeValue.Query().
+			Where(propertytypevalue.ID(id)).
+			CollectFields(ctx, "PropertyTypeValue").
 			Only(ctx)
 		if err != nil {
 			return nil, err

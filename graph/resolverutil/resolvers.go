@@ -417,6 +417,16 @@ func NetworkTypeFilter(query *ent.NetworkTypeQuery, filters []*models.NetworkTyp
 	return query, nil
 }
 
+func PropertyTypeValueFilter(query *ent.PropertyTypeValueQuery, filters []*models.PropertyTypeValueFilterInput) (*ent.PropertyTypeValueQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handlePropertyTypeValueFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
 func validateSlot(startDate time.Time, endDate time.Time) (err error) {
 	/*switch {
 	case startDate == nil || endDate == nil:

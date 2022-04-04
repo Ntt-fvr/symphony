@@ -1179,6 +1179,7 @@ type ComplexityRoot struct {
 		AddNetworkType                           func(childComplexity int, input models.AddNetworkTypeInput) int
 		AddOrganization                          func(childComplexity int, input models.AddOrganizationInput) int
 		AddPermissionsPolicy                     func(childComplexity int, input models.AddPermissionsPolicyInput) int
+		AddPropertyTypeValue                     func(childComplexity int, input models1.AddPropertyTypeValueInput) int
 		AddRecommendations                       func(childComplexity int, input models.AddRecommendationsInput) int
 		AddRecommendationsCategory               func(childComplexity int, input models.AddRecommendationsCategoryInput) int
 		AddRecommendationsList                   func(childComplexity int, input models.AddRecommendationsListInput) int
@@ -1257,6 +1258,7 @@ type ComplexityRoot struct {
 		EditProject                              func(childComplexity int, input models.EditProjectInput) int
 		EditProjectType                          func(childComplexity int, input models.EditProjectTypeInput) int
 		EditPropertyCategories                   func(childComplexity int, propertyCategories []*models.EditPropertyCategoryInput) int
+		EditPropertyTypeValue                    func(childComplexity int, input models.EditPropertyTypeValueInput) int
 		EditRecommendations                      func(childComplexity int, input models.EditRecommendationsInput) int
 		EditRecommendationsCategory              func(childComplexity int, input models.EditRecommendationsCategoryInput) int
 		EditRecommendationsSources               func(childComplexity int, input models.EditRecommendationsSourcesInput) int
@@ -1312,6 +1314,7 @@ type ComplexityRoot struct {
 		RemoveOrganization                       func(childComplexity int, id int) int
 		RemoveParameterCatalog                   func(childComplexity int, entityType enum.ParameterCatalogEntity, id int) int
 		RemovePropertyCategory                   func(childComplexity int, id int) int
+		RemovePropertyTypeValue                  func(childComplexity int, id int) int
 		RemoveRecommendations                    func(childComplexity int, id int) int
 		RemoveRecommendationsCategory            func(childComplexity int, id int) int
 		RemoveRecommendationsSources             func(childComplexity int, id int) int
@@ -1503,18 +1506,20 @@ type ComplexityRoot struct {
 	}
 
 	Property struct {
-		BoolVal      func(childComplexity int) int
-		FloatVal     func(childComplexity int) int
-		ID           func(childComplexity int) int
-		IntVal       func(childComplexity int) int
-		LatitudeVal  func(childComplexity int) int
-		LongitudeVal func(childComplexity int) int
-		NodeValue    func(childComplexity int) int
-		RangeFromVal func(childComplexity int) int
-		RangeToVal   func(childComplexity int) int
-		RawValue     func(childComplexity int) int
-		StringVal    func(childComplexity int) int
-		Type         func(childComplexity int) int
+		BoolVal              func(childComplexity int) int
+		DependenceProperties func(childComplexity int) int
+		FloatVal             func(childComplexity int) int
+		ID                   func(childComplexity int) int
+		IntVal               func(childComplexity int) int
+		LatitudeVal          func(childComplexity int) int
+		LongitudeVal         func(childComplexity int) int
+		NodeValue            func(childComplexity int) int
+		PropertyTypeValue    func(childComplexity int) int
+		RangeFromVal         func(childComplexity int) int
+		RangeToVal           func(childComplexity int) int
+		RawValue             func(childComplexity int) int
+		StringVal            func(childComplexity int) int
+		Type                 func(childComplexity int) int
 	}
 
 	PropertyCategory struct {
@@ -1548,28 +1553,50 @@ type ComplexityRoot struct {
 	}
 
 	PropertyType struct {
-		BoolVal            func(childComplexity int) int
-		Category           func(childComplexity int) int
-		Deleted            func(childComplexity int) int
-		Editable           func(childComplexity int) int
-		ExternalID         func(childComplexity int) int
-		FloatVal           func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Index              func(childComplexity int) int
-		IntVal             func(childComplexity int) int
-		IsInstanceProperty func(childComplexity int) int
-		LatitudeVal        func(childComplexity int) int
-		Listable           func(childComplexity int) int
-		LongitudeVal       func(childComplexity int) int
-		Mandatory          func(childComplexity int) int
-		Name               func(childComplexity int) int
-		NodeType           func(childComplexity int) int
-		PropertyCategory   func(childComplexity int) int
-		RangeFromVal       func(childComplexity int) int
-		RangeToVal         func(childComplexity int) int
-		RawValue           func(childComplexity int) int
-		StringVal          func(childComplexity int) int
-		Type               func(childComplexity int) int
+		BoolVal                 func(childComplexity int) int
+		Category                func(childComplexity int) int
+		Deleted                 func(childComplexity int) int
+		DependencePropertyTypes func(childComplexity int) int
+		Editable                func(childComplexity int) int
+		ExternalID              func(childComplexity int) int
+		FloatVal                func(childComplexity int) int
+		ID                      func(childComplexity int) int
+		Index                   func(childComplexity int) int
+		IntVal                  func(childComplexity int) int
+		IsInstanceProperty      func(childComplexity int) int
+		LatitudeVal             func(childComplexity int) int
+		Listable                func(childComplexity int) int
+		LongitudeVal            func(childComplexity int) int
+		Mandatory               func(childComplexity int) int
+		Name                    func(childComplexity int) int
+		NodeType                func(childComplexity int) int
+		PropertyCategory        func(childComplexity int) int
+		PropertyType            func(childComplexity int) int
+		PropertyTypeValues      func(childComplexity int) int
+		RangeFromVal            func(childComplexity int) int
+		RangeToVal              func(childComplexity int) int
+		RawValue                func(childComplexity int) int
+		StringVal               func(childComplexity int) int
+		Type                    func(childComplexity int) int
+	}
+
+	PropertyTypeValue struct {
+		Deleted                 func(childComplexity int) int
+		ID                      func(childComplexity int) int
+		Name                    func(childComplexity int) int
+		ParentPropertyTypeValue func(childComplexity int) int
+		PropertyType            func(childComplexity int) int
+	}
+
+	PropertyTypeValueConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PropertyTypeValueEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	PythonPackage struct {
@@ -1625,6 +1652,7 @@ type ComplexityRoot struct {
 		Projects                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) int
 		PropertiesByCategories    func(childComplexity int, filterBy []*models1.PropertiesByCategoryFilterInput) int
 		PropertyCategories        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyCategoryOrder) int
+		PropertyTypeValues        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyTypeValueOrder, filterBy []*models.PropertyTypeValueFilterInput) int
 		PythonPackages            func(childComplexity int) int
 		Recommendations           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) int
 		RecommendationsCategories func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) int
@@ -2625,6 +2653,9 @@ type MutationResolver interface {
 	EditParametersCatalog(ctx context.Context, parametersCatalog []*models.EditParameterCatalogInput) ([]*ent.ParameterCatalog, error)
 	RemoveParameterCatalog(ctx context.Context, entityType enum.ParameterCatalogEntity, id int) (int, error)
 	EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error)
+	AddPropertyTypeValue(ctx context.Context, input models1.AddPropertyTypeValueInput) (*ent.PropertyTypeValue, error)
+	EditPropertyTypeValue(ctx context.Context, input models.EditPropertyTypeValueInput) (*ent.PropertyTypeValue, error)
+	RemovePropertyTypeValue(ctx context.Context, id int) (int, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -2638,12 +2669,16 @@ type ProjectTypeResolver interface {
 type PropertyResolver interface {
 	NodeValue(ctx context.Context, obj *ent.Property) (models.NamedNode, error)
 	RawValue(ctx context.Context, obj *ent.Property) (*string, error)
+	DependenceProperties(ctx context.Context, obj *ent.Property) ([]*ent.Property, error)
 }
 type PropertyCategoryResolver interface {
 	NumberOfProperties(ctx context.Context, obj *ent.PropertyCategory) (*int, error)
 }
 type PropertyTypeResolver interface {
 	RawValue(ctx context.Context, obj *ent.PropertyType) (*string, error)
+
+	PropertyType(ctx context.Context, obj *ent.PropertyType) (*ent.PropertyType, error)
+	DependencePropertyTypes(ctx context.Context, obj *ent.PropertyType) ([]*ent.PropertyType, error)
 }
 type QueryResolver interface {
 	Me(ctx context.Context) (viewer.Viewer, error)
@@ -2706,6 +2741,7 @@ type QueryResolver interface {
 	RecommendationsSources(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsSourcesOrder, filterBy []*models.RecommendationsSourcesFilterInput) (*ent.RecommendationsSourcesConnection, error)
 	RecommendationsCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) (*ent.RecommendationsCategoryConnection, error)
 	Formulas(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) (*ent.FormulaConnection, error)
+	PropertyTypeValues(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyTypeValueOrder, filterBy []*models.PropertyTypeValueFilterInput) (*ent.PropertyTypeValueConnection, error)
 	Techs(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TechOrder, filterBy []*models.TechFilterInput) (*ent.TechConnection, error)
 	NetworkTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.NetworkTypeOrder, filterBy []*models.NetworkTypeFilterInput) (*ent.NetworkTypeConnection, error)
 	Appointments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, slotFilterBy *models.SlotFilterInput) (*ent.AppointmentConnection, error)
@@ -7435,6 +7471,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddPermissionsPolicy(childComplexity, args["input"].(models.AddPermissionsPolicyInput)), true
 
+	case "Mutation.addPropertyTypeValue":
+		if e.complexity.Mutation.AddPropertyTypeValue == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addPropertyTypeValue_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddPropertyTypeValue(childComplexity, args["input"].(models1.AddPropertyTypeValueInput)), true
+
 	case "Mutation.addRecommendations":
 		if e.complexity.Mutation.AddRecommendations == nil {
 			break
@@ -8371,6 +8419,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditPropertyCategories(childComplexity, args["propertyCategories"].([]*models.EditPropertyCategoryInput)), true
 
+	case "Mutation.editPropertyTypeValue":
+		if e.complexity.Mutation.EditPropertyTypeValue == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editPropertyTypeValue_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditPropertyTypeValue(childComplexity, args["input"].(models.EditPropertyTypeValueInput)), true
+
 	case "Mutation.editRecommendations":
 		if e.complexity.Mutation.EditRecommendations == nil {
 			break
@@ -9030,6 +9090,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemovePropertyCategory(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removePropertyTypeValue":
+		if e.complexity.Mutation.RemovePropertyTypeValue == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removePropertyTypeValue_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemovePropertyTypeValue(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeRecommendations":
 		if e.complexity.Mutation.RemoveRecommendations == nil {
@@ -9944,6 +10016,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Property.BoolVal(childComplexity), true
 
+	case "Property.dependenceProperties":
+		if e.complexity.Property.DependenceProperties == nil {
+			break
+		}
+
+		return e.complexity.Property.DependenceProperties(childComplexity), true
+
 	case "Property.floatValue":
 		if e.complexity.Property.FloatVal == nil {
 			break
@@ -9985,6 +10064,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Property.NodeValue(childComplexity), true
+
+	case "Property.propertyTypeValue":
+		if e.complexity.Property.PropertyTypeValue == nil {
+			break
+		}
+
+		return e.complexity.Property.PropertyTypeValue(childComplexity), true
 
 	case "Property.rangeFromValue":
 		if e.complexity.Property.RangeFromVal == nil {
@@ -10147,6 +10233,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyType.Deleted(childComplexity), true
 
+	case "PropertyType.dependencePropertyTypes":
+		if e.complexity.PropertyType.DependencePropertyTypes == nil {
+			break
+		}
+
+		return e.complexity.PropertyType.DependencePropertyTypes(childComplexity), true
+
 	case "PropertyType.isEditable":
 		if e.complexity.PropertyType.Editable == nil {
 			break
@@ -10245,6 +10338,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertyType.PropertyCategory(childComplexity), true
 
+	case "PropertyType.parentPropertyType":
+		if e.complexity.PropertyType.PropertyType == nil {
+			break
+		}
+
+		return e.complexity.PropertyType.PropertyType(childComplexity), true
+
+	case "PropertyType.propertyTypeValues":
+		if e.complexity.PropertyType.PropertyTypeValues == nil {
+			break
+		}
+
+		return e.complexity.PropertyType.PropertyTypeValues(childComplexity), true
+
 	case "PropertyType.rangeFromValue":
 		if e.complexity.PropertyType.RangeFromVal == nil {
 			break
@@ -10279,6 +10386,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PropertyType.Type(childComplexity), true
+
+	case "PropertyTypeValue.isDeleted":
+		if e.complexity.PropertyTypeValue.Deleted == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValue.Deleted(childComplexity), true
+
+	case "PropertyTypeValue.id":
+		if e.complexity.PropertyTypeValue.ID == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValue.ID(childComplexity), true
+
+	case "PropertyTypeValue.name":
+		if e.complexity.PropertyTypeValue.Name == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValue.Name(childComplexity), true
+
+	case "PropertyTypeValue.parentPropertyTypeValue":
+		if e.complexity.PropertyTypeValue.ParentPropertyTypeValue == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValue.ParentPropertyTypeValue(childComplexity), true
+
+	case "PropertyTypeValue.propertyType":
+		if e.complexity.PropertyTypeValue.PropertyType == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValue.PropertyType(childComplexity), true
+
+	case "PropertyTypeValueConnection.edges":
+		if e.complexity.PropertyTypeValueConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValueConnection.Edges(childComplexity), true
+
+	case "PropertyTypeValueConnection.pageInfo":
+		if e.complexity.PropertyTypeValueConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValueConnection.PageInfo(childComplexity), true
+
+	case "PropertyTypeValueConnection.totalCount":
+		if e.complexity.PropertyTypeValueConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValueConnection.TotalCount(childComplexity), true
+
+	case "PropertyTypeValueEdge.cursor":
+		if e.complexity.PropertyTypeValueEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValueEdge.Cursor(childComplexity), true
+
+	case "PropertyTypeValueEdge.node":
+		if e.complexity.PropertyTypeValueEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PropertyTypeValueEdge.Node(childComplexity), true
 
 	case "PythonPackage.hasBreakingChange":
 		if e.complexity.PythonPackage.HasBreakingChange == nil {
@@ -10837,6 +11014,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.PropertyCategories(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.PropertyCategoryOrder)), true
+
+	case "Query.propertyTypeValues":
+		if e.complexity.Query.PropertyTypeValues == nil {
+			break
+		}
+
+		args, err := ec.field_Query_propertyTypeValues_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PropertyTypeValues(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.PropertyTypeValueOrder), args["filterBy"].([]*models.PropertyTypeValueFilterInput)), true
 
 	case "Query.pythonPackages":
 		if e.complexity.Query.PythonPackages == nil {
@@ -13976,7 +14165,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "schema/symphony.graphql", Input: ` # Copyright (c) 2004-present Facebook All rights reserved.
+	{Name: "schema/symphony.graphql", Input: `# Copyright (c) 2004-present Facebook All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
@@ -15644,6 +15833,9 @@ type PropertyType implements Node {
   isDeleted: Boolean
   propertyCategory: PropertyCategory
   isListable: Boolean
+  parentPropertyType: PropertyType @goField(name: "PropertyType") 
+  dependencePropertyTypes: [PropertyType]!
+  propertyTypeValues: [PropertyTypeValue!]
 }
 
 type DocumentCategory implements Node {
@@ -15698,6 +15890,8 @@ input PropertyTypeInput
   isDeleted: Boolean
   propertyCategoryID: ID
   isListable: Boolean
+  dependencePropertyTypes: [PropertyTypeInput]
+  propertyTypeValues: [AddPropertyTypeValueInput]
 }
 
 input EditIsListableInput {
@@ -15718,6 +15912,8 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
+  dependenceProperties: [Property!]
+  propertyTypeValue: PropertyTypeValue
 }
 
 input PropertyInput {
@@ -15734,6 +15930,8 @@ input PropertyInput {
   nodeIDValue: ID
   isEditable: Boolean
   isInstanceProperty: Boolean
+  dependenceProperties: [PropertyInput!]
+  propertyTypeValueID: ID
 }
 
 """
@@ -17582,7 +17780,7 @@ type KqiEdge {
   """
   cursor: Cursor!
 }
-################################ conection Organization ###############################################
+
 """
 Properties by which Organization connections can be ordered.
 """
@@ -17650,9 +17848,8 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendations ###############################################
 """
-Properties by which RecPropertyCategoryNodeommendations connections can be ordered.
+Properties by which Recommendations connections can be ordered.
 """
 enum RecommendationsOrderField {
   """
@@ -17718,7 +17915,6 @@ type RecommendationsEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendationsSources ###############################################
 """
 Properties by which RecommendationsSources connections can be ordered.
 """
@@ -17786,7 +17982,6 @@ type RecommendationsSourcesEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendationsCategory ###############################################
 """
 Properties by which RecommendationsCategory connections can be ordered.
 """
@@ -18188,6 +18383,74 @@ type KqiTargetEdge {
   """
   cursor: Cursor!
 }
+
+"""
+Properties by which PropertyTypeValues connections can be ordered.
+"""
+enum PropertyTypeValueOrderField {
+  """
+  Order propertyTypeValue by name.
+  """
+  NAME
+
+  """
+  Order propertyTypeValue by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order propertyTypeValue by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for propertyTypeValues connections.
+"""
+input PropertyTypeValueOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kpi's by.
+  """
+  field: PropertyTypeValueOrderField
+}
+
+"""
+A connection to a list of kpi's.
+"""
+type PropertyTypeValueConnection {
+  """
+  Total kpi's of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kpi's edges.
+  """
+  edges: [PropertyTypeValueEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kpi's edge in a connection.
+"""
+type PropertyTypeValueEdge {
+  """
+  The kpi's at the end of the edge.
+  """
+  node: PropertyTypeValue
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 """
 Properties by which formulas connections can be ordered.
 """
@@ -20298,9 +20561,9 @@ type Query {
     """
     orderBy: CounterOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [CounterFilterInput!]
   ): CounterConnection!
   
@@ -20333,9 +20596,9 @@ type Query {
     """
     orderBy: KpiOrder
 
-    
-    #Filtering options for the returned kpis.
-    
+    """
+    Filtering options for the returned kpis.
+    """
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
 
@@ -20368,9 +20631,9 @@ type Query {
     """
     orderBy: KpiCategoryOrder
 
-    
-    #Filtering options for the returned kpiCategoriess.
-    
+    """
+    Filtering options for the returned kpiCategoriess.
+    """
     filterBy: [KpiCategoryFilterInput!]
   ): KpiCategoryConnection!
 
@@ -20403,9 +20666,9 @@ type Query {
     """
     orderBy: ThresholdOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [ThresholdFilterInput!]
   ): ThresholdConnection!
   
@@ -20438,12 +20701,11 @@ type Query {
     """
     orderBy: AlarmFilterOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [AlarmFilterFilterInput!]
   ): AlarmFilterConnection!
-
   
   """
   A list of domains.
@@ -20474,9 +20736,9 @@ type Query {
     """
     orderBy: DomainOrder
 
-    
-    #Filtering options for the returned domains.
-    
+    """
+    Filtering options for the returned domains.
+    """
     filterBy: [DomainFilterInput!]
   ): DomainConnection!
 
@@ -20509,9 +20771,9 @@ type Query {
     """
     orderBy: VendorOrder
 
-    
-    #Filtering options for the returned vendors.
-    
+    """
+    Filtering options for the returned vendors.
+    """
     filterBy: [VendorFilterInput!]
   ): VendorConnection!
 
@@ -20544,12 +20806,11 @@ type Query {
     """
     orderBy: CounterFamilyOrder
 
-    
-    #Filtering options for the returned counterFamilies.
-    
+    """
+    Filtering options for the returned counterFamilies.
+    """
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
-
   
   """
   A list of ruleTypes.
@@ -20580,9 +20841,9 @@ type Query {
     """
     orderBy: RuleTypeOrder
 
-    
-    #Filtering options for the returned ruleTypes.
-    
+    """
+    Filtering options for the returned ruleTypes.
+    """
     filterBy: [RuleTypeFilterInput!]
   ): RuleTypeConnection!
 
@@ -20615,16 +20876,15 @@ type Query {
     """
     orderBy: EventSeverityOrder
 
-    
-    #Filtering options for the returned eventSeverities.
-    
+    """
+    Filtering options for the returned eventSeverities.
+    """
     filterBy: [EventSeverityFilterInput!]
   ): EventSeverityConnection!
   
   """
   A list of comparator.
   """
-  
   comparators(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -20651,16 +20911,15 @@ type Query {
     """
     orderBy: ComparatorOrder
 
-    
-    #Filtering options for the returned comparator.
-    
+    """
+    Filtering options for the returned comparator.
+    """
     filterBy: [ComparatorFilterInput!]
   ): ComparatorConnection!
 
   """
   A list of alarmStatus.
-  """
-  
+  """  
   alarmStatus(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -20687,9 +20946,9 @@ type Query {
     """
     orderBy: AlarmStatusOrder
 
-    
-    #Filtering options for the returned alarmStatus.
-    
+    """
+    Filtering options for the returned alarmStatus.
+    """
     filterBy: [AlarmStatusFilterInput!]
   ): AlarmStatusConnection!
 
@@ -20722,9 +20981,9 @@ type Query {
     """
     orderBy: KqiOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [KqiFilterInput!]
   ): KqiConnection!
   
@@ -20757,9 +21016,9 @@ type Query {
     """
     orderBy: KqiCategoryOrder
 
-    
-    #Filtering options for the returned kqiCategories.
-    
+    """
+    Filtering options for the returned kqiCategories.
+    """
     filterBy: [KqiCategoryFilterInput!]
   ): KqiCategoryConnection!
 
@@ -20792,9 +21051,9 @@ type Query {
     """
     orderBy: KqiPerspectiveOrder
 
-    
-    #Filtering options for the returned kqiPerspectives.
-    
+    """
+    Filtering options for the returned kqiPerspectives.
+    """
     filterBy: [KqiPerspectiveFilterInput!]
   ): KqiPerspectiveConnection!
 
@@ -20827,9 +21086,9 @@ type Query {
     """
     orderBy: KqiTemporalFrequencyOrder
 
-    
-    #Filtering options for the returned kqiTemporalFrequency.
-    
+    """
+    Filtering options for the returned kqiTemporalFrequency.
+    """
     filterBy: [KqiTemporalFrequencyFilterInput!]
   ): KqiTemporalFrequencyConnection!
 
@@ -20862,9 +21121,9 @@ type Query {
     """
     orderBy: KqiSourceOrder
 
-    
-    #Filtering options for the returned kqiSource.
-    
+    """
+    Filtering options for the returned kqiSource.
+    """
     filterBy: [KqiSourceFilterInput!]
   ): KqiSourceConnection!
 
@@ -20897,15 +21156,15 @@ type Query {
     """
     orderBy: KqiTargetOrder
 
-    
-    #Filtering options for the returned kqiTarget.
+    """
+    Filtering options for the returned kqiTarget.
+    """
     filterBy: [KqiTargetFilterInput!]
   ): KqiTargetConnection!
 
   """
   A list of organization.
   """
-  
   organizations(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -20932,11 +21191,12 @@ type Query {
     """
     orderBy: OrganizationOrder
 
-    
-    #Filtering options for the returned organization.
-    
+    """
+    Filtering options for the returned organization.
+    """
     filterBy: [OrganizationFilterInput!]
   ): OrganizationConnection!
+
   """
   A list of Recommendations.
   """
@@ -20966,11 +21226,12 @@ type Query {
     """
     orderBy: RecommendationsOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsFilterInput!]
   ): RecommendationsConnection!
+
   """
   A list of RecommendationsSources.
   """
@@ -21000,11 +21261,12 @@ type Query {
     """
     orderBy: RecommendationsSourcesOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsSourcesFilterInput!]
   ): RecommendationsSourcesConnection!
+
   """
   A list of RecommendationsCategories.
   """
@@ -21034,12 +21296,13 @@ type Query {
     """
     orderBy: RecommendationsCategoryOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsCategoryFilterInput!]
   ): RecommendationsCategoryConnection!
-     """
+
+  """
   A list of formulas.
   """
   formulas(
@@ -21068,13 +21331,48 @@ type Query {
     """
     orderBy: FormulaOrder
 
-    
-    #Filtering options for the returned formulas.
-    
+    """
+    Filtering options for the returned formulas.
+    """
     filterBy: [FormulaFilterInput!]
   ): FormulaConnection!
 
+  """
+  A list of propertyTypeValue.
+  """
+  propertyTypeValues(
     """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned networkTypes.
+    """
+    orderBy: PropertyTypeValueOrder
+
+    """
+    Filtering options for the returned networkTypes.
+    """
+    filterBy: [PropertyTypeValueFilterInput!]
+  ): PropertyTypeValueConnection!
+  
+  """
   A list of techs.
   """
   techs(
@@ -21103,9 +21401,9 @@ type Query {
     """
     orderBy: TechOrder
 
-    
-    #Filtering options for the returned techs.
-    
+    """
+    Filtering options for the returned techs.
+    """
     filterBy: [TechFilterInput!]
   ): TechConnection!
 
@@ -21138,9 +21436,9 @@ type Query {
     """
     orderBy: NetworkTypeOrder
 
-    
-    #Filtering options for the returned networkTypes.
-    
+    """
+    Filtering options for the returned networkTypes.
+    """
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
  
@@ -21520,6 +21818,9 @@ type Mutation {
   editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
   removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
+  addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
+  editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
+  removePropertyTypeValue(id: ID!): ID!
 }
 
 """
@@ -21670,6 +21971,53 @@ enum DomainFilterType {
 
 input DomainFilterInput {
   filterType: DomainFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type PropertyTypeValue implements Node {
+  id: ID!
+  name: String!
+  isDeleted: Boolean
+  propertyType: PropertyType
+  parentPropertyTypeValue: [PropertyTypeValue]
+}
+
+input AddPropertyTypeValueInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.AddPropertyTypeValueInput"
+  ) {
+  id: ID
+  name: String!
+  isDeleted: Boolean
+  propertyType: ID
+  parentPropertyTypeValue: [String]
+  parentPropertyType: [ParentPropertyTypeValueInput]
+}
+
+input ParentPropertyTypeValueInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ParentPropertyValueInput"
+  ) {
+  parentPropertyTypeValue: String
+  parentPropertyType: ID
+}
+
+input EditPropertyTypeValueInput {
+  id: ID
+  name: String!
+  isDeleted: Boolean
+}
+
+enum PropertyTypeValueFilterType {
+  NAME
+}
+
+input PropertyTypeValueFilterInput {
+  filterType: PropertyTypeValueFilterType!
   operator: FilterOperator!
   stringValue: String
   idSet: [ID!]
@@ -22377,8 +22725,6 @@ input EditKqiComparatorInput {
   comparatorType: String!
 }
 
-##################### RECOMMENDATIONS #######################
-
 type Recommendations implements Node {
   id: ID!
   externalID: String!
@@ -22437,7 +22783,7 @@ input EditRecommendationsInput {
   userApprobed: ID
   vendor: ID!
 }
-######################## filter ###################
+
 enum RecommendationsFilterType {
   EXTERNALID
   RESOURCE
@@ -22523,7 +22869,6 @@ input RecommendationsCategoryFilterInput {
   stringSet: [String!]
 }
 
-## scheduling
 """
 A connection to a list of appoinments.
 """
@@ -23732,6 +24077,21 @@ func (ec *executionContext) field_Mutation_addPermissionsPolicy_args(ctx context
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddPermissionsPolicyInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPermissionsPolicyInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addPropertyTypeValue_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models1.AddPropertyTypeValueInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐAddPropertyTypeValueInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -25009,6 +25369,21 @@ func (ec *executionContext) field_Mutation_editPropertyCategories_args(ctx conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editPropertyTypeValue_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditPropertyTypeValueInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditPropertyTypeValueInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editRecommendationsCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -25892,6 +26267,21 @@ func (ec *executionContext) field_Mutation_removeParameterCatalog_args(ctx conte
 }
 
 func (ec *executionContext) field_Mutation_removePropertyCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removePropertyTypeValue_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -30242,6 +30632,104 @@ func (ec *executionContext) field_Query_propertyCategories_args(ctx context.Cont
 		}
 	}
 	args["orderBy"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_propertyTypeValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.PropertyTypeValueOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOPropertyTypeValueOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.PropertyTypeValueFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOPropertyTypeValueFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -59736,6 +60224,132 @@ func (ec *executionContext) _Mutation_editIsListable(ctx context.Context, field 
 	return ec.marshalNPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addPropertyTypeValue(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addPropertyTypeValue_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddPropertyTypeValue(rctx, args["input"].(models1.AddPropertyTypeValueInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyTypeValue)
+	fc.Result = res
+	return ec.marshalNPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editPropertyTypeValue(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editPropertyTypeValue_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditPropertyTypeValue(rctx, args["input"].(models.EditPropertyTypeValueInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyTypeValue)
+	fc.Result = res
+	return ec.marshalNPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removePropertyTypeValue(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removePropertyTypeValue_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemovePropertyTypeValue(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -63258,6 +63872,70 @@ func (ec *executionContext) _Property_rawValue(ctx context.Context, field graphq
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Property_dependenceProperties(ctx context.Context, field graphql.CollectedField, obj *ent.Property) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Property",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Property().DependenceProperties(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Property)
+	fc.Result = res
+	return ec.marshalOProperty2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Property_propertyTypeValue(ctx context.Context, field graphql.CollectedField, obj *ent.Property) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Property",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyTypeValue(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyTypeValue)
+	fc.Result = res
+	return ec.marshalOPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PropertyCategory_id(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -64467,6 +65145,443 @@ func (ec *executionContext) _PropertyType_isListable(ctx context.Context, field 
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyType_parentPropertyType(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.PropertyType().PropertyType(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalOPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyType_dependencePropertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.PropertyType().DependencePropertyTypes(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyType_propertyTypeValues(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyTypeValues(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PropertyTypeValue)
+	fc.Result = res
+	return ec.marshalOPropertyTypeValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValue_id(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValue",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValue_name(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValue",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValue_isDeleted(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValue",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Deleted, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValue_propertyType(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValue",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyType(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalOPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValue_parentPropertyTypeValue(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValue) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValue",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ParentPropertyTypeValue(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PropertyTypeValue)
+	fc.Result = res
+	return ec.marshalOPropertyTypeValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValueConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValueConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValueConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValueConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValueConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValueConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PropertyTypeValueEdge)
+	fc.Result = res
+	return ec.marshalNPropertyTypeValueEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValueConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValueConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValueConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValueEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValueEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValueEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyTypeValue)
+	fc.Result = res
+	return ec.marshalOPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PropertyTypeValueEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.PropertyTypeValueEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PropertyTypeValueEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PythonPackage_version(ctx context.Context, field graphql.CollectedField, obj *models.PythonPackage) (ret graphql.Marshaler) {
@@ -67048,6 +68163,48 @@ func (ec *executionContext) _Query_formulas(ctx context.Context, field graphql.C
 	res := resTmp.(*ent.FormulaConnection)
 	fc.Result = res
 	return ec.marshalNFormulaConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_propertyTypeValues(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_propertyTypeValues_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PropertyTypeValues(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.PropertyTypeValueOrder), args["filterBy"].([]*models.PropertyTypeValueFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyTypeValueConnection)
+	fc.Result = res
+	return ec.marshalNPropertyTypeValueConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_techs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -84257,6 +85414,66 @@ func (ec *executionContext) unmarshalInputAddProjectTypeInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddPropertyTypeValueInput(ctx context.Context, obj interface{}) (models1.AddPropertyTypeValueInput, error) {
+	var it models1.AddPropertyTypeValueInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isDeleted":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDeleted"))
+			it.IsDeleted, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyType"))
+			it.PropertyType, err = ec.unmarshalOID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "parentPropertyTypeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentPropertyTypeValue"))
+			it.ParentPropertyTypeValue, err = ec.unmarshalOString2ᚕstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "parentPropertyType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentPropertyType"))
+			it.ParentPropertyType, err = ec.unmarshalOParentPropertyTypeValueInput2ᚕgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐParentPropertyValueInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddRecommendationsCategoryInput(ctx context.Context, obj interface{}) (models.AddRecommendationsCategoryInput, error) {
 	var it models.AddRecommendationsCategoryInput
 	var asMap = obj.(map[string]interface{})
@@ -88519,6 +89736,42 @@ func (ec *executionContext) unmarshalInputEditPropertyCategoryInput(ctx context.
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditPropertyTypeValueInput(ctx context.Context, obj interface{}) (models.EditPropertyTypeValueInput, error) {
+	var it models.EditPropertyTypeValueInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isDeleted":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDeleted"))
+			it.IsDeleted, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditRecommendationsCategoryInput(ctx context.Context, obj interface{}) (models.EditRecommendationsCategoryInput, error) {
 	var it models.EditRecommendationsCategoryInput
 	var asMap = obj.(map[string]interface{})
@@ -91727,6 +92980,34 @@ func (ec *executionContext) unmarshalInputOrganizationOrder(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputParentPropertyTypeValueInput(ctx context.Context, obj interface{}) (models1.ParentPropertyValueInput, error) {
+	var it models1.ParentPropertyValueInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "parentPropertyTypeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentPropertyTypeValue"))
+			it.ParentPropertyTypeValue, err = ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "parentPropertyType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentPropertyType"))
+			it.ParentPropertyType, err = ec.unmarshalOID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPermissionsPolicyFilterInput(ctx context.Context, obj interface{}) (models.PermissionsPolicyFilterInput, error) {
 	var it models.PermissionsPolicyFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -92233,6 +93514,22 @@ func (ec *executionContext) unmarshalInputPropertyInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "dependenceProperties":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dependenceProperties"))
+			it.DependenceProperties, err = ec.unmarshalOPropertyInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypeValueID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypeValueID"))
+			it.PropertyTypeValueID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -92410,6 +93707,114 @@ func (ec *executionContext) unmarshalInputPropertyTypeInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isListable"))
 			it.IsListable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "dependencePropertyTypes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dependencePropertyTypes"))
+			it.DependencePropertyTypes, err = ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypeValues":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypeValues"))
+			it.PropertyTypeValues, err = ec.unmarshalOAddPropertyTypeValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐAddPropertyTypeValueInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPropertyTypeValueFilterInput(ctx context.Context, obj interface{}) (models.PropertyTypeValueFilterInput, error) {
+	var it models.PropertyTypeValueFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNPropertyTypeValueFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPropertyTypeValueOrder(ctx context.Context, obj interface{}) (ent.PropertyTypeValueOrder, error) {
+	var it ent.PropertyTypeValueOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOPropertyTypeValueOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -95852,6 +97257,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Domain(ctx, sel, obj)
+	case *ent.PropertyTypeValue:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._PropertyTypeValue(ctx, sel, obj)
 	case *ent.KpiCategory:
 		if obj == nil {
 			return graphql.Null
@@ -103821,6 +105231,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addPropertyTypeValue":
+			out.Values[i] = ec._Mutation_addPropertyTypeValue(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editPropertyTypeValue":
+			out.Values[i] = ec._Mutation_editPropertyTypeValue(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removePropertyTypeValue":
+			out.Values[i] = ec._Mutation_removePropertyTypeValue(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -104987,6 +106412,28 @@ func (ec *executionContext) _Property(ctx context.Context, sel ast.SelectionSet,
 				res = ec._Property_rawValue(ctx, field, obj)
 				return res
 			})
+		case "dependenceProperties":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Property_dependenceProperties(ctx, field, obj)
+				return res
+			})
+		case "propertyTypeValue":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Property_propertyTypeValue(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -105247,6 +106694,164 @@ func (ec *executionContext) _PropertyType(ctx context.Context, sel ast.Selection
 			})
 		case "isListable":
 			out.Values[i] = ec._PropertyType_isListable(ctx, field, obj)
+		case "parentPropertyType":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertyType_parentPropertyType(ctx, field, obj)
+				return res
+			})
+		case "dependencePropertyTypes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertyType_dependencePropertyTypes(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "propertyTypeValues":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertyType_propertyTypeValues(ctx, field, obj)
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var propertyTypeValueImplementors = []string{"PropertyTypeValue", "Node"}
+
+func (ec *executionContext) _PropertyTypeValue(ctx context.Context, sel ast.SelectionSet, obj *ent.PropertyTypeValue) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, propertyTypeValueImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PropertyTypeValue")
+		case "id":
+			out.Values[i] = ec._PropertyTypeValue_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._PropertyTypeValue_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "isDeleted":
+			out.Values[i] = ec._PropertyTypeValue_isDeleted(ctx, field, obj)
+		case "propertyType":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertyTypeValue_propertyType(ctx, field, obj)
+				return res
+			})
+		case "parentPropertyTypeValue":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PropertyTypeValue_parentPropertyTypeValue(ctx, field, obj)
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var propertyTypeValueConnectionImplementors = []string{"PropertyTypeValueConnection"}
+
+func (ec *executionContext) _PropertyTypeValueConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.PropertyTypeValueConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, propertyTypeValueConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PropertyTypeValueConnection")
+		case "totalCount":
+			out.Values[i] = ec._PropertyTypeValueConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._PropertyTypeValueConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._PropertyTypeValueConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var propertyTypeValueEdgeImplementors = []string{"PropertyTypeValueEdge"}
+
+func (ec *executionContext) _PropertyTypeValueEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.PropertyTypeValueEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, propertyTypeValueEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PropertyTypeValueEdge")
+		case "node":
+			out.Values[i] = ec._PropertyTypeValueEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._PropertyTypeValueEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -106099,6 +107704,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_formulas(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "propertyTypeValues":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_propertyTypeValues(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -110922,6 +112541,11 @@ func (ec *executionContext) unmarshalNAddProjectTypeInput2githubᚗcomᚋfaceboo
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐAddPropertyTypeValueInput(ctx context.Context, v interface{}) (models1.AddPropertyTypeValueInput, error) {
+	res, err := ec.unmarshalInputAddPropertyTypeValueInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddRecommendationsCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsCategoryInput(ctx context.Context, v interface{}) (models.AddRecommendationsCategoryInput, error) {
 	res, err := ec.unmarshalInputAddRecommendationsCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -112838,6 +114462,11 @@ func (ec *executionContext) unmarshalNEditProjectInput2githubᚗcomᚋfacebookin
 
 func (ec *executionContext) unmarshalNEditProjectTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditProjectTypeInput(ctx context.Context, v interface{}) (models.EditProjectTypeInput, error) {
 	res, err := ec.unmarshalInputEditProjectTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditPropertyTypeValueInput(ctx context.Context, v interface{}) (models.EditPropertyTypeValueInput, error) {
+	res, err := ec.unmarshalInputEditPropertyTypeValueInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -116884,6 +118513,96 @@ func (ec *executionContext) unmarshalNPropertyTypeInput2ᚖgithubᚗcomᚋfacebo
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNPropertyTypeValue2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx context.Context, sel ast.SelectionSet, v ent.PropertyTypeValue) graphql.Marshaler {
+	return ec._PropertyTypeValue(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx context.Context, sel ast.SelectionSet, v *ent.PropertyTypeValue) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PropertyTypeValue(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPropertyTypeValueConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueConnection(ctx context.Context, sel ast.SelectionSet, v ent.PropertyTypeValueConnection) graphql.Marshaler {
+	return ec._PropertyTypeValueConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPropertyTypeValueConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueConnection(ctx context.Context, sel ast.SelectionSet, v *ent.PropertyTypeValueConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PropertyTypeValueConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPropertyTypeValueEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.PropertyTypeValueEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPropertyTypeValueEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNPropertyTypeValueEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueEdge(ctx context.Context, sel ast.SelectionSet, v *ent.PropertyTypeValueEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PropertyTypeValueEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPropertyTypeValueFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterInput(ctx context.Context, v interface{}) (*models.PropertyTypeValueFilterInput, error) {
+	res, err := ec.unmarshalInputPropertyTypeValueFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNPropertyTypeValueFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterType(ctx context.Context, v interface{}) (models.PropertyTypeValueFilterType, error) {
+	var res models.PropertyTypeValueFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPropertyTypeValueFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterType(ctx context.Context, sel ast.SelectionSet, v models.PropertyTypeValueFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNPublishFlowInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPublishFlowInput(ctx context.Context, v interface{}) (models.PublishFlowInput, error) {
 	res, err := ec.unmarshalInputPublishFlowInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -119934,6 +121653,38 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOAddPropertyTypeValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐAddPropertyTypeValueInput(ctx context.Context, v interface{}) ([]*models1.AddPropertyTypeValueInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models1.AddPropertyTypeValueInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOAddPropertyTypeValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐAddPropertyTypeValueInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOAddPropertyTypeValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐAddPropertyTypeValueInput(ctx context.Context, v interface{}) (*models1.AddPropertyTypeValueInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddPropertyTypeValueInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOAlarmFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.AlarmFilter) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -121927,6 +123678,15 @@ func (ec *executionContext) marshalOHyperlink2ᚖgithubᚗcomᚋfacebookincubato
 	return ec._Hyperlink(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOID2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalIntID(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	return graphql.MarshalIntID(v)
+}
+
 func (ec *executionContext) unmarshalOID2ᚕintᚄ(ctx context.Context, v interface{}) ([]int, error) {
 	if v == nil {
 		return nil, nil
@@ -122926,6 +124686,35 @@ func (ec *executionContext) marshalOParameterCatalog2ᚖgithubᚗcomᚋfacebooki
 	return ec._ParameterCatalog(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOParentPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐParentPropertyValueInput(ctx context.Context, v interface{}) (models1.ParentPropertyValueInput, error) {
+	res, err := ec.unmarshalInputParentPropertyTypeValueInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOParentPropertyTypeValueInput2ᚕgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐParentPropertyValueInput(ctx context.Context, v interface{}) ([]models1.ParentPropertyValueInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]models1.ParentPropertyValueInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOParentPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐParentPropertyValueInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) marshalOPermissionsPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPermissionsPolicy(ctx context.Context, sel ast.SelectionSet, v *ent.PermissionsPolicy) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -123139,6 +124928,46 @@ func (ec *executionContext) marshalOProperty2ᚕᚖgithubᚗcomᚋfacebookincuba
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalOProperty2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProperty(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOProperty2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Property) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProperty2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProperty(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -123409,6 +125238,141 @@ func (ec *executionContext) unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebo
 	}
 	res, err := ec.unmarshalInputPropertyTypeInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPropertyTypeValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx context.Context, sel ast.SelectionSet, v []*ent.PropertyTypeValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOPropertyTypeValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.PropertyTypeValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOPropertyTypeValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValue(ctx context.Context, sel ast.SelectionSet, v *ent.PropertyTypeValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PropertyTypeValue(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPropertyTypeValueFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.PropertyTypeValueFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.PropertyTypeValueFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPropertyTypeValueFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOPropertyTypeValueOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueOrder(ctx context.Context, v interface{}) (*ent.PropertyTypeValueOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPropertyTypeValueOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOPropertyTypeValueOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueOrderField(ctx context.Context, v interface{}) (*ent.PropertyTypeValueOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.PropertyTypeValueOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPropertyTypeValueOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyTypeValueOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.PropertyTypeValueOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOPythonPackage2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPythonPackage(ctx context.Context, sel ast.SelectionSet, v *models.PythonPackage) graphql.Marshaler {
@@ -123976,6 +125940,42 @@ func (ec *executionContext) unmarshalOString2string(ctx context.Context, v inter
 
 func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	return graphql.MarshalString(v)
+}
+
+func (ec *executionContext) unmarshalOString2ᚕstring(ctx context.Context, v interface{}) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕstring(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOString2string(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {

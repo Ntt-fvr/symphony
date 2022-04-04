@@ -232,7 +232,7 @@ func (r queryResolver) WorkOrders(
 	orderBy *ent.WorkOrderOrder,
 	filterBy []*pkgmodels.WorkOrderFilterInput,
 ) (*ent.WorkOrderConnection, error) {
-	return r.ClientFrom(ctx).Debug().
+	return r.ClientFrom(ctx).
 		WorkOrder.
 		Query().
 		Paginate(ctx, after, first, before, last,
@@ -1261,6 +1261,26 @@ func (r queryResolver) UsersAvailability(
 		}
 	}
 	return users, nil
+}
+
+func (r queryResolver) PropertyTypeValues(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.PropertyTypeValueOrder,
+	filterBy []*models.PropertyTypeValueFilterInput,
+) (*ent.PropertyTypeValueConnection, error) {
+	return r.ClientFrom(ctx).
+		PropertyTypeValue.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithPropertyTypeValueOrder(orderBy),
+			ent.WithPropertyTypeValueFilter(
+				func(query *ent.PropertyTypeValueQuery) (*ent.PropertyTypeValueQuery, error) {
+					return resolverutil.PropertyTypeValueFilter(query, filterBy)
+				},
+			),
+		)
 }
 
 func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*pkgmodels.PropertiesByCategoryFilterInput) ([]*models.PropertiesByCategories, error) {
