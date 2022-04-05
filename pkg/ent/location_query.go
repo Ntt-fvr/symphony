@@ -24,7 +24,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
 	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
@@ -52,7 +51,6 @@ type LocationQuery struct {
 	withCellScan   *SurveyCellScanQuery
 	withWorkOrders *WorkOrderQuery
 	withFloorPlans *FloorPlanQuery
-	withRsLocation *ResourceRelationshipQuery
 	withFKs        bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -347,28 +345,6 @@ func (lq *LocationQuery) QueryFloorPlans() *FloorPlanQuery {
 	return query
 }
 
-// QueryRsLocation chains the current query on the rs_location edge.
-func (lq *LocationQuery) QueryRsLocation() *ResourceRelationshipQuery {
-	query := &ResourceRelationshipQuery{config: lq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := lq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := lq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, selector),
-			sqlgraph.To(resourcerelationship.Table, resourcerelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, location.RsLocationTable, location.RsLocationColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(lq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // First returns the first Location entity in the query. Returns *NotFoundError when no location was found.
 func (lq *LocationQuery) First(ctx context.Context) (*Location, error) {
 	nodes, err := lq.Limit(1).All(ctx)
@@ -557,7 +533,6 @@ func (lq *LocationQuery) Clone() *LocationQuery {
 		withCellScan:   lq.withCellScan.Clone(),
 		withWorkOrders: lq.withWorkOrders.Clone(),
 		withFloorPlans: lq.withFloorPlans.Clone(),
-		withRsLocation: lq.withRsLocation.Clone(),
 		// clone intermediate query.
 		sql:  lq.sql.Clone(),
 		path: lq.path,
@@ -696,17 +671,6 @@ func (lq *LocationQuery) WithFloorPlans(opts ...func(*FloorPlanQuery)) *Location
 	return lq
 }
 
-//  WithRsLocation tells the query-builder to eager-loads the nodes that are connected to
-// the "rs_location" edge. The optional arguments used to configure the query builder of the edge.
-func (lq *LocationQuery) WithRsLocation(opts ...func(*ResourceRelationshipQuery)) *LocationQuery {
-	query := &ResourceRelationshipQuery{config: lq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	lq.withRsLocation = query
-	return lq
-}
-
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -777,7 +741,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		nodes       = []*Location{}
 		withFKs     = lq.withFKs
 		_spec       = lq.querySpec()
-		loadedTypes = [13]bool{
+		loadedTypes = [12]bool{
 			lq.withType != nil,
 			lq.withParent != nil,
 			lq.withChildren != nil,
@@ -790,7 +754,6 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 			lq.withCellScan != nil,
 			lq.withWorkOrders != nil,
 			lq.withFloorPlans != nil,
-			lq.withRsLocation != nil,
 		}
 	)
 	if lq.withType != nil || lq.withParent != nil {
@@ -1160,35 +1123,6 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "floor_plan_location" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.FloorPlans = append(node.Edges.FloorPlans, n)
-		}
-	}
-
-	if query := lq.withRsLocation; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Location)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.RsLocation = []*ResourceRelationship{}
-		}
-		query.withFKs = true
-		query.Where(predicate.ResourceRelationship(func(s *sql.Selector) {
-			s.Where(sql.InValues(location.RsLocationColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.location_rs_location
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "location_rs_location" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "location_rs_location" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.RsLocation = append(node.Edges.RsLocation, n)
 		}
 	}
 

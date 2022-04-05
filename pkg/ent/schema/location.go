@@ -125,8 +125,6 @@ func (Location) Edges() []ent.Edge {
 		edge.From("floor_plans", FloorPlan.Type).
 			Ref("location").
 			Annotations(entgql.MapsTo("floorPlans")),
-		edge.To("rs_location", ResourceRelationship.Type).
-			Annotations(entgql.MapsTo("resourcelocation")),
 	}
 }
 

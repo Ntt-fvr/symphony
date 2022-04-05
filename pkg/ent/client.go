@@ -80,9 +80,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
-	"github.com/facebookincubator/symphony/pkg/ent/resource"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
@@ -256,12 +254,8 @@ type Client struct {
 	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
-	// Resource is the client for interacting with the Resource builders.
-	Resource *ResourceClient
 	// ResourcePropertyType is the client for interacting with the ResourcePropertyType builders.
 	ResourcePropertyType *ResourcePropertyTypeClient
-	// ResourceRelationship is the client for interacting with the ResourceRelationship builders.
-	ResourceRelationship *ResourceRelationshipClient
 	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
 	ResourceSpecification *ResourceSpecificationClient
 	// ResourceSpecificationItems is the client for interacting with the ResourceSpecificationItems builders.
@@ -400,9 +394,7 @@ func (c *Client) init() {
 	c.RecommendationsCategory = NewRecommendationsCategoryClient(c.config)
 	c.RecommendationsSources = NewRecommendationsSourcesClient(c.config)
 	c.ReportFilter = NewReportFilterClient(c.config)
-	c.Resource = NewResourceClient(c.config)
 	c.ResourcePropertyType = NewResourcePropertyTypeClient(c.config)
-	c.ResourceRelationship = NewResourceRelationshipClient(c.config)
 	c.ResourceSpecification = NewResourceSpecificationClient(c.config)
 	c.ResourceSpecificationItems = NewResourceSpecificationItemsClient(c.config)
 	c.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(c.config)
@@ -530,9 +522,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
-		Resource:                          NewResourceClient(cfg),
 		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
-		ResourceRelationship:              NewResourceRelationshipClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
 		ResourceSpecificationItems:        NewResourceSpecificationItemsClient(cfg),
 		ResourceSpecificationRelationship: NewResourceSpecificationRelationshipClient(cfg),
@@ -643,9 +633,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
-		Resource:                          NewResourceClient(cfg),
 		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
-		ResourceRelationship:              NewResourceRelationshipClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
 		ResourceSpecificationItems:        NewResourceSpecificationItemsClient(cfg),
 		ResourceSpecificationRelationship: NewResourceSpecificationRelationshipClient(cfg),
@@ -769,9 +757,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.RecommendationsCategory.Use(hooks...)
 	c.RecommendationsSources.Use(hooks...)
 	c.ReportFilter.Use(hooks...)
-	c.Resource.Use(hooks...)
 	c.ResourcePropertyType.Use(hooks...)
-	c.ResourceRelationship.Use(hooks...)
 	c.ResourceSpecification.Use(hooks...)
 	c.ResourceSpecificationItems.Use(hooks...)
 	c.ResourceSpecificationRelationship.Use(hooks...)
@@ -7856,22 +7842,6 @@ func (c *LocationClient) QueryFloorPlans(l *Location) *FloorPlanQuery {
 	return query
 }
 
-// QueryRsLocation queries the rs_location edge of a Location.
-func (c *LocationClient) QueryRsLocation(l *Location) *ResourceRelationshipQuery {
-	query := &ResourceRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := l.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, id),
-			sqlgraph.To(resourcerelationship.Table, resourcerelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, location.RsLocationTable, location.RsLocationColumn),
-		)
-		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *LocationClient) Hooks() []Hook {
 	hooks := c.hooks.Location
@@ -10189,143 +10159,6 @@ func (c *ReportFilterClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], reportfilter.Hooks[:]...)
 }
 
-// ResourceClient is a client for the Resource schema.
-type ResourceClient struct {
-	config
-}
-
-// NewResourceClient returns a client for the Resource from the given config.
-func NewResourceClient(c config) *ResourceClient {
-	return &ResourceClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `resource.Hooks(f(g(h())))`.
-func (c *ResourceClient) Use(hooks ...Hook) {
-	c.hooks.Resource = append(c.hooks.Resource, hooks...)
-}
-
-// Create returns a create builder for Resource.
-func (c *ResourceClient) Create() *ResourceCreate {
-	mutation := newResourceMutation(c.config, OpCreate)
-	return &ResourceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Resource entities.
-func (c *ResourceClient) CreateBulk(builders ...*ResourceCreate) *ResourceCreateBulk {
-	return &ResourceCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Resource.
-func (c *ResourceClient) Update() *ResourceUpdate {
-	mutation := newResourceMutation(c.config, OpUpdate)
-	return &ResourceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ResourceClient) UpdateOne(r *Resource) *ResourceUpdateOne {
-	mutation := newResourceMutation(c.config, OpUpdateOne, withResource(r))
-	return &ResourceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ResourceClient) UpdateOneID(id int) *ResourceUpdateOne {
-	mutation := newResourceMutation(c.config, OpUpdateOne, withResourceID(id))
-	return &ResourceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Resource.
-func (c *ResourceClient) Delete() *ResourceDelete {
-	mutation := newResourceMutation(c.config, OpDelete)
-	return &ResourceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ResourceClient) DeleteOne(r *Resource) *ResourceDeleteOne {
-	return c.DeleteOneID(r.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ResourceClient) DeleteOneID(id int) *ResourceDeleteOne {
-	builder := c.Delete().Where(resource.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ResourceDeleteOne{builder}
-}
-
-// Query returns a query builder for Resource.
-func (c *ResourceClient) Query() *ResourceQuery {
-	return &ResourceQuery{config: c.config}
-}
-
-// Get returns a Resource entity by its id.
-func (c *ResourceClient) Get(ctx context.Context, id int) (*Resource, error) {
-	return c.Query().Where(resource.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ResourceClient) GetX(ctx context.Context, id int) *Resource {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryResourcespec queries the resourcespec edge of a Resource.
-func (c *ResourceClient) QueryResourcespec(r *Resource) *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := r.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resource.Table, resource.FieldID, id),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resource.ResourcespecTable, resource.ResourcespecColumn),
-		)
-		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceA queries the resource_a edge of a Resource.
-func (c *ResourceClient) QueryResourceA(r *Resource) *ResourceRelationshipQuery {
-	query := &ResourceRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := r.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resource.Table, resource.FieldID, id),
-			sqlgraph.To(resourcerelationship.Table, resourcerelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resource.ResourceATable, resource.ResourceAColumn),
-		)
-		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceB queries the resource_b edge of a Resource.
-func (c *ResourceClient) QueryResourceB(r *Resource) *ResourceRelationshipQuery {
-	query := &ResourceRelationshipQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := r.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resource.Table, resource.FieldID, id),
-			sqlgraph.To(resourcerelationship.Table, resourcerelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resource.ResourceBTable, resource.ResourceBColumn),
-		)
-		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ResourceClient) Hooks() []Hook {
-	hooks := c.hooks.Resource
-	return append(hooks[:len(hooks):len(hooks)], resource.Hooks[:]...)
-}
-
 // ResourcePropertyTypeClient is a client for the ResourcePropertyType schema.
 type ResourcePropertyTypeClient struct {
 	config
@@ -10445,143 +10278,6 @@ func (c *ResourcePropertyTypeClient) QueryPropertyCategory(rpt *ResourceProperty
 func (c *ResourcePropertyTypeClient) Hooks() []Hook {
 	hooks := c.hooks.ResourcePropertyType
 	return append(hooks[:len(hooks):len(hooks)], resourcepropertytype.Hooks[:]...)
-}
-
-// ResourceRelationshipClient is a client for the ResourceRelationship schema.
-type ResourceRelationshipClient struct {
-	config
-}
-
-// NewResourceRelationshipClient returns a client for the ResourceRelationship from the given config.
-func NewResourceRelationshipClient(c config) *ResourceRelationshipClient {
-	return &ResourceRelationshipClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `resourcerelationship.Hooks(f(g(h())))`.
-func (c *ResourceRelationshipClient) Use(hooks ...Hook) {
-	c.hooks.ResourceRelationship = append(c.hooks.ResourceRelationship, hooks...)
-}
-
-// Create returns a create builder for ResourceRelationship.
-func (c *ResourceRelationshipClient) Create() *ResourceRelationshipCreate {
-	mutation := newResourceRelationshipMutation(c.config, OpCreate)
-	return &ResourceRelationshipCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ResourceRelationship entities.
-func (c *ResourceRelationshipClient) CreateBulk(builders ...*ResourceRelationshipCreate) *ResourceRelationshipCreateBulk {
-	return &ResourceRelationshipCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ResourceRelationship.
-func (c *ResourceRelationshipClient) Update() *ResourceRelationshipUpdate {
-	mutation := newResourceRelationshipMutation(c.config, OpUpdate)
-	return &ResourceRelationshipUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ResourceRelationshipClient) UpdateOne(rr *ResourceRelationship) *ResourceRelationshipUpdateOne {
-	mutation := newResourceRelationshipMutation(c.config, OpUpdateOne, withResourceRelationship(rr))
-	return &ResourceRelationshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ResourceRelationshipClient) UpdateOneID(id int) *ResourceRelationshipUpdateOne {
-	mutation := newResourceRelationshipMutation(c.config, OpUpdateOne, withResourceRelationshipID(id))
-	return &ResourceRelationshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ResourceRelationship.
-func (c *ResourceRelationshipClient) Delete() *ResourceRelationshipDelete {
-	mutation := newResourceRelationshipMutation(c.config, OpDelete)
-	return &ResourceRelationshipDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ResourceRelationshipClient) DeleteOne(rr *ResourceRelationship) *ResourceRelationshipDeleteOne {
-	return c.DeleteOneID(rr.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ResourceRelationshipClient) DeleteOneID(id int) *ResourceRelationshipDeleteOne {
-	builder := c.Delete().Where(resourcerelationship.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ResourceRelationshipDeleteOne{builder}
-}
-
-// Query returns a query builder for ResourceRelationship.
-func (c *ResourceRelationshipClient) Query() *ResourceRelationshipQuery {
-	return &ResourceRelationshipQuery{config: c.config}
-}
-
-// Get returns a ResourceRelationship entity by its id.
-func (c *ResourceRelationshipClient) Get(ctx context.Context, id int) (*ResourceRelationship, error) {
-	return c.Query().Where(resourcerelationship.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ResourceRelationshipClient) GetX(ctx context.Context, id int) *ResourceRelationship {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryResourcea queries the resourcea edge of a ResourceRelationship.
-func (c *ResourceRelationshipClient) QueryResourcea(rr *ResourceRelationship) *ResourceQuery {
-	query := &ResourceQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcerelationship.Table, resourcerelationship.FieldID, id),
-			sqlgraph.To(resource.Table, resource.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcerelationship.ResourceaTable, resourcerelationship.ResourceaColumn),
-		)
-		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceb queries the resourceb edge of a ResourceRelationship.
-func (c *ResourceRelationshipClient) QueryResourceb(rr *ResourceRelationship) *ResourceQuery {
-	query := &ResourceQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcerelationship.Table, resourcerelationship.FieldID, id),
-			sqlgraph.To(resource.Table, resource.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcerelationship.ResourcebTable, resourcerelationship.ResourcebColumn),
-		)
-		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourcelocation queries the resourcelocation edge of a ResourceRelationship.
-func (c *ResourceRelationshipClient) QueryResourcelocation(rr *ResourceRelationship) *LocationQuery {
-	query := &LocationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcerelationship.Table, resourcerelationship.FieldID, id),
-			sqlgraph.To(location.Table, location.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcerelationship.ResourcelocationTable, resourcerelationship.ResourcelocationColumn),
-		)
-		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ResourceRelationshipClient) Hooks() []Hook {
-	hooks := c.hooks.ResourceRelationship
-	return append(hooks[:len(hooks):len(hooks)], resourcerelationship.Hooks[:]...)
 }
 
 // ResourceSpecificationClient is a client for the ResourceSpecification schema.
@@ -10724,22 +10420,6 @@ func (c *ResourceSpecificationClient) QueryResourceSpecificationItems(rs *Resour
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
 			sqlgraph.To(resourcespecificationitems.Table, resourcespecificationitems.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourceSpecificationItemsTable, resourcespecification.ResourceSpecificationItemsColumn),
-		)
-		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourceSpecificationR queries the resource_specification_r edge of a ResourceSpecification.
-func (c *ResourceSpecificationClient) QueryResourceSpecificationR(rs *ResourceSpecification) *ResourceQuery {
-	query := &ResourceQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rs.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
-			sqlgraph.To(resource.Table, resource.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourceSpecificationRTable, resourcespecification.ResourceSpecificationRColumn),
 		)
 		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
 		return fromV, nil

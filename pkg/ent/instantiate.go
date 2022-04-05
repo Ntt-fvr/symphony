@@ -409,21 +409,9 @@ func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 }
 
 // Instantiate entity configuration.
-func (c *ResourceClient) Instantiate(r *Resource) *Resource {
-	r.config = c.config
-	return r
-}
-
-// Instantiate entity configuration.
 func (c *ResourcePropertyTypeClient) Instantiate(rpt *ResourcePropertyType) *ResourcePropertyType {
 	rpt.config = c.config
 	return rpt
-}
-
-// Instantiate entity configuration.
-func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *ResourceRelationship {
-	rr.config = c.config
-	return rr
 }
 
 // Instantiate entity configuration.

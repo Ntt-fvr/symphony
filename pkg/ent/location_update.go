@@ -22,7 +22,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
 	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
@@ -310,21 +309,6 @@ func (lu *LocationUpdate) AddFloorPlans(f ...*FloorPlan) *LocationUpdate {
 	return lu.AddFloorPlanIDs(ids...)
 }
 
-// AddRsLocationIDs adds the rs_location edge to ResourceRelationship by ids.
-func (lu *LocationUpdate) AddRsLocationIDs(ids ...int) *LocationUpdate {
-	lu.mutation.AddRsLocationIDs(ids...)
-	return lu
-}
-
-// AddRsLocation adds the rs_location edges to ResourceRelationship.
-func (lu *LocationUpdate) AddRsLocation(r ...*ResourceRelationship) *LocationUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return lu.AddRsLocationIDs(ids...)
-}
-
 // Mutation returns the LocationMutation object of the builder.
 func (lu *LocationUpdate) Mutation() *LocationMutation {
 	return lu.mutation
@@ -550,27 +534,6 @@ func (lu *LocationUpdate) RemoveFloorPlans(f ...*FloorPlan) *LocationUpdate {
 		ids[i] = f[i].ID
 	}
 	return lu.RemoveFloorPlanIDs(ids...)
-}
-
-// ClearRsLocation clears all "rs_location" edges to type ResourceRelationship.
-func (lu *LocationUpdate) ClearRsLocation() *LocationUpdate {
-	lu.mutation.ClearRsLocation()
-	return lu
-}
-
-// RemoveRsLocationIDs removes the rs_location edge to ResourceRelationship by ids.
-func (lu *LocationUpdate) RemoveRsLocationIDs(ids ...int) *LocationUpdate {
-	lu.mutation.RemoveRsLocationIDs(ids...)
-	return lu
-}
-
-// RemoveRsLocation removes rs_location edges to ResourceRelationship.
-func (lu *LocationUpdate) RemoveRsLocation(r ...*ResourceRelationship) *LocationUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return lu.RemoveRsLocationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1358,60 +1321,6 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if lu.mutation.RsLocationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   location.RsLocationTable,
-			Columns: []string{location.RsLocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := lu.mutation.RemovedRsLocationIDs(); len(nodes) > 0 && !lu.mutation.RsLocationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   location.RsLocationTable,
-			Columns: []string{location.RsLocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := lu.mutation.RsLocationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   location.RsLocationTable,
-			Columns: []string{location.RsLocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, lu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{location.Label}
@@ -1698,21 +1607,6 @@ func (luo *LocationUpdateOne) AddFloorPlans(f ...*FloorPlan) *LocationUpdateOne 
 	return luo.AddFloorPlanIDs(ids...)
 }
 
-// AddRsLocationIDs adds the rs_location edge to ResourceRelationship by ids.
-func (luo *LocationUpdateOne) AddRsLocationIDs(ids ...int) *LocationUpdateOne {
-	luo.mutation.AddRsLocationIDs(ids...)
-	return luo
-}
-
-// AddRsLocation adds the rs_location edges to ResourceRelationship.
-func (luo *LocationUpdateOne) AddRsLocation(r ...*ResourceRelationship) *LocationUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return luo.AddRsLocationIDs(ids...)
-}
-
 // Mutation returns the LocationMutation object of the builder.
 func (luo *LocationUpdateOne) Mutation() *LocationMutation {
 	return luo.mutation
@@ -1938,27 +1832,6 @@ func (luo *LocationUpdateOne) RemoveFloorPlans(f ...*FloorPlan) *LocationUpdateO
 		ids[i] = f[i].ID
 	}
 	return luo.RemoveFloorPlanIDs(ids...)
-}
-
-// ClearRsLocation clears all "rs_location" edges to type ResourceRelationship.
-func (luo *LocationUpdateOne) ClearRsLocation() *LocationUpdateOne {
-	luo.mutation.ClearRsLocation()
-	return luo
-}
-
-// RemoveRsLocationIDs removes the rs_location edge to ResourceRelationship by ids.
-func (luo *LocationUpdateOne) RemoveRsLocationIDs(ids ...int) *LocationUpdateOne {
-	luo.mutation.RemoveRsLocationIDs(ids...)
-	return luo
-}
-
-// RemoveRsLocation removes rs_location edges to ResourceRelationship.
-func (luo *LocationUpdateOne) RemoveRsLocation(r ...*ResourceRelationship) *LocationUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return luo.RemoveRsLocationIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -2736,60 +2609,6 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (_node *Location, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: floorplan.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if luo.mutation.RsLocationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   location.RsLocationTable,
-			Columns: []string{location.RsLocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := luo.mutation.RemovedRsLocationIDs(); len(nodes) > 0 && !luo.mutation.RsLocationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   location.RsLocationTable,
-			Columns: []string{location.RsLocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := luo.mutation.RsLocationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   location.RsLocationTable,
-			Columns: []string{location.RsLocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcerelationship.FieldID,
 				},
 			},
 		}

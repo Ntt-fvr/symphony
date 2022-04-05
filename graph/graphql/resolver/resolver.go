@@ -301,14 +301,6 @@ func (r resolver) PropertyCategory() generated.PropertyCategoryResolver {
 	return propertyCategoryResolver{}
 }
 
-func (r resolver) Resource() generated.ResourceResolver {
-	return resourceResolver{}
-}
-
-func (r resolver) ResourceRelationship() generated.ResourceRelationshipResolver {
-	return resourceRelationshipResolver{}
-}
-
 func (r resolver) ResourcePropertyType() generated.ResourcePropertyTypeResolver {
 	return resourcePropertyTypeResolver{}
 }

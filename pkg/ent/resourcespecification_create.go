@@ -14,7 +14,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/resource"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
@@ -139,21 +138,6 @@ func (rsc *ResourceSpecificationCreate) AddResourceSpecificationItems(r ...*Reso
 		ids[i] = r[i].ID
 	}
 	return rsc.AddResourceSpecificationItemIDs(ids...)
-}
-
-// AddResourceSpecificationRIDs adds the resource_specification_r edge to Resource by ids.
-func (rsc *ResourceSpecificationCreate) AddResourceSpecificationRIDs(ids ...int) *ResourceSpecificationCreate {
-	rsc.mutation.AddResourceSpecificationRIDs(ids...)
-	return rsc
-}
-
-// AddResourceSpecificationR adds the resource_specification_r edges to Resource.
-func (rsc *ResourceSpecificationCreate) AddResourceSpecificationR(r ...*Resource) *ResourceSpecificationCreate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return rsc.AddResourceSpecificationRIDs(ids...)
 }
 
 // Mutation returns the ResourceSpecificationMutation object of the builder.
@@ -361,25 +345,6 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecificationitems.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := rsc.mutation.ResourceSpecificationRIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   resourcespecification.ResourceSpecificationRTable,
-			Columns: []string{resourcespecification.ResourceSpecificationRColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resource.FieldID,
 				},
 			},
 		}
