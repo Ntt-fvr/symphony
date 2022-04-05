@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
@@ -379,6 +380,32 @@ type AddResourceInput struct {
 	Available             *bool  `json:"available"`
 }
 
+type AddResourcePropertyTypeInput struct {
+	ID                    *int                      `json:"id"`
+	ExternalID            *string                   `json:"externalId"`
+	Name                  string                    `json:"name"`
+	Type                  resourcepropertytype.Type `json:"type"`
+	NodeType              *string                   `json:"nodeType"`
+	Index                 *int                      `json:"index"`
+	Category              *string                   `json:"category"`
+	RawValue              *string                   `json:"rawValue"`
+	StringValue           *string                   `json:"stringValue"`
+	IntValue              *int                      `json:"intValue"`
+	BooleanValue          *bool                     `json:"booleanValue"`
+	FloatValue            *float64                  `json:"floatValue"`
+	LatitudeValue         *float64                  `json:"latitudeValue"`
+	LongitudeValue        *float64                  `json:"longitudeValue"`
+	RangeFromValue        *float64                  `json:"rangeFromValue"`
+	RangeToValue          *float64                  `json:"rangeToValue"`
+	IsEditable            *bool                     `json:"isEditable"`
+	IsInstanceProperty    *bool                     `json:"isInstanceProperty"`
+	IsMandatory           *bool                     `json:"isMandatory"`
+	IsDeleted             *bool                     `json:"isDeleted"`
+	PropertyCategory      *int                      `json:"propertyCategory"`
+	IsListable            *bool                     `json:"isListable"`
+	ResourceSpecification *int                      `json:"resourceSpecification"`
+}
+
 type AddResourceRelationshipInput struct {
 	ResourceRelationshipTypes resourcerelationship.ResourceRelationshipTypes `json:"resourceRelationshipTypes"`
 	ResourceA                 int                                            `json:"resourceA"`
@@ -387,9 +414,10 @@ type AddResourceRelationshipInput struct {
 }
 
 type AddResourceSpecificationInput struct {
-	Name          string                      `json:"name"`
-	ResourceType  int                         `json:"resourceType"`
-	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
+	Name                  string                          `json:"name"`
+	Quantity              *int                            `json:"quantity"`
+	ResourceType          int                             `json:"resourceType"`
+	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
 }
 
 type AddResourceSpecificationItemsInput struct {
@@ -1020,10 +1048,11 @@ type EditResourceRelationshipInput struct {
 }
 
 type EditResourceSpecificationInput struct {
-	ID            int                         `json:"id"`
-	Name          string                      `json:"name"`
-	ResourceType  *int                        `json:"resourceType"`
-	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
+	ID                    int                             `json:"id"`
+	Name                  string                          `json:"name"`
+	Quantity              *int                            `json:"quantity"`
+	ResourceType          *int                            `json:"resourceType"`
+	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
 }
 
 type EditResourceSpecificationItemsInput struct {

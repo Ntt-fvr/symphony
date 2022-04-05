@@ -85,6 +85,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resource"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
@@ -5293,7 +5294,7 @@ func (pc *PropertyCategory) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pc.ID,
 		Type:   "PropertyCategory",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pc.CreateTime); err != nil {
@@ -5339,10 +5340,20 @@ func (pc *PropertyCategory) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
+		Type: "ResourcePropertyType",
+		Name: "resource_properties_type",
+	}
+	node.Edges[1].IDs, err = pc.QueryResourcePropertiesType().
+		Select(resourcepropertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
 		Type: "ParameterCatalog",
 		Name: "parameter_catalog",
 	}
-	node.Edges[1].IDs, err = pc.QueryParameterCatalog().
+	node.Edges[2].IDs, err = pc.QueryParameterCatalog().
 		Select(parametercatalog.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -5356,7 +5367,7 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pt.ID,
 		Type:   "PropertyType",
 		Fields: make([]*Field, 21),
-		Edges:  make([]*Edge, 13),
+		Edges:  make([]*Edge, 12),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pt.CreateTime); err != nil {
@@ -5638,20 +5649,10 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[11] = &Edge{
-		Type: "ResourceSpecification",
-		Name: "resourcespecification",
-	}
-	node.Edges[11].IDs, err = pt.QueryResourcespecification().
-		Select(resourcespecification.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[12] = &Edge{
 		Type: "PropertyCategory",
 		Name: "property_category",
 	}
-	node.Edges[12].IDs, err = pt.QueryPropertyCategory().
+	node.Edges[11].IDs, err = pt.QueryPropertyCategory().
 		Select(propertycategory.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -6031,6 +6032,205 @@ func (r *Resource) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (rpt *ResourcePropertyType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rpt.ID,
+		Type:   "ResourcePropertyType",
+		Fields: make([]*Field, 21),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rpt.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Type); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "resourcepropertytype.Type",
+		Name:  "type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.ExternalID); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "external_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "index",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Category); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "category",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.IntVal); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "int",
+		Name:  "int_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.BoolVal); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "bool",
+		Name:  "bool_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.FloatVal); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "float64",
+		Name:  "float_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.LatitudeVal); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "float64",
+		Name:  "latitude_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.LongitudeVal); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "float64",
+		Name:  "longitude_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.StringVal); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "string",
+		Name:  "string_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.RangeFromVal); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "float64",
+		Name:  "range_from_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.RangeToVal); err != nil {
+		return nil, err
+	}
+	node.Fields[14] = &Field{
+		Type:  "float64",
+		Name:  "range_to_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.IsInstanceProperty); err != nil {
+		return nil, err
+	}
+	node.Fields[15] = &Field{
+		Type:  "bool",
+		Name:  "is_instance_property",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Editable); err != nil {
+		return nil, err
+	}
+	node.Fields[16] = &Field{
+		Type:  "bool",
+		Name:  "editable",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Mandatory); err != nil {
+		return nil, err
+	}
+	node.Fields[17] = &Field{
+		Type:  "bool",
+		Name:  "mandatory",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Deleted); err != nil {
+		return nil, err
+	}
+	node.Fields[18] = &Field{
+		Type:  "bool",
+		Name:  "deleted",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Listable); err != nil {
+		return nil, err
+	}
+	node.Fields[19] = &Field{
+		Type:  "bool",
+		Name:  "listable",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.NodeType); err != nil {
+		return nil, err
+	}
+	node.Fields[20] = &Field{
+		Type:  "string",
+		Name:  "nodeType",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "resourceSpecification",
+	}
+	node.Edges[0].IDs, err = rpt.QueryResourceSpecification().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "PropertyCategory",
+		Name: "property_category",
+	}
+	node.Edges[1].IDs, err = rpt.QueryPropertyCategory().
+		Select(propertycategory.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (rr *ResourceRelationship) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     rr.ID,
@@ -6100,7 +6300,7 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 	node = &Node{
 		ID:     rs.ID,
 		Type:   "ResourceSpecification",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 4),
 		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
@@ -6128,6 +6328,14 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 		Name:  "name",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(rs.Quantity); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "int",
+		Name:  "quantity",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "ResourceType",
 		Name: "resourcetype",
@@ -6139,11 +6347,11 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "PropertyType",
-		Name: "property_type",
+		Type: "ResourcePropertyType",
+		Name: "resource_property_type",
 	}
-	node.Edges[1].IDs, err = rs.QueryPropertyType().
-		Select(propertytype.FieldID).
+	node.Edges[1].IDs, err = rs.QueryResourcePropertyType().
+		Select(resourcepropertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -9584,6 +9792,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Resource.Query().
 			Where(resource.ID(id)).
 			CollectFields(ctx, "Resource").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case resourcepropertytype.Table:
+		n, err := c.ResourcePropertyType.Query().
+			Where(resourcepropertytype.ID(id)).
+			CollectFields(ctx, "ResourcePropertyType").
 			Only(ctx)
 		if err != nil {
 			return nil, err

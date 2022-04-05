@@ -81,6 +81,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resource"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
@@ -257,6 +258,8 @@ type Client struct {
 	ReportFilter *ReportFilterClient
 	// Resource is the client for interacting with the Resource builders.
 	Resource *ResourceClient
+	// ResourcePropertyType is the client for interacting with the ResourcePropertyType builders.
+	ResourcePropertyType *ResourcePropertyTypeClient
 	// ResourceRelationship is the client for interacting with the ResourceRelationship builders.
 	ResourceRelationship *ResourceRelationshipClient
 	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
@@ -398,6 +401,7 @@ func (c *Client) init() {
 	c.RecommendationsSources = NewRecommendationsSourcesClient(c.config)
 	c.ReportFilter = NewReportFilterClient(c.config)
 	c.Resource = NewResourceClient(c.config)
+	c.ResourcePropertyType = NewResourcePropertyTypeClient(c.config)
 	c.ResourceRelationship = NewResourceRelationshipClient(c.config)
 	c.ResourceSpecification = NewResourceSpecificationClient(c.config)
 	c.ResourceSpecificationItems = NewResourceSpecificationItemsClient(c.config)
@@ -527,6 +531,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		Resource:                          NewResourceClient(cfg),
+		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
 		ResourceRelationship:              NewResourceRelationshipClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
 		ResourceSpecificationItems:        NewResourceSpecificationItemsClient(cfg),
@@ -639,6 +644,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		Resource:                          NewResourceClient(cfg),
+		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
 		ResourceRelationship:              NewResourceRelationshipClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
 		ResourceSpecificationItems:        NewResourceSpecificationItemsClient(cfg),
@@ -764,6 +770,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.RecommendationsSources.Use(hooks...)
 	c.ReportFilter.Use(hooks...)
 	c.Resource.Use(hooks...)
+	c.ResourcePropertyType.Use(hooks...)
 	c.ResourceRelationship.Use(hooks...)
 	c.ResourceSpecification.Use(hooks...)
 	c.ResourceSpecificationItems.Use(hooks...)
@@ -9395,6 +9402,22 @@ func (c *PropertyCategoryClient) QueryPropertiesType(pc *PropertyCategory) *Prop
 	return query
 }
 
+// QueryResourcePropertiesType queries the resource_properties_type edge of a PropertyCategory.
+func (c *PropertyCategoryClient) QueryResourcePropertiesType(pc *PropertyCategory) *ResourcePropertyTypeQuery {
+	query := &ResourcePropertyTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertycategory.Table, propertycategory.FieldID, id),
+			sqlgraph.To(resourcepropertytype.Table, resourcepropertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertycategory.ResourcePropertiesTypeTable, propertycategory.ResourcePropertiesTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryParameterCatalog queries the parameter_catalog edge of a PropertyCategory.
 func (c *PropertyCategoryClient) QueryParameterCatalog(pc *PropertyCategory) *ParameterCatalogQuery {
 	query := &ParameterCatalogQuery{config: c.config}
@@ -9669,22 +9692,6 @@ func (c *PropertyTypeClient) QueryWorkerType(pt *PropertyType) *WorkerTypeQuery 
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
 			sqlgraph.To(workertype.Table, workertype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.WorkerTypeTable, propertytype.WorkerTypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryResourcespecification queries the resourcespecification edge of a PropertyType.
-func (c *PropertyTypeClient) QueryResourcespecification(pt *PropertyType) *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := pt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ResourcespecificationTable, propertytype.ResourcespecificationColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil
@@ -10319,6 +10326,127 @@ func (c *ResourceClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], resource.Hooks[:]...)
 }
 
+// ResourcePropertyTypeClient is a client for the ResourcePropertyType schema.
+type ResourcePropertyTypeClient struct {
+	config
+}
+
+// NewResourcePropertyTypeClient returns a client for the ResourcePropertyType from the given config.
+func NewResourcePropertyTypeClient(c config) *ResourcePropertyTypeClient {
+	return &ResourcePropertyTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `resourcepropertytype.Hooks(f(g(h())))`.
+func (c *ResourcePropertyTypeClient) Use(hooks ...Hook) {
+	c.hooks.ResourcePropertyType = append(c.hooks.ResourcePropertyType, hooks...)
+}
+
+// Create returns a create builder for ResourcePropertyType.
+func (c *ResourcePropertyTypeClient) Create() *ResourcePropertyTypeCreate {
+	mutation := newResourcePropertyTypeMutation(c.config, OpCreate)
+	return &ResourcePropertyTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ResourcePropertyType entities.
+func (c *ResourcePropertyTypeClient) CreateBulk(builders ...*ResourcePropertyTypeCreate) *ResourcePropertyTypeCreateBulk {
+	return &ResourcePropertyTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ResourcePropertyType.
+func (c *ResourcePropertyTypeClient) Update() *ResourcePropertyTypeUpdate {
+	mutation := newResourcePropertyTypeMutation(c.config, OpUpdate)
+	return &ResourcePropertyTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ResourcePropertyTypeClient) UpdateOne(rpt *ResourcePropertyType) *ResourcePropertyTypeUpdateOne {
+	mutation := newResourcePropertyTypeMutation(c.config, OpUpdateOne, withResourcePropertyType(rpt))
+	return &ResourcePropertyTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ResourcePropertyTypeClient) UpdateOneID(id int) *ResourcePropertyTypeUpdateOne {
+	mutation := newResourcePropertyTypeMutation(c.config, OpUpdateOne, withResourcePropertyTypeID(id))
+	return &ResourcePropertyTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ResourcePropertyType.
+func (c *ResourcePropertyTypeClient) Delete() *ResourcePropertyTypeDelete {
+	mutation := newResourcePropertyTypeMutation(c.config, OpDelete)
+	return &ResourcePropertyTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ResourcePropertyTypeClient) DeleteOne(rpt *ResourcePropertyType) *ResourcePropertyTypeDeleteOne {
+	return c.DeleteOneID(rpt.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ResourcePropertyTypeClient) DeleteOneID(id int) *ResourcePropertyTypeDeleteOne {
+	builder := c.Delete().Where(resourcepropertytype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ResourcePropertyTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for ResourcePropertyType.
+func (c *ResourcePropertyTypeClient) Query() *ResourcePropertyTypeQuery {
+	return &ResourcePropertyTypeQuery{config: c.config}
+}
+
+// Get returns a ResourcePropertyType entity by its id.
+func (c *ResourcePropertyTypeClient) Get(ctx context.Context, id int) (*ResourcePropertyType, error) {
+	return c.Query().Where(resourcepropertytype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ResourcePropertyTypeClient) GetX(ctx context.Context, id int) *ResourcePropertyType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryResourceSpecification queries the resourceSpecification edge of a ResourcePropertyType.
+func (c *ResourcePropertyTypeClient) QueryResourceSpecification(rpt *ResourcePropertyType) *ResourceSpecificationQuery {
+	query := &ResourceSpecificationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rpt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcepropertytype.Table, resourcepropertytype.FieldID, id),
+			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcepropertytype.ResourceSpecificationTable, resourcepropertytype.ResourceSpecificationColumn),
+		)
+		fromV = sqlgraph.Neighbors(rpt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPropertyCategory queries the property_category edge of a ResourcePropertyType.
+func (c *ResourcePropertyTypeClient) QueryPropertyCategory(rpt *ResourcePropertyType) *PropertyCategoryQuery {
+	query := &PropertyCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rpt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcepropertytype.Table, resourcepropertytype.FieldID, id),
+			sqlgraph.To(propertycategory.Table, propertycategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcepropertytype.PropertyCategoryTable, resourcepropertytype.PropertyCategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(rpt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ResourcePropertyTypeClient) Hooks() []Hook {
+	hooks := c.hooks.ResourcePropertyType
+	return append(hooks[:len(hooks):len(hooks)], resourcepropertytype.Hooks[:]...)
+}
+
 // ResourceRelationshipClient is a client for the ResourceRelationship schema.
 type ResourceRelationshipClient struct {
 	config
@@ -10555,15 +10683,15 @@ func (c *ResourceSpecificationClient) QueryResourcetype(rs *ResourceSpecificatio
 	return query
 }
 
-// QueryPropertyType queries the property_type edge of a ResourceSpecification.
-func (c *ResourceSpecificationClient) QueryPropertyType(rs *ResourceSpecification) *PropertyTypeQuery {
-	query := &PropertyTypeQuery{config: c.config}
+// QueryResourcePropertyType queries the resource_property_type edge of a ResourceSpecification.
+func (c *ResourceSpecificationClient) QueryResourcePropertyType(rs *ResourceSpecification) *ResourcePropertyTypeQuery {
+	query := &ResourcePropertyTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := rs.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
-			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.PropertyTypeTable, resourcespecification.PropertyTypeColumn),
+			sqlgraph.To(resourcepropertytype.Table, resourcepropertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourcePropertyTypeTable, resourcespecification.ResourcePropertyTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
 		return fromV, nil

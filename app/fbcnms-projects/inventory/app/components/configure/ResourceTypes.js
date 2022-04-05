@@ -53,7 +53,7 @@ const ResourceTypesQuery = graphql`
           resourceType {
             id
           }
-          propertyTypes {
+          resourcePropertyTypes {
             id
             name
             type
@@ -81,7 +81,7 @@ const ResourceTypesQuery = graphql`
 
 const objectSelectors = {
   data: {
-    resourceTypeBaseType: [
+    resourceTypeClass: [
       {
         name: 'EQUIPMENT',
       },
@@ -97,9 +97,12 @@ const objectSelectors = {
       {
         name: 'CARD',
       },
+      {
+        name: 'VLAN',
+      },
     ],
 
-    resourceTypeClass: [
+    resourceTypeBaseType: [
       {
         name: 'LOGICAL_RESOURCE',
       },

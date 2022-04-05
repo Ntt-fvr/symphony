@@ -14,8 +14,8 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resource"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
@@ -63,6 +63,20 @@ func (rsc *ResourceSpecificationCreate) SetName(s string) *ResourceSpecification
 	return rsc
 }
 
+// SetQuantity sets the quantity field.
+func (rsc *ResourceSpecificationCreate) SetQuantity(i int) *ResourceSpecificationCreate {
+	rsc.mutation.SetQuantity(i)
+	return rsc
+}
+
+// SetNillableQuantity sets the quantity field if the given value is not nil.
+func (rsc *ResourceSpecificationCreate) SetNillableQuantity(i *int) *ResourceSpecificationCreate {
+	if i != nil {
+		rsc.SetQuantity(*i)
+	}
+	return rsc
+}
+
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
 func (rsc *ResourceSpecificationCreate) SetResourcetypeID(id int) *ResourceSpecificationCreate {
 	rsc.mutation.SetResourcetypeID(id)
@@ -82,19 +96,19 @@ func (rsc *ResourceSpecificationCreate) SetResourcetype(r *ResourceType) *Resour
 	return rsc.SetResourcetypeID(r.ID)
 }
 
-// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
-func (rsc *ResourceSpecificationCreate) AddPropertyTypeIDs(ids ...int) *ResourceSpecificationCreate {
-	rsc.mutation.AddPropertyTypeIDs(ids...)
+// AddResourcePropertyTypeIDs adds the resource_property_type edge to ResourcePropertyType by ids.
+func (rsc *ResourceSpecificationCreate) AddResourcePropertyTypeIDs(ids ...int) *ResourceSpecificationCreate {
+	rsc.mutation.AddResourcePropertyTypeIDs(ids...)
 	return rsc
 }
 
-// AddPropertyType adds the property_type edges to PropertyType.
-func (rsc *ResourceSpecificationCreate) AddPropertyType(p ...*PropertyType) *ResourceSpecificationCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// AddResourcePropertyType adds the resource_property_type edges to ResourcePropertyType.
+func (rsc *ResourceSpecificationCreate) AddResourcePropertyType(r ...*ResourcePropertyType) *ResourceSpecificationCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return rsc.AddPropertyTypeIDs(ids...)
+	return rsc.AddResourcePropertyTypeIDs(ids...)
 }
 
 // AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecificationRelationship by ids.
@@ -271,6 +285,14 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 		})
 		_node.Name = value
 	}
+	if value, ok := rsc.mutation.Quantity(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+		_node.Quantity = value
+	}
 	if nodes := rsc.mutation.ResourcetypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -290,17 +312,17 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rsc.mutation.PropertyTypeIDs(); len(nodes) > 0 {
+	if nodes := rsc.mutation.ResourcePropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeTable,
-			Columns: []string{resourcespecification.PropertyTypeColumn},
+			Table:   resourcespecification.ResourcePropertyTypeTable,
+			Columns: []string{resourcespecification.ResourcePropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}

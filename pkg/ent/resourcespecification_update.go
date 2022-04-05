@@ -14,8 +14,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resource"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
@@ -41,6 +41,33 @@ func (rsu *ResourceSpecificationUpdate) SetName(s string) *ResourceSpecification
 	return rsu
 }
 
+// SetQuantity sets the quantity field.
+func (rsu *ResourceSpecificationUpdate) SetQuantity(i int) *ResourceSpecificationUpdate {
+	rsu.mutation.ResetQuantity()
+	rsu.mutation.SetQuantity(i)
+	return rsu
+}
+
+// SetNillableQuantity sets the quantity field if the given value is not nil.
+func (rsu *ResourceSpecificationUpdate) SetNillableQuantity(i *int) *ResourceSpecificationUpdate {
+	if i != nil {
+		rsu.SetQuantity(*i)
+	}
+	return rsu
+}
+
+// AddQuantity adds i to quantity.
+func (rsu *ResourceSpecificationUpdate) AddQuantity(i int) *ResourceSpecificationUpdate {
+	rsu.mutation.AddQuantity(i)
+	return rsu
+}
+
+// ClearQuantity clears the value of quantity.
+func (rsu *ResourceSpecificationUpdate) ClearQuantity() *ResourceSpecificationUpdate {
+	rsu.mutation.ClearQuantity()
+	return rsu
+}
+
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
 func (rsu *ResourceSpecificationUpdate) SetResourcetypeID(id int) *ResourceSpecificationUpdate {
 	rsu.mutation.SetResourcetypeID(id)
@@ -60,19 +87,19 @@ func (rsu *ResourceSpecificationUpdate) SetResourcetype(r *ResourceType) *Resour
 	return rsu.SetResourcetypeID(r.ID)
 }
 
-// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
-func (rsu *ResourceSpecificationUpdate) AddPropertyTypeIDs(ids ...int) *ResourceSpecificationUpdate {
-	rsu.mutation.AddPropertyTypeIDs(ids...)
+// AddResourcePropertyTypeIDs adds the resource_property_type edge to ResourcePropertyType by ids.
+func (rsu *ResourceSpecificationUpdate) AddResourcePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdate {
+	rsu.mutation.AddResourcePropertyTypeIDs(ids...)
 	return rsu
 }
 
-// AddPropertyType adds the property_type edges to PropertyType.
-func (rsu *ResourceSpecificationUpdate) AddPropertyType(p ...*PropertyType) *ResourceSpecificationUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// AddResourcePropertyType adds the resource_property_type edges to ResourcePropertyType.
+func (rsu *ResourceSpecificationUpdate) AddResourcePropertyType(r ...*ResourcePropertyType) *ResourceSpecificationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return rsu.AddPropertyTypeIDs(ids...)
+	return rsu.AddResourcePropertyTypeIDs(ids...)
 }
 
 // AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecificationRelationship by ids.
@@ -131,25 +158,25 @@ func (rsu *ResourceSpecificationUpdate) ClearResourcetype() *ResourceSpecificati
 	return rsu
 }
 
-// ClearPropertyType clears all "property_type" edges to type PropertyType.
-func (rsu *ResourceSpecificationUpdate) ClearPropertyType() *ResourceSpecificationUpdate {
-	rsu.mutation.ClearPropertyType()
+// ClearResourcePropertyType clears all "resource_property_type" edges to type ResourcePropertyType.
+func (rsu *ResourceSpecificationUpdate) ClearResourcePropertyType() *ResourceSpecificationUpdate {
+	rsu.mutation.ClearResourcePropertyType()
 	return rsu
 }
 
-// RemovePropertyTypeIDs removes the property_type edge to PropertyType by ids.
-func (rsu *ResourceSpecificationUpdate) RemovePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdate {
-	rsu.mutation.RemovePropertyTypeIDs(ids...)
+// RemoveResourcePropertyTypeIDs removes the resource_property_type edge to ResourcePropertyType by ids.
+func (rsu *ResourceSpecificationUpdate) RemoveResourcePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdate {
+	rsu.mutation.RemoveResourcePropertyTypeIDs(ids...)
 	return rsu
 }
 
-// RemovePropertyType removes property_type edges to PropertyType.
-func (rsu *ResourceSpecificationUpdate) RemovePropertyType(p ...*PropertyType) *ResourceSpecificationUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// RemoveResourcePropertyType removes resource_property_type edges to ResourcePropertyType.
+func (rsu *ResourceSpecificationUpdate) RemoveResourcePropertyType(r ...*ResourcePropertyType) *ResourceSpecificationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return rsu.RemovePropertyTypeIDs(ids...)
+	return rsu.RemoveResourcePropertyTypeIDs(ids...)
 }
 
 // ClearResourceSpecification clears all "resource_specification" edges to type ResourceSpecificationRelationship.
@@ -323,6 +350,26 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 			Column: resourcespecification.FieldName,
 		})
 	}
+	if value, ok := rsu.mutation.Quantity(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
+	if value, ok := rsu.mutation.AddedQuantity(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
+	if rsu.mutation.QuantityCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
 	if rsu.mutation.ResourcetypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -358,33 +405,33 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rsu.mutation.PropertyTypeCleared() {
+	if rsu.mutation.ResourcePropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeTable,
-			Columns: []string{resourcespecification.PropertyTypeColumn},
+			Table:   resourcespecification.ResourcePropertyTypeTable,
+			Columns: []string{resourcespecification.ResourcePropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsu.mutation.RemovedPropertyTypeIDs(); len(nodes) > 0 && !rsu.mutation.PropertyTypeCleared() {
+	if nodes := rsu.mutation.RemovedResourcePropertyTypeIDs(); len(nodes) > 0 && !rsu.mutation.ResourcePropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeTable,
-			Columns: []string{resourcespecification.PropertyTypeColumn},
+			Table:   resourcespecification.ResourcePropertyTypeTable,
+			Columns: []string{resourcespecification.ResourcePropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}
@@ -393,17 +440,17 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsu.mutation.PropertyTypeIDs(); len(nodes) > 0 {
+	if nodes := rsu.mutation.ResourcePropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeTable,
-			Columns: []string{resourcespecification.PropertyTypeColumn},
+			Table:   resourcespecification.ResourcePropertyTypeTable,
+			Columns: []string{resourcespecification.ResourcePropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}
@@ -598,6 +645,33 @@ func (rsuo *ResourceSpecificationUpdateOne) SetName(s string) *ResourceSpecifica
 	return rsuo
 }
 
+// SetQuantity sets the quantity field.
+func (rsuo *ResourceSpecificationUpdateOne) SetQuantity(i int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ResetQuantity()
+	rsuo.mutation.SetQuantity(i)
+	return rsuo
+}
+
+// SetNillableQuantity sets the quantity field if the given value is not nil.
+func (rsuo *ResourceSpecificationUpdateOne) SetNillableQuantity(i *int) *ResourceSpecificationUpdateOne {
+	if i != nil {
+		rsuo.SetQuantity(*i)
+	}
+	return rsuo
+}
+
+// AddQuantity adds i to quantity.
+func (rsuo *ResourceSpecificationUpdateOne) AddQuantity(i int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.AddQuantity(i)
+	return rsuo
+}
+
+// ClearQuantity clears the value of quantity.
+func (rsuo *ResourceSpecificationUpdateOne) ClearQuantity() *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ClearQuantity()
+	return rsuo
+}
+
 // SetResourcetypeID sets the resourcetype edge to ResourceType by id.
 func (rsuo *ResourceSpecificationUpdateOne) SetResourcetypeID(id int) *ResourceSpecificationUpdateOne {
 	rsuo.mutation.SetResourcetypeID(id)
@@ -617,19 +691,19 @@ func (rsuo *ResourceSpecificationUpdateOne) SetResourcetype(r *ResourceType) *Re
 	return rsuo.SetResourcetypeID(r.ID)
 }
 
-// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
-func (rsuo *ResourceSpecificationUpdateOne) AddPropertyTypeIDs(ids ...int) *ResourceSpecificationUpdateOne {
-	rsuo.mutation.AddPropertyTypeIDs(ids...)
+// AddResourcePropertyTypeIDs adds the resource_property_type edge to ResourcePropertyType by ids.
+func (rsuo *ResourceSpecificationUpdateOne) AddResourcePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.AddResourcePropertyTypeIDs(ids...)
 	return rsuo
 }
 
-// AddPropertyType adds the property_type edges to PropertyType.
-func (rsuo *ResourceSpecificationUpdateOne) AddPropertyType(p ...*PropertyType) *ResourceSpecificationUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// AddResourcePropertyType adds the resource_property_type edges to ResourcePropertyType.
+func (rsuo *ResourceSpecificationUpdateOne) AddResourcePropertyType(r ...*ResourcePropertyType) *ResourceSpecificationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return rsuo.AddPropertyTypeIDs(ids...)
+	return rsuo.AddResourcePropertyTypeIDs(ids...)
 }
 
 // AddResourceSpecificationIDs adds the resource_specification edge to ResourceSpecificationRelationship by ids.
@@ -688,25 +762,25 @@ func (rsuo *ResourceSpecificationUpdateOne) ClearResourcetype() *ResourceSpecifi
 	return rsuo
 }
 
-// ClearPropertyType clears all "property_type" edges to type PropertyType.
-func (rsuo *ResourceSpecificationUpdateOne) ClearPropertyType() *ResourceSpecificationUpdateOne {
-	rsuo.mutation.ClearPropertyType()
+// ClearResourcePropertyType clears all "resource_property_type" edges to type ResourcePropertyType.
+func (rsuo *ResourceSpecificationUpdateOne) ClearResourcePropertyType() *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ClearResourcePropertyType()
 	return rsuo
 }
 
-// RemovePropertyTypeIDs removes the property_type edge to PropertyType by ids.
-func (rsuo *ResourceSpecificationUpdateOne) RemovePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdateOne {
-	rsuo.mutation.RemovePropertyTypeIDs(ids...)
+// RemoveResourcePropertyTypeIDs removes the resource_property_type edge to ResourcePropertyType by ids.
+func (rsuo *ResourceSpecificationUpdateOne) RemoveResourcePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.RemoveResourcePropertyTypeIDs(ids...)
 	return rsuo
 }
 
-// RemovePropertyType removes property_type edges to PropertyType.
-func (rsuo *ResourceSpecificationUpdateOne) RemovePropertyType(p ...*PropertyType) *ResourceSpecificationUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// RemoveResourcePropertyType removes resource_property_type edges to ResourcePropertyType.
+func (rsuo *ResourceSpecificationUpdateOne) RemoveResourcePropertyType(r ...*ResourcePropertyType) *ResourceSpecificationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return rsuo.RemovePropertyTypeIDs(ids...)
+	return rsuo.RemoveResourcePropertyTypeIDs(ids...)
 }
 
 // ClearResourceSpecification clears all "resource_specification" edges to type ResourceSpecificationRelationship.
@@ -878,6 +952,26 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 			Column: resourcespecification.FieldName,
 		})
 	}
+	if value, ok := rsuo.mutation.Quantity(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
+	if value, ok := rsuo.mutation.AddedQuantity(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
+	if rsuo.mutation.QuantityCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: resourcespecification.FieldQuantity,
+		})
+	}
 	if rsuo.mutation.ResourcetypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -913,33 +1007,33 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rsuo.mutation.PropertyTypeCleared() {
+	if rsuo.mutation.ResourcePropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeTable,
-			Columns: []string{resourcespecification.PropertyTypeColumn},
+			Table:   resourcespecification.ResourcePropertyTypeTable,
+			Columns: []string{resourcespecification.ResourcePropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsuo.mutation.RemovedPropertyTypeIDs(); len(nodes) > 0 && !rsuo.mutation.PropertyTypeCleared() {
+	if nodes := rsuo.mutation.RemovedResourcePropertyTypeIDs(); len(nodes) > 0 && !rsuo.mutation.ResourcePropertyTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeTable,
-			Columns: []string{resourcespecification.PropertyTypeColumn},
+			Table:   resourcespecification.ResourcePropertyTypeTable,
+			Columns: []string{resourcespecification.ResourcePropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}
@@ -948,17 +1042,17 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rsuo.mutation.PropertyTypeIDs(); len(nodes) > 0 {
+	if nodes := rsuo.mutation.ResourcePropertyTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   resourcespecification.PropertyTypeTable,
-			Columns: []string{resourcespecification.PropertyTypeColumn},
+			Table:   resourcespecification.ResourcePropertyTypeTable,
+			Columns: []string{resourcespecification.ResourcePropertyTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}

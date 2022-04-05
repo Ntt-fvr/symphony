@@ -92,7 +92,7 @@ const RelationshipsTypeItemList = (props: Props) => {
                 <SettingsIcon />
               </div>
               <Text useEllipsis={true} weight={'bold'}>
-                {item.resourceTypeA.name}
+                {item.resourceTypeA?.name}
               </Text>
             </div>
           </Grid>
@@ -108,7 +108,7 @@ const RelationshipsTypeItemList = (props: Props) => {
           </Grid>
           <Grid item sm={3} md={3} lg={3} className={classes.containerInner}>
             <Text useEllipsis={true} weight={'bold'}>
-              {item.resourceTypeB.name}
+              {item.resourceTypeB?.name}
             </Text>
           </Grid>
           <Grid item sm={1} className={classes.containerDelete}>

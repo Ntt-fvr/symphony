@@ -14,9 +14,9 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
-export type ResourceTypeBaseTypeKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "%future added value";
-export type ResourceTypeClassKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
+export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type ResourceTypeBaseTypeKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
+export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
 export type ResourceTypesQueryVariables = {||};
 export type ResourceTypesQueryResponse = {|
   +resourceTypes: {|
@@ -37,10 +37,10 @@ export type ResourceTypesQueryResponse = {|
         +resourceType: ?{|
           +id: string
         |},
-        +propertyTypes: $ReadOnlyArray<?{|
+        +resourcePropertyTypes: $ReadOnlyArray<?{|
           +id: string,
           +name: string,
-          +type: PropertyKind,
+          +type: ResourcePropertyKind,
           +nodeType: ?string,
           +index: ?number,
           +stringValue: ?string,
@@ -88,7 +88,7 @@ query ResourceTypesQuery {
         resourceType {
           id
         }
-        propertyTypes {
+        resourcePropertyTypes {
           id
           name
           type
@@ -220,9 +220,9 @@ v2 = [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "PropertyType",
+                "concreteType": "ResourcePropertyType",
                 "kind": "LinkedField",
-                "name": "propertyTypes",
+                "name": "resourcePropertyTypes",
                 "plural": true,
                 "selections": [
                   (v0/*: any*/),
@@ -370,16 +370,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "65cb5db0df6bcfe66795d42e0c3b2df6",
+    "cacheID": "1433617df5e4bab0bae7418f52e62b47",
     "id": null,
     "metadata": {},
     "name": "ResourceTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n        }\n        propertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'df2d2ffd086669ddbb39b1a83fa72453';
+(node/*: any*/).hash = '0cc37789f568af8d8f94fce937ecbdd4';
 
 module.exports = node;
