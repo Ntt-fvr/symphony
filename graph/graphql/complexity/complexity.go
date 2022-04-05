@@ -166,6 +166,9 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.DocumentCategory.HyperlinksByEntity = func(childComplexity int, _ models.ImageEntity, _ *int) int {
 		return SearchComplexity(childComplexity, nil)
 	}
+	complexity.Query.PropertyTypeValues = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.PropertyTypeValueOrder, _ []*models.PropertyTypeValueFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.ParametersCatalog = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {
 		return SearchComplexity(childComplexity, nil)
 	}
@@ -174,21 +177,6 @@ func New() (complexity generated.ComplexityRoot) {
 	}
 	complexity.Query.PropertyCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyCategoryOrder) int {
 		return SearchComplexity(childComplexity, nil)
-	}
-	complexity.Query.ResourceSpecificationRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationRelationshipOrder, _ []*models.ResourceSpecificationRelationshipFilterInput) int {
-		return PaginationComplexity(childComplexity, after, first, before, last)
-	}
-	complexity.Query.ResourceSpecificationItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.ResourceSpecificationItemsFilterInput) int {
-		return PaginationComplexity(childComplexity, after, first, before, last)
-	}
-	complexity.Query.ResourceTypeRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeRelationshipOrder, _ []*models.ResourceTypeRelationshipFilterInput) int {
-		return PaginationComplexity(childComplexity, after, first, before, last)
-	}
-	complexity.Query.ResourceSpecifications = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationOrder, _ []*models.ResourceSpecificationFilterInput) int {
-		return PaginationComplexity(childComplexity, after, first, before, last)
-	}
-	complexity.Query.ResourceTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeOrder, _ []*models.ResourceTypeFilterInput) int {
-		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {

@@ -81,6 +81,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
@@ -15367,6 +15368,268 @@ var DefaultPropertyTypeOrder = &PropertyTypeOrder{
 		field: propertytype.FieldID,
 		toCursor: func(pt *PropertyType) Cursor {
 			return Cursor{ID: pt.ID}
+		},
+	},
+}
+
+// PropertyTypeValueEdge is the edge representation of PropertyTypeValue.
+type PropertyTypeValueEdge struct {
+	Node   *PropertyTypeValue `json:"node"`
+	Cursor Cursor             `json:"cursor"`
+}
+
+// PropertyTypeValueConnection is the connection containing edges to PropertyTypeValue.
+type PropertyTypeValueConnection struct {
+	Edges      []*PropertyTypeValueEdge `json:"edges"`
+	PageInfo   PageInfo                 `json:"pageInfo"`
+	TotalCount int                      `json:"totalCount"`
+}
+
+// PropertyTypeValuePaginateOption enables pagination customization.
+type PropertyTypeValuePaginateOption func(*propertyTypeValuePager) error
+
+// WithPropertyTypeValueOrder configures pagination ordering.
+func WithPropertyTypeValueOrder(order *PropertyTypeValueOrder) PropertyTypeValuePaginateOption {
+	if order == nil {
+		order = DefaultPropertyTypeValueOrder
+	}
+	o := *order
+	return func(pager *propertyTypeValuePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultPropertyTypeValueOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithPropertyTypeValueFilter configures pagination filter.
+func WithPropertyTypeValueFilter(filter func(*PropertyTypeValueQuery) (*PropertyTypeValueQuery, error)) PropertyTypeValuePaginateOption {
+	return func(pager *propertyTypeValuePager) error {
+		if filter == nil {
+			return errors.New("PropertyTypeValueQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type propertyTypeValuePager struct {
+	order  *PropertyTypeValueOrder
+	filter func(*PropertyTypeValueQuery) (*PropertyTypeValueQuery, error)
+}
+
+func newPropertyTypeValuePager(opts []PropertyTypeValuePaginateOption) (*propertyTypeValuePager, error) {
+	pager := &propertyTypeValuePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultPropertyTypeValueOrder
+	}
+	return pager, nil
+}
+
+func (p *propertyTypeValuePager) applyFilter(query *PropertyTypeValueQuery) (*PropertyTypeValueQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *propertyTypeValuePager) toCursor(ptv *PropertyTypeValue) Cursor {
+	return p.order.Field.toCursor(ptv)
+}
+
+func (p *propertyTypeValuePager) applyCursors(query *PropertyTypeValueQuery, after, before *Cursor) *PropertyTypeValueQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultPropertyTypeValueOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *propertyTypeValuePager) applyOrder(query *PropertyTypeValueQuery, reverse bool) *PropertyTypeValueQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultPropertyTypeValueOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultPropertyTypeValueOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to PropertyTypeValue.
+func (ptv *PropertyTypeValueQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...PropertyTypeValuePaginateOption,
+) (*PropertyTypeValueConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newPropertyTypeValuePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if ptv, err = pager.applyFilter(ptv); err != nil {
+		return nil, err
+	}
+
+	conn := &PropertyTypeValueConnection{Edges: []*PropertyTypeValueEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := ptv.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := ptv.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	ptv = pager.applyCursors(ptv, after, before)
+	ptv = pager.applyOrder(ptv, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		ptv = ptv.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		ptv = ptv.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := ptv.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *PropertyTypeValue
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *PropertyTypeValue {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *PropertyTypeValue {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*PropertyTypeValueEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &PropertyTypeValueEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// PropertyTypeValueOrderFieldName orders PropertyTypeValue by name.
+	PropertyTypeValueOrderFieldName = &PropertyTypeValueOrderField{
+		field: propertytypevalue.FieldName,
+		toCursor: func(ptv *PropertyTypeValue) Cursor {
+			return Cursor{
+				ID:    ptv.ID,
+				Value: ptv.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f PropertyTypeValueOrderField) String() string {
+	var str string
+	switch f.field {
+	case propertytypevalue.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f PropertyTypeValueOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *PropertyTypeValueOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("PropertyTypeValueOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *PropertyTypeValueOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid PropertyTypeValueOrderField", str)
+	}
+	return nil
+}
+
+// PropertyTypeValueOrderField defines the ordering field of PropertyTypeValue.
+type PropertyTypeValueOrderField struct {
+	field    string
+	toCursor func(*PropertyTypeValue) Cursor
+}
+
+// PropertyTypeValueOrder defines the ordering of PropertyTypeValue.
+type PropertyTypeValueOrder struct {
+	Direction OrderDirection               `json:"direction"`
+	Field     *PropertyTypeValueOrderField `json:"field"`
+}
+
+// DefaultPropertyTypeValueOrder is the default ordering of PropertyTypeValue.
+var DefaultPropertyTypeValueOrder = &PropertyTypeValueOrder{
+	Direction: OrderDirectionAsc,
+	Field: &PropertyTypeValueOrderField{
+		field: propertytypevalue.FieldID,
+		toCursor: func(ptv *PropertyTypeValue) Cursor {
+			return Cursor{ID: ptv.ID}
 		},
 	},
 }

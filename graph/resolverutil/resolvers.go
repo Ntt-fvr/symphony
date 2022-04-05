@@ -171,16 +171,6 @@ func CounterFilter(query *ent.CounterQuery, filters []*models.CounterFilterInput
 	return query, nil
 }
 
-func ResourceSpecificationRelationshipFilter(query *ent.ResourceSpecificationRelationshipQuery, filters []*models.ResourceSpecificationRelationshipFilterInput) (*ent.ResourceSpecificationRelationshipQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceSpecificationRelationshipFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
 func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -427,29 +417,10 @@ func NetworkTypeFilter(query *ent.NetworkTypeQuery, filters []*models.NetworkTyp
 	return query, nil
 }
 
-func ResourceTypeFilter(query *ent.ResourceTypeQuery, filters []*models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
+func PropertyTypeValueFilter(query *ent.PropertyTypeValueQuery, filters []*models.PropertyTypeValueFilterInput) (*ent.PropertyTypeValueQuery, error) {
 	var err error
 	for _, f := range filters {
-		if query, err = handleResourceTypeFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func ResourceSpecificationFilter(query *ent.ResourceSpecificationQuery, filters []*models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceSpecificationFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-func ResourceTypeRelationshipFilter(query *ent.ResourceTypeRelationshipQuery, filters []*models.ResourceTypeRelationshipFilterInput) (*ent.ResourceTypeRelationshipQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceTypeRelationshipFilter(query, f); err != nil {
+		if query, err = handlePropertyTypeValueFilter(query, f); err != nil {
 			return nil, err
 		}
 	}
@@ -483,14 +454,4 @@ func SlotFilter(query *ent.AppointmentQuery, filter *models.SlotFilterInput) (*e
 		appointment.And(
 			appointment.StartGTE(filter.SlotStartDate),
 			appointment.StartLTE(filter.SlotEndDate)))).Order(ent.Asc(appointment.FieldStart)), nil
-}
-
-func ResourceSpecificationItemsFilter(query *ent.ResourceSpecificationItemsQuery, filters []*models.ResourceSpecificationItemsFilterInput) (*ent.ResourceSpecificationItemsQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceSpecificationItemsFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
 }
