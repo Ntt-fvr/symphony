@@ -138,7 +138,7 @@ func TestAddPropertyTypeValueWithPropertyType(t *testing.T) {
 	require.NoError(t, err)
 }
 
-/*func TestAddPropertyTypeValueWithParentPropertyTypeValue(t *testing.T) {
+func TestAddPropertyTypeValueWithParentPropertyTypeValue(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
@@ -162,28 +162,26 @@ func TestAddPropertyTypeValueWithPropertyType(t *testing.T) {
 	require.NoError(t, err)
 	propertyTypeID, err := project1.QueryProperties().Only(ctx)
 	require.NoError(t, err)
-	parentPropTypeValue := []*pkgmodels.AddPropertyTypeValueInput{
-		"hola", "adios",
-	}
-	parentPropTypeValue := pkgmodels.AddPropertyTypeValueInput{
-		Name: "ParentProperty_1",
-		PropertyType: propertyTypeID.ID,
-		ParentPropertyTypeValue: []*pkgmodels.AddPropertyTypeValueInput{"hola", "adios",},
-	}
-	PropTypeValue, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
+	parentPropTypeValue := []string{"prueba1", "prueba2"}
+	_, err = mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:                    "example_type_a",
 		PropertyType:            propertyTypeID.ID,
-		ParentPropertyTypeValue: []*pkgmodels.ParentPropertyValueInput{&parentPropTypeValue},
+		ParentPropertyTypeValue: parentPropTypeValue,
 	})
 	require.NoError(t, err)
 
-	strProp := PropTypeValue.QueryPropertyType().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
-
-	require.Equal(t, "str_prop", strProp.Name, "verifying string property type's name")
-	require.Equal(t, strValue, pointer.GetString(strProp.StringVal), "verifying string property type's String value")
-	require.Nil(t, strProp.IntVal, "verifying int property type's int value")
-	require.Equal(t, strIndex, strProp.Index, "verifying string property type's index")
-
-	_, err = PropTypeValue.PropertyType(ctx)
+	_, err = mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
+		Name:                    "example_type_b",
+		PropertyType:            propertyTypeID.ID,
+		ParentPropertyTypeValue: nil,
+	})
 	require.NoError(t, err)
-}*/
+
+	_, err = mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
+		Name:                    "example_type_b",
+		PropertyType:            propertyTypeID.ID,
+		ParentPropertyTypeValue: nil,
+	})
+	require.Error(t, err)
+
+}
