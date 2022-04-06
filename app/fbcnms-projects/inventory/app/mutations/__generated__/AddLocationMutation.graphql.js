@@ -37,8 +37,6 @@ export type PropertyInput = {|
   nodeIDValue?: ?string,
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
-  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
-  propertyTypeValueID?: ?string,
 |};
 export type AddLocationMutationVariables = {|
   input: AddLocationInput

@@ -16,10 +16,6 @@ export type PropertyTypeTableDispatcherActionType =
       type: 'ADD_PROPERTY_TYPE',
     |}
   | {|
-      type: 'DELETE_PROPERTY_TYPE',
-      id: string,
-    |}
-  | {|
       type: 'REMOVE_PROPERTY_TYPE',
       id: string,
     |}

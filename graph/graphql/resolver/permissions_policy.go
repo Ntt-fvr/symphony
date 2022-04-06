@@ -52,8 +52,7 @@ func (mutationResolver) AddPermissionsPolicy(
 	mutation := client.PermissionsPolicy.Create().
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
-		SetNillableIsGlobal(input.IsGlobal).
-		SetNillableIsMulticontractor(input.IsMulticontractor)
+		SetNillableIsGlobal(input.IsGlobal)
 	if input.Groups != nil {
 		mutation = mutation.AddGroupIDs(input.Groups...)
 	}
@@ -111,8 +110,7 @@ func (mutationResolver) EditPermissionsPolicy(
 	upd := client.PermissionsPolicy.
 		UpdateOne(p).
 		SetNillableDescription(input.Description).
-		SetNillableIsGlobal(input.IsGlobal).
-		SetNillableIsMulticontractor(input.IsMulticontractor)
+		SetNillableIsGlobal(input.IsGlobal)
 	if input.Name != nil {
 		upd = upd.SetName(*input.Name)
 	}

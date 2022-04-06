@@ -37,17 +37,12 @@ type PropertyTypeOption = {|
 type Props = $ReadOnly<{|
   propertyType: PropertyType,
   onPropertyTypeChange?: (propertyType: PropertyType) => void,
-  disabled?: true,
 |}>;
 
-const PropertyTypeSelect = ({
-  propertyType,
-  onPropertyTypeChange,
-  disabled,
-}: Props) => {
+const PropertyTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
   const classes = useStyles();
   const context = useContext(AppContext);
-  const {dispatch} = useContext(PropertyTypesTableDispatcher);
+  const dispatch = useContext(PropertyTypesTableDispatcher);
 
   const getOptionKey = (type: string) =>
     `${PropertyTypeLabels[type].kind}_${type}`;
@@ -93,7 +88,6 @@ const PropertyTypeSelect = ({
       selectedValue={
         selectedValueIndex > -1 ? options[selectedValueIndex].value : null
       }
-      disabled={disabled}
       onChange={value => {
         onPropertyTypeChange &&
           onPropertyTypeChange({

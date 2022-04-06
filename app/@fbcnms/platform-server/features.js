@@ -274,11 +274,6 @@ export const arrayConfigs = [
     title: 'IPT import projects',
     enabledByDefault: false,
   },
-  {
-    id: 'property_combo',
-    title: 'Property Combo',
-    enabledByDefault: false,
-  },
 ];
 
 export const featureConfigs: {[FeatureID]: FeatureConfig} = {};

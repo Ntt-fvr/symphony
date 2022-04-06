@@ -45,6 +45,7 @@ import LocationMapSnippet from '../location/LocationMapSnippet';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
+import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useContext, useMemo, useReducer, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import Strings from '@fbcnms/strings/Strings';
@@ -75,7 +76,6 @@ import SelectAvailabilityAssignee, {
 } from './SelectAvailabilityAssignee';
 
 import LoadingIndicator from '../../common/LoadingIndicator';
-import PropertyTypeInput from './PropertyTypeInput';
 import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useSnackbar} from 'notistack';
@@ -598,15 +598,6 @@ const WorkOrderDetails = ({
     date: null,
     saveAppointment: false,
   });
-
-  const _propertyChangedHandler = index => property =>
-    // $FlowFixMe - known techdebt with Property/PropertyType flow definitions
-    setProperties(prevProperties => [
-      ...prevProperties.slice(0, index),
-      property,
-      ...prevProperties.slice(index + 1),
-    ]);
-
   if (loading) {
     return <LoadingIndicator />;
   } else {
@@ -780,17 +771,37 @@ const WorkOrderDetails = ({
                             </FormField>
                           </Grid>
                           {properties.map((property, index) => (
-                            <PropertyTypeInput
+                            <Grid
                               key={property.id}
-                              workOrder={workOrder}
-                              property={property}
-                              mandatoryPropertiesOnCloseEnabled={
-                                mandatoryPropertiesOnCloseEnabled
-                              }
-                              classes={classes}
-                              index={index}
-                              _propertyChangedHandler={_propertyChangedHandler}
-                            />
+                              item
+                              xs={12}
+                              sm={6}
+                              lg={4}
+                              xl={4}>
+                              <PropertyValueInput
+                                required={
+                                  !!property.propertyType.isMandatory &&
+                                  (workOrder.status === closedStatus.value ||
+                                    !mandatoryPropertiesOnCloseEnabled)
+                                }
+                                disabled={
+                                  !property.propertyType.isInstanceProperty
+                                }
+                                label={property.propertyType.name}
+                                className={classes.gridInput}
+                                inputType="Property"
+                                property={property}
+                                onChange={property =>
+                                  setProperties(prevProperties => [
+                                    ...prevProperties.slice(0, index),
+                                    property,
+                                    ...prevProperties.slice(index + 1),
+                                  ])
+                                }
+                                headlineVariant="form"
+                                fullWidth={true}
+                              />
+                            </Grid>
                           ))}
                         </Grid>
                         <>

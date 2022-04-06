@@ -35,9 +35,6 @@ func handleProjectFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput)
 	if filter.FilterType == models.ProjectFilterTypeProjectPriority {
 		return projectPriorityFilter(q, filter)
 	}
-	if filter.FilterType == models.ProjectFilterTypeProjectCreationDate {
-		return projectCreationDateFilter(q, filter)
-	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
@@ -152,21 +149,4 @@ func projectPropertiesFilter(q *ent.ProjectQuery, filter *models.ProjectFilterIn
 	default:
 		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
-}
-
-func projectCreationDateFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
-	if filter.TimeValue == nil {
-		return nil, errors.Errorf("TimeValue is required: %s", filter.Operator)
-	}
-	switch filter.Operator {
-	case enum.FilterOperatorDateLessThan:
-		return q.Where(project.CreateTimeLT(*filter.TimeValue)), nil
-	case enum.FilterOperatorDateLessOrEqualThan:
-		return q.Where(project.CreateTimeLTE(*filter.TimeValue)), nil
-	case enum.FilterOperatorDateGreaterThan:
-		return q.Where(project.CreateTimeGT(*filter.TimeValue)), nil
-	case enum.FilterOperatorDateGreaterOrEqualThan:
-		return q.Where(project.CreateTimeGTE(*filter.TimeValue)), nil
-	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

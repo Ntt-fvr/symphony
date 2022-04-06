@@ -102,15 +102,3 @@ class TestCounterFormula(BaseTest):
         )
         self.assertNotEqual(self.test_counter_formula_created, fetched_counter_formula_created)
 
-
-    def test_edit_counter_formula(self) -> None:
-        new_mandatory = True
-        u =  self.test_counter_formula_created
-        edit_counter_formula(
-            client=self.client,
-            CounterFormula=u,
-            new_mandatory=new_mandatory,
-            counter=self.test_counter_created.id,
-            formula=self.test_formula_created.id
-        )
-        self.assertNotEqual(u.mandatory, False)

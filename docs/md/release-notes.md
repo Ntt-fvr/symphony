@@ -7,12 +7,6 @@ title: Release Notes
 
 ### Release Notes
 
-* 06/01/2022
-	* Assurance
-		* **[Python API]** 	**[Assurance]**	Finished implementing the assurance functionalities, especially counterFormula, to which we added edit and remove(delete) functionalities.
-* 02/03/2022
-    * LocatioType
-        * **[Python API]** **[Assurance]**		Add document category to a location type.
 * 18/03/2022
     * RecommendationSource
         * **[Python API]** **[Assurance]**		Fixed the name of get_recommendation_sources

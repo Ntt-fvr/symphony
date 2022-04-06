@@ -223,16 +223,21 @@ function WorkforceDataRulesSection(props: InventoryDataRulesSectionProps) {
 
 type Props = $ReadOnly<{|
   policy: ?WorkforcePolicy,
-  isMulticontractor: ?Boolean,
   onChange?: WorkforcePolicy => void,
   className?: ?string,
 |}>;
 export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
-  const {policy, onChange, className, isMulticontractor} = props;
+  const {policy, onChange, className} = props;
   const classes = useStyles();
   const [enableOrganization, setEnableOrganization] = useState(false);
   const multicontractorFlag = useFeatureFlag('multicontractor');
   const {me} = useMainContext();
+
+  useEffect(() => {
+    if (policy?.read.organizationIds && readAllowed) {
+      setEnableOrganization(true);
+    }
+  }, [policy]);
 
   if (policy == null) {
     return null;
@@ -246,13 +251,13 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
       if (onChange == null) {
         return;
       }
-      onChange(updatedPolicy, isMulticontractor);
+      onChange(updatedPolicy);
     },
     [onChange],
   );
   const handleOnOrganizationSwitchChange = useCallback(() => {
-    onChange(policy, !isMulticontractor);
-  }, [isMulticontractor, onChange]);
+    setEnableOrganization(!enableOrganization);
+  }, [enableOrganization, setEnableOrganization, onChange]);
 
   return (
     <div className={classNames(classes.root, className)}>
@@ -300,17 +305,16 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
       />
       {multicontractorFlag && (
         <Switch
-        className={classNames(classes.readRule, classes.rule)}
-        title={fbt('View work orders from multiple organizations', '')}
-        checked={isMulticontractor}
-        disabled={isDisabled || !readAllowed }
-        onChange={handleOnOrganizationSwitchChange}
-      />
+          className={classNames(classes.readRule, classes.rule)}
+          title={fbt('View work orders form multiple organizations', '')}
+          checked={enableOrganization}
+          disabled={isDisabled || !readAllowed}
+          onChange={handleOnOrganizationSwitchChange}
+        />
       )}
       <PermissionsPolicyWorkforceOrganizationSpecification
-        disabled={!isMulticontractor}
+        disabled={!enableOrganization}
         userOrganization={me.user.organizationFk}
-        isMulticontractor={isMulticontractor}
         policy={{
           ...policy,
           read: {
@@ -318,7 +322,7 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
             organizationIds:
               isDisabled || !readAllowed
                 ? null
-                : isMulticontractor
+                : enableOrganization
                 ? policy.read.organizationIds
                 : me.user.organizationFk === null
                 ? []

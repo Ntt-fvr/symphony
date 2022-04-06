@@ -12,11 +12,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
-	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
-	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -118,7 +116,6 @@ func workOrderCudBasedCheck(ctx context.Context, cud *models.WorkforceCud, m *en
 }
 
 func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
-	var predicates []predicate.WorkOrder
 	var predicatesWo []predicate.WorkOrder
 	var predicatesOrg []predicate.WorkOrder
 	var predicatesPrj []predicate.WorkOrder
@@ -126,81 +123,39 @@ func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
 	var predicatesReturns []predicate.WorkOrder
 
 	rule := FromContext(ctx).WorkforcePolicy.Read
-	userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
-	if !ok {
-		return nil
-	}
-	client := ent.FromContext(ctx)
-
-	policies, err := client.PermissionsPolicy.Query().
-		Where(
-			permissionspolicy.Or(
-				permissionspolicy.HasGroupsWith(
-					usersgroup.HasMembersWith(user.ID(userViewer.User().ID)),
-					usersgroup.StatusEQ(usersgroup.StatusActive),
-				))).
-		All(ctx)
-	if err != nil {
-		return nil
-	}
-	multicontractor := false
-
-	for _, policiesint := range policies {
-		if policiesint.IsMulticontractor {
-			multicontractor = true
-		}
-	}
-
-	if multicontractor {
-		switch rule.IsAllowed {
-		case models.PermissionValueYes:
-			if rule.OrganizationIds != nil {
-				predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
-			} else {
-				userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
-				if !ok {
-					return nil
-				}
-
-				uOrg, err := userViewer.User().QueryOrganization().OnlyID(ctx)
-				if err != nil {
-					return nil
-				}
-				predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(uOrg)))
+	switch rule.IsAllowed {
+	case models.PermissionValueYes:
+		if rule.OrganizationIds != nil {
+			predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
+		} else {
+			userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+			if !ok {
+				return nil
 			}
-		case models.PermissionValueByCondition:
-			predicatesWo = append(predicatesWo, workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
-			if rule.OrganizationIds != nil {
-				predicatesFusion = append(predicatesFusion, workorder.Or(predicatesWo...))
-				predicatesOrg = append(predicatesOrg, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
-				predicatesFusion = append(predicatesFusion, workorder.Or(predicatesOrg...))
-				predicatesReturns = append(predicatesReturns, workorder.And(predicatesFusion...))
-			} else {
-				predicatesReturns = append(predicatesReturns, workorder.Or(predicatesWo...))
-			}
-		}
-		if v, exists := viewer.FromContext(ctx).(*viewer.UserViewer); exists {
-			predicatesPrj = append(predicatesPrj, workorder.HasOwnerWith(user.ID(v.User().ID)), workorder.HasAssigneeWith(user.ID(v.User().ID)))
-			predicatesReturns = append(predicatesReturns, workorder.Or(predicatesPrj...))
-		}
-		return workorder.Or(predicatesReturns...)
-	} else {
-		switch rule.IsAllowed {
-		case models.PermissionValueYes:
-			return nil
-		case models.PermissionValueByCondition:
-			predicates = append(predicates,
-				workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
-		}
-		if v, exists := viewer.FromContext(ctx).(*viewer.UserViewer); exists {
-			predicates = append(predicates,
-				workorder.HasOwnerWith(user.ID(v.User().ID)),
-				workorder.HasAssigneeWith(user.ID(v.User().ID)),
-			)
-		}
-		return workorder.Or(predicates...)
-	}
 
+			uOrg, err := userViewer.User().QueryOrganization().OnlyID(ctx)
+			if err != nil {
+				return nil
+			}
+			predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(uOrg)))
+			predicatesReturns = append(predicatesReturns, workorder.Not(workorder.HasOrganization()))
+		}
+	case models.PermissionValueByCondition:
+		predicatesWo = append(predicatesWo, workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
+		if rule.OrganizationIds != nil {
+			predicatesFusion = append(predicatesFusion, workorder.Or(predicatesWo...))
+			predicatesOrg = append(predicatesOrg, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
+			predicatesFusion = append(predicatesFusion, workorder.Or(predicatesOrg...))
+			predicatesReturns = append(predicatesReturns, workorder.And(predicatesFusion...))
+		} else {
+			predicatesReturns = append(predicatesReturns, workorder.Or(predicatesWo...))
+		}
+	}
+	if v, exists := viewer.FromContext(ctx).(*viewer.UserViewer); exists {
+		predicatesPrj = append(predicatesPrj, workorder.HasOwnerWith(user.ID(v.User().ID)), workorder.HasAssigneeWith(user.ID(v.User().ID)))
+		predicatesReturns = append(predicatesReturns, workorder.Or(predicatesPrj...))
+	}
+	return workorder.Or(predicatesReturns...)
 }
 
 func isAssigneeChanged(ctx context.Context, m *ent.WorkOrderMutation) (bool, error) {

@@ -85,12 +85,6 @@ const (
 	EdgeProjectTemplate = "project_template"
 	// EdgeWorkerType holds the string denoting the worker_type edge name in mutations.
 	EdgeWorkerType = "worker_type"
-	// EdgePropertyTypeValues holds the string denoting the property_type_values edge name in mutations.
-	EdgePropertyTypeValues = "property_type_values"
-	// EdgeParentPropertyType holds the string denoting the parent_property_type edge name in mutations.
-	EdgeParentPropertyType = "parent_property_type"
-	// EdgePropertyType holds the string denoting the property_type edge name in mutations.
-	EdgePropertyType = "property_type"
 	// EdgePropertyCategory holds the string denoting the property_category edge name in mutations.
 	EdgePropertyCategory = "property_category"
 
@@ -173,21 +167,6 @@ const (
 	WorkerTypeInverseTable = "worker_types"
 	// WorkerTypeColumn is the table column denoting the worker_type relation/edge.
 	WorkerTypeColumn = "worker_type_property_types"
-	// PropertyTypeValuesTable is the table the holds the property_type_values relation/edge.
-	PropertyTypeValuesTable = "property_type_values"
-	// PropertyTypeValuesInverseTable is the table name for the PropertyTypeValue entity.
-	// It exists in this package in order to avoid circular dependency with the "propertytypevalue" package.
-	PropertyTypeValuesInverseTable = "property_type_values"
-	// PropertyTypeValuesColumn is the table column denoting the property_type_values relation/edge.
-	PropertyTypeValuesColumn = "property_type_property_type_values"
-	// ParentPropertyTypeTable is the table the holds the parent_property_type relation/edge.
-	ParentPropertyTypeTable = "property_types"
-	// ParentPropertyTypeColumn is the table column denoting the parent_property_type relation/edge.
-	ParentPropertyTypeColumn = "property_type_property_type"
-	// PropertyTypeTable is the table the holds the property_type relation/edge.
-	PropertyTypeTable = "property_types"
-	// PropertyTypeColumn is the table column denoting the property_type relation/edge.
-	PropertyTypeColumn = "property_type_property_type"
 	// PropertyCategoryTable is the table the holds the property_category relation/edge.
 	PropertyCategoryTable = "property_types"
 	// PropertyCategoryInverseTable is the table name for the PropertyCategory entity.
@@ -232,7 +211,6 @@ var ForeignKeys = []string{
 	"project_template_properties",
 	"project_type_properties",
 	"property_category_properties_type",
-	"property_type_property_type",
 	"service_type_property_types",
 	"work_order_template_property_types",
 	"work_order_type_property_types",

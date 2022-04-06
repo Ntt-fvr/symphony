@@ -97,7 +97,6 @@ def load_tests(
         TestRecommendationsSources,
         TestRecommendationsCategory,
         TestRecommendations,
-        TestCounterFormula,
     ]
     print("Waiting for symphony to be ready")
     wait_for_platform()
