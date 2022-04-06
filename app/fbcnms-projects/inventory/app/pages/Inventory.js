@@ -176,7 +176,7 @@ class Inventory extends React.Component<Props, State> {
   render() {
     const {classes} = this.props;
     const {card} = this.state;
-
+    const {history} = this.props;
     const queryLocationId = extractEntityIdFromUrl(
       'location',
       this.props.location.search,
@@ -260,7 +260,9 @@ class Inventory extends React.Component<Props, State> {
                   onLocationRemoved={this.onDeleteLocation}
                 />
               )}
-              <ResourceCard />
+              <ResourceCard
+                onResourceSelected={() => history.push(`/inventory/inventory`)}
+              />
               {card.type == 'equipment' && (
                 <EquipmentCard
                   mode={card.mode}

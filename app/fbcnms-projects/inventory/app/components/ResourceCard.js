@@ -31,10 +31,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{||}>;
+type Props = $ReadOnly<{|
+  onResourceSelected: () => void,
+|}>;
 
 const ResourceCard = (props: Props) => {
-  const {} = props;
+  const {onResourceSelected} = props;
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
   const [showFormCreate, setShowFormCreate] = useState(false);
@@ -77,7 +79,9 @@ const ResourceCard = (props: Props) => {
               <Divider variant="middle" />
             </Grid>
             <Grid item xs={3}>
-              <Typography color="primary">OLT_10394</Typography>
+              <Typography color="primary" onClick={onResourceSelected}>
+                OLT_10394
+              </Typography>
             </Grid>
             <Grid item xs={3}>
               <Typography>OLT_Nokia_H20</Typography>
