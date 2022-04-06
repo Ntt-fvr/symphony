@@ -14,20 +14,22 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type AddResourceSpecificationInput = {|
   name: string,
+  quantity?: ?number,
   resourceType: string,
-  propertyTypes?: ?$ReadOnlyArray<PropertyTypeInput>,
+  resourcePropertyTypes?: ?$ReadOnlyArray<?AddResourcePropertyTypeInput>,
 |};
-export type PropertyTypeInput = {|
+export type AddResourcePropertyTypeInput = {|
   id?: ?string,
   externalId?: ?string,
   name: string,
-  type: PropertyKind,
+  type: ResourcePropertyKind,
   nodeType?: ?string,
   index?: ?number,
   category?: ?string,
+  rawValue?: ?string,
   stringValue?: ?string,
   intValue?: ?number,
   booleanValue?: ?boolean,
@@ -40,8 +42,9 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
-  propertyCategoryID?: ?string,
+  propertyCategory?: ?string,
   isListable?: ?boolean,
+  resourceSpecification?: ?string,
 |};
 export type AddResourceSpecificationMutationVariables = {|
   input: AddResourceSpecificationInput
@@ -50,10 +53,10 @@ export type AddResourceSpecificationMutationResponse = {|
   +addResourceSpecification: {|
     +id: string,
     +name: string,
-    +propertyTypes: $ReadOnlyArray<?{|
+    +resourcePropertyTypes: $ReadOnlyArray<?{|
       +externalId: ?string,
       +name: string,
-      +type: PropertyKind,
+      +type: ResourcePropertyKind,
       +nodeType: ?string,
       +index: ?number,
       +category: ?string,
@@ -87,7 +90,7 @@ mutation AddResourceSpecificationMutation(
   addResourceSpecification(input: $input) {
     id
     name
-    propertyTypes {
+    resourcePropertyTypes {
       externalId
       name
       type
@@ -288,9 +291,9 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "PropertyType",
+            "concreteType": "ResourcePropertyType",
             "kind": "LinkedField",
-            "name": "propertyTypes",
+            "name": "resourcePropertyTypes",
             "plural": true,
             "selections": [
               (v4/*: any*/),
@@ -341,9 +344,9 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "PropertyType",
+            "concreteType": "ResourcePropertyType",
             "kind": "LinkedField",
-            "name": "propertyTypes",
+            "name": "resourcePropertyTypes",
             "plural": true,
             "selections": [
               (v4/*: any*/),
@@ -375,16 +378,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0c3b307d2a3d3b84bf71c86e9985ec43",
+    "cacheID": "96fc9097fba423e793a00cc6b54f8fa0",
     "id": null,
     "metadata": {},
     "name": "AddResourceSpecificationMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceSpecificationMutation(\n  $input: AddResourceSpecificationInput!\n) {\n  addResourceSpecification(input: $input) {\n    id\n    name\n    propertyTypes {\n      externalId\n      name\n      type\n      nodeType\n      index\n      category\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      isDeleted\n      isListable\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceSpecificationMutation(\n  $input: AddResourceSpecificationInput!\n) {\n  addResourceSpecification(input: $input) {\n    id\n    name\n    resourcePropertyTypes {\n      externalId\n      name\n      type\n      nodeType\n      index\n      category\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      isDeleted\n      isListable\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8f99aaa8212846868e5c398a47c1c3cb';
+(node/*: any*/).hash = '7cb5b9d746fb08c3a3a9317ffab59a8f';
 
 module.exports = node;

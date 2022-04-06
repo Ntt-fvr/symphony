@@ -121,7 +121,9 @@ export const AddEditResourceSpecification = (props: Props) => {
     setResourceSpecification,
   ] = useState<ResourceSpecification>({data: {}});
   const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
-    (dataForm?.propertyTypes ?? []).filter(Boolean).map(toMutablePropertyType),
+    (dataForm?.resourcePropertyTypes ?? [])
+      .filter(Boolean)
+      .map(toMutablePropertyType),
   );
 
   const nameEdit = useFormInput(dataForm.name);
@@ -172,7 +174,9 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         name: resourceSpecification.data.name,
         resourceType: formValues.id,
-        propertyTypes: convertPropertyTypeToMutationInput(propertyTypes),
+        resourcePropertyTypes: convertPropertyTypeToMutationInput(
+          propertyTypes,
+        ),
       },
     };
     AddResourceSpecificationMutation(variables, {
@@ -190,7 +194,9 @@ export const AddEditResourceSpecification = (props: Props) => {
         id: dataForm.id,
         name: nameEdit.value,
         resourceType: dataForm.resourceType.id,
-        propertyTypes: convertPropertyTypeToMutationInput(propertyTypes),
+        resourcePropertyTypes: convertPropertyTypeToMutationInput(
+          propertyTypes,
+        ),
       },
     };
     EditResourceSpecificationMutation(variables, {
@@ -323,7 +329,7 @@ export const AddEditResourceSpecification = (props: Props) => {
           Relationship types definition
         </Text>
       </Grid>
-      <RelationshipTypeItem dataForm={dataForm} />
+      <RelationshipTypeItem dataForm={formValues} />
     </div>
   );
 };
