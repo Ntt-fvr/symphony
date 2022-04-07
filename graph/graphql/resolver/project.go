@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
@@ -52,7 +53,7 @@ func (r mutationResolver) CreateProjectType(ctx context.Context, input models.Ad
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetProjectTypeID(typ.ID)
-	}, input.Properties...); err != nil {
+	}, input.Properties); err != nil {
 		return nil, fmt.Errorf("creating properties: %w", err)
 	}
 	builders := make([]*ent.WorkOrderDefinitionCreate, len(input.WorkOrders))
@@ -87,14 +88,20 @@ func (r mutationResolver) EditProjectType(
 		return nil, errors.Wrapf(err, "updating project template: id=%q", pt.ID)
 	}
 	for _, p := range input.Properties {
+		var edited []*pkgmodels.PropertyTypeInput
 		if p.ID == nil {
 			if err := r.validateAddedNewPropertyType(p); err != nil {
 				return nil, err
 			}
-			if err := r.AddPropertyTypes(ctx, func(b *ent.PropertyTypeCreate) { b.SetProjectTypeID(pt.ID) }, p); err != nil {
+			edited = append(edited, p)
+			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
+				ptc.SetProjectTypeID(pt.ID)
+			}, edited); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, p); err != nil {
+		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
+			ptc.SetProjectTypeID(pt.ID)
+		}, p); err != nil {
 			return nil, err
 		}
 	}
