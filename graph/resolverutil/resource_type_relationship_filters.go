@@ -21,6 +21,10 @@ func handleResourceTypeRelationshipFilter(q *ent.ResourceTypeRelationshipQuery, 
 		return resourceTypeRelationshipLocationTypeFilter(q, filter)
 	case models.ResourceTypeRelationshipFilterTypeResourceRelationshipResource:
 		return resourceTypeRelationshipResourceTypeFilter(q, filter)
+	case models.ResourceTypeRelationshipFilterTypeResourceRelationshipTypeA:
+		return resourceTypeRelationshipResourceTypeAFilter(q, filter)
+	case models.ResourceTypeRelationshipFilterTypeResourceRelationshipTypeB:
+		return resourceTypeRelationshipResourceTypeBFilter(q, filter)
 	case models.ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity:
 		return resourceTypeRelationshipMultiplicityFilter(q, filter)
 	case models.ResourceTypeRelationshipFilterTypeResourceRelationshipType:
@@ -43,6 +47,20 @@ func resourceTypeRelationshipResourceTypeFilter(q *ent.ResourceTypeRelationshipQ
 		predicatesType = append(predicatesType, resourcetyperelationship.Or(resourcetyperelationship.HasResourcetypeaWith(resourcetype.IDIn(filter.IDSet...)), resourcetyperelationship.HasResourcetypebWith(resourcetype.IDIn(filter.IDSet...))))
 
 		return q.Where(predicatesType...), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func resourceTypeRelationshipResourceTypeAFilter(q *ent.ResourceTypeRelationshipQuery, filter *models.ResourceTypeRelationshipFilterInput) (*ent.ResourceTypeRelationshipQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(resourcetyperelationship.HasResourcetypeaWith(resourcetype.IDIn(filter.IDSet...))), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func resourceTypeRelationshipResourceTypeBFilter(q *ent.ResourceTypeRelationshipQuery, filter *models.ResourceTypeRelationshipFilterInput) (*ent.ResourceTypeRelationshipQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(resourcetyperelationship.HasResourcetypebWith(resourcetype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

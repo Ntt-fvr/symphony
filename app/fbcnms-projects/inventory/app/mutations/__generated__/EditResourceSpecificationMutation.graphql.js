@@ -14,21 +14,23 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditResourceSpecificationInput = {|
   id: string,
   name: string,
+  quantity?: ?number,
   resourceType?: ?string,
-  propertyTypes?: ?$ReadOnlyArray<PropertyTypeInput>,
+  resourcePropertyTypes?: ?$ReadOnlyArray<?AddResourcePropertyTypeInput>,
 |};
-export type PropertyTypeInput = {|
+export type AddResourcePropertyTypeInput = {|
   id?: ?string,
   externalId?: ?string,
   name: string,
-  type: PropertyKind,
+  type: ResourcePropertyKind,
   nodeType?: ?string,
   index?: ?number,
   category?: ?string,
+  rawValue?: ?string,
   stringValue?: ?string,
   intValue?: ?number,
   booleanValue?: ?boolean,
@@ -41,8 +43,9 @@ export type PropertyTypeInput = {|
   isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
-  propertyCategoryID?: ?string,
+  propertyCategory?: ?string,
   isListable?: ?boolean,
+  resourceSpecification?: ?string,
 |};
 export type EditResourceSpecificationMutationVariables = {|
   input: EditResourceSpecificationInput
@@ -51,10 +54,10 @@ export type EditResourceSpecificationMutationResponse = {|
   +editResourceSpecification: {|
     +id: string,
     +name: string,
-    +propertyTypes: $ReadOnlyArray<?{|
+    +resourcePropertyTypes: $ReadOnlyArray<?{|
       +externalId: ?string,
       +name: string,
-      +type: PropertyKind,
+      +type: ResourcePropertyKind,
       +nodeType: ?string,
       +index: ?number,
       +category: ?string,
@@ -88,7 +91,7 @@ mutation EditResourceSpecificationMutation(
   editResourceSpecification(input: $input) {
     id
     name
-    propertyTypes {
+    resourcePropertyTypes {
       externalId
       name
       type
@@ -289,9 +292,9 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "PropertyType",
+            "concreteType": "ResourcePropertyType",
             "kind": "LinkedField",
-            "name": "propertyTypes",
+            "name": "resourcePropertyTypes",
             "plural": true,
             "selections": [
               (v4/*: any*/),
@@ -342,9 +345,9 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "PropertyType",
+            "concreteType": "ResourcePropertyType",
             "kind": "LinkedField",
-            "name": "propertyTypes",
+            "name": "resourcePropertyTypes",
             "plural": true,
             "selections": [
               (v4/*: any*/),
@@ -376,16 +379,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a16f741f86cb2f6aa036f015360fb3c7",
+    "cacheID": "24791a6575f6d36774da54ff24a407a6",
     "id": null,
     "metadata": {},
     "name": "EditResourceSpecificationMutation",
     "operationKind": "mutation",
-    "text": "mutation EditResourceSpecificationMutation(\n  $input: EditResourceSpecificationInput!\n) {\n  editResourceSpecification(input: $input) {\n    id\n    name\n    propertyTypes {\n      externalId\n      name\n      type\n      nodeType\n      index\n      category\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      isDeleted\n      isListable\n      id\n    }\n  }\n}\n"
+    "text": "mutation EditResourceSpecificationMutation(\n  $input: EditResourceSpecificationInput!\n) {\n  editResourceSpecification(input: $input) {\n    id\n    name\n    resourcePropertyTypes {\n      externalId\n      name\n      type\n      nodeType\n      index\n      category\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      isDeleted\n      isListable\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '204315f3048fba589b7eacd3117fce03';
+(node/*: any*/).hash = '2a1f72d614c2f1baa19eed742628374b';
 
 module.exports = node;

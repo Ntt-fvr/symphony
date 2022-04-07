@@ -101,7 +101,7 @@ export type ResourceSpecifications = {
   resourceType: {
     id: string,
   },
-  propertyTypes: Array<PropertyType>,
+  resourcePropertyTypes: Array<PropertyType>,
 };
 
 type Props = $ReadOnly<{|
