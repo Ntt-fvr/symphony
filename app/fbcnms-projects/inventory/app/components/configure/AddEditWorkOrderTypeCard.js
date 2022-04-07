@@ -306,6 +306,7 @@ const AddEditWorkOrderTypeCard = ({
               <ExperimentalPropertyTypesTable
                 supportDelete={true}
                 propertyTypes={propertyTypes}
+                showPropertyCombo={isTempId(editingWorkOrderType.id)}
               />
             </PropertyTypesTableDispatcher.Provider>
           </ExpandingPanel>
