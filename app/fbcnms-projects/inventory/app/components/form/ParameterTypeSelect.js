@@ -43,28 +43,21 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
   const classes = useStyles();
   const context = useContext(AppContext);
   const dispatch = useContext(PropertyTypesTableDispatcher);
-  console.log('propertyType Parameter  ', propertyType);
+
   const getOptionKey = (type: string) =>
     `${ParameterTypeLabels[type].kind}_${type}`;
 
   const options = useMemo(
     () =>
-      Object.keys(ParameterTypeLabels)
-        // .filter(
-        //   (type: string) =>
-        //     !ParameterTypeLabels[type].featureFlag ||
-        //     context.isFeatureEnabled(ParameterTypeLabels[type].featureFlag),
-        // )
-        .map((type: string) => ({
-          key: getOptionKey(type),
-          value: {
-            kind: ParameterTypeLabels[type].kind,
-            nodeType: undefined,
-            /*ParameterTypeLabels[type].kind === 'node' ? type : */
-          },
-          label: ParameterTypeLabels[type].label,
-        })),
-    // [context],
+      Object.keys(ParameterTypeLabels).map((type: string) => ({
+        key: getOptionKey(type),
+        value: {
+          kind: ParameterTypeLabels[type].kind,
+          nodeType: undefined,
+        },
+        label: ParameterTypeLabels[type].label,
+      })),
+
     [],
   );
 
@@ -90,7 +83,6 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
         selectedValueIndex > -1 ? options[selectedValueIndex].value : null
       }
       onChange={value => {
-        console.log('parameter', value);
         onPropertyTypeChange &&
           onPropertyTypeChange({
             ...propertyType,

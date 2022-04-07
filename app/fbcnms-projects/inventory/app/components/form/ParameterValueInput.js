@@ -19,10 +19,8 @@ import EnumPropertyValueInput from './EnumPropertyValueInput';
 import FormContext from '../../common/FormContext';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import GPSPropertyValueInput from './GPSPropertyValueInput';
-import NodePropertyInput from '../NodePropertyInput';
 import RangePropertyValueInput from './RangePropertyValueInput';
 import Select from '@symphony/design-system/components/Select/Select';
-import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
 import update from 'immutability-helper';
@@ -272,26 +270,6 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
             }
           />
         );
-      /*case 'node':
-         return inputType == 'Property' ? (
-           <NodePropertyInput
-             type={propertyType.nodeType ?? ''}
-             // eslint-disable-next-line no-warning-comments
-             // $FlowFixMe - need to fix this entire file as it receives either property or property type
-             value={property.nodeValue}
-             onChange={node =>
-               // eslint-disable-next-line no-warning-comments
-               // $FlowFixMe - need to fix this entire file as it receives either property or property type
-               onChange({
-                 ...property,
-                 nodeValue: node,
-               })
-             }
-             label={label}
-           />
-         ) : (
-           <Text>***PROPIO***</Text>
-         );*/
     }
     return null;
   };

@@ -25,12 +25,10 @@ import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
-import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
@@ -117,22 +115,20 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const [parameters, setParameters] = useState([]);
   const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [changeInput, setChangeInput] = useState('TXT');
   const classes = useStyles();
 
-  const typeInput = {
-    mc: 'MC',
-    txt: 'TXT',
-  };
   const handleChecked = () => {
     setChecked(!checked);
   };
+
   const handleDelete = (i, ID) => {
     i, ID;
   };
+
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
   };
+
   const handleAddParameters = () => {
     const id = Math.floor(Math.random() * 101);
     setParameters([
@@ -156,31 +152,11 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
       },
     ]);
   };
+
   const nameChange = ({target}) => {
     target.value;
   };
-  const handleOption = mc => {
-    mc === typeInput.mc && setChangeInput(typeInput.mc);
-    mc === typeInput.txt && setChangeInput(typeInput.txt);
-  };
-  const drag = result => {
-    {
-      const {source, destination} = result;
-      if (!destination) {
-        return;
-      }
-      if (
-        source.index === destination.index &&
-        source.droppableId === destination.droppableId
-      ) {
-        return;
-      }
 
-      setParameters(parameters =>
-        reorder(parameters, source.index, destination.index),
-      );
-    }
-  };
   const onDragEnd = result => {
     {
       const {source, destination} = result;
