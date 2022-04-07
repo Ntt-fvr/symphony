@@ -24117,10 +24117,6 @@ input RecommendationsCategoryFilterInput {
   stringSet: [String!]
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> parent of 79151226 (Revert "Updated files with development")
 enum ResourceTypeClassKind
   @goModel(
   model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeClass"
@@ -24238,11 +24234,8 @@ enum ResourceTypeRelationshipFilterType {
   RESOURCE_RELATIONSHIP_MULTIPLICITY
   RESOURCE_RELATIONSHIP_LOCATION_TYPE
   RESOURCE_RELATIONSHIP_TYPE
-<<<<<<< HEAD
   RESOURCE_RELATIONSHIP_TYPE_A
   RESOURCE_RELATIONSHIP_TYPE_B
-=======
->>>>>>> parent of 79151226 (Revert "Updated files with development")
   RESOURCE_RELATIONSHIP_RESOURCE
 }
 
@@ -24257,11 +24250,6 @@ input ResourceTypeRelationshipFilterInput {
   stringSet: [String!]
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> parent of 0558087c (Revert "Merge branch 'development' into feat/resource_catalog")
-=======
->>>>>>> parent of 79151226 (Revert "Updated files with development")
 """
 A connection to a list of appoinments.
 """
