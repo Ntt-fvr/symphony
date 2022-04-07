@@ -23,6 +23,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldQuantity holds the string denoting the quantity field in the database.
+	FieldQuantity = "quantity"
 
 	// EdgeResourcetype holds the string denoting the resourcetype edge name in mutations.
 	EdgeResourcetype = "resourcetype"
@@ -32,8 +34,6 @@ const (
 	EdgeResourceSpecification = "resource_specification"
 	// EdgeResourceSpecificationItems holds the string denoting the resource_specification_items edge name in mutations.
 	EdgeResourceSpecificationItems = "resource_specification_items"
-	// EdgeResourceSpecificationR holds the string denoting the resource_specification_r edge name in mutations.
-	EdgeResourceSpecificationR = "resource_specification_r"
 
 	// Table holds the table name of the resourcespecification in the database.
 	Table = "resource_specifications"
@@ -65,13 +65,6 @@ const (
 	ResourceSpecificationItemsInverseTable = "resource_specification_items"
 	// ResourceSpecificationItemsColumn is the table column denoting the resource_specification_items relation/edge.
 	ResourceSpecificationItemsColumn = "resource_specification_resource_specification_items"
-	// ResourceSpecificationRTable is the table the holds the resource_specification_r relation/edge.
-	ResourceSpecificationRTable = "resources"
-	// ResourceSpecificationRInverseTable is the table name for the Resource entity.
-	// It exists in this package in order to avoid circular dependency with the "resource" package.
-	ResourceSpecificationRInverseTable = "resources"
-	// ResourceSpecificationRColumn is the table column denoting the resource_specification_r relation/edge.
-	ResourceSpecificationRColumn = "resource_specification_resource_specification_r"
 )
 
 // Columns holds all SQL columns for resourcespecification fields.
@@ -80,6 +73,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
+	FieldQuantity,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceSpecification type.

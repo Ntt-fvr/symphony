@@ -55,20 +55,13 @@ func (r resourceSpecificationResolver) ResourceSpecificationItems(ctx context.Co
 	return variable, nil
 }
 
-func (r resourceSpecificationResolver) Resource(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.Resource, error) {
-	variable, err := resourceSpecification.ResourceSpecificationR(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
-	}
-	return variable, nil
-}
-
 func (r mutationResolver) AddResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error) {
 
 	client := r.ClientFrom(ctx)
 	typ, err := client.
 		ResourceSpecification.Create().
 		SetName(input.Name).
+		SetNillableQuantity(input.Quantity).
 		SetResourcetypeID(input.ResourceType).
 		Save(ctx)
 	if err != nil {
@@ -133,6 +126,7 @@ func (r mutationResolver) EditResourceSpecification(ctx context.Context, input m
 		if et, err = client.ResourceSpecification.
 			UpdateOne(et).
 			SetName(input.Name).
+			SetNillableQuantity(input.Quantity).
 			SetNillableResourcetypeID(input.ResourceType).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {

@@ -27,6 +27,8 @@ type ResourceSpecification struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Quantity holds the value of the "quantity" field.
+	Quantity int `json:"quantity,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceSpecificationQuery when eager-loading is set.
 	Edges                                ResourceSpecificationEdges `json:"edges"`
@@ -43,11 +45,9 @@ type ResourceSpecificationEdges struct {
 	ResourceSpecification []*ResourceSpecificationRelationship
 	// ResourceSpecificationItems holds the value of the resource_specification_items edge.
 	ResourceSpecificationItems []*ResourceSpecificationItems
-	// ResourceSpecificationR holds the value of the resource_specification_r edge.
-	ResourceSpecificationR []*Resource
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 }
 
 // ResourcetypeOrErr returns the Resourcetype value or an error if the edge
@@ -91,15 +91,6 @@ func (e ResourceSpecificationEdges) ResourceSpecificationItemsOrErr() ([]*Resour
 	return nil, &NotLoadedError{edge: "resource_specification_items"}
 }
 
-// ResourceSpecificationROrErr returns the ResourceSpecificationR value or an error if the edge
-// was not loaded in eager-loading.
-func (e ResourceSpecificationEdges) ResourceSpecificationROrErr() ([]*Resource, error) {
-	if e.loadedTypes[4] {
-		return e.ResourceSpecificationR, nil
-	}
-	return nil, &NotLoadedError{edge: "resource_specification_r"}
-}
-
 // scanValues returns the types for scanning values from sql.Rows.
 func (*ResourceSpecification) scanValues() []interface{} {
 	return []interface{}{
@@ -107,6 +98,7 @@ func (*ResourceSpecification) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+		&sql.NullInt64{},  // quantity
 	}
 }
 
@@ -144,7 +136,12 @@ func (rs *ResourceSpecification) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rs.Name = value.String
 	}
-	values = values[3:]
+	if value, ok := values[3].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field quantity", values[3])
+	} else if value.Valid {
+		rs.Quantity = int(value.Int64)
+	}
+	values = values[4:]
 	if len(values) == len(resourcespecification.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field resource_type_resource_specification", value)
@@ -176,11 +173,6 @@ func (rs *ResourceSpecification) QueryResourceSpecificationItems() *ResourceSpec
 	return (&ResourceSpecificationClient{config: rs.config}).QueryResourceSpecificationItems(rs)
 }
 
-// QueryResourceSpecificationR queries the resource_specification_r edge of the ResourceSpecification.
-func (rs *ResourceSpecification) QueryResourceSpecificationR() *ResourceQuery {
-	return (&ResourceSpecificationClient{config: rs.config}).QueryResourceSpecificationR(rs)
-}
-
 // Update returns a builder for updating this ResourceSpecification.
 // Note that, you need to call ResourceSpecification.Unwrap() before calling this method, if this ResourceSpecification
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -210,6 +202,8 @@ func (rs *ResourceSpecification) String() string {
 	builder.WriteString(rs.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(rs.Name)
+	builder.WriteString(", quantity=")
+	builder.WriteString(fmt.Sprintf("%v", rs.Quantity))
 	builder.WriteByte(')')
 	return builder.String()
 }

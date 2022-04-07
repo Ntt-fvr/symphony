@@ -1224,14 +1224,6 @@ func (l *Location) FloorPlans(ctx context.Context) ([]*FloorPlan, error) {
 	return result, err
 }
 
-func (l *Location) RsLocation(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := l.Edges.RsLocationOrErr()
-	if IsNotLoaded(err) {
-		result, err = l.QueryRsLocation().All(ctx)
-	}
-	return result, err
-}
-
 func (lt *LocationType) Locations(ctx context.Context) ([]*Location, error) {
 	result, err := lt.Edges.LocationsOrErr()
 	if IsNotLoaded(err) {
@@ -1720,30 +1712,6 @@ func (rs *RecommendationsSources) Recommendations(ctx context.Context) ([]*Recom
 	return result, err
 }
 
-func (r *Resource) Resourcespec(ctx context.Context) (*ResourceSpecification, error) {
-	result, err := r.Edges.ResourcespecOrErr()
-	if IsNotLoaded(err) {
-		result, err = r.QueryResourcespec().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (r *Resource) ResourceA(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := r.Edges.ResourceAOrErr()
-	if IsNotLoaded(err) {
-		result, err = r.QueryResourceA().All(ctx)
-	}
-	return result, err
-}
-
-func (r *Resource) ResourceB(ctx context.Context) ([]*ResourceRelationship, error) {
-	result, err := r.Edges.ResourceBOrErr()
-	if IsNotLoaded(err) {
-		result, err = r.QueryResourceB().All(ctx)
-	}
-	return result, err
-}
-
 func (rpt *ResourcePropertyType) ResourceSpecification(ctx context.Context) (*ResourceSpecification, error) {
 	result, err := rpt.Edges.ResourceSpecificationOrErr()
 	if IsNotLoaded(err) {
@@ -1756,30 +1724,6 @@ func (rpt *ResourcePropertyType) PropertyCategory(ctx context.Context) (*Propert
 	result, err := rpt.Edges.PropertyCategoryOrErr()
 	if IsNotLoaded(err) {
 		result, err = rpt.QueryPropertyCategory().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (rr *ResourceRelationship) Resourcea(ctx context.Context) (*Resource, error) {
-	result, err := rr.Edges.ResourceaOrErr()
-	if IsNotLoaded(err) {
-		result, err = rr.QueryResourcea().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (rr *ResourceRelationship) Resourceb(ctx context.Context) (*Resource, error) {
-	result, err := rr.Edges.ResourcebOrErr()
-	if IsNotLoaded(err) {
-		result, err = rr.QueryResourceb().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (rr *ResourceRelationship) Resourcelocation(ctx context.Context) (*Location, error) {
-	result, err := rr.Edges.ResourcelocationOrErr()
-	if IsNotLoaded(err) {
-		result, err = rr.QueryResourcelocation().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -1812,14 +1756,6 @@ func (rs *ResourceSpecification) ResourceSpecificationItems(ctx context.Context)
 	result, err := rs.Edges.ResourceSpecificationItemsOrErr()
 	if IsNotLoaded(err) {
 		result, err = rs.QueryResourceSpecificationItems().All(ctx)
-	}
-	return result, err
-}
-
-func (rs *ResourceSpecification) ResourceSpecificationR(ctx context.Context) ([]*Resource, error) {
-	result, err := rs.Edges.ResourceSpecificationROrErr()
-	if IsNotLoaded(err) {
-		result, err = rs.QueryResourceSpecificationR().All(ctx)
 	}
 	return result, err
 }

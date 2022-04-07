@@ -68,11 +68,9 @@ type LocationEdges struct {
 	WorkOrders []*WorkOrder
 	// FloorPlans holds the value of the floor_plans edge.
 	FloorPlans []*FloorPlan
-	// RsLocation holds the value of the rs_location edge.
-	RsLocation []*ResourceRelationship
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [13]bool
+	loadedTypes [12]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -191,15 +189,6 @@ func (e LocationEdges) FloorPlansOrErr() ([]*FloorPlan, error) {
 		return e.FloorPlans, nil
 	}
 	return nil, &NotLoadedError{edge: "floor_plans"}
-}
-
-// RsLocationOrErr returns the RsLocation value or an error if the edge
-// was not loaded in eager-loading.
-func (e LocationEdges) RsLocationOrErr() ([]*ResourceRelationship, error) {
-	if e.loadedTypes[12] {
-		return e.RsLocation, nil
-	}
-	return nil, &NotLoadedError{edge: "rs_location"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -347,11 +336,6 @@ func (l *Location) QueryWorkOrders() *WorkOrderQuery {
 // QueryFloorPlans queries the floor_plans edge of the Location.
 func (l *Location) QueryFloorPlans() *FloorPlanQuery {
 	return (&LocationClient{config: l.config}).QueryFloorPlans(l)
-}
-
-// QueryRsLocation queries the rs_location edge of the Location.
-func (l *Location) QueryRsLocation() *ResourceRelationshipQuery {
-	return (&LocationClient{config: l.config}).QueryRsLocation(l)
 }
 
 // Update returns a builder for updating this Location.

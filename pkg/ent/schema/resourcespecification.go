@@ -23,6 +23,7 @@ func (ResourceSpecification) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
+		field.Int("quantity").Optional(),
 	}
 }
 
@@ -37,8 +38,6 @@ func (ResourceSpecification) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("resourcespecification")),
 		edge.To("resource_specification_items", ResourceSpecificationItems.Type).
 			Annotations(entgql.MapsTo("resourcespecificationitems")),
-		edge.To("resource_specification_r", Resource.Type).
-			Annotations(entgql.MapsTo("resourcespecificationr")),
 	}
 }
 

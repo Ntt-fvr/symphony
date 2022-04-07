@@ -456,26 +456,6 @@ func ResourceTypeRelationshipFilter(query *ent.ResourceTypeRelationshipQuery, fi
 	return query, nil
 }
 
-func ResourceFilter(query *ent.ResourceQuery, filters []*models.ResourceFilterInput) (*ent.ResourceQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func ResourceRelationshipFilter(query *ent.ResourceRelationshipQuery, filters []*models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleResourceRelationshipFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
 func validateSlot(startDate time.Time, endDate time.Time) (err error) {
 	/*switch {
 	case startDate == nil || endDate == nil:
