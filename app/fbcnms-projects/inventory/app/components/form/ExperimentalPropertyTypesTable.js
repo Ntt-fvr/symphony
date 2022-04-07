@@ -74,12 +74,14 @@ type Props = $ReadOnly<{|
   propertyTypes: Array<PropertyType>,
   supportMandatory?: boolean,
   supportDelete?: boolean,
+  showPropertyCombo?: boolean,
 |}>;
 
 const ExperimentalPropertyTypesTable = ({
   propertyTypes,
   supportMandatory = true,
   supportDelete,
+  showPropertyCombo = false,
 }: Props) => {
   const classes = useStyles();
   const {dispatch} = useContext(PropertyTypesTableDispatcher);
@@ -192,7 +194,7 @@ const ExperimentalPropertyTypesTable = ({
                             value,
                           })
                         }
-                        showPropertyCombo={true}
+                        showPropertyCombo={showPropertyCombo}
                       />
                     </TableCell>
                     <TableCell padding="checkbox" component="div">

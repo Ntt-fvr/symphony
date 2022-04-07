@@ -16,6 +16,7 @@ import TextField from '@material-ui/core/TextField';
 import {DependentPropertyTypesReducerTypes} from './DependentPropertyTypesReducer';
 import {NextArrowIcon} from '@symphony/design-system/icons';
 import {PropertyTypeValues} from '../../../common/PropertyType';
+import {getPropertyTypeByRelated} from './PropertyTypeValuesHelpers';
 
 type Props = $ReadOnly<{|
   propertyTypeValues: PropertyTypeValues[],
@@ -35,7 +36,14 @@ const PropertyComboList = (props: Props) => {
   } = props;
 
   const handlePropertyTypeValues = propertyTypeValueFromEnum => {
-    if (propertyTypeValueFromEnum.propertyTypeValues.length < 1) {
+    const propertyTypesByRelated = getPropertyTypeByRelated(
+      dependencePropertyTypeValues,
+      propertyTypeValueFromEnum.name,
+    );
+    if (
+      propertyTypeValueFromEnum.propertyTypeValues.length < 1 &&
+      propertyTypesByRelated.length < 1
+    ) {
       return;
     }
     const dependencePropertyValues = propertyTypeValueFromEnum.propertyTypeValues.map(
