@@ -79,3 +79,45 @@ export const PropertyTypeLabels: {[string]: PropertyTypeInfo} = {
     kind: 'node',
   },
 };
+export const ParameterTypeLabels: {[string]: PropertyTypeInfo} = {
+  date: {
+    label: fbt('Date xxx', ''),
+    kind: 'date',
+  },
+  datetime_local: {
+    label: fbt('Date & Time xxx', ''),
+    kind: 'datetime_local',
+  },
+  int: {
+    label: fbt('Number xxx', ''),
+    kind: 'int',
+  },
+  float: {
+    label: fbt('Float xxx', ''),
+    kind: 'float',
+  },
+  string: {
+    label: fbt('Text xxx', ''),
+    kind: 'string',
+  },
+  email: {
+    label: fbt('Email xxx', ''),
+    kind: 'email',
+  },
+  gps_location: {
+    label: fbt('Coordinates xxx', ''),
+    kind: 'gps_location',
+  },
+  bool: {
+    label: fbt('True or False xxx', ''),
+    kind: 'bool',
+  },
+  range: {
+    label: fbt('Range xxx', ''),
+    kind: 'range',
+  },
+  enum: {
+    label: fbt('Multiple choice xxx', ''),
+    kind: 'enum',
+  },
+};

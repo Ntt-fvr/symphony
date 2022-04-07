@@ -18,6 +18,8 @@ import DroppableTableBody from '../draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
+import ParameterTypeSelect from './ParameterTypeSelect';
+import ParameterValueInput from './ParameterValueInput';
 import SubjectIcon from '@material-ui/icons/Subject';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -133,7 +135,26 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   };
   const handleAddParameters = () => {
     const id = Math.floor(Math.random() * 101);
-    setParameters([...parameters, {id}]);
+    setParameters([
+      ...parameters,
+      {
+        booleanValue: false,
+        floatValue: null,
+        id: id,
+        index: id,
+        intValue: null,
+        isEditable: true,
+        isInstanceProperty: true,
+        latitudeValue: null,
+        longitudeValue: null,
+        name: '',
+        nodeType: undefined,
+        rangeFromValue: null,
+        rangeToValue: null,
+        stringValue: null,
+        type: 'string',
+      },
+    ]);
   };
   const nameChange = ({target}) => {
     target.value;
@@ -188,7 +209,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               <fbt desc="">Name</fbt>
             </TableCell>
             <TableCell component="div">
-              <fbt desc="">Property Type</fbt>
+              <fbt desc="">Parameter Type</fbt>
             </TableCell>
             <TableCell component="div">
               <fbt desc="">Default Value</fbt>
@@ -229,41 +250,22 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <form className={classes.formField} autoComplete="off">
-                  <TextField
-                    required
-                    id="outlined-select-option-native-simple"
-                    select
-                    className={classes.selectField}
-                    label="Option"
-                    defaultValue="Text"
-                    name="status"
-                    variant="outlined">
-                    <MenuItem
-                      onClick={() => handleOption('MC')}
-                      value={'Multiple Choice'}>
-                      Multiple Choice
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => handleOption('TXT')}
-                      value={'Text'}>
-                      Text
-                    </MenuItem>
-                  </TextField>
+                  <ParameterTypeSelect propertyType={parameter} />
                 </form>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
-                {changeInput === 'MC' && (
-                  <EnumPropertyValueInput property={parameter} />
-                )}
-                {changeInput === 'TXT' && (
-                  <TextInput
-                    autoFocus={true}
-                    placeholder={'Text'}
-                    autoComplete="off"
-                    className={classes.input}
-                    onChange={nameChange}
-                  />
-                )}
+                <ParameterValueInput
+                  label={null}
+                  className={classes.input}
+                  inputType="PropertyType"
+                  property={parameter}
+                  // onChange={value =>
+                  //   dispatch({
+                  //     type: 'UPDATE_PROPERTY_TYPE',
+                  //     value,
+                  //   })
+                  //}
+                />
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
