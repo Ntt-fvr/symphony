@@ -253,10 +253,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 {changeInput === 'MC' && (
-                  <EnumPropertyValueInput
-                    onChange={() => chip()}
-                    property={parameter}
-                  />
+                  <EnumPropertyValueInput property={parameter} />
                 )}
                 {changeInput === 'TXT' && (
                   <TextInput
@@ -270,10 +267,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
-                  <EnumPropertyValueInput
-                    onChange={chip}
-                    property={parameter}
-                  />
+                  <EnumPropertyValueInput property={parameter} />
                 </FormField>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">
