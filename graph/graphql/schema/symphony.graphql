@@ -7712,6 +7712,146 @@ type Query {
     #Filtering options for the returned ResourceSpecificationItems.
     filterBy: [ResourceSpecificationItemsFilterInput!]
   ): ResourceSpecificationItemsConnection!
+
+  """
+  A list of resourceSpecificationRelationships.
+  """
+  resourceSpecificationRelationships(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceSpecificationRelationships.
+    """
+    orderBy: ResourceSpecificationRelationshipOrder
+
+    
+    #Filtering options for the returned resourceSpecificationRelationships.
+    
+    filterBy: [ResourceSpecificationRelationshipFilterInput!]
+  ): ResourceSpecificationRelationshipConnection!
+
+  """
+  A list of resourceTypeRelationships.
+  """
+  resourceTypeRelationships(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceTypeRelationships.
+    """
+    orderBy: ResourceTypeRelationshipOrder
+
+    
+    #Filtering options for the returned resourceTypeRelationships.
+    
+    filterBy: [ResourceTypeRelationshipFilterInput!]
+  ): ResourceTypeRelationshipConnection!
+
+  """
+  A list of resourceSpecifications.
+  """
+  resourceSpecifications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceSpecifications.
+    """
+    orderBy: ResourceSpecificationOrder
+
+    
+    #Filtering options for the returned resourceSpecifications.
+    
+    filterBy: [ResourceSpecificationFilterInput!]
+  ): ResourceSpecificationConnection!
+
+  """
+  A list of resourceTypes.
+  """
+  resourceTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceTypes.
+    """
+    orderBy: ResourceTypeOrder
+
+    
+    #Filtering options for the returned resourceTypes.
+    
+    filterBy: [ResourceTypeFilterInput!]
+  ): ResourceTypeConnection!
 }
 
 
