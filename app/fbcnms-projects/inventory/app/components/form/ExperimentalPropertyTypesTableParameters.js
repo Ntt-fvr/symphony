@@ -148,7 +148,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
         rangeFromValue: null,
         rangeToValue: null,
         stringValue: null,
-        type: 'string',
+        type: 'datetime_local',
       },
     ]);
   };
