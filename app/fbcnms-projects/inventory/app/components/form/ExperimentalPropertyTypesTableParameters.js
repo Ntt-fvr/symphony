@@ -113,13 +113,9 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
   const dispatch = useContext(ParameterTypesTableDispatcher);
-  console.log('parameterTypes-> ', parameterTypes);
+
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
-  };
-
-  const nameChange = ({target}) => {
-    target.value;
   };
 
   return (

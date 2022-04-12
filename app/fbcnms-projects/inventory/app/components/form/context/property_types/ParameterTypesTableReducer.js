@@ -48,10 +48,6 @@ export function reducerParameter(
       return [...state, getInitialParameterType(state.length)];
     case 'REMOVE_PARAMETER_TYPE':
       return state.filter(prt => prt.id !== action.id);
-    // editParameterType(state, action.id, pt => ({
-    //   ...pt,
-    //   isDeleted: true,
-    // }));
     case 'UPDATE_PARAMETER_TYPE_NAME':
       return editParameterType(state, action.id, pt => ({
         ...pt,
