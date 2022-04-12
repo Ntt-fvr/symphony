@@ -113,7 +113,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
   const dispatch = useContext(ParameterTypesTableDispatcher);
-
+  console.log('parameterTypes-> ', parameterTypes);
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
   };
@@ -175,9 +175,22 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                     autoFocus={true}
                     placeholder="Name"
                     autoComplete="off"
-                    value={''}
+                    value={parameter.name}
                     className={classes.input}
-                    onChange={nameChange}
+                    onChange={({target}) =>
+                      dispatch({
+                        type: 'UPDATE_PARAMETER_TYPE_NAME',
+                        id: parameter.id,
+                        name: target.value,
+                      })
+                    }
+                    onBlur={() =>
+                      dispatch({
+                        type: 'UPDATE_PARAMETER_TYPE_NAME',
+                        id: parameter.id,
+                        name: parameter.name.trim(),
+                      })
+                    }
                   />
                 </FormField>
               </TableCell>
@@ -202,7 +215,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
-                  <EnumPropertyValueInput property={parameter} />
+                  <EnumPropertyValueInput property={[]} />
                 </FormField>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">

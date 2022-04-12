@@ -296,6 +296,7 @@ export const AddEditResourceSpecification = (props: Props) => {
           <ParameterTypesTableDispatcher.Provider
             value={parameterTypesDispacher}>
             <ExperimentalPropertyTypesTableParameters
+              supportDelete={true}
               parameterTypes={parameterTypes}
             />
           </ParameterTypesTableDispatcher.Provider>

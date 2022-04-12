@@ -12,7 +12,7 @@ import type {ParameterTypeTableDispatcherActionType} from './ParameterTypeTableD
 import type {ParameterTypesTableState} from './ParameterTypesTableState';
 import type {PropertyType} from '../../../../common/PropertyType';
 
-import {getInitialPropertyType} from './ParameterTypesTableState';
+import {getInitialParameterType} from './ParameterTypesTableState';
 import {reorder} from '../../../draggable/DraggableUtils';
 import {sortByIndex} from '../../../draggable/DraggableUtils';
 
@@ -20,11 +20,11 @@ export function getInitialState(
   propertyTypes: Array<PropertyType>,
 ): ParameterTypesTableState {
   return propertyTypes.length === 0
-    ? [getInitialPropertyType(0)]
+    ? [getInitialParameterType(0)]
     : propertyTypes.slice().map(p => ({...p}));
 }
 
-function editPropertyType<T: ParameterTypesTableState>(
+function editParameterType<T: ParameterTypesTableState>(
   state: T,
   updatedPropertyTypeId: string,
   updatingCallback: PropertyType => PropertyType,
@@ -39,33 +39,34 @@ function editPropertyType<T: ParameterTypesTableState>(
   ];
 }
 
-export function reducer(
+export function reducerParameter(
   state: ParameterTypesTableState,
   action: ParameterTypeTableDispatcherActionType,
 ): ParameterTypesTableState {
   switch (action.type) {
     case 'ADD_PARAMETER_TYPE':
-      return [...state, getInitialPropertyType(state.length)];
+      return [...state, getInitialParameterType(state.length)];
     case 'REMOVE_PARAMETER_TYPE':
-      return editPropertyType(state, action.id, pt => ({
-        ...pt,
-        isDeleted: true,
-      }));
+      return state.filter(prt => prt.id !== action.id);
+    // editParameterType(state, action.id, pt => ({
+    //   ...pt,
+    //   isDeleted: true,
+    // }));
     case 'UPDATE_PARAMETER_TYPE_NAME':
-      return editPropertyType(state, action.id, pt => ({
+      return editParameterType(state, action.id, pt => ({
         ...pt,
         name: action.name,
       }));
     case 'UPDATE_PARAMETER_TYPE_KIND':
-      return editPropertyType(state, action.id, pt => ({
-        ...getInitialPropertyType(pt.index ?? 0),
+      return editParameterType(state, action.id, pt => ({
+        ...getInitialParameterType(pt.index ?? 0),
         id: action.id,
         type: action.kind,
         name: pt.name,
         nodeType: action.nodeType,
       }));
     case 'UPDATE_PARAMETER_TYPE':
-      return editPropertyType(state, action.value.id, pt => ({
+      return editParameterType(state, action.value.id, pt => ({
         ...pt,
         ...action.value,
       }));

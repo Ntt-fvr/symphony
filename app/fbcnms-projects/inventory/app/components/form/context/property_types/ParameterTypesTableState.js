@@ -12,12 +12,12 @@ import type {ParameterTypeTableDispatcherActionType} from './ParameterTypeTableD
 import type {PropertyType} from '../../../../common/PropertyType';
 
 import {generateTempId} from '../../../../common/EntUtils';
-import {getInitialState, reducer} from './ParameterTypesTableReducer';
+import {getInitialState, reducerParameter} from './ParameterTypesTableReducer';
 import {useReducer} from 'react';
 
 export type ParameterTypesTableState = Array<PropertyType>;
 
-export const getInitialPropertyType = (index: number): PropertyType => ({
+export const getInitialParameterType = (index: number): PropertyType => ({
   id: generateTempId(),
   name: '',
   index: index,
@@ -36,11 +36,11 @@ export const getInitialPropertyType = (index: number): PropertyType => ({
 });
 
 export const useParameterTypesReducer = (
-  initialPropertyTypes: Array<PropertyType>,
+  initialParameterTypes: Array<PropertyType>,
 ) => {
   return useReducer<
     ParameterTypesTableState,
     ParameterTypeTableDispatcherActionType,
     Array<PropertyType>,
-  >(reducer, initialPropertyTypes, getInitialState);
+  >(reducerParameter, initialParameterTypes, getInitialState);
 };
