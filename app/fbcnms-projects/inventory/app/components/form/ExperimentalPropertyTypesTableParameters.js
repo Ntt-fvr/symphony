@@ -19,6 +19,7 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
 import ParameterTypeSelect from './ParameterTypeSelect';
+import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
 import ParameterValueInput from './ParameterValueInput';
 import SubjectIcon from '@material-ui/icons/Subject';
 import Table from '@material-ui/core/Table';
@@ -30,8 +31,10 @@ import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
 import {PlusIcon} from '@symphony/design-system/icons';
+import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
-import {useState} from 'react';
+import {sortByIndex} from '../draggable/DraggableUtils';
+import {useContext, useState} from 'react';
 
 import EnumPropertyValueInput from './EnumPropertyValueInput';
 
@@ -100,7 +103,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{||}>;
+type Props = $ReadOnly<{|
+  parameterTypes: Array<any>,
+  supportDelete?: boolean,
+|}>;
 
 const reorder = (list, startIndex, endIndex) => {
   const result = [...list];
@@ -111,11 +117,12 @@ const reorder = (list, startIndex, endIndex) => {
 };
 
 const ExperimentalPropertyTypesTableParameters = (props: Props) => {
-  const {supportMandatory = true} = props;
+  const {supportMandatory = true, parameterTypes, supportDelete} = props;
   const [parameters, setParameters] = useState([]);
   const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
+  const dispatch = useContext(ParameterTypesTableDispatcher);
 
   const handleChecked = () => {
     setChecked(!checked);
@@ -157,6 +164,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
     target.value;
   };
 
+  //Function sort dnd basic
   const onDragEnd = result => {
     {
       const {source, destination} = result;
@@ -206,8 +214,18 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
             </TableCell>
           </TableRow>
         </TableHead>
-        <DroppableTableBody onDragEnd={onDragEnd}>
-          {parameters.map((parameter, i) => (
+
+        <DroppableTableBody
+          onDragEnd={({source, destination}) => {
+            if (destination != null) {
+              dispatch({
+                type: 'CHANGE_PARAMETER_TYPE_INDEX',
+                sourceIndex: source.index,
+                destinationIndex: destination.index,
+              });
+            }
+          }}>
+          {parameterTypes?.sort(sortByIndex).map((parameter, i) => (
             <DraggableTableRow
               id={parameter.id}
               index={i}
@@ -235,12 +253,12 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                   className={classes.input}
                   inputType="PropertyType"
                   property={parameter}
-                  // onChange={value =>
-                  //   dispatch({
-                  //     type: 'UPDATE_PROPERTY_TYPE',
-                  //     value,
-                  //   })
-                  //}
+                  onChange={value =>
+                    dispatch({
+                      type: 'UPDATE_PARAMETER_TYPE',
+                      value,
+                    })
+                  }
                 />
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
@@ -259,8 +277,16 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
               <TableCell className={classes.checkbox} component="div">
                 <FormField>
                   <Checkbox
-                    checked={checked}
-                    onClick={handleChecked}
+                    checked={!!parameter.isMandatory}
+                    onChange={checkedNewValue =>
+                      dispatch({
+                        type: 'UPDATE_PARAMETER_TYPE',
+                        value: {
+                          ...parameter,
+                          isMandatory: checkedNewValue === 'checked',
+                        },
+                      })
+                    }
                     title={null}
                   />
                 </FormField>
@@ -270,7 +296,14 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                   <IconButton aria-label="delete">
                     <DeleteOutlinedIcon
                       color="primary"
-                      onClick={() => handleDelete()}
+                      onClick={() =>
+                        // dispatch({
+                        //   type: 'REMOVE_PARAMETER_TYPE',
+                        //   id: parameter.id,
+                        // })
+                        console.log(parameter.id)
+                      }
+                      disabled={!supportDelete && !isTempId(parameter.id)}
                     />
                   </IconButton>
                 </FormAction>
@@ -282,7 +315,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
       <FormAction>
         <Button
           variant="text"
-          onClick={handleAddParameters}
+          onClick={() => dispatch({type: 'ADD_PARAMETER_TYPE'})}
           leftIcon={PlusIcon}>
           <fbt desc="">Add Property</fbt>
         </Button>

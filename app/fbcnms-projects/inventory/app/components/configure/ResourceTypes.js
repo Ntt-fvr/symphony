@@ -210,7 +210,6 @@ const ResourceTypes = () => {
               {...item.node}
             />
           ))}
-          <ExperimentalPropertyTypesTableParameters />
         </List>
       </Grid>
       <Grid item xs={12} lg={3}>

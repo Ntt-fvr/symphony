@@ -30,6 +30,7 @@ import EditResourceSpecificationMutation from '../../mutations/EditResourceSpeci
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import ExperimentalPropertyTypesTableParameters from '../form/ExperimentalPropertyTypesTableParameters';
+import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
@@ -37,6 +38,7 @@ import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from './../assurance/common/useDisabledButton';
 import {useFormInput} from '../assurance/common/useFormInput';
+import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 import {useValidationEdit} from './../assurance/common/useValidation';
 
@@ -123,7 +125,14 @@ export const AddEditResourceSpecification = (props: Props) => {
       .filter(Boolean)
       .map(toMutablePropertyType),
   );
-
+  const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer(
+    (dataForm?.resourcePropertyTypes ?? [])
+      .filter(Boolean)
+      .map(toMutablePropertyType),
+  );
+  console.log('dataForm***  ', dataForm);
+  console.log('Dispatch Property ***  ', propertyTypes);
+  console.log('Dispatch Parameter***  ', parameterTypes);
   const nameEdit = useFormInput(dataForm.name);
 
   const namesFilter = filterData?.map(item => item.name);
@@ -286,7 +295,12 @@ export const AddEditResourceSpecification = (props: Props) => {
       </Card>
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
-          <ExperimentalPropertyTypesTableParameters />
+          <ParameterTypesTableDispatcher.Provider
+            value={parameterTypesDispacher}>
+            <ExperimentalPropertyTypesTableParameters
+              parameterTypes={parameterTypes}
+            />
+          </ParameterTypesTableDispatcher.Provider>
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (

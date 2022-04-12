@@ -12,7 +12,7 @@ import type {PropertyKind} from '../../mutations/__generated__/AddEquipmentPortT
 import type {PropertyType} from '../../common/PropertyType';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import PropertyTypesTableDispatcher from './context/property_types/PropertyTypesTableDispatcher';
+import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
 import React, {useContext, useMemo} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import inventoryTheme from '../../common/theme';
@@ -41,7 +41,7 @@ type Props = $ReadOnly<{|
 const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
   const classes = useStyles();
   const context = useContext(AppContext);
-  const dispatch = useContext(PropertyTypesTableDispatcher);
+  const dispatch = useContext(ParameterTypesTableDispatcher);
   const getOptionKey = (type: string) =>
     `${ParameterTypeLabels[type].kind}_${type}`;
 
@@ -58,7 +58,6 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
 
     [],
   );
-  console.log('OPT-> ', options);
 
   const selectedValueIndex = useMemo(
     () =>
@@ -73,15 +72,6 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
       ),
     [options, propertyType],
   );
-  const opt = value => {
-    console.log('value->', value);
-    dispatch({
-      type: 'UPDATE_PROPERTY_TYPE_KIND',
-      id: propertyType.id,
-      kind: value.kind,
-      nodeType: value.nodeType,
-    });
-  };
 
   return (
     <Select
@@ -90,22 +80,20 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
       selectedValue={
         selectedValueIndex > -1 ? options[selectedValueIndex].value : null
       }
-      onChange={value => opt(value)}
-      // onChange={value => {
-      //   console.log(value);
-      //   // onPropertyTypeChange &&
-      //   //   onPropertyTypeChange({
-      //   //     ...propertyType,
-      //   //     type: value.kind,
-      //   //     nodeType: value.nodeType,
-      //   //   });
-      //   dispatch({
-      //     type: 'UPDATE_PROPERTY_TYPE_KIND',
-      //     id: propertyType.id,
-      //     kind: value.kind,
-      //     nodeType: value.nodeType,
-      //   });
-      // }}
+      onChange={value => {
+        onPropertyTypeChange &&
+          onPropertyTypeChange({
+            ...propertyType,
+            type: value.kind,
+            nodeType: value.nodeType,
+          });
+        dispatch({
+          type: 'UPDATE_PARAMETER_TYPE_KIND',
+          id: propertyType.id,
+          kind: value.kind,
+          nodeType: value.nodeType,
+        });
+      }}
     />
   );
 };
