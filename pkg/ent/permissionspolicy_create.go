@@ -89,6 +89,20 @@ func (ppc *PermissionsPolicyCreate) SetNillableIsGlobal(b *bool) *PermissionsPol
 	return ppc
 }
 
+// SetIsMulticontractor sets the is_multicontractor field.
+func (ppc *PermissionsPolicyCreate) SetIsMulticontractor(b bool) *PermissionsPolicyCreate {
+	ppc.mutation.SetIsMulticontractor(b)
+	return ppc
+}
+
+// SetNillableIsMulticontractor sets the is_multicontractor field if the given value is not nil.
+func (ppc *PermissionsPolicyCreate) SetNillableIsMulticontractor(b *bool) *PermissionsPolicyCreate {
+	if b != nil {
+		ppc.SetIsMulticontractor(*b)
+	}
+	return ppc
+}
+
 // SetInventoryPolicy sets the inventory_policy field.
 func (ppc *PermissionsPolicyCreate) SetInventoryPolicy(mpi *models.InventoryPolicyInput) *PermissionsPolicyCreate {
 	ppc.mutation.SetInventoryPolicy(mpi)
@@ -207,6 +221,10 @@ func (ppc *PermissionsPolicyCreate) defaults() {
 		v := permissionspolicy.DefaultIsGlobal
 		ppc.mutation.SetIsGlobal(v)
 	}
+	if _, ok := ppc.mutation.IsMulticontractor(); !ok {
+		v := permissionspolicy.DefaultIsMulticontractor
+		ppc.mutation.SetIsMulticontractor(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -291,6 +309,14 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Column: permissionspolicy.FieldIsGlobal,
 		})
 		_node.IsGlobal = value
+	}
+	if value, ok := ppc.mutation.IsMulticontractor(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: permissionspolicy.FieldIsMulticontractor,
+		})
+		_node.IsMulticontractor = value
 	}
 	if value, ok := ppc.mutation.InventoryPolicy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

@@ -239,7 +239,7 @@ const AddEditWorkerTypeCard = ({
           </ExpandingPanel>
           <ExpandingPanel title="Properties">
             <PropertyTypesTableDispatcher.Provider
-              value={propertyTypesDispatcher}>
+              value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
               <ExperimentalPropertyTypesTable
                 supportDelete={true}
                 propertyTypes={propertyTypes}
@@ -277,6 +277,40 @@ export default createFragmentContainer(withAlert(AddEditWorkerTypeCard), {
         isInstanceProperty
         isDeleted
         category
+        parentPropertyType {
+          id
+          name
+        }
+        dependencePropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isMandatory
+          isInstanceProperty
+          isDeleted
+          category
+          propertyTypeValues {
+            id
+            isDeleted
+            name
+            parentPropertyTypeValue {
+              id
+              isDeleted
+              name
+            }
+          }
+        }
       }
     }
   `,

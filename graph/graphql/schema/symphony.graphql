@@ -380,6 +380,7 @@ type PermissionsPolicy implements Node {
   name: String!
   description: String
   isGlobal: Boolean!
+  isMulticontractor: Boolean!
   policy: SystemPolicy!
   groups: [UsersGroup!]!
 }
@@ -388,6 +389,7 @@ input AddPermissionsPolicyInput {
   name: String!
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -400,6 +402,7 @@ input EditPermissionsPolicyInput {
   name: String
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -1693,6 +1696,7 @@ type ParameterCatalog implements Node {
   isDisabled: Boolean
   propertyCategories: [PropertyCategory]!
 }
+
 
 input PropertyTypeInput
   @goModel(
@@ -4865,6 +4869,7 @@ enum ProjectFilterType {
   LOCATION_INST
   PROJECT_PRIORITY
   PROPERTY
+  PROJECT_CREATION_DATE
 }
 
 input ProjectFilterInput {
@@ -4875,6 +4880,7 @@ input ProjectFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: PropertyTypeInput
+  timeValue: Time
 }
 
 enum CounterFilterType {

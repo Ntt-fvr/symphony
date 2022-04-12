@@ -43,6 +43,8 @@ type Props<T: Property | PropertyType> = {|
   onKeyDown?: (e: SyntheticKeyboardEvent<>) => void,
   headlineVariant?: 'headline' | 'form',
   fullWidth?: boolean,
+  showPropertyCombo?: boolean,
+  isDependentProperty?: boolean,
 |} & WithStyles<typeof styles>;
 
 const styles = {
@@ -92,7 +94,10 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
       inputType,
       headlineVariant,
       onKeyDown,
+      showPropertyCombo = false,
+      isDependentProperty = false,
     } = this.props;
+
     const disabled = this.props.disabled || showDisabled;
     const property = this.props.property;
     const propertyType = !!property.propertyType
@@ -102,15 +107,17 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
     const propInputType = propertyType.type;
     switch (propInputType) {
       case 'enum': {
-        return inputType == 'Property' ? (
-          <EnumPropertySelectValueInput
-            className={classNames(classes.input, className)}
+        return inputType != 'Property' ? (
+          <EnumPropertyValueInput
             property={property}
             onChange={onChange}
             disabled={disabled}
+            showPropertyCombo={showPropertyCombo}
+            isDependentProperty={isDependentProperty}
           />
         ) : (
-          <EnumPropertyValueInput
+          <EnumPropertySelectValueInput
+            className={classNames(classes.input, className)}
             property={property}
             onChange={onChange}
             disabled={disabled}

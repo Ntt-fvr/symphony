@@ -46,5 +46,6 @@ export type FeatureID =
   | 'enable_backplane_connections'
   | 'projects_column_selector'
   | 'multicontractor'
-  | 'equipment_&_ports_module'
-  | 'scheduling_filter_dates';
+  | 'scheduling_filter_dates'
+  | 'property_combo'
+  | 'equipment_&_ports_module';

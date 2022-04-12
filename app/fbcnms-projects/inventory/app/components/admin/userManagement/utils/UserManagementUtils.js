@@ -232,6 +232,7 @@ graphql`
     name
     description
     isGlobal
+    isMulticontractor
     policy {
       __typename
       ... on InventoryPolicy {
