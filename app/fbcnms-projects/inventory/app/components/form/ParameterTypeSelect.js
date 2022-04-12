@@ -8,10 +8,8 @@
  * @format
  */
 
-import type {PropertyKind} from '../../mutations/__generated__/AddEquipmentPortTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
 
-import AppContext from '@fbcnms/ui/context/AppContext';
 import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
 import React, {useContext, useMemo} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
@@ -27,12 +25,6 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
 }));
-
-type PropertyTypeOption = {|
-  kind: PropertyKind,
-  nodeType: ?string,
-|};
-
 type Props = $ReadOnly<{|
   propertyType: PropertyType,
   onPropertyTypeChange?: (propertyType: PropertyType) => void,
@@ -40,7 +32,6 @@ type Props = $ReadOnly<{|
 
 const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
   const classes = useStyles();
-  const context = useContext(AppContext);
   const dispatch = useContext(ParameterTypesTableDispatcher);
   const getOptionKey = (type: string) =>
     `${ParameterTypeLabels[type].kind}_${type}`;

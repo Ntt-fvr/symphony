@@ -108,79 +108,18 @@ type Props = $ReadOnly<{|
   supportDelete?: boolean,
 |}>;
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = [...list];
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   const {supportMandatory = true, parameterTypes, supportDelete} = props;
-  const [parameters, setParameters] = useState([]);
-  const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
   const dispatch = useContext(ParameterTypesTableDispatcher);
-
-  const handleChecked = () => {
-    setChecked(!checked);
-  };
-
-  const handleDelete = (i, ID) => {
-    i, ID;
-  };
 
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
   };
 
-  const handleAddParameters = () => {
-    const id = Math.floor(Math.random() * 101);
-    setParameters([
-      ...parameters,
-      {
-        booleanValue: false,
-        floatValue: null,
-        id: id,
-        index: id,
-        intValue: null,
-        isEditable: true,
-        isInstanceProperty: true,
-        latitudeValue: null,
-        longitudeValue: null,
-        name: '',
-        nodeType: undefined,
-        rangeFromValue: null,
-        rangeToValue: null,
-        stringValue: null,
-        type: 'datetime_local',
-      },
-    ]);
-  };
-
   const nameChange = ({target}) => {
     target.value;
-  };
-
-  //Function sort dnd basic
-  const onDragEnd = result => {
-    {
-      const {source, destination} = result;
-      if (!destination) {
-        return;
-      }
-      if (
-        source.index === destination.index &&
-        source.droppableId === destination.droppableId
-      ) {
-        return;
-      }
-      setParameters(parameters =>
-        reorder(parameters, source.index, destination.index),
-      );
-    }
   };
 
   return (
@@ -236,7 +175,7 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                     autoFocus={true}
                     placeholder="Name"
                     autoComplete="off"
-                    value={parameter.id}
+                    value={''}
                     className={classes.input}
                     onChange={nameChange}
                   />
@@ -297,11 +236,10 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
                     <DeleteOutlinedIcon
                       color="primary"
                       onClick={() =>
-                        // dispatch({
-                        //   type: 'REMOVE_PARAMETER_TYPE',
-                        //   id: parameter.id,
-                        // })
-                        console.log(parameter.id)
+                        dispatch({
+                          type: 'REMOVE_PARAMETER_TYPE',
+                          id: parameter.id,
+                        })
                       }
                       disabled={!supportDelete && !isTempId(parameter.id)}
                     />

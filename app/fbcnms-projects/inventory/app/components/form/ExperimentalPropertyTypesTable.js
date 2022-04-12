@@ -88,7 +88,7 @@ const ExperimentalPropertyTypesTable = ({
 }: Props) => {
   const classes = useStyles();
   const dispatch = useContext(PropertyTypesTableDispatcher);
-  console.log('DND-> ', propertyTypes);
+
   return (
     <div className={classes.container}>
       <Table component="div" className={classes.root}>
@@ -142,7 +142,7 @@ const ExperimentalPropertyTypesTable = ({
                       placeholder="Name"
                       autoComplete="off"
                       className={classes.input}
-                      value={property.id}
+                      value={property.name}
                       onChange={({target}) =>
                         dispatch({
                           type: 'UPDATE_PROPERTY_TYPE_NAME',
