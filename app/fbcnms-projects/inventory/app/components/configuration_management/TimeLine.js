@@ -38,15 +38,24 @@ const useStyles = makeStyles(() => ({
   },
   timeline: {
     transform: 'rotate(90deg)',
-    width: '150px',
+    width: '0px',
     margin: '0',
     padding: '0',
     '& .MuiTimelineItem-root': {
       minHeight: '125px',
     },
+    '& .MuiTimelineItem-missingOppositeContent:before': {
+      flex: '0',
+      content: '""',
+      padding: '0',
+    },
   },
   timelineContentContainer: {
-    textAlign: 'left',
+    textAlign: 'center',
+    // '& .MuiTimelineContent-root': {
+    flex: '0',
+    padding: '0',
+    // },
   },
   timelineContent: {
     display: 'inline-block',
@@ -61,11 +70,11 @@ const useStyles = makeStyles(() => ({
     border: '1px solid red',
   },
   wrapperTimeLine: {
+    border: '1px solid blue',
     display: 'flex',
-    alignItems: 'center',
-    border: '1px solid red',
+    alignItems: 'end',
     width: '300px',
-    height: '270px',
+    height: '200px',
     margin: '0 auto',
   },
 }));
