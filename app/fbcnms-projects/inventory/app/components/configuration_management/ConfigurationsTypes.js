@@ -15,6 +15,7 @@ import React, {useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
+import {TimeLine} from './TimeLine';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -183,6 +184,9 @@ const ConfigurationsTypes = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <Table data={data} columns={tableColumns} />
+      </Grid>
+      <Grid item xs={12}>
+        <TimeLine />
       </Grid>
     </Grid>
   );
