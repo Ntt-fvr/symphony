@@ -73,9 +73,10 @@ const useStyles = makeStyles(() => ({
     border: '1px solid blue',
     display: 'flex',
     alignItems: 'end',
-    width: '300px',
+    width: '350px',
     height: '200px',
     margin: '0 auto',
+    overflow: 'hidden',
   },
 }));
 
