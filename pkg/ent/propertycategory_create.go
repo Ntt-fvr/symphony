@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/parametercatalog"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 )
 
 // PropertyCategoryCreate is the builder for creating a PropertyCategory entity.
@@ -79,6 +80,21 @@ func (pcc *PropertyCategoryCreate) AddPropertiesType(p ...*PropertyType) *Proper
 		ids[i] = p[i].ID
 	}
 	return pcc.AddPropertiesTypeIDs(ids...)
+}
+
+// AddResourcePropertiesTypeIDs adds the resource_properties_type edge to ResourcePropertyType by ids.
+func (pcc *PropertyCategoryCreate) AddResourcePropertiesTypeIDs(ids ...int) *PropertyCategoryCreate {
+	pcc.mutation.AddResourcePropertiesTypeIDs(ids...)
+	return pcc
+}
+
+// AddResourcePropertiesType adds the resource_properties_type edges to ResourcePropertyType.
+func (pcc *PropertyCategoryCreate) AddResourcePropertiesType(r ...*ResourcePropertyType) *PropertyCategoryCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return pcc.AddResourcePropertiesTypeIDs(ids...)
 }
 
 // SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
@@ -251,6 +267,25 @@ func (pcc *PropertyCategoryCreate) createSpec() (*PropertyCategory, *sqlgraph.Cr
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pcc.mutation.ResourcePropertiesTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   propertycategory.ResourcePropertiesTypeTable,
+			Columns: []string{propertycategory.ResourcePropertiesTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}

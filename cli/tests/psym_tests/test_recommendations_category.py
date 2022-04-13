@@ -8,7 +8,7 @@ import json
 from psym.api.recommendation_category import (
     add_recommendations_category,
     edit_recommendations_category,
-    get_recommendations_categoryes,
+    get_recommendations_categories,
     remove_recommendations_category,
 )
 
@@ -53,22 +53,22 @@ class TestRecommendationsCategory(BaseTest):
  
 
     def test_get_recommendation_categoryes(self) -> None:
-        recommendation_categoryes_ = list(get_recommendations_categoryes(client=self.client))
+        recommendation_categoryes_ = list(get_recommendations_categories(client=self.client))
         self.assertEqual(len(recommendation_categoryes_), 2)
         add_recommendations_category(
             client=self.client,
             name="RecommendationsCategory_3"
         )
-        recommendation_categoryes_= list(get_recommendations_categoryes(client=self.client))
+        recommendation_categoryes_= list(get_recommendations_categories(client=self.client))
         self.assertEqual(len(recommendation_categoryes_), 3)
 
     
 
     def test_delete_RecommendationsCategory(self) -> None:
-        recommendation_categoryes_ = list(get_recommendations_categoryes(client=self.client))
+        recommendation_categoryes_ = list(get_recommendations_categories(client=self.client))
         self.assertEqual(len(recommendation_categoryes_), 2)
         remove_recommendations_category(client=self.client, id=self.test_recommendation_category_created_2.id)
-        recommendation_categoryes_ = list(get_recommendations_categoryes(client=self.client))
+        recommendation_categoryes_ = list(get_recommendations_categories(client=self.client))
         self.assertEqual(len(recommendation_categoryes_), 1)
  
 

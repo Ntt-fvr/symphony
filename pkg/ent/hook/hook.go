@@ -884,6 +884,84 @@ func (f ReportFilterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The ResourcePropertyTypeFunc type is an adapter to allow the use of ordinary
+// function as ResourcePropertyType mutator.
+type ResourcePropertyTypeFunc func(context.Context, *ent.ResourcePropertyTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourcePropertyTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourcePropertyTypeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourcePropertyTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceSpecificationFunc type is an adapter to allow the use of ordinary
+// function as ResourceSpecification mutator.
+type ResourceSpecificationFunc func(context.Context, *ent.ResourceSpecificationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceSpecificationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceSpecificationMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceSpecificationMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceSpecificationItemsFunc type is an adapter to allow the use of ordinary
+// function as ResourceSpecificationItems mutator.
+type ResourceSpecificationItemsFunc func(context.Context, *ent.ResourceSpecificationItemsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceSpecificationItemsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceSpecificationItemsMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceSpecificationItemsMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceSpecificationRelationshipFunc type is an adapter to allow the use of ordinary
+// function as ResourceSpecificationRelationship mutator.
+type ResourceSpecificationRelationshipFunc func(context.Context, *ent.ResourceSpecificationRelationshipMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceSpecificationRelationshipFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceSpecificationRelationshipMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceSpecificationRelationshipMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceTypeFunc type is an adapter to allow the use of ordinary
+// function as ResourceType mutator.
+type ResourceTypeFunc func(context.Context, *ent.ResourceTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceTypeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceTypeRelationshipFunc type is an adapter to allow the use of ordinary
+// function as ResourceTypeRelationship mutator.
+type ResourceTypeRelationshipFunc func(context.Context, *ent.ResourceTypeRelationshipMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceTypeRelationshipFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceTypeRelationshipMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceTypeRelationshipMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The RuleFunc type is an adapter to allow the use of ordinary
 // function as Rule mutator.
 type RuleFunc func(context.Context, *ent.RuleMutation) (ent.Value, error)

@@ -2246,6 +2246,195 @@ var (
 			},
 		},
 	}
+	// ResourcePropertyTypesColumns holds the columns for the "resource_property_types" table.
+	ResourcePropertyTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"string", "int", "bool", "float", "date", "enum", "range", "email", "gps_location", "datetime_local", "node"}},
+		{Name: "name", Type: field.TypeString},
+		{Name: "external_id", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "index", Type: field.TypeInt, Nullable: true},
+		{Name: "category", Type: field.TypeString, Nullable: true},
+		{Name: "int_val", Type: field.TypeInt, Nullable: true},
+		{Name: "bool_val", Type: field.TypeBool, Nullable: true},
+		{Name: "float_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "latitude_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "longitude_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "string_val", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "range_from_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "range_to_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "is_instance_property", Type: field.TypeBool, Default: true},
+		{Name: "editable", Type: field.TypeBool, Default: true},
+		{Name: "mandatory", Type: field.TypeBool},
+		{Name: "deleted", Type: field.TypeBool},
+		{Name: "listable", Type: field.TypeBool},
+		{Name: "node_type", Type: field.TypeString, Nullable: true},
+		{Name: "property_category_resource_properties_type", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_specification_resource_property_type", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourcePropertyTypesTable holds the schema information for the "resource_property_types" table.
+	ResourcePropertyTypesTable = &schema.Table{
+		Name:       "resource_property_types",
+		Columns:    ResourcePropertyTypesColumns,
+		PrimaryKey: []*schema.Column{ResourcePropertyTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_property_types_property_categories_resource_properties_type",
+				Columns: []*schema.Column{ResourcePropertyTypesColumns[22]},
+
+				RefColumns: []*schema.Column{PropertyCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_property_types_resource_specifications_resource_property_type",
+				Columns: []*schema.Column{ResourcePropertyTypesColumns[23]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "resourcepropertytype_name_property_category_resource_properties_type",
+				Unique:  false,
+				Columns: []*schema.Column{ResourcePropertyTypesColumns[4], ResourcePropertyTypesColumns[22]},
+			},
+		},
+	}
+	// ResourceSpecificationsColumns holds the columns for the "resource_specifications" table.
+	ResourceSpecificationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "quantity", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_type_resource_specification", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceSpecificationsTable holds the schema information for the "resource_specifications" table.
+	ResourceSpecificationsTable = &schema.Table{
+		Name:       "resource_specifications",
+		Columns:    ResourceSpecificationsColumns,
+		PrimaryKey: []*schema.Column{ResourceSpecificationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_specifications_resource_types_resource_specification",
+				Columns: []*schema.Column{ResourceSpecificationsColumns[5]},
+
+				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ResourceSpecificationItemsColumns holds the columns for the "resource_specification_items" table.
+	ResourceSpecificationItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "resource_specification_resource_specification_items", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_specification_relationship_resource_sr", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceSpecificationItemsTable holds the schema information for the "resource_specification_items" table.
+	ResourceSpecificationItemsTable = &schema.Table{
+		Name:       "resource_specification_items",
+		Columns:    ResourceSpecificationItemsColumns,
+		PrimaryKey: []*schema.Column{ResourceSpecificationItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_specification_items_resource_specifications_resource_specification_items",
+				Columns: []*schema.Column{ResourceSpecificationItemsColumns[3]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_specification_items_resource_specification_relationships_resource_sr",
+				Columns: []*schema.Column{ResourceSpecificationItemsColumns[4]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationRelationshipsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ResourceSpecificationRelationshipsColumns holds the columns for the "resource_specification_relationships" table.
+	ResourceSpecificationRelationshipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "resource_specification_resource_specification", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceSpecificationRelationshipsTable holds the schema information for the "resource_specification_relationships" table.
+	ResourceSpecificationRelationshipsTable = &schema.Table{
+		Name:       "resource_specification_relationships",
+		Columns:    ResourceSpecificationRelationshipsColumns,
+		PrimaryKey: []*schema.Column{ResourceSpecificationRelationshipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_specification_relationships_resource_specifications_resource_specification",
+				Columns: []*schema.Column{ResourceSpecificationRelationshipsColumns[4]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ResourceTypesColumns holds the columns for the "resource_types" table.
+	ResourceTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "resource_type_class", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "SLOT", "RACK", "PORT", "CARD", "VLAN"}},
+		{Name: "resource_type_base_type", Type: field.TypeEnum, Enums: []string{"LOGICAL_RESOURCE", "PHYSICAL_RESOURCE", "VIRTUAL_RESOURCE"}},
+	}
+	// ResourceTypesTable holds the schema information for the "resource_types" table.
+	ResourceTypesTable = &schema.Table{
+		Name:        "resource_types",
+		Columns:     ResourceTypesColumns,
+		PrimaryKey:  []*schema.Column{ResourceTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// ResourceTypeRelationshipsColumns holds the columns for the "resource_type_relationships" table.
+	ResourceTypeRelationshipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "resource_relationship_type", Type: field.TypeEnum, Enums: []string{"BELONGS_TO", "LOCATED_IN", "PHYSICAL_LINK", "LOGICAL_LINK", "CROSS_CONNECTION"}},
+		{Name: "resource_relationship_multiplicity", Type: field.TypeEnum, Enums: []string{"ONE_TO_ONE", "ONE_TO_MANY", "MANY_TO_ONE", "MANY_TO_MANY"}},
+		{Name: "location_type_resource_relationship_location", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_type_resource_relationship_a", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_type_resource_relationship_b", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceTypeRelationshipsTable holds the schema information for the "resource_type_relationships" table.
+	ResourceTypeRelationshipsTable = &schema.Table{
+		Name:       "resource_type_relationships",
+		Columns:    ResourceTypeRelationshipsColumns,
+		PrimaryKey: []*schema.Column{ResourceTypeRelationshipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_type_relationships_location_types_resource_relationship_location",
+				Columns: []*schema.Column{ResourceTypeRelationshipsColumns[5]},
+
+				RefColumns: []*schema.Column{LocationTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_type_relationships_resource_types_resource_relationship_a",
+				Columns: []*schema.Column{ResourceTypeRelationshipsColumns[6]},
+
+				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_type_relationships_resource_types_resource_relationship_b",
+				Columns: []*schema.Column{ResourceTypeRelationshipsColumns[7]},
+
+				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// RulesColumns holds the columns for the "rules" table.
 	RulesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3387,6 +3576,12 @@ var (
 		RecommendationsCategoriesTable,
 		RecommendationsSourcesTable,
 		ReportFiltersTable,
+		ResourcePropertyTypesTable,
+		ResourceSpecificationsTable,
+		ResourceSpecificationItemsTable,
+		ResourceSpecificationRelationshipsTable,
+		ResourceTypesTable,
+		ResourceTypeRelationshipsTable,
 		RulesTable,
 		RuleLimitsTable,
 		RuleTypesTable,
@@ -3537,6 +3732,15 @@ func init() {
 	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable
 	RecommendationsTable.ForeignKeys[3].RefTable = UsersTable
 	RecommendationsTable.ForeignKeys[4].RefTable = VendorsTable
+	ResourcePropertyTypesTable.ForeignKeys[0].RefTable = PropertyCategoriesTable
+	ResourcePropertyTypesTable.ForeignKeys[1].RefTable = ResourceSpecificationsTable
+	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ResourceTypesTable
+	ResourceSpecificationItemsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
+	ResourceSpecificationItemsTable.ForeignKeys[1].RefTable = ResourceSpecificationRelationshipsTable
+	ResourceSpecificationRelationshipsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
+	ResourceTypeRelationshipsTable.ForeignKeys[0].RefTable = LocationTypesTable
+	ResourceTypeRelationshipsTable.ForeignKeys[1].RefTable = ResourceTypesTable
+	ResourceTypeRelationshipsTable.ForeignKeys[2].RefTable = ResourceTypesTable
 	RulesTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
 	RulesTable.ForeignKeys[2].RefTable = ThresholdsTable

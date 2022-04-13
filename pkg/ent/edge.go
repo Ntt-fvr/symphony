@@ -1248,6 +1248,14 @@ func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*Survey
 	return result, err
 }
 
+func (lt *LocationType) ResourceRelationshipLocation(ctx context.Context) ([]*ResourceTypeRelationship, error) {
+	result, err := lt.Edges.ResourceRelationshipLocationOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryResourceRelationshipLocation().All(ctx)
+	}
+	return result, err
+}
+
 func (lt *LocationType) DocumentCategory(ctx context.Context) ([]*DocumentCategory, error) {
 	result, err := lt.Edges.DocumentCategoryOrErr()
 	if IsNotLoaded(err) {
@@ -1536,6 +1544,14 @@ func (pc *PropertyCategory) PropertiesType(ctx context.Context) ([]*PropertyType
 	return result, err
 }
 
+func (pc *PropertyCategory) ResourcePropertiesType(ctx context.Context) ([]*ResourcePropertyType, error) {
+	result, err := pc.Edges.ResourcePropertiesTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryResourcePropertiesType().All(ctx)
+	}
+	return result, err
+}
+
 func (pc *PropertyCategory) ParameterCatalog(ctx context.Context) (*ParameterCatalog, error) {
 	result, err := pc.Edges.ParameterCatalogOrErr()
 	if IsNotLoaded(err) {
@@ -1694,6 +1710,134 @@ func (rs *RecommendationsSources) Recommendations(ctx context.Context) ([]*Recom
 		result, err = rs.QueryRecommendations().All(ctx)
 	}
 	return result, err
+}
+
+func (rpt *ResourcePropertyType) ResourceSpecification(ctx context.Context) (*ResourceSpecification, error) {
+	result, err := rpt.Edges.ResourceSpecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = rpt.QueryResourceSpecification().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rpt *ResourcePropertyType) PropertyCategory(ctx context.Context) (*PropertyCategory, error) {
+	result, err := rpt.Edges.PropertyCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = rpt.QueryPropertyCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rs *ResourceSpecification) Resourcetype(ctx context.Context) (*ResourceType, error) {
+	result, err := rs.Edges.ResourcetypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryResourcetype().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rs *ResourceSpecification) ResourcePropertyType(ctx context.Context) ([]*ResourcePropertyType, error) {
+	result, err := rs.Edges.ResourcePropertyTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryResourcePropertyType().All(ctx)
+	}
+	return result, err
+}
+
+func (rs *ResourceSpecification) ResourceSpecification(ctx context.Context) ([]*ResourceSpecificationRelationship, error) {
+	result, err := rs.Edges.ResourceSpecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryResourceSpecification().All(ctx)
+	}
+	return result, err
+}
+
+func (rs *ResourceSpecification) ResourceSpecificationItems(ctx context.Context) ([]*ResourceSpecificationItems, error) {
+	result, err := rs.Edges.ResourceSpecificationItemsOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryResourceSpecificationItems().All(ctx)
+	}
+	return result, err
+}
+
+func (rsi *ResourceSpecificationItems) Resourcespecificationrelationship(ctx context.Context) (*ResourceSpecificationRelationship, error) {
+	result, err := rsi.Edges.ResourcespecificationrelationshipOrErr()
+	if IsNotLoaded(err) {
+		result, err = rsi.QueryResourcespecificationrelationship().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rsi *ResourceSpecificationItems) Resourcespecificationitems(ctx context.Context) (*ResourceSpecification, error) {
+	result, err := rsi.Edges.ResourcespecificationitemsOrErr()
+	if IsNotLoaded(err) {
+		result, err = rsi.QueryResourcespecificationitems().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rsr *ResourceSpecificationRelationship) Resourcespecification(ctx context.Context) (*ResourceSpecification, error) {
+	result, err := rsr.Edges.ResourcespecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = rsr.QueryResourcespecification().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rsr *ResourceSpecificationRelationship) ResourceSr(ctx context.Context) ([]*ResourceSpecificationItems, error) {
+	result, err := rsr.Edges.ResourceSrOrErr()
+	if IsNotLoaded(err) {
+		result, err = rsr.QueryResourceSr().All(ctx)
+	}
+	return result, err
+}
+
+func (rt *ResourceType) ResourceRelationshipA(ctx context.Context) ([]*ResourceTypeRelationship, error) {
+	result, err := rt.Edges.ResourceRelationshipAOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryResourceRelationshipA().All(ctx)
+	}
+	return result, err
+}
+
+func (rt *ResourceType) ResourceRelationshipB(ctx context.Context) ([]*ResourceTypeRelationship, error) {
+	result, err := rt.Edges.ResourceRelationshipBOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryResourceRelationshipB().All(ctx)
+	}
+	return result, err
+}
+
+func (rt *ResourceType) ResourceSpecification(ctx context.Context) ([]*ResourceSpecification, error) {
+	result, err := rt.Edges.ResourceSpecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryResourceSpecification().All(ctx)
+	}
+	return result, err
+}
+
+func (rtr *ResourceTypeRelationship) Resourcetypea(ctx context.Context) (*ResourceType, error) {
+	result, err := rtr.Edges.ResourcetypeaOrErr()
+	if IsNotLoaded(err) {
+		result, err = rtr.QueryResourcetypea().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rtr *ResourceTypeRelationship) Resourcetypeb(ctx context.Context) (*ResourceType, error) {
+	result, err := rtr.Edges.ResourcetypebOrErr()
+	if IsNotLoaded(err) {
+		result, err = rtr.QueryResourcetypeb().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rtr *ResourceTypeRelationship) LocationType(ctx context.Context) (*LocationType, error) {
+	result, err := rtr.Edges.LocationTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = rtr.QueryLocationType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (r *Rule) Ruletype(ctx context.Context) (*RuleType, error) {
