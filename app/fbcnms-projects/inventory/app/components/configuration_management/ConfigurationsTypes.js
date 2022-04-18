@@ -168,6 +168,9 @@ const ConfigurationsTypes = () => {
         />
       </Grid>
       <Grid item xs={12}>
+        <TimeLine />
+      </Grid>
+      <Grid item xs={12}>
         <div className={classes.bar}>
           <div className={classes.searchBar}>
             <PowerSearchBar
@@ -184,9 +187,6 @@ const ConfigurationsTypes = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <Table data={data} columns={tableColumns} />
-      </Grid>
-      <Grid item xs={12}>
-        <TimeLine />
       </Grid>
     </Grid>
   );
