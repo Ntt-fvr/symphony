@@ -8,24 +8,29 @@
  * @format
  */
 
-import type {AddWorkOrderCardTypeQueryResponse} from '../__generated__/AddWorkOrderCardTypeQuery.graphql';
-import type {Property} from '../../../common/Property';
-import type {
-  PropertyType,
-  PropertyTypeValues,
-} from '../../../common/PropertyType';
+import type {AddProjectCard__projectTypeQueryResponse} from '../../components/projects/__generated__/AddProjectCard__projectTypeQuery.graphql';
+import type {AddWorkOrderCardTypeQueryResponse} from '../../components/work_orders/__generated__/AddWorkOrderCardTypeQuery.graphql';
+import type {Property} from '../Property';
+import type {PropertyType, PropertyTypeValues} from '../PropertyType';
 
-import {WorkOrder} from '../../../common/WorkOrder';
+import {Project} from '../Project';
+import {WorkOrder} from '../WorkOrder';
+
 import {
   getInitialPropertyFromType,
   toMutablePropertyType,
-} from '../../../common/PropertyType';
-import {isTempId} from '../../../common/EntUtils';
-import {sortPropertiesByIndex} from '../../../common/Property';
+} from '../PropertyType';
+import {isTempId} from '../EntUtils';
+import {sortPropertiesByIndex} from '../Property';
 
 const extractNameOfArray = array => {
   return array?.map(value => value.name);
 };
+
+export type ElementType = WorkOrder | Project;
+export type ElementCardType =
+  | AddWorkOrderCardTypeQueryResponse
+  | AddProjectCard__projectTypeQueryResponse;
 
 export const createPropertyTypeValuesJson = (propertyType: PropertyType) => {
   const temporalPropertyValue = JSON.parse(propertyType.stringValue);
@@ -73,8 +78,8 @@ export const isPropertyWithDependenceRelation = (property: Property) => {
   return property.propertyType?.propertyTypeValues?.length > 0;
 };
 
-export const getDependentPropertyFromWorkOrder = (
-  workOrder: WorkOrder,
+export const getDependentPropertyFromElement = (
+  element: ElementType,
   property: Property,
 ) => {
   if (
@@ -83,23 +88,23 @@ export const getDependentPropertyFromWorkOrder = (
   ) {
     return null;
   }
-  return workOrder.properties?.filter(
-    propertyWorkOrder =>
-      propertyWorkOrder.propertyType.parentPropertyType?.id ===
+  return element.properties?.filter(
+    propElement =>
+      propElement.propertyType.parentPropertyType?.id ===
       property.propertyType.id,
   );
 };
 
-export const getParentPropertyFromWorkOrder = (
-  workOrder: WorkOrder,
+export const getParentPropertyFromElement = (
+  element: ElementType,
   property: Property,
 ) => {
   if (!property.propertyType?.parentPropertyType) {
     return null;
   }
-  return workOrder.properties?.find(
-    propertyWorkOrder =>
-      propertyWorkOrder.propertyType?.id ===
+  return element.properties?.find(
+    propElement =>
+      propElement.propertyType?.id ===
       property.propertyType.parentPropertyType?.id,
   );
 };
@@ -156,9 +161,7 @@ export const getPropertyTypesWithoutParentsInformation = (
   });
 };
 
-export const getAllInitialProperties = (
-  workOrderType: AddWorkOrderCardTypeQueryResponse,
-) => {
+export const getAllInitialProperties = (cardType: ElementCardType) => {
   const reducer = (previousValue, currentValue) => {
     return [
       ...previousValue,
@@ -167,7 +170,7 @@ export const getAllInitialProperties = (
   };
 
   return (
-    workOrderType.propertyTypes
+    cardType.propertyTypes
       ?.filter(Boolean)
       .filter(propertyType => !propertyType.isDeleted)
       .reduce(reducer, [])

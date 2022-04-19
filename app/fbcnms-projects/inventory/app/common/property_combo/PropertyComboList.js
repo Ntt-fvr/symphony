@@ -8,14 +8,14 @@
  * @format
  */
 
-import EnumPropertyValueInput from '../../form/EnumPropertyValueInput';
+import EnumPropertyValueInput from '../../components/form/EnumPropertyValueInput';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import {DependentPropertyTypesReducerTypes} from './DependentPropertyTypesReducer';
 import {NextArrowIcon} from '@symphony/design-system/icons';
-import {PropertyTypeValues} from '../../../common/PropertyType';
+import {PropertyTypeValues} from '../PropertyType';
 import {getPropertyTypeByRelated} from './PropertyTypeValuesHelpers';
 
 type Props = $ReadOnly<{|

@@ -16,7 +16,7 @@ import PropertyComboSelectContent from './PropertyComboSelectContent';
 import React, {useState} from 'react';
 import {CloseIcon} from '@symphony/design-system/icons';
 import {GREEN} from '@symphony/design-system/theme/symphony';
-import {PropertyType} from '../../../common/PropertyType';
+import {PropertyType} from '../PropertyType';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

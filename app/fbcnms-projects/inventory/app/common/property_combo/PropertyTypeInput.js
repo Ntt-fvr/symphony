@@ -10,24 +10,25 @@
 
 import type {PropertyType} from '../../common/PropertyType';
 
-import EnumPropertyComboSelectValueInput from './property_combo/EnumPropertyComboSelectValueInput';
+import EnumPropertyComboSelectValueInput from '../../common/property_combo/EnumPropertyComboSelectValueInput';
 import Grid from '@material-ui/core/Grid';
-import PropertyValueInput from '../form/PropertyValueInput';
+import PropertyValueInput from '../../components/form/PropertyValueInput';
 import React from 'react';
 import classNames from 'classnames';
-import {WorkOrder} from '../../common/WorkOrder';
+
 import {
-  getDependentPropertyFromWorkOrder,
-  getParentPropertyFromWorkOrder,
+  ElementType,
+  getDependentPropertyFromElement,
+  getParentPropertyFromElement,
   isPropertyWithDependenceRelation,
-} from './property_combo/PropertyComboHelpers';
+} from './PropertyComboHelpers';
 import {useStatusValues} from '../../common/FilterTypes';
 
 type Props = $ReadOnly<{|
-  workOrder: WorkOrder,
+  elementType: ElementType,
   property: PropertyType,
   mandatoryPropertiesOnCloseEnabled: boolean,
-  classes: any,
+  classes: object,
   index: number,
   _propertyChangedHandler: () => void,
   nextProperty: PropertyType,
@@ -35,7 +36,7 @@ type Props = $ReadOnly<{|
 
 const PropertyTypeInput = (props: Props) => {
   const {
-    workOrder,
+    elementType,
     property,
     mandatoryPropertiesOnCloseEnabled,
     classes,
@@ -45,8 +46,8 @@ const PropertyTypeInput = (props: Props) => {
 
   const {closedStatus} = useStatusValues();
 
-  const dependentPropertyList = getDependentPropertyFromWorkOrder(
-    workOrder,
+  const dependentPropertyList = getDependentPropertyFromElement(
+    elementType,
     property,
   );
 
@@ -71,20 +72,23 @@ const PropertyTypeInput = (props: Props) => {
             property={property}
             onChange={onPropertyComboChange}
             disabled={!property.propertyType.isInstanceProperty}
-            parentProperty={getParentPropertyFromWorkOrder(workOrder, property)}
+            parentProperty={getParentPropertyFromElement(elementType, property)}
           />
         </Grid>
       </>
     );
   } else {
+    let isRequired = !!property.propertyType.isMandatory;
+
+    if (elementType.hasOwnProperty('status')) {
+      isRequired =
+        (isRequired && elementType.status === closedStatus.value) ||
+        !mandatoryPropertiesOnCloseEnabled;
+    }
     return (
       <Grid item xs={12} sm={6} lg={4} xl={4}>
         <PropertyValueInput
-          required={
-            !!property.propertyType.isMandatory &&
-            (workOrder.status === closedStatus.value ||
-              !mandatoryPropertiesOnCloseEnabled)
-          }
+          required={isRequired}
           disabled={!property.propertyType.isInstanceProperty}
           label={property.propertyType.name}
           className={classes.gridInput}
