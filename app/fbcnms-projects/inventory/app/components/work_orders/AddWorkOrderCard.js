@@ -38,7 +38,7 @@ import LocationTypeahead from '../typeahead/LocationTypeahead';
 import MomentUtils from '@date-io/moment';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
-import PropertyTypeInput from './PropertyTypeInput';
+import PropertyTypeInput from '../../common/property_combo/PropertyTypeInput';
 import React, {useCallback, useContext, useReducer, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import SelectAvailabilityAssignee, {
@@ -53,7 +53,7 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {convertChecklistCategoriesStateToInput} from '../checklist/ChecklistUtils';
 import {generateTempId, getGraphError} from '../../common/EntUtils';
-import {getAllInitialProperties} from './property_combo/PropertyComboHelpers';
+import {getAllInitialProperties} from '../../common/property_combo/PropertyComboHelpers';
 import {
   getInitialStateFromChecklistDefinitions,
   reducer,

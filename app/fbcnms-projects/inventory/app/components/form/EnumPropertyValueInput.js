@@ -11,7 +11,7 @@ import type {Property} from '../../common/Property';
 import type {PropertyType, PropertyTypeValues} from '../../common/PropertyType';
 
 import IconButton from '@symphony/design-system/components/IconButton';
-import PropertyComboPrincipalDialog from '../work_orders/property_combo/PropertyComboPrincipalDialog';
+import PropertyComboPrincipalDialog from '../../common/property_combo/PropertyComboPrincipalDialog';
 import PropertyTypesTableDispatcher from './context/property_types/PropertyTypesTableDispatcher';
 import React, {useContext, useState} from 'react';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
@@ -21,7 +21,7 @@ import {Launch, PlaylistAdd} from '@material-ui/icons';
 import {
   getAllPropertyTypesValuesInString,
   getValidDependencePropertyTypeValueInString,
-} from '../work_orders/property_combo/PropertyComboHelpers';
+} from '../../common/property_combo/PropertyComboHelpers';
 import {isJSON} from '@symphony/design-system/utils/displayUtils';
 import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
