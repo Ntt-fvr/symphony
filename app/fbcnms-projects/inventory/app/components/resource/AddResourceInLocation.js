@@ -14,16 +14,12 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Grid from '@material-ui/core/Grid';
-import SaveDialogConfirm from '../components/configure/SaveDialogConfirm';
+import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
-  root: {
-    // padding: '24px 25px 34px 34px',
-    // margin: '0',
-  },
   formField: {
     margin: '0 30px',
     '& .MuiOutlinedInput-notchedOutline': {
@@ -79,13 +75,13 @@ type Props = $ReadOnly<{|
   closeFormAddEdit: () => void,
 |}>;
 
-export const AddResourceInLocation = (props: Props) => {
+const AddResourceInLocation = (props: Props) => {
   const {closeFormAddEdit} = props;
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <div className={classes.root}>
+    <>
       <Grid item xs={12} sm={12} lg={12} xl={12}>
         <Card margins="none">
           <CardHeader className={classes.cardHeader}>
@@ -227,6 +223,8 @@ export const AddResourceInLocation = (props: Props) => {
           customTitle="Resource Creation"
         />
       )}
-    </div>
+    </>
   );
 };
+
+export default AddResourceInLocation;

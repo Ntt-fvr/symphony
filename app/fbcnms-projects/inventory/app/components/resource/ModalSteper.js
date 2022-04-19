@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 type Props = $ReadOnly<{|
   openModal: boolean,
   onClose: () => void,
-  saveModal: () => void,
+  saveModal?: () => void,
 |}>;
 
 function getSteps() {

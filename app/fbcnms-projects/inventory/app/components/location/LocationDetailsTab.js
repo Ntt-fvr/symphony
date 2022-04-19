@@ -17,6 +17,7 @@ import DynamicPropertyCategoriesTable from '../DynamicPropertyCategoriesTable';
 import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';
 import React from 'react';
+import ResourceCard from '../resource/ResourceCard';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = $ReadOnly<{|
@@ -24,7 +25,9 @@ type Props = $ReadOnly<{|
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
   onWorkOrderSelected: (workOrderId: string) => void,
+  onResourceSelected: () => void,
   onAddEquipment: () => void,
+  onAddResource: () => void,
 |}>;
 
 const useStyles = makeStyles(_theme => ({
@@ -40,7 +43,9 @@ const LocationDetailsTab = (props: Props) => {
     selectedWorkOrderId,
     onEquipmentSelected,
     onWorkOrderSelected,
+    onResourceSelected,
     onAddEquipment,
+    onAddResource,
   } = props;
 
   const propTypes = location.locationType.propertyTypes;
@@ -59,6 +64,10 @@ const LocationDetailsTab = (props: Props) => {
         onEquipmentSelected={onEquipmentSelected}
         onWorkOrderSelected={onWorkOrderSelected}
         onAddEquipment={onAddEquipment}
+      />
+      <ResourceCard
+        onResourceSelected={onResourceSelected}
+        onAddResource={onAddResource}
       />
     </div>
   );

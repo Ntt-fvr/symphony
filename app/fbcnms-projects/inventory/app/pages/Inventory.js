@@ -25,7 +25,7 @@ import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
 import LocationsTree from '../components/LocationsTree';
 import React from 'react';
-import ResourceCard from '../components/ResourceCard';
+import ResourceCard from '../components/resource/ResourceCard';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
@@ -71,10 +71,12 @@ const EDIT_LOCATION_CARD: Card = {mode: 'edit', type: 'location'};
 const EDIT_EQUIPMENT_CARD: Card = {mode: 'edit', type: 'equipment'};
 const SHOW_LOCATION_CARD: Card = {mode: 'show', type: 'location'};
 const SHOW_EQUIPMENT_CARD: Card = {mode: 'show', type: 'equipment'};
+const SHOW_RESOURCE_CARD: Card = {mode: 'show', type: 'resource'};
+const ADD_RESOURCE_CARD: Card = {mode: 'add', type: 'resource'};
 
 type Card = {
   mode: 'add' | 'edit' | 'show',
-  type: 'location' | 'equipment',
+  type: 'location' | 'equipment' | 'resource',
 };
 
 type Props = ContextRouter &
@@ -203,7 +205,7 @@ class Inventory extends React.Component<Props, State> {
         this.setLocationCardState(null);
       }
     }
-
+    console.log(card);
     return (
       <>
         <InventoryTopBar
@@ -255,14 +257,22 @@ class Inventory extends React.Component<Props, State> {
                   onWorkOrderSelected={selectedWorkOrderCardId =>
                     this.navigateToWorkOrder(selectedWorkOrderCardId)
                   }
+                  onResourceSelected={() =>
+                    this.setState({
+                      card: SHOW_RESOURCE_CARD,
+                    })
+                  }
+                  onAddResource={() =>
+                    this.setState({
+                      card: ADD_RESOURCE_CARD,
+                    })
+                  }
                   onAddEquipment={() => this.showDialog('equipment')}
                   onLocationMoved={this.onMoveLocation}
                   onLocationRemoved={this.onDeleteLocation}
                 />
               )}
-              <ResourceCard
-                onResourceSelected={() => history.push(`/inventory/inventory`)}
-              />
+              {card.type == 'resource' && <ResourceCard mode={card.mode} />}
               {card.type == 'equipment' && (
                 <EquipmentCard
                   mode={card.mode}
