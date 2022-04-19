@@ -19,11 +19,9 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AddToLocationDialog from '../components/AddToLocationDialog';
-import Button from '@material-ui/core/Button';
-import CardPlusDnD from '../components/CardPlusDnD';
+import Configure from '../components/resource_instance/Configure';
 import DialogStatus from '../components/configure/DialogStatus';
 import EquipmentCard from '../components/EquipmentCard';
-import Grid from '@material-ui/core/Grid';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
@@ -254,33 +252,7 @@ class Inventory extends React.Component<Props, State> {
           />
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
-              <Grid
-                className={classes.header}
-                container
-                direction="row"
-                justify="flex-end"
-                alignItems="center">
-                <Grid>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    className={classes.buttons}
-                    style={{marginRight: '1rem'}}>
-                    Cancel
-                  </Button>
-                </Grid>
-                <Grid>
-                  <Button
-                    style={{marginRight: '2px'}}
-                    variant="contained"
-                    color="primary"
-                    className={classes.buttons}
-                    onClick={() => handelModal()}>
-                    Submit
-                  </Button>
-                </Grid>
-              </Grid>
-              <CardPlusDnD />
+              <Configure />
               <CardSuggested />
               {card.type == 'location' && (
                 <LocationCard
