@@ -23,7 +23,6 @@ import type {RemoveResourceTypeMutationVariables} from '../../mutations/__genera
 
 import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
 
-import ExperimentalPropertyTypesTableParameters from '../form/ExperimentalPropertyTypesTableParameters';
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
