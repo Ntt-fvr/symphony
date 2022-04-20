@@ -51,11 +51,19 @@ const useStyles = makeStyles(() => ({
     },
   },
   wrapperContentTimeLine: {
+    border: '1px dotted red',
     display: 'inline-block',
-    width: '780px',
-    height: '200px',
+    minWidth: '80px',
+    width: '90%',
+    height: '140px',
     margin: '0 auto',
     overflow: 'hidden',
+    msOverflowStyle: 'none',
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    overflowX: 'auto',
   },
   wrapperTimeLine: {
     width: '200px',
@@ -91,38 +99,36 @@ const TimeLine = () => {
 
   return (
     <Grid item className={classes.root} container spacing={0}>
-      <Grid item md={12}>
+      <Grid item xs={12}>
         <Card className={classes.cardContainer}>
           <CardHeader className={classes.cardTitle}>Timeline</CardHeader>
           <div className={classes.wrapperContentTimeLine}>
             <div className={classes.wrapperTimeLine}>
               <Timeline className={classes.timeline} align="right">
                 <LineTime date={date} dateTime={dateTime} />
+                {/* <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
-                <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} /> */}
               </Timeline>
             </div>
-            <div className={classes.keypad}>
-              <IconButton
-                icon={FastRewindIcon}
-                className={classes.buttonKeypad}
-              />
-              <IconButton
-                icon={SkipPreviousIcon}
-                className={classes.buttonKeypad}
-              />
-              <IconButton
-                icon={SkipNextIcon}
-                className={classes.buttonKeypad}
-              />
-              <IconButton
-                icon={FastForwardIcon}
-                className={classes.buttonKeypad}
-              />
-            </div>
+          </div>
+          <div className={classes.keypad}>
+            <IconButton
+              icon={FastRewindIcon}
+              className={classes.buttonKeypad}
+            />
+            <IconButton
+              icon={SkipPreviousIcon}
+              className={classes.buttonKeypad}
+            />
+            <IconButton icon={SkipNextIcon} className={classes.buttonKeypad} />
+            <IconButton
+              icon={FastForwardIcon}
+              className={classes.buttonKeypad}
+            />
           </div>
         </Card>
       </Grid>

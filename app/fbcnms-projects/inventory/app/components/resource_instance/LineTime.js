@@ -21,15 +21,17 @@ import {withStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
   timelineContentContainer: {
-    textAlign: 'center',
-    flex: '0',
+    // textAlign: 'center',
+    // flex: '0',
     padding: '0',
+    border: '1px solid green',
   },
   timelineContent: {
+    border: '1px solid black',
     display: 'inline-block',
     transform: 'rotate(-90deg)',
     textAlign: 'center',
-    width: 120,
+    minWidth: 120,
     position: 'absolute',
     top: '0px',
     right: '-30px',
@@ -38,6 +40,7 @@ const useStyles = makeStyles(() => ({
 
   timelineIcon: {
     fontSize: '14px',
+    border: '1px solid red',
   },
   lineConector: {
     border: '1px solid',
@@ -86,7 +89,10 @@ const LineTime = (props: Props) => {
           <TimelineConnector className={classes.lineConector} />
         </TimelineSeparator>
         <TimelineContent className={classes.timelineContentContainer}>
-          <Text variant={'body2'} className={classes.timelineContent}>
+          <Text
+            useEllipsis={true}
+            variant={'body2'}
+            className={classes.timelineContent}>
             {date}
           </Text>
         </TimelineContent>

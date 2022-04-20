@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   },
   buttonsStatus: {
     display: 'flex',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   timeLineContainer: {
@@ -55,18 +55,18 @@ const Configuration = (props: Props) => {
           <Text>Pending requests: 1</Text>
         </Grid>
         <Grid className={classes.buttonsStatus} item xs={6}>
-          <Button size="large" variant="outlined" color="primary">
+          <Button size="medium" variant="outlined" color="primary">
             <Text useEllipsis={true} color={'primary'}>
               Sync Parameters
             </Text>
           </Button>
-          <Button size="large" variant="outlined" color="primary">
+          <Button size="medium" variant="outlined" color="primary">
             <Text useEllipsis={true} color={'primary'}>
               {' '}
               Rollback
             </Text>
           </Button>
-          <Button size="large" variant="outlined" color="primary">
+          <Button size="medium" variant="outlined" color="primary">
             <Text useEllipsis={true} color={'primary'}>
               Request Change
             </Text>
