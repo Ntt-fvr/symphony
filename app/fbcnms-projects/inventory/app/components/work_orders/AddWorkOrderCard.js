@@ -235,7 +235,7 @@ type Props = $ReadOnly<{|
 const AddWorkOrderCard = (props: Props) => {
   const {workOrderTypeId} = props;
   const classes = useStyles();
-  const {statusValues} = useStatusValues();
+  const {statusValues, closedStatus} = useStatusValues();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -585,10 +585,12 @@ const AddWorkOrderCard = (props: Props) => {
                           .map((property, index) => (
                             <PropertyTypeInput
                               key={property.id}
-                              workOrder={workOrder}
+                              elementType={workOrder}
                               property={property}
-                              mandatoryPropertiesOnCloseEnabled={
-                                mandatoryPropertiesOnCloseEnabled
+                              required={
+                                !!property.propertyType.isMandatory &&
+                                (workOrder.status === closedStatus.value ||
+                                  !mandatoryPropertiesOnCloseEnabled)
                               }
                               classes={classes}
                               index={index}

@@ -27,7 +27,7 @@ import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSav
 import Grid from '@material-ui/core/Grid';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
-import PropertyValueInput from '../form/PropertyValueInput';
+import PropertyTypeInput from '../../common/property_combo/PropertyTypeInput';
 import React from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Select from '@symphony/design-system/components/Select/Select';
@@ -254,18 +254,16 @@ class AddProjectCard extends React.Component<Props, State> {
                               sm={6}
                               lg={4}
                               xl={4}>
-                              <PropertyValueInput
-                                required={!!property.propertyType.isMandatory}
-                                disabled={
-                                  !property.propertyType.isInstanceProperty
-                                }
-                                headlineVariant="form"
-                                fullWidth={true}
-                                label={property.propertyType.name}
-                                className={classes.gridInput}
-                                inputType="Property"
+                              <PropertyTypeInput
+                                key={property.id}
+                                elementType={project}
                                 property={property}
-                                onChange={this._propertyChangedHandler(index)}
+                                required={!!property.propertyType.isMandatory}
+                                classes={classes}
+                                index={index}
+                                propertyChangedHandler={
+                                  this._propertyChangedHandler
+                                }
                               />
                             </Grid>
                           ))}
