@@ -24,8 +24,6 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
-    // marginBottom: '30px',
-    // height: '274px',
   },
   cardContainer: {
     padding: '0px',
@@ -51,7 +49,6 @@ const useStyles = makeStyles(() => ({
     },
   },
   wrapperContentTimeLine: {
-    // border: '1px dotted red',
     display: 'inline-block',
     minWidth: '80px',
     width: '100%',

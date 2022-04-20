@@ -24,10 +24,8 @@ const useStyles = makeStyles(() => ({
     textAlign: 'center',
     flex: '0',
     padding: '0',
-    // border: '1px solid green',
   },
   timelineContent: {
-    // border: '1px solid black',
     display: 'inline-block',
     transform: 'rotate(-90deg)',
     textAlign: 'center',
@@ -40,7 +38,6 @@ const useStyles = makeStyles(() => ({
 
   timelineIcon: {
     fontSize: '14px',
-    // border: '1px solid red',
   },
   lineConector: {
     border: '1px solid',
