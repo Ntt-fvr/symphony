@@ -51,10 +51,10 @@ const useStyles = makeStyles(() => ({
     },
   },
   wrapperContentTimeLine: {
-    border: '1px dotted red',
+    // border: '1px dotted red',
     display: 'inline-block',
     minWidth: '80px',
-    width: '90%',
+    width: '100%',
     height: '140px',
     margin: '0 auto',
     overflow: 'hidden',
@@ -106,12 +106,15 @@ const TimeLine = () => {
             <div className={classes.wrapperTimeLine}>
               <Timeline className={classes.timeline} align="right">
                 <LineTime date={date} dateTime={dateTime} />
-                {/* <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
-                <LineTime date={date} dateTime={dateTime} /> */}
+                <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} />
               </Timeline>
             </div>
           </div>
