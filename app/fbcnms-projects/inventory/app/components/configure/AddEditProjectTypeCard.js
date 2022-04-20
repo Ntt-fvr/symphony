@@ -35,7 +35,6 @@ import {
   orderPropertyTypesIndex,
 } from '../../common/property_combo/PropertyComboHelpers';
 import {makeStyles} from '@material-ui/styles';
-import {sortByIndex} from '../draggable/DraggableUtils';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';

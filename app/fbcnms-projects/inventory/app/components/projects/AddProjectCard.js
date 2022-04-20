@@ -131,6 +131,54 @@ const addProjectCard__projectTypeQuery = graphql`
           isInstanceProperty
           isDeleted
           isMandatory
+          parentPropertyType {
+            id
+            name
+          }
+          dependencePropertyTypes {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isMandatory
+            isInstanceProperty
+            isDeleted
+            category
+            parentPropertyType {
+              id
+              name
+            }
+            propertyTypeValues {
+              id
+              isDeleted
+              name
+              parentPropertyTypeValue {
+                id
+                isDeleted
+                name
+              }
+            }
+          }
+          propertyTypeValues {
+            id
+            isDeleted
+            name
+            parentPropertyTypeValue {
+              id
+              isDeleted
+              name
+            }
+          }
         }
       }
     }
@@ -261,7 +309,7 @@ class AddProjectCard extends React.Component<Props, State> {
                                 required={!!property.propertyType.isMandatory}
                                 classes={classes}
                                 index={index}
-                                propertyChangedHandler={
+                                _propertyChangedHandler={
                                   this._propertyChangedHandler
                                 }
                               />

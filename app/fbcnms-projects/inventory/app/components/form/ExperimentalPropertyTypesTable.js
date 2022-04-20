@@ -255,6 +255,7 @@ const ExperimentalPropertyTypesTable = ({
                   </DraggableTableRow>
                 ) : (
                   <PropertyComboTableItem
+                    key={i}
                     property={property}
                     classes={classes}
                     supportMandatory={supportMandatory}
