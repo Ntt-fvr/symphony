@@ -10,8 +10,16 @@
 
 import * as React from 'react';
 import Button from '@material-ui/core/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
+import PowerSearchBar from '../power_search/PowerSearchBar';
+import Radio from '@material-ui/core/Radio';
 import Text from '@symphony/design-system/components/Text';
+import {CircleIndicator} from './CircleIndicator';
+import {TableConfigurationParameters} from './TableConfigurationParameters';
 import {TimeLine} from './TimeLine';
 import {makeStyles} from '@material-ui/styles';
 
@@ -22,6 +30,7 @@ const useStyles = makeStyles(() => ({
     padding: '20px 0 0 0 ',
   },
   status: {
+    padding: '20px 0 0 0 ',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -33,10 +42,36 @@ const useStyles = makeStyles(() => ({
   },
   timeLineContainer: {
     margin: '20px 0 0 0',
-    border: '1px solid blue',
   },
   cardTable: {
     margin: '20px 0 0 0',
+  },
+  cardContainer: {
+    padding: '0px',
+  },
+  bar: {
+    display: 'flex',
+    flexDirection: 'row',
+    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  },
+  searchBar: {
+    flexGrow: 1,
+  },
+  searchInput: {
+    border: '1px solid #E5E5E5',
+    borderRadius: '4px',
+  },
+  containerCheck: {
+    display: 'flex',
+    padding: '25px 0 0 0 ',
+  },
+  checkRadio: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  checkSquare: {
+    display: 'flex',
+    justifyContent: 'end',
   },
 }));
 
@@ -44,14 +79,17 @@ type Props = $ReadOnly<{||}>;
 
 const Configuration = (props: Props) => {
   const {} = props;
-
+  const [filters, setFilters] = React.useState([]);
+  const [checkedHidden, setCheckedHidden] = React.useState(true);
+  const [checked, setChecked] = React.useState(true);
   const classes = useStyles();
 
   return (
     <Grid className={classes.root}>
       <Grid className={classes.status} item xs={12}>
-        <Grid item xs={6}>
-          <Text>Pending requests: 1</Text>
+        <Grid item xs={6} container>
+          <Text style={{padding: '0 10px 0 0'}}>Pending requests:</Text>
+          <CircleIndicator>10</CircleIndicator>
         </Grid>
         <Grid className={classes.buttonsStatus} item xs={6}>
           <Button size="medium" variant="outlined" color="primary">
@@ -76,7 +114,61 @@ const Configuration = (props: Props) => {
         <TimeLine />
       </Grid>
       <Grid className={classes.cardTable} item xs={12}>
-        Tabla Configuration Parameters
+        <Card className={classes.cardContainer}>
+          <CardHeader>Configuration parameters</CardHeader>
+          <Grid item xs={12}>
+            <div className={classes.bar}>
+              <div className={classes.searchBar}>
+                <PowerSearchBar
+                  className={classes.searchInput}
+                  placeholder="Configuration parameters"
+                  getSelectedFilter={filters => setFilters(filters)}
+                  onFiltersChanged={filters => setFilters(filters)}
+                  filterConfigs={[]}
+                  searchConfig={[]}
+                  exportPath={'/configurations_types'}
+                  entity={'SERVICE'}
+                />
+              </div>
+            </div>
+          </Grid>
+          <Grid item xs={12} className={classes.containerCheck}>
+            <Grid item xs={6} className={classes.checkRadio}>
+              <Text
+                style={{padding: '0 10px 0 0'}}
+                color={'primary'}
+                useEllipsis={true}>
+                Compare with:{' '}
+              </Text>
+              <FormControlLabel
+                onChange={() => setCheckedHidden(!checkedHidden)}
+                checked={checkedHidden}
+                value="approved"
+                control={<Radio color="primary" />}
+                label="Previous change"
+              />
+              <FormControlLabel
+                onChange={() => setCheckedHidden(!checkedHidden)}
+                checked={!checkedHidden}
+                value="approval"
+                control={<Radio color="primary" />}
+                label="Schedule with approval"
+              />
+            </Grid>
+            <Grid item xs={6} className={classes.checkSquare}>
+              <Checkbox
+                onChange={selection =>
+                  setChecked(selection === 'checked' ? true : false)
+                }
+                checked={checked}
+                title={'See only changed parameters'}
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <TableConfigurationParameters />
+          </Grid>
+        </Card>
       </Grid>
     </Grid>
   );
