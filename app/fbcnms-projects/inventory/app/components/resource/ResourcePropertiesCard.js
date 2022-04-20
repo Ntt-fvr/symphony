@@ -10,13 +10,13 @@
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import Button from '@material-ui/core/Button';
 
-import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
+import ActionButton from '@fbcnms/ui/components/ActionButton';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
+import ModalSteper from './ModalSteper';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import React, {useState} from 'react';
 import Tab from '@material-ui/core/Tab';
@@ -45,13 +45,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  onAddResourceSlot?: () => void,
+  onAddResourceSlot: () => void,
 |}>;
 
 const ResourcePropertiesCard = (props: Props) => {
   const {onAddResourceSlot} = props;
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
+  const [openDialog, setOpenDialog] = useState(false);
+
   return (
     <>
       <Tabs
@@ -107,21 +109,32 @@ const ResourcePropertiesCard = (props: Props) => {
                 <Grid container>
                   <Grid item xs className={classes.gridContent}>
                     Slot 1: <br /> Available
-                    <IconButton edge="end" onClick={onAddResourceSlot}>
-                      <AddCircleOutline />
-                    </IconButton>
+                    <ActionButton
+                      action={'add'}
+                      onClick={() => {
+                        onAddResourceSlot;
+                        setOpenDialog(true);
+                      }}
+                    />
                   </Grid>
                   <Grid item xs className={classes.gridContent}>
                     Slot 2: <br /> Available
-                    <IconButton>
-                      <AddCircleOutline />
-                    </IconButton>
+                    <ActionButton
+                      action={'add'}
+                      onClick={() => {
+                        onAddResourceSlot;
+                        setOpenDialog(true);
+                      }}
+                    />
                   </Grid>
                   <Grid item xs className={classes.gridContent}>
                     Slot 3: <br /> Available
-                    <IconButton>
-                      <AddCircleOutline />
-                    </IconButton>
+                    <ActionButton
+                      action={'add'}
+                      onClick={() => {
+                        onAddResourceSlot;
+                      }}
+                    />
                   </Grid>
                   <Grid
                     item
@@ -129,9 +142,12 @@ const ResourcePropertiesCard = (props: Props) => {
                     className={classes.gridContent}
                     style={{marginRight: '0'}}>
                     Slot 4: <br /> Available
-                    <IconButton>
-                      <AddCircleOutline />
-                    </IconButton>
+                    <ActionButton
+                      action={'add'}
+                      onClick={() => {
+                        onAddResourceSlot;
+                      }}
+                    />
                   </Grid>
                 </Grid>
               </CardActions>
@@ -144,6 +160,13 @@ const ResourcePropertiesCard = (props: Props) => {
           ) : null}
           {selectedTab === 'services' ? <div>soy services</div> : null}
         </PerfectScrollbar>
+        {openDialog && (
+          <ModalSteper
+            openModal={openDialog}
+            onClose={() => setOpenDialog(false)}
+            saveModal={onAddResourceSlot}
+          />
+        )}
       </>
     </>
   );

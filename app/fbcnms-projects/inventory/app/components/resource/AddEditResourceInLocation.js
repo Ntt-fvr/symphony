@@ -75,7 +75,7 @@ type Props = $ReadOnly<{|
   closeFormAddEdit: () => void,
 |}>;
 
-const AddResourceInLocation = (props: Props) => {
+const AddEditResourceInLocation = (props: Props) => {
   const {closeFormAddEdit} = props;
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -196,7 +196,7 @@ const AddResourceInLocation = (props: Props) => {
                 color="primary"
                 className={classes.buttons}
                 style={{marginRight: '1rem'}}
-                onClick={() => closeFormAddEdit()}>
+                onClick={() => closeFormAddEdit}>
                 Cancel
               </Button>
             </Grid>
@@ -227,4 +227,4 @@ const AddResourceInLocation = (props: Props) => {
   );
 };
 
-export default AddResourceInLocation;
+export default AddEditResourceInLocation;

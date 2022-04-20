@@ -272,7 +272,16 @@ class Inventory extends React.Component<Props, State> {
                   onLocationRemoved={this.onDeleteLocation}
                 />
               )}
-              {card.type == 'resource' && <ResourceCard mode={card.mode} />}
+              {card.type == 'resource' && (
+                <ResourceCard
+                  mode={card.mode}
+                  onAddResourceSlot={() =>
+                    this.setState({
+                      card: ADD_RESOURCE_CARD,
+                    })
+                  }
+                />
+              )}
               {card.type == 'equipment' && (
                 <EquipmentCard
                   mode={card.mode}

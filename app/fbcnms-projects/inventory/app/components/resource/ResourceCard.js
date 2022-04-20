@@ -11,7 +11,7 @@
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AddResourceInLocation from './AddResourceInLocation';
+import AddEditResourceInLocation from './AddEditResourceInLocation';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Divider from '@material-ui/core/Divider';
@@ -34,34 +34,32 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
+  mode?: string,
   onResourceSelected?: () => void,
   onAddResource?: () => void,
-  mode?: string,
+  onAddResourceSlot: () => void,
 |}>;
 
 const ResourceCard = (props: Props) => {
-  const {onResourceSelected, onAddResource, mode} = props;
+  const {onResourceSelected, onAddResource, mode, onAddResourceSlot} = props;
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
 
   switch (mode) {
     case 'add':
       return (
-        <AddResourceInLocation closeFormAddEdit={() => setOpenDialog(false)} />
+        <AddEditResourceInLocation
+          closeFormAddEdit={() => setOpenDialog(false)}
+        />
       );
     case 'edit':
       return (
-        <AddResourceInLocation closeFormAddEdit={() => setOpenDialog(false)} />
-      );
-    case 'show':
-      return (
-        <ResourcePropertiesCard
-          onAddResourceSlot={() => {
-            onAddResource;
-            setOpenDialog(true);
-          }}
+        <AddEditResourceInLocation
+          closeFormAddEdit={() => setOpenDialog(false)}
         />
       );
+    case 'show':
+      return <ResourcePropertiesCard onAddResourceSlot={onAddResourceSlot} />;
     default:
       return (
         <div className={classes.root}>
