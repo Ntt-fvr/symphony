@@ -24,9 +24,8 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
-    marginBottom: '30px',
-    width: '961px',
-    height: '274px',
+    // marginBottom: '30px',
+    // height: '274px',
   },
   cardContainer: {
     padding: '0px',
@@ -91,8 +90,8 @@ const TimeLine = () => {
   const dateTime = '10 JUN 2022 14:00';
 
   return (
-    <Grid className={classes.root} container spacing={0}>
-      <Grid item xs={12}>
+    <Grid item className={classes.root} container spacing={0}>
+      <Grid item md={12}>
         <Card className={classes.cardContainer}>
           <CardHeader className={classes.cardTitle}>Timeline</CardHeader>
           <div className={classes.wrapperContentTimeLine}>

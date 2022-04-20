@@ -12,6 +12,7 @@ import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
+import {TimeLine} from './TimeLine';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -30,6 +31,14 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'space-around',
     alignItems: 'center',
   },
+  timeLineContainer: {
+    margin: '20px 0 0 0',
+    border: '1px solid blue',
+  },
+  cardTable: {
+    margin: '20px 0 0 0',
+    border: '1px solid red',
+  },
 }));
 
 type Props = $ReadOnly<{||}>;
@@ -40,7 +49,7 @@ const Configuration = (props: Props) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <Grid className={classes.root}>
       <Grid className={classes.status} item xs={12}>
         <Grid item xs={6}>
           <Text>Pending requests: 1</Text>
@@ -64,7 +73,13 @@ const Configuration = (props: Props) => {
           </Button>
         </Grid>
       </Grid>
-    </div>
+      <Grid className={classes.timeLineContainer} item md={12}>
+        <TimeLine />
+      </Grid>
+      <Grid className={classes.cardTable} item xs={12}>
+        Tabla Configuration Parameters
+      </Grid>
+    </Grid>
   );
 };
 
