@@ -22,7 +22,6 @@ import {
   getParentPropertyFromElement,
   isPropertyWithDependenceRelation,
 } from './PropertyComboHelpers';
-import {useStatusValues} from '../../common/FilterTypes';
 
 type Props = $ReadOnly<{|
   elementType: ElementType,
@@ -30,6 +29,7 @@ type Props = $ReadOnly<{|
   mandatoryPropertiesOnCloseEnabled: boolean,
   classes: object,
   index: number,
+  required: boolean,
   _propertyChangedHandler: () => void,
   nextProperty: PropertyType,
 |}>;
@@ -38,13 +38,11 @@ const PropertyTypeInput = (props: Props) => {
   const {
     elementType,
     property,
-    mandatoryPropertiesOnCloseEnabled,
     classes,
+    required = false,
     index = 0,
     _propertyChangedHandler,
   } = props;
-
-  const {closedStatus} = useStatusValues();
 
   const dependentPropertyList = getDependentPropertyFromElement(
     elementType,
@@ -78,17 +76,10 @@ const PropertyTypeInput = (props: Props) => {
       </>
     );
   } else {
-    let isRequired = !!property.propertyType.isMandatory;
-
-    if (elementType.hasOwnProperty('status')) {
-      isRequired =
-        (isRequired && elementType.status === closedStatus.value) ||
-        !mandatoryPropertiesOnCloseEnabled;
-    }
     return (
       <Grid item xs={12} sm={6} lg={4} xl={4}>
         <PropertyValueInput
-          required={isRequired}
+          required={required}
           disabled={!property.propertyType.isInstanceProperty}
           label={property.propertyType.name}
           className={classes.gridInput}
