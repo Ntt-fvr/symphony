@@ -13,6 +13,8 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
+import DialogInformation from './DialogInformation';
+import DialogSelectDate from './DialogSelectDate';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import PowerSearchBar from '../power_search/PowerSearchBar';
@@ -22,6 +24,7 @@ import {CircleIndicator} from './CircleIndicator';
 import {TableConfigurationParameters} from './TableConfigurationParameters';
 import {TimeLine} from './TimeLine';
 import {makeStyles} from '@material-ui/styles';
+import {useState} from 'react';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -79,11 +82,19 @@ type Props = $ReadOnly<{||}>;
 
 const Configuration = (props: Props) => {
   const {} = props;
-  const [filters, setFilters] = React.useState([]);
-  const [checkedHidden, setCheckedHidden] = React.useState(true);
-  const [checked, setChecked] = React.useState(true);
+  const [filters, setFilters] = useState([]);
+  const [checkedHidden, setCheckedHidden] = useState(true);
+  const [isDialogInformation, setIsDialogInformation] = useState(false);
+  const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
+  const [checked, setChecked] = useState(true);
   const classes = useStyles();
 
+  const handleClickOpenInformation = () => {
+    setIsDialogInformation(!isDialogInformation);
+  };
+  const handleClickOpenSelectDate = () => {
+    setIsDialogSelectDate(!isDialogSelectDate);
+  };
   return (
     <Grid className={classes.root}>
       <Grid className={classes.status} item xs={12}>
@@ -92,12 +103,20 @@ const Configuration = (props: Props) => {
           <CircleIndicator>10</CircleIndicator>
         </Grid>
         <Grid className={classes.buttonsStatus} item xs={6}>
-          <Button size="medium" variant="outlined" color="primary">
+          <Button
+            size="medium"
+            variant="outlined"
+            color="primary"
+            onClick={handleClickOpenInformation}>
             <Text useEllipsis={true} color={'primary'}>
               Sync Parameters
             </Text>
           </Button>
-          <Button size="medium" variant="outlined" color="primary">
+          <Button
+            size="medium"
+            variant="outlined"
+            color="primary"
+            onClick={handleClickOpenSelectDate}>
             <Text useEllipsis={true} color={'primary'}>
               {' '}
               Rollback
@@ -170,6 +189,12 @@ const Configuration = (props: Props) => {
           </Grid>
         </Card>
       </Grid>
+      {isDialogInformation && (
+        <DialogInformation onClose={handleClickOpenInformation} />
+      )}
+      {isDialogSelectDate && (
+        <DialogSelectDate onClose={handleClickOpenSelectDate} />
+      )}
     </Grid>
   );
 };

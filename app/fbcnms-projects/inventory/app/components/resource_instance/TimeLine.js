@@ -112,6 +112,8 @@ const TimeLine = () => {
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} />
               </Timeline>
             </div>
           </div>
