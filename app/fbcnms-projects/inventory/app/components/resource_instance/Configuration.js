@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
     margin: '0',
-    padding: '20px 0 0 0 ',
+    padding: '20px 0 30px 0 ',
   },
   status: {
     padding: '20px 0 0 0 ',
@@ -100,7 +100,7 @@ const Configuration = (props: Props) => {
       <Grid className={classes.status} item xs={12}>
         <Grid item xs={6} container>
           <Text style={{padding: '0 10px 0 0'}}>Pending requests:</Text>
-          <CircleIndicator>10</CircleIndicator>
+          <CircleIndicator>2</CircleIndicator>
         </Grid>
         <Grid className={classes.buttonsStatus} item xs={6}>
           <Button

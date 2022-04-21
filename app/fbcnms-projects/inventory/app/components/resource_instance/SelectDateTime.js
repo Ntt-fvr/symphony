@@ -24,6 +24,11 @@ const useStyles = makeStyles(() => ({
     height: 300,
     overflow: 'auto',
   },
+  item: {
+    '&:hover': {
+      backgroundColor: '#EDF0F9',
+    },
+  },
 }));
 const dateTime = [
   '01-01-2022 - 01:00',
@@ -51,7 +56,7 @@ const SelectDateTime = (props: Props) => {
     <div className={classes.root}>
       <List className={classes.contenedor}>
         {dateTime.map((item, index) => (
-          <ListItem key={index} button>
+          <ListItem className={classes.item} key={index} button>
             {item}
           </ListItem>
         ))}
