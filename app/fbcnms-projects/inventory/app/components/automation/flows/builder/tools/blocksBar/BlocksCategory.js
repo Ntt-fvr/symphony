@@ -11,33 +11,58 @@
 import type {IBlockType} from '../../canvas/graph/shapes/blocks/blockTypes/BaseBlockType';
 
 import Button from '@symphony/design-system/components/Button';
+import ExpandLess from '@material-ui/icons/ArrowDropDown';
+import ExpandMore from '@material-ui/icons/ArrowDropUp';
 import React, {useCallback} from 'react';
-import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import useDragAndDropHandler from '../../../utils/useDragAndDropHandler';
+import {
+  Collapse,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: '32px',
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+    '& .MuiTypography-body1': {
+      fontWeight: 500,
+      lineHeight: '16px',
+      color: '#8895AD',
+      letterSpacing: '1px',
+      fontSize: 12,
+      textTransform: 'uppercase',
+    },
+    '& .MuiSvgIcon-root': {
+      color: '#8895AD',
+    },
   },
-  header: {
-    textTransform: 'uppercase',
-    minHeight: '20px',
-    marginBottom: '16px',
-  },
-  body: {},
   blockType: {
     width: '100%',
-    height: '48px',
+    height: '40px',
     padding: '0',
     display: 'flex',
     justifyContent: 'flex-start',
     cursor: 'move',
-
+    '& div[class*="wrapper"]': {
+      width: 40,
+      height: 40,
+      minWidth: 40,
+      minHeight: 40,
+    },
+    '& svg[class*="large"]': {
+      width: 40,
+      height: 40,
+      minWidth: 40,
+      minHeight: 40,
+    },
     '& > span': {
       width: '100%',
     },
@@ -56,26 +81,41 @@ export type BlocksCategoryProps = $ReadOnly<{|
 export default function BlocksCategory(props: BlocksCategoryProps) {
   const {header, blockTypes, collapsed} = props;
   const classes = useStyles();
+  const [open, setOpen] = React.useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   return (
-    <div className={classes.root}>
-      <div className={classes.header}>
-        {!collapsed && (
-          <Text variant="overline" color="gray">
-            {header}
-          </Text>
-        )}
-      </div>
-      <div className={classes.body}>
-        {blockTypes.map((blockType, index) => (
-          <Block
-            key={index}
-            blockType={blockType}
-            className={classNames(classes.blockType)}
-          />
-        ))}
-      </div>
-    </div>
+    <List className={classes.root}>
+      <ListItem button onClick={handleClick}>
+        <ListItemText
+          primary={
+            <Grid item xs zeroMinWidth>
+              <Typography variant={'body1'} noWrap>
+                {header}
+              </Typography>
+            </Grid>
+          }
+        />
+        {!collapsed ? open ? <ExpandLess /> : <ExpandMore /> : ''}
+      </ListItem>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {blockTypes &&
+            blockTypes.map((blockType, index) => (
+              <ListItem key={index}>
+                <Block
+                  key={index}
+                  blockType={blockType}
+                  className={classNames(classes.blockType)}
+                />
+              </ListItem>
+            ))}
+        </List>
+      </Collapse>
+    </List>
   );
 }
 

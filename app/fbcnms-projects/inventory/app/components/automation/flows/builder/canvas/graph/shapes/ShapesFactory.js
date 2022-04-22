@@ -26,6 +26,9 @@ import GoTo, {TYPE as GoToType} from '../facades/shapes/vertexes/logic/GoTo';
 import ManualStart, {
   TYPE as ManualStartType,
 } from '../facades/shapes/vertexes/administrative/ManualStart';
+import TriggerStart, {
+  TYPE as TriggerStartType,
+} from '../facades/shapes/vertexes/triggers/TriggerStart';
 import TriggerWorkforce, {
   TYPE as TriggerWorkforceType,
 } from '../facades/shapes/vertexes/triggers/TriggerWorkforce';
@@ -55,6 +58,7 @@ const VERTEXES = {
   [UpdateWorkforceType]: UpdateWorkforce,
   // Triggers
   [TriggerWorkforceType]: TriggerWorkforce,
+  [TriggerStartType]: TriggerStart,
   // Logic
   [DecisionType]: Decision,
   [GoToType]: GoTo,
