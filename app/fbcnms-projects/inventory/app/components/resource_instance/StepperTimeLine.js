@@ -14,6 +14,9 @@ import Step from '@material-ui/core/Step';
 import StepConnector from '@material-ui/core/StepConnector';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
+import Text from '@symphony/design-system/components/Text';
+import Tooltip from '@material-ui/core/Tooltip';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
 
@@ -24,21 +27,28 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   stepperRoot: {
-    background: 'red',
+    // minWidth: '120%',
   },
   stepLabelRoot: {
-    color: 'blue',
+    color: symphony.palette.B800,
+  },
+  prueba: {
+    minWidth: '180px',
+    // border: '1px dotted black',
+    '& .MuiStepLabel-label.MuiStepLabel-alternativeLabel': {
+      marginTop: '-48px',
+    },
   },
 }));
 const QontoConnector = withStyles({
   alternativeLabel: {
     top: 10,
-    left: 'calc(-50% + 9px)',
-    right: 'calc(50% + 9px)',
+    left: 'calc(-50% + 5px)',
+    right: 'calc(50% + 5px)',
   },
   active: {
     '& $line': {
-      borderColor: 'blue',
+      borderColor: symphony.palette.B800,
     },
   },
   completed: {
@@ -47,34 +57,49 @@ const QontoConnector = withStyles({
     },
   },
   line: {
-    borderColor: 'blue',
+    borderColor: symphony.palette.B800,
     borderTopWidth: 3,
     borderRadius: 1,
   },
 })(StepConnector);
 
+const TooltipTime = withStyles(() => ({
+  tooltip: {
+    backgroundColor: symphony.palette.B800,
+    color: 'white',
+    maxWidth: 220,
+    fontSize: '14px',
+    width: '140px',
+    height: '30px',
+    position: 'absolute',
+    top: '-50px',
+    left: '-55px',
+    '&::before': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      top: '27px',
+      left: '45px',
+      borderTop: '10px solid',
+      color: symphony.palette.B800,
+      borderRight: '10px solid transparent',
+      borderLeft: '10px solid transparent',
+      borderBottom: '10px solid transparent',
+    },
+  },
+}))(Tooltip);
+
 const steps = [
-  'Select Date 1',
-  'Confirm Change 2',
-  'Select Date 3',
-  'Confirm Change 4',
-  'Select Date 5',
-  'Confirm Change 6',
-  'Select Date 7',
-  'Confirm Change 8',
-  'Select Date 9',
-  'Confirm Change 10',
-  'Select Date 11',
-  'Confirm Change 12',
-  'Select Date 13',
-  'Confirm Change 14',
-  'Select Date 15',
-  'Confirm Change 16',
-  'Select Date 17',
-  'Confirm Change 18',
-  'Select Date 19',
-  'Confirm Change 20',
-  ,
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
+  '10 JUN 2022',
 ];
 
 type Props = $ReadOnly<{||}>;
@@ -85,22 +110,28 @@ const StepperTimeLine = (props: Props) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <Stepper
-        className={classes.stepperRoot}
-        alternativeLabel
-        connector={<QontoConnector />}>
-        {steps.map(label => (
-          <Step key={label}>
-            <StepLabel
-              className={classes.stepLabelRoot}
-              icon={<FiberManualRecordIcon />}>
+    // <div className={classes.root}>
+    <Stepper
+      className={classes.stepperRoot}
+      alternativeLabel
+      connector={<QontoConnector />}>
+      {steps.map(label => (
+        <Step className={classes.prueba} key={label}>
+          <StepLabel
+            className={classes.stepLabelRoot}
+            icon={
+              <TooltipTime arrow={false} placement="top" title={label}>
+                <FiberManualRecordIcon className={classes.stepLabelRoot} />
+              </TooltipTime>
+            }>
+            <Text variant={'body1'} color={'gray'} weight={'bold'}>
               {label}
-            </StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-    </div>
+            </Text>
+          </StepLabel>
+        </Step>
+      ))}
+    </Stepper>
+    // </div>
   );
 };
 

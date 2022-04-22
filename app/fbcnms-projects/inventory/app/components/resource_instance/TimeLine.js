@@ -36,7 +36,7 @@ const useStyles = makeStyles(() => ({
     paddingBottom: '20px',
   },
   timeline: {
-    border: '1px dotted red',
+    // border: '1px dotted red',
     // transform: 'rotate(90deg)',
     // width: '0px',
     // margin: '80px',
@@ -51,11 +51,15 @@ const useStyles = makeStyles(() => ({
     // },
   },
   wrapperContentTimeLine: {
-    display: 'inline-block',
-    minWidth: '80px',
-    width: '100%',
-    height: '140px',
-    margin: '0 auto',
+    // border: '1px dashed red',
+    height: '130px',
+    display: 'flex',
+    alignItems: 'center',
+    // display: 'inline-block',
+    // minWidth: '80px',
+    // width: '100%',
+    // height: '140px',
+    // margin: '0 auto',
     overflow: 'hidden',
     msOverflowStyle: 'none',
     scrollbarWidth: 'none',
@@ -64,14 +68,14 @@ const useStyles = makeStyles(() => ({
     },
     overflowX: 'auto',
   },
-  wrapperTimeLine: {
-    // width: '200px',
-    maxHeight: '160px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // margin: '0 auto',
-  },
+  // wrapperTimeLine: {
+  //   // width: '200px',
+  //   maxHeight: '160px',
+  //   display: 'flex',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   // margin: '0 auto',
+  // },
   keypad: {
     width: '146px',
     height: '36px',
@@ -102,10 +106,10 @@ const TimeLine = () => {
         <Card className={classes.cardContainer}>
           <CardHeader className={classes.cardTitle}>Timeline</CardHeader>
           <div className={classes.wrapperContentTimeLine}>
-            <div className={classes.wrapperTimeLine}>
-              <Timeline className={classes.timeline} align="right">
-                <StepperTimeLine />
-                {/* <LineTime date={date} dateTime={dateTime} />
+            {/* <div className={classes.wrapperTimeLine}> */}
+            {/* <Timeline className={classes.timeline} align="right"> */}
+            <StepperTimeLine />
+            {/* <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
@@ -117,9 +121,9 @@ const TimeLine = () => {
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} /> */}
-              </Timeline>
-            </div>
+            {/* </Timeline> */}
           </div>
+          {/* </div> */}
           <div className={classes.keypad}>
             <IconButton
               icon={FastRewindIcon}
