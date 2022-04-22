@@ -308,6 +308,7 @@ class AddProjectCard extends React.Component<Props, State> {
                                 property={property}
                                 required={!!property.propertyType.isMandatory}
                                 classes={classes}
+                                properties={project.properties}
                                 index={index}
                                 _propertyChangedHandler={
                                   this._propertyChangedHandler

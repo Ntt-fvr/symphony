@@ -96,13 +96,13 @@ export const getDependentPropertyFromElement = (
 };
 
 export const getParentPropertyFromElement = (
-  element: ElementType,
+  properties: any[],
   property: Property,
 ) => {
   if (!property.propertyType?.parentPropertyType) {
     return null;
   }
-  return element.properties?.find(
+  return properties?.find(
     propElement =>
       propElement.propertyType?.id ===
       property.propertyType.parentPropertyType?.id,

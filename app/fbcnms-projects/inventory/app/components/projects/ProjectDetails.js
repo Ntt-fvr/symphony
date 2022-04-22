@@ -363,6 +363,7 @@ class ProjectDetails extends React.Component<Props, State> {
                               required={!!property.propertyType.isMandatory}
                               classes={classes}
                               index={index}
+                              properties={properties}
                               _propertyChangedHandler={
                                 this._propertyChangedHandler
                               }

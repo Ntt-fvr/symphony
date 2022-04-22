@@ -32,6 +32,7 @@ type Props = $ReadOnly<{|
   required: boolean,
   _propertyChangedHandler: () => void,
   nextProperty: PropertyType,
+  properties: any[]
 |}>;
 
 const PropertyTypeInput = (props: Props) => {
@@ -42,6 +43,7 @@ const PropertyTypeInput = (props: Props) => {
     required = false,
     index = 0,
     _propertyChangedHandler,
+    properties,
   } = props;
 
   const dependentPropertyList = getDependentPropertyFromElement(
@@ -70,7 +72,7 @@ const PropertyTypeInput = (props: Props) => {
             property={property}
             onChange={onPropertyComboChange}
             disabled={!property.propertyType.isInstanceProperty}
-            parentProperty={getParentPropertyFromElement(elementType, property)}
+            parentProperty={getParentPropertyFromElement(properties, property)}
           />
         </Grid>
       </>

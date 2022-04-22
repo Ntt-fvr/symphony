@@ -593,6 +593,7 @@ const AddWorkOrderCard = (props: Props) => {
                                   !mandatoryPropertiesOnCloseEnabled)
                               }
                               classes={classes}
+                              properties={workOrder.properties}
                               index={index}
                               _propertyChangedHandler={_propertyChangedHandler}
                             />

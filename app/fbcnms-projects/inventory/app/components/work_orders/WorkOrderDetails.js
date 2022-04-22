@@ -787,6 +787,7 @@ const WorkOrderDetails = ({
                               mandatoryPropertiesOnCloseEnabled={
                                 mandatoryPropertiesOnCloseEnabled
                               }
+                              properties={properties}
                               classes={classes}
                               index={index}
                               _propertyChangedHandler={_propertyChangedHandler}
