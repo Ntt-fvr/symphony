@@ -8,7 +8,7 @@
  * @format
  */
 
-import {PropertyTypeValues} from '../../../common/PropertyType';
+import {PropertyTypeValues} from '../PropertyType';
 
 export const getPropertyTypeValuesToReducer = (
   oldPropertyTypeValues: PropertyTypeValues[],
