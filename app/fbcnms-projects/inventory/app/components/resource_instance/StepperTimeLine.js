@@ -26,15 +26,11 @@ const useStyles = makeStyles(() => ({
     flexGrow: '0',
     margin: '0',
   },
-  stepperRoot: {
-    // minWidth: '120%',
-  },
   stepLabelRoot: {
     color: symphony.palette.B800,
   },
   prueba: {
     minWidth: '180px',
-    // border: '1px dotted black',
     '& .MuiStepLabel-label.MuiStepLabel-alternativeLabel': {
       marginTop: '-48px',
     },
@@ -110,11 +106,7 @@ const StepperTimeLine = (props: Props) => {
   const classes = useStyles();
 
   return (
-    // <div className={classes.root}>
-    <Stepper
-      className={classes.stepperRoot}
-      alternativeLabel
-      connector={<QontoConnector />}>
+    <Stepper alternativeLabel connector={<QontoConnector />}>
       {steps.map(label => (
         <Step className={classes.prueba} key={label}>
           <StepLabel
@@ -131,7 +123,6 @@ const StepperTimeLine = (props: Props) => {
         </Step>
       ))}
     </Stepper>
-    // </div>
   );
 };
 
