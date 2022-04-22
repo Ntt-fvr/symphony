@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   stepperRoot: {
-    background: '#F5F7FC',
+    background: 'red',
   },
   stepLabelRoot: {
     color: 'blue',
@@ -53,11 +53,33 @@ const QontoConnector = withStyles({
   },
 })(StepConnector);
 
-const steps = ['Select Date', 'Confirm Change'];
+const steps = [
+  'Select Date 1',
+  'Confirm Change 2',
+  'Select Date 3',
+  'Confirm Change 4',
+  'Select Date 5',
+  'Confirm Change 6',
+  'Select Date 7',
+  'Confirm Change 8',
+  'Select Date 9',
+  'Confirm Change 10',
+  'Select Date 11',
+  'Confirm Change 12',
+  'Select Date 13',
+  'Confirm Change 14',
+  'Select Date 15',
+  'Confirm Change 16',
+  'Select Date 17',
+  'Confirm Change 18',
+  'Select Date 19',
+  'Confirm Change 20',
+  ,
+];
 
 type Props = $ReadOnly<{||}>;
 
-const StepperDate = (props: Props) => {
+const StepperTimeLine = (props: Props) => {
   const {} = props;
 
   const classes = useStyles();
@@ -82,4 +104,4 @@ const StepperDate = (props: Props) => {
   );
 };
 
-export {StepperDate};
+export {StepperTimeLine};

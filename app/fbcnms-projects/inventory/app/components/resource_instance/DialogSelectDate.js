@@ -56,7 +56,7 @@ const DialogSelectDate = (props: Props) => {
       onClose={onClose}
       fullWidth={true}
       className={classes.root}>
-      <Grid container justify={'center'} style={{background: '#F5F7FC'}}>
+      <Grid container justify={'center'}>
         <StepperDate />
       </Grid>
       <Card className={classes.title} margins="none" variant={'none'}>

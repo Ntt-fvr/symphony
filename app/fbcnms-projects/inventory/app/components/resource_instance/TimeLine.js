@@ -19,6 +19,7 @@ import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import Timeline from '@material-ui/lab/Timeline';
 import {Grid} from '@material-ui/core';
 import {LineTime} from './LineTime';
+import {StepperTimeLine} from './StepperTimeLine';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -35,18 +36,19 @@ const useStyles = makeStyles(() => ({
     paddingBottom: '20px',
   },
   timeline: {
-    transform: 'rotate(90deg)',
-    width: '0px',
-    margin: '80px',
-    padding: '0',
-    '& .MuiTimelineItem-root': {
-      minHeight: '154px',
-    },
-    '& .MuiTimelineItem-missingOppositeContent:before': {
-      flex: '0',
-      content: '""',
-      padding: '0',
-    },
+    border: '1px dotted red',
+    // transform: 'rotate(90deg)',
+    // width: '0px',
+    // margin: '80px',
+    // padding: '0',
+    // '& .MuiTimelineItem-root': {
+    //   minHeight: '154px',
+    // },
+    // '& .MuiTimelineItem-missingOppositeContent:before': {
+    //   flex: '0',
+    //   content: '""',
+    //   padding: '0',
+    // },
   },
   wrapperContentTimeLine: {
     display: 'inline-block',
@@ -63,12 +65,12 @@ const useStyles = makeStyles(() => ({
     overflowX: 'auto',
   },
   wrapperTimeLine: {
-    width: '200px',
+    // width: '200px',
     maxHeight: '160px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '0 auto',
+    // margin: '0 auto',
   },
   keypad: {
     width: '146px',
@@ -102,6 +104,8 @@ const TimeLine = () => {
           <div className={classes.wrapperContentTimeLine}>
             <div className={classes.wrapperTimeLine}>
               <Timeline className={classes.timeline} align="right">
+                <StepperTimeLine />
+                {/* <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
@@ -112,8 +116,7 @@ const TimeLine = () => {
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
                 <LineTime date={date} dateTime={dateTime} />
-                <LineTime date={date} dateTime={dateTime} />
-                <LineTime date={date} dateTime={dateTime} />
+                <LineTime date={date} dateTime={dateTime} /> */}
               </Timeline>
             </div>
           </div>
