@@ -38,6 +38,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     overflow: 'hidden',
+    scrollBehavior: 'smooth',
     msOverflowStyle: 'none',
     scrollbarWidth: 'none',
     '&::-webkit-scrollbar': {
