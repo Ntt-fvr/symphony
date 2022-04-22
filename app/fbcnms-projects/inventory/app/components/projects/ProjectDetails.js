@@ -36,7 +36,7 @@ import LocationTypeahead from '../typeahead/LocationTypeahead';
 import MainContext from '../MainContext';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectWorkOrdersList from './ProjectWorkOrdersList';
-import PropertyValueInput from '../form/PropertyValueInput';
+import PropertyTypeInput from '../../common/property_combo/PropertyTypeInput';
 import React from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
@@ -356,27 +356,17 @@ class ProjectDetails extends React.Component<Props, State> {
                             </FormField>
                           </Grid>
                           {properties.map((property, index) => (
-                            <Grid
+                            <PropertyTypeInput
                               key={property.id}
-                              item
-                              xs={12}
-                              sm={6}
-                              lg={4}
-                              xl={4}>
-                              <PropertyValueInput
-                                required={!!property.propertyType.isMandatory}
-                                disabled={
-                                  !property.propertyType.isInstanceProperty
-                                }
-                                headlineVariant="form"
-                                fullWidth={true}
-                                label={property.propertyType.name}
-                                className={classes.gridInput}
-                                inputType="Property"
-                                property={property}
-                                onChange={this._propertyChangedHandler(index)}
-                              />
-                            </Grid>
+                              elementType={this.state.editedProject}
+                              property={property}
+                              required={!!property.propertyType.isMandatory}
+                              classes={classes}
+                              index={index}
+                              _propertyChangedHandler={
+                                this._propertyChangedHandler
+                              }
+                            />
                           ))}
                         </Grid>
                         <>
@@ -519,36 +509,7 @@ export default withRouter(
               }
               priority
               properties {
-                id
-                stringValue
-                intValue
-                floatValue
-                booleanValue
-                latitudeValue
-                longitudeValue
-                rangeFromValue
-                rangeToValue
-                nodeValue {
-                  id
-                  name
-                }
-                propertyType {
-                  id
-                  name
-                  type
-                  nodeType
-                  isEditable
-                  isMandatory
-                  isInstanceProperty
-                  stringValue
-                  intValue
-                  floatValue
-                  booleanValue
-                  latitudeValue
-                  longitudeValue
-                  rangeFromValue
-                  rangeToValue
-                }
+                ...PropertyFormField_property @relay(mask: false)
               }
               workOrders {
                 ...ProjectWorkOrdersList_workOrders

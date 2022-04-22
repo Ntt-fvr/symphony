@@ -782,7 +782,7 @@ const WorkOrderDetails = ({
                           {properties.map((property, index) => (
                             <PropertyTypeInput
                               key={property.id}
-                              workOrder={workOrder}
+                              elementType={workOrder}
                               property={property}
                               mandatoryPropertiesOnCloseEnabled={
                                 mandatoryPropertiesOnCloseEnabled
