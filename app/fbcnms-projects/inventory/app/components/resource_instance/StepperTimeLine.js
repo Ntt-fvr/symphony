@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
   stepLabelRoot: {
     color: symphony.palette.B800,
   },
-  prueba: {
+  stepItem: {
     minWidth: '180px',
     '& .MuiStepLabel-label.MuiStepLabel-alternativeLabel': {
       marginTop: '-48px',
@@ -118,7 +118,7 @@ const StepperTimeLine = (props: Props) => {
   return (
     <Stepper alternativeLabel connector={<QontoConnector />}>
       {steps.map(label => (
-        <Step className={classes.prueba} key={label}>
+        <Step className={classes.stepItem} key={label}>
           <StepLabel
             className={classes.stepLabelRoot}
             icon={
