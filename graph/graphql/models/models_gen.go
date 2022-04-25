@@ -422,6 +422,12 @@ type AddResourceSpecificationRelationshipInput struct {
 	ResourceSpecification int    `json:"resourceSpecification"`
 }
 
+type AddResourceSpecificationRelationshipList struct {
+	Name                                   string                                         `json:"name"`
+	ResourceSpecification                  int                                            `json:"resourceSpecification"`
+	ResourceSpecificationRelationshipItems []*ResourceSpecificationRelationshipItemsInput `json:"resourceSpecificationRelationshipItems"`
+}
+
 type AddResourceTypeInput struct {
 	Name                 string                            `json:"name"`
 	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`
@@ -1561,6 +1567,10 @@ type ResourceSpecificationRelationshipFilterInput struct {
 	IDSet       []int                                       `json:"idSet"`
 	MaxDepth    *int                                        `json:"maxDepth"`
 	StringSet   []string                                    `json:"stringSet"`
+}
+
+type ResourceSpecificationRelationshipItemsInput struct {
+	IDDestino *int `json:"id_destino"`
 }
 
 type ResourceTypeFilterInput struct {

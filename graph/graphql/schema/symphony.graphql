@@ -8140,6 +8140,7 @@ type Mutation {
   addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
+  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -9529,6 +9530,16 @@ input ResourceSpecificationFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]  
+}
+
+input ResourceSpecificationRelationshipItemsInput {
+  id_destino: ID
+}
+
+input AddResourceSpecificationRelationshipList {
+  name: String!
+  resourceSpecification: ID!
+  resourceSpecificationRelationshipItems: [ResourceSpecificationRelationshipItemsInput]
 }
 
 type ResourceSpecificationRelationship implements Node {
