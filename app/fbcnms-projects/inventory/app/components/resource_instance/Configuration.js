@@ -32,17 +32,6 @@ const useStyles = makeStyles(() => ({
     margin: '0',
     padding: '20px 0 30px 0 ',
   },
-  status: {
-    padding: '20px 0 0 0 ',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  buttonsStatus: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   timeLineContainer: {
     margin: '20px 0 0 0',
   },
@@ -97,12 +86,32 @@ const Configuration = (props: Props) => {
   };
   return (
     <Grid className={classes.root}>
-      <Grid className={classes.status} item xs={12}>
-        <Grid item xs={6} container>
-          <Text style={{padding: '0 10px 0 0'}}>Pending requests:</Text>
+      <Grid
+        container
+        direction="row"
+        justify="space-between"
+        alignItems="center"
+        item
+        xs={12}>
+        <Grid item xs={4} md={4} lg={6} container>
+          <Text
+            variant={'body2'}
+            weight={'medium'}
+            useEllipsis={false}
+            style={{padding: '0 10px 0 0'}}>
+            Pending requests:
+          </Text>
           <CircleIndicator>2</CircleIndicator>
         </Grid>
-        <Grid className={classes.buttonsStatus} item xs={6}>
+        <Grid
+          container
+          direction="row"
+          justify="space-between"
+          alignItems="center"
+          item
+          xs={8}
+          md={8}
+          lg={6}>
           <Button
             size="medium"
             variant="outlined"
@@ -157,7 +166,7 @@ const Configuration = (props: Props) => {
                 style={{padding: '0 10px 0 0'}}
                 color={'primary'}
                 useEllipsis={true}>
-                Compare with:{' '}
+                Compare with:
               </Text>
               <FormControlLabel
                 onChange={() => setCheckedHidden(!checkedHidden)}

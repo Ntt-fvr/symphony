@@ -53,7 +53,7 @@ type RouteTab = {
   path: string,
 };
 
-export default function Configure() {
+export default function NavbarResourceInstance() {
   const relativeUrl = useRelativeUrl();
   const history = useHistory();
   const location = useLocation();

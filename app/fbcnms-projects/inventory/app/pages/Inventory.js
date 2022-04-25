@@ -19,13 +19,13 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AddToLocationDialog from '../components/AddToLocationDialog';
-import Configure from '../components/resource_instance/Configure';
 import DialogStatus from '../components/configure/DialogStatus';
 import EquipmentCard from '../components/EquipmentCard';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
 import LocationsTree from '../components/LocationsTree';
+import NavbarResourceInstance from '../components/resource_instance/NavbarResourceInstance';
 import React from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
@@ -251,7 +251,7 @@ class Inventory extends React.Component<Props, State> {
           />
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
-              <Configure />
+              <NavbarResourceInstance />
               {card.type == 'location' && (
                 <LocationCard
                   mode={card.mode}
