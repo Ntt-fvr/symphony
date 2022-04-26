@@ -86,26 +86,26 @@ const TooltipTime = withStyles(() => ({
 }))(Tooltip);
 
 const steps = [
+  '1 JUN 2022',
+  '2 JUN 2022',
+  '3 JUN 2022',
+  '4 JUN 2022',
+  '5 JUN 2022',
+  '6 JUN 2022',
+  '7 JUN 2022',
+  '8 JUN 2022',
+  '9 JUN 2022',
   '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
-  '10 JUN 2022',
+  '11 JUN 2022',
+  '12 JUN 2022',
+  '13 JUN 2022',
+  '14 JUN 2022',
+  '15 JUN 2022',
+  '16 JUN 2022',
+  '17 JUN 2022',
+  '18 JUN 2022',
+  '19 JUN 2022',
+  '20 JUN 2022',
 ];
 
 type Props = $ReadOnly<{||}>;
@@ -117,8 +117,8 @@ const StepperTimeLine = (props: Props) => {
 
   return (
     <Stepper alternativeLabel connector={<QontoConnector />}>
-      {steps.map(label => (
-        <Step className={classes.stepItem} key={label}>
+      {steps.map((label, index) => (
+        <Step className={classes.stepItem} key={index}>
           <StepLabel
             className={classes.stepLabelRoot}
             icon={

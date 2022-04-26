@@ -63,31 +63,62 @@ const useStyles = makeStyles(() => ({
     background: 'white',
   },
 }));
+const sideScroll = (
+  element: any,
+  speed: number,
+  distance: number,
+  step: number,
+) => {
+  let scrollAmount = 0;
+  const slideTimer = setInterval(() => {
+    element.scrollLeft += step;
+    scrollAmount += Math.abs(step);
+    if (scrollAmount >= distance) {
+      clearInterval(slideTimer);
+    }
+  }, speed);
+};
 
 const TimeLine = () => {
   const classes = useStyles();
+  const contentWrapper = React.useRef(null);
 
   return (
     <Grid item className={classes.root} container spacing={0}>
       <Grid item xs={12}>
         <Card className={classes.cardContainer}>
           <CardHeader className={classes.cardTitle}>Timeline</CardHeader>
-          <div className={classes.wrapperContentTimeLine}>
+          <div ref={contentWrapper} className={classes.wrapperContentTimeLine}>
             <StepperTimeLine />
           </div>
           <div className={classes.keypad}>
             <IconButton
               icon={FastRewindIcon}
               className={classes.buttonKeypad}
+              onClick={() => {
+                sideScroll(contentWrapper.current, 25, 100, 200);
+              }}
             />
             <IconButton
               icon={SkipPreviousIcon}
               className={classes.buttonKeypad}
+              onClick={() => {
+                sideScroll(contentWrapper.current, 25, 100, 5000);
+              }}
             />
-            <IconButton icon={SkipNextIcon} className={classes.buttonKeypad} />
+            <IconButton
+              icon={SkipNextIcon}
+              className={classes.buttonKeypad}
+              onClick={() => {
+                sideScroll(contentWrapper.current, 25, 100, -2440);
+              }}
+            />
             <IconButton
               icon={FastForwardIcon}
               className={classes.buttonKeypad}
+              onClick={() => {
+                sideScroll(contentWrapper.current, 25, 100, -200);
+              }}
             />
           </div>
         </Card>
