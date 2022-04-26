@@ -10,11 +10,14 @@
 
 import React from 'react';
 import TriggerStartIcon from './TriggerStartIcon';
-import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
+import {Typography} from '@material-ui/core';
 
 export default function TriggerStartIconPresentation() {
   return (
-    <BasePresentation icon={TriggerStartIcon} text={fbt('Trigger Start', '')} />
+    <BasePresentation
+      icon={TriggerStartIcon}
+      text={<Typography variant="caption">Parallel</Typography>}
+    />
   );
 }

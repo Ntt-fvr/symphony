@@ -8,16 +8,16 @@
  * @format
  */
 
+import InvokeRestApiIcon from './InvokeRestApiIcon';
 import React from 'react';
-import UpdateWorkforceIcon from './UpdateWorkforceIcon';
 import {BasePresentation} from '../BasePresentation';
 import {Typography} from '@material-ui/core';
 
-export default function UpdateWorkforcePresentation() {
+export default function InvokeRestApiPresentation() {
   return (
     <BasePresentation
-      icon={UpdateWorkforceIcon}
-      text={<Typography variant="caption">Update Workforce</Typography>}
+      icon={InvokeRestApiIcon}
+      text={<Typography variant="caption">Invoke REST API</Typography>}
     />
   );
 }

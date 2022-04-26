@@ -13,15 +13,22 @@ import BlocksCategory from './BlocksCategory';
 import CreateWorkorderBlockType from '../../canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
 import DecisionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/decision/DecisionBlockType';
 import EndBlockType from '../../canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
+import ExecuteFlowBlockType from '../../canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowBlockType';
+import ExecuteNetworkActionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/executeNetworkAction/ExecuteNetworkActionBlockType';
+import ForEachLoop from '../../canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopBlockType';
 import GoToBlockType from '../../canvas/graph/shapes/blocks/blockTypes/goTo/GoToBlockType';
+import InvokeRestApiBlockType from '../../canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiBlockType';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
 import MenuCloseIcon from '@material-ui/icons/Menu';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import ParallelBlockType from '../../canvas/graph/shapes/blocks/blockTypes/Parallel/ParallelBlockType';
+import Timer from '../../canvas/graph/shapes/blocks/blockTypes/timer/TimerBlockType';
 import TriggerStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartBlockType';
 import TriggerWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerWorkforce/TriggerWorkforceBlockType';
-import TrueFalseBlockType from '../../canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseBlockType';
 import UpdateInventoryBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateInventory/UpdateInventoryBlockType';
 import UpdateWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateWorkforce/UpdateWorkforceBlockType';
+import WaitSignalBlockType from '../../canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalBlockType';
+
 import fbt from 'fbt';
 import {Drawer, IconButton} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -40,6 +47,7 @@ const useStyles = makeStyles(theme => ({
     top: 0,
     width: 'inherit',
     backgroundColor: '#FFF',
+    zIndex: 2,
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
@@ -107,8 +115,10 @@ export default function BlocksBar(props: Props) {
       new ManualStartBlockType(flow),
       new EndBlockType(flow),
       new TriggerStartBlockType(flow),
-      new TrueFalseBlockType(flow),
+      new Timer(flow),
+      new ForEachLoop(flow),
       new DecisionBlockType(flow),
+      new ParallelBlockType(flow),
       new GoToBlockType(flow),
     ],
     [flow],
@@ -117,6 +127,16 @@ export default function BlocksBar(props: Props) {
   const inventoryTypes = useMemo(() => [new UpdateInventoryBlockType(flow)], [
     flow,
   ]);
+
+  const general = useMemo(
+    () => [
+      new ExecuteFlowBlockType(flow),
+      new WaitSignalBlockType(flow),
+      new InvokeRestApiBlockType(flow),
+      new ExecuteNetworkActionBlockType(flow),
+    ],
+    [flow],
+  );
 
   const workforceTypes = useMemo(
     () => [
@@ -129,7 +149,7 @@ export default function BlocksBar(props: Props) {
 
   const listBlocksCategory = [
     {header: fbt('Flow', ''), blockTypes: flowTypes, collapsed: open},
-    {header: fbt('General', ''), blockTypes: null, collapsed: open},
+    {header: fbt('General', ''), blockTypes: general, collapsed: open},
     {header: fbt('Workforce', ''), blockTypes: workforceTypes, collapsed: open},
     {header: fbt('Inventory', ''), blockTypes: inventoryTypes, collapsed: open},
     {header: fbt('Configuration mgmt', ''), blockTypes: null, collapsed: open},

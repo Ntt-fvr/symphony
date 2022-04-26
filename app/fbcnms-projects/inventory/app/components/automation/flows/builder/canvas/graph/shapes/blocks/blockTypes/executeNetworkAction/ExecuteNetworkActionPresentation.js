@@ -8,16 +8,16 @@
  * @format
  */
 
+import ExecuteNetworkActionIcon from './ExecuteNetworkActionIcon';
 import React from 'react';
-import UpdateWorkforceIcon from './UpdateWorkforceIcon';
 import {BasePresentation} from '../BasePresentation';
 import {Typography} from '@material-ui/core';
 
-export default function UpdateWorkforcePresentation() {
+export default function ExecuteNetworkActionPresentation() {
   return (
     <BasePresentation
-      icon={UpdateWorkforceIcon}
-      text={<Typography variant="caption">Update Workforce</Typography>}
+      icon={ExecuteNetworkActionIcon}
+      text={<Typography variant="caption">Execute Network Action</Typography>}
     />
   );
 }

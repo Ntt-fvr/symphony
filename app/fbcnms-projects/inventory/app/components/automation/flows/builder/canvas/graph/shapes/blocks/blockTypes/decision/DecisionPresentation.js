@@ -10,9 +10,14 @@
 
 import * as React from 'react';
 import DecisionIcon from './DecisionIcon';
-import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
+import {Typography} from '@material-ui/core';
 
 export default function DecisionPresentation() {
-  return <BasePresentation icon={DecisionIcon} text={fbt('Decision', '')} />;
+  return (
+    <BasePresentation
+      icon={DecisionIcon}
+      text={<Typography variant="caption">Choice</Typography>}
+    />
+  );
 }

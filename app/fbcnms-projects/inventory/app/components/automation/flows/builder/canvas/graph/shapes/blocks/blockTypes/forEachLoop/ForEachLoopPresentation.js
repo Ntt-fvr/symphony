@@ -8,16 +8,16 @@
  * @format
  */
 
+import ForEachLoopIcon from './ForEachLoopIcon';
 import React from 'react';
-import UpdateWorkforceIcon from './UpdateWorkforceIcon';
 import {BasePresentation} from '../BasePresentation';
 import {Typography} from '@material-ui/core';
 
-export default function UpdateWorkforcePresentation() {
+export default function ForEachLoopPresentation() {
   return (
     <BasePresentation
-      icon={UpdateWorkforceIcon}
-      text={<Typography variant="caption">Update Workforce</Typography>}
+      icon={ForEachLoopIcon}
+      text={<Typography variant="caption">For each loop</Typography>}
     />
   );
 }

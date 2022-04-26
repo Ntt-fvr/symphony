@@ -16,7 +16,7 @@ import {IVertexModel, PORTS_GROUPS} from '../BaseVertext';
 import {VERTEX_COMMON_DISPLAY, getInitObject} from '../BaseVertext';
 import {getTriggerType} from '../actions/utils';
 
-export const TRIGGER_TYPE_ID = 'trigger_start';
+export const TRIGGER_TYPE_ID = 'wait-signal';
 export const TYPE = getTriggerType(TRIGGER_TYPE_ID);
 
 const FILL_COLOR = symphony.palette.AUTOMATION.ORANGE;
@@ -44,7 +44,7 @@ const defaultProperties = {
     },
     image: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
-      xlinkHref: '/inventory/static/svg/BlockTriggerStart.svg',
+      xlinkHref: '/inventory/static/svg/BlockWaitSignal.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
       x: IMAGE_PADDING,
@@ -53,7 +53,7 @@ const defaultProperties = {
     },
   },
 };
-defaultProperties.attrs.label.text = `${fbt('Triggered', '')}`;
+defaultProperties.attrs.label.text = `${fbt('Wait for signal', '')}`;
 
 const markup = {
   markup: [
@@ -69,14 +69,14 @@ const markup = {
   ],
 };
 
-const TriggerStartBaseClass = jointJS.dia.Element.define(
+const WaitSignalBaseClass = jointJS.dia.Element.define(
   TYPE,
   defaultProperties,
   markup,
 );
 
-export default class TriggerStart
-  extends TriggerStartBaseClass
+export default class WaitSignal
+  extends WaitSignalBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(

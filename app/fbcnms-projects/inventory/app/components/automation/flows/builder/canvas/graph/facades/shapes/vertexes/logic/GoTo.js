@@ -52,7 +52,7 @@ const defaultProperties = {
     },
     image: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
-      xlinkHref: '/inventory/static/svg/BlockFlowGoTo.svg',
+      xlinkHref: '/inventory/static/svg/BlocksGoTo.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
       x: IMAGE_PADDING,

@@ -13,6 +13,8 @@ import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
 import fbt from 'fbt';
+import symphony from '@symphony/design-system/theme/symphony';
+
 import {
   PORTS_GROUPS,
   VERTEX_COMMON_DISPLAY,
@@ -21,7 +23,7 @@ import {
 
 export const TYPE = 'DecisionBlock';
 
-const FILL_COLOR = '#9360f7';
+const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
@@ -60,7 +62,7 @@ const defaultProperties = {
     },
   },
 };
-defaultProperties.attrs.label.text = `${fbt('Decision', '')}`;
+defaultProperties.attrs.label.text = `${fbt('Choice', '')}`;
 
 const markup = {
   markup: [

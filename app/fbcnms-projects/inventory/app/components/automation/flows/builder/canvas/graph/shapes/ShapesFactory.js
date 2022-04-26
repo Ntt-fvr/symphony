@@ -22,10 +22,28 @@ import Decision, {
 import End, {
   TYPE as EndType,
 } from '../facades/shapes/vertexes/administrative/End';
+import ExecuteFlow, {
+  TYPE as ExecuteFlowType,
+} from '../facades/shapes/vertexes/actions/ExecuteFlow';
+import ExecuteNetworkAction, {
+  TYPE as ExecuteNetworkActionType,
+} from '../facades/shapes/vertexes/actions/ExecuteNetworkAction';
+import ForEachLoop, {
+  TYPE as ForEachLoopType,
+} from '../facades/shapes/vertexes/logic/ForEachLoop';
 import GoTo, {TYPE as GoToType} from '../facades/shapes/vertexes/logic/GoTo';
+import InvokeRestApi, {
+  TYPE as InvokeRestApiType,
+} from '../facades/shapes/vertexes/actions/InvokeRestApi';
 import ManualStart, {
   TYPE as ManualStartType,
 } from '../facades/shapes/vertexes/administrative/ManualStart';
+import Parallel, {
+  TYPE as ParallelType,
+} from '../facades/shapes/vertexes/logic/Parallel';
+import Timer, {
+  TYPE as TimerType,
+} from '../facades/shapes/vertexes/triggers/Timer';
 import TriggerStart, {
   TYPE as TriggerStartType,
 } from '../facades/shapes/vertexes/triggers/TriggerStart';
@@ -41,6 +59,9 @@ import UpdateInventory, {
 import UpdateWorkforce, {
   TYPE as UpdateWorkforceType,
 } from '../facades/shapes/vertexes/actions/UpdateWorkforce';
+import WaitSignal, {
+  TYPE as WaitSignalType,
+} from '../facades/shapes/vertexes/triggers/WaitSignal';
 import Worker, {
   TYPE as WorkerType,
 } from '../facades/shapes/vertexes/actions/Worker';
@@ -56,13 +77,20 @@ const VERTEXES = {
   [WorkerType]: Worker,
   [UpdateInventoryType]: UpdateInventory,
   [UpdateWorkforceType]: UpdateWorkforce,
+  [ExecuteFlowType]: ExecuteFlow,
+  [InvokeRestApiType]: InvokeRestApi,
+  [ExecuteNetworkActionType]: ExecuteNetworkAction,
   // Triggers
+  [TimerType]: Timer,
   [TriggerWorkforceType]: TriggerWorkforce,
   [TriggerStartType]: TriggerStart,
+  [WaitSignalType]: WaitSignal,
   // Logic
   [DecisionType]: Decision,
   [GoToType]: GoTo,
   [TrueFalseType]: TrueFalse,
+  [ForEachLoopType]: ForEachLoop,
+  [ParallelType]: Parallel,
 };
 const VERTEX_TYPES = Object.keys(VERTEXES);
 

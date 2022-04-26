@@ -9,15 +9,15 @@
  */
 
 import React from 'react';
-import UpdateWorkforceIcon from './UpdateWorkforceIcon';
+import TimerIcon from './TimerIcon';
 import {BasePresentation} from '../BasePresentation';
 import {Typography} from '@material-ui/core';
 
-export default function UpdateWorkforcePresentation() {
+export default function TriggerStartIconPresentation() {
   return (
     <BasePresentation
-      icon={UpdateWorkforceIcon}
-      text={<Typography variant="caption">Update Workforce</Typography>}
+      icon={TimerIcon}
+      text={<Typography variant="caption">Timer</Typography>}
     />
   );
 }

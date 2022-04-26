@@ -8,16 +8,16 @@
  * @format
  */
 
+import ExecuteFlowIcon from './ExecuteFlowIcon';
 import React from 'react';
-import UpdateWorkforceIcon from './UpdateWorkforceIcon';
 import {BasePresentation} from '../BasePresentation';
 import {Typography} from '@material-ui/core';
 
-export default function UpdateWorkforcePresentation() {
+export default function ExecuteFlowPresentation() {
   return (
     <BasePresentation
-      icon={UpdateWorkforceIcon}
-      text={<Typography variant="caption">Update Workforce</Typography>}
+      icon={ExecuteFlowIcon}
+      text={<Typography variant="caption">Execute Flow</Typography>}
     />
   );
 }

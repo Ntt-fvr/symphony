@@ -8,16 +8,16 @@
  * @format
  */
 
+import ParallelIcon from './ParallelIcon';
 import React from 'react';
-import UpdateWorkforceIcon from './UpdateWorkforceIcon';
 import {BasePresentation} from '../BasePresentation';
 import {Typography} from '@material-ui/core';
 
-export default function UpdateWorkforcePresentation() {
+export default function ParallelPresentation() {
   return (
     <BasePresentation
-      icon={UpdateWorkforceIcon}
-      text={<Typography variant="caption">Update Workforce</Typography>}
+      icon={ParallelIcon}
+      text={<Typography variant="caption">Parallel</Typography>}
     />
   );
 }

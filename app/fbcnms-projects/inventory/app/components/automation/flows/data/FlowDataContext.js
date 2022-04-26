@@ -38,6 +38,10 @@ import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {
+  TYPE as TimerBlockType,
+  TRIGGER_TYPE_ID as TimerTriggerTypeID,
+} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
+import {
   TYPE as TriggerStartBlockType,
   TRIGGER_TYPE_ID as TriggerStartTriggerTypeID,
 } from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
@@ -329,7 +333,15 @@ function FlowDataContextProviderComponent(props: Props) {
           mapTriggerBlocksForSave(block, TriggerStartTriggerTypeID),
         );
 
-      const triggerBlocks = [...triggerWorkforceBlocks, ...triggerStartBlocks];
+      const timerBlocks = flow
+        .getBlocksByType(TimerBlockType)
+        .map(block => mapTriggerBlocksForSave(block, TimerTriggerTypeID));
+
+      const triggerBlocks = [
+        ...triggerWorkforceBlocks,
+        ...triggerStartBlocks,
+        ...timerBlocks,
+      ];
       const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
       if (startBlocks.length > 0) {

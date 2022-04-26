@@ -12,32 +12,40 @@
 import CreateActionBaseClass from './CreateActionBaseClass';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
-import {IVertexModel, getInitObject} from '../BaseVertext';
+import {IVertexModel, PORTS_GROUPS, getInitObject} from '../BaseVertext';
 import {getActionType} from './utils';
 
-export const ACTION_TYPE_ID = 'update_workforce';
+export const ACTION_TYPE_ID = 'execute_flow';
 export const TYPE = getActionType(ACTION_TYPE_ID);
 const FILL_COLOR = symphony.palette.AUTOMATION.BLUE;
 
-const UpdateWorkforceBaseClass = CreateActionBaseClass({
+const ExecuteFlowBaseClass = CreateActionBaseClass({
   actionName: ACTION_TYPE_ID,
   fillColor: FILL_COLOR,
-  svgPath: '/inventory/static/svg/BlockActionUpdateWorkforce.svg',
-  defaultText: `${fbt('Update Workforce', '')}`,
+  svgPath: '/inventory/static/svg/BlockExecutionFlow.svg',
+  defaultText: `${fbt('Execute Flow', '')}`,
 });
 
 const TOTAL_SIZE = 72;
 
-export default class UpdateWorkforce
-  extends UpdateWorkforceBaseClass
+export default class ExecuteFlow
+  extends ExecuteFlowBaseClass
   implements IVertexModel {
   constructor(id?: string) {
-    super(getInitObject(FILL_COLOR, {}, id));
+    super(
+      getInitObject(
+        FILL_COLOR,
+        {
+          [PORTS_GROUPS.OUTPUT]: {count: 1},
+        },
+        id,
+      ),
+    );
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }
 }
 
-export function isUpdateWorkforce(element: ?IVertexModel): boolean {
+export function isExecuteFlow(element: ?IVertexModel): boolean {
   if (element == null) {
     return false;
   }

@@ -9,23 +9,30 @@
  */
 'use strict';
 
+import type {IVertexModel} from '../BaseVertext';
+
 import * as jointJS from 'jointjs';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
-import {IVertexModel, PORTS_GROUPS} from '../BaseVertext';
-import {VERTEX_COMMON_DISPLAY, getInitObject} from '../BaseVertext';
-import {getTriggerType} from '../actions/utils';
+import {
+  PORTS_GROUPS,
+  VERTEX_COMMON_DISPLAY,
+  getInitObject,
+} from '../BaseVertext';
 
-export const TRIGGER_TYPE_ID = 'trigger_start';
-export const TYPE = getTriggerType(TRIGGER_TYPE_ID);
+export const TYPE = 'ForEachLoopBlock';
 
-const FILL_COLOR = symphony.palette.AUTOMATION.ORANGE;
+const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
+
 const TOTAL_SIZE = 72;
 const PADDING = 5;
 const BORDER = 4;
+const BORDER_RADIUS = 16;
+
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
 const RADIUS = INNER_SIZE / 2;
 const INNER_CENTER = PADDING + RADIUS;
+
 const IMAGE_SIZE = 34;
 const IMAGE_CENTER = IMAGE_SIZE / 2;
 const IMAGE_PADDING = INNER_CENTER - IMAGE_CENTER;
@@ -37,14 +44,16 @@ const defaultProperties = {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
       strokeWidth: BORDER,
       fill: FILL_COLOR,
-      r: RADIUS,
-      cx: INNER_CENTER,
-      cy: INNER_CENTER,
-      refX2: PADDING,
+      rx: BORDER_RADIUS,
+      ry: BORDER_RADIUS,
+      width: INNER_SIZE,
+      height: INNER_SIZE,
+      refX2: 9,
+      refY2: 4,
     },
     image: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
-      xlinkHref: '/inventory/static/svg/BlockTriggerStart.svg',
+      xlinkHref: '/inventory/static/svg/BlockForEachLoop.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
       x: IMAGE_PADDING,
@@ -53,13 +62,13 @@ const defaultProperties = {
     },
   },
 };
-defaultProperties.attrs.label.text = `${fbt('Triggered', '')}`;
+defaultProperties.attrs.label.text = `${fbt('For each loop', '')}`;
 
 const markup = {
   markup: [
     ...VERTEX_COMMON_DISPLAY.markup,
     {
-      tagName: 'circle',
+      tagName: 'rect',
       selector: 'body',
     },
     {
@@ -69,25 +78,32 @@ const markup = {
   ],
 };
 
-const TriggerStartBaseClass = jointJS.dia.Element.define(
+const ForEachLoopBaseClass = jointJS.dia.Element.define(
   TYPE,
   defaultProperties,
   markup,
 );
 
-export default class TriggerStart
-  extends TriggerStartBaseClass
+export default class ForEachLoop
+  extends ForEachLoopBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(
       getInitObject(
         FILL_COLOR,
         {
-          [PORTS_GROUPS.INPUT]: {count: 1},
+          [PORTS_GROUPS.OUTPUT]: {count: 1},
         },
-        id,
+        id ? id : undefined,
       ),
     );
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }
+}
+
+export function isForEachLoop(element: ?IVertexModel): boolean {
+  if (element == null) {
+    return false;
+  }
+  return element.attributes.type === TYPE;
 }
