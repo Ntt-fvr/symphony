@@ -26,7 +26,7 @@ const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
-const BORDER = 6;
+const BORDER = 4;
 const BORDER_RADIUS = 16;
 
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;

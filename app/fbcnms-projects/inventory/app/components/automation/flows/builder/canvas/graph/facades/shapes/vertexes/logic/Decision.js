@@ -25,7 +25,7 @@ const FILL_COLOR = '#9360f7';
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
-const BORDER = 6;
+const BORDER = 4;
 const BORDER_RADIUS = 16;
 
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
@@ -82,7 +82,8 @@ const DecisionBaseClass = jointJS.dia.Element.define(
   markup,
 );
 
-export default class Decision extends DecisionBaseClass
+export default class Decision
+  extends DecisionBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(

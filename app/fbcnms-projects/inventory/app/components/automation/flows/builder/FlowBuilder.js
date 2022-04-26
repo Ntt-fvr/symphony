@@ -37,6 +37,9 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexGrow: 1,
     userSelect: 'none',
+    '& g.joint-element:hover': {
+      stroke: '#3A71EA',
+    },
   },
   workspace: {
     position: 'relative',

@@ -24,6 +24,7 @@ import {
   ListItemText,
   Typography,
 } from '@material-ui/core';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
@@ -35,13 +36,16 @@ const useStyles = makeStyles(theme => ({
     '& .MuiTypography-body1': {
       fontWeight: 500,
       lineHeight: '16px',
-      color: '#8895AD',
+      color: DARK.D400,
       letterSpacing: '1px',
       fontSize: 12,
       textTransform: 'uppercase',
     },
     '& .MuiSvgIcon-root': {
-      color: '#8895AD',
+      color: DARK.D400,
+    },
+    '& .MuiListItem-button:hover': {
+      backgroundColor: 'transparent',
     },
   },
   blockType: {

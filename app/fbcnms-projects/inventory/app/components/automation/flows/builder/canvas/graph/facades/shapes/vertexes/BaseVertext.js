@@ -17,11 +17,7 @@ import type {
   Size,
 } from '../../Helpers';
 import type {Graph} from '../../Graph';
-import type {
-  IBaseShapeAttributes,
-  IShape,
-  IShapeView,
-} from '../../shapes/BaseShape';
+import type {IBaseShapeAttributes, IShape, IShapeView} from '../BaseShape';
 import type {Paper} from '../../Paper';
 
 import symphony from '@symphony/design-system/theme/symphony';
@@ -35,12 +31,15 @@ export const VERTEX_COMMON_DISPLAY = {
     label: {
       ...defaultAttrProps,
       text: 'manual action',
-      textVerticalAnchor: 'middle',
-      textAnchor: 'center',
-      refY: '115%',
-      fontSize: 14,
+      textAnchor: 'middle',
+      refX: '50%',
+      refX2: 4,
+      refY: '100%',
+      refY2: 5,
+      fontSize: 12,
       fill: symphony.palette.secondary,
       strokeWidth: 0,
+      pointerEvents: 'none',
     },
   },
   defaultAttrProps,
@@ -51,16 +50,6 @@ export const VERTEX_COMMON_DISPLAY = {
     },
   ],
 };
-
-// export const DISPLAY_SETTINGS = {
-//   body: {
-//     stroke: {
-//       default: symphony.palette.white,
-//       hovered: symphony.palette.B700,
-//       selected: symphony.palette.primary,
-//     },
-//   },
-// };
 
 export type VertexDescriptor = $ReadOnly<{|
   id: string,
@@ -157,10 +146,12 @@ function getPortsArray(
   const inputPortsCount = settings?.count ?? 1;
   return Array(inputPortsCount).fill({group: groupName});
 }
+
 type InitObjectType = {
   ...KeyValuePair,
   id?: ?string,
 };
+
 export function getInitObject(
   backgroundColor: string,
   ports?: {

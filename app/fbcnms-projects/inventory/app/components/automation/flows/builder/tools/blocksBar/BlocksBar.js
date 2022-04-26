@@ -35,7 +35,11 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0, 1, 0, 2),
+    position: 'fixed',
+    top: 0,
+    width: 'inherit',
+    backgroundColor: '#FFF',
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
@@ -46,6 +50,23 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
+    '& .MuiDrawer-paper': {
+      overflow: 'hidden',
+      paddingTop: 64,
+      borderRightWidth: 0,
+      '&:hover': {
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+          width: 0,
+        },
+        '&::-webkit-scrollbar-thumb': {
+          border: '4px solid rgba(0, 0, 0, 0)',
+          backgroundClip: 'padding-box',
+          borderRadius: 9999,
+          backgroundColor: 'transparent',
+        },
+      },
+    },
   },
   drawerOpen: {
     width: drawerWidth,
@@ -61,6 +82,13 @@ const useStyles = makeStyles(theme => ({
     }),
     overflowX: 'hidden',
     width: '73px !important',
+  },
+  iconMenu: {
+    backgroundColor: 'transparent',
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: 'transparent',
+    },
   },
 }));
 
@@ -122,6 +150,9 @@ export default function BlocksBar(props: Props) {
       <div className={classes.toolbar}>
         {!open && title}
         <IconButton
+          disableTouchRipple={true}
+          color="secondary"
+          className={classes.iconMenu}
           onClick={() => {
             open ? setOpen(false) : setOpen(true);
           }}>
