@@ -7,21 +7,28 @@
  * @flow
  * @format
  */
-
 import Button from '@symphony/design-system/components/Button';
 import FlowBuilderButton from '../../utils/FlowBuilderButton';
 import FlowHeader from './FlowHeader';
+import IconButton from '@symphony/design-system/components/IconButton';
+import MenuTopBar from './MenuTopBar';
 import React, {useCallback} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
 import fbt from 'fbt';
+import {BLUE, DARK, GREEN} from '@symphony/design-system/theme/symphony';
+import {
+  CheckIcon,
+  GridIcon,
+  RedoIcon,
+  UndoIcon,
+} from '@symphony/design-system/icons';
 import {
   PREDICATES,
   useKeyboardShortcut,
 } from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
 import {SettingsIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-import {useCopyPaste} from '../widgets/copyPaste/CopyPasteContext';
 import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useFlowData} from '../../data/FlowDataContext';
@@ -32,14 +39,59 @@ import {useReadOnlyMode} from '../widgets/readOnlyModeContext';
 const useStyles = makeStyles(() => ({
   root: {
     top: 0,
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
   },
   right: {
     display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: 8,
+    '& div[class*="textVariant"]': {
+      height: 'auto',
+    },
   },
-  center: {
-    flexGrow: 1,
+  left: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    marginBottom: 8,
+    '& div[class*="textVariant"]': {
+      minHeight: 36,
+      minWidth: 36,
+      background:
+        'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF',
+      borderRadius: 4,
+      color: DARK.D900,
+      fill: DARK.D900,
+      '&:hover': {
+        color: BLUE.B600,
+        fill: BLUE.B600,
+        '& svg': {
+          color: BLUE.B600,
+        },
+      },
+    },
+    '& span[class*="buttonText"]': {
+      padding: 4,
+    },
   },
-  left: {},
+  marginLeft: {
+    marginLeft: '32px !important',
+  },
+  textVariant: {
+    padding: '0 8px',
+    color: DARK.D900,
+    fill: DARK.D900,
+    '&:hover': {
+      color: BLUE.B600,
+      fill: BLUE.B600,
+      '& span': {
+        color: BLUE.B600,
+      },
+    },
+  },
+  publish: {
+    backgroundColor: `${GREEN.G600} !important`,
+  },
 }));
 
 export default function TopBar() {
@@ -52,10 +104,10 @@ function BuilderTopBar() {
 
   const flow = useGraph();
   const selection = useGraphSelection();
-  const detailsPane = useDetailsPane();
   const flowData = useFlowData();
   const enqueueSnackbar = useEnqueueSnackbar();
-  const copyPaste = useCopyPaste();
+
+  const showGrid = useCallback(() => {}, [flow, flowData]);
 
   const deleteSelected = useCallback(() => {
     if (selection.selectedLink) {
@@ -106,40 +158,45 @@ function BuilderTopBar() {
       });
   }, [enqueueSnackbar, flowData]);
 
+  const isSaved = () => !flowData.flowDraft?.id || !flowData.hasChanges;
+
   return (
     <ToolsBar className={classes.root}>
       <div className={classes.left}>
-        <Button
-          onClick={deleteSelected}
-          disabled={
-            selection.selectedElements.length == 0 && !selection.selectedLink
-          }>
-          Delete
-        </Button>
-        <Button onClick={copyPaste.copy} disabled={!copyPaste.allowCopy}>
-          Copy
-        </Button>
-        <Button onClick={copyPaste.paste} disabled={!copyPaste.allowPaste}>
-          Paste
-        </Button>
-        <Button
-          onClick={copyPaste.duplicate}
-          disabled={!copyPaste.allowDuplicate}>
-          Duplicate
-        </Button>
+        <IconButton
+          tooltip={'Show Grid'}
+          skin={'inherit'}
+          onClick={showGrid}
+          icon={GridIcon}
+        />
+        <IconButton
+          className={classes.marginLeft}
+          tooltip={'Undo'}
+          skin={'inherit'}
+          icon={UndoIcon}
+        />
+        <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
       </div>
-      <div className={classes.center} />
+
       <div className={classes.right}>
-        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
         <Button
-          disabled={!flowData.flowDraft?.id || !flowData.hasChanges}
+          className={classes.textVariant}
+          variant={'text'}
+          skin={'inherit'}
+          color={'secondary'}
+          leftIcon={isSaved() ? CheckIcon : null}
+          disabled={isSaved()}
           onClick={save}>
-          {Strings.common.saveButton}
+          {isSaved() ? 'Saved' : Strings.common.saveButton}
         </Button>
-        <Button onClick={publish} tooltip="publish last saved version">{`${fbt(
-          'Publish',
-          '',
-        )}`}</Button>
+        <MenuTopBar />
+        <Button
+          onClick={publish}
+          tooltip="publish last saved version"
+          disabled={isSaved() && flowData.hasPublish}
+          className={flowData.hasPublish ? classes.publish : null}>
+          {flowData.hasPublish ? 'Published' : 'Publish'}
+        </Button>
       </div>
     </ToolsBar>
   );

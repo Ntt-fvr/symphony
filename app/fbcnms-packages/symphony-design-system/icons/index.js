@@ -9,6 +9,12 @@
  */
 
 export {default as AddIcon} from './Actions/AddIcon';
+export {default as GridIcon} from './Actions/GridIcon';
+export {default as UndoIcon} from './Actions/UndoIcon';
+export {default as RedoIcon} from './Actions/RedoIcon';
+export {default as DuplicateFlowIcon} from './Actions/DuplicateFlowIcon';
+export {default as MenuCloseIcon} from './Actions/MenuCloseIcon';
+export {default as EditFlowIcon} from './Actions/EditFlowIcon';
 export {default as AssignIcon} from './Actions/AssignIcon';
 export {default as Bookmark} from './Actions/Bookmark';
 export {default as BookmarkFilled} from './Actions/BookmarkFilled';

@@ -18,6 +18,7 @@ import {useReadOnlyMode} from '../widgets/readOnlyModeContext';
 const useStyles = makeStyles(() => ({
   graphContainer: {
     overflow: 'hidden',
+    /*position: 'relative',*/
   },
   canvasKeyboardShortcutsMagnet: {},
 }));

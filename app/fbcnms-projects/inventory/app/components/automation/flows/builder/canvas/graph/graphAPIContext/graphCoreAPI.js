@@ -86,6 +86,7 @@ function graphBindToContainer(containerElement: HTMLElement) {
     width: '100%',
     height: '100%',
     gridSize: 1,
+    drawGrid: true,
     background: {
       color: symphony.palette.D100,
     },
@@ -247,7 +248,7 @@ function graphAddCopiedBlocks(blocks: IBlock[]) {
 
 function graphDuplicateBlocks(
   blocks: IBlock[],
-  addToGraph?: boolean = true,
+  addToGraph?: boolean,
 ): IBlock[] {
   if (this.current == null) {
     return [];

@@ -19,7 +19,6 @@ import ForEachLoop from '../../canvas/graph/shapes/blocks/blockTypes/forEachLoop
 import GoToBlockType from '../../canvas/graph/shapes/blocks/blockTypes/goTo/GoToBlockType';
 import InvokeRestApiBlockType from '../../canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiBlockType';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
-import MenuCloseIcon from '@material-ui/icons/Menu';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import ParallelBlockType from '../../canvas/graph/shapes/blocks/blockTypes/Parallel/ParallelBlockType';
 import Timer from '../../canvas/graph/shapes/blocks/blockTypes/timer/TimerBlockType';
@@ -28,6 +27,8 @@ import TriggerWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTyp
 import UpdateInventoryBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateInventory/UpdateInventoryBlockType';
 import UpdateWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateWorkforce/UpdateWorkforceBlockType';
 import WaitSignalBlockType from '../../canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalBlockType';
+import {DARK} from '@symphony/design-system/theme/symphony';
+import {MenuCloseIcon} from '@symphony/design-system/icons';
 
 import fbt from 'fbt';
 import {Drawer, IconButton} from '@material-ui/core';
@@ -93,9 +94,19 @@ const useStyles = makeStyles(theme => ({
   },
   iconMenu: {
     backgroundColor: 'transparent',
+    color: DARK.D400,
+    fill: DARK.D400,
+    '& svg': {
+      fill: DARK.D400,
+    },
     '&:hover': {
       color: theme.palette.primary.main,
+      fill: theme.palette.primary.main,
       backgroundColor: 'transparent',
+      '& svg': {
+        color: theme.palette.primary.main,
+        fill: theme.palette.primary.main,
+      },
     },
   },
 }));
