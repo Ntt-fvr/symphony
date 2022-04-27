@@ -79,7 +79,7 @@ func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.Mu
 
 func EditPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	var deleted = true
-	var Id = 12345
+	var IDTest = 12345
 	_, err := mr.EditPropertyTypeValue(ctx, models.EditPropertyTypeValueInput{
 		ID:        &id1,
 		Name:      "propertyTypeValue_test_1.1",
@@ -87,7 +87,7 @@ func EditPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.M
 	})
 	require.NoError(t, err)
 	_, err = mr.EditPropertyTypeValue(ctx, models.EditPropertyTypeValueInput{
-		ID:        &Id,
+		ID:        &IDTest,
 		Name:      "propertyTypeValue_test_1.1",
 		IsDeleted: &deleted,
 	})
