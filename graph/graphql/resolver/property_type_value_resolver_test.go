@@ -7,7 +7,9 @@ package resolver_test
 import (
 	"context"
 	"testing"
+
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
