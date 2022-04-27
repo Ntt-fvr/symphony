@@ -10,7 +10,6 @@
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
-import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
@@ -116,12 +115,3 @@ const DialogConfirmChange = (props: Props) => {
 };
 
 export default DialogConfirmChange;
-/**
- * <Dialog
-      maxWidth="xs"
-      open={true}
-      onClose={onClose}
-      fullWidth={true}
-      className={classes.root}>
-       </Dialog>
- */
