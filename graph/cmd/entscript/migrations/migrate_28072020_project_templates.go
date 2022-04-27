@@ -17,6 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// nolint: funlen
 func createTemplatePropertyType(
 	ctx context.Context,
 	client *ent.Client,
