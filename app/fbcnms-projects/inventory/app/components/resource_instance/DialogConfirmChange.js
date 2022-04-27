@@ -48,19 +48,18 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   open?: boolean,
   onClose: () => void,
+  setIsDialogConfirmChange: any,
 |}>;
 
 const DialogConfirmChange = (props: Props) => {
-  const {onClose} = props;
+  const {onClose, setIsDialogConfirmChange} = props;
 
   const classes = useStyles();
+  const handleBack = () => {
+    setIsDialogConfirmChange(prev => !prev);
+  };
   return (
-    <Dialog
-      maxWidth="xs"
-      open={true}
-      onClose={onClose}
-      fullWidth={true}
-      className={classes.root}>
+    <div>
       <Grid container justify={'center'} style={{background: '#F5F7FC'}}>
         <StepperDate />
       </Grid>
@@ -99,7 +98,7 @@ const DialogConfirmChange = (props: Props) => {
           className={classes.option}
           variant="outlined"
           color="primary"
-          onClick={onClose}>
+          onClick={handleBack}>
           Back
         </Button>
         <Button
@@ -112,8 +111,17 @@ const DialogConfirmChange = (props: Props) => {
           Create Change Request
         </Button>
       </DialogActions>
-    </Dialog>
+    </div>
   );
 };
 
 export default DialogConfirmChange;
+/**
+ * <Dialog
+      maxWidth="xs"
+      open={true}
+      onClose={onClose}
+      fullWidth={true}
+      className={classes.root}>
+       </Dialog>
+ */

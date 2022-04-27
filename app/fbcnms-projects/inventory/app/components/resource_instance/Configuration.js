@@ -82,7 +82,7 @@ const Configuration = (props: Props) => {
     setIsDialogInformation(!isDialogInformation);
   };
   const handleClickOpenSelectDate = () => {
-    setIsDialogSelectDate(!isDialogSelectDate);
+    setIsDialogSelectDate(prev => !prev);
   };
   return (
     <Grid className={classes.root}>
@@ -202,7 +202,10 @@ const Configuration = (props: Props) => {
         <DialogInformation onClose={handleClickOpenInformation} />
       )}
       {isDialogSelectDate && (
-        <DialogSelectDate onClose={handleClickOpenSelectDate} />
+        <DialogSelectDate
+          isDialogSelectDate={isDialogSelectDate}
+          onClose={handleClickOpenSelectDate}
+        />
       )}
     </Grid>
   );

@@ -61,6 +61,9 @@ const useStyles = makeStyles(() => ({
     height: '24px',
     borderRadius: '50%',
     background: 'white',
+    '&:active': {
+      background: '#d9dce5',
+    },
   },
 }));
 const sideScroll = (
@@ -99,6 +102,7 @@ const TimeLine = () => {
                 sideScroll(contentWrapper.current, 25, 100, 200);
               }}
             />
+
             <IconButton
               icon={SkipPreviousIcon}
               className={classes.buttonKeypad}

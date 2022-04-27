@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   stepLabelRoot: {
-    color: symphony.palette.B800,
+    color: symphony.palette.B600,
   },
   stepItem: {
     minWidth: '180px',
@@ -44,7 +44,7 @@ const QontoConnector = withStyles({
   },
   active: {
     '& $line': {
-      borderColor: symphony.palette.B800,
+      borderColor: symphony.palette.B600,
     },
   },
   completed: {
@@ -53,7 +53,7 @@ const QontoConnector = withStyles({
     },
   },
   line: {
-    borderColor: symphony.palette.B800,
+    borderColor: symphony.palette.B600,
     borderTopWidth: 3,
     borderRadius: 1,
   },
@@ -61,7 +61,7 @@ const QontoConnector = withStyles({
 
 const TooltipTime = withStyles(() => ({
   tooltip: {
-    backgroundColor: symphony.palette.B800,
+    backgroundColor: symphony.palette.B600,
     color: 'white',
     maxWidth: 220,
     fontSize: '14px',
@@ -77,7 +77,7 @@ const TooltipTime = withStyles(() => ({
       top: '27px',
       left: '45px',
       borderTop: '10px solid',
-      color: symphony.palette.B800,
+      color: symphony.palette.B600,
       borderRight: '10px solid transparent',
       borderLeft: '10px solid transparent',
       borderBottom: '10px solid transparent',
