@@ -186,5 +186,4 @@ func TestAddPropertyTypeValueWithParentPropertyTypeValue(t *testing.T) {
 		ParentPropertyTypeValue: nil,
 	})
 	require.Error(t, err)
-
 }
