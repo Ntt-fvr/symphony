@@ -161,7 +161,6 @@ func createTemplatePropertyType(
 				}
 			}
 		}
-
 	}
 	return result, nil
 }
