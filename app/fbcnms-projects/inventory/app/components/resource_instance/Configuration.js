@@ -65,6 +65,11 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'end',
   },
+  pendingChange: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
 }));
 
 type Props = $ReadOnly<{||}>;
@@ -91,13 +96,12 @@ const Configuration = (props: Props) => {
         direction="row"
         justify="space-between"
         alignItems="center"
-        item
         xs={12}>
-        <Grid item xs={4} md={4} lg={6} container>
+        <Grid className={classes.pendingChange} sm={12} md={3} lg={4}>
           <Text
             variant={'body2'}
             weight={'medium'}
-            useEllipsis={false}
+            useEllipsis={true}
             style={{padding: '0 10px 0 0'}}>
             Pending requests:
           </Text>
@@ -106,36 +110,43 @@ const Configuration = (props: Props) => {
         <Grid
           container
           direction="row"
-          justify="space-between"
+          justify="flex-end"
           alignItems="center"
+          spacing={2}
           item
-          xs={8}
-          md={8}
-          lg={6}>
-          <Button
-            size="medium"
-            variant="outlined"
-            color="primary"
-            onClick={handleClickOpenInformation}>
-            <Text useEllipsis={true} color={'primary'}>
-              Sync Parameters
-            </Text>
-          </Button>
-          <Button
-            size="medium"
-            variant="outlined"
-            color="primary"
-            onClick={handleClickOpenSelectDate}>
-            <Text useEllipsis={true} color={'primary'}>
-              {' '}
-              Rollback
-            </Text>
-          </Button>
-          <Button size="medium" variant="outlined" color="primary">
-            <Text useEllipsis={true} color={'primary'}>
-              Request Change
-            </Text>
-          </Button>
+          sm={12}
+          md={9}
+          lg={8}>
+          <Grid item>
+            <Button
+              size="medium"
+              variant="outlined"
+              color="primary"
+              onClick={handleClickOpenInformation}>
+              <Text useEllipsis={true} color={'primary'}>
+                Sync Parameters
+              </Text>
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              size="medium"
+              variant="outlined"
+              color="primary"
+              onClick={handleClickOpenSelectDate}>
+              <Text useEllipsis={true} color={'primary'}>
+                {' '}
+                Rollback
+              </Text>
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button size="medium" variant="outlined" color="primary">
+              <Text useEllipsis={true} color={'primary'}>
+                Request Change
+              </Text>
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
       <Grid className={classes.timeLineContainer} item md={12}>

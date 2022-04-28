@@ -45,6 +45,7 @@ const useStyles = makeStyles(() => ({
       display: 'none',
     },
     overflowX: 'auto',
+    direction: 'rtl',
   },
   keypad: {
     width: '146px',

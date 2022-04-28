@@ -28,6 +28,9 @@ const useStyles = makeStyles(() => ({
   },
   stepLabelRoot: {
     color: symphony.palette.B600,
+    '&:active': {
+      color: symphony.palette.B300,
+    },
   },
   stepItem: {
     minWidth: '180px',
@@ -86,26 +89,26 @@ const TooltipTime = withStyles(() => ({
 }))(Tooltip);
 
 const steps = [
-  '1 JUN 2022',
-  '2 JUN 2022',
-  '3 JUN 2022',
-  '4 JUN 2022',
-  '5 JUN 2022',
-  '6 JUN 2022',
-  '7 JUN 2022',
-  '8 JUN 2022',
-  '9 JUN 2022',
-  '10 JUN 2022',
-  '11 JUN 2022',
-  '12 JUN 2022',
-  '13 JUN 2022',
-  '14 JUN 2022',
-  '15 JUN 2022',
-  '16 JUN 2022',
-  '17 JUN 2022',
-  '18 JUN 2022',
-  '19 JUN 2022',
-  '20 JUN 2022',
+  {date: '1 JUN 2022', id: '1'},
+  {date: '2 JUN 2022', id: '2'},
+  {date: '3 JUN 2022', id: '3'},
+  {date: '4 JUN 2022', id: '4'},
+  {date: '5 JUN 2022', id: '5'},
+  {date: '6 JUN 2022', id: '6'},
+  {date: '7 JUN 2022', id: '7'},
+  {date: '8 JUN 2022', id: '8'},
+  {date: '9 JUN 2022', id: '9'},
+  {date: '10 JUN 2022', id: '10'},
+  {date: '11 JUN 2022', id: '11'},
+  {date: '12 JUN 2022', id: '12'},
+  {date: '13 JUN 2022', id: '13'},
+  {date: '14 JUN 2022', id: '14'},
+  {date: '15 JUN 2022', id: '15'},
+  {date: '16 JUN 2022', id: '16'},
+  {date: '17 JUN 2022', id: '17'},
+  {date: '18 JUN 2022', id: '18'},
+  {date: '19 JUN 2022', id: '19'},
+  {date: '20 JUN 2022', id: '20'},
 ];
 
 type Props = $ReadOnly<{||}>;
@@ -115,19 +118,27 @@ const StepperTimeLine = (props: Props) => {
 
   const classes = useStyles();
 
+  const handleInfo = data => {
+    return data;
+  };
+
   return (
-    <Stepper alternativeLabel connector={<QontoConnector />}>
-      {steps.map((label, index) => (
-        <Step className={classes.stepItem} key={index}>
+    <Stepper
+      style={{direction: 'ltr'}}
+      alternativeLabel
+      connector={<QontoConnector />}>
+      {steps.map(label => (
+        <Step className={classes.stepItem} key={label.id}>
           <StepLabel
+            onClick={() => handleInfo(label)}
             className={classes.stepLabelRoot}
             icon={
-              <TooltipTime arrow={false} placement="top" title={label}>
+              <TooltipTime arrow={false} placement="top" title={label.date}>
                 <FiberManualRecordIcon className={classes.stepLabelRoot} />
               </TooltipTime>
             }>
             <Text variant={'body1'} color={'gray'} weight={'bold'}>
-              {label}
+              {label.date}
             </Text>
           </StepLabel>
         </Step>
