@@ -54,15 +54,12 @@ func TestAddRemovePropertyTypeValue(t *testing.T) {
 	RemovePropertyTypeValueTest(ctx, t, mr, id1, id2)
 }
 func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
-
 	propertyType := prepareBasicPropertyType(ctx, t, mr)
-
 	propertyTypeValue1, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_1",
 		PropertyType: propertyType.ID,
 	})
 	require.NoError(t, err)
-
 	propertyTypeValue2, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_2",
 		PropertyType: propertyType.ID,
