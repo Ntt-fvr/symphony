@@ -73,7 +73,7 @@ func (r mutationResolver) RemoveThreshold(ctx context.Context, id int) (int, err
 			}
 		}
 		if err := client.Rule.DeleteOne(rule).Exec(ctx); err != nil {
-			return id, errors.Wrap(err, "has ocurred error on process: %v")
+			return id, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 

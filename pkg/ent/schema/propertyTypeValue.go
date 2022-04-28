@@ -13,7 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-//PropertyTypeValue defines the property type schema
+// PropertyTypeValue defines the property type schema
 type PropertyTypeValue struct {
 	schema
 }

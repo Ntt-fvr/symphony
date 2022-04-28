@@ -64,16 +64,6 @@ func (Appointment) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),
 		),
 	)
-	/*return authz.NewPolicy(
-		authz.WithQueryRules(
-			authz.WorkOrderReadPolicyRule(),
-		),
-		authz.WithMutationRules(
-			authz.WorkOrderWritePolicyRule(),
-			authz.AllowWorkOrderOwnerWrite(),
-			authz.AllowWorkOrderAssigneeWrite(),
-		),
-	)*/
 }
 
 // Hooks returns Appointment hooks.

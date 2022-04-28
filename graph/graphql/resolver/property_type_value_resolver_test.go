@@ -8,7 +8,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
@@ -52,15 +54,12 @@ func TestAddRemovePropertyTypeValue(t *testing.T) {
 	RemovePropertyTypeValueTest(ctx, t, mr, id1, id2)
 }
 func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
-
 	propertyType := prepareBasicPropertyType(ctx, t, mr)
-
 	propertyTypeValue1, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_1",
 		PropertyType: propertyType.ID,
 	})
 	require.NoError(t, err)
-
 	propertyTypeValue2, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_2",
 		PropertyType: propertyType.ID,
@@ -77,7 +76,7 @@ func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.Mu
 
 func EditPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	var deleted = true
-	var Id = 12345
+	var IDTest = 12345
 	_, err := mr.EditPropertyTypeValue(ctx, models.EditPropertyTypeValueInput{
 		ID:        &id1,
 		Name:      "propertyTypeValue_test_1.1",
@@ -85,7 +84,7 @@ func EditPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.M
 	})
 	require.NoError(t, err)
 	_, err = mr.EditPropertyTypeValue(ctx, models.EditPropertyTypeValueInput{
-		ID:        &Id,
+		ID:        &IDTest,
 		Name:      "propertyTypeValue_test_1.1",
 		IsDeleted: &deleted,
 	})
@@ -98,5 +97,93 @@ func RemovePropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated
 	_, err = mr.RemovePropertyTypeValue(ctx, id2)
 	require.NoError(t, err)
 	_, err = mr.RemovePropertyTypeValue(ctx, id1)
+	require.Error(t, err)
+}
+
+func TestAddPropertyTypeValueWithPropertyType(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr := r.Mutation()
+	strValue, strIndex := "Foo", 7
+
+	strPropType := pkgmodels.PropertyTypeInput{
+		Name:        "str_prop",
+		Type:        "string",
+		Index:       &strIndex,
+		StringValue: &strValue,
+	}
+	PropertyTypes := []*pkgmodels.PropertyTypeInput{&strPropType}
+	project1, err := mr.CreateProjectType(ctx, models.AddProjectTypeInput{
+		Name:        "Project_test_1",
+		Description: new(string),
+		Properties:  PropertyTypes,
+		WorkOrders:  []*models.WorkOrderDefinitionInput{},
+	})
+	require.NoError(t, err)
+	propertyTypeID, err := project1.QueryProperties().Only(ctx)
+	require.NoError(t, err)
+	PropTypeValue, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
+		Name:         "example_type_a",
+		PropertyType: propertyTypeID.ID,
+	})
+	require.NoError(t, err)
+
+	strProp := PropTypeValue.QueryPropertyType().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
+
+	require.Equal(t, "str_prop", strProp.Name, "verifying string property type's name")
+	require.Equal(t, strValue, pointer.GetString(strProp.StringVal), "verifying string property type's String value")
+	require.Nil(t, strProp.IntVal, "verifying int property type's int value")
+	require.Equal(t, strIndex, strProp.Index, "verifying string property type's index")
+
+	_, err = PropTypeValue.PropertyType(ctx)
+	require.NoError(t, err)
+}
+
+func TestAddPropertyTypeValueWithParentPropertyTypeValue(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr := r.Mutation()
+	strValue, strIndex := "Foo", 7
+
+	strPropType := pkgmodels.PropertyTypeInput{
+		Name:        "str_prop",
+		Type:        "string",
+		Index:       &strIndex,
+		StringValue: &strValue,
+	}
+	PropertyTypes := []*pkgmodels.PropertyTypeInput{&strPropType}
+	project1, err := mr.CreateProjectType(ctx, models.AddProjectTypeInput{
+		Name:        "Project_test_1",
+		Description: new(string),
+		Properties:  PropertyTypes,
+		WorkOrders:  []*models.WorkOrderDefinitionInput{},
+	})
+	require.NoError(t, err)
+	propertyTypeID, err := project1.QueryProperties().Only(ctx)
+	require.NoError(t, err)
+	parentPropTypeValue := []string{"prueba1", "prueba2"}
+	_, err = mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
+		Name:                    "example_type_a",
+		PropertyType:            propertyTypeID.ID,
+		ParentPropertyTypeValue: parentPropTypeValue,
+	})
+	require.NoError(t, err)
+
+	_, err = mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
+		Name:                    "example_type_b",
+		PropertyType:            propertyTypeID.ID,
+		ParentPropertyTypeValue: nil,
+	})
+	require.NoError(t, err)
+
+	_, err = mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
+		Name:                    "example_type_b",
+		PropertyType:            propertyTypeID.ID,
+		ParentPropertyTypeValue: nil,
+	})
 	require.Error(t, err)
 }

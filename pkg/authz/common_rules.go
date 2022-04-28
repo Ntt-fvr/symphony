@@ -126,7 +126,6 @@ func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, work
 				}
 			}
 		}
-		return false
 	} else {
 		switch r.IsAllowed {
 		case models.PermissionValueYes:
@@ -147,9 +146,8 @@ func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, work
 				}
 			}
 		}
-		return false
 	}
-
+	return false
 }
 
 func cudBasedRule(cud *models.Cud, m ent.Mutation) error {

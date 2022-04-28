@@ -20,6 +20,7 @@ const (
 	PropertyTypeParentProject   PropertyTypeParent = "PROJECT"
 )
 
+// nolint: funlen
 func createTemplatePropertyType(
 	ctx context.Context,
 	client *ent.Client,
@@ -160,8 +161,6 @@ func createTemplatePropertyType(
 				}
 			}
 		}
-
 	}
-
 	return result, nil
 }
