@@ -53,14 +53,14 @@ const useStyles = makeStyles(() => ({
   },
   gridRight: {
     '& div': {
-      padding: '0'
-    }
+      padding: '0',
+    },
   },
   checkbox: {
     textAlign: 'center',
     '& div': {
-      justifyContent: 'center'
-    }
+      justifyContent: 'center',
+    },
   },
   selectMenu: {
     height: '14px',
@@ -294,4 +294,3 @@ const ExperimentalPropertyTypesTable = ({
 };
 
 export default ExperimentalPropertyTypesTable;
- 
