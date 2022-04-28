@@ -28,38 +28,47 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     width: '100%',
-    flexGrow: 1,
     marginBottom: '20px',
+    '& .MuiAccordionSummary-root': {
+      padding: '0 26px',
+    },
   },
 }));
 
 type Props = $ReadOnly<{|
   mode?: string,
-  onResourceSelected?: () => void,
   onAddResource?: () => void,
   onAddResourceSlot: () => void,
+  onEditResource: () => void,
+  onResourceSelected: (selectedResourceId: string) => void,
+  onCancel: () => void,
 |}>;
 
 const ResourceCard = (props: Props) => {
-  const {onResourceSelected, onAddResource, mode, onAddResourceSlot} = props;
+  const {
+    mode,
+    onAddResource,
+    onEditResource,
+    onResourceSelected,
+    onAddResourceSlot,
+
+    onCancel,
+  } = props;
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
 
   switch (mode) {
     case 'add':
-      return (
-        <AddEditResourceInLocation
-          closeFormAddEdit={() => setOpenDialog(false)}
-        />
-      );
+      return <AddEditResourceInLocation closeFormAddEdit={onCancel} />;
     case 'edit':
+      return <AddEditResourceInLocation closeFormAddEdit={onCancel} />;
+    case 'show':
       return (
-        <AddEditResourceInLocation
-          closeFormAddEdit={() => setOpenDialog(false)}
+        <ResourcePropertiesCard
+          onAddResourceSlot={onAddResourceSlot}
+          onEditResource={onEditResource}
         />
       );
-    case 'show':
-      return <ResourcePropertiesCard onAddResourceSlot={onAddResourceSlot} />;
     default:
       return (
         <div className={classes.root}>
@@ -94,12 +103,14 @@ const ResourceCard = (props: Props) => {
                   <Typography color="primary">Delete</Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Divider variant="middle" />
+                  <Divider variant="middle" style={{margin: 0}} />
                 </Grid>
                 <Grid item xs={3}>
-                  <Typography color="primary" onClick={onResourceSelected}>
-                    OLT_10394
-                  </Typography>
+                  <Button
+                    variant="text"
+                    onClick={() => onResourceSelected('123456')}>
+                    <Typography>OLT_1212323434</Typography>
+                  </Button>
                 </Grid>
                 <Grid item xs={3}>
                   <Typography>OLT_Nokia_H20</Typography>
@@ -122,6 +133,7 @@ const ResourceCard = (props: Props) => {
               openModal={openDialog}
               onClose={() => setOpenDialog(false)}
               saveModal={onAddResource}
+              titleSteps={['Resource type', 'Resource specification']}
             />
           )}
         </div>

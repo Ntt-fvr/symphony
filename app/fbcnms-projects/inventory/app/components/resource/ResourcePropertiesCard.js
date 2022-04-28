@@ -8,13 +8,13 @@
  * @format
  */
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import Button from '@material-ui/core/Button';
+import Button from '@symphony/design-system/components/Button';
 
 import ActionButton from '@fbcnms/ui/components/ActionButton';
+import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import ModalSteper from './ModalSteper';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -26,18 +26,25 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    height: 'calc(100% - 92px)',
+  },
   tabsContainer: {
     marginBottom: '16px',
     backgroundColor: 'white',
   },
   gridContent: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#EDF0F9',
+    borderRadius: '4px',
+    padding: '14px 22px',
+    marginRight: '30px',
     '&:hover': {
       backgroundColor: theme.palette.grey[50],
       boxShadow: theme.shadows[1],
     },
-    padding: '10px',
-    marginRight: '30px',
   },
   equipmentDetails: {
     marginTop: '20px',
@@ -46,16 +53,37 @@ const useStyles = makeStyles(theme => ({
 
 type Props = $ReadOnly<{|
   onAddResourceSlot: () => void,
+  onEditResource: () => void,
 |}>;
 
 const ResourcePropertiesCard = (props: Props) => {
-  const {onAddResourceSlot} = props;
+  const {onAddResourceSlot, onEditResource} = props;
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
-    <>
+    <div className={classes.root}>
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        style={{marginBottom: '16px'}}>
+        <Breadcrumbs
+          breadcrumbs={[
+            {
+              id: 'Location',
+              name: 'Location',
+            },
+            {
+              id: `OLT_1212323434`,
+              name: 'OLT_1212323434',
+            },
+          ]}
+          size="large"
+        />
+        <Button onClick={onEditResource}>Edit Resource</Button>
+      </Grid>
       <Tabs
         className={classes.tabsContainer}
         value={selectedTab}
@@ -133,6 +161,7 @@ const ResourcePropertiesCard = (props: Props) => {
                       action={'add'}
                       onClick={() => {
                         onAddResourceSlot;
+                        setOpenDialog(true);
                       }}
                     />
                   </Grid>
@@ -146,6 +175,7 @@ const ResourcePropertiesCard = (props: Props) => {
                       action={'add'}
                       onClick={() => {
                         onAddResourceSlot;
+                        setOpenDialog(true);
                       }}
                     />
                   </Grid>
@@ -165,10 +195,11 @@ const ResourcePropertiesCard = (props: Props) => {
             openModal={openDialog}
             onClose={() => setOpenDialog(false)}
             saveModal={onAddResourceSlot}
+            titleSteps={['Resource specification']}
           />
         )}
       </>
-    </>
+    </div>
   );
 };
 

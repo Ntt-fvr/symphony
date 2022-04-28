@@ -196,7 +196,7 @@ const AddEditResourceInLocation = (props: Props) => {
                 color="primary"
                 className={classes.buttons}
                 style={{marginRight: '1rem'}}
-                onClick={() => closeFormAddEdit}>
+                onClick={closeFormAddEdit}>
                 Cancel
               </Button>
             </Grid>
