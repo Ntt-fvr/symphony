@@ -12,39 +12,143 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"go.uber.org/zap"
 )
 
 func createTemplatePropertyType(
 	ctx context.Context,
 	client *ent.Client,
-	pt *ent.PropertyType,
+	pt []*ent.PropertyType,
 	id int,
-) (*ent.PropertyType, error) {
-	result, err := client.PropertyType.Create().
-		SetName(pt.Name).
-		SetType(pt.Type).
-		SetNodeType(pt.NodeType).
-		SetIndex(pt.Index).
-		SetCategory(pt.Category).
-		SetNillableStringVal(pt.StringVal).
-		SetNillableIntVal(pt.IntVal).
-		SetNillableBoolVal(pt.BoolVal).
-		SetNillableFloatVal(pt.FloatVal).
-		SetNillableLatitudeVal(pt.LatitudeVal).
-		SetNillableLongitudeVal(pt.LongitudeVal).
-		SetIsInstanceProperty(pt.IsInstanceProperty).
-		SetNillableRangeFromVal(pt.RangeFromVal).
-		SetNillableRangeToVal(pt.RangeToVal).
-		SetEditable(pt.Editable).
-		SetMandatory(pt.Mandatory).
-		SetDeleted(pt.Deleted).
-		SetProjectTemplateID(id).
-		Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("creating property type: %w", err)
+) ([]*ent.PropertyType, error) {
+	var results []*ent.PropertyType
+	for _, propertyType := range pt {
+		prop, err1 := propertyType.ParentPropertyType(ctx)
+		if err1 != nil {
+			return nil, fmt.Errorf("error querying the ParentPropertyType: %w", err1)
+		}
+		if prop == nil {
+			result, err := client.PropertyType.Create().
+				SetName(propertyType.Name).
+				SetType(propertyType.Type).
+				SetNodeType(propertyType.NodeType).
+				SetIndex(propertyType.Index).
+				SetCategory(propertyType.Category).
+				SetNillableStringVal(propertyType.StringVal).
+				SetNillableIntVal(propertyType.IntVal).
+				SetNillableBoolVal(propertyType.BoolVal).
+				SetNillableFloatVal(propertyType.FloatVal).
+				SetNillableLatitudeVal(propertyType.LatitudeVal).
+				SetNillableLongitudeVal(propertyType.LongitudeVal).
+				SetIsInstanceProperty(propertyType.IsInstanceProperty).
+				SetNillableRangeFromVal(propertyType.RangeFromVal).
+				SetNillableRangeToVal(propertyType.RangeToVal).
+				SetEditable(propertyType.Editable).
+				SetMandatory(propertyType.Mandatory).
+				SetDeleted(propertyType.Deleted).
+				SetProjectTemplateID(id).
+				Save(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("error creating property type: %w", err)
+			}
+			propertyTypeValues := client.PropertyTypeValue.Query().Where(
+				propertytypevalue.HasPropertyTypeWith(propertytype.ID(propertyType.ID)),
+			).AllX(ctx)
+			if len(propertyTypeValues) > 0 {
+				for _, propValue := range propertyTypeValues {
+					p2 := propValue.QueryParentPropertyTypeValue().AllX(ctx)
+					var parentDePropertyValueList []int
+					for _, propValueTraveled := range p2 {
+						parentDePropertyValues, _ := client.PropertyTypeValue.Query().Where(
+							propertytypevalue.NameEQ(propValueTraveled.Name),
+							propertytypevalue.HasPropertyTypeWith(propertytype.ID(result.ID)),
+						).Only(ctx)
+						if parentDePropertyValues != nil {
+							parentDePropertyValueList = append(parentDePropertyValueList, parentDePropertyValues.ID)
+						}
+					}
+					_, err3 := client.PropertyTypeValue.Create().
+						SetName(propValue.Name).
+						SetPropertyTypeID(result.ID).
+						SetNillableDeleted(&propValue.Deleted).
+						AddParentPropertyTypeValueIDs(parentDePropertyValueList...).
+						Save(ctx)
+					if err3 != nil {
+						return nil, fmt.Errorf("error creating property type values: %w", err3)
+					}
+				}
+			}
+			results = append(results, result)
+		} else if prop != nil {
+			var propertyOriginal *ent.PropertyType
+			for _, dependenceProp := range results {
+				propertyOriginal, _ = client.Debug().PropertyType.Query().Where(
+					propertytype.NameEQ(prop.Name),
+					propertytype.ID(dependenceProp.ID),
+				).Only(ctx)
+				if propertyOriginal != nil {
+					break
+				}
+			}
+			dependenceProperty := client.PropertyType.Create().
+				SetName(propertyType.Name).
+				SetType(propertyType.Type).
+				SetNodeType(propertyType.NodeType).
+				SetIndex(propertyType.Index).
+				SetCategory(propertyType.Category).
+				SetNillableStringVal(propertyType.StringVal).
+				SetNillableIntVal(propertyType.IntVal).
+				SetNillableBoolVal(propertyType.BoolVal).
+				SetNillableFloatVal(propertyType.FloatVal).
+				SetNillableLatitudeVal(propertyType.LatitudeVal).
+				SetNillableLongitudeVal(propertyType.LongitudeVal).
+				SetIsInstanceProperty(propertyType.IsInstanceProperty).
+				SetNillableRangeFromVal(propertyType.RangeFromVal).
+				SetNillableRangeToVal(propertyType.RangeToVal).
+				SetEditable(propertyType.Editable).
+				SetMandatory(propertyType.Mandatory).
+				SetDeleted(propertyType.Deleted).
+				SetParentPropertyTypeID(propertyOriginal.ID).
+				SetProjectTemplateID(id)
+			resultDependence, err := dependenceProperty.Save(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("creating property type: %w", err)
+			}
+
+			propertyTypeValues := client.PropertyTypeValue.Query().Where(
+				propertytypevalue.HasPropertyTypeWith(propertytype.ID(propertyType.ID)),
+			).AllX(ctx)
+			if len(propertyTypeValues) > 0 {
+				for _, propValue := range propertyTypeValues {
+					p2 := propValue.QueryParentPropertyTypeValue().AllX(ctx)
+					var parentDePropertyValueList []int
+					for _, propValueTraveled := range p2 {
+						parentDePropertyValues, _ := client.Debug().PropertyTypeValue.Query().Where(
+							propertytypevalue.NameEQ(propValueTraveled.Name),
+							propertytypevalue.HasPropertyTypeWith(propertytype.ID(propertyOriginal.ID)),
+						).Only(ctx)
+						if parentDePropertyValues != nil {
+							parentDePropertyValueList = append(parentDePropertyValueList, parentDePropertyValues.ID)
+						}
+					}
+					_, err3 := client.PropertyTypeValue.Create().
+						SetName(propValue.Name).
+						SetPropertyTypeID(resultDependence.ID).
+						SetNillableDeleted(&propValue.Deleted).
+						AddParentPropertyTypeValueIDs(parentDePropertyValueList...).
+						Save(ctx)
+					if err3 != nil {
+						return nil, fmt.Errorf("error creating property type values: %w", err3)
+					}
+				}
+			}
+		}
+
 	}
-	return result, nil
+
+	return results, nil
 }
 
 // AddProjectTemplate adds project template to existing project
@@ -70,13 +174,12 @@ func addProjectTemplate(
 	if err != nil {
 		return nil, nil, fmt.Errorf("creating project template: %w", err)
 	}
-	for _, pt := range projectType.Edges.Properties {
-		npt, err := createTemplatePropertyType(ctx, client, pt, tem.ID)
-		if err != nil {
-			return nil, nil, fmt.Errorf("creating property type: %w", err)
-		}
-		typeToType[pt.ID] = npt.ID
+
+	_, err = createTemplatePropertyType(ctx, client, projectType.Edges.Properties, tem.ID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("creating property type: %w", err)
 	}
+
 	for _, wo := range projectType.Edges.WorkOrders {
 		wot, err := wo.QueryType().Only(ctx)
 		if err != nil {

@@ -316,14 +316,15 @@ type AddOrganizationInput struct {
 }
 
 type AddPermissionsPolicyInput struct {
-	Name            string                         `json:"name"`
-	Description     *string                        `json:"description"`
-	IsGlobal        *bool                          `json:"isGlobal"`
-	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
-	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
-	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
-	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
-	Groups          []int                          `json:"groups"`
+	Name              string                         `json:"name"`
+	Description       *string                        `json:"description"`
+	IsGlobal          *bool                          `json:"isGlobal"`
+	IsMulticontractor *bool                          `json:"isMulticontractor"`
+	InventoryInput    *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput    *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput   *models1.AutomationPolicyInput `json:"automationInput"`
+	AssuranceInput    *models1.AssurancePolicyInput  `json:"assuranceInput"`
+	Groups            []int                          `json:"groups"`
 }
 
 type AddProjectInput struct {
@@ -419,6 +420,12 @@ type AddResourceSpecificationRelationShipListInput struct {
 type AddResourceSpecificationRelationshipInput struct {
 	Name                  string `json:"name"`
 	ResourceSpecification int    `json:"resourceSpecification"`
+}
+
+type AddResourceSpecificationRelationshipList struct {
+	Name                                   string                                         `json:"name"`
+	ResourceSpecification                  int                                            `json:"resourceSpecification"`
+	ResourceSpecificationRelationshipItems []*ResourceSpecificationRelationshipItemsInput `json:"resourceSpecificationRelationshipItems"`
 }
 
 type AddResourceTypeInput struct {
@@ -948,15 +955,16 @@ type EditParameterCatalogInput struct {
 }
 
 type EditPermissionsPolicyInput struct {
-	ID              int                            `json:"id"`
-	Name            *string                        `json:"name"`
-	Description     *string                        `json:"description"`
-	IsGlobal        *bool                          `json:"isGlobal"`
-	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
-	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
-	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
-	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
-	Groups          []int                          `json:"groups"`
+	ID                int                            `json:"id"`
+	Name              *string                        `json:"name"`
+	Description       *string                        `json:"description"`
+	IsGlobal          *bool                          `json:"isGlobal"`
+	IsMulticontractor *bool                          `json:"isMulticontractor"`
+	InventoryInput    *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput    *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput   *models1.AutomationPolicyInput `json:"automationInput"`
+	AssuranceInput    *models1.AssurancePolicyInput  `json:"assuranceInput"`
+	Groups            []int                          `json:"groups"`
 }
 
 type EditProjectInput struct {
@@ -983,6 +991,12 @@ type EditPropertyCategoryInput struct {
 	Name               string `json:"name"`
 	Index              int    `json:"index"`
 	ParameterCatalogID int    `json:"parameterCatalogId"`
+}
+
+type EditPropertyTypeValueInput struct {
+	ID        *int   `json:"id"`
+	Name      string `json:"name"`
+	IsDeleted *bool  `json:"isDeleted"`
 }
 
 type EditRecommendationsCategoryInput struct {
@@ -1433,6 +1447,7 @@ type ProjectFilterInput struct {
 	MaxDepth      *int                      `json:"maxDepth"`
 	StringSet     []string                  `json:"stringSet"`
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
+	TimeValue     *time.Time                `json:"timeValue"`
 }
 
 // Model for properties group by property categories
@@ -1444,19 +1459,30 @@ type PropertiesByCategories struct {
 }
 
 type PropertyInput struct {
-	ID                 *int     `json:"id"`
-	PropertyTypeID     int      `json:"propertyTypeID"`
-	StringValue        *string  `json:"stringValue"`
-	IntValue           *int     `json:"intValue"`
-	BooleanValue       *bool    `json:"booleanValue"`
-	FloatValue         *float64 `json:"floatValue"`
-	LatitudeValue      *float64 `json:"latitudeValue"`
-	LongitudeValue     *float64 `json:"longitudeValue"`
-	RangeFromValue     *float64 `json:"rangeFromValue"`
-	RangeToValue       *float64 `json:"rangeToValue"`
-	NodeIDValue        *int     `json:"nodeIDValue"`
-	IsEditable         *bool    `json:"isEditable"`
-	IsInstanceProperty *bool    `json:"isInstanceProperty"`
+	ID                   *int             `json:"id"`
+	PropertyTypeID       int              `json:"propertyTypeID"`
+	StringValue          *string          `json:"stringValue"`
+	IntValue             *int             `json:"intValue"`
+	BooleanValue         *bool            `json:"booleanValue"`
+	FloatValue           *float64         `json:"floatValue"`
+	LatitudeValue        *float64         `json:"latitudeValue"`
+	LongitudeValue       *float64         `json:"longitudeValue"`
+	RangeFromValue       *float64         `json:"rangeFromValue"`
+	RangeToValue         *float64         `json:"rangeToValue"`
+	NodeIDValue          *int             `json:"nodeIDValue"`
+	IsEditable           *bool            `json:"isEditable"`
+	IsInstanceProperty   *bool            `json:"isInstanceProperty"`
+	DependenceProperties []*PropertyInput `json:"dependenceProperties"`
+	PropertyTypeValueID  *int             `json:"propertyTypeValueID"`
+}
+
+type PropertyTypeValueFilterInput struct {
+	FilterType  PropertyTypeValueFilterType `json:"filterType"`
+	Operator    enum.FilterOperator         `json:"operator"`
+	StringValue *string                     `json:"stringValue"`
+	IDSet       []int                       `json:"idSet"`
+	MaxDepth    *int                        `json:"maxDepth"`
+	StringSet   []string                    `json:"stringSet"`
 }
 
 type PublishFlowInput struct {
@@ -1541,6 +1567,10 @@ type ResourceSpecificationRelationshipFilterInput struct {
 	IDSet       []int                                       `json:"idSet"`
 	MaxDepth    *int                                        `json:"maxDepth"`
 	StringSet   []string                                    `json:"stringSet"`
+}
+
+type ResourceSpecificationRelationshipItemsInput struct {
+	IDDestino *int `json:"id_destino"`
 }
 
 type ResourceTypeFilterInput struct {
@@ -2902,12 +2932,13 @@ func (e PermissionsPolicyFilterType) MarshalGQL(w io.Writer) {
 type ProjectFilterType string
 
 const (
-	ProjectFilterTypeProjectName     ProjectFilterType = "PROJECT_NAME"
-	ProjectFilterTypeProjectOwnedBy  ProjectFilterType = "PROJECT_OWNED_BY"
-	ProjectFilterTypeProjectType     ProjectFilterType = "PROJECT_TYPE"
-	ProjectFilterTypeLocationInst    ProjectFilterType = "LOCATION_INST"
-	ProjectFilterTypeProjectPriority ProjectFilterType = "PROJECT_PRIORITY"
-	ProjectFilterTypeProperty        ProjectFilterType = "PROPERTY"
+	ProjectFilterTypeProjectName         ProjectFilterType = "PROJECT_NAME"
+	ProjectFilterTypeProjectOwnedBy      ProjectFilterType = "PROJECT_OWNED_BY"
+	ProjectFilterTypeProjectType         ProjectFilterType = "PROJECT_TYPE"
+	ProjectFilterTypeLocationInst        ProjectFilterType = "LOCATION_INST"
+	ProjectFilterTypeProjectPriority     ProjectFilterType = "PROJECT_PRIORITY"
+	ProjectFilterTypeProperty            ProjectFilterType = "PROPERTY"
+	ProjectFilterTypeProjectCreationDate ProjectFilterType = "PROJECT_CREATION_DATE"
 )
 
 var AllProjectFilterType = []ProjectFilterType{
@@ -2917,11 +2948,12 @@ var AllProjectFilterType = []ProjectFilterType{
 	ProjectFilterTypeLocationInst,
 	ProjectFilterTypeProjectPriority,
 	ProjectFilterTypeProperty,
+	ProjectFilterTypeProjectCreationDate,
 }
 
 func (e ProjectFilterType) IsValid() bool {
 	switch e {
-	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst, ProjectFilterTypeProjectPriority, ProjectFilterTypeProperty:
+	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst, ProjectFilterTypeProjectPriority, ProjectFilterTypeProperty, ProjectFilterTypeProjectCreationDate:
 		return true
 	}
 	return false
@@ -2945,6 +2977,45 @@ func (e *ProjectFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ProjectFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type PropertyTypeValueFilterType string
+
+const (
+	PropertyTypeValueFilterTypeName PropertyTypeValueFilterType = "NAME"
+)
+
+var AllPropertyTypeValueFilterType = []PropertyTypeValueFilterType{
+	PropertyTypeValueFilterTypeName,
+}
+
+func (e PropertyTypeValueFilterType) IsValid() bool {
+	switch e {
+	case PropertyTypeValueFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e PropertyTypeValueFilterType) String() string {
+	return string(e)
+}
+
+func (e *PropertyTypeValueFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PropertyTypeValueFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PropertyTypeValueFilterType", str)
+	}
+	return nil
+}
+
+func (e PropertyTypeValueFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -3265,6 +3336,8 @@ const (
 	ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
 	ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_LOCATION_TYPE"
 	ResourceTypeRelationshipFilterTypeResourceRelationshipType         ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
+	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeA        ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE_A"
+	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeB        ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE_B"
 	ResourceTypeRelationshipFilterTypeResourceRelationshipResource     ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE"
 )
 
@@ -3272,12 +3345,14 @@ var AllResourceTypeRelationshipFilterType = []ResourceTypeRelationshipFilterType
 	ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity,
 	ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType,
 	ResourceTypeRelationshipFilterTypeResourceRelationshipType,
+	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeA,
+	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeB,
 	ResourceTypeRelationshipFilterTypeResourceRelationshipResource,
 }
 
 func (e ResourceTypeRelationshipFilterType) IsValid() bool {
 	switch e {
-	case ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType, ResourceTypeRelationshipFilterTypeResourceRelationshipType, ResourceTypeRelationshipFilterTypeResourceRelationshipResource:
+	case ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType, ResourceTypeRelationshipFilterTypeResourceRelationshipType, ResourceTypeRelationshipFilterTypeResourceRelationshipTypeA, ResourceTypeRelationshipFilterTypeResourceRelationshipTypeB, ResourceTypeRelationshipFilterTypeResourceRelationshipResource:
 		return true
 	}
 	return false

@@ -36,11 +36,9 @@ func addProjectTemplate(
 	if err != nil {
 		return nil, fmt.Errorf("creating project template: %w", err)
 	}
-	for _, pt := range projectType.Edges.Properties {
-		_, err := createTemplatePropertyType(ctx, client, pt, tem.ID, PropertyTypeParentProject)
-		if err != nil {
-			return nil, fmt.Errorf("creating property type: %w", err)
-		}
+	_, err = createTemplatePropertyType(ctx, client, projectType.Edges.Properties, tem.ID, PropertyTypeParentProject)
+	if err != nil {
+		return nil, fmt.Errorf("creating property type: %w", err)
 	}
 	for _, wo := range projectType.Edges.WorkOrders {
 		wot, err := wo.QueryType().Only(ctx)

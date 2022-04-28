@@ -50,7 +50,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.counter_family">psym.api.counter_family module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.counter_formula">psym.api.counter_formula module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.customer">psym.api.customer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-psym.api.document_category">psym.api.document_category module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.domain">psym.api.domain module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.equipment">psym.api.equipment module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-psym.api.equipment_type">psym.api.equipment_type module</a></li>
@@ -101,7 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym.client">psym.client module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym.config">psym.config module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym.exceptions">psym.exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="psym.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psym.html#module-psym">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">psym.api package</a><ul>
@@ -112,7 +111,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.counter_family">psym.api.counter_family module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.counter_formula">psym.api.counter_formula module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.customer">psym.api.customer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-psym.api.document_category">psym.api.document_category module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.domain">psym.api.domain module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.equipment">psym.api.equipment module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-psym.api.equipment_type">psym.api.equipment_type module</a></li>
@@ -240,8 +238,8 @@
 <p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_alarm_status</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_alarm_status</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;alarm_status&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_alarm_status</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -311,7 +309,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">remove_alarm_status</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">remove_alarm_status</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_alarm_status</span><span class="p">(</span><span class="n">alarmStatus</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -335,10 +333,14 @@
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_comparatores</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_comparator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_comparator&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_comparator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_comparator</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;comparator&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_comparator</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -362,11 +364,15 @@
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">comparator_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_comparator</span><span class="p">(</span>
-<span class="n">comparator</span><span class="o">=</span><span class="n">new_comparator</span><span class="p">,</span>
-<span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;comparator_edited&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">comparator_edited</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alarm_statu_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_comparator</span><span class="p">(</span><span class="n">comparator</span><span class="o">=</span><span class="n">comparator</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_comparator&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_comparator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_comparator</span><span class="p">(</span>
+    <span class="n">comparator</span><span class="o">=</span><span class="n">comparator</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;comparator&quot;</span><span class="p">,</span>
+
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -384,7 +390,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">comparators</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_comparators</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">comparatores</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_comparators</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">comparator</span> <span class="ow">in</span> <span class="n">comparators</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">comparator</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -404,7 +410,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">remove_comparator</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">remove_comparator</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_comparator</span><span class="p">(</span><span class="n">comparator</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -451,7 +457,6 @@
     <span class="n">counterFamily</span><span class="o">=</span><span class="n">counter_family</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
     <span class="n">vendor</span><span class="o">=</span> <span class="n">vendor</span><span class="o">.</span><span class="n">id</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -524,7 +529,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_counter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_counter</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -548,10 +553,14 @@
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_counter_family</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter_family</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_counter_family&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_counter_family</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter_family</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;counter_family&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_counter_family</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -575,11 +584,15 @@
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counter_family_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_counter_family</span><span class="p">(</span>
-    <span class="n">counter_family</span><span class="o">=</span><span class="n">new_counter_family</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;counter_family_edited&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counter_family_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_counter_family</span><span class="p">(</span><span class="n">counter_family</span><span class="o">=</span><span class="n">counterFamily</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_counter_family&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_counter_family</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_counter_family</span><span class="p">(</span>
+    <span class="n">counter_family</span><span class="o">=</span><span class="n">counterFamily</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;counter_family&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">counter_family_edited</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -597,7 +610,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">get_counter_familiies</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_counter_families</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">get_counter_familiies</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_counter_familiies</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">get_counter_family</span> <span class="ow">in</span> <span class="n">get_counter_familiies</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">get_counter_familiy</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -617,7 +630,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">remove_counterFamilyclient</span><span class="o">.</span><span class="n">remove_counter_family</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_counter_familiy</span><span class="p">(</span><span class="n">counterFamily</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -646,65 +659,12 @@
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counter_family</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter_family</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;counter_family&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">new_vendor</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_vendor</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;vendor&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">counter</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;counter&quot;</span><span class="p">,</span>
-    <span class="n">externalID</span><span class="o">=</span><span class="s2">&quot;new counter&quot;</span><span class="p">,</span>
-    <span class="n">networkManagerSystem</span><span class="o">=</span><span class="s2">&quot;counter&quot;</span><span class="p">,</span>
-    <span class="n">counterFamily</span><span class="o">=</span><span class="n">counter_family</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">vendor</span><span class="o">=</span> <span class="n">vendor</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">Kpi</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Kpi</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Kpi_2&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new kpi&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">kpiCategory</span><span class="o">=</span><span class="n">kpi_category</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">new_Tech</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Tech</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_Tech&quot;</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span>
-    <span class="p">)</span>
-
-<span class="n">network_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_network_type</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;network_type&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">new_formula</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_formula</span><span class="p">(</span>
-    <span class="n">textFormula</span><span class="o">=</span><span class="s2">&quot;formula_1&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">kpi</span><span class="o">=</span><span class="n">Kpi_created</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">tech</span><span class="o">=</span><span class="n">tech_created</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">networkType</span><span class="o">=</span><span class="n">network_type</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-
-<span class="n">new_counter_formula</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter_formula</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_counter_formula</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_counter_formula</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;counter_formula&quot;</span><span class="p">,</span>
     <span class="n">mandatory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="o">.</span><span class="n">id</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_counter_formula</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -748,7 +708,7 @@
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counter_formula_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_counter_formula</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counter_formula_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_Kpi</span><span class="p">(</span>
     <span class="n">CounterFormula</span><span class="o">=</span><span class="n">CounterFormula</span><span class="p">,</span>
     <span class="n">new_mandatory</span><span class="o">=</span><span class="n">new_mandatory</span><span class="p">,</span>
     <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
@@ -805,7 +765,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_customer</span><span class="p">(</span><span class="n">customer</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_customer</span><span class="p">(</span><span class="n">customer</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -829,39 +789,6 @@
 </dd></dl>
 
 </section>
-<section id="module-psym.api.document_category">
-<span id="psym-api-document-category-module"></span><h2>psym.api.document_category module<a class="headerlink" href="#module-psym.api.document_category" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="psym.api.document_category.get_document_category_by_names">
-<span class="sig-prename descclassname"><span class="pre">psym.api.document_category.</span></span><span class="sig-name descname"><span class="pre">get_document_category_by_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc_category_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.DocumentCategory" title="psym.common.data_class.DocumentCategory"><span class="pre">psym.common.data_class.DocumentCategory</span></a></span></span><a class="headerlink" href="#psym.api.document_category.get_document_category_by_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function gets existing Document Category by its name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>location_type_name</strong> (<em>str</em>) – Location type name</p></li>
-<li><p><strong>doc_category_name</strong> (<em>str</em>) – Document Category name</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p>FailedOperationException: Internal symphony error</p></li>
-<li><p><a class="reference internal" href="psym.html#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Document Category does not exist</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>DocumentCategory</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.DocumentCategory" title="psym.common.data_class.DocumentCategory"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentCategory</span></code></a></p>
-</dd>
-</dl>
-<p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_doc_category_by_names</span><span class="p">(</span><span class="n">location_type_name</span><span class="o">=</span><span class="s2">&quot;COUNTRY&quot;</span><span class="p">,</span> <span class="n">doc_category_name</span><span class="o">=</span><span class="s2">&quot;DATAFILLS&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</section>
 <section id="module-psym.api.domain">
 <span id="psym-api-domain-module"></span><h2>psym.api.domain module<a class="headerlink" href="#module-psym.api.domain" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
@@ -880,10 +807,14 @@
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_domaines</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_domain&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_domain</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -911,11 +842,11 @@
 </pre></div>
 </div>
 <p><strong>Example 2</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domain_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_domain</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">new_domain</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;domain_edited&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_domain</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">domain_edited</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -933,7 +864,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domains</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_domains</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domaines</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_domains</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -953,7 +884,7 @@
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_domain</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">12345679</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2079,10 +2010,14 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_event_severityes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_event_severity</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_event_severity&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_event_severity</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_event_severity</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;event_severity&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_event_severity</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2106,9 +2041,13 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event_severity_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_event_severity</span><span class="p">(</span><span class="n">event_severity</span><span class="o">=</span><span class="n">eventSeverity</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_event_severity&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_event_severity</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_event_severity</span><span class="p">(</span>
-    <span class="n">event_severity</span><span class="o">=</span><span class="n">new_event_severity</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;event_severity_edited&quot;</span><span class="p">,</span>
+    <span class="n">event_severity</span><span class="o">=</span><span class="n">eventSeverity</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;event_severity&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -2128,7 +2067,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event_severities</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_event_severities</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event_severityes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_event_severities</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">event_severity</span> <span class="ow">in</span> <span class="n">event_severities</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">event_severity</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -2148,7 +2087,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_event_severity</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_event_severity</span><span class="p">(</span><span class="n">eventSeverity</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2207,7 +2146,7 @@ in case it is not found, creates one.</p>
 <span id="psym-api-file-module"></span><h2>psym.api.file module<a class="headerlink" href="#module-psym.api.file" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.file.add_file">
-<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document_category_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_file" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function adds file to an entity of a given type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2215,7 +2154,6 @@ in case it is not found, creates one.</p>
 <li><p><strong>local_file_path</strong> (<em>str</em>) – Local system path to the file</p></li>
 <li><p><strong>entity_type</strong> (<em>str</em>) – One of existing options [“LOCATION”, “WORK_ORDER”, “SITE_SURVEY”, “EQUIPMENT”]</p></li>
 <li><p><strong>category</strong> (<em>str</em><em>, </em><em>optional</em>) – File category name</p></li>
-<li><p><strong>document_category_id</strong> (<em>int</em><em>, </em><em>optional</em>) – Document category id</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -2226,17 +2164,12 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">document_category</span> <span class="o">=</span> <span class="n">PsymClient</span><span class="o">.</span><span class="n">get_document_category_by_names</span><span class="p">(</span>
-    <span class="n">client</span><span class="o">=</span><span class="n">client_symp</span><span class="p">,</span>
-    <span class="n">location_type_name</span><span class="o">=</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span>
-    <span class="n">doc_category_name</span><span class="o">=</span><span class="s2">&quot;Correo de notificación&quot;</span>
-<span class="p">)</span>
-<span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location</span><span class="p">({(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;LS_IND_Prod_Copy&quot;</span><span class="p">)})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location</span><span class="p">({(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;LS_IND_Prod_Copy&quot;</span><span class="p">)})</span>
 <span class="n">client</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span>
     <span class="n">local_file_path</span><span class="o">=</span><span class="s2">&quot;./document.pdf&quot;</span><span class="p">,</span>
     <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
     <span class="n">entity_id</span><span class="o">=</span><span class="n">location</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">document_category_id</span><span class="o">=</span><span class="n">document_category</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">category</span><span class="o">=</span><span class="s2">&quot;category_name&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -2244,7 +2177,7 @@ in case it is not found, creates one.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.file.add_files">
-<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_directory_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document_category_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_files" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_directory_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function adds all files located in folder to an entity of a given type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2252,7 +2185,6 @@ in case it is not found, creates one.</p>
 <li><p><strong>local_directory_path</strong> (<em>str</em>) – Local system path to the directory</p></li>
 <li><p><strong>entity_type</strong> (<em>str</em>) – One of existing options [“LOCATION”, “WORK_ORDER”, “SITE_SURVEY”, “EQUIPMENT”]</p></li>
 <li><p><strong>category</strong> (<em>str</em><em>, </em><em>optional</em>) – File category name</p></li>
-<li><p><strong>document_category_id</strong> (<em>int</em><em>, </em><em>optional</em>) – Document category id</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -2263,17 +2195,12 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">document_category</span> <span class="o">=</span> <span class="n">PsymClient</span><span class="o">.</span><span class="n">get_document_category_by_names</span><span class="p">(</span>
-    <span class="n">client</span><span class="o">=</span><span class="n">client_symp</span><span class="p">,</span>
-    <span class="n">location_type_name</span><span class="o">=</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span>
-    <span class="n">doc_category_name</span><span class="o">=</span><span class="s2">&quot;Correo de notificación&quot;</span>
-<span class="p">)</span>
-<span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location</span><span class="p">({(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;LS_IND_Prod_Copy&quot;</span><span class="p">)})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location</span><span class="p">({(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;LS_IND_Prod_Copy&quot;</span><span class="p">)})</span>
 <span class="n">client</span><span class="o">.</span><span class="n">add_files</span><span class="p">(</span>
     <span class="n">local_directory_path</span><span class="o">=</span><span class="s2">&quot;./documents_folder/&quot;</span><span class="p">,</span>
     <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
     <span class="n">entity_id</span><span class="o">=</span><span class="n">location</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">document_category_id</span><span class="o">=</span><span class="n">document_category</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">category</span><span class="o">=</span><span class="s2">&quot;category_name&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -2281,12 +2208,12 @@ in case it is not found, creates one.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.file.add_image">
-<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">psym.graphql.enum.image_entity.ImageEntity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">documentCategoryId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_image" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">psym.graphql.enum.image_entity.ImageEntity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_image" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.file.add_location_image">
-<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_location_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.Location" title="psym.common.data_class.Location"><span class="pre">psym.common.data_class.Location</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">document_category_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_location_image" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psym.api.file.</span></span><span class="sig-name descname"><span class="pre">add_location_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.Location" title="psym.common.data_class.Location"><span class="pre">psym.common.data_class.Location</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.file.add_location_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function adds image to existing location.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2298,7 +2225,6 @@ in case it is not found, creates one.</p>
 <li><p><a class="reference internal" href="#psym.api.location.add_location" title="psym.api.location.add_location"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_location()</span></code></a></p></li>
 </ul>
 </p></li>
-<li><p><strong>document_category_id</strong> (<em>int</em><em>, </em><em>optional</em>) – Document category id</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -2309,6 +2235,13 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location</span><span class="p">({(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;LS_IND_Prod_Copy&quot;</span><span class="p">)})</span>
+<span class="n">client</span><span class="o">.</span><span class="n">add_location_image</span><span class="p">(</span>
+    <span class="n">local_file_path</span><span class="o">=</span><span class="s2">&quot;./document.pdf&quot;</span><span class="p">,</span>
+    <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -2368,41 +2301,14 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
- <span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_formula</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_formula</span><span class="p">(</span>
+    <span class="n">textFormula</span><span class="o">=</span><span class="s2">&quot;formula_1&quot;</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">kpi</span><span class="o">=</span><span class="n">Kpi_created</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">tech</span><span class="o">=</span><span class="n">tech_created</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">networkType</span><span class="o">=</span><span class="n">network_type</span><span class="o">.</span><span class="n">id</span>
 
- <span class="n">kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span>
-     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
- <span class="p">)</span>
-
- <span class="n">Kpi</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Kpi</span><span class="p">(</span>
-     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Kpi_2&quot;</span><span class="p">,</span>
-     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new kpi&quot;</span><span class="p">,</span>
-     <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-     <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-     <span class="n">kpiCategory</span><span class="o">=</span><span class="n">kpi_category</span><span class="o">.</span><span class="n">id</span>
- <span class="p">)</span>
-
- <span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
- <span class="p">)</span>
-
- <span class="n">tech</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Tech</span><span class="p">(</span>
-     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_Tech&quot;</span><span class="p">,</span>
-     <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span>
-
- <span class="n">network_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_network_type</span><span class="p">(</span>
-     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;network_type&quot;</span><span class="p">,</span>
- <span class="p">)</span>
-
- <span class="n">new_formula</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_formula</span><span class="p">(</span>
-     <span class="n">textFormula</span><span class="o">=</span><span class="s2">&quot;formula_1&quot;</span><span class="p">,</span>
-     <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-     <span class="n">kpi</span><span class="o">=</span><span class="n">Kpi</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-     <span class="n">tech</span><span class="o">=</span><span class="n">tech</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-     <span class="n">networkType</span><span class="o">=</span><span class="n">network_type</span><span class="o">.</span><span class="n">id</span>
- <span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2426,14 +2332,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">formula_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_formula</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_formula_edited&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">kpi</span><span class="o">=</span><span class="n">Kpi</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">tech</span><span class="o">=</span><span class="n">tech</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">networkType</span><span class="o">=</span><span class="n">network_type</span><span class="o">.</span><span class="n">id</span>
-    <span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">formula_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_formula</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="n">formula</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_formula&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2471,7 +2370,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_formula</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_formula</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2501,21 +2400,14 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">new_Kpi</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Kpi</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_Kpi</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Kpi</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Kpi_2&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new kpi&quot;</span><span class="p">,</span>
     <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
     <span class="n">kpiCategory</span><span class="o">=</span><span class="n">kpi_category</span><span class="o">.</span><span class="n">id</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_Kpi</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2539,13 +2431,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Kpi_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_Kpi</span><span class="p">(</span>
-    <span class="n">Kpi</span><span class="o">=</span><span class="n">Kpi</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_Kpi&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new kpi_edited&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">kpiCategory</span><span class="o">=</span><span class="n">kpi_category</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Kpi_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_Kpi</span><span class="p">(</span><span class="n">Kpi</span><span class="o">=</span><span class="n">Kpi</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_Kpi&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2583,7 +2469,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_kpi</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_Kpi</span><span class="p">(</span><span class="n">Kpi</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2607,10 +2493,14 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kpi_categoryes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_kpi_category&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_kpi_category</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2628,7 +2518,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kpi_category</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kpi_category</span><span class="p">(</span><span class="n">kpiCategory</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2652,12 +2542,15 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kpi_category_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kpi_category</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kpi_category_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kpi_category</span><span class="p">(</span><span class="n">kpi_category</span><span class="o">=</span><span class="n">kpiCategory</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_kpi_category&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kpi_category</span><span class="p">(</span>
     <span class="n">kpi_category</span><span class="o">=</span><span class="n">kpiCategory</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kpi_category_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_kpi_category_edited</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2701,6 +2594,10 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_categoryes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_category</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_kqi_category&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_category</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kqi_category&quot;</span><span class="p">,</span>
 
@@ -2722,7 +2619,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_category</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_category</span><span class="p">(</span><span class="n">kqiCategory</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2746,12 +2643,15 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_category_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_category</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alarm_statu_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_category</span><span class="p">(</span><span class="n">kqi_category</span><span class="o">=</span><span class="n">kqiCategory</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_kqi_category&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_category</span><span class="p">(</span>
     <span class="n">kqi_category</span><span class="o">=</span><span class="n">kqiCategory</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kqi_category_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kqi_category&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_kqi_category_edited</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2795,6 +2695,10 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_Kqi_perspectivees</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_perspective</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_Kqi_perspective&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_Kqi_perspective</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_perspective</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Kqi_perspective&quot;</span><span class="p">,</span>
 
@@ -2816,7 +2720,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_perspective</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_perspective</span><span class="p">(</span><span class="n">KqiPerspective</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2840,9 +2744,13 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_Kqi_perspective_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_perspective</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kqi_perspective_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_perspective</span><span class="p">(</span><span class="n">Kqi_perspective</span><span class="o">=</span><span class="n">KqiPerspective</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_Kqi_perspective&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_Kqi_perspective</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_perspective</span><span class="p">(</span>
     <span class="n">Kqi_perspective</span><span class="o">=</span><span class="n">KqiPerspective</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;Kqi_perspective_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;Kqi_perspective&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -2888,6 +2796,10 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_sourcees</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_source</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_kqi_source&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_source</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_source</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kqi_source&quot;</span><span class="p">,</span>
 
@@ -2909,7 +2821,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_source</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_source</span><span class="p">(</span><span class="n">KqiSource</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2933,9 +2845,13 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_source_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_source</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kqi_source_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_source</span><span class="p">(</span><span class="n">kqi_source</span><span class="o">=</span><span class="n">KqiSource</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_kqi_source&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_source</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_source</span><span class="p">(</span>
     <span class="n">kqi_source</span><span class="o">=</span><span class="n">KqiSource</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kqi_source_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kqi_source&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -2980,6 +2896,10 @@ in case it is not found, creates one.</p>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">kqiTemporalFrecuency</span></code></p>
 </dd>
 </dl>
+<p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_temporal_frecuencyes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_temporal_frecuency</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_kqi_temporal_frecuency&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_temporal_frecuency</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kqi_temporal_frecuency</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kqi_temporal_frecuency&quot;</span><span class="p">,</span>
@@ -3002,7 +2922,7 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_temporal_frecuency</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_kqi_temporal_frecuency</span><span class="p">(</span><span class="n">kqiTemporalFrecuency</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3026,9 +2946,13 @@ in case it is not found, creates one.</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_temporal_frecuency_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_temporal_frecuency</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kqi_temporal_frecuency_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_temporal_frecuency</span><span class="p">(</span><span class="n">kqi_temporal_frecuency</span><span class="o">=</span><span class="n">kqiTemporalFrecuency</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_kqi_temporal_frecuency&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_kqi_temporal_frecuency</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_kqi_temporal_frecuency</span><span class="p">(</span>
     <span class="n">kqi_temporal_frecuency</span><span class="o">=</span><span class="n">kqiTemporalFrecuency</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kqi_temporal_frecuency_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;kqi_temporal_frecuency&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -3596,14 +3520,13 @@ includes the equipment given as parameter and also all the equipments attached t
 <span id="psym-api-location-type-module"></span><h2>psym.api.location_type module<a class="headerlink" href="#module-psym.api.location_type" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.location_type.add_location_type">
-<span class="sig-prename descclassname"><span class="pre">psym.api.location_type.</span></span><span class="sig-name descname"><span class="pre">add_location_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><span class="pre">psym.common.data_class.PropertyDefinition</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_zoom_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_site</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document_categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.DocumentCategory" title="psym.common.data_class.DocumentCategory"><span class="pre">psym.common.data_class.DocumentCategory</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><span class="pre">psym.common.data_class.LocationType</span></a></span></span><a class="headerlink" href="#psym.api.location_type.add_location_type" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psym.api.location_type.</span></span><span class="sig-name descname"><span class="pre">add_location_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><span class="pre">psym.common.data_class.PropertyDefinition</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_zoom_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_site</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><span class="pre">psym.common.data_class.LocationType</span></a></span></span><a class="headerlink" href="#psym.api.location_type.add_location_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates new location type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Location type name</p></li>
 <li><p><strong>properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
-<li><p><strong>document_categories</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.DocumentCategory" title="psym.common.data_class.DocumentCategory"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentCategory</span></code></a> ]) – List of documents category</p></li>
 <li><p><strong>map_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Map type</p></li>
 <li><p><strong>map_zoom_level</strong> (<em>int</em>) – Map zoom level</p></li>
 <li><p><strong>is_site</strong> (<em>bool</em>) – Is site flag</p></li>
@@ -3627,18 +3550,8 @@ includes the equipment given as parameter and also all the equipments attached t
             <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;Contact&quot;</span><span class="p">,</span>
             <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
             <span class="n">default_raw_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">False</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
-    <span class="p">],</span>
-    <span class="n">document_categories</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">DocumentCategory</span><span class="p">(</span>
-            <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DATAFILLS&quot;</span>
-        <span class="p">),</span>
-        <span class="n">DocumentCategory</span><span class="p">(</span>
-            <span class="n">index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;TOPOLOGIA&quot;</span>
-        <span class="p">),</span>
     <span class="p">],</span>
     <span class="n">map_zoom_level</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 <span class="p">)</span>
@@ -3750,7 +3663,7 @@ includes the equipment given as parameter and also all the equipments attached t
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.location_type.edit_location_type">
-<span class="sig-prename descclassname"><span class="pre">psym.api.location_type.</span></span><span class="sig-name descname"><span class="pre">edit_location_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_properties_defaults</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.date</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_map_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_map_zoom_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_is_site</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_document_categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.DocumentCategory" title="psym.common.data_class.DocumentCategory"><span class="pre">psym.common.data_class.DocumentCategory</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><span class="pre">psym.common.data_class.LocationType</span></a></span></span><a class="headerlink" href="#psym.api.location_type.edit_location_type" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psym.api.location_type.</span></span><span class="sig-name descname"><span class="pre">edit_location_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_properties_defaults</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.date</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_map_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_map_zoom_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_is_site</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><span class="pre">psym.common.data_class.LocationType</span></a></span></span><a class="headerlink" href="#psym.api.location_type.edit_location_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function edits existing LocationType.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3766,7 +3679,6 @@ includes the equipment given as parameter and also all the equipments attached t
 <li><p><strong>map_type</strong> (<em>str</em><em>, </em><em>optional</em>) – New map type</p></li>
 <li><p><strong>map_zoom_level</strong> (<em>int</em><em>, </em><em>optional</em>) – New map zoom level</p></li>
 <li><p><strong>new_is_site</strong> (<em>bool</em><em>, </em><em>optional</em>) – New is site flag</p></li>
-<li><p><strong>new_document_categories</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.DocumentCategory" title="psym.common.data_class.DocumentCategory"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentCategory</span></code></a> ]) – List of documents category</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -3787,15 +3699,6 @@ includes the equipment given as parameter and also all the equipments attached t
     <span class="n">location_type_id</span><span class="o">=</span><span class="s2">&quot;12345678,</span>
     <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;New name&quot;</span><span class="p">,</span>
     <span class="n">new_description</span><span class="o">=</span><span class="s2">&quot;New description&quot;</span><span class="p">,</span>
-    <span class="n">new_properties_defaults</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;CONTACT&quot;</span><span class="p">:</span> <span class="s2">&quot;ALEN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;DATE&quot;</span><span class="p">:</span> <span class="n">date</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="s2">&quot;DATETIME&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">55</span><span class="p">)</span>
-    <span class="p">},</span>
-    <span class="n">document_categories</span><span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;DATAFILLS&quot;</span><span class="p">:</span> <span class="s2">&quot;NEW_DATAFILLS&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;TOPOLOGIA&quot;</span><span class="p">:</span> <span class="s2">&quot;NEW_TOPOLOGIA&quot;</span>
-    <span class="p">}</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -3824,33 +3727,6 @@ includes the equipment given as parameter and also all the equipments attached t
 </dl>
 <p><strong>Example</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_location_type_by_id</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="psym.api.location_type.get_location_type_by_name">
-<span class="sig-prename descclassname"><span class="pre">psym.api.location_type.</span></span><span class="sig-name descname"><span class="pre">get_location_type_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><span class="pre">psym.common.data_class.LocationType</span></a></span></span><a class="headerlink" href="#psym.api.location_type.get_location_type_by_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function gets existing LocationType by its name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Location type name</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p>FailedOperationException: Internal symphony error</p></li>
-<li><p><a class="reference internal" href="psym.html#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location type does not exist</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Location type</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a></p>
-</dd>
-</dl>
-<p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_location_type_by_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;COUNTRY&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3897,10 +3773,14 @@ includes the equipment given as parameter and also all the equipments attached t
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_network_typees</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_network_type</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_network_type&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_network_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_network_type</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;network_type&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_network_type</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3924,9 +3804,13 @@ includes the equipment given as parameter and also all the equipments attached t
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">network_type_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_network_type</span><span class="p">(</span><span class="n">network_type</span><span class="o">=</span><span class="n">networkType</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_network_type&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_network_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_network_type</span><span class="p">(</span>
     <span class="n">network_type</span><span class="o">=</span><span class="n">networkType</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;network_type_edit&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;network_type&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -3966,7 +3850,7 @@ includes the equipment given as parameter and also all the equipments attached t
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_network_type</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">12346789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_network_type</span><span class="p">(</span><span class="n">networkType</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3990,9 +3874,12 @@ includes the equipment given as parameter and also all the equipments attached t
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_organizationes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_organization</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_organization&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_organization</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_organization</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;organization_1&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;organization&quot;</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;organization&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -4018,10 +3905,13 @@ includes the equipment given as parameter and also all the equipments attached t
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">organization_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_organization</span><span class="p">(</span><span class="n">organization</span><span class="o">=</span><span class="n">organization</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_organization&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_organization</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_organization</span><span class="p">(</span>
     <span class="n">organization</span><span class="o">=</span><span class="n">organization</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_name&quot;</span><span class="p">,</span>
-    <span class="n">new_description</span><span class="o">=</span><span class="s2">&quot;organization&quot;</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;organization&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -4041,7 +3931,7 @@ includes the equipment given as parameter and also all the equipments attached t
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">organization_name</span><span class="p">:</span><span class="n">client</span><span class="o">.</span><span class="n">get_organization_by_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">organization_name</span><span class="p">:</span><span class="n">client</span><span class="o">.</span><span class="n">get_organization_by_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">organization_name</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -4080,7 +3970,7 @@ includes the equipment given as parameter and also all the equipments attached t
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_organization</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_organization</span><span class="p">(</span><span class="n">organization</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -4976,10 +4866,14 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_categoryes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations_category</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_recommendations_category&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations_category</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;recommendations_category&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_recommendations_category</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5003,9 +4897,14 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_category_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations_category</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_category_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations_category</span><span class="p">(</span><span class="n">recommendations_category</span><span class="o">=</span><span class="n">recommendationsCategory</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_recommendations_category&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations_category</span><span class="p">(</span>
     <span class="n">recommendations_category</span><span class="o">=</span><span class="n">recommendationsCategory</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;recommendations_category_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;recommendations_category&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -5044,7 +4943,7 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_recommendations_category</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_recommendations_category</span><span class="p">(</span><span class="n">recommendationsCategory</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5068,10 +4967,14 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_sourceses</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations_sources</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_recommendations_sources&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_sources</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations_sources</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;recommendations_sources&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_recommendations_sources</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5095,17 +4998,22 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_sources_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations_sources</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_sources_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations_sources</span><span class="p">(</span><span class="n">recommendations_sources</span><span class="o">=</span><span class="n">recommendationsSources</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_recommendations_sources&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations_sources</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations_sources</span><span class="p">(</span>
     <span class="n">recommendations_sources</span><span class="o">=</span><span class="n">recommendationsSources</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;recommendations_sources_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;recommendations_sources&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="psym.api.recommendation_sources.get_recommendations_sources">
-<span class="sig-prename descclassname"><span class="pre">psym.api.recommendation_sources.</span></span><span class="sig-name descname"><span class="pre">get_recommendations_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">psym.graphql.query.recommendation_sources.RecommendationsSources</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#psym.api.recommendation_sources.get_recommendations_sources" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psym.api.recommendation_sources.get_recommendations_sourceses">
+<span class="sig-prename descclassname"><span class="pre">psym.api.recommendation_sources.</span></span><span class="sig-name descname"><span class="pre">get_recommendations_sourceses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">psym.graphql.query.recommendation_sources.RecommendationsSources</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#psym.api.recommendation_sources.get_recommendations_sourceses" title="Permalink to this definition">¶</a></dt>
 <dd><p>this funtion Get recommendations Sourceses</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -5116,8 +5024,8 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_sources</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_recommendations_sources</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">recommendations_sources</span> <span class="ow">in</span> <span class="n">recommendations_sources</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_sourceses</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_recommendations_sourceses</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">recommendations_sources</span> <span class="ow">in</span> <span class="n">recommendations_sourceses</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">recommendations_sources</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -5136,7 +5044,7 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_recommendations_sources</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_recommendations_sources</span><span class="p">(</span><span class="n">recommendationsSources</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5181,19 +5089,7 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_sources</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations_sources</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;recommendations_sources&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">recommendations_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations_category</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;recommendations_category&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">vendor</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_vendor</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;vendor&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">user_created</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">get_user_by_email</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;user@nttdata.com&quot;</span><span class="p">)</span>
-
-<span class="n">new_recommendations</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_recommendations</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_recommendations</span><span class="p">(</span>
     <span class="n">externalID</span><span class="o">=</span><span class="s2">&quot;new_externalID&quot;</span><span class="p">,</span>
     <span class="n">resource</span><span class="o">=</span><span class="s2">&quot;resoruce&quot;</span><span class="p">,</span>
     <span class="n">alarmType</span><span class="o">=</span><span class="s2">&quot;alarmType&quot;</span><span class="p">,</span>
@@ -5207,10 +5103,9 @@ It gets the requested equipment port type ID</p>
     <span class="n">vendor</span><span class="o">=</span><span class="n">vendor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
     <span class="n">RecomendationSources</span><span class="o">=</span><span class="n">recommendation_sources</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
     <span class="n">RecomendationsCategory</span><span class="o">=</span><span class="n">recommendation_category</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">userCreated</span><span class="o">=</span><span class="n">user_created</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">userApproved</span><span class="o">=</span><span class="n">user_created</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">userCreated</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">userApproved</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_recommendations</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5234,25 +5129,7 @@ It gets the requested equipment port type ID</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations</span><span class="p">(</span>
-    <span class="n">recommendations</span><span class="o">=</span><span class="n">recommendations</span>
-    <span class="n">new_externalID</span><span class="o">=</span><span class="n">new_externalID</span><span class="p">,</span>
-    <span class="n">resource</span><span class="o">=</span><span class="s2">&quot;resoruce_2&quot;</span><span class="p">,</span>
-    <span class="n">alarmType</span><span class="o">=</span><span class="s2">&quot;alarmType_2&quot;</span><span class="p">,</span>
-    <span class="n">LongDescription</span><span class="o">=</span><span class="s2">&quot;LongDescription_2&quot;</span><span class="p">,</span>
-    <span class="n">shortDescription</span><span class="o">=</span><span class="s2">&quot;shortDescription_2&quot;</span><span class="p">,</span>
-    <span class="n">command</span><span class="o">=</span><span class="s2">&quot;command_2&quot;</span><span class="p">,</span>
-    <span class="n">runbook</span><span class="o">=</span><span class="s2">&quot;runbook_2&quot;</span><span class="p">,</span>
-    <span class="n">priority</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">used</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">vendor</span><span class="o">=</span><span class="n">vendor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">RecomendationSources</span><span class="o">=</span><span class="n">recommendation_sources</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">RecomendationsCategory</span><span class="o">=</span><span class="n">recommendation_category</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">userCreated</span><span class="o">=</span><span class="n">user_created</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">userApproved</span><span class="o">=</span><span class="n">user_created</span><span class="o">.</span><span class="n">id</span>
-
-    <span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recommendations_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_recommendations</span><span class="p">(</span><span class="n">recommendations</span><span class="o">=</span><span class="n">recommendations</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_recommendations&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5260,7 +5137,7 @@ It gets the requested equipment port type ID</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.recommendations.get_recommendations">
 <span class="sig-prename descclassname"><span class="pre">psym.api.recommendations.</span></span><span class="sig-name descname"><span class="pre">get_recommendations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="psym.common.html#psym.common.data_class.recommendations" title="psym.common.data_class.recommendations"><span class="pre">psym.common.data_class.recommendations</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#psym.api.recommendations.get_recommendations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the list of Recommendations
+<dd><p>Get the list of Recommendations)
 :raises:</p>
 <blockquote>
 <div><p>FailedOperationException: Internal symphony error</p>
@@ -5297,7 +5174,7 @@ for recommendation in recommendations:</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_recommendations</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_recommendations</span><span class="p">(</span><span class="n">recommendations</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5331,34 +5208,7 @@ for recommendation in recommendations:</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">Kpi</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Kpi</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Kpi_2&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new kpi&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">kpiCategory</span><span class="o">=</span><span class="n">kpi_category</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-
-<span class="n">threshold</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Threshold</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Threshold&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">kpi</span><span class="o">=</span><span class="n">Kpi</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-<span class="n">rule_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule_type</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rule_type&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">event_severity</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_event_severity</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;event_severity&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">new_rules</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rulees</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rule_1&quot;</span><span class="p">,</span>
     <span class="n">additionalInfo</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
     <span class="n">eventTypeName</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
@@ -5398,50 +5248,7 @@ for recommendation in recommendations:</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">Kpi</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Kpi</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Kpi_2&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new kpi&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">kpiCategory</span><span class="o">=</span><span class="n">kpi_category</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-
-<span class="n">threshold</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Threshold</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Threshold&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">kpi</span><span class="o">=</span><span class="n">Kpi</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-<span class="n">rule_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule_type</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rule_type&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">event_severity</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_event_severity</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;event_severity&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">rule</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rule_1&quot;</span><span class="p">,</span>
-    <span class="n">additionalInfo</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-    <span class="n">eventTypeName</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-    <span class="n">gracePeriod</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">specificProblem</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">ruleType</span><span class="o">=</span><span class="n">rule_type</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">eventSeverity</span><span class="o">=</span><span class="n">event_severity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="p">)</span>
-
-<span class="n">comparator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_comparator</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;comparator&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">new_rule_limit</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule_limit</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_limit</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule_limit</span><span class="p">(</span>
     <span class="n">number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">limitType</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
     <span class="n">comparator</span><span class="o">=</span><span class="n">comparator</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
@@ -5474,9 +5281,6 @@ for recommendation in recommendations:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_limit</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_rule_limit</span><span class="p">(</span>
     <span class="n">rule_limit</span><span class="o">=</span><span class="n">ruleLimit</span><span class="p">,</span>
     <span class="n">new_number</span><span class="o">=</span><span class="n">new_number</span><span class="p">,</span>
-    <span class="n">limitType</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-    <span class="n">comparator</span><span class="o">=</span><span class="n">comparator</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">rule</span><span class="o">=</span><span class="n">rule</span><span class="o">.</span><span class="n">id</span>
 
 
 <span class="p">)</span>
@@ -5487,20 +5291,7 @@ for recommendation in recommendations:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.rule_limit.remove_rule_limit">
 <span class="sig-prename descclassname"><span class="pre">psym.api.rule_limit.</span></span><span class="sig-name descname"><span class="pre">remove_rule_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#psym.api.rule_limit.remove_rule_limit" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function delete Rule Limit.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.ruleLimit" title="psym.common.data_class.ruleLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">ruleLimit</span></code></a>) – Rule Limit name</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-<p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_rule_limit</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456798</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 </section>
 <section id="module-psym.api.rule_type">
@@ -5517,9 +5308,13 @@ for recommendation in recommendations:</p>
 <dd class="field-even"><p>ruleType object</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.ruleType" title="psym.common.data_class.ruleType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ruleType</span></code></a>)</p>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.ruleType" title="psym.common.data_class.ruleType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ruleType</span></code></a></p>
 </dd>
 </dl>
+<p><strong>Example 1</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule_type</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_rule_type&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>Example 2</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_rule_type</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rule_type&quot;</span><span class="p">,</span>
@@ -5548,9 +5343,13 @@ for recommendation in recommendations:</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_type_Edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_rule_type</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rule_type_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_rule_type</span><span class="p">(</span><span class="n">rule_type</span><span class="o">=</span><span class="n">ruleType</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_rule_type&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_rule_type</span><span class="p">(</span>
     <span class="n">rule_type</span><span class="o">=</span><span class="n">ruleType</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;rule_type_edited&quot;</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;rule_type&quot;</span><span class="p">,</span>
 
 <span class="p">)</span>
 </pre></div>
@@ -5590,7 +5389,7 @@ for recommendation in recommendations:</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_rule_type</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456798</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_rule_type</span><span class="p">(</span><span class="n">ruleType</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5898,7 +5697,7 @@ It gets the requested service type ID</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_service_type_with_services</span><span class="p">(</span><span class="n">service_type</span><span class="o">=</span><span class="n">service_type</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_service_type_with_services</span><span class="p">(</span><span class="n">service_type</span><span class="o">=</span><span class="n">service_type</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6254,15 +6053,7 @@ Example of the format:</p></li>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">new_Tech</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Tech</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_Tech&quot;</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span>
-    <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_Tech</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_Tech</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Tech</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_Tech&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6286,10 +6077,7 @@ Example of the format:</p></li>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Tech_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_Tech</span><span class="p">(</span>
-    <span class="n">Tech</span><span class="o">=</span><span class="n">Tech</span> <span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_Tech&quot;</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Tech_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_Tech</span><span class="p">(</span><span class="n">Tech</span><span class="o">=</span><span class="n">Tech</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_Tech&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6327,7 +6115,7 @@ Example of the format:</p></li>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_tech</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_Tech</span><span class="p">(</span><span class="n">Tech</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6356,22 +6144,7 @@ Example of the format:</p></li>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">domain</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_domain</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">kpi_category</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_kpi_category</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;kpi_category&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">Kpi</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Kpi</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Kpi_2&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;new kpi&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-    <span class="n">kpiCategory</span><span class="o">=</span><span class="n">kpi_category</span><span class="o">.</span><span class="n">id</span>
-<span class="p">)</span>
-
-<span class="n">new_Threshold</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Threshold</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_Threshold</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_Threshold</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Threshold&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span>
     <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -6400,12 +6173,7 @@ Example of the format:</p></li>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Threshold_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_threshold</span><span class="p">(</span>
-    <span class="n">threshold</span><span class="o">=</span><span class="n">Threshold</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span>
-    <span class="n">status</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Threshold_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_Threshold</span><span class="p">(</span><span class="n">Threshold</span><span class="o">=</span><span class="n">Threshold</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_Threshold&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6443,7 +6211,7 @@ Example of the format:</p></li>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_threshold</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_Threshold</span><span class="p">(</span><span class="n">Threshold</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6538,31 +6306,7 @@ client.deactivate_user(user=user)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.user.edit_user">
 <span class="sig-prename descclassname"><span class="pre">psym.api.user.</span></span><span class="sig-name descname"><span class="pre">edit_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">firstName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lastName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">psym.graphql.enum.user_role.UserRole</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">psym.graphql.enum.user_role.UserRole</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><span class="pre">psym.common.data_class.User</span></a></span></span><a class="headerlink" href="#psym.api.user.edit_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Lists a specific user according to email address
-:param user: User object
-:type user: <a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a>
-:raises:</p>
-<blockquote>
-<div><p>FailedOperationException: Internal symphony error</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-<p><strong>Example</strong>
-.. code-block:: python</p>
-<blockquote>
-<div><p>user_email = client.get_user_by_email(email=”<a class="reference external" href="mailto:user&#37;&#52;&#48;test&#46;com">user<span>&#64;</span>test<span>&#46;</span>com</a>”)
-user_Edited= client.edit_user(</p>
-<blockquote>
-<div><p>id=user_email.id,
-firstName=”firstName”,
-lastName=”lastName”,</p>
-</div></blockquote>
-<p>)</p>
-</div></blockquote>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.user.edit_user_for_password_and_role">
@@ -6659,48 +6403,12 @@ for user in users:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.user.get_user_by_email">
 <span class="sig-prename descclassname"><span class="pre">psym.api.user.</span></span><span class="sig-name descname"><span class="pre">get_user_by_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><span class="pre">psym.common.data_class.User</span></a></span></span><a class="headerlink" href="#psym.api.user.get_user_by_email" title="Permalink to this definition">¶</a></dt>
-<dd><p>Lists a specific user according to email address
-:param user: User object
-:type user: <a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a>
-:raises:</p>
-<blockquote>
-<div><p>FailedOperationException: Internal symphony error</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-<p><strong>Example</strong>
-.. code-block:: python</p>
-<blockquote>
-<div><p>user_email = client.get_user_by_email(email=”<a class="reference external" href="mailto:user&#37;&#52;&#48;test&#46;com">user<span>&#64;</span>test<span>&#46;</span>com</a>”)
-print(user_email)</p>
-</div></blockquote>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.user.get_user_by_id">
 <span class="sig-prename descclassname"><span class="pre">psym.api.user.</span></span><span class="sig-name descname"><span class="pre">get_user_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><span class="pre">psym.client.SymphonyClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><span class="pre">psym.common.data_class.User</span></a></span></span><a class="headerlink" href="#psym.api.user.get_user_by_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Lists a specific user according to id
-:param user: User object
-:type user: <a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a>
-:raises:</p>
-<blockquote>
-<div><p>FailedOperationException: Internal symphony error</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-<p><strong>Example</strong>
-.. code-block:: python</p>
-<blockquote>
-<div><p>user = client.get_user_by_email(id=123456789)
-print(user)</p>
-</div></blockquote>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psym.api.user.get_users">
@@ -6750,8 +6458,8 @@ for user in users:</p>
 <p><strong>Example 1</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_vendor</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_vendor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;vendor&quot;</span><span class="p">,</span>
+
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">new_vendor</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6775,9 +6483,7 @@ for user in users:</p>
 </dd>
 </dl>
 <p><strong>Example 1</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vendor_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_vendor</span><span class="p">(</span>
-    <span class="n">vendor</span><span class="o">=</span><span class="n">vendor</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_vendor&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vendor_edited</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_vendor</span><span class="p">(</span><span class="n">vendor</span><span class="o">=</span><span class="n">vendor</span> <span class="p">,</span><span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;new_vendor&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -6815,7 +6521,7 @@ for user in users:</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">remove_vendor</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">123456789</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_vendor</span><span class="p">(</span><span class="n">vendor</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

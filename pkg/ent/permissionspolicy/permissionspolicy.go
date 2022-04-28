@@ -27,6 +27,8 @@ const (
 	FieldDescription = "description"
 	// FieldIsGlobal holds the string denoting the is_global field in the database.
 	FieldIsGlobal = "is_global"
+	// FieldIsMulticontractor holds the string denoting the is_multicontractor field in the database.
+	FieldIsMulticontractor = "is_multicontractor"
 	// FieldInventoryPolicy holds the string denoting the inventory_policy field in the database.
 	FieldInventoryPolicy = "inventory_policy"
 	// FieldWorkforcePolicy holds the string denoting the workforce_policy field in the database.
@@ -63,6 +65,7 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldIsGlobal,
+	FieldIsMulticontractor,
 	FieldInventoryPolicy,
 	FieldWorkforcePolicy,
 	FieldAutomationPolicy,
@@ -107,4 +110,6 @@ var (
 	NameValidator func(string) error
 	// DefaultIsGlobal holds the default value on creation for the is_global field.
 	DefaultIsGlobal bool
+	// DefaultIsMulticontractor holds the default value on creation for the is_multicontractor field.
+	DefaultIsMulticontractor bool
 )

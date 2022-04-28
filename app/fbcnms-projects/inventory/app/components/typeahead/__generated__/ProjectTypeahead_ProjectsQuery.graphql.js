@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "PROPERTY" | "%future added value";
+export type ProjectFilterType = "LOCATION_INST" | "PROJECT_CREATION_DATE" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "PROPERTY" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
@@ -25,6 +25,7 @@ export type ProjectFilterInput = {|
   maxDepth?: ?number,
   stringSet?: ?$ReadOnlyArray<string>,
   propertyValue?: ?PropertyTypeInput,
+  timeValue?: ?any,
 |};
 export type PropertyTypeInput = {|
   id?: ?string,
@@ -48,6 +49,20 @@ export type PropertyTypeInput = {|
   isDeleted?: ?boolean,
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
+  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+|};
+export type AddPropertyTypeValueInput = {|
+  id?: ?string,
+  name: string,
+  isDeleted?: ?boolean,
+  propertyType?: ?string,
+  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
+|};
+export type ParentPropertyTypeValueInput = {|
+  parentPropertyTypeValue?: ?string,
+  parentPropertyType?: ?string,
 |};
 export type ProjectTypeahead_ProjectsQueryVariables = {|
   limit?: ?number,
