@@ -85,7 +85,7 @@ function graphBindToContainer(containerElement: HTMLElement) {
     model: graph,
     width: '100%',
     height: '100%',
-    gridSize: 1,
+    gridSize: 30,
     drawGrid: {
       name: 'dot',
       args: [
@@ -256,7 +256,7 @@ function graphAddCopiedBlocks(blocks: IBlock[]) {
 
 function graphDuplicateBlocks(
   blocks: IBlock[],
-  addToGraph?: boolean,
+  addToGraph?: boolean = true,
 ): IBlock[] {
   if (this.current == null) {
     return [];

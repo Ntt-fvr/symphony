@@ -9,7 +9,6 @@
  */
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-
 import FlowBuilderButton from '../../utils/FlowBuilderButton';
 import FlowHeader from './FlowHeader';
 import IconButton from '@symphony/design-system/components/IconButton';
@@ -93,6 +92,9 @@ const useStyles = makeStyles(() => ({
         color: BLUE.B600,
       },
     },
+    width: 92,
+    justifyContent: 'right',
+    backgroundColor: 'rgb(210, 218, 231)',
   },
   blue: {
     color: BLUE.B600 + ' !important',
@@ -110,7 +112,7 @@ export default function TopBar() {
 
 function BuilderTopBar() {
   const classes = useStyles();
-  const [isGrid, setIsGrid] = useState(true);
+  const [isGrid, setIsGrid] = useState(false);
 
   const flow = useGraph();
   const selection = useGraphSelection();
@@ -168,7 +170,7 @@ function BuilderTopBar() {
   }, [enqueueSnackbar, flowData]);
 
   const handleShowGrid = () => {
-    isGrid ? flow.showGrid() : flow.hiddenGrid();
+    !isGrid ? flow.showGrid() : flow.hiddenGrid();
     setIsGrid(prev => {
       return !prev;
     });

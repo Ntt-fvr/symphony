@@ -11,12 +11,12 @@
 import AddIcon from '@material-ui/icons/Add';
 import FilterCenterFocusIcon from '@material-ui/icons/FilterCenterFocus';
 import IconButton from '@symphony/design-system/components/IconButton';
-import PanToolIcon from '@material-ui/icons/PanTool';
 import React from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ToolsBar from './ToolsBar';
 import usePaperGrab from '../widgets/navigation/usePaperGrab';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
+import {PanToolsIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
 
@@ -85,7 +85,7 @@ export default function BottomBar() {
         onClick={() =>
           isOnGrabMode ? handleOnGrabMode(true) : handleOnGrabMode(false)
         }
-        icon={PanToolIcon}
+        icon={PanToolsIcon}
       />
     </ToolsBar>
   );

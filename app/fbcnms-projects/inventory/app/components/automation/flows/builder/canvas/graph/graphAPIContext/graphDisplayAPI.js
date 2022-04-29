@@ -161,5 +161,5 @@ function paperGrid(isShow: boolean) {
     return;
   }
   const flow: FlowWrapper = this.current;
-  isShow ? flow.paper.setGridSize(30) : flow.paper.setGridSize(1);
+  !isShow ? flow.paper.setGridSize(30) : flow.paper.setGridSize(1);
 }

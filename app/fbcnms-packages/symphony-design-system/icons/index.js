@@ -9,6 +9,7 @@
  */
 
 export {default as AddIcon} from './Actions/AddIcon';
+export {default as PanToolsIcon} from './Actions/PanToolsIcon';
 export {default as GridIcon} from './Actions/GridIcon';
 export {default as UndoIcon} from './Actions/UndoIcon';
 export {default as RedoIcon} from './Actions/RedoIcon';
