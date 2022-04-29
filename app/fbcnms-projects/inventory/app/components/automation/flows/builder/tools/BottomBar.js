@@ -15,6 +15,7 @@ import PanToolIcon from '@material-ui/icons/PanTool';
 import React from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ToolsBar from './ToolsBar';
+import usePaperGrab from '../widgets/navigation/usePaperGrab';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
@@ -45,12 +46,16 @@ const useStyles = makeStyles(() => ({
   marginLeft: {
     marginLeft: '2px !important',
   },
+  blue: {
+    color: BLUE.B600 + ' !important',
+    fill: BLUE.B600 + ' !important',
+  },
 }));
 
 export default function BottomBar() {
   const classes = useStyles();
-
   const flow = useGraph();
+  const [isOnGrabMode, handleOnGrabMode] = usePaperGrab(false);
 
   return (
     <ToolsBar className={classes.root}>
@@ -70,13 +75,16 @@ export default function BottomBar() {
       <IconButton
         tooltip={'Zoom Fit'}
         skin={'inherit'}
-        onClick={() => flow.zoomFit()}
+        onClick={() => flow.zoomIn()}
         icon={FilterCenterFocusIcon}
       />
       <IconButton
+        className={isOnGrabMode ? classes.blue : null}
         tooltip={'Pan Toll'}
         skin={'inherit'}
-        onClick={() => flow.zoomIn()}
+        onClick={() =>
+          isOnGrabMode ? handleOnGrabMode(true) : handleOnGrabMode(false)
+        }
         icon={PanToolIcon}
       />
     </ToolsBar>

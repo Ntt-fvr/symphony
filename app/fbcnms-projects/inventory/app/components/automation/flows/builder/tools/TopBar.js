@@ -12,7 +12,7 @@ import FlowBuilderButton from '../../utils/FlowBuilderButton';
 import FlowHeader from './FlowHeader';
 import IconButton from '@symphony/design-system/components/IconButton';
 import MenuTopBar from './MenuTopBar';
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
 import fbt from 'fbt';
@@ -41,6 +41,7 @@ const useStyles = makeStyles(() => ({
     top: 0,
     justifyContent: 'space-between',
     flexWrap: 'wrap',
+    zIndex: 1,
   },
   right: {
     display: 'flex',
@@ -89,6 +90,10 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  blue: {
+    color: BLUE.B600 + ' !important',
+    fill: BLUE.B600 + ' !important',
+  },
   publish: {
     backgroundColor: `${GREEN.G600} !important`,
   },
@@ -101,13 +106,12 @@ export default function TopBar() {
 
 function BuilderTopBar() {
   const classes = useStyles();
+  const [isGrid, setIsGrid] = useState(true);
 
   const flow = useGraph();
   const selection = useGraphSelection();
   const flowData = useFlowData();
   const enqueueSnackbar = useEnqueueSnackbar();
-
-  const showGrid = useCallback(() => {}, [flow, flowData]);
 
   const deleteSelected = useCallback(() => {
     if (selection.selectedLink) {
@@ -158,15 +162,23 @@ function BuilderTopBar() {
       });
   }, [enqueueSnackbar, flowData]);
 
+  const handleShowGrid = () => {
+    isGrid ? flow.showGrid() : flow.hiddenGrid();
+    setIsGrid(prev => {
+      return !prev;
+    });
+  };
+
   const isSaved = () => !flowData.flowDraft?.id || !flowData.hasChanges;
 
   return (
     <ToolsBar className={classes.root}>
       <div className={classes.left}>
         <IconButton
+          className={!isGrid ? classes.blue : null}
           tooltip={'Show Grid'}
           skin={'inherit'}
-          onClick={showGrid}
+          onClick={() => handleShowGrid()}
           icon={GridIcon}
         />
         <IconButton

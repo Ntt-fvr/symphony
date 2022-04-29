@@ -18,7 +18,14 @@ import {useReadOnlyMode} from '../widgets/readOnlyModeContext';
 const useStyles = makeStyles(() => ({
   graphContainer: {
     overflow: 'hidden',
-    /*position: 'relative',*/
+    position: 'relative',
+    '& div[class*="joint-paper-background"], div[class*="joint-paper-grid"] , >svg': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
   },
   canvasKeyboardShortcutsMagnet: {},
 }));
