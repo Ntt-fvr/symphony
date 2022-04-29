@@ -19,7 +19,7 @@ import DroppableTableBody from '../draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@symphony/design-system/components/IconButton';
-import PropertyComboTableItem from '../work_orders/property_combo/PropertyComboTableItem';
+import PropertyComboTableItem from '../../common/property_combo/PropertyComboTableItem';
 import PropertyTypeSelect from './PropertyTypeSelect';
 import PropertyTypesTableDispatcher from './context/property_types/PropertyTypesTableDispatcher';
 import PropertyValueInput from './PropertyValueInput';
@@ -31,7 +31,7 @@ import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
-import {isPropertyTypeWithDependenceRelation} from '../work_orders/property_combo/PropertyComboHelpers';
+import {isPropertyTypeWithDependenceRelation} from '../../common/property_combo/PropertyComboHelpers';
 import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
@@ -255,6 +255,7 @@ const ExperimentalPropertyTypesTable = ({
                   </DraggableTableRow>
                 ) : (
                   <PropertyComboTableItem
+                    key={i}
                     property={property}
                     classes={classes}
                     supportMandatory={supportMandatory}

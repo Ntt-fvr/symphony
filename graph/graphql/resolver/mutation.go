@@ -223,6 +223,7 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 	return properties, err
 }
 
+// nolint: funlen
 func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), inputs []*pkgmodels.PropertyTypeInput) error {
 	var (
 		client   = r.ClientFrom(ctx)
@@ -3120,6 +3121,7 @@ func (r mutationResolver) EditIsListable(ctx context.Context, input models.EditI
 	return et, nil
 }
 
+// nolint: funlen
 func (r mutationResolver) updatePropType(ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), input *pkgmodels.PropertyTypeInput) error {
 	var (
 		client = r.ClientFrom(ctx)

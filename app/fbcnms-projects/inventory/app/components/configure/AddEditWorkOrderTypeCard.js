@@ -46,7 +46,7 @@ import {
 import {
   getPropertyTypesWithoutParentsInformation,
   orderPropertyTypesIndex,
-} from '../work_orders/property_combo/PropertyComboHelpers';
+} from '../../common/property_combo/PropertyComboHelpers';
 import {makeStyles} from '@material-ui/styles';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
