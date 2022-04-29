@@ -48,10 +48,12 @@ type Props = $ReadOnly<{|
   open?: boolean,
   onClose: () => void,
   setIsDialogConfirmChange: any,
+  activeStep: any,
+  handleBackStep: any,
 |}>;
 
 const DialogConfirmChange = (props: Props) => {
-  const {onClose, setIsDialogConfirmChange} = props;
+  const {onClose, setIsDialogConfirmChange, activeStep, handleBackStep} = props;
 
   const classes = useStyles();
   const handleBack = () => {
@@ -60,7 +62,7 @@ const DialogConfirmChange = (props: Props) => {
   return (
     <div>
       <Grid container justify={'center'} style={{background: '#F5F7FC'}}>
-        <StepperDate />
+        <StepperDate activeStep={activeStep} />
       </Grid>
       <Card className={classes.title} margins="none" variant={'none'}>
         <Grid container justify={'center'} style={{margin: '10px 0 0 0'}}>
@@ -97,7 +99,10 @@ const DialogConfirmChange = (props: Props) => {
           className={classes.option}
           variant="outlined"
           color="primary"
-          onClick={handleBack}>
+          onClick={() => {
+            handleBack();
+            handleBackStep();
+          }}>
           Back
         </Button>
         <Button

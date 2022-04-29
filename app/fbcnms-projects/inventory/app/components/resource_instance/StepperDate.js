@@ -33,7 +33,6 @@ const useStyles = makeStyles(() => ({
   stepLabelRoot: {
     color: 'blue',
   },
-  //*********************** */
   rootStep: {
     color: 'yellow',
     display: 'flex',
@@ -77,26 +76,6 @@ const QontoConnector = withStyles({
   },
 })(StepConnector);
 
-// const useQontoStepIconStyles = makeStyles({
-//   root: {
-//     color: 'yellow',
-//     display: 'flex',
-//     height: 22,
-//     alignItems: 'center',
-//   },
-//   active: {
-//     color: '#784af4',
-//   },
-//   circle: {
-//     fontSize: '16px',
-//     color: 'black',
-//   },
-//   completed: {
-//     fontSize: '16px',
-//     color: 'red',
-//     zIndex: 1,
-//   },
-// });
 function QontoStepIcon(props) {
   const classes = useStyles();
   const {active, completed} = props;
@@ -117,20 +96,22 @@ function QontoStepIcon(props) {
 
 const steps = ['Select Date', 'Confirm Change'];
 
-type Props = $ReadOnly<{||}>;
+type Props = $ReadOnly<{|
+  activeStep: any,
+|}>;
 
 const StepperDate = (props: Props) => {
-  const {} = props;
+  const {activeStep} = props;
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
+  // const [activeStep, setActiveStep] = React.useState(0);
 
-  const handleNext = () => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
-  };
+  // const handleNext = () => {
+  //   setActiveStep(prevActiveStep => prevActiveStep + 1);
+  // };
 
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
-  };
+  // const handleBack = () => {
+  //   setActiveStep(prevActiveStep => prevActiveStep - 1);
+  // };
 
   return (
     <div className={classes.root}>
@@ -143,15 +124,13 @@ const StepperDate = (props: Props) => {
           <Step key={label}>
             <StepLabel
               StepIconComponent={QontoStepIcon}
-              className={classes.stepLabelRoot}
-              // icon={<FiberManualRecordIcon />}
-            >
+              className={classes.stepLabelRoot}>
               {label}
             </StepLabel>
           </Step>
         ))}
       </Stepper>
-      <div>
+      {/* <div>
         <div>
           <Button disabled={activeStep === 0} onClick={handleBack}>
             Back
@@ -160,7 +139,7 @@ const StepperDate = (props: Props) => {
             Fecha
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

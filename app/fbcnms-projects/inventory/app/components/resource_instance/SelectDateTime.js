@@ -66,18 +66,27 @@ const dateTime = [
   '01-01-2022 - 12:00',
 ];
 
-type Props = $ReadOnly<{||}>;
+type Props = $ReadOnly<{|
+  handleSelectDate: any,
+|}>;
 
 const SelectDateTime = (props: Props) => {
-  const {} = props;
+  const {handleSelectDate} = props;
 
   const classes = useStyles();
+  // const selectDateTime = date => {
+  //   console.log(date);
+  // };
 
   return (
     <div className={classes.root}>
       <List className={classes.contenedor}>
         {dateTime.map((item, index) => (
-          <ListItem className={classes.item} key={index} button>
+          <ListItem
+            onClick={() => handleSelectDate(item)}
+            className={classes.item}
+            key={index}
+            button>
             {item}
           </ListItem>
         ))}

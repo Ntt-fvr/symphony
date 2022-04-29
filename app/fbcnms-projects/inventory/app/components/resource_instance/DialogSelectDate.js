@@ -52,6 +52,18 @@ const DialogSelectDate = (props: Props) => {
   const [isDialogConfirmChange, setIsDialogConfirmChange] = useState(
     isDialogSelectDate,
   );
+
+  const [activeStep, setActiveStep] = React.useState(0);
+
+  const handleSelectDate = item => {
+    console.log(item);
+    setActiveStep(prevActiveStep => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep(prevActiveStep => prevActiveStep - 1);
+  };
+
   const handleClickOpenConfirmChange = () => {
     setIsDialogConfirmChange(prev => !prev);
   };
@@ -68,7 +80,7 @@ const DialogSelectDate = (props: Props) => {
         {isDialogConfirmChange ? (
           <div>
             <Grid container justify={'center'}>
-              <StepperDate />
+              <StepperDate activeStep={activeStep} />
             </Grid>
             <Card className={classes.title} margins="none" variant={'none'}>
               <Grid container justify={'center'}>
@@ -80,19 +92,23 @@ const DialogSelectDate = (props: Props) => {
               hidden={true}
               justify={'center'}
               style={{margin: '0 0 30px 0'}}>
-              <SelectDateTime />
+              <SelectDateTime handleSelectDate={handleSelectDate} />
             </Grid>
             <DialogActions className={classes.dialogActions}>
               <Button
                 className={classes.option}
                 variant="outlined"
                 color="primary"
-                onClick={onClose}>
+                onClick={() => {
+                  onClose();
+                  handleBack();
+                }}>
                 Cancel
               </Button>
               <Button
                 onClick={() => {
                   handleClickOpenConfirmChange();
+                  handleSelectDate();
                 }}
                 className={classes.option}
                 variant="contained"
@@ -103,6 +119,8 @@ const DialogSelectDate = (props: Props) => {
           </div>
         ) : (
           <DialogConfirmChange
+            handleBackStep={handleBack}
+            activeStep={activeStep}
             onClose={onClose}
             setIsDialogConfirmChange={setIsDialogConfirmChange}
           />
