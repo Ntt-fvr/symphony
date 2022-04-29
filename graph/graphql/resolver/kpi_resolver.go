@@ -92,7 +92,7 @@ func (r mutationResolver) RemoveKpi(ctx context.Context, id int) (int, error) {
 
 			for _, counterFormula := range countersFormulas {
 				if err := client.CounterFormula.DeleteOne(counterFormula).Exec(ctx); err != nil {
-					return id, errors.Wrap(err, "has ocurred error on process: %v")
+					return id, errors.Wrap(err, "has occurred error on process: %v")
 				}
 			}
 
@@ -118,12 +118,12 @@ func (r mutationResolver) RemoveKpi(ctx context.Context, id int) (int, error) {
 			}
 
 			if err := client.Rule.DeleteOne(rule).Exec(ctx); err != nil {
-				return id, errors.Wrap(err, "has ocurred error on process: %v")
+				return id, errors.Wrap(err, "has occurred error on process: %v")
 			}
 		}
 
 		if err := client.Threshold.DeleteOne(thresholds).Exec(ctx); err != nil {
-			return id, errors.Wrap(err, "has ocurred error on process: %v")
+			return id, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 

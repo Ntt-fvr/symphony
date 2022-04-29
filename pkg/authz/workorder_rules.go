@@ -118,7 +118,6 @@ func workOrderCudBasedCheck(ctx context.Context, cud *models.WorkforceCud, m *en
 }
 
 func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
-	var predicates []predicate.WorkOrder
 	var predicatesWo []predicate.WorkOrder
 	var predicatesOrg []predicate.WorkOrder
 	var predicatesPrj []predicate.WorkOrder
@@ -183,24 +182,22 @@ func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
 			predicatesPrj = append(predicatesPrj, workorder.HasOwnerWith(user.ID(v.User().ID)), workorder.HasAssigneeWith(user.ID(v.User().ID)))
 			predicatesReturns = append(predicatesReturns, workorder.Or(predicatesPrj...))
 		}
-		return workorder.Or(predicatesReturns...)
 	} else {
 		switch rule.IsAllowed {
 		case models.PermissionValueYes:
 			return nil
 		case models.PermissionValueByCondition:
-			predicates = append(predicates,
+			predicatesReturns = append(predicatesReturns,
 				workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
 		}
 		if v, exists := viewer.FromContext(ctx).(*viewer.UserViewer); exists {
-			predicates = append(predicates,
+			predicatesReturns = append(predicatesReturns,
 				workorder.HasOwnerWith(user.ID(v.User().ID)),
 				workorder.HasAssigneeWith(user.ID(v.User().ID)),
 			)
 		}
-		return workorder.Or(predicates...)
 	}
-
+	return workorder.Or(predicatesReturns...)
 }
 
 func isAssigneeChanged(ctx context.Context, m *ent.WorkOrderMutation) (bool, error) {

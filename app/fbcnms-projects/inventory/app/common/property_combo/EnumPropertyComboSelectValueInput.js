@@ -7,16 +7,16 @@
  * @flow
  * @format
  */
-import type {Property} from '../../../common/Property';
-import type {PropertyType} from '../../../common/PropertyType';
+import type {Property} from '../Property';
+import type {PropertyType} from '../PropertyType';
 
-import FormContext from '../../../common/FormContext';
+import FormContext from '../FormContext';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import React from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import classNames from 'classnames';
 import update from 'immutability-helper';
-import {getPropertyValue} from '../../../common/Property';
+import {getPropertyValue} from '../Property';
 import {getValidPropertyValuesFromParent} from './PropertyComboHelpers';
 import {makeStyles} from '@material-ui/styles';
 
