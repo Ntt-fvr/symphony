@@ -8,6 +8,8 @@
  * @format
  */
 import Button from '@symphony/design-system/components/Button';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+
 import FlowBuilderButton from '../../utils/FlowBuilderButton';
 import FlowHeader from './FlowHeader';
 import IconButton from '@symphony/design-system/components/IconButton';
@@ -19,6 +21,7 @@ import fbt from 'fbt';
 import {BLUE, DARK, GREEN} from '@symphony/design-system/theme/symphony';
 import {
   CheckIcon,
+  DuplicateFlowIcon,
   GridIcon,
   RedoIcon,
   UndoIcon,
@@ -29,6 +32,7 @@ import {
 } from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
 import {SettingsIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+import {useCopyPaste} from '../widgets/copyPaste/CopyPasteContext';
 import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useFlowData} from '../../data/FlowDataContext';
@@ -112,6 +116,7 @@ function BuilderTopBar() {
   const selection = useGraphSelection();
   const flowData = useFlowData();
   const enqueueSnackbar = useEnqueueSnackbar();
+  const copyPaste = useCopyPaste();
 
   const deleteSelected = useCallback(() => {
     if (selection.selectedLink) {
@@ -188,6 +193,30 @@ function BuilderTopBar() {
           icon={UndoIcon}
         />
         <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
+      </div>
+      <div className={classes.left}>
+        {copyPaste.allowDuplicate && (
+          <IconButton
+            tooltip={'Duplicate'}
+            skin={'inherit'}
+            icon={DuplicateFlowIcon}
+            onClick={copyPaste.duplicate}
+            disabled={!copyPaste.allowDuplicate}
+          />
+        )}
+        {!(
+          selection.selectedElements.length === 0 && !selection.selectedLink
+        ) && (
+          <IconButton
+            tooltip={'Delete block'}
+            skin={'inherit'}
+            icon={DeleteOutlineIcon}
+            onClick={deleteSelected}
+            disabled={
+              selection.selectedElements.length === 0 && !selection.selectedLink
+            }
+          />
+        )}
       </div>
 
       <div className={classes.right}>
