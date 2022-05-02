@@ -49,6 +49,9 @@ const useStyles = makeStyles(() => ({
     '&:hover': {
       backgroundColor: '#EDF0F9',
     },
+    '&.MuiListItem-root.Mui-selected, .MuiListItem-root.Mui-selected:hover': {
+      backgroundColor: '#c2c3c5',
+    },
   },
 }));
 const dateTime = [
