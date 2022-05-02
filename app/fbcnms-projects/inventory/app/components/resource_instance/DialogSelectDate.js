@@ -59,9 +59,11 @@ const DialogSelectDate = (props: Props) => {
   const handleSelectDate = useCallback(clickedDate => {
     const selectedDate = clickedDate?.id;
     setSelectedDate(selectedDate);
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
+    setActiveStep(1);
   }, []);
-
+  const handleConfirmDate = () => {
+    setActiveStep(2);
+  };
   const handleBack = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
@@ -114,6 +116,7 @@ const DialogSelectDate = (props: Props) => {
                 onClick={() => {
                   handleClickOpenConfirmChange();
                   handleSelectDate();
+                  handleConfirmDate();
                 }}
                 className={classes.option}
                 variant="contained"
