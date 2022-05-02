@@ -52,42 +52,40 @@ const useStyles = makeStyles(() => ({
   },
 }));
 const dateTime = [
-  '01-01-2022 - 01:00',
-  '01-01-2022 - 02:00',
-  '01-01-2022 - 03:00',
-  '01-01-2022 - 04:00',
-  '01-01-2022 - 05:00',
-  '01-01-2022 - 06:00',
-  '01-01-2022 - 07:00',
-  '01-01-2022 - 08:00',
-  '01-01-2022 - 09:00',
-  '01-01-2022 - 10:00',
-  '01-01-2022 - 11:00',
-  '01-01-2022 - 12:00',
+  {id: '1', date: '01-01-2022 - 01:00'},
+  {id: '2', date: '01-01-2022 - 02:00'},
+  {id: '3', date: '01-01-2022 - 03:00'},
+  {id: '4', date: '01-01-2022 - 04:00'},
+  {id: '5', date: '01-01-2022 - 05:00'},
+  {id: '6', date: '01-01-2022 - 06:00'},
+  {id: '7', date: '01-01-2022 - 07:00'},
+  {id: '8', date: '01-01-2022 - 08:00'},
+  {id: '9', date: '01-01-2022 - 09:00'},
+  {id: '10', date: '01-01-2022 - 10:00'},
+  {id: '11', date: '01-01-2022 - 11:00'},
+  {id: '12', date: '01-01-2022 - 12:00'},
 ];
 
 type Props = $ReadOnly<{|
   handleSelectDate: any,
+  selectedDateOpt: any,
 |}>;
 
 const SelectDateTime = (props: Props) => {
-  const {handleSelectDate} = props;
-
+  const {handleSelectDate, selectedDateOpt} = props;
   const classes = useStyles();
-  // const selectDateTime = date => {
-  //   console.log(date);
-  // };
 
   return (
     <div className={classes.root}>
       <List className={classes.contenedor}>
-        {dateTime.map((item, index) => (
+        {dateTime.map(item => (
           <ListItem
             onClick={() => handleSelectDate(item)}
             className={classes.item}
-            key={index}
+            key={item.id}
+            selected={selectedDateOpt === item.id}
             button>
-            {item}
+            {item.date}
           </ListItem>
         ))}
       </List>

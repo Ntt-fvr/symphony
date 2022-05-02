@@ -9,8 +9,6 @@
  */
 
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
-// import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import LensIcon from '@material-ui/icons/Lens';
 import PanoramaFishEyeIcon from '@material-ui/icons/PanoramaFishEye';
 import Step from '@material-ui/core/Step';
@@ -18,6 +16,7 @@ import StepConnector from '@material-ui/core/StepConnector';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import classNames from 'classnames';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
 
@@ -44,11 +43,11 @@ const useStyles = makeStyles(() => ({
   },
   circleStep: {
     fontSize: '16px',
-    color: 'black',
+    color: symphony.palette.D400,
   },
   completedStep: {
     fontSize: '16px',
-    color: 'red',
+    color: symphony.palette.B600,
     zIndex: 1,
   },
 }));
@@ -56,21 +55,21 @@ const useStyles = makeStyles(() => ({
 const QontoConnector = withStyles({
   alternativeLabel: {
     top: 10,
-    left: 'calc(-50% + 9px)',
-    right: 'calc(50% + 9px)',
+    left: 'calc(-50% + 7px)',
+    right: 'calc(50% + 7px)',
   },
   active: {
     '& $line': {
-      borderColor: 'red',
+      borderColor: symphony.palette.B600,
     },
   },
   completed: {
     '& $line': {
-      borderColor: 'green',
+      borderColor: symphony.palette.B600,
     },
   },
   line: {
-    borderColor: 'black',
+    borderColor: symphony.palette.D400,
     borderTopWidth: 3,
     borderRadius: 1,
   },
@@ -103,15 +102,6 @@ type Props = $ReadOnly<{|
 const StepperDate = (props: Props) => {
   const {activeStep} = props;
   const classes = useStyles();
-  // const [activeStep, setActiveStep] = React.useState(0);
-
-  // const handleNext = () => {
-  //   setActiveStep(prevActiveStep => prevActiveStep + 1);
-  // };
-
-  // const handleBack = () => {
-  //   setActiveStep(prevActiveStep => prevActiveStep - 1);
-  // };
 
   return (
     <div className={classes.root}>
@@ -130,16 +120,6 @@ const StepperDate = (props: Props) => {
           </Step>
         ))}
       </Stepper>
-      {/* <div>
-        <div>
-          <Button disabled={activeStep === 0} onClick={handleBack}>
-            Back
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleNext}>
-            Fecha
-          </Button>
-        </div>
-      </div> */}
     </div>
   );
 };

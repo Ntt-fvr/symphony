@@ -15,7 +15,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogConfirmChange from './DialogConfirmChange';
 import Grid from '@material-ui/core/Grid';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {SelectDateTime} from './SelectDateTime';
 import {StepperDate} from './StepperDate';
 import {makeStyles} from '@material-ui/styles';
@@ -53,12 +53,14 @@ const DialogSelectDate = (props: Props) => {
     isDialogSelectDate,
   );
 
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(null);
 
-  const handleSelectDate = item => {
-    console.log(item);
+  const handleSelectDate = useCallback(clickedDate => {
+    const selectedDate = clickedDate?.id;
+    setSelectedDate(selectedDate);
     setActiveStep(prevActiveStep => prevActiveStep + 1);
-  };
+  }, []);
 
   const handleBack = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
@@ -92,7 +94,10 @@ const DialogSelectDate = (props: Props) => {
               hidden={true}
               justify={'center'}
               style={{margin: '0 0 30px 0'}}>
-              <SelectDateTime handleSelectDate={handleSelectDate} />
+              <SelectDateTime
+                selectedDateOpt={selectedDate}
+                handleSelectDate={handleSelectDate}
+              />
             </Grid>
             <DialogActions className={classes.dialogActions}>
               <Button
