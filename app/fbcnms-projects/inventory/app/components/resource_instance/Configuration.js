@@ -21,6 +21,7 @@ import PowerSearchBar from '../power_search/PowerSearchBar';
 import Radio from '@material-ui/core/Radio';
 import Text from '@symphony/design-system/components/Text';
 import {CircleIndicator} from './CircleIndicator';
+import {SimpleChangeRequest} from './SimpleChangeRequest';
 import {TableConfigurationParameters} from './TableConfigurationParameters';
 import {TimeLine} from './TimeLine';
 import {makeStyles} from '@material-ui/styles';
@@ -81,6 +82,7 @@ const Configuration = (props: Props) => {
   const [isDialogInformation, setIsDialogInformation] = useState(false);
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [checked, setChecked] = useState(true);
+  const [openSimpleChangeRequest, setOpenSimpleChangeRequest] = useState(false);
   const classes = useStyles();
 
   const handleClickOpenInformation = () => {
@@ -89,6 +91,16 @@ const Configuration = (props: Props) => {
   const handleClickOpenSelectDate = () => {
     setIsDialogSelectDate(prev => !prev);
   };
+  const handleSimpleChangeRequest = () => {
+    setOpenSimpleChangeRequest(prevStateSCR => !prevStateSCR);
+  };
+  if (openSimpleChangeRequest) {
+    return (
+      <SimpleChangeRequest
+        handleSimpleChangeRequest={handleSimpleChangeRequest}
+      />
+    );
+  }
   return (
     <Grid className={classes.root}>
       <Grid
@@ -141,7 +153,11 @@ const Configuration = (props: Props) => {
             </Button>
           </Grid>
           <Grid item>
-            <Button size="medium" variant="outlined" color="primary">
+            <Button
+              size="medium"
+              variant="outlined"
+              color="primary"
+              onClick={handleSimpleChangeRequest}>
               <Text useEllipsis={true} color={'primary'}>
                 Request Change
               </Text>
