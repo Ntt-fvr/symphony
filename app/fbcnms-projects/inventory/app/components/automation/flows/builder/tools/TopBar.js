@@ -119,6 +119,7 @@ function BuilderTopBar() {
   const flowData = useFlowData();
   const enqueueSnackbar = useEnqueueSnackbar();
   const copyPaste = useCopyPaste();
+  const detailsPane = useDetailsPane();
 
   const deleteSelected = useCallback(() => {
     if (selection.selectedLink) {
@@ -222,6 +223,7 @@ function BuilderTopBar() {
       </div>
 
       <div className={classes.right}>
+        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
         <Button
           className={classes.textVariant}
           variant={'text'}
