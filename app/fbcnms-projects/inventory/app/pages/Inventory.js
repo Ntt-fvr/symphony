@@ -19,20 +19,17 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AddToLocationDialog from '../components/AddToLocationDialog';
-import Button from '@material-ui/core/Button';
-import CardPlusDnD from '../components/CardPlusDnD';
 import DialogStatus from '../components/configure/DialogStatus';
 import EquipmentCard from '../components/EquipmentCard';
-import Grid from '@material-ui/core/Grid';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
 import LocationsTree from '../components/LocationsTree';
+import NavbarResourceInstance from '../components/resource_instance/NavbarResourceInstance';
 import React from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
-import {CardSuggested} from '../components/CardSuggested';
 import {InventoryAPIUrls} from '../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {extractEntityIdFromUrl} from '../common/RouterUtils';
@@ -254,34 +251,7 @@ class Inventory extends React.Component<Props, State> {
           />
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
-              <Grid
-                className={classes.header}
-                container
-                direction="row"
-                justify="flex-end"
-                alignItems="center">
-                <Grid>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    className={classes.buttons}
-                    style={{marginRight: '1rem'}}>
-                    Cancel
-                  </Button>
-                </Grid>
-                <Grid>
-                  <Button
-                    style={{marginRight: '2px'}}
-                    variant="contained"
-                    color="primary"
-                    className={classes.buttons}
-                    onClick={() => handelModal()}>
-                    Submit
-                  </Button>
-                </Grid>
-              </Grid>
-              <CardPlusDnD />
-              <CardSuggested />
+              <NavbarResourceInstance />
               {card.type == 'location' && (
                 <LocationCard
                   mode={card.mode}
