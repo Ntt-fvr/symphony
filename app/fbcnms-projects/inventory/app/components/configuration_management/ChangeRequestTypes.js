@@ -8,49 +8,16 @@
  * @format
  */
 
-import ButtonAlarmStatus from './common/ButtonAlarmStatus';
-import ButtonSaveDelete from './common/ButtonSaveDelete';
-import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
+// import Button from '@symphony/design-system/components/Button';
+import Button from '@material-ui/core/Button';
 import ConfigureTitle from './common/ConfigureTitle';
+import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
-import TextField from '@material-ui/core/TextField';
+import Table from '@symphony/design-system/components/Table/Table';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
-import {CardAccordion} from './common/CardAccordion';
-import {CardSuggested} from './common/CardSuggested';
-import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
-import {MenuItem} from '@material-ui/core';
-import {Tabla} from './common/Tabla';
 import {makeStyles} from '@material-ui/styles';
-
-const valuesTable = [
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132331',
-    parameter: 'arfcndu1',
-    currentValue: '3960001',
-    newValue: '183001',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132332',
-    parameter: 'arfcndu2',
-    currentValue: '3960002',
-    newValue: '183002',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu3',
-    currentValue: '3960003',
-    newValue: '183003',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu4',
-    currentValue: '3960004',
-    newValue: '183004',
-  },
-];
-
-const status = ['Approve', 'Reject'];
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -58,149 +25,204 @@ const useStyles = makeStyles(() => ({
     padding: '30px',
     margin: '0',
   },
-  titleModule: {
-    margin: '0 0 40px 0',
+  titleCounter: {
+    margin: '0 0 30px 0',
     display: 'flex',
     justifyContent: 'space-between',
   },
   buttonDelete: {
     marginRight: '24px',
   },
-  accordionDetails: {
-    '&.MuiAccordionDetails-root': {
-      padding: '0 16px 0px ',
-    },
+  searchArea: {
+    padding: '16px 24px',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
   },
-  listComment: {
-    '& .MuiAccordionDetails-root': {
-      padding: '0 0 16px 0',
-      width: '100%',
-    },
+  bar: {
+    display: 'flex',
+    flexDirection: 'row',
+    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
   },
-  inExpandingPanelFix: {
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  },
-  commentsLog: {
-    maxHeight: '400px',
+  searchBar: {
+    flexGrow: 1,
   },
 }));
+const tableColumns = [
+  {
+    key: 'change',
+    title: 'Change ID',
+    getSortingValue: row => row.name,
+    render: row => (
+      <Button
+        disableRipple
+        variant="text"
+        color="primary"
+        tooltip={row.name ?? ''}>
+        {row.name}
+      </Button>
+    ),
+  },
+  {
+    key: 'creation date',
+    title: 'Creation date',
+    render: row => row.location.name ?? '',
+    tooltip: row => row.location.name ?? '',
+  },
+  {
+    key: 'last modification date',
+    title: `${fbt('Last modification date', '')}`,
+    render: row => row.arfcndu?.name ?? '',
+    tooltip: row => row.arfcndu?.name ?? '',
+  },
+  {
+    key: 'resource type',
+    title: `${fbt('Resource type', '')}`,
+    render: row => row.nRTAC?.name ?? '',
+    tooltip: row => row.nRTAC?.name ?? '',
+  },
+  {
+    key: 'change source',
+    title: `${fbt('Change source', '')}`,
+    render: row => row.nRTAC?.name ?? '',
+    tooltip: row => row.nRTAC?.name ?? '',
+  },
+  {
+    key: 'affected resources',
+    title: `${fbt('Affected resources', '')}`,
+    render: row => row.nRTAC?.name ?? '',
+    tooltip: row => row.nRTAC?.name ?? '',
+  },
+  {
+    key: 'status',
+    title: `${fbt('Status', '')}`,
+    render: row => row.nRTAC?.name ?? '',
+    tooltip: row => row.nRTAC?.name ?? '',
+  },
+];
+
+const data = [
+  {
+    id: '386547056643',
+    key: '386547056643',
+    location: {
+      id: '219043332105',
+      name: 'S17161',
+    },
+    name: 'RNCellDU_Nokia_MLN1_3132331',
+    priority: 'NONE',
+    arfcndu: {
+      id: '240518168576',
+      name: '10000',
+    },
+    nRTAC: {
+      id: '399431958528',
+      name: '10000',
+    },
+  },
+  {
+    id: '386547056643',
+    key: '386547056643',
+    location: {
+      id: '219043332105',
+      name: 'P10177',
+    },
+    name: 'RNCellDU_Nokia_MLN1_3132332',
+    priority: 'NONE',
+    arfcndu: {
+      id: '240518168576',
+      name: '396000',
+    },
+    nRTAC: {
+      id: '399431958528',
+      name: '9001',
+    },
+  },
+  {
+    id: '386547056643',
+    key: '386547056643',
+    location: {
+      id: '219043332105',
+      name: 'S17589',
+    },
+    name: 'RNCellDU_Nokia_MLN1_3132333',
+    priority: 'NONE',
+    arfcndu: {
+      id: '240518168576',
+      name: '370000',
+    },
+    nRTAC: {
+      id: '399431958528',
+      name: '8800',
+    },
+  },
+  {
+    id: '386547056643',
+    key: '386547056643',
+    location: {
+      id: '219043332105',
+      name: 'S19161',
+    },
+    name: 'RNCellDU_Nokia_MLN1_3132334',
+    priority: 'NONE',
+    arfcndu: {
+      id: '240518168576',
+      name: '382000',
+    },
+    nRTAC: {
+      id: '399431958528',
+      name: '2500',
+    },
+  },
+];
 
 const ChangeRequestTypes = () => {
-  const classes = useStyles();
+  const [filters, setFilters] = useState([]);
 
-  const [statusAlarm] = useState('Pending for approval');
+  const classes = useStyles();
 
   return (
     <Grid className={classes.root} container spacing={0}>
-      <Grid className={classes.titleModule} item xs={12}>
+      <Grid className={classes.titleCounter} item xs={12}>
         <ConfigureTitle
           title={fbt('Change Request', '')}
-          subtitle={fbt('', '  ')}
+          subtitle={fbt(
+            'Find and manage change request and their details',
+            '  ',
+          )}
         />
         <Grid>
-          <ButtonSaveDelete className={classes.buttonDelete} variant="outlined">
-            Delete
-          </ButtonSaveDelete>
-          <ButtonSaveDelete>Save</ButtonSaveDelete>
+          <Button size="medium" variant="outlined" color="primary">
+            <Text useEllipsis={true} color={'primary'}>
+              NF Initial Configuration
+            </Text>
+          </Button>
+
+          <Button
+            style={{padding: '10px 16px', margin: '0 0 0 20px'}}
+            variant="contained"
+            color="primary">
+            Create bulk request
+          </Button>
         </Grid>
       </Grid>
-      <Grid style={{display: 'flex'}}>
-        <ButtonAlarmStatus skin={'yellow'}>
-          Status: {statusAlarm}{' '}
-        </ButtonAlarmStatus>
-        <FormField>
-          <TextField
-            required
-            id="outlined-select-action"
-            select
-            style={{
-              padding: '0',
-              marginLeft: '40px',
-              width: '250px',
-            }}
-            label="Action"
-            name="action"
-            defaultValue=""
-            variant="outlined">
-            {status.map((item, index) => (
-              <MenuItem key={index} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </TextField>
-        </FormField>
+      <Grid item xs={12}>
+        <div className={classes.bar}>
+          <div className={classes.searchBar}>
+            <PowerSearchBar
+              placeholder="Configuration management"
+              getSelectedFilter={filters => setFilters(filters)}
+              onFiltersChanged={filters => setFilters(filters)}
+              filterConfigs={[]}
+              searchConfig={[]}
+              exportPath={'/configurations_types'}
+              entity={'SERVICE'}
+            />
+          </div>
+        </div>
       </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={8}>
-          <CardAccordion className={classes.accordionDetails} title={'Details'}>
-            <FormField>
-              <Grid container spacing={1}>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="id"
-                    label="Id"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="resource_type"
-                    label="Resource type"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="change_source"
-                    label="Change source"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="change_source"
-                    label="Change source"
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                    name="name"
-                  />
-                </Grid>
-              </Grid>
-            </FormField>
-          </CardAccordion>
-          <CardAccordion title={'Target parameters'}>
-            <Tabla valuesTable={valuesTable} />
-          </CardAccordion>
-          <CardAccordion title={'Suggested change request schedule'}>
-            <CardSuggested />
-          </CardAccordion>
-        </Grid>
-        <Grid item xs={4}>
-          <CardAccordion
-            className={classes.listComment}
-            title={'Activity & Comments'}>
-            <Grid item xs={12}>
-              <CommentsActivitiesBox
-                boxElementsClass={classes.inExpandingPanelFix}
-                commentsLogClass={classes.commentsLog}
-                relatedEntityId={''}
-                relatedEntityType="%future added value"
-                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-                activities={[]}
-                comments={[]}
-              />
-            </Grid>
-          </CardAccordion>
-        </Grid>
+      <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
+        <Table data={data} columns={tableColumns} />
       </Grid>
     </Grid>
   );
