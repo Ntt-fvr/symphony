@@ -30,13 +30,20 @@ const useStyles = makeStyles(theme => ({
       paddingBottom: 3,
     },
     '& .MuiInputLabel-outlined': {
-      transform: 'translate(14px, 12px) scale(1)',
+      transform: 'translate(14px, 10px) scale(1)',
     },
     '& .MuiSelect-selectMenu': {
       height: 13,
+      minHeight: 13,
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -6px) scale(0.75)',
+    },
+    '& .MuiTypography-body2': {
+      lineHeight: '14px',
+    },
+    '& .MuiFormLabel-root': {
+      fontSize: 14,
     },
   },
   paper: {
@@ -64,7 +71,7 @@ const InputSelect = ({value, name, label, onChange, items}) => {
 
   return (
     <FormControl variant="outlined" fullWidth className={classes.root}>
-      <InputLabel id="inputStrategy">{'Strategy'}</InputLabel>
+      <InputLabel id="inputStrategy">{label}</InputLabel>
       <Select
         label={label}
         name={name}

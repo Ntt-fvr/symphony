@@ -13,6 +13,7 @@ import BlocksBar from './tools/blocksBar/BlocksBar';
 import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
 import FlowHeader from './tools/FlowHeader';
+import LeftBar from './tools/blocksBar/LeftBar';
 import React, {useEffect, useMemo, useState} from 'react';
 import TopBar from './tools/TopBar';
 import usePaperGrab from './widgets/navigation/usePaperGrab';
@@ -142,6 +143,7 @@ function FlowBuilderLayout() {
       <div className={classes.workspace}>
         <TopBar />
         <Canvas />
+        <LeftBar />
         <BottomBar />
       </div>
     </div>

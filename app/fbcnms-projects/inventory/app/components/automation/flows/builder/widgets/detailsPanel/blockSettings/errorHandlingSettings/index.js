@@ -11,7 +11,7 @@ import React from 'react';
 import Select from '../../../../../../inputs/Select';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import TextField from '../../../../../../inputs/TextField';
-import {Divider, FormControlLabel, Grid} from '@material-ui/core';
+import {Divider, FormControlLabel, Grid, Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import {useForm} from '../../../../../utils/useForm';
 
@@ -42,7 +42,7 @@ export default function ErrorHandlingSettings() {
     retryPolicy: false,
     retryInterval: null,
     units: '',
-    maxAttemps: false,
+    maxAttemps: null,
     backOffRate: null,
     errorCatching: false,
   });
@@ -74,7 +74,9 @@ export default function ErrorHandlingSettings() {
                   }}
                 />
               }
-              label={'Retry Policy'}
+              label={
+                <Typography variant={'body2'}> {'Retry Policy'}</Typography>
+              }
               labelPlacement="start"
             />
           </Grid>
@@ -137,7 +139,7 @@ export default function ErrorHandlingSettings() {
               }}
             />
           }
-          label={'Error Catching'}
+          label={<Typography variant={'body2'}>{'Error Catching'}</Typography>}
           labelPlacement="start"
         />
       </Grid>

@@ -14,11 +14,8 @@ import * as React from 'react';
 import ErrorHandlingSettings from './errorHandlingSettings';
 import InputSettings from './inputSettings';
 import OutputSettings from './outputSettings';
-import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
-import fbt from 'fbt';
-import {Grid} from '@material-ui/core';
+import Tabs from '../../../../../inputs/Tabs';
 import {makeStyles} from '@material-ui/styles';
-import {useState} from 'react';
 type Props = $ReadOnly<{|
   block: IBlock,
 |}>;
@@ -36,46 +33,34 @@ const useStyles = makeStyles(() => ({
 export default function BlockSettings(props: Props) {
   const {block} = props;
   const classes = useStyles();
-  const [activeTab, setActiveTab] = useState(0);
-
   console.log('Block', block);
 
   const tabs = [
     {
-      tab: {
-        label: `${fbt('Input', '')}`,
-      },
+      label: 'Configurations',
+      index: 0,
+      view: <div />,
+    },
+    {
+      label: 'Input',
+      index: 1,
       view: <InputSettings />,
     },
     {
-      tab: {
-        label: `${fbt('Output', '')}`,
-      },
+      label: 'Output',
+      index: 2,
       view: <OutputSettings />,
     },
     {
-      tab: {
-        label: `${fbt('Error Handling', '')}`,
-      },
+      label: 'Error Handling',
+      index: 3,
       view: <ErrorHandlingSettings />,
     },
   ];
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={4}>
-        <Grid item xs={12}>
-          <TabsBar
-            tabs={tabs.map(type => type.tab)}
-            activeTabIndex={activeTab}
-            onChange={setActiveTab}
-            spread={false}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          {tabs[activeTab].view}
-        </Grid>
-      </Grid>
+      <Tabs tabs={tabs} scrollable={false} />
     </div>
   );
 }

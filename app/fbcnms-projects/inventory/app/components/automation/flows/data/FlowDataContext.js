@@ -172,6 +172,7 @@ function FlowDataContextProviderComponent(props: Props) {
     },
   );
 
+  console.log('flowDraft', flowDraft);
   const enqueueSnackbar = useEnqueueSnackbar();
   const handleError = useCallback(
     (error: string) => {
