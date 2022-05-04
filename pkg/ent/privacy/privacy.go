@@ -840,6 +840,30 @@ func (f EventSeverityMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EventSeverityMutation", m)
 }
 
+// The ExecutionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ExecutionQueryRuleFunc func(context.Context, *ent.ExecutionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ExecutionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ExecutionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ExecutionQuery", q)
+}
+
+// The ExecutionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ExecutionMutationRuleFunc func(context.Context, *ent.ExecutionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ExecutionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ExecutionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ExecutionMutation", m)
+}
+
 // The ExitPointQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ExitPointQueryRuleFunc func(context.Context, *ent.ExitPointQuery) error

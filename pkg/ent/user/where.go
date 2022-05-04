@@ -1005,6 +1005,34 @@ func HasUserApprovedWith(preds ...predicate.Recommendations) predicate.User {
 	})
 }
 
+// HasUserFk applies the HasEdge predicate on the "User_fk" edge.
+func HasUserFk() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserFkTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserFkTable, UserFkColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserFkWith applies the HasEdge predicate on the "User_fk" edge with a given conditions (other predicates).
+func HasUserFkWith(preds ...predicate.Execution) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserFkInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserFkTable, UserFkColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasGroups applies the HasEdge predicate on the "groups" edge.
 func HasGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

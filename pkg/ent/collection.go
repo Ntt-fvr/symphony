@@ -561,6 +561,18 @@ func (es *EventSeverityQuery) collectField(ctx *graphql.OperationContext, field 
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (e *ExecutionQuery) CollectFields(ctx context.Context, satisfies ...string) *ExecutionQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		e = e.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return e
+}
+
+func (e *ExecutionQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ExecutionQuery {
+	return e
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (ep *ExitPointQuery) CollectFields(ctx context.Context, satisfies ...string) *ExitPointQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		ep = ep.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1741,6 +1753,10 @@ func (u *UserQuery) collectField(ctx *graphql.OperationContext, field graphql.Co
 			})
 		case "UserCreate":
 			u = u.WithUserCreate(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		case "UserFk":
+			u = u.WithUserFk(func(query *ExecutionQuery) {
 				query.collectField(ctx, field)
 			})
 		}

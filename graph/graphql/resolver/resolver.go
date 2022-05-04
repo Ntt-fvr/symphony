@@ -221,6 +221,10 @@ func (r resolver) CounterFormula() generated.CounterFormulaResolver {
 	return counterFormulaResolver{}
 }
 
+func (r resolver) Execution() generated.ExecutionResolver {
+	return executionResolver{}
+}
+
 func (r resolver) Counter() generated.CounterResolver {
 	return counterResolver{}
 }

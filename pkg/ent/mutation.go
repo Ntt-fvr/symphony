@@ -41,6 +41,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
+	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
@@ -154,6 +155,7 @@ const (
 	TypeEquipmentPositionDefinition       = "EquipmentPositionDefinition"
 	TypeEquipmentType                     = "EquipmentType"
 	TypeEventSeverity                     = "EventSeverity"
+	TypeExecution                         = "Execution"
 	TypeExitPoint                         = "ExitPoint"
 	TypeExportTask                        = "ExportTask"
 	TypeFeature                           = "Feature"
@@ -21659,6 +21661,479 @@ func (m *EventSeverityMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown EventSeverity edge %s", name)
+}
+
+// ExecutionMutation represents an operation that mutate the Executions
+// nodes in the graph.
+type ExecutionMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *int
+	create_time        *time.Time
+	update_time        *time.Time
+	manualConfirmation *time.Time
+	clearedFields      map[string]struct{}
+	user               *int
+	cleareduser        bool
+	done               bool
+	oldValue           func(context.Context) (*Execution, error)
+	predicates         []predicate.Execution
+}
+
+var _ ent.Mutation = (*ExecutionMutation)(nil)
+
+// executionOption allows to manage the mutation configuration using functional options.
+type executionOption func(*ExecutionMutation)
+
+// newExecutionMutation creates new mutation for Execution.
+func newExecutionMutation(c config, op Op, opts ...executionOption) *ExecutionMutation {
+	m := &ExecutionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeExecution,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withExecutionID sets the id field of the mutation.
+func withExecutionID(id int) executionOption {
+	return func(m *ExecutionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Execution
+		)
+		m.oldValue = func(ctx context.Context) (*Execution, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Execution.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withExecution sets the old Execution of the mutation.
+func withExecution(node *Execution) executionOption {
+	return func(m *ExecutionMutation) {
+		m.oldValue = func(context.Context) (*Execution, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ExecutionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ExecutionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ExecutionMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ExecutionMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ExecutionMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the Execution.
+// If the Execution object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExecutionMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ExecutionMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ExecutionMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ExecutionMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the Execution.
+// If the Execution object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExecutionMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ExecutionMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetManualConfirmation sets the manualConfirmation field.
+func (m *ExecutionMutation) SetManualConfirmation(t time.Time) {
+	m.manualConfirmation = &t
+}
+
+// ManualConfirmation returns the manualConfirmation value in the mutation.
+func (m *ExecutionMutation) ManualConfirmation() (r time.Time, exists bool) {
+	v := m.manualConfirmation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldManualConfirmation returns the old manualConfirmation value of the Execution.
+// If the Execution object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExecutionMutation) OldManualConfirmation(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldManualConfirmation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldManualConfirmation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldManualConfirmation: %w", err)
+	}
+	return oldValue.ManualConfirmation, nil
+}
+
+// ResetManualConfirmation reset all changes of the "manualConfirmation" field.
+func (m *ExecutionMutation) ResetManualConfirmation() {
+	m.manualConfirmation = nil
+}
+
+// SetUserID sets the user edge to User by id.
+func (m *ExecutionMutation) SetUserID(id int) {
+	m.user = &id
+}
+
+// ClearUser clears the user edge to User.
+func (m *ExecutionMutation) ClearUser() {
+	m.cleareduser = true
+}
+
+// UserCleared returns if the edge user was cleared.
+func (m *ExecutionMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserID returns the user id in the mutation.
+func (m *ExecutionMutation) UserID() (id int, exists bool) {
+	if m.user != nil {
+		return *m.user, true
+	}
+	return
+}
+
+// UserIDs returns the user ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *ExecutionMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser reset all changes of the "user" edge.
+func (m *ExecutionMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Op returns the operation name.
+func (m *ExecutionMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Execution).
+func (m *ExecutionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ExecutionMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, execution.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, execution.FieldUpdateTime)
+	}
+	if m.manualConfirmation != nil {
+		fields = append(fields, execution.FieldManualConfirmation)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ExecutionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case execution.FieldCreateTime:
+		return m.CreateTime()
+	case execution.FieldUpdateTime:
+		return m.UpdateTime()
+	case execution.FieldManualConfirmation:
+		return m.ManualConfirmation()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ExecutionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case execution.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case execution.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case execution.FieldManualConfirmation:
+		return m.OldManualConfirmation(ctx)
+	}
+	return nil, fmt.Errorf("unknown Execution field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ExecutionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case execution.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case execution.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case execution.FieldManualConfirmation:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetManualConfirmation(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Execution field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ExecutionMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ExecutionMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ExecutionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Execution numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ExecutionMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ExecutionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ExecutionMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Execution nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ExecutionMutation) ResetField(name string) error {
+	switch name {
+	case execution.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case execution.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case execution.FieldManualConfirmation:
+		m.ResetManualConfirmation()
+		return nil
+	}
+	return fmt.Errorf("unknown Execution field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ExecutionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, execution.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ExecutionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case execution.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ExecutionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ExecutionMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ExecutionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, execution.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ExecutionMutation) EdgeCleared(name string) bool {
+	switch name {
+	case execution.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ExecutionMutation) ClearEdge(name string) error {
+	switch name {
+	case execution.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown Execution unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ExecutionMutation) ResetEdge(name string) error {
+	switch name {
+	case execution.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown Execution edge %s", name)
 }
 
 // ExitPointMutation represents an operation that mutate the ExitPoints
@@ -77495,6 +77970,9 @@ type UserMutation struct {
 	_User_approved              map[int]struct{}
 	removed_User_approved       map[int]struct{}
 	cleared_User_approved       bool
+	_User_fk                    map[int]struct{}
+	removed_User_fk             map[int]struct{}
+	cleared_User_fk             bool
 	groups                      map[int]struct{}
 	removedgroups               map[int]struct{}
 	clearedgroups               bool
@@ -78114,6 +78592,59 @@ func (m *UserMutation) ResetUserApproved() {
 	m._User_approved = nil
 	m.cleared_User_approved = false
 	m.removed_User_approved = nil
+}
+
+// AddUserFkIDs adds the User_fk edge to Execution by ids.
+func (m *UserMutation) AddUserFkIDs(ids ...int) {
+	if m._User_fk == nil {
+		m._User_fk = make(map[int]struct{})
+	}
+	for i := range ids {
+		m._User_fk[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUserFk clears the User_fk edge to Execution.
+func (m *UserMutation) ClearUserFk() {
+	m.cleared_User_fk = true
+}
+
+// UserFkCleared returns if the edge User_fk was cleared.
+func (m *UserMutation) UserFkCleared() bool {
+	return m.cleared_User_fk
+}
+
+// RemoveUserFkIDs removes the User_fk edge to Execution by ids.
+func (m *UserMutation) RemoveUserFkIDs(ids ...int) {
+	if m.removed_User_fk == nil {
+		m.removed_User_fk = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removed_User_fk[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUserFk returns the removed ids of User_fk.
+func (m *UserMutation) RemovedUserFkIDs() (ids []int) {
+	for id := range m.removed_User_fk {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UserFkIDs returns the User_fk ids in the mutation.
+func (m *UserMutation) UserFkIDs() (ids []int) {
+	for id := range m._User_fk {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUserFk reset all changes of the "User_fk" edge.
+func (m *UserMutation) ResetUserFk() {
+	m._User_fk = nil
+	m.cleared_User_fk = false
+	m.removed_User_fk = nil
 }
 
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
@@ -78745,7 +79276,7 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.profile_photo != nil {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -78754,6 +79285,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m._User_approved != nil {
 		edges = append(edges, user.EdgeUserApproved)
+	}
+	if m._User_fk != nil {
+		edges = append(edges, user.EdgeUserFk)
 	}
 	if m.groups != nil {
 		edges = append(edges, user.EdgeGroups)
@@ -78796,6 +79330,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 	case user.EdgeUserApproved:
 		ids := make([]ent.Value, 0, len(m._User_approved))
 		for id := range m._User_approved {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeUserFk:
+		ids := make([]ent.Value, 0, len(m._User_fk))
+		for id := range m._User_fk {
 			ids = append(ids, id)
 		}
 		return ids
@@ -78846,12 +79386,15 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.removed_User_create != nil {
 		edges = append(edges, user.EdgeUserCreate)
 	}
 	if m.removed_User_approved != nil {
 		edges = append(edges, user.EdgeUserApproved)
+	}
+	if m.removed_User_fk != nil {
+		edges = append(edges, user.EdgeUserFk)
 	}
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
@@ -78887,6 +79430,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	case user.EdgeUserApproved:
 		ids := make([]ent.Value, 0, len(m.removed_User_approved))
 		for id := range m.removed_User_approved {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeUserFk:
+		ids := make([]ent.Value, 0, len(m.removed_User_fk))
+		for id := range m.removed_User_fk {
 			ids = append(ids, id)
 		}
 		return ids
@@ -78933,7 +79482,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.clearedprofile_photo {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -78942,6 +79491,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.cleared_User_approved {
 		edges = append(edges, user.EdgeUserApproved)
+	}
+	if m.cleared_User_fk {
+		edges = append(edges, user.EdgeUserFk)
 	}
 	if m.clearedgroups {
 		edges = append(edges, user.EdgeGroups)
@@ -78977,6 +79529,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.cleared_User_create
 	case user.EdgeUserApproved:
 		return m.cleared_User_approved
+	case user.EdgeUserFk:
+		return m.cleared_User_fk
 	case user.EdgeGroups:
 		return m.clearedgroups
 	case user.EdgeOrganization:
@@ -79022,6 +79576,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeUserApproved:
 		m.ResetUserApproved()
+		return nil
+	case user.EdgeUserFk:
+		m.ResetUserFk()
 		return nil
 	case user.EdgeGroups:
 		m.ResetGroups()

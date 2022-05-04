@@ -175,6 +175,12 @@ func (c *EventSeverityClient) Instantiate(es *EventSeverity) *EventSeverity {
 }
 
 // Instantiate entity configuration.
+func (c *ExecutionClient) Instantiate(e *Execution) *Execution {
+	e.config = c.config
+	return e
+}
+
+// Instantiate entity configuration.
 func (c *ExitPointClient) Instantiate(ep *ExitPoint) *ExitPoint {
 	ep.config = c.config
 	return ep

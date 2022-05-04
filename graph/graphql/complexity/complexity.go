@@ -85,6 +85,9 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.CounterFamilies = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterFamilyOrder, _ []*models.CounterFamilyFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.Executions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ExecutionOrder, _ []*models.ExecutionFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.Counters = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterOrder, _ []*models.CounterFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}

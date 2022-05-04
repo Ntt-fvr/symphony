@@ -69,6 +69,8 @@ func (User) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("UserCreate")),
 		edge.To("User_approved", Recommendations.Type).
 			Annotations(entgql.MapsTo("UserApprobed")),
+		edge.To("User_fk", Execution.Type).
+			Annotations(entgql.MapsTo("UserFk")),
 		edge.From("groups", UsersGroup.Type).
 			Ref("members"),
 		edge.From("organization", Organization.Type).

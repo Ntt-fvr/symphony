@@ -38,6 +38,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
+	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
@@ -828,6 +829,29 @@ func init() {
 	eventseverityDescName := eventseverityFields[0].Descriptor()
 	// eventseverity.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	eventseverity.NameValidator = eventseverityDescName.Validators[0].(func(string) error)
+	executionMixin := schema.Execution{}.Mixin()
+	execution.Policy = privacy.NewPolicies(schema.Execution{})
+	execution.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := execution.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	executionMixinFields0 := executionMixin[0].Fields()
+	executionFields := schema.Execution{}.Fields()
+	_ = executionFields
+	// executionDescCreateTime is the schema descriptor for create_time field.
+	executionDescCreateTime := executionMixinFields0[0].Descriptor()
+	// execution.DefaultCreateTime holds the default value on creation for the create_time field.
+	execution.DefaultCreateTime = executionDescCreateTime.Default.(func() time.Time)
+	// executionDescUpdateTime is the schema descriptor for update_time field.
+	executionDescUpdateTime := executionMixinFields0[1].Descriptor()
+	// execution.DefaultUpdateTime holds the default value on creation for the update_time field.
+	execution.DefaultUpdateTime = executionDescUpdateTime.Default.(func() time.Time)
+	// execution.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	execution.UpdateDefaultUpdateTime = executionDescUpdateTime.UpdateDefault.(func() time.Time)
 	exitpointMixin := schema.ExitPoint{}.Mixin()
 	exitpoint.Policy = privacy.NewPolicies(schema.ExitPoint{})
 	exitpoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {

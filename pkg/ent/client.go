@@ -41,6 +41,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
+	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
@@ -177,6 +178,8 @@ type Client struct {
 	EquipmentType *EquipmentTypeClient
 	// EventSeverity is the client for interacting with the EventSeverity builders.
 	EventSeverity *EventSeverityClient
+	// Execution is the client for interacting with the Execution builders.
+	Execution *ExecutionClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
 	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
@@ -358,6 +361,7 @@ func (c *Client) init() {
 	c.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(c.config)
 	c.EquipmentType = NewEquipmentTypeClient(c.config)
 	c.EventSeverity = NewEventSeverityClient(c.config)
+	c.Execution = NewExecutionClient(c.config)
 	c.ExitPoint = NewExitPointClient(c.config)
 	c.ExportTask = NewExportTaskClient(c.config)
 	c.Feature = NewFeatureClient(c.config)
@@ -487,6 +491,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EquipmentPositionDefinition:       NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:                     NewEquipmentTypeClient(cfg),
 		EventSeverity:                     NewEventSeverityClient(cfg),
+		Execution:                         NewExecutionClient(cfg),
 		ExitPoint:                         NewExitPointClient(cfg),
 		ExportTask:                        NewExportTaskClient(cfg),
 		Feature:                           NewFeatureClient(cfg),
@@ -599,6 +604,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EquipmentPositionDefinition:       NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:                     NewEquipmentTypeClient(cfg),
 		EventSeverity:                     NewEventSeverityClient(cfg),
+		Execution:                         NewExecutionClient(cfg),
 		ExitPoint:                         NewExitPointClient(cfg),
 		ExportTask:                        NewExportTaskClient(cfg),
 		Feature:                           NewFeatureClient(cfg),
@@ -724,6 +730,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.EquipmentPositionDefinition.Use(hooks...)
 	c.EquipmentType.Use(hooks...)
 	c.EventSeverity.Use(hooks...)
+	c.Execution.Use(hooks...)
 	c.ExitPoint.Use(hooks...)
 	c.ExportTask.Use(hooks...)
 	c.Feature.Use(hooks...)
@@ -4613,6 +4620,111 @@ func (c *EventSeverityClient) QueryEventseverityrule(es *EventSeverity) *RuleQue
 func (c *EventSeverityClient) Hooks() []Hook {
 	hooks := c.hooks.EventSeverity
 	return append(hooks[:len(hooks):len(hooks)], eventseverity.Hooks[:]...)
+}
+
+// ExecutionClient is a client for the Execution schema.
+type ExecutionClient struct {
+	config
+}
+
+// NewExecutionClient returns a client for the Execution from the given config.
+func NewExecutionClient(c config) *ExecutionClient {
+	return &ExecutionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `execution.Hooks(f(g(h())))`.
+func (c *ExecutionClient) Use(hooks ...Hook) {
+	c.hooks.Execution = append(c.hooks.Execution, hooks...)
+}
+
+// Create returns a create builder for Execution.
+func (c *ExecutionClient) Create() *ExecutionCreate {
+	mutation := newExecutionMutation(c.config, OpCreate)
+	return &ExecutionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Execution entities.
+func (c *ExecutionClient) CreateBulk(builders ...*ExecutionCreate) *ExecutionCreateBulk {
+	return &ExecutionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Execution.
+func (c *ExecutionClient) Update() *ExecutionUpdate {
+	mutation := newExecutionMutation(c.config, OpUpdate)
+	return &ExecutionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExecutionClient) UpdateOne(e *Execution) *ExecutionUpdateOne {
+	mutation := newExecutionMutation(c.config, OpUpdateOne, withExecution(e))
+	return &ExecutionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExecutionClient) UpdateOneID(id int) *ExecutionUpdateOne {
+	mutation := newExecutionMutation(c.config, OpUpdateOne, withExecutionID(id))
+	return &ExecutionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Execution.
+func (c *ExecutionClient) Delete() *ExecutionDelete {
+	mutation := newExecutionMutation(c.config, OpDelete)
+	return &ExecutionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ExecutionClient) DeleteOne(e *Execution) *ExecutionDeleteOne {
+	return c.DeleteOneID(e.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ExecutionClient) DeleteOneID(id int) *ExecutionDeleteOne {
+	builder := c.Delete().Where(execution.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExecutionDeleteOne{builder}
+}
+
+// Query returns a query builder for Execution.
+func (c *ExecutionClient) Query() *ExecutionQuery {
+	return &ExecutionQuery{config: c.config}
+}
+
+// Get returns a Execution entity by its id.
+func (c *ExecutionClient) Get(ctx context.Context, id int) (*Execution, error) {
+	return c.Query().Where(execution.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExecutionClient) GetX(ctx context.Context, id int) *Execution {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Execution.
+func (c *ExecutionClient) QueryUser(e *Execution) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(execution.Table, execution.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, execution.UserTable, execution.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ExecutionClient) Hooks() []Hook {
+	hooks := c.hooks.Execution
+	return append(hooks[:len(hooks):len(hooks)], execution.Hooks[:]...)
 }
 
 // ExitPointClient is a client for the ExitPoint schema.
@@ -13400,6 +13512,22 @@ func (c *UserClient) QueryUserApproved(u *User) *RecommendationsQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(recommendations.Table, recommendations.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UserApprovedTable, user.UserApprovedColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUserFk queries the User_fk edge of a User.
+func (c *UserClient) QueryUserFk(u *User) *ExecutionQuery {
+	query := &ExecutionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(execution.Table, execution.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserFkTable, user.UserFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

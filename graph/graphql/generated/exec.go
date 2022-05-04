@@ -79,6 +79,7 @@ type ResolverRoot interface {
 	EquipmentPortType() EquipmentPortTypeResolver
 	EquipmentType() EquipmentTypeResolver
 	EventSeverity() EventSeverityResolver
+	Execution() ExecutionResolver
 	ExportTask() ExportTaskResolver
 	FloorPlan() FloorPlanResolver
 	Flow() FlowResolver
@@ -676,6 +677,23 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	Execution struct {
+		ID                 func(childComplexity int) int
+		ManualConfirmation func(childComplexity int) int
+		UserFk             func(childComplexity int) int
+	}
+
+	ExecutionConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	ExecutionEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	ExitPoint struct {
 		Cid             func(childComplexity int) int
 		Condition       func(childComplexity int) int
@@ -1164,6 +1182,7 @@ type ComplexityRoot struct {
 		AddEquipmentPortType                          func(childComplexity int, input models.AddEquipmentPortTypeInput) int
 		AddEquipmentType                              func(childComplexity int, input models.AddEquipmentTypeInput) int
 		AddEventSeverity                              func(childComplexity int, input models.AddEventSeverityInput) int
+		AddExecution                                  func(childComplexity int, input models.AddExecutionInput) int
 		AddFloorPlan                                  func(childComplexity int, input models.AddFloorPlanInput) int
 		AddFlowDraft                                  func(childComplexity int, input models.AddFlowDraftInput) int
 		AddFormula                                    func(childComplexity int, input models.AddFormulaInput) int
@@ -1247,6 +1266,7 @@ type ComplexityRoot struct {
 		EditEquipmentPortType                         func(childComplexity int, input models.EditEquipmentPortTypeInput) int
 		EditEquipmentType                             func(childComplexity int, input models.EditEquipmentTypeInput) int
 		EditEventSeverity                             func(childComplexity int, input models.EditEventSeverityInput) int
+		EditExecution                                 func(childComplexity int, input models.EditExecutionInput) int
 		EditFlowInstance                              func(childComplexity int, input *models.EditFlowInstanceInput) int
 		EditFormula                                   func(childComplexity int, input models.EditFormulaInput) int
 		EditIsListable                                func(childComplexity int, input models.EditIsListableInput) int
@@ -1315,6 +1335,7 @@ type ComplexityRoot struct {
 		RemoveEquipmentPortType                       func(childComplexity int, id int) int
 		RemoveEquipmentType                           func(childComplexity int, id int) int
 		RemoveEventSeverity                           func(childComplexity int, id int) int
+		RemoveExecution                               func(childComplexity int, id int) int
 		RemoveFormula                                 func(childComplexity int, id int) int
 		RemoveKpi                                     func(childComplexity int, id int) int
 		RemoveKpiCategory                             func(childComplexity int, id int) int
@@ -1647,6 +1668,7 @@ type ComplexityRoot struct {
 		EquipmentTypes                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
 		EventSeverities                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) int
+		Executions                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ExecutionOrder, filterBy []*models.ExecutionFilterInput) int
 		FlowDrafts                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		FlowInstances                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) int
 		Flows                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
@@ -2525,6 +2547,9 @@ type EquipmentTypeResolver interface {
 type EventSeverityResolver interface {
 	Rule(ctx context.Context, obj *ent.EventSeverity) ([]*ent.Rule, error)
 }
+type ExecutionResolver interface {
+	UserFk(ctx context.Context, obj *ent.Execution) (*ent.User, error)
+}
 type ExportTaskResolver interface {
 	Filters(ctx context.Context, obj *ent.ExportTask) ([]*models.GeneralFilter, error)
 }
@@ -2707,6 +2732,9 @@ type MutationResolver interface {
 	AddCounterFamily(ctx context.Context, input models.AddCounterFamilyInput) (*ent.CounterFamily, error)
 	EditCounterFamily(ctx context.Context, input models.EditCounterFamilyInput) (*ent.CounterFamily, error)
 	RemoveCounterFamily(ctx context.Context, id int) (int, error)
+	AddExecution(ctx context.Context, input models.AddExecutionInput) (*ent.Execution, error)
+	EditExecution(ctx context.Context, input models.EditExecutionInput) (*ent.Execution, error)
+	RemoveExecution(ctx context.Context, id int) (int, error)
 	AddVendor(ctx context.Context, input models.AddVendorInput) (*ent.Vendor, error)
 	EditVendor(ctx context.Context, input models.EditVendorInput) (*ent.Vendor, error)
 	RemoveVendor(ctx context.Context, id int) (int, error)
@@ -2888,6 +2916,7 @@ type QueryResolver interface {
 	Domains(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) (*ent.DomainConnection, error)
 	Vendors(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) (*ent.VendorConnection, error)
 	CounterFamilies(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) (*ent.CounterFamilyConnection, error)
+	Executions(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ExecutionOrder, filterBy []*models.ExecutionFilterInput) (*ent.ExecutionConnection, error)
 	RuleTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) (*ent.RuleTypeConnection, error)
 	EventSeverities(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) (*ent.EventSeverityConnection, error)
 	Comparators(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) (*ent.ComparatorConnection, error)
@@ -5184,6 +5213,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventSeverityEdge.Node(childComplexity), true
 
+	case "Execution.id":
+		if e.complexity.Execution.ID == nil {
+			break
+		}
+
+		return e.complexity.Execution.ID(childComplexity), true
+
+	case "Execution.manualConfirmation":
+		if e.complexity.Execution.ManualConfirmation == nil {
+			break
+		}
+
+		return e.complexity.Execution.ManualConfirmation(childComplexity), true
+
+	case "Execution.UserFk":
+		if e.complexity.Execution.UserFk == nil {
+			break
+		}
+
+		return e.complexity.Execution.UserFk(childComplexity), true
+
+	case "ExecutionConnection.edges":
+		if e.complexity.ExecutionConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.ExecutionConnection.Edges(childComplexity), true
+
+	case "ExecutionConnection.pageInfo":
+		if e.complexity.ExecutionConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.ExecutionConnection.PageInfo(childComplexity), true
+
+	case "ExecutionConnection.totalCount":
+		if e.complexity.ExecutionConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.ExecutionConnection.TotalCount(childComplexity), true
+
+	case "ExecutionEdge.cursor":
+		if e.complexity.ExecutionEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.ExecutionEdge.Cursor(childComplexity), true
+
+	case "ExecutionEdge.node":
+		if e.complexity.ExecutionEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.ExecutionEdge.Node(childComplexity), true
+
 	case "ExitPoint.cid":
 		if e.complexity.ExitPoint.Cid == nil {
 			break
@@ -7395,6 +7480,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddEventSeverity(childComplexity, args["input"].(models.AddEventSeverityInput)), true
 
+	case "Mutation.addExecution":
+		if e.complexity.Mutation.AddExecution == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addExecution_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddExecution(childComplexity, args["input"].(models.AddExecutionInput)), true
+
 	case "Mutation.addFloorPlan":
 		if e.complexity.Mutation.AddFloorPlan == nil {
 			break
@@ -8391,6 +8488,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditEventSeverity(childComplexity, args["input"].(models.EditEventSeverityInput)), true
 
+	case "Mutation.editExecution":
+		if e.complexity.Mutation.EditExecution == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editExecution_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditExecution(childComplexity, args["input"].(models.EditExecutionInput)), true
+
 	case "Mutation.editFlowInstance":
 		if e.complexity.Mutation.EditFlowInstance == nil {
 			break
@@ -9206,6 +9315,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveEventSeverity(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeExecution":
+		if e.complexity.Mutation.RemoveExecution == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeExecution_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveExecution(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeFormula":
 		if e.complexity.Mutation.RemoveFormula == nil {
@@ -11068,6 +11189,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.EventSeverities(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EventSeverityOrder), args["filterBy"].([]*models.EventSeverityFilterInput)), true
+
+	case "Query.executions":
+		if e.complexity.Query.Executions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_executions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Executions(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ExecutionOrder), args["filterBy"].([]*models.ExecutionFilterInput)), true
 
 	case "Query.flowDrafts":
 		if e.complexity.Query.FlowDrafts == nil {
@@ -18454,6 +18587,73 @@ type CounterFamilyEdge {
 }
 
 """
+Properties by which execution connections can be ordered.
+"""
+enum ExecutionOrderField {
+  """
+  Order executions by time.
+  """
+  MANUELCONFIRMATION
+
+  """
+  Order executions by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order executions by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for executions connections.
+"""
+input ExecutionOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order executions by.
+  """
+  field: ExecutionOrderField
+}
+
+"""
+A connection to a list of executions.
+"""
+type ExecutionConnection {
+  """
+  Total executions of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of executions edges.
+  """
+  edges: [ExecutionEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A executions edge in a connection.
+"""
+type ExecutionEdge {
+  """
+  The executions at the end of the edge.
+  """
+  node: Execution
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
 Properties by which ruleTypes connections can be ordered.
 """
 enum RuleTypeOrderField {
@@ -22084,6 +22284,41 @@ type Query {
     """
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
+
+    """
+  A list of executions.
+  """
+  executions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned executions.
+    """
+    orderBy: ExecutionOrder
+
+    """
+    Filtering options for the returned executions.
+    """
+    filterBy: [ExecutionFilterInput!]
+  ): ExecutionConnection!
   
   """
   A list of ruleTypes.
@@ -23169,6 +23404,9 @@ type Mutation {
   addCounterFamily(input: AddCounterFamilyInput!):CounterFamily!
   editCounterFamily(input: EditCounterFamilyInput!): CounterFamily!
   removeCounterFamily(id: ID!): ID!
+  addExecution(input: AddExecutionInput!):Execution!
+  editExecution(input: EditExecutionInput!): Execution!
+  removeExecution(id: ID!): ID!
   addVendor(input: AddVendorInput!):Vendor!
   editVendor(input: EditVendorInput!): Vendor!
   removeVendor(id: ID!): ID!
@@ -23378,6 +23616,38 @@ input CounterFamilyFilterInput {
   stringSet: [String!]
 }
 
+type Execution implements Node {
+  id: ID!
+  manualConfirmation: Time!
+  UserFk: User!
+  
+}
+
+input AddExecutionInput {
+  manualConfirmation: Time!
+  UserFk: ID!
+  
+}
+
+input EditExecutionInput {
+  id: ID!
+  manualConfirmation: Time!
+  UserFk: ID!
+  
+}
+
+enum ExecutionFilterType {
+  MANUELCONFIRMATION
+}
+
+input ExecutionFilterInput {
+  filterType: ExecutionFilterType!
+  operator: FilterOperator!
+  timeValue: Time
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
 
 type Vendor implements Node {
   id: ID!
@@ -25509,6 +25779,21 @@ func (ec *executionContext) field_Mutation_addEventSeverity_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addExecution_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddExecutionInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddExecutionInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddExecutionInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addFloorPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -26853,6 +27138,21 @@ func (ec *executionContext) field_Mutation_editEventSeverity_args(ctx context.Co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editExecution_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditExecutionInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditExecutionInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditExecutionInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editFlowInstance_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -27922,6 +28222,21 @@ func (ec *executionContext) field_Mutation_removeEquipment_args(ctx context.Cont
 }
 
 func (ec *executionContext) field_Mutation_removeEventSeverity_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeExecution_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -30382,6 +30697,104 @@ func (ec *executionContext) field_Query_eventSeverities_args(ctx context.Context
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
 		arg5, err = ec.unmarshalOEventSeverityFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_executions_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.ExecutionOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOExecutionOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.ExecutionFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOExecutionFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecutionFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -44882,6 +45295,283 @@ func (ec *executionContext) _EventSeverityEdge_cursor(ctx context.Context, field
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Execution_id(ctx context.Context, field graphql.CollectedField, obj *ent.Execution) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Execution",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Execution_manualConfirmation(ctx context.Context, field graphql.CollectedField, obj *ent.Execution) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Execution",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ManualConfirmation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Execution_UserFk(ctx context.Context, field graphql.CollectedField, obj *ent.Execution) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Execution",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Execution().UserFk(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ExecutionConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecutionConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.ExecutionConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecutionConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.ExecutionEdge)
+	fc.Result = res
+	return ec.marshalNExecutionEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.ExecutionConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecutionConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.ExecutionEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecutionEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Execution)
+	fc.Result = res
+	return ec.marshalOExecution2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecution(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.ExecutionEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecutionEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ExitPoint_id(ctx context.Context, field graphql.CollectedField, obj *ent.ExitPoint) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -58892,6 +59582,132 @@ func (ec *executionContext) _Mutation_removeCounterFamily(ctx context.Context, f
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addExecution(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addExecution_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddExecution(rctx, args["input"].(models.AddExecutionInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Execution)
+	fc.Result = res
+	return ec.marshalNExecution2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecution(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editExecution(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editExecution_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditExecution(rctx, args["input"].(models.EditExecutionInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Execution)
+	fc.Result = res
+	return ec.marshalNExecution2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecution(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeExecution(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeExecution_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveExecution(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addVendor(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -70731,6 +71547,48 @@ func (ec *executionContext) _Query_counterFamilies(ctx context.Context, field gr
 	res := resTmp.(*ent.CounterFamilyConnection)
 	fc.Result = res
 	return ec.marshalNCounterFamilyConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_executions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_executions_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Executions(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ExecutionOrder), args["filterBy"].([]*models.ExecutionFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExecutionConnection)
+	fc.Result = res
+	return ec.marshalNExecutionConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_ruleTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -89900,6 +90758,34 @@ func (ec *executionContext) unmarshalInputAddEventSeverityInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddExecutionInput(ctx context.Context, obj interface{}) (models.AddExecutionInput, error) {
+	var it models.AddExecutionInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "manualConfirmation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("manualConfirmation"))
+			it.ManualConfirmation, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "UserFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserFk"))
+			it.UserFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddFloorPlanInput(ctx context.Context, obj interface{}) (models.AddFloorPlanInput, error) {
 	var it models.AddFloorPlanInput
 	var asMap = obj.(map[string]interface{})
@@ -94736,6 +95622,42 @@ func (ec *executionContext) unmarshalInputEditEventSeverityInput(ctx context.Con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditExecutionInput(ctx context.Context, obj interface{}) (models.EditExecutionInput, error) {
+	var it models.EditExecutionInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "manualConfirmation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("manualConfirmation"))
+			it.ManualConfirmation, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "UserFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserFk"))
+			it.UserFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditFlowInstanceInput(ctx context.Context, obj interface{}) (models.EditFlowInstanceInput, error) {
 	var it models.EditFlowInstanceInput
 	var asMap = obj.(map[string]interface{})
@@ -97531,6 +98453,98 @@ func (ec *executionContext) unmarshalInputEventSeverityOrder(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
 			it.Field, err = ec.unmarshalOEventSeverityOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputExecutionFilterInput(ctx context.Context, obj interface{}) (models.ExecutionFilterInput, error) {
+	var it models.ExecutionFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNExecutionFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecutionFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "timeValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timeValue"))
+			it.TimeValue, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputExecutionOrder(ctx context.Context, obj interface{}) (ent.ExecutionOrder, error) {
+	var it ent.ExecutionOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOExecutionOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -104147,6 +105161,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._CounterFamily(ctx, sel, obj)
+	case *ent.Execution:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Execution(ctx, sel, obj)
 	case *ent.Vendor:
 		if obj == nil {
 			return graphql.Null
@@ -108004,6 +109023,118 @@ func (ec *executionContext) _EventSeverityEdge(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var executionImplementors = []string{"Execution", "Node"}
+
+func (ec *executionContext) _Execution(ctx context.Context, sel ast.SelectionSet, obj *ent.Execution) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, executionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Execution")
+		case "id":
+			out.Values[i] = ec._Execution_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "manualConfirmation":
+			out.Values[i] = ec._Execution_manualConfirmation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "UserFk":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Execution_UserFk(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var executionConnectionImplementors = []string{"ExecutionConnection"}
+
+func (ec *executionContext) _ExecutionConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.ExecutionConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, executionConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExecutionConnection")
+		case "totalCount":
+			out.Values[i] = ec._ExecutionConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._ExecutionConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._ExecutionConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var executionEdgeImplementors = []string{"ExecutionEdge"}
+
+func (ec *executionContext) _ExecutionEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.ExecutionEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, executionEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExecutionEdge")
+		case "node":
+			out.Values[i] = ec._ExecutionEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._ExecutionEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var exitPointImplementors = []string{"ExitPoint", "Node"}
 
 func (ec *executionContext) _ExitPoint(ctx context.Context, sel ast.SelectionSet, obj *ent.ExitPoint) graphql.Marshaler {
@@ -111712,6 +112843,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addExecution":
+			out.Values[i] = ec._Mutation_addExecution(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editExecution":
+			out.Values[i] = ec._Mutation_editExecution(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeExecution":
+			out.Values[i] = ec._Mutation_removeExecution(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addVendor":
 			out.Values[i] = ec._Mutation_addVendor(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -114509,6 +115655,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_counterFamilies(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "executions":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_executions(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -120220,6 +121380,11 @@ func (ec *executionContext) unmarshalNAddEventSeverityInput2githubᚗcomᚋfaceb
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddExecutionInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddExecutionInput(ctx context.Context, v interface{}) (models.AddExecutionInput, error) {
+	res, err := ec.unmarshalInputAddExecutionInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddFloorPlanInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFloorPlanInput(ctx context.Context, v interface{}) (models.AddFloorPlanInput, error) {
 	res, err := ec.unmarshalInputAddFloorPlanInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -122178,6 +123343,11 @@ func (ec *executionContext) unmarshalNEditEventSeverityInput2githubᚗcomᚋface
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNEditExecutionInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditExecutionInput(ctx context.Context, v interface{}) (models.EditExecutionInput, error) {
+	res, err := ec.unmarshalInputEditExecutionInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNEditFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditFormulaInput(ctx context.Context, v interface{}) (models.EditFormulaInput, error) {
 	res, err := ec.unmarshalInputEditFormulaInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -123233,6 +124403,96 @@ func (ec *executionContext) unmarshalNEventSeverityFilterType2githubᚗcomᚋfac
 }
 
 func (ec *executionContext) marshalNEventSeverityFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterType(ctx context.Context, sel ast.SelectionSet, v models.EventSeverityFilterType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNExecution2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecution(ctx context.Context, sel ast.SelectionSet, v ent.Execution) graphql.Marshaler {
+	return ec._Execution(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNExecution2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecution(ctx context.Context, sel ast.SelectionSet, v *ent.Execution) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Execution(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNExecutionConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionConnection(ctx context.Context, sel ast.SelectionSet, v ent.ExecutionConnection) graphql.Marshaler {
+	return ec._ExecutionConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNExecutionConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ExecutionConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExecutionConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNExecutionEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ExecutionEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNExecutionEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNExecutionEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionEdge(ctx context.Context, sel ast.SelectionSet, v *ent.ExecutionEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExecutionEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNExecutionFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecutionFilterInput(ctx context.Context, v interface{}) (*models.ExecutionFilterInput, error) {
+	res, err := ec.unmarshalInputExecutionFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNExecutionFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecutionFilterType(ctx context.Context, v interface{}) (models.ExecutionFilterType, error) {
+	var res models.ExecutionFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNExecutionFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecutionFilterType(ctx context.Context, sel ast.SelectionSet, v models.ExecutionFilterType) graphql.Marshaler {
 	return v
 }
 
@@ -131571,6 +132831,61 @@ func (ec *executionContext) unmarshalOEventSeverityOrderField2ᚖgithubᚗcomᚋ
 }
 
 func (ec *executionContext) marshalOEventSeverityOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.EventSeverityOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalOExecution2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecution(ctx context.Context, sel ast.SelectionSet, v *ent.Execution) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Execution(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOExecutionFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecutionFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ExecutionFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.ExecutionFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNExecutionFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecutionFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOExecutionOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionOrder(ctx context.Context, v interface{}) (*ent.ExecutionOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputExecutionOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOExecutionOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionOrderField(ctx context.Context, v interface{}) (*ent.ExecutionOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.ExecutionOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOExecutionOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExecutionOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ExecutionOrderField) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

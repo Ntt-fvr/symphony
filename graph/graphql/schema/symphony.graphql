@@ -3364,6 +3364,73 @@ type CounterFamilyEdge {
 }
 
 """
+Properties by which execution connections can be ordered.
+"""
+enum ExecutionOrderField {
+  """
+  Order executions by time.
+  """
+  MANUELCONFIRMATION
+
+  """
+  Order executions by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order executions by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for executions connections.
+"""
+input ExecutionOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order executions by.
+  """
+  field: ExecutionOrderField
+}
+
+"""
+A connection to a list of executions.
+"""
+type ExecutionConnection {
+  """
+  Total executions of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of executions edges.
+  """
+  edges: [ExecutionEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A executions edge in a connection.
+"""
+type ExecutionEdge {
+  """
+  The executions at the end of the edge.
+  """
+  node: Execution
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
 Properties by which ruleTypes connections can be ordered.
 """
 enum RuleTypeOrderField {
@@ -6994,6 +7061,41 @@ type Query {
     """
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
+
+    """
+  A list of executions.
+  """
+  executions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned executions.
+    """
+    orderBy: ExecutionOrder
+
+    """
+    Filtering options for the returned executions.
+    """
+    filterBy: [ExecutionFilterInput!]
+  ): ExecutionConnection!
   
   """
   A list of ruleTypes.
@@ -8079,6 +8181,9 @@ type Mutation {
   addCounterFamily(input: AddCounterFamilyInput!):CounterFamily!
   editCounterFamily(input: EditCounterFamilyInput!): CounterFamily!
   removeCounterFamily(id: ID!): ID!
+  addExecution(input: AddExecutionInput!):Execution!
+  editExecution(input: EditExecutionInput!): Execution!
+  removeExecution(id: ID!): ID!
   addVendor(input: AddVendorInput!):Vendor!
   editVendor(input: EditVendorInput!): Vendor!
   removeVendor(id: ID!): ID!
@@ -8288,6 +8393,38 @@ input CounterFamilyFilterInput {
   stringSet: [String!]
 }
 
+type Execution implements Node {
+  id: ID!
+  manualConfirmation: Time!
+  UserFk: User!
+  
+}
+
+input AddExecutionInput {
+  manualConfirmation: Time!
+  UserFk: ID!
+  
+}
+
+input EditExecutionInput {
+  id: ID!
+  manualConfirmation: Time!
+  UserFk: ID!
+  
+}
+
+enum ExecutionFilterType {
+  MANUELCONFIRMATION
+}
+
+input ExecutionFilterInput {
+  filterType: ExecutionFilterType!
+  operator: FilterOperator!
+  timeValue: Time
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
 
 type Vendor implements Node {
   id: ID!

@@ -852,6 +852,29 @@ var (
 		PrimaryKey:  []*schema.Column{EventSeveritiesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ExecutionsColumns holds the columns for the "executions" table.
+	ExecutionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "manual_confirmation", Type: field.TypeTime},
+		{Name: "user_user_fk", Type: field.TypeInt, Nullable: true},
+	}
+	// ExecutionsTable holds the schema information for the "executions" table.
+	ExecutionsTable = &schema.Table{
+		Name:       "executions",
+		Columns:    ExecutionsColumns,
+		PrimaryKey: []*schema.Column{ExecutionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "executions_users_User_fk",
+				Columns: []*schema.Column{ExecutionsColumns[4]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// ExitPointsColumns holds the columns for the "exit_points" table.
 	ExitPointsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3613,6 +3636,7 @@ var (
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
 		EventSeveritiesTable,
+		ExecutionsTable,
 		ExitPointsTable,
 		ExportTasksTable,
 		FeaturesTable,
@@ -3737,6 +3761,7 @@ func init() {
 	EquipmentPositionsTable.ForeignKeys[1].RefTable = EquipmentPositionDefinitionsTable
 	EquipmentPositionDefinitionsTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTypesTable.ForeignKeys[0].RefTable = EquipmentCategoriesTable
+	ExecutionsTable.ForeignKeys[0].RefTable = UsersTable
 	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	FilesTable.ForeignKeys[1].RefTable = DocumentCategoriesTable

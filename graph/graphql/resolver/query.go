@@ -502,6 +502,27 @@ func (r queryResolver) CounterFamilies(
 			),
 		)
 }
+
+func (r queryResolver) Executions(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.ExecutionOrder,
+	filterBy []*models.ExecutionFilterInput,
+) (*ent.ExecutionConnection, error) {
+	return r.ClientFrom(ctx).
+		Execution.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithExecutionOrder(orderBy),
+			ent.WithExecutionFilter(
+				func(query *ent.ExecutionQuery) (*ent.ExecutionQuery, error) {
+					return resolverutil.ExecutionFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) RuleTypes(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

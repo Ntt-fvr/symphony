@@ -56,6 +56,7 @@ type hooks struct {
 	EquipmentPositionDefinition       []ent.Hook
 	EquipmentType                     []ent.Hook
 	EventSeverity                     []ent.Hook
+	Execution                         []ent.Hook
 	ExitPoint                         []ent.Hook
 	ExportTask                        []ent.Hook
 	Feature                           []ent.Hook

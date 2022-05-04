@@ -169,6 +169,11 @@ type AddEventSeverityInput struct {
 	Name string `json:"name"`
 }
 
+type AddExecutionInput struct {
+	ManualConfirmation time.Time `json:"manualConfirmation"`
+	UserFk             int       `json:"UserFk"`
+}
+
 type AddFloorPlanInput struct {
 	Name             string         `json:"name"`
 	LocationID       int            `json:"locationID"`
@@ -823,6 +828,12 @@ type EditEventSeverityInput struct {
 	Name string `json:"name"`
 }
 
+type EditExecutionInput struct {
+	ID                 int       `json:"id"`
+	ManualConfirmation time.Time `json:"manualConfirmation"`
+	UserFk             int       `json:"UserFk"`
+}
+
 type EditFlowInstanceInput struct {
 	ID                  int                  `json:"id"`
 	ServiceInstanceCode *string              `json:"serviceInstanceCode"`
@@ -1226,6 +1237,15 @@ type EventSeverityFilterInput struct {
 	IDSet       []int                   `json:"idSet"`
 	MaxDepth    *int                    `json:"maxDepth"`
 	StringSet   []string                `json:"stringSet"`
+}
+
+type ExecutionFilterInput struct {
+	FilterType ExecutionFilterType `json:"filterType"`
+	Operator   enum.FilterOperator `json:"operator"`
+	TimeValue  *time.Time          `json:"timeValue"`
+	IDSet      []int               `json:"idSet"`
+	MaxDepth   *int                `json:"maxDepth"`
+	StringSet  []string            `json:"stringSet"`
 }
 
 type ExitPointInput struct {
@@ -2307,6 +2327,45 @@ func (e *EventSeverityFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e EventSeverityFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ExecutionFilterType string
+
+const (
+	ExecutionFilterTypeManuelconfirmation ExecutionFilterType = "MANUELCONFIRMATION"
+)
+
+var AllExecutionFilterType = []ExecutionFilterType{
+	ExecutionFilterTypeManuelconfirmation,
+}
+
+func (e ExecutionFilterType) IsValid() bool {
+	switch e {
+	case ExecutionFilterTypeManuelconfirmation:
+		return true
+	}
+	return false
+}
+
+func (e ExecutionFilterType) String() string {
+	return string(e)
+}
+
+func (e *ExecutionFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExecutionFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExecutionFilterType", str)
+	}
+	return nil
+}
+
+func (e ExecutionFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

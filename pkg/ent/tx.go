@@ -72,6 +72,8 @@ type Tx struct {
 	EquipmentType *EquipmentTypeClient
 	// EventSeverity is the client for interacting with the EventSeverity builders.
 	EventSeverity *EventSeverityClient
+	// Execution is the client for interacting with the Execution builders.
+	Execution *ExecutionClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
 	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
@@ -373,6 +375,7 @@ func (tx *Tx) init() {
 	tx.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(tx.config)
 	tx.EquipmentType = NewEquipmentTypeClient(tx.config)
 	tx.EventSeverity = NewEventSeverityClient(tx.config)
+	tx.Execution = NewExecutionClient(tx.config)
 	tx.ExitPoint = NewExitPointClient(tx.config)
 	tx.ExportTask = NewExportTaskClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)

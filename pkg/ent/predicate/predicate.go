@@ -94,6 +94,9 @@ type EquipmentType func(*sql.Selector)
 // EventSeverity is the predicate function for eventseverity builders.
 type EventSeverity func(*sql.Selector)
 
+// Execution is the predicate function for execution builders.
+type Execution func(*sql.Selector)
+
 // ExitPoint is the predicate function for exitpoint builders.
 type ExitPoint func(*sql.Selector)
 

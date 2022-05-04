@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
@@ -197,6 +198,21 @@ func (uc *UserCreate) AddUserApproved(r ...*Recommendations) *UserCreate {
 		ids[i] = r[i].ID
 	}
 	return uc.AddUserApprovedIDs(ids...)
+}
+
+// AddUserFkIDs adds the User_fk edge to Execution by ids.
+func (uc *UserCreate) AddUserFkIDs(ids ...int) *UserCreate {
+	uc.mutation.AddUserFkIDs(ids...)
+	return uc
+}
+
+// AddUserFk adds the User_fk edges to Execution.
+func (uc *UserCreate) AddUserFk(e ...*Execution) *UserCreate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uc.AddUserFkIDs(ids...)
 }
 
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
@@ -585,6 +601,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserFkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserFkTable,
+			Columns: []string{user.UserFkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: execution.FieldID,
 				},
 			},
 		}

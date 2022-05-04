@@ -46,6 +46,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
+	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
@@ -6960,6 +6961,268 @@ var DefaultEventSeverityOrder = &EventSeverityOrder{
 		field: eventseverity.FieldID,
 		toCursor: func(es *EventSeverity) Cursor {
 			return Cursor{ID: es.ID}
+		},
+	},
+}
+
+// ExecutionEdge is the edge representation of Execution.
+type ExecutionEdge struct {
+	Node   *Execution `json:"node"`
+	Cursor Cursor     `json:"cursor"`
+}
+
+// ExecutionConnection is the connection containing edges to Execution.
+type ExecutionConnection struct {
+	Edges      []*ExecutionEdge `json:"edges"`
+	PageInfo   PageInfo         `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
+}
+
+// ExecutionPaginateOption enables pagination customization.
+type ExecutionPaginateOption func(*executionPager) error
+
+// WithExecutionOrder configures pagination ordering.
+func WithExecutionOrder(order *ExecutionOrder) ExecutionPaginateOption {
+	if order == nil {
+		order = DefaultExecutionOrder
+	}
+	o := *order
+	return func(pager *executionPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultExecutionOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithExecutionFilter configures pagination filter.
+func WithExecutionFilter(filter func(*ExecutionQuery) (*ExecutionQuery, error)) ExecutionPaginateOption {
+	return func(pager *executionPager) error {
+		if filter == nil {
+			return errors.New("ExecutionQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type executionPager struct {
+	order  *ExecutionOrder
+	filter func(*ExecutionQuery) (*ExecutionQuery, error)
+}
+
+func newExecutionPager(opts []ExecutionPaginateOption) (*executionPager, error) {
+	pager := &executionPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultExecutionOrder
+	}
+	return pager, nil
+}
+
+func (p *executionPager) applyFilter(query *ExecutionQuery) (*ExecutionQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *executionPager) toCursor(e *Execution) Cursor {
+	return p.order.Field.toCursor(e)
+}
+
+func (p *executionPager) applyCursors(query *ExecutionQuery, after, before *Cursor) *ExecutionQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultExecutionOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *executionPager) applyOrder(query *ExecutionQuery, reverse bool) *ExecutionQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultExecutionOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultExecutionOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Execution.
+func (e *ExecutionQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...ExecutionPaginateOption,
+) (*ExecutionConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newExecutionPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if e, err = pager.applyFilter(e); err != nil {
+		return nil, err
+	}
+
+	conn := &ExecutionConnection{Edges: []*ExecutionEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := e.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := e.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	e = pager.applyCursors(e, after, before)
+	e = pager.applyOrder(e, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		e = e.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		e = e.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := e.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *Execution
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Execution {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Execution {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*ExecutionEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &ExecutionEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// ExecutionOrderFieldManualConfirmation orders Execution by manualConfirmation.
+	ExecutionOrderFieldManualConfirmation = &ExecutionOrderField{
+		field: execution.FieldManualConfirmation,
+		toCursor: func(e *Execution) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.ManualConfirmation,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ExecutionOrderField) String() string {
+	var str string
+	switch f.field {
+	case execution.FieldManualConfirmation:
+		str = "MANUALCONFIRMATION"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ExecutionOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ExecutionOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ExecutionOrderField %T must be a string", v)
+	}
+	switch str {
+	case "MANUALCONFIRMATION":
+		*f = *ExecutionOrderFieldManualConfirmation
+	default:
+		return fmt.Errorf("%s is not a valid ExecutionOrderField", str)
+	}
+	return nil
+}
+
+// ExecutionOrderField defines the ordering field of Execution.
+type ExecutionOrderField struct {
+	field    string
+	toCursor func(*Execution) Cursor
+}
+
+// ExecutionOrder defines the ordering of Execution.
+type ExecutionOrder struct {
+	Direction OrderDirection       `json:"direction"`
+	Field     *ExecutionOrderField `json:"field"`
+}
+
+// DefaultExecutionOrder is the default ordering of Execution.
+var DefaultExecutionOrder = &ExecutionOrder{
+	Direction: OrderDirectionAsc,
+	Field: &ExecutionOrderField{
+		field: execution.FieldID,
+		toCursor: func(e *Execution) Cursor {
+			return Cursor{ID: e.ID}
 		},
 	},
 }

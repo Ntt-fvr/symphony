@@ -377,6 +377,19 @@ func (f EventSeverityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return f(ctx, mv)
 }
 
+// The ExecutionFunc type is an adapter to allow the use of ordinary
+// function as Execution mutator.
+type ExecutionFunc func(context.Context, *ent.ExecutionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExecutionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ExecutionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExecutionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ExitPointFunc type is an adapter to allow the use of ordinary
 // function as ExitPoint mutator.
 type ExitPointFunc func(context.Context, *ent.ExitPointMutation) (ent.Value, error)

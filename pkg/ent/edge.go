@@ -672,6 +672,14 @@ func (es *EventSeverity) Eventseverityrule(ctx context.Context) ([]*Rule, error)
 	return result, err
 }
 
+func (e *Execution) User(ctx context.Context) (*User, error) {
+	result, err := e.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryUser().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (ep *ExitPoint) NextEntryPoints(ctx context.Context) ([]*EntryPoint, error) {
 	result, err := ep.Edges.NextEntryPointsOrErr()
 	if IsNotLoaded(err) {
@@ -2308,6 +2316,14 @@ func (u *User) UserApproved(ctx context.Context) ([]*Recommendations, error) {
 	result, err := u.Edges.UserApprovedOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QueryUserApproved().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) UserFk(ctx context.Context) ([]*Execution, error) {
+	result, err := u.Edges.UserFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserFk().All(ctx)
 	}
 	return result, err
 }

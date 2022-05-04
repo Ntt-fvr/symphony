@@ -54,6 +54,8 @@ type UserEdges struct {
 	UserCreate []*Recommendations
 	// UserApproved holds the value of the User_approved edge.
 	UserApproved []*Recommendations
+	// UserFk holds the value of the User_fk edge.
+	UserFk []*Execution
 	// Groups holds the value of the groups edge.
 	Groups []*UsersGroup
 	// Organization holds the value of the organization edge.
@@ -70,7 +72,7 @@ type UserEdges struct {
 	Appointment []*Appointment
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [11]bool
 }
 
 // ProfilePhotoOrErr returns the ProfilePhoto value or an error if the edge
@@ -105,10 +107,19 @@ func (e UserEdges) UserApprovedOrErr() ([]*Recommendations, error) {
 	return nil, &NotLoadedError{edge: "User_approved"}
 }
 
+// UserFkOrErr returns the UserFk value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserFkOrErr() ([]*Execution, error) {
+	if e.loadedTypes[3] {
+		return e.UserFk, nil
+	}
+	return nil, &NotLoadedError{edge: "User_fk"}
+}
+
 // GroupsOrErr returns the Groups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupsOrErr() ([]*UsersGroup, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
@@ -117,7 +128,7 @@ func (e UserEdges) GroupsOrErr() ([]*UsersGroup, error) {
 // OrganizationOrErr returns the Organization value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e UserEdges) OrganizationOrErr() (*Organization, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		if e.Organization == nil {
 			// The edge organization was loaded in eager-loading,
 			// but was not found.
@@ -131,7 +142,7 @@ func (e UserEdges) OrganizationOrErr() (*Organization, error) {
 // OwnedWorkOrdersOrErr returns the OwnedWorkOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OwnedWorkOrdersOrErr() ([]*WorkOrder, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.OwnedWorkOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "owned_work_orders"}
@@ -140,7 +151,7 @@ func (e UserEdges) OwnedWorkOrdersOrErr() ([]*WorkOrder, error) {
 // AssignedWorkOrdersOrErr returns the AssignedWorkOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) AssignedWorkOrdersOrErr() ([]*WorkOrder, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.AssignedWorkOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "assigned_work_orders"}
@@ -149,7 +160,7 @@ func (e UserEdges) AssignedWorkOrdersOrErr() ([]*WorkOrder, error) {
 // CreatedProjectsOrErr returns the CreatedProjects value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) CreatedProjectsOrErr() ([]*Project, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.CreatedProjects, nil
 	}
 	return nil, &NotLoadedError{edge: "created_projects"}
@@ -158,7 +169,7 @@ func (e UserEdges) CreatedProjectsOrErr() ([]*Project, error) {
 // FeaturesOrErr returns the Features value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FeaturesOrErr() ([]*Feature, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.Features, nil
 	}
 	return nil, &NotLoadedError{edge: "features"}
@@ -167,7 +178,7 @@ func (e UserEdges) FeaturesOrErr() ([]*Feature, error) {
 // AppointmentOrErr returns the Appointment value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) AppointmentOrErr() ([]*Appointment, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.Appointment, nil
 	}
 	return nil, &NotLoadedError{edge: "appointment"}
@@ -278,6 +289,11 @@ func (u *User) QueryUserCreate() *RecommendationsQuery {
 // QueryUserApproved queries the User_approved edge of the User.
 func (u *User) QueryUserApproved() *RecommendationsQuery {
 	return (&UserClient{config: u.config}).QueryUserApproved(u)
+}
+
+// QueryUserFk queries the User_fk edge of the User.
+func (u *User) QueryUserFk() *ExecutionQuery {
+	return (&UserClient{config: u.config}).QueryUserFk(u)
 }
 
 // QueryGroups queries the groups edge of the User.

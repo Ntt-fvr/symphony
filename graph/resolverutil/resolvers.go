@@ -250,6 +250,16 @@ func CounterFamilyFilter(query *ent.CounterFamilyQuery, filters []*models.Counte
 	return query, nil
 }
 
+func ExecutionFilter(query *ent.ExecutionQuery, filters []*models.ExecutionFilterInput) (*ent.ExecutionQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleExecutionFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
 func RuleTypeFilter(query *ent.RuleTypeQuery, filters []*models.RuleTypeFilterInput) (*ent.RuleTypeQuery, error) {
 	var err error
 	for _, f := range filters {
