@@ -214,6 +214,9 @@ type RecommendationsCategory func(*sql.Selector)
 // RecommendationsSources is the predicate function for recommendationssources builders.
 type RecommendationsSources func(*sql.Selector)
 
+// ReconciliationRule is the predicate function for reconciliationrule builders.
+type ReconciliationRule func(*sql.Selector)
+
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
 

@@ -17,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
@@ -34,6 +35,7 @@ type ResourceSpecificationQuery struct {
 	predicates []predicate.ResourceSpecification
 	// eager-loading edges.
 	withResourcetype               *ResourceTypeQuery
+	withReconciliationrule         *ReconciliationRuleQuery
 	withResourcePropertyType       *ResourcePropertyTypeQuery
 	withResourceSpecification      *ResourceSpecificationRelationshipQuery
 	withResourceSpecificationItems *ResourceSpecificationItemsQuery
@@ -82,6 +84,28 @@ func (rsq *ResourceSpecificationQuery) QueryResourcetype() *ResourceTypeQuery {
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
 			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.ResourcetypeTable, resourcespecification.ResourcetypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryReconciliationrule chains the current query on the reconciliationrule edge.
+func (rsq *ResourceSpecificationQuery) QueryReconciliationrule() *ReconciliationRuleQuery {
+	query := &ReconciliationRuleQuery{config: rsq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rsq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
+			sqlgraph.To(reconciliationrule.Table, reconciliationrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.ReconciliationruleTable, resourcespecification.ReconciliationruleColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
 		return fromU, nil
@@ -332,6 +356,7 @@ func (rsq *ResourceSpecificationQuery) Clone() *ResourceSpecificationQuery {
 		unique:                         append([]string{}, rsq.unique...),
 		predicates:                     append([]predicate.ResourceSpecification{}, rsq.predicates...),
 		withResourcetype:               rsq.withResourcetype.Clone(),
+		withReconciliationrule:         rsq.withReconciliationrule.Clone(),
 		withResourcePropertyType:       rsq.withResourcePropertyType.Clone(),
 		withResourceSpecification:      rsq.withResourceSpecification.Clone(),
 		withResourceSpecificationItems: rsq.withResourceSpecificationItems.Clone(),
@@ -349,6 +374,17 @@ func (rsq *ResourceSpecificationQuery) WithResourcetype(opts ...func(*ResourceTy
 		opt(query)
 	}
 	rsq.withResourcetype = query
+	return rsq
+}
+
+//  WithReconciliationrule tells the query-builder to eager-loads the nodes that are connected to
+// the "reconciliationrule" edge. The optional arguments used to configure the query builder of the edge.
+func (rsq *ResourceSpecificationQuery) WithReconciliationrule(opts ...func(*ReconciliationRuleQuery)) *ResourceSpecificationQuery {
+	query := &ReconciliationRuleQuery{config: rsq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rsq.withReconciliationrule = query
 	return rsq
 }
 
@@ -455,14 +491,15 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		nodes       = []*ResourceSpecification{}
 		withFKs     = rsq.withFKs
 		_spec       = rsq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			rsq.withResourcetype != nil,
+			rsq.withReconciliationrule != nil,
 			rsq.withResourcePropertyType != nil,
 			rsq.withResourceSpecification != nil,
 			rsq.withResourceSpecificationItems != nil,
 		}
 	)
-	if rsq.withResourcetype != nil {
+	if rsq.withResourcetype != nil || rsq.withReconciliationrule != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -513,6 +550,31 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resourcetype = n
+			}
+		}
+	}
+
+	if query := rsq.withReconciliationrule; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*ResourceSpecification)
+		for i := range nodes {
+			if fk := nodes[i].reconciliation_rule_reconciliation_rule_specification; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(reconciliationrule.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "reconciliation_rule_reconciliation_rule_specification" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Reconciliationrule = n
 			}
 		}
 	}

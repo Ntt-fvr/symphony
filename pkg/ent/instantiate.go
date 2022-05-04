@@ -415,6 +415,12 @@ func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *
 }
 
 // Instantiate entity configuration.
+func (c *ReconciliationRuleClient) Instantiate(rr *ReconciliationRule) *ReconciliationRule {
+	rr.config = c.config
+	return rr
+}
+
+// Instantiate entity configuration.
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf

@@ -86,6 +86,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
+	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
@@ -16805,6 +16806,268 @@ var DefaultRecommendationsSourcesOrder = &RecommendationsSourcesOrder{
 		field: recommendationssources.FieldID,
 		toCursor: func(rs *RecommendationsSources) Cursor {
 			return Cursor{ID: rs.ID}
+		},
+	},
+}
+
+// ReconciliationRuleEdge is the edge representation of ReconciliationRule.
+type ReconciliationRuleEdge struct {
+	Node   *ReconciliationRule `json:"node"`
+	Cursor Cursor              `json:"cursor"`
+}
+
+// ReconciliationRuleConnection is the connection containing edges to ReconciliationRule.
+type ReconciliationRuleConnection struct {
+	Edges      []*ReconciliationRuleEdge `json:"edges"`
+	PageInfo   PageInfo                  `json:"pageInfo"`
+	TotalCount int                       `json:"totalCount"`
+}
+
+// ReconciliationRulePaginateOption enables pagination customization.
+type ReconciliationRulePaginateOption func(*reconciliationRulePager) error
+
+// WithReconciliationRuleOrder configures pagination ordering.
+func WithReconciliationRuleOrder(order *ReconciliationRuleOrder) ReconciliationRulePaginateOption {
+	if order == nil {
+		order = DefaultReconciliationRuleOrder
+	}
+	o := *order
+	return func(pager *reconciliationRulePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultReconciliationRuleOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithReconciliationRuleFilter configures pagination filter.
+func WithReconciliationRuleFilter(filter func(*ReconciliationRuleQuery) (*ReconciliationRuleQuery, error)) ReconciliationRulePaginateOption {
+	return func(pager *reconciliationRulePager) error {
+		if filter == nil {
+			return errors.New("ReconciliationRuleQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type reconciliationRulePager struct {
+	order  *ReconciliationRuleOrder
+	filter func(*ReconciliationRuleQuery) (*ReconciliationRuleQuery, error)
+}
+
+func newReconciliationRulePager(opts []ReconciliationRulePaginateOption) (*reconciliationRulePager, error) {
+	pager := &reconciliationRulePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultReconciliationRuleOrder
+	}
+	return pager, nil
+}
+
+func (p *reconciliationRulePager) applyFilter(query *ReconciliationRuleQuery) (*ReconciliationRuleQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *reconciliationRulePager) toCursor(rr *ReconciliationRule) Cursor {
+	return p.order.Field.toCursor(rr)
+}
+
+func (p *reconciliationRulePager) applyCursors(query *ReconciliationRuleQuery, after, before *Cursor) *ReconciliationRuleQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultReconciliationRuleOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *reconciliationRulePager) applyOrder(query *ReconciliationRuleQuery, reverse bool) *ReconciliationRuleQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultReconciliationRuleOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultReconciliationRuleOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to ReconciliationRule.
+func (rr *ReconciliationRuleQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...ReconciliationRulePaginateOption,
+) (*ReconciliationRuleConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newReconciliationRulePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if rr, err = pager.applyFilter(rr); err != nil {
+		return nil, err
+	}
+
+	conn := &ReconciliationRuleConnection{Edges: []*ReconciliationRuleEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := rr.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := rr.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	rr = pager.applyCursors(rr, after, before)
+	rr = pager.applyOrder(rr, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		rr = rr.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		rr = rr.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := rr.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *ReconciliationRule
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *ReconciliationRule {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *ReconciliationRule {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*ReconciliationRuleEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &ReconciliationRuleEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// ReconciliationRuleOrderFieldName orders ReconciliationRule by name.
+	ReconciliationRuleOrderFieldName = &ReconciliationRuleOrderField{
+		field: reconciliationrule.FieldName,
+		toCursor: func(rr *ReconciliationRule) Cursor {
+			return Cursor{
+				ID:    rr.ID,
+				Value: rr.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ReconciliationRuleOrderField) String() string {
+	var str string
+	switch f.field {
+	case reconciliationrule.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ReconciliationRuleOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ReconciliationRuleOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ReconciliationRuleOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *ReconciliationRuleOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid ReconciliationRuleOrderField", str)
+	}
+	return nil
+}
+
+// ReconciliationRuleOrderField defines the ordering field of ReconciliationRule.
+type ReconciliationRuleOrderField struct {
+	field    string
+	toCursor func(*ReconciliationRule) Cursor
+}
+
+// ReconciliationRuleOrder defines the ordering of ReconciliationRule.
+type ReconciliationRuleOrder struct {
+	Direction OrderDirection                `json:"direction"`
+	Field     *ReconciliationRuleOrderField `json:"field"`
+}
+
+// DefaultReconciliationRuleOrder is the default ordering of ReconciliationRule.
+var DefaultReconciliationRuleOrder = &ReconciliationRuleOrder{
+	Direction: OrderDirectionAsc,
+	Field: &ReconciliationRuleOrderField{
+		field: reconciliationrule.FieldID,
+		toCursor: func(rr *ReconciliationRule) Cursor {
+			return Cursor{ID: rr.ID}
 		},
 	},
 }

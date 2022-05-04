@@ -24,6 +24,7 @@ func (r mutationResolver) AddResourceType(ctx context.Context, input models.AddR
 		SetName(input.Name).
 		SetResourceTypeBaseType(input.ResourceTypeBaseType).
 		SetResourceTypeClass(input.ResourceTypeClass).
+		SetReconciliationruleID(input.ReconciliationRule).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -77,6 +78,7 @@ func (r mutationResolver) EditResourceType(ctx context.Context, input models.Edi
 			SetName(input.Name).
 			SetResourceTypeBaseType(resourceBaseType).
 			SetResourceTypeClass(resourceClass).
+			SetReconciliationruleID(*input.ReconciliationRule).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)

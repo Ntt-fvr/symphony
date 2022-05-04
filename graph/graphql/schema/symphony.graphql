@@ -4713,6 +4713,74 @@ type ResourceTypeEdge {
 }
 
 """
+Properties by which ReconciliationRule connections can be ordered.
+"""
+enum ReconciliationRuleOrderField {
+  """
+  Order ReconciliationRule by name.
+  """
+  NAME
+
+  """
+  Order ReconciliationRule by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ReconciliationRule by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ReconciliationRule connections.
+"""
+input ReconciliationRuleOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ReconciliationRule by.
+  """
+  field: ReconciliationRuleOrderField
+}
+
+"""
+A connection to a list of ReconciliationRule.
+"""
+type ReconciliationRuleConnection {
+  """
+  Total ReconciliationRule of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ReconciliationRule edges.
+  """
+  edges: [ReconciliationRuleEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ReconciliationRule edge in a connection.
+"""
+type ReconciliationRuleEdge {
+  """
+  The ReconciliationRule at the end of the edge.
+  """
+  node: ReconciliationRule
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+
+"""
 Properties by which ResourceTypeRelationship connections can be ordered.
 """
 enum ResourceTypeRelationshipOrderField {
@@ -7954,6 +8022,41 @@ type Query {
     
     filterBy: [ResourceTypeFilterInput!]
   ): ResourceTypeConnection!
+
+    """
+  A list of reconciliationRules.
+  """
+  reconciliationRules(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned reconciliationRules.
+    """
+    orderBy: ReconciliationRuleOrder
+
+    
+    #Filtering options for the returned reconciliationRules.
+    
+    filterBy: [ReconciliationRuleFilterInput!]
+  ): ReconciliationRuleConnection!
 }
 
 
@@ -8246,6 +8349,9 @@ type Mutation {
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
   addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship!
+  addReconciliationRule(input: AddReconciliationRuleInput!):ReconciliationRule!
+  editReconciliationRule(input: EditReconciliationRuleInput!): ReconciliationRule!
+  removeReconciliationRule(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -9399,12 +9505,14 @@ enum ResourceTypeBaseTypeKind
 type ResourceType implements Node {
   id: ID!
   name: String!
+  reconciliationRule: ReconciliationRule
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
 
 input AddResourceTypeInput {  
   name: String!
+  reconciliationRule: ID!
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -9412,6 +9520,7 @@ input AddResourceTypeInput {
 input EditResourceTypeInput {
   id: ID!
   name: String!
+  reconciliationRule: ID
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -9420,6 +9529,7 @@ enum ResourceTypeFilterType {
   NAME
   RESOURCE_TYPE_CLASS
   RESOURCE_TYPE_BASE_TYPE
+  RECONCILIATION_RULE
 }
 
 input ResourceTypeFilterInput {
@@ -9428,6 +9538,33 @@ input ResourceTypeFilterInput {
   stringValue: String
   typeClassValue: ResourceTypeClassKind
   typeBaseTypeValue: ResourceTypeBaseTypeKind
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type ReconciliationRule implements Node {
+  id: ID!
+  name: String!
+}
+
+input AddReconciliationRuleInput {  
+  name: String!
+}
+
+input EditReconciliationRuleInput {
+  id: ID!
+  name: String!
+}
+
+enum ReconciliationRuleFilterType {
+  NAME
+}
+
+input ReconciliationRuleFilterInput {
+  filterType: ReconciliationRuleFilterType!
+  operator: FilterOperator!
+  stringValue: String
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
@@ -9640,12 +9777,14 @@ type ResourceSpecification implements Node {
   name: String!  
   quantity: Int
   resourceType: ResourceType
+  reconciliationRule: ReconciliationRule
   resourcePropertyTypes: [ResourcePropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
   quantity: Int
   resourceType: ID!
+  reconciliationRule: ID!
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 input EditResourceSpecificationInput {
@@ -9653,11 +9792,13 @@ input EditResourceSpecificationInput {
   name: String!
   quantity: Int
   resourceType: ID 
+  reconciliationRule: ID
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 enum ResourceSpecificationFilterType {
   NAME  
   RESOURCE_TYPE
+  RECONCILIATION_RULE
 }
 
 input ResourceSpecificationFilterInput {

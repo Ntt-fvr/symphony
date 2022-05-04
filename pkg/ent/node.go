@@ -85,6 +85,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
+	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
@@ -6094,6 +6095,61 @@ func (rs *RecommendationsSources) Node(ctx context.Context) (node *Node, err err
 	return node, nil
 }
 
+func (rr *ReconciliationRule) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rr.ID,
+		Type:   "ReconciliationRule",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rr.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rr.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rr.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceType",
+		Name: "reconciliation_rule_type",
+	}
+	node.Edges[0].IDs, err = rr.QueryReconciliationRuleType().
+		Select(resourcetype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "reconciliation_rule_specification",
+	}
+	node.Edges[1].IDs, err = rr.QueryReconciliationRuleSpecification().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     rf.ID,
@@ -6349,7 +6405,7 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 		ID:     rs.ID,
 		Type:   "ResourceSpecification",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 4),
+		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(rs.CreateTime); err != nil {
@@ -6395,30 +6451,40 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "ResourcePropertyType",
-		Name: "resource_property_type",
+		Type: "ReconciliationRule",
+		Name: "reconciliationrule",
 	}
-	node.Edges[1].IDs, err = rs.QueryResourcePropertyType().
-		Select(resourcepropertytype.FieldID).
+	node.Edges[1].IDs, err = rs.QueryReconciliationrule().
+		Select(reconciliationrule.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "ResourceSpecificationRelationship",
-		Name: "resource_specification",
+		Type: "ResourcePropertyType",
+		Name: "resource_property_type",
 	}
-	node.Edges[2].IDs, err = rs.QueryResourceSpecification().
-		Select(resourcespecificationrelationship.FieldID).
+	node.Edges[2].IDs, err = rs.QueryResourcePropertyType().
+		Select(resourcepropertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
+		Type: "ResourceSpecificationRelationship",
+		Name: "resource_specification",
+	}
+	node.Edges[3].IDs, err = rs.QueryResourceSpecification().
+		Select(resourcespecificationrelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
 		Type: "ResourceSpecificationItems",
 		Name: "resource_specification_items",
 	}
-	node.Edges[3].IDs, err = rs.QueryResourceSpecificationItems().
+	node.Edges[4].IDs, err = rs.QueryResourceSpecificationItems().
 		Select(resourcespecificationitems.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -6534,7 +6600,7 @@ func (rt *ResourceType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     rt.ID,
 		Type:   "ResourceType",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(rt.CreateTime); err != nil {
@@ -6578,30 +6644,40 @@ func (rt *ResourceType) Node(ctx context.Context) (node *Node, err error) {
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
-		Type: "ResourceTypeRelationship",
-		Name: "resource_relationship_a",
+		Type: "ReconciliationRule",
+		Name: "reconciliationrule",
 	}
-	node.Edges[0].IDs, err = rt.QueryResourceRelationshipA().
-		Select(resourcetyperelationship.FieldID).
+	node.Edges[0].IDs, err = rt.QueryReconciliationrule().
+		Select(reconciliationrule.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
 		Type: "ResourceTypeRelationship",
-		Name: "resource_relationship_b",
+		Name: "resource_relationship_a",
 	}
-	node.Edges[1].IDs, err = rt.QueryResourceRelationshipB().
+	node.Edges[1].IDs, err = rt.QueryResourceRelationshipA().
 		Select(resourcetyperelationship.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
+		Type: "ResourceTypeRelationship",
+		Name: "resource_relationship_b",
+	}
+	node.Edges[2].IDs, err = rt.QueryResourceRelationshipB().
+		Select(resourcetyperelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
 		Type: "ResourceSpecification",
 		Name: "resource_specification",
 	}
-	node.Edges[2].IDs, err = rt.QueryResourceSpecification().
+	node.Edges[3].IDs, err = rt.QueryResourceSpecification().
 		Select(resourcespecification.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -9840,6 +9916,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.RecommendationsSources.Query().
 			Where(recommendationssources.ID(id)).
 			CollectFields(ctx, "RecommendationsSources").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case reconciliationrule.Table:
+		n, err := c.ReconciliationRule.Query().
+			Where(reconciliationrule.ID(id)).
+			CollectFields(ctx, "ReconciliationRule").
 			Only(ctx)
 		if err != nil {
 			return nil, err

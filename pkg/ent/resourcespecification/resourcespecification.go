@@ -28,6 +28,8 @@ const (
 
 	// EdgeResourcetype holds the string denoting the resourcetype edge name in mutations.
 	EdgeResourcetype = "resourcetype"
+	// EdgeReconciliationrule holds the string denoting the reconciliationrule edge name in mutations.
+	EdgeReconciliationrule = "reconciliationrule"
 	// EdgeResourcePropertyType holds the string denoting the resource_property_type edge name in mutations.
 	EdgeResourcePropertyType = "resource_property_type"
 	// EdgeResourceSpecification holds the string denoting the resource_specification edge name in mutations.
@@ -44,6 +46,13 @@ const (
 	ResourcetypeInverseTable = "resource_types"
 	// ResourcetypeColumn is the table column denoting the resourcetype relation/edge.
 	ResourcetypeColumn = "resource_type_resource_specification"
+	// ReconciliationruleTable is the table the holds the reconciliationrule relation/edge.
+	ReconciliationruleTable = "resource_specifications"
+	// ReconciliationruleInverseTable is the table name for the ReconciliationRule entity.
+	// It exists in this package in order to avoid circular dependency with the "reconciliationrule" package.
+	ReconciliationruleInverseTable = "reconciliation_rules"
+	// ReconciliationruleColumn is the table column denoting the reconciliationrule relation/edge.
+	ReconciliationruleColumn = "reconciliation_rule_reconciliation_rule_specification"
 	// ResourcePropertyTypeTable is the table the holds the resource_property_type relation/edge.
 	ResourcePropertyTypeTable = "resource_property_types"
 	// ResourcePropertyTypeInverseTable is the table name for the ResourcePropertyType entity.
@@ -78,6 +87,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceSpecification type.
 var ForeignKeys = []string{
+	"reconciliation_rule_reconciliation_rule_specification",
 	"resource_type_resource_specification",
 }
 

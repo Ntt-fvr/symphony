@@ -81,6 +81,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
+	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
@@ -258,6 +259,8 @@ type Client struct {
 	RecommendationsCategory *RecommendationsCategoryClient
 	// RecommendationsSources is the client for interacting with the RecommendationsSources builders.
 	RecommendationsSources *RecommendationsSourcesClient
+	// ReconciliationRule is the client for interacting with the ReconciliationRule builders.
+	ReconciliationRule *ReconciliationRuleClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
 	// ResourcePropertyType is the client for interacting with the ResourcePropertyType builders.
@@ -401,6 +404,7 @@ func (c *Client) init() {
 	c.Recommendations = NewRecommendationsClient(c.config)
 	c.RecommendationsCategory = NewRecommendationsCategoryClient(c.config)
 	c.RecommendationsSources = NewRecommendationsSourcesClient(c.config)
+	c.ReconciliationRule = NewReconciliationRuleClient(c.config)
 	c.ReportFilter = NewReportFilterClient(c.config)
 	c.ResourcePropertyType = NewResourcePropertyTypeClient(c.config)
 	c.ResourceSpecification = NewResourceSpecificationClient(c.config)
@@ -531,6 +535,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Recommendations:                   NewRecommendationsClient(cfg),
 		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
+		ReconciliationRule:                NewReconciliationRuleClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
@@ -644,6 +649,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Recommendations:                   NewRecommendationsClient(cfg),
 		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
+		ReconciliationRule:                NewReconciliationRuleClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
@@ -770,6 +776,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Recommendations.Use(hooks...)
 	c.RecommendationsCategory.Use(hooks...)
 	c.RecommendationsSources.Use(hooks...)
+	c.ReconciliationRule.Use(hooks...)
 	c.ReportFilter.Use(hooks...)
 	c.ResourcePropertyType.Use(hooks...)
 	c.ResourceSpecification.Use(hooks...)
@@ -10438,6 +10445,127 @@ func (c *RecommendationsSourcesClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], recommendationssources.Hooks[:]...)
 }
 
+// ReconciliationRuleClient is a client for the ReconciliationRule schema.
+type ReconciliationRuleClient struct {
+	config
+}
+
+// NewReconciliationRuleClient returns a client for the ReconciliationRule from the given config.
+func NewReconciliationRuleClient(c config) *ReconciliationRuleClient {
+	return &ReconciliationRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `reconciliationrule.Hooks(f(g(h())))`.
+func (c *ReconciliationRuleClient) Use(hooks ...Hook) {
+	c.hooks.ReconciliationRule = append(c.hooks.ReconciliationRule, hooks...)
+}
+
+// Create returns a create builder for ReconciliationRule.
+func (c *ReconciliationRuleClient) Create() *ReconciliationRuleCreate {
+	mutation := newReconciliationRuleMutation(c.config, OpCreate)
+	return &ReconciliationRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ReconciliationRule entities.
+func (c *ReconciliationRuleClient) CreateBulk(builders ...*ReconciliationRuleCreate) *ReconciliationRuleCreateBulk {
+	return &ReconciliationRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ReconciliationRule.
+func (c *ReconciliationRuleClient) Update() *ReconciliationRuleUpdate {
+	mutation := newReconciliationRuleMutation(c.config, OpUpdate)
+	return &ReconciliationRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ReconciliationRuleClient) UpdateOne(rr *ReconciliationRule) *ReconciliationRuleUpdateOne {
+	mutation := newReconciliationRuleMutation(c.config, OpUpdateOne, withReconciliationRule(rr))
+	return &ReconciliationRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ReconciliationRuleClient) UpdateOneID(id int) *ReconciliationRuleUpdateOne {
+	mutation := newReconciliationRuleMutation(c.config, OpUpdateOne, withReconciliationRuleID(id))
+	return &ReconciliationRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ReconciliationRule.
+func (c *ReconciliationRuleClient) Delete() *ReconciliationRuleDelete {
+	mutation := newReconciliationRuleMutation(c.config, OpDelete)
+	return &ReconciliationRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ReconciliationRuleClient) DeleteOne(rr *ReconciliationRule) *ReconciliationRuleDeleteOne {
+	return c.DeleteOneID(rr.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ReconciliationRuleClient) DeleteOneID(id int) *ReconciliationRuleDeleteOne {
+	builder := c.Delete().Where(reconciliationrule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ReconciliationRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for ReconciliationRule.
+func (c *ReconciliationRuleClient) Query() *ReconciliationRuleQuery {
+	return &ReconciliationRuleQuery{config: c.config}
+}
+
+// Get returns a ReconciliationRule entity by its id.
+func (c *ReconciliationRuleClient) Get(ctx context.Context, id int) (*ReconciliationRule, error) {
+	return c.Query().Where(reconciliationrule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ReconciliationRuleClient) GetX(ctx context.Context, id int) *ReconciliationRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryReconciliationRuleType queries the reconciliation_rule_type edge of a ReconciliationRule.
+func (c *ReconciliationRuleClient) QueryReconciliationRuleType(rr *ReconciliationRule) *ResourceTypeQuery {
+	query := &ResourceTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, id),
+			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleTypeTable, reconciliationrule.ReconciliationRuleTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryReconciliationRuleSpecification queries the reconciliation_rule_specification edge of a ReconciliationRule.
+func (c *ReconciliationRuleClient) QueryReconciliationRuleSpecification(rr *ReconciliationRule) *ResourceSpecificationQuery {
+	query := &ResourceSpecificationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, id),
+			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleSpecificationTable, reconciliationrule.ReconciliationRuleSpecificationColumn),
+		)
+		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ReconciliationRuleClient) Hooks() []Hook {
+	hooks := c.hooks.ReconciliationRule
+	return append(hooks[:len(hooks):len(hooks)], reconciliationrule.Hooks[:]...)
+}
+
 // ReportFilterClient is a client for the ReportFilter schema.
 type ReportFilterClient struct {
 	config
@@ -10740,6 +10868,22 @@ func (c *ResourceSpecificationClient) QueryResourcetype(rs *ResourceSpecificatio
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
 			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.ResourcetypeTable, resourcespecification.ResourcetypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryReconciliationrule queries the reconciliationrule edge of a ResourceSpecification.
+func (c *ResourceSpecificationClient) QueryReconciliationrule(rs *ResourceSpecification) *ReconciliationRuleQuery {
+	query := &ReconciliationRuleQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rs.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
+			sqlgraph.To(reconciliationrule.Table, reconciliationrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.ReconciliationruleTable, resourcespecification.ReconciliationruleColumn),
 		)
 		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
 		return fromV, nil
@@ -11124,6 +11268,22 @@ func (c *ResourceTypeClient) GetX(ctx context.Context, id int) *ResourceType {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryReconciliationrule queries the reconciliationrule edge of a ResourceType.
+func (c *ResourceTypeClient) QueryReconciliationrule(rt *ResourceType) *ReconciliationRuleQuery {
+	query := &ReconciliationRuleQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, id),
+			sqlgraph.To(reconciliationrule.Table, reconciliationrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcetype.ReconciliationruleTable, resourcetype.ReconciliationruleColumn),
+		)
+		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // QueryResourceRelationshipA queries the resource_relationship_a edge of a ResourceType.

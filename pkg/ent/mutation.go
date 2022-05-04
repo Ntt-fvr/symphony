@@ -82,6 +82,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
+	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
@@ -195,6 +196,7 @@ const (
 	TypeRecommendations                   = "Recommendations"
 	TypeRecommendationsCategory           = "RecommendationsCategory"
 	TypeRecommendationsSources            = "RecommendationsSources"
+	TypeReconciliationRule                = "ReconciliationRule"
 	TypeReportFilter                      = "ReportFilter"
 	TypeResourcePropertyType              = "ResourcePropertyType"
 	TypeResourceSpecification             = "ResourceSpecification"
@@ -56493,6 +56495,584 @@ func (m *RecommendationsSourcesMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RecommendationsSources edge %s", name)
 }
 
+// ReconciliationRuleMutation represents an operation that mutate the ReconciliationRules
+// nodes in the graph.
+type ReconciliationRuleMutation struct {
+	config
+	op                                       Op
+	typ                                      string
+	id                                       *int
+	create_time                              *time.Time
+	update_time                              *time.Time
+	name                                     *string
+	clearedFields                            map[string]struct{}
+	reconciliation_rule_type                 map[int]struct{}
+	removedreconciliation_rule_type          map[int]struct{}
+	clearedreconciliation_rule_type          bool
+	reconciliation_rule_specification        map[int]struct{}
+	removedreconciliation_rule_specification map[int]struct{}
+	clearedreconciliation_rule_specification bool
+	done                                     bool
+	oldValue                                 func(context.Context) (*ReconciliationRule, error)
+	predicates                               []predicate.ReconciliationRule
+}
+
+var _ ent.Mutation = (*ReconciliationRuleMutation)(nil)
+
+// reconciliationruleOption allows to manage the mutation configuration using functional options.
+type reconciliationruleOption func(*ReconciliationRuleMutation)
+
+// newReconciliationRuleMutation creates new mutation for ReconciliationRule.
+func newReconciliationRuleMutation(c config, op Op, opts ...reconciliationruleOption) *ReconciliationRuleMutation {
+	m := &ReconciliationRuleMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeReconciliationRule,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withReconciliationRuleID sets the id field of the mutation.
+func withReconciliationRuleID(id int) reconciliationruleOption {
+	return func(m *ReconciliationRuleMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ReconciliationRule
+		)
+		m.oldValue = func(ctx context.Context) (*ReconciliationRule, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ReconciliationRule.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withReconciliationRule sets the old ReconciliationRule of the mutation.
+func withReconciliationRule(node *ReconciliationRule) reconciliationruleOption {
+	return func(m *ReconciliationRuleMutation) {
+		m.oldValue = func(context.Context) (*ReconciliationRule, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ReconciliationRuleMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ReconciliationRuleMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ReconciliationRuleMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ReconciliationRuleMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ReconciliationRuleMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the ReconciliationRule.
+// If the ReconciliationRule object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ReconciliationRuleMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ReconciliationRuleMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ReconciliationRuleMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ReconciliationRuleMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the ReconciliationRule.
+// If the ReconciliationRule object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ReconciliationRuleMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ReconciliationRuleMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *ReconciliationRuleMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *ReconciliationRuleMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the ReconciliationRule.
+// If the ReconciliationRule object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ReconciliationRuleMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *ReconciliationRuleMutation) ResetName() {
+	m.name = nil
+}
+
+// AddReconciliationRuleTypeIDs adds the reconciliation_rule_type edge to ResourceType by ids.
+func (m *ReconciliationRuleMutation) AddReconciliationRuleTypeIDs(ids ...int) {
+	if m.reconciliation_rule_type == nil {
+		m.reconciliation_rule_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.reconciliation_rule_type[ids[i]] = struct{}{}
+	}
+}
+
+// ClearReconciliationRuleType clears the reconciliation_rule_type edge to ResourceType.
+func (m *ReconciliationRuleMutation) ClearReconciliationRuleType() {
+	m.clearedreconciliation_rule_type = true
+}
+
+// ReconciliationRuleTypeCleared returns if the edge reconciliation_rule_type was cleared.
+func (m *ReconciliationRuleMutation) ReconciliationRuleTypeCleared() bool {
+	return m.clearedreconciliation_rule_type
+}
+
+// RemoveReconciliationRuleTypeIDs removes the reconciliation_rule_type edge to ResourceType by ids.
+func (m *ReconciliationRuleMutation) RemoveReconciliationRuleTypeIDs(ids ...int) {
+	if m.removedreconciliation_rule_type == nil {
+		m.removedreconciliation_rule_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedreconciliation_rule_type[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedReconciliationRuleType returns the removed ids of reconciliation_rule_type.
+func (m *ReconciliationRuleMutation) RemovedReconciliationRuleTypeIDs() (ids []int) {
+	for id := range m.removedreconciliation_rule_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ReconciliationRuleTypeIDs returns the reconciliation_rule_type ids in the mutation.
+func (m *ReconciliationRuleMutation) ReconciliationRuleTypeIDs() (ids []int) {
+	for id := range m.reconciliation_rule_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetReconciliationRuleType reset all changes of the "reconciliation_rule_type" edge.
+func (m *ReconciliationRuleMutation) ResetReconciliationRuleType() {
+	m.reconciliation_rule_type = nil
+	m.clearedreconciliation_rule_type = false
+	m.removedreconciliation_rule_type = nil
+}
+
+// AddReconciliationRuleSpecificationIDs adds the reconciliation_rule_specification edge to ResourceSpecification by ids.
+func (m *ReconciliationRuleMutation) AddReconciliationRuleSpecificationIDs(ids ...int) {
+	if m.reconciliation_rule_specification == nil {
+		m.reconciliation_rule_specification = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.reconciliation_rule_specification[ids[i]] = struct{}{}
+	}
+}
+
+// ClearReconciliationRuleSpecification clears the reconciliation_rule_specification edge to ResourceSpecification.
+func (m *ReconciliationRuleMutation) ClearReconciliationRuleSpecification() {
+	m.clearedreconciliation_rule_specification = true
+}
+
+// ReconciliationRuleSpecificationCleared returns if the edge reconciliation_rule_specification was cleared.
+func (m *ReconciliationRuleMutation) ReconciliationRuleSpecificationCleared() bool {
+	return m.clearedreconciliation_rule_specification
+}
+
+// RemoveReconciliationRuleSpecificationIDs removes the reconciliation_rule_specification edge to ResourceSpecification by ids.
+func (m *ReconciliationRuleMutation) RemoveReconciliationRuleSpecificationIDs(ids ...int) {
+	if m.removedreconciliation_rule_specification == nil {
+		m.removedreconciliation_rule_specification = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedreconciliation_rule_specification[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedReconciliationRuleSpecification returns the removed ids of reconciliation_rule_specification.
+func (m *ReconciliationRuleMutation) RemovedReconciliationRuleSpecificationIDs() (ids []int) {
+	for id := range m.removedreconciliation_rule_specification {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ReconciliationRuleSpecificationIDs returns the reconciliation_rule_specification ids in the mutation.
+func (m *ReconciliationRuleMutation) ReconciliationRuleSpecificationIDs() (ids []int) {
+	for id := range m.reconciliation_rule_specification {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetReconciliationRuleSpecification reset all changes of the "reconciliation_rule_specification" edge.
+func (m *ReconciliationRuleMutation) ResetReconciliationRuleSpecification() {
+	m.reconciliation_rule_specification = nil
+	m.clearedreconciliation_rule_specification = false
+	m.removedreconciliation_rule_specification = nil
+}
+
+// Op returns the operation name.
+func (m *ReconciliationRuleMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (ReconciliationRule).
+func (m *ReconciliationRuleMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ReconciliationRuleMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, reconciliationrule.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, reconciliationrule.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, reconciliationrule.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ReconciliationRuleMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case reconciliationrule.FieldCreateTime:
+		return m.CreateTime()
+	case reconciliationrule.FieldUpdateTime:
+		return m.UpdateTime()
+	case reconciliationrule.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ReconciliationRuleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case reconciliationrule.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case reconciliationrule.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case reconciliationrule.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown ReconciliationRule field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ReconciliationRuleMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case reconciliationrule.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case reconciliationrule.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case reconciliationrule.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ReconciliationRule field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ReconciliationRuleMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ReconciliationRuleMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ReconciliationRuleMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ReconciliationRule numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ReconciliationRuleMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ReconciliationRuleMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ReconciliationRuleMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ReconciliationRule nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ReconciliationRuleMutation) ResetField(name string) error {
+	switch name {
+	case reconciliationrule.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case reconciliationrule.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case reconciliationrule.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown ReconciliationRule field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ReconciliationRuleMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.reconciliation_rule_type != nil {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleType)
+	}
+	if m.reconciliation_rule_specification != nil {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleSpecification)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ReconciliationRuleMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case reconciliationrule.EdgeReconciliationRuleType:
+		ids := make([]ent.Value, 0, len(m.reconciliation_rule_type))
+		for id := range m.reconciliation_rule_type {
+			ids = append(ids, id)
+		}
+		return ids
+	case reconciliationrule.EdgeReconciliationRuleSpecification:
+		ids := make([]ent.Value, 0, len(m.reconciliation_rule_specification))
+		for id := range m.reconciliation_rule_specification {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ReconciliationRuleMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedreconciliation_rule_type != nil {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleType)
+	}
+	if m.removedreconciliation_rule_specification != nil {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleSpecification)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ReconciliationRuleMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case reconciliationrule.EdgeReconciliationRuleType:
+		ids := make([]ent.Value, 0, len(m.removedreconciliation_rule_type))
+		for id := range m.removedreconciliation_rule_type {
+			ids = append(ids, id)
+		}
+		return ids
+	case reconciliationrule.EdgeReconciliationRuleSpecification:
+		ids := make([]ent.Value, 0, len(m.removedreconciliation_rule_specification))
+		for id := range m.removedreconciliation_rule_specification {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ReconciliationRuleMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedreconciliation_rule_type {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleType)
+	}
+	if m.clearedreconciliation_rule_specification {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleSpecification)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ReconciliationRuleMutation) EdgeCleared(name string) bool {
+	switch name {
+	case reconciliationrule.EdgeReconciliationRuleType:
+		return m.clearedreconciliation_rule_type
+	case reconciliationrule.EdgeReconciliationRuleSpecification:
+		return m.clearedreconciliation_rule_specification
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ReconciliationRuleMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ReconciliationRule unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ReconciliationRuleMutation) ResetEdge(name string) error {
+	switch name {
+	case reconciliationrule.EdgeReconciliationRuleType:
+		m.ResetReconciliationRuleType()
+		return nil
+	case reconciliationrule.EdgeReconciliationRuleSpecification:
+		m.ResetReconciliationRuleSpecification()
+		return nil
+	}
+	return fmt.Errorf("unknown ReconciliationRule edge %s", name)
+}
+
 // ReportFilterMutation represents an operation that mutate the ReportFilters
 // nodes in the graph.
 type ReportFilterMutation struct {
@@ -59016,6 +59596,8 @@ type ResourceSpecificationMutation struct {
 	clearedFields                       map[string]struct{}
 	resourcetype                        *int
 	clearedresourcetype                 bool
+	reconciliationrule                  *int
+	clearedreconciliationrule           bool
 	resource_property_type              map[int]struct{}
 	removedresource_property_type       map[int]struct{}
 	clearedresource_property_type       bool
@@ -59328,6 +59910,45 @@ func (m *ResourceSpecificationMutation) ResourcetypeIDs() (ids []int) {
 func (m *ResourceSpecificationMutation) ResetResourcetype() {
 	m.resourcetype = nil
 	m.clearedresourcetype = false
+}
+
+// SetReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id.
+func (m *ResourceSpecificationMutation) SetReconciliationruleID(id int) {
+	m.reconciliationrule = &id
+}
+
+// ClearReconciliationrule clears the reconciliationrule edge to ReconciliationRule.
+func (m *ResourceSpecificationMutation) ClearReconciliationrule() {
+	m.clearedreconciliationrule = true
+}
+
+// ReconciliationruleCleared returns if the edge reconciliationrule was cleared.
+func (m *ResourceSpecificationMutation) ReconciliationruleCleared() bool {
+	return m.clearedreconciliationrule
+}
+
+// ReconciliationruleID returns the reconciliationrule id in the mutation.
+func (m *ResourceSpecificationMutation) ReconciliationruleID() (id int, exists bool) {
+	if m.reconciliationrule != nil {
+		return *m.reconciliationrule, true
+	}
+	return
+}
+
+// ReconciliationruleIDs returns the reconciliationrule ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ReconciliationruleID instead. It exists only for internal usage by the builders.
+func (m *ResourceSpecificationMutation) ReconciliationruleIDs() (ids []int) {
+	if id := m.reconciliationrule; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetReconciliationrule reset all changes of the "reconciliationrule" edge.
+func (m *ResourceSpecificationMutation) ResetReconciliationrule() {
+	m.reconciliationrule = nil
+	m.clearedreconciliationrule = false
 }
 
 // AddResourcePropertyTypeIDs adds the resource_property_type edge to ResourcePropertyType by ids.
@@ -59679,9 +60300,12 @@ func (m *ResourceSpecificationMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ResourceSpecificationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.resourcetype != nil {
 		edges = append(edges, resourcespecification.EdgeResourcetype)
+	}
+	if m.reconciliationrule != nil {
+		edges = append(edges, resourcespecification.EdgeReconciliationrule)
 	}
 	if m.resource_property_type != nil {
 		edges = append(edges, resourcespecification.EdgeResourcePropertyType)
@@ -59701,6 +60325,10 @@ func (m *ResourceSpecificationMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case resourcespecification.EdgeResourcetype:
 		if id := m.resourcetype; id != nil {
+			return []ent.Value{*id}
+		}
+	case resourcespecification.EdgeReconciliationrule:
+		if id := m.reconciliationrule; id != nil {
 			return []ent.Value{*id}
 		}
 	case resourcespecification.EdgeResourcePropertyType:
@@ -59728,7 +60356,7 @@ func (m *ResourceSpecificationMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ResourceSpecificationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedresource_property_type != nil {
 		edges = append(edges, resourcespecification.EdgeResourcePropertyType)
 	}
@@ -59770,9 +60398,12 @@ func (m *ResourceSpecificationMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ResourceSpecificationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedresourcetype {
 		edges = append(edges, resourcespecification.EdgeResourcetype)
+	}
+	if m.clearedreconciliationrule {
+		edges = append(edges, resourcespecification.EdgeReconciliationrule)
 	}
 	if m.clearedresource_property_type {
 		edges = append(edges, resourcespecification.EdgeResourcePropertyType)
@@ -59792,6 +60423,8 @@ func (m *ResourceSpecificationMutation) EdgeCleared(name string) bool {
 	switch name {
 	case resourcespecification.EdgeResourcetype:
 		return m.clearedresourcetype
+	case resourcespecification.EdgeReconciliationrule:
+		return m.clearedreconciliationrule
 	case resourcespecification.EdgeResourcePropertyType:
 		return m.clearedresource_property_type
 	case resourcespecification.EdgeResourceSpecification:
@@ -59809,6 +60442,9 @@ func (m *ResourceSpecificationMutation) ClearEdge(name string) error {
 	case resourcespecification.EdgeResourcetype:
 		m.ClearResourcetype()
 		return nil
+	case resourcespecification.EdgeReconciliationrule:
+		m.ClearReconciliationrule()
+		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecification unique edge %s", name)
 }
@@ -59820,6 +60456,9 @@ func (m *ResourceSpecificationMutation) ResetEdge(name string) error {
 	switch name {
 	case resourcespecification.EdgeResourcetype:
 		m.ResetResourcetype()
+		return nil
+	case resourcespecification.EdgeReconciliationrule:
+		m.ResetReconciliationrule()
 		return nil
 	case resourcespecification.EdgeResourcePropertyType:
 		m.ResetResourcePropertyType()
@@ -60879,6 +61518,8 @@ type ResourceTypeMutation struct {
 	_ResourceTypeClass             *resourcetype.ResourceTypeClass
 	_ResourceTypeBaseType          *resourcetype.ResourceTypeBaseType
 	clearedFields                  map[string]struct{}
+	reconciliationrule             *int
+	clearedreconciliationrule      bool
 	resource_relationship_a        map[int]struct{}
 	removedresource_relationship_a map[int]struct{}
 	clearedresource_relationship_a bool
@@ -61155,6 +61796,45 @@ func (m *ResourceTypeMutation) OldResourceTypeBaseType(ctx context.Context) (v r
 // ResetResourceTypeBaseType reset all changes of the "ResourceTypeBaseType" field.
 func (m *ResourceTypeMutation) ResetResourceTypeBaseType() {
 	m._ResourceTypeBaseType = nil
+}
+
+// SetReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id.
+func (m *ResourceTypeMutation) SetReconciliationruleID(id int) {
+	m.reconciliationrule = &id
+}
+
+// ClearReconciliationrule clears the reconciliationrule edge to ReconciliationRule.
+func (m *ResourceTypeMutation) ClearReconciliationrule() {
+	m.clearedreconciliationrule = true
+}
+
+// ReconciliationruleCleared returns if the edge reconciliationrule was cleared.
+func (m *ResourceTypeMutation) ReconciliationruleCleared() bool {
+	return m.clearedreconciliationrule
+}
+
+// ReconciliationruleID returns the reconciliationrule id in the mutation.
+func (m *ResourceTypeMutation) ReconciliationruleID() (id int, exists bool) {
+	if m.reconciliationrule != nil {
+		return *m.reconciliationrule, true
+	}
+	return
+}
+
+// ReconciliationruleIDs returns the reconciliationrule ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ReconciliationruleID instead. It exists only for internal usage by the builders.
+func (m *ResourceTypeMutation) ReconciliationruleIDs() (ids []int) {
+	if id := m.reconciliationrule; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetReconciliationrule reset all changes of the "reconciliationrule" edge.
+func (m *ResourceTypeMutation) ResetReconciliationrule() {
+	m.reconciliationrule = nil
+	m.clearedreconciliationrule = false
 }
 
 // AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
@@ -61499,7 +62179,10 @@ func (m *ResourceTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ResourceTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.reconciliationrule != nil {
+		edges = append(edges, resourcetype.EdgeReconciliationrule)
+	}
 	if m.resource_relationship_a != nil {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipA)
 	}
@@ -61516,6 +62199,10 @@ func (m *ResourceTypeMutation) AddedEdges() []string {
 // the given edge name.
 func (m *ResourceTypeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case resourcetype.EdgeReconciliationrule:
+		if id := m.reconciliationrule; id != nil {
+			return []ent.Value{*id}
+		}
 	case resourcetype.EdgeResourceRelationshipA:
 		ids := make([]ent.Value, 0, len(m.resource_relationship_a))
 		for id := range m.resource_relationship_a {
@@ -61541,7 +62228,7 @@ func (m *ResourceTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ResourceTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedresource_relationship_a != nil {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipA)
 	}
@@ -61583,7 +62270,10 @@ func (m *ResourceTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ResourceTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.clearedreconciliationrule {
+		edges = append(edges, resourcetype.EdgeReconciliationrule)
+	}
 	if m.clearedresource_relationship_a {
 		edges = append(edges, resourcetype.EdgeResourceRelationshipA)
 	}
@@ -61600,6 +62290,8 @@ func (m *ResourceTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ResourceTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case resourcetype.EdgeReconciliationrule:
+		return m.clearedreconciliationrule
 	case resourcetype.EdgeResourceRelationshipA:
 		return m.clearedresource_relationship_a
 	case resourcetype.EdgeResourceRelationshipB:
@@ -61614,6 +62306,9 @@ func (m *ResourceTypeMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *ResourceTypeMutation) ClearEdge(name string) error {
 	switch name {
+	case resourcetype.EdgeReconciliationrule:
+		m.ClearReconciliationrule()
+		return nil
 	}
 	return fmt.Errorf("unknown ResourceType unique edge %s", name)
 }
@@ -61623,6 +62318,9 @@ func (m *ResourceTypeMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *ResourceTypeMutation) ResetEdge(name string) error {
 	switch name {
+	case resourcetype.EdgeReconciliationrule:
+		m.ResetReconciliationrule()
+		return nil
 	case resourcetype.EdgeResourceRelationshipA:
 		m.ResetResourceRelationshipA()
 		return nil

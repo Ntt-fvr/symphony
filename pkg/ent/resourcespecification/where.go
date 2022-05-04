@@ -506,6 +506,34 @@ func HasResourcetypeWith(preds ...predicate.ResourceType) predicate.ResourceSpec
 	})
 }
 
+// HasReconciliationrule applies the HasEdge predicate on the "reconciliationrule" edge.
+func HasReconciliationrule() predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ReconciliationruleTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ReconciliationruleTable, ReconciliationruleColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasReconciliationruleWith applies the HasEdge predicate on the "reconciliationrule" edge with a given conditions (other predicates).
+func HasReconciliationruleWith(preds ...predicate.ReconciliationRule) predicate.ResourceSpecification {
+	return predicate.ResourceSpecification(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ReconciliationruleInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ReconciliationruleTable, ReconciliationruleColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasResourcePropertyType applies the HasEdge predicate on the "resource_property_type" edge.
 func HasResourcePropertyType() predicate.ResourceSpecification {
 	return predicate.ResourceSpecification(func(s *sql.Selector) {

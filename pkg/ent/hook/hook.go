@@ -897,6 +897,19 @@ func (f RecommendationsSourcesFunc) Mutate(ctx context.Context, m ent.Mutation) 
 	return f(ctx, mv)
 }
 
+// The ReconciliationRuleFunc type is an adapter to allow the use of ordinary
+// function as ReconciliationRule mutator.
+type ReconciliationRuleFunc func(context.Context, *ent.ReconciliationRuleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ReconciliationRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ReconciliationRuleMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReconciliationRuleMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ReportFilterFunc type is an adapter to allow the use of ordinary
 // function as ReportFilter mutator.
 type ReportFilterFunc func(context.Context, *ent.ReportFilterMutation) (ent.Value, error)

@@ -698,6 +698,26 @@ func (r queryResolver) ResourceTypes(
 		)
 }
 
+func (r queryResolver) ReconciliationRules(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.ReconciliationRuleOrder,
+	filterBy []*models.ReconciliationRuleFilterInput,
+) (*ent.ReconciliationRuleConnection, error) {
+	return r.ClientFrom(ctx).
+		ReconciliationRule.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithReconciliationRuleOrder(orderBy),
+			ent.WithReconciliationRuleFilter(
+				func(query *ent.ReconciliationRuleQuery) (*ent.ReconciliationRuleQuery, error) {
+					return resolverutil.ReconciliationRuleFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) ResourceTypeRelationships(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

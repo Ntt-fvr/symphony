@@ -513,3 +513,13 @@ func ResourceSpecificationItemsFilter(query *ent.ResourceSpecificationItemsQuery
 	}
 	return query, nil
 }
+
+func ReconciliationRuleFilter(query *ent.ReconciliationRuleQuery, filters []*models.ReconciliationRuleFilterInput) (*ent.ReconciliationRuleQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleReconciliationRuleFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

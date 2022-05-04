@@ -1209,6 +1209,7 @@ type ComplexityRoot struct {
 		AddRecommendationsCategory                    func(childComplexity int, input models.AddRecommendationsCategoryInput) int
 		AddRecommendationsList                        func(childComplexity int, input models.AddRecommendationsListInput) int
 		AddRecommendationsSources                     func(childComplexity int, input models.AddRecommendationsSourcesInput) int
+		AddReconciliationRule                         func(childComplexity int, input models.AddReconciliationRuleInput) int
 		AddReportFilter                               func(childComplexity int, input models.ReportFilterInput) int
 		AddResourceSpecification                      func(childComplexity int, input models.AddResourceSpecificationInput) int
 		AddResourceSpecificationItems                 func(childComplexity int, input models.AddResourceSpecificationItemsInput) int
@@ -1295,6 +1296,7 @@ type ComplexityRoot struct {
 		EditRecommendations                           func(childComplexity int, input models.EditRecommendationsInput) int
 		EditRecommendationsCategory                   func(childComplexity int, input models.EditRecommendationsCategoryInput) int
 		EditRecommendationsSources                    func(childComplexity int, input models.EditRecommendationsSourcesInput) int
+		EditReconciliationRule                        func(childComplexity int, input models.EditReconciliationRuleInput) int
 		EditReportFilter                              func(childComplexity int, input models.EditReportFilterInput) int
 		EditResourceSpecification                     func(childComplexity int, input models.EditResourceSpecificationInput) int
 		EditResourceSpecificationItems                func(childComplexity int, input models.EditResourceSpecificationItemsInput) int
@@ -1357,6 +1359,7 @@ type ComplexityRoot struct {
 		RemoveRecommendations                         func(childComplexity int, id int) int
 		RemoveRecommendationsCategory                 func(childComplexity int, id int) int
 		RemoveRecommendationsSources                  func(childComplexity int, id int) int
+		RemoveReconciliationRule                      func(childComplexity int, id int) int
 		RemoveResourceSpecification                   func(childComplexity int, id int) int
 		RemoveResourceSpecificationItems              func(childComplexity int, id int) int
 		RemoveResourceSpecificationRelationship       func(childComplexity int, id int) int
@@ -1702,6 +1705,7 @@ type ComplexityRoot struct {
 		Recommendations                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) int
 		RecommendationsCategories          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) int
 		RecommendationsSources             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsSourcesOrder, filterBy []*models.RecommendationsSourcesFilterInput) int
+		ReconciliationRules                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ReconciliationRuleOrder, filterBy []*models.ReconciliationRuleFilterInput) int
 		ReportFilters                      func(childComplexity int, entity models.FilterEntity) int
 		ResourceSpecificationItems         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.ResourceSpecificationItemsFilterInput) int
 		ResourceSpecificationRelationships func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceSpecificationRelationshipOrder, filterBy []*models.ResourceSpecificationRelationshipFilterInput) int
@@ -1791,6 +1795,22 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	ReconciliationRule struct {
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
+	}
+
+	ReconciliationRuleConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	ReconciliationRuleEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	ReportFilter struct {
 		Entity  func(childComplexity int) int
 		Filters func(childComplexity int) int
@@ -1828,6 +1848,7 @@ type ComplexityRoot struct {
 		ID                    func(childComplexity int) int
 		Name                  func(childComplexity int) int
 		Quantity              func(childComplexity int) int
+		Reconciliationrule    func(childComplexity int) int
 		ResourcePropertyTypes func(childComplexity int) int
 		Resourcetype          func(childComplexity int) int
 	}
@@ -1880,6 +1901,7 @@ type ComplexityRoot struct {
 	ResourceType struct {
 		ID                   func(childComplexity int) int
 		Name                 func(childComplexity int) int
+		Reconciliationrule   func(childComplexity int) int
 		ResourceTypeBaseType func(childComplexity int) int
 		ResourceTypeClass    func(childComplexity int) int
 	}
@@ -2797,6 +2819,9 @@ type MutationResolver interface {
 	EditResourceSpecification(ctx context.Context, input models.EditResourceSpecificationInput) (*ent.ResourceSpecification, error)
 	RemoveResourceSpecification(ctx context.Context, id int) (int, error)
 	AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipList) (*ent.ResourceSpecificationRelationship, error)
+	AddReconciliationRule(ctx context.Context, input models.AddReconciliationRuleInput) (*ent.ReconciliationRule, error)
+	EditReconciliationRule(ctx context.Context, input models.EditReconciliationRuleInput) (*ent.ReconciliationRule, error)
+	RemoveReconciliationRule(ctx context.Context, id int) (int, error)
 	AddKqi(ctx context.Context, input models.AddKqiInput) (*ent.Kqi, error)
 	EditKqi(ctx context.Context, input models.EditKqiInput) (*ent.Kqi, error)
 	RemoveKqi(ctx context.Context, id int) (int, error)
@@ -2945,6 +2970,7 @@ type QueryResolver interface {
 	ResourceTypeRelationships(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeRelationshipOrder, filterBy []*models.ResourceTypeRelationshipFilterInput) (*ent.ResourceTypeRelationshipConnection, error)
 	ResourceSpecifications(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceSpecificationOrder, filterBy []*models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationConnection, error)
 	ResourceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeOrder, filterBy []*models.ResourceTypeFilterInput) (*ent.ResourceTypeConnection, error)
+	ReconciliationRules(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ReconciliationRuleOrder, filterBy []*models.ReconciliationRuleFilterInput) (*ent.ReconciliationRuleConnection, error)
 }
 type RecommendationsResolver interface {
 	RecommendationsSources(ctx context.Context, obj *ent.Recommendations) (*ent.RecommendationsSources, error)
@@ -7804,6 +7830,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddRecommendationsSources(childComplexity, args["input"].(models.AddRecommendationsSourcesInput)), true
 
+	case "Mutation.addReconciliationRule":
+		if e.complexity.Mutation.AddReconciliationRule == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addReconciliationRule_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddReconciliationRule(childComplexity, args["input"].(models.AddReconciliationRuleInput)), true
+
 	case "Mutation.addReportFilter":
 		if e.complexity.Mutation.AddReportFilter == nil {
 			break
@@ -8836,6 +8874,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditRecommendationsSources(childComplexity, args["input"].(models.EditRecommendationsSourcesInput)), true
 
+	case "Mutation.editReconciliationRule":
+		if e.complexity.Mutation.EditReconciliationRule == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editReconciliationRule_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditReconciliationRule(childComplexity, args["input"].(models.EditReconciliationRuleInput)), true
+
 	case "Mutation.editReportFilter":
 		if e.complexity.Mutation.EditReportFilter == nil {
 			break
@@ -9579,6 +9629,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveRecommendationsSources(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeReconciliationRule":
+		if e.complexity.Mutation.RemoveReconciliationRule == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeReconciliationRule_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveReconciliationRule(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeResourceSpecification":
 		if e.complexity.Mutation.RemoveResourceSpecification == nil {
@@ -11583,6 +11645,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.RecommendationsSources(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RecommendationsSourcesOrder), args["filterBy"].([]*models.RecommendationsSourcesFilterInput)), true
 
+	case "Query.reconciliationRules":
+		if e.complexity.Query.ReconciliationRules == nil {
+			break
+		}
+
+		args, err := ec.field_Query_reconciliationRules_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReconciliationRules(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ReconciliationRuleOrder), args["filterBy"].([]*models.ReconciliationRuleFilterInput)), true
+
 	case "Query.reportFilters":
 		if e.complexity.Query.ReportFilters == nil {
 			break
@@ -12113,6 +12187,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RecommendationsSourcesEdge.Node(childComplexity), true
 
+	case "ReconciliationRule.id":
+		if e.complexity.ReconciliationRule.ID == nil {
+			break
+		}
+
+		return e.complexity.ReconciliationRule.ID(childComplexity), true
+
+	case "ReconciliationRule.name":
+		if e.complexity.ReconciliationRule.Name == nil {
+			break
+		}
+
+		return e.complexity.ReconciliationRule.Name(childComplexity), true
+
+	case "ReconciliationRuleConnection.edges":
+		if e.complexity.ReconciliationRuleConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.ReconciliationRuleConnection.Edges(childComplexity), true
+
+	case "ReconciliationRuleConnection.pageInfo":
+		if e.complexity.ReconciliationRuleConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.ReconciliationRuleConnection.PageInfo(childComplexity), true
+
+	case "ReconciliationRuleConnection.totalCount":
+		if e.complexity.ReconciliationRuleConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.ReconciliationRuleConnection.TotalCount(childComplexity), true
+
+	case "ReconciliationRuleEdge.cursor":
+		if e.complexity.ReconciliationRuleEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.ReconciliationRuleEdge.Cursor(childComplexity), true
+
+	case "ReconciliationRuleEdge.node":
+		if e.complexity.ReconciliationRuleEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.ReconciliationRuleEdge.Node(childComplexity), true
+
 	case "ReportFilter.entity":
 		if e.complexity.ReportFilter.Entity == nil {
 			break
@@ -12323,6 +12446,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceSpecification.Quantity(childComplexity), true
 
+	case "ResourceSpecification.reconciliationRule":
+		if e.complexity.ResourceSpecification.Reconciliationrule == nil {
+			break
+		}
+
+		return e.complexity.ResourceSpecification.Reconciliationrule(childComplexity), true
+
 	case "ResourceSpecification.resourcePropertyTypes":
 		if e.complexity.ResourceSpecification.ResourcePropertyTypes == nil {
 			break
@@ -12497,6 +12627,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResourceType.Name(childComplexity), true
+
+	case "ResourceType.reconciliationRule":
+		if e.complexity.ResourceType.Reconciliationrule == nil {
+			break
+		}
+
+		return e.complexity.ResourceType.Reconciliationrule(childComplexity), true
 
 	case "ResourceType.resourceTypeBaseType":
 		if e.complexity.ResourceType.ResourceTypeBaseType == nil {
@@ -19936,6 +20073,74 @@ type ResourceTypeEdge {
 }
 
 """
+Properties by which ReconciliationRule connections can be ordered.
+"""
+enum ReconciliationRuleOrderField {
+  """
+  Order ReconciliationRule by name.
+  """
+  NAME
+
+  """
+  Order ReconciliationRule by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ReconciliationRule by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ReconciliationRule connections.
+"""
+input ReconciliationRuleOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ReconciliationRule by.
+  """
+  field: ReconciliationRuleOrderField
+}
+
+"""
+A connection to a list of ReconciliationRule.
+"""
+type ReconciliationRuleConnection {
+  """
+  Total ReconciliationRule of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ReconciliationRule edges.
+  """
+  edges: [ReconciliationRuleEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ReconciliationRule edge in a connection.
+"""
+type ReconciliationRuleEdge {
+  """
+  The ReconciliationRule at the end of the edge.
+  """
+  node: ReconciliationRule
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+
+"""
 Properties by which ResourceTypeRelationship connections can be ordered.
 """
 enum ResourceTypeRelationshipOrderField {
@@ -23177,6 +23382,41 @@ type Query {
     
     filterBy: [ResourceTypeFilterInput!]
   ): ResourceTypeConnection!
+
+    """
+  A list of reconciliationRules.
+  """
+  reconciliationRules(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned reconciliationRules.
+    """
+    orderBy: ReconciliationRuleOrder
+
+    
+    #Filtering options for the returned reconciliationRules.
+    
+    filterBy: [ReconciliationRuleFilterInput!]
+  ): ReconciliationRuleConnection!
 }
 
 
@@ -23469,6 +23709,9 @@ type Mutation {
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
   addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship!
+  addReconciliationRule(input: AddReconciliationRuleInput!):ReconciliationRule!
+  editReconciliationRule(input: EditReconciliationRuleInput!): ReconciliationRule!
+  removeReconciliationRule(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -24622,12 +24865,14 @@ enum ResourceTypeBaseTypeKind
 type ResourceType implements Node {
   id: ID!
   name: String!
+  reconciliationRule: ReconciliationRule
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
 
 input AddResourceTypeInput {  
   name: String!
+  reconciliationRule: ID!
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -24635,6 +24880,7 @@ input AddResourceTypeInput {
 input EditResourceTypeInput {
   id: ID!
   name: String!
+  reconciliationRule: ID
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -24643,6 +24889,7 @@ enum ResourceTypeFilterType {
   NAME
   RESOURCE_TYPE_CLASS
   RESOURCE_TYPE_BASE_TYPE
+  RECONCILIATION_RULE
 }
 
 input ResourceTypeFilterInput {
@@ -24651,6 +24898,33 @@ input ResourceTypeFilterInput {
   stringValue: String
   typeClassValue: ResourceTypeClassKind
   typeBaseTypeValue: ResourceTypeBaseTypeKind
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type ReconciliationRule implements Node {
+  id: ID!
+  name: String!
+}
+
+input AddReconciliationRuleInput {  
+  name: String!
+}
+
+input EditReconciliationRuleInput {
+  id: ID!
+  name: String!
+}
+
+enum ReconciliationRuleFilterType {
+  NAME
+}
+
+input ReconciliationRuleFilterInput {
+  filterType: ReconciliationRuleFilterType!
+  operator: FilterOperator!
+  stringValue: String
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
@@ -24863,12 +25137,14 @@ type ResourceSpecification implements Node {
   name: String!  
   quantity: Int
   resourceType: ResourceType
+  reconciliationRule: ReconciliationRule
   resourcePropertyTypes: [ResourcePropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
   quantity: Int
   resourceType: ID!
+  reconciliationRule: ID!
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 input EditResourceSpecificationInput {
@@ -24876,11 +25152,13 @@ input EditResourceSpecificationInput {
   name: String!
   quantity: Int
   resourceType: ID 
+  reconciliationRule: ID
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 enum ResourceSpecificationFilterType {
   NAME  
   RESOURCE_TYPE
+  RECONCILIATION_RULE
 }
 
 input ResourceSpecificationFilterInput {
@@ -25012,7 +25290,8 @@ input AddResourcePropertyTypeInput {
   propertyCategory: ID
   isListable: Boolean
   resourceSpecification: ID
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -26185,6 +26464,21 @@ func (ec *executionContext) field_Mutation_addRecommendations_args(ctx context.C
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddRecommendationsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addReconciliationRule_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddReconciliationRuleInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddReconciliationRuleInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddReconciliationRuleInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -27582,6 +27876,21 @@ func (ec *executionContext) field_Mutation_editRecommendations_args(ctx context.
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editReconciliationRule_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditReconciliationRuleInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditReconciliationRuleInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditReconciliationRuleInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editReportFilter_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -28570,6 +28879,21 @@ func (ec *executionContext) field_Mutation_removeRecommendationsSources_args(ctx
 }
 
 func (ec *executionContext) field_Mutation_removeRecommendations_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeReconciliationRule_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -33141,6 +33465,104 @@ func (ec *executionContext) field_Query_propertyTypeValues_args(ctx context.Cont
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
 		arg5, err = ec.unmarshalOPropertyTypeValueFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeValueFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_reconciliationRules_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.ReconciliationRuleOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOReconciliationRuleOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.ReconciliationRuleFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOReconciliationRuleFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐReconciliationRuleFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -62312,6 +62734,132 @@ func (ec *executionContext) _Mutation_addResourceSpecificationRelationshipItemsL
 	return ec.marshalNResourceSpecificationRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addReconciliationRule(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addReconciliationRule_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddReconciliationRule(rctx, args["input"].(models.AddReconciliationRuleInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ReconciliationRule)
+	fc.Result = res
+	return ec.marshalNReconciliationRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editReconciliationRule(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editReconciliationRule_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditReconciliationRule(rctx, args["input"].(models.EditReconciliationRuleInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ReconciliationRule)
+	fc.Result = res
+	return ec.marshalNReconciliationRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeReconciliationRule(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeReconciliationRule_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveReconciliationRule(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addKqi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -72764,6 +73312,48 @@ func (ec *executionContext) _Query_resourceTypes(ctx context.Context, field grap
 	return ec.marshalNResourceTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceTypeConnection(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_reconciliationRules(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_reconciliationRules_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ReconciliationRules(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ReconciliationRuleOrder), args["filterBy"].([]*models.ReconciliationRuleFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ReconciliationRuleConnection)
+	fc.Result = res
+	return ec.marshalNReconciliationRuleConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleConnection(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -74103,6 +74693,248 @@ func (ec *executionContext) _RecommendationsSourcesEdge_cursor(ctx context.Conte
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ReconciliationRule_id(ctx context.Context, field graphql.CollectedField, obj *ent.ReconciliationRule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ReconciliationRule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ReconciliationRule_name(ctx context.Context, field graphql.CollectedField, obj *ent.ReconciliationRule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ReconciliationRule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ReconciliationRuleConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ReconciliationRuleConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ReconciliationRuleConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ReconciliationRuleConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.ReconciliationRuleConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ReconciliationRuleConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.ReconciliationRuleEdge)
+	fc.Result = res
+	return ec.marshalNReconciliationRuleEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ReconciliationRuleConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.ReconciliationRuleConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ReconciliationRuleConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ReconciliationRuleEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.ReconciliationRuleEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ReconciliationRuleEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ReconciliationRule)
+	fc.Result = res
+	return ec.marshalOReconciliationRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ReconciliationRuleEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.ReconciliationRuleEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ReconciliationRuleEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ReportFilter_id(ctx context.Context, field graphql.CollectedField, obj *ent.ReportFilter) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -75125,6 +75957,38 @@ func (ec *executionContext) _ResourceSpecification_resourceType(ctx context.Cont
 	return ec.marshalOResourceType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ResourceSpecification_reconciliationRule(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourceSpecification",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reconciliationrule(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ReconciliationRule)
+	fc.Result = res
+	return ec.marshalOReconciliationRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ResourceSpecification_resourcePropertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -75951,6 +76815,38 @@ func (ec *executionContext) _ResourceType_name(ctx context.Context, field graphq
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourceType_reconciliationRule(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourceType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reconciliationrule(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ReconciliationRule)
+	fc.Result = res
+	return ec.marshalOReconciliationRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceType_resourceTypeBaseType(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
@@ -92288,6 +93184,26 @@ func (ec *executionContext) unmarshalInputAddRecommendationsSourcesInput(ctx con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddReconciliationRuleInput(ctx context.Context, obj interface{}) (models.AddReconciliationRuleInput, error) {
+	var it models.AddReconciliationRuleInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddResourcePropertyTypeInput(ctx context.Context, obj interface{}) (models.AddResourcePropertyTypeInput, error) {
 	var it models.AddResourcePropertyTypeInput
 	var asMap = obj.(map[string]interface{})
@@ -92514,6 +93430,14 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationInput(ctx cont
 			if err != nil {
 				return it, err
 			}
+		case "reconciliationRule":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reconciliationRule"))
+			it.ReconciliationRule, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "resourcePropertyTypes":
 			var err error
 
@@ -92659,6 +93583,14 @@ func (ec *executionContext) unmarshalInputAddResourceTypeInput(ctx context.Conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "reconciliationRule":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reconciliationRule"))
+			it.ReconciliationRule, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -97066,6 +97998,34 @@ func (ec *executionContext) unmarshalInputEditRecommendationsSourcesInput(ctx co
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditReconciliationRuleInput(ctx context.Context, obj interface{}) (models.EditReconciliationRuleInput, error) {
+	var it models.EditReconciliationRuleInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditReportFilterInput(ctx context.Context, obj interface{}) (models.EditReportFilterInput, error) {
 	var it models.EditReportFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -97129,6 +98089,14 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationInput(ctx con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceType"))
 			it.ResourceType, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "reconciliationRule":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reconciliationRule"))
+			it.ReconciliationRule, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -97237,6 +98205,14 @@ func (ec *executionContext) unmarshalInputEditResourceTypeInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "reconciliationRule":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reconciliationRule"))
+			it.ReconciliationRule, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -101570,6 +102546,98 @@ func (ec *executionContext) unmarshalInputRecommendationsSourcesOrder(ctx contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputReconciliationRuleFilterInput(ctx context.Context, obj interface{}) (models.ReconciliationRuleFilterInput, error) {
+	var it models.ReconciliationRuleFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNReconciliationRuleFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐReconciliationRuleFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputReconciliationRuleOrder(ctx context.Context, obj interface{}) (ent.ReconciliationRuleOrder, error) {
+	var it ent.ReconciliationRuleOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOReconciliationRuleOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputRegularHoursInput(ctx context.Context, obj interface{}) (models.RegularHoursInput, error) {
 	var it models.RegularHoursInput
 	var asMap = obj.(map[string]interface{})
@@ -105306,6 +106374,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._ResourceType(ctx, sel, obj)
+	case *ent.ReconciliationRule:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ReconciliationRule(ctx, sel, obj)
 	case *ent.ResourceTypeRelationship:
 		if obj == nil {
 			return graphql.Null
@@ -113168,6 +114241,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addReconciliationRule":
+			out.Values[i] = ec._Mutation_addReconciliationRule(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editReconciliationRule":
+			out.Values[i] = ec._Mutation_editReconciliationRule(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeReconciliationRule":
+			out.Values[i] = ec._Mutation_removeReconciliationRule(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addKqi":
 			out.Values[i] = ec._Mutation_addKqi(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -116063,6 +117151,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "reconciliationRules":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_reconciliationRules(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -116497,6 +117599,104 @@ func (ec *executionContext) _RecommendationsSourcesEdge(ctx context.Context, sel
 	return out
 }
 
+var reconciliationRuleImplementors = []string{"ReconciliationRule", "Node"}
+
+func (ec *executionContext) _ReconciliationRule(ctx context.Context, sel ast.SelectionSet, obj *ent.ReconciliationRule) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, reconciliationRuleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ReconciliationRule")
+		case "id":
+			out.Values[i] = ec._ReconciliationRule_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._ReconciliationRule_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var reconciliationRuleConnectionImplementors = []string{"ReconciliationRuleConnection"}
+
+func (ec *executionContext) _ReconciliationRuleConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.ReconciliationRuleConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, reconciliationRuleConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ReconciliationRuleConnection")
+		case "totalCount":
+			out.Values[i] = ec._ReconciliationRuleConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._ReconciliationRuleConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._ReconciliationRuleConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var reconciliationRuleEdgeImplementors = []string{"ReconciliationRuleEdge"}
+
+func (ec *executionContext) _ReconciliationRuleEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.ReconciliationRuleEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, reconciliationRuleEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ReconciliationRuleEdge")
+		case "node":
+			out.Values[i] = ec._ReconciliationRuleEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._ReconciliationRuleEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var reportFilterImplementors = []string{"ReportFilter", "Node"}
 
 func (ec *executionContext) _ReportFilter(ctx context.Context, sel ast.SelectionSet, obj *ent.ReportFilter) graphql.Marshaler {
@@ -116696,6 +117896,17 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 					}
 				}()
 				res = ec._ResourceSpecification_resourceType(ctx, field, obj)
+				return res
+			})
+		case "reconciliationRule":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourceSpecification_reconciliationRule(ctx, field, obj)
 				return res
 			})
 		case "resourcePropertyTypes":
@@ -117033,22 +118244,33 @@ func (ec *executionContext) _ResourceType(ctx context.Context, sel ast.Selection
 		case "id":
 			out.Values[i] = ec._ResourceType_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._ResourceType_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "reconciliationRule":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourceType_reconciliationRule(ctx, field, obj)
+				return res
+			})
 		case "resourceTypeBaseType":
 			out.Values[i] = ec._ResourceType_resourceTypeBaseType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "resourceTypeClass":
 			out.Values[i] = ec._ResourceType_resourceTypeClass(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -121551,6 +122773,11 @@ func (ec *executionContext) unmarshalNAddRecommendationsSourcesInput2githubᚗco
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddReconciliationRuleInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddReconciliationRuleInput(ctx context.Context, v interface{}) (models.AddReconciliationRuleInput, error) {
+	res, err := ec.unmarshalInputAddReconciliationRuleInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddResourceSpecificationInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationInput(ctx context.Context, v interface{}) (models.AddResourceSpecificationInput, error) {
 	res, err := ec.unmarshalInputAddResourceSpecificationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -123481,6 +124708,11 @@ func (ec *executionContext) unmarshalNEditRecommendationsInput2githubᚗcomᚋfa
 
 func (ec *executionContext) unmarshalNEditRecommendationsSourcesInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditRecommendationsSourcesInput(ctx context.Context, v interface{}) (models.EditRecommendationsSourcesInput, error) {
 	res, err := ec.unmarshalInputEditRecommendationsSourcesInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditReconciliationRuleInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditReconciliationRuleInput(ctx context.Context, v interface{}) (models.EditReconciliationRuleInput, error) {
+	res, err := ec.unmarshalInputEditReconciliationRuleInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -128073,6 +129305,96 @@ func (ec *executionContext) unmarshalNRecommendationsSourcesFilterType2githubᚗ
 }
 
 func (ec *executionContext) marshalNRecommendationsSourcesFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterType(ctx context.Context, sel ast.SelectionSet, v models.RecommendationsSourcesFilterType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNReconciliationRule2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx context.Context, sel ast.SelectionSet, v ent.ReconciliationRule) graphql.Marshaler {
+	return ec._ReconciliationRule(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNReconciliationRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx context.Context, sel ast.SelectionSet, v *ent.ReconciliationRule) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ReconciliationRule(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNReconciliationRuleConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleConnection(ctx context.Context, sel ast.SelectionSet, v ent.ReconciliationRuleConnection) graphql.Marshaler {
+	return ec._ReconciliationRuleConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNReconciliationRuleConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ReconciliationRuleConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ReconciliationRuleConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNReconciliationRuleEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ReconciliationRuleEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNReconciliationRuleEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNReconciliationRuleEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleEdge(ctx context.Context, sel ast.SelectionSet, v *ent.ReconciliationRuleEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ReconciliationRuleEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNReconciliationRuleFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐReconciliationRuleFilterInput(ctx context.Context, v interface{}) (*models.ReconciliationRuleFilterInput, error) {
+	res, err := ec.unmarshalInputReconciliationRuleFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNReconciliationRuleFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐReconciliationRuleFilterType(ctx context.Context, v interface{}) (models.ReconciliationRuleFilterType, error) {
+	var res models.ReconciliationRuleFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNReconciliationRuleFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐReconciliationRuleFilterType(ctx context.Context, sel ast.SelectionSet, v models.ReconciliationRuleFilterType) graphql.Marshaler {
 	return v
 }
 
@@ -135377,6 +136699,61 @@ func (ec *executionContext) unmarshalORecommendationsSourcesOrderField2ᚖgithub
 }
 
 func (ec *executionContext) marshalORecommendationsSourcesOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsSourcesOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalOReconciliationRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRule(ctx context.Context, sel ast.SelectionSet, v *ent.ReconciliationRule) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ReconciliationRule(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOReconciliationRuleFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐReconciliationRuleFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ReconciliationRuleFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.ReconciliationRuleFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNReconciliationRuleFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐReconciliationRuleFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOReconciliationRuleOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleOrder(ctx context.Context, v interface{}) (*ent.ReconciliationRuleOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputReconciliationRuleOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOReconciliationRuleOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleOrderField(ctx context.Context, v interface{}) (*ent.ReconciliationRuleOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.ReconciliationRuleOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOReconciliationRuleOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReconciliationRuleOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ReconciliationRuleOrderField) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

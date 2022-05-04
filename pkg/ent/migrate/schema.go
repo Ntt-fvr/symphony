@@ -2295,6 +2295,20 @@ var (
 		PrimaryKey:  []*schema.Column{RecommendationsSourcesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ReconciliationRulesColumns holds the columns for the "reconciliation_rules" table.
+	ReconciliationRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// ReconciliationRulesTable holds the schema information for the "reconciliation_rules" table.
+	ReconciliationRulesTable = &schema.Table{
+		Name:        "reconciliation_rules",
+		Columns:     ReconciliationRulesColumns,
+		PrimaryKey:  []*schema.Column{ReconciliationRulesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// ReportFiltersColumns holds the columns for the "report_filters" table.
 	ReportFiltersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2381,6 +2395,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "quantity", Type: field.TypeInt, Nullable: true},
+		{Name: "reconciliation_rule_reconciliation_rule_specification", Type: field.TypeInt, Nullable: true},
 		{Name: "resource_type_resource_specification", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceSpecificationsTable holds the schema information for the "resource_specifications" table.
@@ -2390,8 +2405,15 @@ var (
 		PrimaryKey: []*schema.Column{ResourceSpecificationsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "resource_specifications_resource_types_resource_specification",
+				Symbol:  "resource_specifications_reconciliation_rules_reconciliation_rule_specification",
 				Columns: []*schema.Column{ResourceSpecificationsColumns[5]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_specifications_resource_types_resource_specification",
+				Columns: []*schema.Column{ResourceSpecificationsColumns[6]},
 
 				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2459,13 +2481,22 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "resource_type_class", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "SLOT", "RACK", "PORT", "CARD", "VLAN"}},
 		{Name: "resource_type_base_type", Type: field.TypeEnum, Enums: []string{"LOGICAL_RESOURCE", "PHYSICAL_RESOURCE", "VIRTUAL_RESOURCE"}},
+		{Name: "reconciliation_rule_reconciliation_rule_type", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceTypesTable holds the schema information for the "resource_types" table.
 	ResourceTypesTable = &schema.Table{
-		Name:        "resource_types",
-		Columns:     ResourceTypesColumns,
-		PrimaryKey:  []*schema.Column{ResourceTypesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "resource_types",
+		Columns:    ResourceTypesColumns,
+		PrimaryKey: []*schema.Column{ResourceTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_types_reconciliation_rules_reconciliation_rule_type",
+				Columns: []*schema.Column{ResourceTypesColumns[6]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// ResourceTypeRelationshipsColumns holds the columns for the "resource_type_relationships" table.
 	ResourceTypeRelationshipsColumns = []*schema.Column{
@@ -3676,6 +3707,7 @@ var (
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
 		RecommendationsSourcesTable,
+		ReconciliationRulesTable,
 		ReportFiltersTable,
 		ResourcePropertyTypesTable,
 		ResourceSpecificationsTable,
@@ -3841,10 +3873,12 @@ func init() {
 	RecommendationsTable.ForeignKeys[4].RefTable = VendorsTable
 	ResourcePropertyTypesTable.ForeignKeys[0].RefTable = PropertyCategoriesTable
 	ResourcePropertyTypesTable.ForeignKeys[1].RefTable = ResourceSpecificationsTable
-	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ResourceTypesTable
+	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
+	ResourceSpecificationsTable.ForeignKeys[1].RefTable = ResourceTypesTable
 	ResourceSpecificationItemsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
 	ResourceSpecificationItemsTable.ForeignKeys[1].RefTable = ResourceSpecificationRelationshipsTable
 	ResourceSpecificationRelationshipsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
+	ResourceTypesTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[0].RefTable = LocationTypesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[1].RefTable = ResourceTypesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[2].RefTable = ResourceTypesTable

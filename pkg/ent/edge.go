@@ -1800,6 +1800,22 @@ func (rs *RecommendationsSources) Recommendations(ctx context.Context) ([]*Recom
 	return result, err
 }
 
+func (rr *ReconciliationRule) ReconciliationRuleType(ctx context.Context) ([]*ResourceType, error) {
+	result, err := rr.Edges.ReconciliationRuleTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryReconciliationRuleType().All(ctx)
+	}
+	return result, err
+}
+
+func (rr *ReconciliationRule) ReconciliationRuleSpecification(ctx context.Context) ([]*ResourceSpecification, error) {
+	result, err := rr.Edges.ReconciliationRuleSpecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryReconciliationRuleSpecification().All(ctx)
+	}
+	return result, err
+}
+
 func (rpt *ResourcePropertyType) ResourceSpecification(ctx context.Context) (*ResourceSpecification, error) {
 	result, err := rpt.Edges.ResourceSpecificationOrErr()
 	if IsNotLoaded(err) {
@@ -1820,6 +1836,14 @@ func (rs *ResourceSpecification) Resourcetype(ctx context.Context) (*ResourceTyp
 	result, err := rs.Edges.ResourcetypeOrErr()
 	if IsNotLoaded(err) {
 		result, err = rs.QueryResourcetype().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rs *ResourceSpecification) Reconciliationrule(ctx context.Context) (*ReconciliationRule, error) {
+	result, err := rs.Edges.ReconciliationruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryReconciliationrule().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -1878,6 +1902,14 @@ func (rsr *ResourceSpecificationRelationship) ResourceSr(ctx context.Context) ([
 		result, err = rsr.QueryResourceSr().All(ctx)
 	}
 	return result, err
+}
+
+func (rt *ResourceType) Reconciliationrule(ctx context.Context) (*ReconciliationRule, error) {
+	result, err := rt.Edges.ReconciliationruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryReconciliationrule().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (rt *ResourceType) ResourceRelationshipA(ctx context.Context) ([]*ResourceTypeRelationship, error) {

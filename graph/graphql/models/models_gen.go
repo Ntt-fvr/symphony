@@ -379,6 +379,10 @@ type AddRecommendationsSourcesInput struct {
 	Name string `json:"name"`
 }
 
+type AddReconciliationRuleInput struct {
+	Name string `json:"name"`
+}
+
 type AddResourcePropertyTypeInput struct {
 	ID                    *int                      `json:"id"`
 	ExternalID            *string                   `json:"externalId"`
@@ -409,6 +413,7 @@ type AddResourceSpecificationInput struct {
 	Name                  string                          `json:"name"`
 	Quantity              *int                            `json:"quantity"`
 	ResourceType          int                             `json:"resourceType"`
+	ReconciliationRule    int                             `json:"reconciliationRule"`
 	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
 }
 
@@ -435,6 +440,7 @@ type AddResourceSpecificationRelationshipList struct {
 
 type AddResourceTypeInput struct {
 	Name                 string                            `json:"name"`
+	ReconciliationRule   int                               `json:"reconciliationRule"`
 	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`
 	ResourceTypeClass    resourcetype.ResourceTypeClass    `json:"resourceTypeClass"`
 }
@@ -1038,6 +1044,11 @@ type EditRecommendationsSourcesInput struct {
 	Name string `json:"name"`
 }
 
+type EditReconciliationRuleInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type EditReportFilterInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -1048,6 +1059,7 @@ type EditResourceSpecificationInput struct {
 	Name                  string                          `json:"name"`
 	Quantity              *int                            `json:"quantity"`
 	ResourceType          *int                            `json:"resourceType"`
+	ReconciliationRule    *int                            `json:"reconciliationRule"`
 	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
 }
 
@@ -1066,6 +1078,7 @@ type EditResourceSpecificationRelationshipInput struct {
 type EditResourceTypeInput struct {
 	ID                   int                               `json:"id"`
 	Name                 string                            `json:"name"`
+	ReconciliationRule   *int                              `json:"reconciliationRule"`
 	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`
 	ResourceTypeClass    resourcetype.ResourceTypeClass    `json:"resourceTypeClass"`
 }
@@ -1544,6 +1557,15 @@ type RecommendationsSourcesFilterInput struct {
 	IDSet       []int                            `json:"idSet"`
 	MaxDepth    *int                             `json:"maxDepth"`
 	StringSet   []string                         `json:"stringSet"`
+}
+
+type ReconciliationRuleFilterInput struct {
+	FilterType  ReconciliationRuleFilterType `json:"filterType"`
+	Operator    enum.FilterOperator          `json:"operator"`
+	StringValue *string                      `json:"stringValue"`
+	IDSet       []int                        `json:"idSet"`
+	MaxDepth    *int                         `json:"maxDepth"`
+	StringSet   []string                     `json:"stringSet"`
 }
 
 type RegularHoursInput struct {
@@ -3223,21 +3245,62 @@ func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type ReconciliationRuleFilterType string
+
+const (
+	ReconciliationRuleFilterTypeName ReconciliationRuleFilterType = "NAME"
+)
+
+var AllReconciliationRuleFilterType = []ReconciliationRuleFilterType{
+	ReconciliationRuleFilterTypeName,
+}
+
+func (e ReconciliationRuleFilterType) IsValid() bool {
+	switch e {
+	case ReconciliationRuleFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e ReconciliationRuleFilterType) String() string {
+	return string(e)
+}
+
+func (e *ReconciliationRuleFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ReconciliationRuleFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ReconciliationRuleFilterType", str)
+	}
+	return nil
+}
+
+func (e ReconciliationRuleFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type ResourceSpecificationFilterType string
 
 const (
-	ResourceSpecificationFilterTypeName         ResourceSpecificationFilterType = "NAME"
-	ResourceSpecificationFilterTypeResourceType ResourceSpecificationFilterType = "RESOURCE_TYPE"
+	ResourceSpecificationFilterTypeName               ResourceSpecificationFilterType = "NAME"
+	ResourceSpecificationFilterTypeResourceType       ResourceSpecificationFilterType = "RESOURCE_TYPE"
+	ResourceSpecificationFilterTypeReconciliationRule ResourceSpecificationFilterType = "RECONCILIATION_RULE"
 )
 
 var AllResourceSpecificationFilterType = []ResourceSpecificationFilterType{
 	ResourceSpecificationFilterTypeName,
 	ResourceSpecificationFilterTypeResourceType,
+	ResourceSpecificationFilterTypeReconciliationRule,
 }
 
 func (e ResourceSpecificationFilterType) IsValid() bool {
 	switch e {
-	case ResourceSpecificationFilterTypeName, ResourceSpecificationFilterTypeResourceType:
+	case ResourceSpecificationFilterTypeName, ResourceSpecificationFilterTypeResourceType, ResourceSpecificationFilterTypeReconciliationRule:
 		return true
 	}
 	return false
@@ -3352,17 +3415,19 @@ const (
 	ResourceTypeFilterTypeName                 ResourceTypeFilterType = "NAME"
 	ResourceTypeFilterTypeResourceTypeClass    ResourceTypeFilterType = "RESOURCE_TYPE_CLASS"
 	ResourceTypeFilterTypeResourceTypeBaseType ResourceTypeFilterType = "RESOURCE_TYPE_BASE_TYPE"
+	ResourceTypeFilterTypeReconciliationRule   ResourceTypeFilterType = "RECONCILIATION_RULE"
 )
 
 var AllResourceTypeFilterType = []ResourceTypeFilterType{
 	ResourceTypeFilterTypeName,
 	ResourceTypeFilterTypeResourceTypeClass,
 	ResourceTypeFilterTypeResourceTypeBaseType,
+	ResourceTypeFilterTypeReconciliationRule,
 }
 
 func (e ResourceTypeFilterType) IsValid() bool {
 	switch e {
-	case ResourceTypeFilterTypeName, ResourceTypeFilterTypeResourceTypeClass, ResourceTypeFilterTypeResourceTypeBaseType:
+	case ResourceTypeFilterTypeName, ResourceTypeFilterTypeResourceTypeClass, ResourceTypeFilterTypeResourceTypeBaseType, ResourceTypeFilterTypeReconciliationRule:
 		return true
 	}
 	return false

@@ -1393,6 +1393,30 @@ func (rs *RecommendationsSourcesQuery) collectField(ctx *graphql.OperationContex
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rr *ReconciliationRuleQuery) CollectFields(ctx context.Context, satisfies ...string) *ReconciliationRuleQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rr = rr.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rr
+}
+
+func (rr *ReconciliationRuleQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ReconciliationRuleQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "resourcespecification":
+			rr = rr.WithReconciliationRuleSpecification(func(query *ResourceSpecificationQuery) {
+				query.collectField(ctx, field)
+			})
+		case "resourcetype":
+			rr = rr.WithReconciliationRuleType(func(query *ResourceTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rr
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rf *ReportFilterQuery) CollectFields(ctx context.Context, satisfies ...string) *ReportFilterQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rf = rf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

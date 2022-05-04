@@ -78,6 +78,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
+	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
@@ -1967,6 +1968,33 @@ func init() {
 	recommendationssourcesDescName := recommendationssourcesFields[0].Descriptor()
 	// recommendationssources.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	recommendationssources.NameValidator = recommendationssourcesDescName.Validators[0].(func(string) error)
+	reconciliationruleMixin := schema.ReconciliationRule{}.Mixin()
+	reconciliationrule.Policy = privacy.NewPolicies(schema.ReconciliationRule{})
+	reconciliationrule.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := reconciliationrule.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	reconciliationruleMixinFields0 := reconciliationruleMixin[0].Fields()
+	reconciliationruleFields := schema.ReconciliationRule{}.Fields()
+	_ = reconciliationruleFields
+	// reconciliationruleDescCreateTime is the schema descriptor for create_time field.
+	reconciliationruleDescCreateTime := reconciliationruleMixinFields0[0].Descriptor()
+	// reconciliationrule.DefaultCreateTime holds the default value on creation for the create_time field.
+	reconciliationrule.DefaultCreateTime = reconciliationruleDescCreateTime.Default.(func() time.Time)
+	// reconciliationruleDescUpdateTime is the schema descriptor for update_time field.
+	reconciliationruleDescUpdateTime := reconciliationruleMixinFields0[1].Descriptor()
+	// reconciliationrule.DefaultUpdateTime holds the default value on creation for the update_time field.
+	reconciliationrule.DefaultUpdateTime = reconciliationruleDescUpdateTime.Default.(func() time.Time)
+	// reconciliationrule.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	reconciliationrule.UpdateDefaultUpdateTime = reconciliationruleDescUpdateTime.UpdateDefault.(func() time.Time)
+	// reconciliationruleDescName is the schema descriptor for name field.
+	reconciliationruleDescName := reconciliationruleFields[0].Descriptor()
+	// reconciliationrule.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	reconciliationrule.NameValidator = reconciliationruleDescName.Validators[0].(func(string) error)
 	reportfilterMixin := schema.ReportFilter{}.Mixin()
 	reportfilter.Policy = privacy.NewPolicies(schema.ReportFilter{})
 	reportfilter.Hooks[0] = func(next ent.Mutator) ent.Mutator {

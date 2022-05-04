@@ -90,6 +90,7 @@ func (c *Client) ReadOnly() *Client {
 		Recommendations:                   NewRecommendationsClient(cfg),
 		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
+		ReconciliationRule:                NewReconciliationRuleClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
