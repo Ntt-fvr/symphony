@@ -12,7 +12,7 @@ import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useState} from 'react';
+import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {CardAccordion} from './common/CardAccordion';
@@ -22,6 +22,7 @@ import {Grid} from '@material-ui/core';
 import {MenuItem} from '@material-ui/core';
 import {Tabla} from './common/Tabla';
 import {makeStyles} from '@material-ui/styles';
+import {useFormInput} from '../assurance/common/useFormInput';
 
 const valuesTable = [
   {
@@ -66,6 +67,9 @@ const useStyles = makeStyles(() => ({
   buttonDelete: {
     marginRight: '24px',
   },
+  buttonStatus: {
+    height: '38px',
+  },
   accordionDetails: {
     '&.MuiAccordionDetails-root': {
       padding: '0 16px 0px ',
@@ -86,123 +90,145 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ChangeRequestDetails = () => {
+export type Props = $ReadOnly<{|
+  setOpenDetails: any,
+  data: any,
+|}>;
+
+const ChangeRequestDetails = (props: Props) => {
+  const {setOpenDetails, data} = props;
   const classes = useStyles();
 
-  const [statusAlarm] = useState('Pending for approval');
+  const resourceType = useFormInput(data.resourceType.trim());
+  const changeSource = useFormInput(data.changeSource.trim());
 
   return (
-    <Grid className={classes.root} container spacing={0}>
-      <Grid className={classes.titleModule} item xs={12}>
-        <ConfigureTitle
-          title={fbt('Change Request', '')}
-          subtitle={fbt('', '  ')}
-        />
-        <Grid>
-          <ButtonSaveDelete className={classes.buttonDelete} variant="outlined">
-            Delete
-          </ButtonSaveDelete>
-          <ButtonSaveDelete>Save</ButtonSaveDelete>
+    <div>
+      <Grid className={classes.root} container spacing={0}>
+        <Grid className={classes.titleModule} item xs={12}>
+          <ConfigureTitle
+            title={fbt('Change Request', '')}
+            subtitle={fbt('', '  ')}
+          />
+          <Grid>
+            <ButtonSaveDelete
+              onClick={() => setOpenDetails()}
+              className={classes.buttonDelete}
+              variant="outlined">
+              Delete
+            </ButtonSaveDelete>
+            <ButtonSaveDelete onClick={() => setOpenDetails()}>
+              Save
+            </ButtonSaveDelete>
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid style={{display: 'flex'}}>
-        <ButtonAlarmStatus skin={'yellow'}>
-          Status: {statusAlarm}{' '}
-        </ButtonAlarmStatus>
-        <FormField>
-          <TextField
-            required
-            id="outlined-select-action"
-            select
-            style={{
-              padding: '0',
-              marginLeft: '40px',
-              width: '250px',
-            }}
-            label="Action"
-            name="action"
-            defaultValue=""
-            variant="outlined">
-            {status.map((item, index) => (
-              <MenuItem key={index} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </TextField>
-        </FormField>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={8}>
-          <CardAccordion className={classes.accordionDetails} title={'Details'}>
-            <FormField>
-              <Grid container spacing={1}>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="id"
-                    label="Id"
-                    variant="outlined"
-                    name="name"
-                  />
+        <Grid style={{display: 'flex'}}>
+          <ButtonAlarmStatus
+            className={classes.buttonStatus}
+            skin={data.status}>
+            Status: {data.status}{' '}
+          </ButtonAlarmStatus>
+          <FormField>
+            <TextField
+              required
+              id="outlined-select-action"
+              select
+              style={{
+                padding: '0',
+                marginLeft: '40px',
+                width: '250px',
+              }}
+              label="Action"
+              name="action"
+              defaultValue=""
+              variant="outlined">
+              {status.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormField>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <CardAccordion
+              className={classes.accordionDetails}
+              title={'Details'}>
+              <FormField>
+                <Grid container spacing={1}>
+                  <Grid item xs={4}>
+                    <TextField
+                      style={{width: '100%'}}
+                      id="id"
+                      label="Id"
+                      variant="outlined"
+                      name="ID"
+                      value={data.id}
+                      disabled
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      style={{width: '100%'}}
+                      id="resource_type"
+                      label="Resource type"
+                      variant="outlined"
+                      name="resourceType"
+                      {...resourceType}
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      style={{width: '100%'}}
+                      id="change_source"
+                      label="Change source"
+                      variant="outlined"
+                      name="changeSource"
+                      {...changeSource}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      style={{width: '100%'}}
+                      id="change_source"
+                      label="Change source"
+                      variant="outlined"
+                      multiline
+                      rows={4}
+                      name="name"
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="resource_type"
-                    label="Resource type"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="change_source"
-                    label="Change source"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="change_source"
-                    label="Change source"
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                    name="name"
-                  />
-                </Grid>
+              </FormField>
+            </CardAccordion>
+            <CardAccordion title={'Target parameters'}>
+              <Tabla valuesTable={valuesTable} />
+            </CardAccordion>
+            <CardAccordion title={'Suggested change request schedule'}>
+              <CardSuggested />
+            </CardAccordion>
+          </Grid>
+          <Grid item xs={4}>
+            <CardAccordion
+              className={classes.listComment}
+              title={'Activity & Comments'}>
+              <Grid item xs={12}>
+                <CommentsActivitiesBox
+                  boxElementsClass={classes.inExpandingPanelFix}
+                  commentsLogClass={classes.commentsLog}
+                  relatedEntityId={''}
+                  relatedEntityType="%future added value"
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                  activities={[]}
+                  comments={[]}
+                />
               </Grid>
-            </FormField>
-          </CardAccordion>
-          <CardAccordion title={'Target parameters'}>
-            <Tabla valuesTable={valuesTable} />
-          </CardAccordion>
-          <CardAccordion title={'Suggested change request schedule'}>
-            <CardSuggested />
-          </CardAccordion>
-        </Grid>
-        <Grid item xs={4}>
-          <CardAccordion
-            className={classes.listComment}
-            title={'Activity & Comments'}>
-            <Grid item xs={12}>
-              <CommentsActivitiesBox
-                boxElementsClass={classes.inExpandingPanelFix}
-                commentsLogClass={classes.commentsLog}
-                relatedEntityId={''}
-                relatedEntityType="%future added value"
-                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-                activities={[]}
-                comments={[]}
-              />
-            </Grid>
-          </CardAccordion>
+            </CardAccordion>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </div>
   );
 };
 

@@ -16,6 +16,7 @@ import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
+import {ChangeRequestDetails} from './ChangeRequestDetails';
 import {CircleIndicator} from '../resource_instance/CircleIndicator';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -56,17 +57,8 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
   },
 }));
+
 const tableColumns = [
-  {
-    key: 'changeId',
-    title: 'Change ID',
-    getSortingValue: row => row.id,
-    render: row => (
-      <Button variant="text" tooltip={row.id ?? ''}>
-        {row.id}
-      </Button>
-    ),
-  },
   {
     key: 'creation date',
     title: 'Creation date',
@@ -130,10 +122,25 @@ const data = [
   },
 ];
 
+export type Props = $ReadOnly<{||}>;
+
 const ChangeRequestTypes = () => {
   const [filters, setFilters] = useState([]);
+  const [openDetails, setOpenDetails] = useState(false);
+  const [dataRow, setDataRow] = useState({});
 
   const classes = useStyles();
+  const mostrarInfo = data => {
+    setDataRow(data);
+  };
+  const handleOpenDetails = () => {
+    setOpenDetails(prevStateDetails => !prevStateDetails);
+  };
+  if (openDetails) {
+    return (
+      <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails} />
+    );
+  }
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -163,7 +170,28 @@ const ChangeRequestTypes = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <Table data={data} columns={tableColumns} />
+        <Table
+          data={data}
+          columns={[
+            {
+              key: 'changeId',
+              title: 'Change ID',
+              getSortingValue: row => row.id,
+              render: row => (
+                <Button
+                  onClick={() => {
+                    handleOpenDetails();
+                    mostrarInfo(row);
+                  }}
+                  variant="text"
+                  tooltip={row.id ?? ''}>
+                  {row.id}
+                </Button>
+              ),
+            },
+            ...tableColumns,
+          ]}
+        />
       </Grid>
     </Grid>
   );
