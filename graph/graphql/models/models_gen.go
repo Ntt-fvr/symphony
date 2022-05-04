@@ -235,7 +235,7 @@ type AddKqiCategoryInput struct {
 }
 
 type AddKqiComparatorInput struct {
-	KqiTargetFk    int     `json:"kqiTargetFk"`
+	KqiTargetFk    *int    `json:"kqiTargetFk"`
 	ComparatorFk   int     `json:"comparatorFk"`
 	Number         float64 `json:"number"`
 	ComparatorType string  `json:"comparatorType"`
@@ -262,14 +262,15 @@ type AddKqiSourceInput struct {
 }
 
 type AddKqiTargetInput struct {
-	Name             string    `json:"name"`
-	Impact           string    `json:"impact"`
-	Period           float64   `json:"period"`
-	AllowedVariation float64   `json:"allowedVariation"`
-	InitTime         time.Time `json:"initTime"`
-	EndTime          time.Time `json:"endTime"`
-	Status           bool      `json:"status"`
-	Kqi              int       `json:"kqi"`
+	Name             string                 `json:"name"`
+	Impact           string                 `json:"impact"`
+	Period           float64                `json:"period"`
+	AllowedVariation float64                `json:"allowedVariation"`
+	InitTime         time.Time              `json:"initTime"`
+	EndTime          time.Time              `json:"endTime"`
+	Status           bool                   `json:"status"`
+	Kqi              int                    `json:"kqi"`
+	KqiComparator    *AddKqiComparatorInput `json:"kqiComparator"`
 }
 
 type AddKqiTemporalFrequencyInput struct {
