@@ -24,6 +24,7 @@ import {useMemo} from 'react';
 
 const useStyles = makeStyles(_theme => ({
   root: {
+    cursor: 'text',
     border: 0,
     '&:focus': {
       outline: 'none',
@@ -58,17 +59,18 @@ const useStyles = makeStyles(_theme => ({
       textAlign: 'right',
     },
   },
-  primarySkin: {},
-  redSkin: {},
-  orangeSkin: {},
-  greenSkin: {},
-  violetSkin: {},
-  yellowSkin: {},
+  SubmitedSkin: {},
+  FaildSkin: {},
+  CancelSkin: {},
+  In_executionSkin: {},
+  SuccesfulSkin: {},
+  PendingSkin: {},
+  ScheduledSkin: {},
   disabled: {},
   containedVariant: {
-    height: '36px',
-    minWidth: '88px',
-    padding: '4px 12px',
+    height: '28px',
+    minWidth: '110px',
+    padding: '0px 12px',
     borderRadius: '4px',
     '&$hasRightIcon': {
       padding: '4px 8px 4px 16px',
@@ -76,8 +78,8 @@ const useStyles = makeStyles(_theme => ({
     '&$hasLeftIcon': {
       padding: '4px 16px 4px 8px',
     },
-    //PRIMARY
-    '&$primarySkin': {
+    //SUBMITED
+    '&$SubmitedSkin': {
       backgroundColor: '#E4F2FF',
       border: '1px solid #3A5FD7',
       '&:not($disabled)': {
@@ -85,15 +87,19 @@ const useStyles = makeStyles(_theme => ({
           color: '#3A5FD7',
         },
       },
-      '&:hover:not($disabled)': {
-        backgroundColor: '#EDF0F9',
-      },
-      '&:active:not($disabled)': {
-        backgroundColor: '#f5f7fc',
+    },
+    //CANCEL
+    '&$CancelSkin': {
+      backgroundColor: '#FAFCFF',
+      border: '1px solid #9DA9BE',
+      '&:not($disabled)': {
+        '& $buttonText, $icon': {
+          color: '#9DA9BE',
+        },
       },
     },
-    //RED
-    '&$redSkin': {
+    //FAILD
+    '&$FaildSkin': {
       backgroundColor: '#FFE8E8',
       border: '1px solid #D4040B',
 
@@ -102,15 +108,9 @@ const useStyles = makeStyles(_theme => ({
           color: '#D4040B',
         },
       },
-      '&:hover:not($disabled)': {
-        backgroundColor: '#FFF2F3',
-      },
-      '&:active:not($disabled)': {
-        backgroundColor: '#f5f7fc',
-      },
     },
-    //YELLOW
-    '&$yellowSkin': {
+    //SCHEDULED
+    '&$ScheduledSkin': {
       backgroundColor: '#FFF9D8',
       border: '1px solid #D4850D',
       '&:not($disabled)': {
@@ -118,15 +118,9 @@ const useStyles = makeStyles(_theme => ({
           color: '#D4850D',
         },
       },
-      '&:hover:not($disabled)': {
-        backgroundColor: '#FFFCEE',
-      },
-      '&:active:not($disabled)': {
-        backgroundColor: '#f5f7fc',
-      },
     },
-    //GREEN
-    '&$greenSkin': {
+    //SUCCESFUL
+    '&$SuccesfulSkin': {
       backgroundColor: '#EBFFE1',
       border: '1px solid #00AF5B',
       '&:not($disabled)': {
@@ -134,15 +128,9 @@ const useStyles = makeStyles(_theme => ({
           color: '#00AF5B',
         },
       },
-      '&:hover:not($disabled)': {
-        backgroundColor: '#F0FFF8',
-      },
-      '&:active:not($disabled)': {
-        backgroundColor: '#f5f7fc',
-      },
     },
-    //VIOLET
-    '&$violetSkin': {
+    //PENDING
+    '&$PendingSkin': {
       backgroundColor: '#eae7fa',
       border: '1px solid #7B61FF',
       '&:not($disabled)': {
@@ -150,27 +138,15 @@ const useStyles = makeStyles(_theme => ({
           color: '#7B61FF',
         },
       },
-      '&:hover:not($disabled)': {
-        backgroundColor: '#edebfc',
-      },
-      '&:active:not($disabled)': {
-        backgroundColor: '#f5f7fc',
-      },
     },
-    //ORANGE
-    '&$orangeSkin': {
+    //EXECUTION
+    '&$In_executionSkin': {
       backgroundColor: '#faf1ec',
       border: '1px solid #ef9a74',
       '&:not($disabled)': {
         '& $buttonText, $icon': {
           color: '#ef9a74',
         },
-      },
-      '&:hover:not($disabled)': {
-        backgroundColor: '#fff7f1',
-      },
-      '&:active:not($disabled)': {
-        backgroundColor: '#f5f7fc',
       },
     },
     //DISABLED
@@ -191,12 +167,14 @@ const useStyles = makeStyles(_theme => ({
 
 export type ButtonVariant = 'contained' | 'text';
 export type ButtonSkin =
-  | 'primary'
-  | 'violet'
-  | 'red'
-  | 'yellow'
-  | 'orange'
-  | 'green';
+  | 'Submited'
+  | 'In_execution'
+  | 'Pending'
+  | 'Succesful'
+  | 'Scheduled'
+  | 'Faild'
+  | 'Cancel'
+  | 'disabled';
 export type SvgIconComponent =
   | React.ComponentType<SvgIconStyleProps>
   | React$ComponentType<SvgIconExports>;
@@ -228,7 +206,7 @@ const ButtonAlarmStatus = (
   const {
     className,
     children,
-    skin = 'primary',
+    skin = 'Submited',
     disabled: disabledProp = false,
     variant = 'contained',
     useEllipsis = true,

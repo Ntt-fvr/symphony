@@ -9,6 +9,7 @@
  */
 
 import Button from '@symphony/design-system/components/Button';
+import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonsChangeRequest from './common/ButtonsChangeRequest';
 import ConfigureTitle from './common/ConfigureTitle';
 import PowerSearchBar from '../power_search/PowerSearchBar';
@@ -99,7 +100,9 @@ const tableColumns = [
   {
     key: 'status',
     title: `${fbt('Status', '')}`,
-    render: row => row.status ?? '',
+    render: row => (
+      <ButtonAlarmStatus skin={row.status}>{row.status}</ButtonAlarmStatus>
+    ),
     tooltip: row => row.status ?? '',
   },
 ];
@@ -113,7 +116,7 @@ const data = [
     resourceType: 'RNCellDU01',
     changeSource: 'Manual',
     affectedResources: '1',
-    status: 'Submited',
+    status: 'Succesful',
   },
   {
     id: '686876768',
@@ -123,7 +126,7 @@ const data = [
     resourceType: 'RNCellDU02',
     changeSource: 'Manual',
     affectedResources: '6',
-    status: 'Succesful',
+    status: 'Scheduled',
   },
 ];
 
