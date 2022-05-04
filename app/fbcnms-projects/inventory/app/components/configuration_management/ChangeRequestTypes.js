@@ -8,14 +8,14 @@
  * @format
  */
 
-// import Button from '@symphony/design-system/components/Button';
-import Button from '@material-ui/core/Button';
+import Button from '@symphony/design-system/components/Button';
+import ButtonsChangeRequest from './common/ButtonsChangeRequest';
 import ConfigureTitle from './common/ConfigureTitle';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
-import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
+import {CircleIndicator} from '../resource_instance/CircleIndicator';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -47,132 +47,83 @@ const useStyles = makeStyles(() => ({
   searchBar: {
     flexGrow: 1,
   },
+  buttonOutlined: {
+    border: '1px solid',
+    color: '#3984FF',
+    width: '177px',
+    height: '36px',
+    borderRadius: '4px',
+  },
 }));
 const tableColumns = [
   {
-    key: 'change',
+    key: 'changeId',
     title: 'Change ID',
-    getSortingValue: row => row.name,
+    getSortingValue: row => row.id,
     render: row => (
-      <Button
-        disableRipple
-        variant="text"
-        color="primary"
-        tooltip={row.name ?? ''}>
-        {row.name}
+      <Button variant="text" tooltip={row.id ?? ''}>
+        {row.id}
       </Button>
     ),
   },
   {
     key: 'creation date',
     title: 'Creation date',
-    render: row => row.location.name ?? '',
-    tooltip: row => row.location.name ?? '',
+    render: row => row.creationDate ?? '',
+    tooltip: row => row.creationDate ?? '',
   },
   {
     key: 'last modification date',
     title: `${fbt('Last modification date', '')}`,
-    render: row => row.arfcndu?.name ?? '',
-    tooltip: row => row.arfcndu?.name ?? '',
+    render: row => row.lastModificationDate ?? '',
+    tooltip: row => row.lastModificationDate ?? '',
   },
   {
     key: 'resource type',
     title: `${fbt('Resource type', '')}`,
-    render: row => row.nRTAC?.name ?? '',
-    tooltip: row => row.nRTAC?.name ?? '',
+    render: row => row.resourceType ?? '',
+    tooltip: row => row.resourceType ?? '',
   },
   {
     key: 'change source',
     title: `${fbt('Change source', '')}`,
-    render: row => row.nRTAC?.name ?? '',
-    tooltip: row => row.nRTAC?.name ?? '',
+    render: row => row.changeSource ?? '',
+    tooltip: row => row.changeSource ?? '',
   },
   {
     key: 'affected resources',
     title: `${fbt('Affected resources', '')}`,
-    render: row => row.nRTAC?.name ?? '',
-    tooltip: row => row.nRTAC?.name ?? '',
+    render: row => <CircleIndicator>{row.affectedResources}</CircleIndicator>,
+    tooltip: row => row.affectedResources ?? '',
   },
   {
     key: 'status',
     title: `${fbt('Status', '')}`,
-    render: row => row.nRTAC?.name ?? '',
-    tooltip: row => row.nRTAC?.name ?? '',
+    render: row => row.status ?? '',
+    tooltip: row => row.status ?? '',
   },
 ];
 
 const data = [
   {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'S17161',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132331',
-    priority: 'NONE',
-    arfcndu: {
-      id: '240518168576',
-      name: '10000',
-    },
-    nRTAC: {
-      id: '399431958528',
-      name: '10000',
-    },
+    id: '686876767',
+    key: '01',
+    creationDate: '01/03/22',
+    lastModificationDate: '01/03/22',
+    resourceType: 'RNCellDU01',
+    changeSource: 'Manual',
+    affectedResources: '1',
+    status: 'Submited',
   },
   {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'P10177',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132332',
-    priority: 'NONE',
-    arfcndu: {
-      id: '240518168576',
-      name: '396000',
-    },
-    nRTAC: {
-      id: '399431958528',
-      name: '9001',
-    },
-  },
-  {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'S17589',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132333',
-    priority: 'NONE',
-    arfcndu: {
-      id: '240518168576',
-      name: '370000',
-    },
-    nRTAC: {
-      id: '399431958528',
-      name: '8800',
-    },
-  },
-  {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'S19161',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132334',
-    priority: 'NONE',
-    arfcndu: {
-      id: '240518168576',
-      name: '382000',
-    },
-    nRTAC: {
-      id: '399431958528',
-      name: '2500',
-    },
+    id: '686876768',
+    key: '02',
+    creationDate: '01/04/22',
+    lastModificationDate: '01/05/22',
+    resourceType: 'RNCellDU02',
+    changeSource: 'Manual',
+    affectedResources: '6',
+    status: 'Succesful',
   },
 ];
 
@@ -191,20 +142,7 @@ const ChangeRequestTypes = () => {
             '  ',
           )}
         />
-        <Grid>
-          <Button size="medium" variant="outlined" color="primary">
-            <Text useEllipsis={true} color={'primary'}>
-              NF Initial Configuration
-            </Text>
-          </Button>
-
-          <Button
-            style={{padding: '10px 16px', margin: '0 0 0 20px'}}
-            variant="contained"
-            color="primary">
-            Create bulk request
-          </Button>
-        </Grid>
+        <ButtonsChangeRequest />
       </Grid>
       <Grid item xs={12}>
         <div className={classes.bar}>
