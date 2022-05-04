@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
       marginLeft: '8px',
       pointerEvents: 'auto',
     },
-    padding: '16px',
+    padding: '16px 29px',
     userSelect: 'none',
     display: 'flex',
   },

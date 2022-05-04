@@ -96,6 +96,7 @@ type FlowSettingsUpdateType = ?{
 export type FlowDataContextType = $ReadOnly<{|
   flowDraft: FlowDraftResponse,
   hasChanges: boolean,
+  hasPublish: boolean,
   save: (
     flowSettingsUpdate?: FlowSettingsUpdateType,
   ) => Promise<ImportFlowDraftMutationResponse>,
@@ -105,6 +106,7 @@ export type FlowDataContextType = $ReadOnly<{|
 const FlowDataContextDefaults = {
   flowDraft: null,
   hasChanges: false,
+  hasPublish: false,
   save: () => Promise.reject(),
   publish: () => Promise.reject(),
 };
@@ -162,6 +164,7 @@ type Props = $ReadOnly<{|
 function FlowDataContextProviderComponent(props: Props) {
   const {flowId} = props;
   const [hasChanges, setHasChanges] = useState(false);
+  const [hasPublish, setHasPublish] = useState(false);
   const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery>(
     flowQuery,
     {
@@ -261,6 +264,7 @@ function FlowDataContextProviderComponent(props: Props) {
         return;
       }
       setHasChanges(true);
+      setHasPublish(false);
     });
   }, [flow, flowDraft, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
 
@@ -393,11 +397,17 @@ function FlowDataContextProviderComponent(props: Props) {
       flowDraftID: flowDraft.id ?? '',
       flowInstancesPolicy: 'ENABLED',
     };
-    return publishFlow(flowData);
+
+    const publishPromise = publishFlow(flowData);
+
+    publishPromise.then(() => setHasPublish(true));
+
+    return publishPromise;
   }, [flowDraft]);
 
   return (
-    <FlowDataContext.Provider value={{flowDraft, hasChanges, save, publish}}>
+    <FlowDataContext.Provider
+      value={{flowDraft, hasChanges, hasPublish, save, publish}}>
       {props.children}
     </FlowDataContext.Provider>
   );

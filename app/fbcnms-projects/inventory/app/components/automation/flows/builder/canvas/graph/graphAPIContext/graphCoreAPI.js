@@ -85,7 +85,16 @@ function graphBindToContainer(containerElement: HTMLElement) {
     model: graph,
     width: '100%',
     height: '100%',
-    gridSize: 1,
+    gridSize: 30,
+    drawGrid: {
+      name: 'dot',
+      args: [
+        {
+          color: '#9da9be',
+          thickness: 2,
+        },
+      ],
+    },
     background: {
       color: symphony.palette.D100,
     },

@@ -70,4 +70,5 @@ export type PaperCtorType = ({
   height: number | string,
   gridSize: number,
   interactive: boolean | (IShape => boolean),
+  drawGrid: boolean | object,
 }) => Paper;

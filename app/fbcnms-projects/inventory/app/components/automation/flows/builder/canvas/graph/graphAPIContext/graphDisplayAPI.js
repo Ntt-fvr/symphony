@@ -22,6 +22,8 @@ export type GraphDisplayAPI = $ReadOnly<{|
   reset: () => void,
   setPaperInteractionLocked: boolean => void,
   paperInteractionIsLocked: () => boolean,
+  showGrid: () => void,
+  hiddenGrid: () => void,
 |}>;
 
 export default function graphDisplayAPIProvider(
@@ -34,6 +36,8 @@ export default function graphDisplayAPIProvider(
   const reset = paperReset.bind(flowWrapper);
   const setPaperInteractionLocked = paperSetLocked.bind(flowWrapper);
   const paperInteractionIsLocked = interactionIsLocked.bind(flowWrapper);
+  const showGrid = paperShowGrid.bind(flowWrapper);
+  const hiddenGrid = paperHiddenGrid.bind(flowWrapper);
 
   return {
     zoomIn,
@@ -43,6 +47,8 @@ export default function graphDisplayAPIProvider(
     reset,
     setPaperInteractionLocked,
     paperInteractionIsLocked,
+    showGrid,
+    hiddenGrid,
   };
 }
 
@@ -140,4 +146,20 @@ function paperSetLocked(locked: boolean) {
 
 function interactionIsLocked() {
   return this.current?.paperIsLocked === true;
+}
+
+function paperShowGrid() {
+  paperGrid.call(this, true);
+}
+
+function paperHiddenGrid() {
+  paperGrid.call(this, false);
+}
+
+function paperGrid(isShow: boolean) {
+  if (this.current == null) {
+    return;
+  }
+  const flow: FlowWrapper = this.current;
+  !isShow ? flow.paper.setGridSize(30) : flow.paper.setGridSize(1);
 }
