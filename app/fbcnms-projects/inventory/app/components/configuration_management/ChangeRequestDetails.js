@@ -115,7 +115,7 @@ const ChangeRequestDetails = (props: Props) => {
               onClick={() => setOpenDetails()}
               className={classes.buttonDelete}
               variant="outlined">
-              Delete
+              Cancel
             </ButtonSaveDelete>
             <ButtonSaveDelete onClick={() => setOpenDetails()}>
               Save

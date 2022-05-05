@@ -59,15 +59,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  deleteItem: () => void,
+  onClick: () => void,
   name?: string,
   open?: boolean,
   onClose: () => void,
-  handleSimpleChangeRequest: any,
 |}>;
 
 const DialogStatus = (props: Props) => {
-  const {onClose, deleteItem, name, handleSimpleChangeRequest} = props;
+  const {onClose, name, onClick} = props;
 
   const classes = useStyles();
   return (
@@ -146,11 +145,7 @@ const DialogStatus = (props: Props) => {
           Cancel
         </Button>
         <Button
-          onClick={() => {
-            onClose();
-            handleSimpleChangeRequest();
-            deleteItem();
-          }}
+          onClick={onClick}
           className={classes.option}
           variant="contained"
           color="primary">

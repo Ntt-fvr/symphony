@@ -16,6 +16,7 @@ import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
+import {ChangeRequestByBulk} from './ChangeRequestByBulk';
 import {ChangeRequestDetails} from './ChangeRequestDetails';
 import {CircleIndicator} from '../resource_instance/CircleIndicator';
 import {Grid} from '@material-ui/core';
@@ -128,6 +129,7 @@ const ChangeRequestTypes = () => {
   const [filters, setFilters] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
   const [dataRow, setDataRow] = useState({});
+  const [openBulkRequest, setOpenBulkRequest] = useState(false);
 
   const classes = useStyles();
   const mostrarInfo = data => {
@@ -136,12 +138,21 @@ const ChangeRequestTypes = () => {
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
+  const bulk = () => {
+    setOpenBulkRequest(prevStateBulk => !prevStateBulk);
+  };
   if (openDetails) {
     return (
       <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails} />
     );
   }
-
+  if (openBulkRequest) {
+    return (
+      <ChangeRequestByBulk
+        onClick={() => setOpenBulkRequest(prevStateBulk => !prevStateBulk)}
+      />
+    );
+  }
   return (
     <Grid className={classes.root} container spacing={0}>
       <Grid className={classes.titleCounter} item xs={12}>
@@ -152,7 +163,7 @@ const ChangeRequestTypes = () => {
             '  ',
           )}
         />
-        <ButtonsChangeRequest />
+        <ButtonsChangeRequest onClickBulk={bulk} />
       </Grid>
       <Grid item xs={12}>
         <div className={classes.bar}>

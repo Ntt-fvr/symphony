@@ -32,7 +32,8 @@ export type ButtonColor = 'default' | 'inherit' | 'primary' | 'secondary';
 
 export type Props = $ReadOnly<{|
   className?: string,
-  onClick?: ?MouseEventHandler,
+  onClickBulk?: ?MouseEventHandler,
+  onClickNf?: ?MouseEventHandler,
   disabled?: boolean,
   color?: ButtonColor,
   variant?: ButtonVariant,
@@ -42,7 +43,8 @@ const ButtonsChangeRequest = (props: Props) => {
   const {
     className,
     disabled,
-    onClick,
+    onClickBulk,
+    onClickNf,
     color = 'primary',
     variant = 'contained',
   } = props;
@@ -52,7 +54,7 @@ const ButtonsChangeRequest = (props: Props) => {
     <Grid className={classes.root}>
       <Button
         className={classNames(className)}
-        onClick={onClick}
+        onClick={onClickNf}
         disabled={disabled}
         size="medium"
         variant="outlined"
@@ -63,7 +65,7 @@ const ButtonsChangeRequest = (props: Props) => {
       </Button>
 
       <Button
-        onClick={onClick}
+        onClick={onClickBulk}
         disabled={disabled}
         style={{padding: '10px 16px', margin: '0 0 0 20px'}}
         variant={variant}

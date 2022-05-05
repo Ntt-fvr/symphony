@@ -89,7 +89,7 @@ const SimpleChangeRequest = (props: Props) => {
       </Grid>
       {openModalStatus && (
         <DialogStatus
-          handleSimpleChangeRequest={handleSimpleChangeRequest}
+          onClick={() => handleSimpleChangeRequest()}
           open={openModalStatus}
           onClose={() =>
             setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal)
