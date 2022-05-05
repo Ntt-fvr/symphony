@@ -83,7 +83,7 @@ export type BlocksCategoryProps = $ReadOnly<{|
 |}>;
 
 export default function BlocksCategory(props: BlocksCategoryProps) {
-  const {header, blockTypes, collapsed} = props;
+  const {header, blockTypes} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
@@ -103,7 +103,7 @@ export default function BlocksCategory(props: BlocksCategoryProps) {
             </Grid>
           }
         />
-        {!collapsed ? open ? <ExpandLess /> : <ExpandMore /> : ''}
+        {open ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>

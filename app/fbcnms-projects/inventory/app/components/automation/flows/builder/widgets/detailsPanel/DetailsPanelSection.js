@@ -12,6 +12,7 @@ import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import symphony from '@symphony/design-system/theme/symphony';
+import {Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -24,8 +25,8 @@ const useStyles = makeStyles(() => ({
   },
   title: {},
   body: {},
-  normalWidth: {
-    maxWidth: '325px',
+  whiteSpace: {
+    whiteSpace: 'break-spaces',
   },
   actionItems: {},
   item: {},
@@ -35,28 +36,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export type SectionVariant = 'fullWidth' | 'normal';
-
 type Props = $ReadOnly<{|
   title: React.Node,
   subtitle?: ?React.Node,
   body: React.Node,
   actionItems?: Array<React.Node>,
   className?: string,
-  variant?: SectionVariant,
 |}>;
 
 export default function DetailsPanelSection(props: Props) {
   const classes = useStyles();
-  const {
-    title,
-    subtitle,
-    body,
-    actionItems,
-    className,
-    variant = 'normal',
-  } = props;
-  console.log(actionItems);
+  const {title, subtitle, body, actionItems, className} = props;
   return (
     <div className={classNames(className, classes.root)}>
       <div className={classes.header}>
@@ -68,20 +58,14 @@ export default function DetailsPanelSection(props: Props) {
             </Text>
           )}
         </div>
-
         <div className={classes.actionItems}>
           {actionItems &&
             actionItems.map(item => <div className={classes.item}>{item}</div>)}
         </div>
       </div>
-
-      <div
-        className={classNames(
-          classes.body,
-          variant !== 'fullWidth' ? classes.normalWidth : '',
-        )}>
-        <Text variant="body2">{body}</Text>
-      </div>
+      <Typography variant={'body2'} className={classes.whiteSpace}>
+        {body}
+      </Typography>
     </div>
   );
 }

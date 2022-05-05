@@ -9,7 +9,6 @@
  */
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import FlowBuilderButton from '../../utils/FlowBuilderButton';
 import FlowHeader from './FlowHeader';
 import IconButton from '@symphony/design-system/components/IconButton';
 import MenuTopBar from './MenuTopBar';
@@ -29,10 +28,8 @@ import {
   PREDICATES,
   useKeyboardShortcut,
 } from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
-import {SettingsIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useCopyPaste} from '../widgets/copyPaste/CopyPasteContext';
-import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useFlowData} from '../../data/FlowDataContext';
 import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
@@ -119,7 +116,6 @@ function BuilderTopBar() {
   const flowData = useFlowData();
   const enqueueSnackbar = useEnqueueSnackbar();
   const copyPaste = useCopyPaste();
-  const detailsPane = useDetailsPane();
 
   const deleteSelected = useCallback(() => {
     if (selection.selectedLink) {
@@ -223,7 +219,6 @@ function BuilderTopBar() {
       </div>
 
       <div className={classes.right}>
-        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
         <Button
           className={classes.textVariant}
           variant={'text'}
@@ -249,7 +244,6 @@ function BuilderTopBar() {
 
 function ViewerTopBar() {
   const classes = useStyles();
-  const detailsPane = useDetailsPane();
 
   return (
     <ToolsBar className={classes.root}>
@@ -257,9 +251,6 @@ function ViewerTopBar() {
         <FlowHeader />
       </div>
       <div className={classes.center} />
-      <div className={classes.right}>
-        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
-      </div>
     </ToolsBar>
   );
 }

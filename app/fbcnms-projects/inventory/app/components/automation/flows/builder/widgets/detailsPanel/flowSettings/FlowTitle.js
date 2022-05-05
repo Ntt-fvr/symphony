@@ -12,7 +12,7 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback} from 'react';
 import RenameFlowDialog from '../RenameFlowDialog';
-import Text from '@symphony/design-system/components/Text';
+import {Grid, Typography} from '@material-ui/core';
 import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {RenameOneLineIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
@@ -22,15 +22,10 @@ import {useFlowData} from '../../../../data/FlowDataContext';
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
-    alignItems: 'flex-start',
-    marginBottom: '6px',
+    alignItems: 'center',
     '&:hover $renameButton': {
       opacity: 1,
     },
-  },
-  name: {
-    width: '320px',
-    marginRight: '16px',
   },
   renameButton: {
     opacity: 0,
@@ -70,9 +65,11 @@ export default function FlowTitle() {
 
   return (
     <div className={classes.root}>
-      <div className={classes.name}>
-        <Text variant="h6">{flowData.flowDraft?.name ?? null}</Text>
-      </div>
+      <Grid item xs zeroMinWidth>
+        <Typography variant={'h6'} noWrap>
+          {flowData.flowDraft?.name ?? null}
+        </Typography>
+      </Grid>
       <FormAction hideOnEditLocks={true}>
         <IconButton
           className={classes.renameButton}

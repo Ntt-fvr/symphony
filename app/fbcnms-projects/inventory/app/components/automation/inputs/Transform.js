@@ -10,7 +10,7 @@
 import React from 'react';
 import Select from './Select';
 import Switch from '@symphony/design-system/components/switch/Switch';
-import {FormControlLabel, Grid} from '@material-ui/core';
+import {FormControlLabel, Grid, Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
@@ -20,6 +20,9 @@ const useStyles = makeStyles(() => ({
     },
     '& .MuiFormControlLabel-label': {
       paddingRight: 24,
+      fontWeight: 400,
+      fontSize: 14,
+      lineHeight: '16.41px',
     },
   },
 }));
@@ -52,7 +55,9 @@ const Transform = ({
               }}
             />
           }
-          label={inputTransformLabel}
+          label={
+            <Typography variant={'body2'}> {inputTransformLabel}</Typography>
+          }
           labelPlacement="start"
         />
       </Grid>

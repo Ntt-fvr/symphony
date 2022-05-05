@@ -11,19 +11,25 @@ import React from 'react';
 import {TextField} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.primary.main,
+    },
     '& .MuiFormControl-root': {
       width: '100%',
     },
     '& .MuiOutlinedInput-input': {
-      height: 17,
+      height: 13,
     },
     '& .MuiInputLabel-outlined': {
-      transform: 'translate(14px, 12px) scale(1)',
+      transform: 'translate(14px, 10px) scale(1)',
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -6px) scale(0.75)',
+    },
+    '& .MuiFormLabel-root': {
+      fontSize: 14,
     },
   },
 }));
