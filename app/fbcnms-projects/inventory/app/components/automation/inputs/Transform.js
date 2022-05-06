@@ -7,6 +7,7 @@
  * @flow
  * @format
  */
+import CodeEditor from './CodeEditor';
 import React from 'react';
 import Select from './Select';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -62,15 +63,21 @@ const Transform = ({
         />
       </Grid>
       {inputTransformValue && (
-        <Grid item xs={12}>
-          <Select
-            label={inputStrategyLabel}
-            name={inputStrategyName}
-            value={inputStrategyValue || ''}
-            onChange={handleInputChange}
-            items={strategies}
-          />
-        </Grid>
+        <>
+          <Grid item xs={12}>
+            <Select
+              label={inputStrategyLabel}
+              name={inputStrategyName}
+              value={inputStrategyValue || ''}
+              onChange={handleInputChange}
+              items={strategies}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <CodeEditor mode="json" />
+          </Grid>
+        </>
       )}
     </Grid>
   );
