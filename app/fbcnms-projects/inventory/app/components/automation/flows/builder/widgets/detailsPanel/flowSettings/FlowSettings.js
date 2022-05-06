@@ -35,7 +35,7 @@ export default function FlowSettings() {
   const classes = useStyles();
 
   return (
-    <Box py={4} px={3}>
+    <Box py={3} px={3}>
       <div className={classes.root}>
         <FlowStatus className={classes.section} />
         <FlowDescription className={classes.section} />

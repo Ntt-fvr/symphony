@@ -14,6 +14,7 @@ import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ToolsBar from './ToolsBar';
+import Tooltip from '../../../inputs/Tooltip';
 import usePaperGrab from '../widgets/navigation/usePaperGrab';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {PanToolsIcon} from '@symphony/design-system/icons';
@@ -59,34 +60,38 @@ export default function BottomBar() {
 
   return (
     <ToolsBar className={classes.root}>
-      <IconButton
-        tooltip={'Zoom In'}
-        skin={'inherit'}
-        onClick={() => flow.zoomIn()}
-        icon={RemoveIcon}
-      />
-      <IconButton
-        className={classes.marginLeft}
-        tooltip={'Zoom Out'}
-        skin={'inherit'}
-        onClick={() => flow.zoomOut()}
-        icon={AddIcon}
-      />
-      <IconButton
-        tooltip={'Zoom Fit'}
-        skin={'inherit'}
-        onClick={() => flow.zoomIn()}
-        icon={FilterCenterFocusIcon}
-      />
-      <IconButton
-        className={isOnGrabMode ? classes.blue : null}
-        tooltip={'Pan Toll'}
-        skin={'inherit'}
-        onClick={() =>
-          isOnGrabMode ? handleOnGrabMode(true) : handleOnGrabMode(false)
-        }
-        icon={PanToolsIcon}
-      />
+      <Tooltip tooltip={'Zoom In'}>
+        <IconButton
+          skin={'inherit'}
+          onClick={() => flow.zoomIn()}
+          icon={RemoveIcon}
+        />
+      </Tooltip>
+      <Tooltip tooltip={'Zoom Out'}>
+        <IconButton
+          className={classes.marginLeft}
+          skin={'inherit'}
+          onClick={() => flow.zoomOut()}
+          icon={AddIcon}
+        />
+      </Tooltip>
+      <Tooltip tooltip={'Zoom Fit'}>
+        <IconButton
+          skin={'inherit'}
+          onClick={() => flow.zoomIn()}
+          icon={FilterCenterFocusIcon}
+        />
+      </Tooltip>
+      <Tooltip tooltip={'Pan Toll'}>
+        <IconButton
+          className={isOnGrabMode ? classes.blue : null}
+          skin={'inherit'}
+          onClick={() =>
+            isOnGrabMode ? handleOnGrabMode(true) : handleOnGrabMode(false)
+          }
+          icon={PanToolsIcon}
+        />
+      </Tooltip>
     </ToolsBar>
   );
 }
