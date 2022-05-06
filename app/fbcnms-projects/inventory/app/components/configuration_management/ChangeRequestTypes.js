@@ -33,15 +33,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
-  buttonDelete: {
-    marginRight: '24px',
-  },
-  searchArea: {
-    padding: '16px 24px',
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-  },
   bar: {
     display: 'flex',
     flexDirection: 'row',
@@ -49,13 +40,6 @@ const useStyles = makeStyles(() => ({
   },
   searchBar: {
     flexGrow: 1,
-  },
-  buttonOutlined: {
-    border: '1px solid',
-    color: '#3984FF',
-    width: '177px',
-    height: '36px',
-    borderRadius: '4px',
   },
 }));
 

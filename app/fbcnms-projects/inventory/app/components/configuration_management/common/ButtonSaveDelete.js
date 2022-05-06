@@ -14,14 +14,10 @@ import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
-  addCounter: {
+  root: {
     width: '98px',
     height: '36px',
     alignSelf: 'flex-end',
-  },
-  buttonText: {
-    maxHeight: '100%',
-    display: 'flex',
   },
 }));
 
@@ -55,7 +51,7 @@ const ButtonSaveDelete = (props: Props) => {
 
   return (
     <Button
-      className={classNames(classes.addCounter, className)}
+      className={classNames(classes.root, className)}
       color={color}
       disabled={disabled}
       variant={variant}

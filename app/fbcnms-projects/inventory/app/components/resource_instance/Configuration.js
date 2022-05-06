@@ -108,8 +108,9 @@ const Configuration = (props: Props) => {
         direction="row"
         justify="space-between"
         alignItems="center"
+        item
         xs={12}>
-        <Grid className={classes.pendingChange} sm={12} md={3} lg={4}>
+        <Grid className={classes.pendingChange} item sm={12} md={3} lg={4}>
           <Text
             variant={'body2'}
             weight={'medium'}

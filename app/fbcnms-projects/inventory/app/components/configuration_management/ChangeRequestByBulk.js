@@ -9,15 +9,11 @@
  */
 
 import Button from '@material-ui/core/Button';
-import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonUpload from './common/ButtonUpload';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
 import DialogStatus from '../configure/DialogStatus';
-import IconButton from '@material-ui/core/IconButton';
 import React, {useState} from 'react';
-import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
@@ -25,7 +21,6 @@ import {CardAccordion} from './common/CardAccordion';
 import {CardSuggested} from './common/CardSuggested';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
-import {MenuItem} from '@material-ui/core';
 import {Tabla} from './common/Tabla';
 import {makeStyles} from '@material-ui/styles';
 
@@ -70,29 +65,10 @@ const useStyles = makeStyles(() => ({
     marginTop: '0px',
     marginBottom: '0px',
   },
-  buttonDelete: {
-    marginRight: '24px',
-  },
-  buttonStatus: {
-    height: '38px',
-  },
   accordionDetails: {
     '&.MuiAccordionDetails-root': {
       padding: '0 16px 0px ',
     },
-  },
-  listComment: {
-    '& .MuiAccordionDetails-root': {
-      padding: '0 0 16px 0',
-      width: '100%',
-    },
-  },
-  inExpandingPanelFix: {
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  },
-  commentsLog: {
-    maxHeight: '400px',
   },
 }));
 
@@ -117,6 +93,7 @@ const ChangeRequestByBulk = (props: Props) => {
             direction="row"
             justify="flex-start"
             alignItems="center"
+            item
             xs={7}>
             <ConfigureTitle
               title={fbt('Request bulk configuration change', '')}
@@ -126,6 +103,7 @@ const ChangeRequestByBulk = (props: Props) => {
           <Grid
             style={{padding: '0px 0'}}
             container
+            item
             xs={5}
             direction="row"
             justify="flex-end"
@@ -156,6 +134,7 @@ const ChangeRequestByBulk = (props: Props) => {
           container
           direction="row"
           alignItems="center"
+          item
           xs={12}>
           <Grid item xs={4} md={4} lg={3}>
             <FormField>
@@ -167,7 +146,7 @@ const ChangeRequestByBulk = (props: Props) => {
               />
             </FormField>
           </Grid>
-          <Grid xs={8} container direction="row" alignItems="center">
+          <Grid item xs={8} container direction="row" alignItems="center">
             <ButtonUpload variant="text" leftIcon={CloudUploadIcon}>
               Upload file
             </ButtonUpload>

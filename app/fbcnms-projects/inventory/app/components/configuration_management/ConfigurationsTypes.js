@@ -26,12 +26,6 @@ const useStyles = makeStyles(() => ({
   titleCounter: {
     margin: '0 0 30px 0',
   },
-  searchArea: {
-    padding: '16px 24px',
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-  },
   bar: {
     display: 'flex',
     flexDirection: 'row',

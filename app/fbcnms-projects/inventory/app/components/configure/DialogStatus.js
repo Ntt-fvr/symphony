@@ -101,7 +101,7 @@ const DialogStatus = (props: Props) => {
           <Card variant={'message'} className={classes.rootCard}>
             <Grid container direction="row">
               <Grid item xs={1}>
-                <InfoOutlinedIcon color={'primary'} fontSize={'medium'} />
+                <InfoOutlinedIcon color={'primary'} />
               </Grid>
               <Grid item xs={11}>
                 <CardHeader>Information</CardHeader>
