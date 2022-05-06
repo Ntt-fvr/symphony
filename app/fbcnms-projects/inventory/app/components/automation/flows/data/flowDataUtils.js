@@ -14,7 +14,7 @@ import type {
   ConnectorInput,
   DecisionBlockInput,
   EndBlockInput,
-  GotoBlockInput,
+  GoToBlockInput,
   ImportFlowDraftInput,
   ImportFlowDraftMutationResponse,
   StartBlockInput,
@@ -93,9 +93,11 @@ export function mapTrueFalseBlockForSave(block: IBlock): TrueFalseBlockInput {
   };
 }
 
-export function mapGoToBlockForSave(block: IBlock): GotoBlockInput {
+export function mapGoToBlockForSave(block: IBlock): GoToBlockInput {
+  debugger;
   return {
     ...mapBlockForSave(block),
+    params: [],
   };
 }
 

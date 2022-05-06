@@ -28,6 +28,11 @@ export const useForm = (propValues = {}) => {
     updateOnValueChange(fieldValuesNew);
   };
 
+  const handleAllInputChange = fieldValuesNew => {
+    setFieldValues(fieldValuesNew);
+    updateOnValueChange(fieldValuesNew);
+  };
+
   const callOnValueChanged = useSideEffectCallback(
     onValueChanged ? () => onValueChanged(fieldValues) : null,
   );
@@ -43,5 +48,5 @@ export const useForm = (propValues = {}) => {
     callOnValueChanged();
   };
 
-  return [fieldValues, handleInputChange];
+  return [fieldValues, handleInputChange, handleAllInputChange];
 };

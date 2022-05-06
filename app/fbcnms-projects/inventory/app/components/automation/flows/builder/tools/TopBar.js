@@ -135,7 +135,8 @@ function BuilderTopBar() {
           variant: 'success',
         });
       })
-      .catch(() => {
+      .catch(error => {
+        console.log(error);
         enqueueSnackbar(
           `${fbt(
             'There was an error when trying to save the flow draft.',

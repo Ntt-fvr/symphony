@@ -19,9 +19,10 @@ const useStyles = makeStyles(() => ({
     },
     '& .MuiFormControlLabel-label': {
       paddingRight: 24,
-      fontWeight: 400,
+      fontWeight: 500,
       fontSize: 14,
       lineHeight: '16.41px',
+      color: '#000000',
     },
   },
 }));
@@ -51,7 +52,9 @@ const InputSelect = ({value, name, label, handleInputChange}: Props) => {
             }}
           />
         }
-        label={<Typography variant={'body2'}> {label ? label : ''}</Typography>}
+        label={
+          <Typography variant={'subtitle3'}> {label ? label : ''}</Typography>
+        }
         labelPlacement="start"
       />
     </div>
