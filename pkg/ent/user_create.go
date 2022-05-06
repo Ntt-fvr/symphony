@@ -200,19 +200,19 @@ func (uc *UserCreate) AddUserApproved(r ...*Recommendations) *UserCreate {
 	return uc.AddUserApprovedIDs(ids...)
 }
 
-// AddUserFkIDs adds the User_fk edge to Execution by ids.
-func (uc *UserCreate) AddUserFkIDs(ids ...int) *UserCreate {
-	uc.mutation.AddUserFkIDs(ids...)
+// AddUserIDs adds the User edge to Execution by ids.
+func (uc *UserCreate) AddUserIDs(ids ...int) *UserCreate {
+	uc.mutation.AddUserIDs(ids...)
 	return uc
 }
 
-// AddUserFk adds the User_fk edges to Execution.
-func (uc *UserCreate) AddUserFk(e ...*Execution) *UserCreate {
+// AddUser adds the User edges to Execution.
+func (uc *UserCreate) AddUser(e ...*Execution) *UserCreate {
 	ids := make([]int, len(e))
 	for i := range e {
 		ids[i] = e[i].ID
 	}
-	return uc.AddUserFkIDs(ids...)
+	return uc.AddUserIDs(ids...)
 }
 
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
@@ -609,12 +609,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.UserFkIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.UserFkTable,
-			Columns: []string{user.UserFkColumn},
+			Table:   user.UserTable,
+			Columns: []string{user.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

@@ -8502,20 +8502,20 @@ input CounterFamilyFilterInput {
 type Execution implements Node {
   id: ID!
   manualConfirmation: Time!
-  UserFk: User!
+  user: User!
   
 }
 
 input AddExecutionInput {
   manualConfirmation: Time!
-  UserFk: ID!
+  user: ID!
   
 }
 
 input EditExecutionInput {
   id: ID!
   manualConfirmation: Time!
-  UserFk: ID!
+  user: ID!
   
 }
 

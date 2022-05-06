@@ -2352,10 +2352,10 @@ func (u *User) UserApproved(ctx context.Context) ([]*Recommendations, error) {
 	return result, err
 }
 
-func (u *User) UserFk(ctx context.Context) ([]*Execution, error) {
-	result, err := u.Edges.UserFkOrErr()
+func (u *User) User(ctx context.Context) ([]*Execution, error) {
+	result, err := u.Edges.UserOrErr()
 	if IsNotLoaded(err) {
-		result, err = u.QueryUserFk().All(ctx)
+		result, err = u.QueryUser().All(ctx)
 	}
 	return result, err
 }

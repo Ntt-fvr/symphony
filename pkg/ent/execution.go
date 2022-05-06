@@ -29,8 +29,8 @@ type Execution struct {
 	ManualConfirmation time.Time `json:"manualConfirmation,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ExecutionQuery when eager-loading is set.
-	Edges        ExecutionEdges `json:"edges"`
-	user_user_fk *int
+	Edges     ExecutionEdges `json:"edges"`
+	user_user *int
 }
 
 // ExecutionEdges holds the relations/edges for other nodes in the graph.
@@ -69,7 +69,7 @@ func (*Execution) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Execution) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // user_user_fk
+		&sql.NullInt64{}, // user_user
 	}
 }
 
@@ -103,10 +103,10 @@ func (e *Execution) assignValues(values ...interface{}) error {
 	values = values[3:]
 	if len(values) == len(execution.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field user_user_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field user_user", value)
 		} else if value.Valid {
-			e.user_user_fk = new(int)
-			*e.user_user_fk = int(value.Int64)
+			e.user_user = new(int)
+			*e.user_user = int(value.Int64)
 		}
 	}
 	return nil

@@ -13679,15 +13679,15 @@ func (c *UserClient) QueryUserApproved(u *User) *RecommendationsQuery {
 	return query
 }
 
-// QueryUserFk queries the User_fk edge of a User.
-func (c *UserClient) QueryUserFk(u *User) *ExecutionQuery {
+// QueryUser queries the User edge of a User.
+func (c *UserClient) QueryUser(u *User) *ExecutionQuery {
 	query := &ExecutionQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(execution.Table, execution.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserFkTable, user.UserFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserTable, user.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

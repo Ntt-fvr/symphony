@@ -171,7 +171,7 @@ type AddEventSeverityInput struct {
 
 type AddExecutionInput struct {
 	ManualConfirmation time.Time `json:"manualConfirmation"`
-	UserFk             int       `json:"UserFk"`
+	User               int       `json:"user"`
 }
 
 type AddFloorPlanInput struct {
@@ -837,7 +837,7 @@ type EditEventSeverityInput struct {
 type EditExecutionInput struct {
 	ID                 int       `json:"id"`
 	ManualConfirmation time.Time `json:"manualConfirmation"`
-	UserFk             int       `json:"UserFk"`
+	User               int       `json:"user"`
 }
 
 type EditFlowInstanceInput struct {

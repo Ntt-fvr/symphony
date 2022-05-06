@@ -54,8 +54,8 @@ type UserEdges struct {
 	UserCreate []*Recommendations
 	// UserApproved holds the value of the User_approved edge.
 	UserApproved []*Recommendations
-	// UserFk holds the value of the User_fk edge.
-	UserFk []*Execution
+	// User holds the value of the User edge.
+	User []*Execution
 	// Groups holds the value of the groups edge.
 	Groups []*UsersGroup
 	// Organization holds the value of the organization edge.
@@ -107,13 +107,13 @@ func (e UserEdges) UserApprovedOrErr() ([]*Recommendations, error) {
 	return nil, &NotLoadedError{edge: "User_approved"}
 }
 
-// UserFkOrErr returns the UserFk value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) UserFkOrErr() ([]*Execution, error) {
+func (e UserEdges) UserOrErr() ([]*Execution, error) {
 	if e.loadedTypes[3] {
-		return e.UserFk, nil
+		return e.User, nil
 	}
-	return nil, &NotLoadedError{edge: "User_fk"}
+	return nil, &NotLoadedError{edge: "User"}
 }
 
 // GroupsOrErr returns the Groups value or an error if the edge
@@ -291,9 +291,9 @@ func (u *User) QueryUserApproved() *RecommendationsQuery {
 	return (&UserClient{config: u.config}).QueryUserApproved(u)
 }
 
-// QueryUserFk queries the User_fk edge of the User.
-func (u *User) QueryUserFk() *ExecutionQuery {
-	return (&UserClient{config: u.config}).QueryUserFk(u)
+// QueryUser queries the User edge of the User.
+func (u *User) QueryUser() *ExecutionQuery {
+	return (&UserClient{config: u.config}).QueryUser(u)
 }
 
 // QueryGroups queries the groups edge of the User.

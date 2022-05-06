@@ -79,7 +79,6 @@ type ResolverRoot interface {
 	EquipmentPortType() EquipmentPortTypeResolver
 	EquipmentType() EquipmentTypeResolver
 	EventSeverity() EventSeverityResolver
-	Execution() ExecutionResolver
 	ExportTask() ExportTaskResolver
 	FloorPlan() FloorPlanResolver
 	Flow() FlowResolver
@@ -680,7 +679,7 @@ type ComplexityRoot struct {
 	Execution struct {
 		ID                 func(childComplexity int) int
 		ManualConfirmation func(childComplexity int) int
-		UserFk             func(childComplexity int) int
+		User               func(childComplexity int) int
 	}
 
 	ExecutionConnection struct {
@@ -2568,9 +2567,6 @@ type EquipmentTypeResolver interface {
 }
 type EventSeverityResolver interface {
 	Rule(ctx context.Context, obj *ent.EventSeverity) ([]*ent.Rule, error)
-}
-type ExecutionResolver interface {
-	UserFk(ctx context.Context, obj *ent.Execution) (*ent.User, error)
 }
 type ExportTaskResolver interface {
 	Filters(ctx context.Context, obj *ent.ExportTask) ([]*models.GeneralFilter, error)
@@ -5253,12 +5249,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Execution.ManualConfirmation(childComplexity), true
 
-	case "Execution.UserFk":
-		if e.complexity.Execution.UserFk == nil {
+	case "Execution.user":
+		if e.complexity.Execution.User == nil {
 			break
 		}
 
-		return e.complexity.Execution.UserFk(childComplexity), true
+		return e.complexity.Execution.User(childComplexity), true
 
 	case "ExecutionConnection.edges":
 		if e.complexity.ExecutionConnection.Edges == nil {
@@ -23862,20 +23858,20 @@ input CounterFamilyFilterInput {
 type Execution implements Node {
   id: ID!
   manualConfirmation: Time!
-  UserFk: User!
+  user: User!
   
 }
 
 input AddExecutionInput {
   manualConfirmation: Time!
-  UserFk: ID!
+  user: ID!
   
 }
 
 input EditExecutionInput {
   id: ID!
   manualConfirmation: Time!
-  UserFk: ID!
+  user: ID!
   
 }
 
@@ -45787,7 +45783,7 @@ func (ec *executionContext) _Execution_manualConfirmation(ctx context.Context, f
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Execution_UserFk(ctx context.Context, field graphql.CollectedField, obj *ent.Execution) (ret graphql.Marshaler) {
+func (ec *executionContext) _Execution_user(ctx context.Context, field graphql.CollectedField, obj *ent.Execution) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -45799,13 +45795,13 @@ func (ec *executionContext) _Execution_UserFk(ctx context.Context, field graphql
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Execution().UserFk(rctx, obj)
+		return obj.User(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -91668,11 +91664,11 @@ func (ec *executionContext) unmarshalInputAddExecutionInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
-		case "UserFk":
+		case "user":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserFk"))
-			it.UserFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
+			it.User, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -96576,11 +96572,11 @@ func (ec *executionContext) unmarshalInputEditExecutionInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "UserFk":
+		case "user":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserFk"))
-			it.UserFk, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
+			it.User, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -110117,7 +110113,7 @@ func (ec *executionContext) _Execution(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "UserFk":
+		case "user":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -110125,7 +110121,7 @@ func (ec *executionContext) _Execution(ctx context.Context, sel ast.SelectionSet
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Execution_UserFk(ctx, field, obj)
+				res = ec._Execution_user(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

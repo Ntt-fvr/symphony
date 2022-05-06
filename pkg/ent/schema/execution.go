@@ -30,8 +30,8 @@ func (Execution) Fields() []ent.Field {
 func (Execution) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
-			Ref("User_fk").
-			Unique().Annotations(entgql.OrderField("USERFK")),
+			Ref("User").
+			Unique().Annotations(entgql.OrderField("USER")),
 	}
 }
 

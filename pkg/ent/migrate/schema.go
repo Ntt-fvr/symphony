@@ -858,7 +858,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "manual_confirmation", Type: field.TypeTime},
-		{Name: "user_user_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "user_user", Type: field.TypeInt, Nullable: true},
 	}
 	// ExecutionsTable holds the schema information for the "executions" table.
 	ExecutionsTable = &schema.Table{
@@ -867,7 +867,7 @@ var (
 		PrimaryKey: []*schema.Column{ExecutionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "executions_users_User_fk",
+				Symbol:  "executions_users_User",
 				Columns: []*schema.Column{ExecutionsColumns[4]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},

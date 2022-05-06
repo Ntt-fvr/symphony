@@ -8456,9 +8456,9 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[3] = &Edge{
 		Type: "Execution",
-		Name: "User_fk",
+		Name: "User",
 	}
-	node.Edges[3].IDs, err = u.QueryUserFk().
+	node.Edges[3].IDs, err = u.QueryUser().
 		Select(execution.FieldID).
 		Ints(ctx)
 	if err != nil {

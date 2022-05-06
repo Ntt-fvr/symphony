@@ -17,7 +17,7 @@ import (
 
 type executionResolver struct{}
 
-func (executionResolver) UserFk(ctx context.Context, execution *ent.Execution) (*ent.User, error) {
+func (executionResolver) User(ctx context.Context, execution *ent.Execution) (*ent.User, error) {
 	variable, err := execution.User(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
@@ -30,7 +30,7 @@ func (r mutationResolver) AddExecution(ctx context.Context, input models.AddExec
 	fam, err := client.
 		Execution.Create().
 		SetManualConfirmation(input.ManualConfirmation).
-		SetUserID(input.UserFk).
+		SetUserID(input.User).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -76,11 +76,11 @@ func (r mutationResolver) EditExecution(ctx context.Context, input models.EditEx
 	} else if user != nil {
 		userid = user.ID
 	}
-	if input.ManualConfirmation != et.ManualConfirmation || input.UserFk != userid {
+	if input.ManualConfirmation != et.ManualConfirmation || input.User != userid {
 		if et, err = client.Execution.
 			UpdateOne(et).
 			SetManualConfirmation(input.ManualConfirmation).
-			SetUserID(input.UserFk).
+			SetUserID(input.User).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has occurred error on process: %v", err)

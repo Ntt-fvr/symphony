@@ -78668,9 +78668,9 @@ type UserMutation struct {
 	_User_approved              map[int]struct{}
 	removed_User_approved       map[int]struct{}
 	cleared_User_approved       bool
-	_User_fk                    map[int]struct{}
-	removed_User_fk             map[int]struct{}
-	cleared_User_fk             bool
+	_User                       map[int]struct{}
+	removed_User                map[int]struct{}
+	cleared_User                bool
 	groups                      map[int]struct{}
 	removedgroups               map[int]struct{}
 	clearedgroups               bool
@@ -79292,57 +79292,57 @@ func (m *UserMutation) ResetUserApproved() {
 	m.removed_User_approved = nil
 }
 
-// AddUserFkIDs adds the User_fk edge to Execution by ids.
-func (m *UserMutation) AddUserFkIDs(ids ...int) {
-	if m._User_fk == nil {
-		m._User_fk = make(map[int]struct{})
+// AddUserIDs adds the User edge to Execution by ids.
+func (m *UserMutation) AddUserIDs(ids ...int) {
+	if m._User == nil {
+		m._User = make(map[int]struct{})
 	}
 	for i := range ids {
-		m._User_fk[ids[i]] = struct{}{}
+		m._User[ids[i]] = struct{}{}
 	}
 }
 
-// ClearUserFk clears the User_fk edge to Execution.
-func (m *UserMutation) ClearUserFk() {
-	m.cleared_User_fk = true
+// ClearUser clears the User edge to Execution.
+func (m *UserMutation) ClearUser() {
+	m.cleared_User = true
 }
 
-// UserFkCleared returns if the edge User_fk was cleared.
-func (m *UserMutation) UserFkCleared() bool {
-	return m.cleared_User_fk
+// UserCleared returns if the edge User was cleared.
+func (m *UserMutation) UserCleared() bool {
+	return m.cleared_User
 }
 
-// RemoveUserFkIDs removes the User_fk edge to Execution by ids.
-func (m *UserMutation) RemoveUserFkIDs(ids ...int) {
-	if m.removed_User_fk == nil {
-		m.removed_User_fk = make(map[int]struct{})
+// RemoveUserIDs removes the User edge to Execution by ids.
+func (m *UserMutation) RemoveUserIDs(ids ...int) {
+	if m.removed_User == nil {
+		m.removed_User = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removed_User_fk[ids[i]] = struct{}{}
+		m.removed_User[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedUserFk returns the removed ids of User_fk.
-func (m *UserMutation) RemovedUserFkIDs() (ids []int) {
-	for id := range m.removed_User_fk {
+// RemovedUser returns the removed ids of User.
+func (m *UserMutation) RemovedUserIDs() (ids []int) {
+	for id := range m.removed_User {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// UserFkIDs returns the User_fk ids in the mutation.
-func (m *UserMutation) UserFkIDs() (ids []int) {
-	for id := range m._User_fk {
+// UserIDs returns the User ids in the mutation.
+func (m *UserMutation) UserIDs() (ids []int) {
+	for id := range m._User {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetUserFk reset all changes of the "User_fk" edge.
-func (m *UserMutation) ResetUserFk() {
-	m._User_fk = nil
-	m.cleared_User_fk = false
-	m.removed_User_fk = nil
+// ResetUser reset all changes of the "User" edge.
+func (m *UserMutation) ResetUser() {
+	m._User = nil
+	m.cleared_User = false
+	m.removed_User = nil
 }
 
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
@@ -79984,8 +79984,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m._User_approved != nil {
 		edges = append(edges, user.EdgeUserApproved)
 	}
-	if m._User_fk != nil {
-		edges = append(edges, user.EdgeUserFk)
+	if m._User != nil {
+		edges = append(edges, user.EdgeUser)
 	}
 	if m.groups != nil {
 		edges = append(edges, user.EdgeGroups)
@@ -80031,9 +80031,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeUserFk:
-		ids := make([]ent.Value, 0, len(m._User_fk))
-		for id := range m._User_fk {
+	case user.EdgeUser:
+		ids := make([]ent.Value, 0, len(m._User))
+		for id := range m._User {
 			ids = append(ids, id)
 		}
 		return ids
@@ -80091,8 +80091,8 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removed_User_approved != nil {
 		edges = append(edges, user.EdgeUserApproved)
 	}
-	if m.removed_User_fk != nil {
-		edges = append(edges, user.EdgeUserFk)
+	if m.removed_User != nil {
+		edges = append(edges, user.EdgeUser)
 	}
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
@@ -80131,9 +80131,9 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeUserFk:
-		ids := make([]ent.Value, 0, len(m.removed_User_fk))
-		for id := range m.removed_User_fk {
+	case user.EdgeUser:
+		ids := make([]ent.Value, 0, len(m.removed_User))
+		for id := range m.removed_User {
 			ids = append(ids, id)
 		}
 		return ids
@@ -80190,8 +80190,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.cleared_User_approved {
 		edges = append(edges, user.EdgeUserApproved)
 	}
-	if m.cleared_User_fk {
-		edges = append(edges, user.EdgeUserFk)
+	if m.cleared_User {
+		edges = append(edges, user.EdgeUser)
 	}
 	if m.clearedgroups {
 		edges = append(edges, user.EdgeGroups)
@@ -80227,8 +80227,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.cleared_User_create
 	case user.EdgeUserApproved:
 		return m.cleared_User_approved
-	case user.EdgeUserFk:
-		return m.cleared_User_fk
+	case user.EdgeUser:
+		return m.cleared_User
 	case user.EdgeGroups:
 		return m.clearedgroups
 	case user.EdgeOrganization:
@@ -80275,8 +80275,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeUserApproved:
 		m.ResetUserApproved()
 		return nil
-	case user.EdgeUserFk:
-		m.ResetUserFk()
+	case user.EdgeUser:
+		m.ResetUser()
 		return nil
 	case user.EdgeGroups:
 		m.ResetGroups()
