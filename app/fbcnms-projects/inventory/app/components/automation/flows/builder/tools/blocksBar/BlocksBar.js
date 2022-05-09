@@ -19,7 +19,7 @@ import ForEachLoop from '../../canvas/graph/shapes/blocks/blockTypes/forEachLoop
 import GoToBlockType from '../../canvas/graph/shapes/blocks/blockTypes/goTo/GoToBlockType';
 import InvokeRestApiBlockType from '../../canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiBlockType';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
-import ParallelBlockType from '../../canvas/graph/shapes/blocks/blockTypes/Parallel/ParallelBlockType';
+import ParallelBlockType from '../../canvas/graph/shapes/blocks/blockTypes/parallel/ParallelBlockType';
 import Timer from '../../canvas/graph/shapes/blocks/blockTypes/timer/TimerBlockType';
 import TriggerStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartBlockType';
 import TriggerWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerWorkforce/TriggerWorkforceBlockType';

@@ -7,46 +7,22 @@
  * @flow
  * @format
  */
-import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
-import BlockNameInput from './BlockNameInput';
 import Select from '../../../../../../inputs/Select';
 import Switch from '../../../../../../inputs/Switch';
 import TextField from '../../../../../../inputs/TextField';
 import {Grid} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
 
-const useStyles = makeStyles(() => ({
-  root: {
-    '& .MuiFormControl-root': {
-      width: '100%',
-    },
-  },
-  formLabel: {
-    '& .MuiFormControlLabel-labelPlacementStart': {
-      marginLeft: 0,
-    },
-    '& .MuiFormControlLabel-label': {
-      paddingRight: 24,
-    },
-  },
-}));
-
-type Props = $ReadOnly<{|
-  block: IBlock,
-|}>;
-
 const FIXED_INTERVAL = 'fixed_interval';
 
-const ConfigurationTimer = ({block}: Props) => {
+const ConfigurationTimer = () => {
   const behaviors = [
     {name: 'Fixed Interval', id: 'fixed_interval'},
     {name: 'Specific date and time', id: 'date_time'},
   ];
-  const classes = useStyles();
   const [
     configurationsValues,
     handleInputChange,
@@ -84,10 +60,7 @@ const ConfigurationTimer = ({block}: Props) => {
   }, [behavior]);
 
   return (
-    <Grid container spacing={4} className={classes.root}>
-      <Grid item xs={12}>
-        <BlockNameInput block={block} />
-      </Grid>
+    <>
       <Grid item xs={12}>
         <Select
           label={'Behavior'}
@@ -150,7 +123,7 @@ const ConfigurationTimer = ({block}: Props) => {
       ) : (
         ''
       )}
-    </Grid>
+    </>
   );
 };
 

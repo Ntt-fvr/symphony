@@ -11,7 +11,7 @@
 import type {IBlock} from '../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
-import ConfigurationTimer from './configureSettings/ConfigurationTimer';
+import ConfigureSettings from './configureSettings/index';
 import ErrorHandlingSettings from './errorHandlingSettings';
 import InputSettings from './inputSettings';
 import OutputSettings from './outputSettings';
@@ -29,7 +29,7 @@ export default function BlockSettings(props: Props) {
     {
       label: 'Configurations',
       index: 0,
-      view: <ConfigurationTimer block={block} />,
+      view: <ConfigureSettings block={block} />,
     },
     {
       label: 'Input',
