@@ -7,16 +7,16 @@
  * @flow strict-local
  * @format
  */
-
-import Button from '@material-ui/core/Button';
-import React from 'react';
+import * as React from 'react';
+import Button from '@symphony/design-system/components/Button';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '98px',
     height: '36px',
+    padding: '0 10px',
+    margin: '0 10px',
     alignSelf: 'flex-end',
   },
 }));
@@ -25,39 +25,28 @@ export type MouseEventHandler = (
   SyntheticMouseEvent<HTMLElement>,
 ) => void | Promise<void>;
 
-export type ButtonVariant = 'contained' | 'outlined';
-
-export type ButtonColor = 'default' | 'inherit' | 'primary' | 'secondary';
-
 export type Props = $ReadOnly<{|
   className?: string,
-  children: string,
+  children: React.Node,
   onClick?: ?MouseEventHandler,
   disabled?: boolean,
-  color?: ButtonColor,
-  variant?: ButtonVariant,
+  variant?: any,
+  leftIcon?: any,
 |}>;
 
-const ButtonSaveDelete = (props: Props) => {
-  const {
-    className,
-    disabled,
-    onClick,
-    color = 'primary',
-    children,
-    variant = 'contained',
-  } = props;
+const ButtonUpload = (props: Props) => {
+  const {className, leftIcon, variant, disabled, onClick, children} = props;
   const classes = useStyles();
 
   return (
     <Button
       className={classNames(classes.root, className)}
-      color={color}
       disabled={disabled}
+      leftIcon={leftIcon}
       variant={variant}
       onClick={onClick}>
       {children}
     </Button>
   );
 };
-export default ButtonSaveDelete;
+export default ButtonUpload;

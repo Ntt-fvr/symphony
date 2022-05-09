@@ -59,14 +59,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  deleteItem: () => void,
+  onClick: () => void,
   name?: string,
   open?: boolean,
   onClose: () => void,
 |}>;
 
 const DialogStatus = (props: Props) => {
-  const {onClose, deleteItem, name} = props;
+  const {onClose, name, onClick} = props;
 
   const classes = useStyles();
   return (
@@ -101,7 +101,7 @@ const DialogStatus = (props: Props) => {
           <Card variant={'message'} className={classes.rootCard}>
             <Grid container direction="row">
               <Grid item xs={1}>
-                <InfoOutlinedIcon color={'primary'} fontSize={'medium'} />
+                <InfoOutlinedIcon color={'primary'} />
               </Grid>
               <Grid item xs={11}>
                 <CardHeader>Information</CardHeader>
@@ -145,10 +145,7 @@ const DialogStatus = (props: Props) => {
           Cancel
         </Button>
         <Button
-          onClick={() => {
-            onClose();
-            deleteItem();
-          }}
+          onClick={onClick}
           className={classes.option}
           variant="contained"
           color="primary">

@@ -10,14 +10,15 @@
 
 import Button from '@material-ui/core/Button';
 import React from 'react';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
+import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '98px',
-    height: '36px',
-    alignSelf: 'flex-end',
+    flexGrow: '0',
+    margin: '0',
   },
 }));
 
@@ -31,33 +32,47 @@ export type ButtonColor = 'default' | 'inherit' | 'primary' | 'secondary';
 
 export type Props = $ReadOnly<{|
   className?: string,
-  children: string,
-  onClick?: ?MouseEventHandler,
+  onClickBulk?: ?MouseEventHandler,
+  onClickNf?: ?MouseEventHandler,
   disabled?: boolean,
   color?: ButtonColor,
   variant?: ButtonVariant,
 |}>;
 
-const ButtonSaveDelete = (props: Props) => {
+const ButtonsChangeRequest = (props: Props) => {
   const {
     className,
     disabled,
-    onClick,
+    onClickBulk,
+    onClickNf,
     color = 'primary',
-    children,
     variant = 'contained',
   } = props;
   const classes = useStyles();
 
   return (
-    <Button
-      className={classNames(classes.root, className)}
-      color={color}
-      disabled={disabled}
-      variant={variant}
-      onClick={onClick}>
-      {children}
-    </Button>
+    <Grid className={classes.root}>
+      <Button
+        className={classNames(className)}
+        onClick={onClickNf}
+        disabled={disabled}
+        size="medium"
+        variant="outlined"
+        color={color}>
+        <Text useEllipsis={true} color={'primary'}>
+          NF Initial Configuration
+        </Text>
+      </Button>
+
+      <Button
+        onClick={onClickBulk}
+        disabled={disabled}
+        style={{padding: '10px 16px', margin: '0 0 0 20px'}}
+        variant={variant}
+        color={color}>
+        Create bulk request
+      </Button>
+    </Grid>
   );
 };
-export default ButtonSaveDelete;
+export default ButtonsChangeRequest;

@@ -8,49 +8,19 @@
  * @format
  */
 
+import Button from '@symphony/design-system/components/Button';
 import ButtonAlarmStatus from './common/ButtonAlarmStatus';
-import ButtonSaveDelete from './common/ButtonSaveDelete';
-import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
+import ButtonsChangeRequest from './common/ButtonsChangeRequest';
 import ConfigureTitle from './common/ConfigureTitle';
+import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
-import TextField from '@material-ui/core/TextField';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
-import {CardAccordion} from './common/CardAccordion';
-import {CardSuggested} from './common/CardSuggested';
-import {FormField} from './common/FormField';
+import {ChangeRequestByBulk} from './ChangeRequestByBulk';
+import {ChangeRequestDetails} from './ChangeRequestDetails';
+import {CircleIndicator} from '../resource_instance/CircleIndicator';
 import {Grid} from '@material-ui/core';
-import {MenuItem} from '@material-ui/core';
-import {Tabla} from './common/Tabla';
 import {makeStyles} from '@material-ui/styles';
-
-const valuesTable = [
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132331',
-    parameter: 'arfcndu1',
-    currentValue: '3960001',
-    newValue: '183001',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132332',
-    parameter: 'arfcndu2',
-    currentValue: '3960002',
-    newValue: '183002',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu3',
-    currentValue: '3960003',
-    newValue: '183003',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu4',
-    currentValue: '3960004',
-    newValue: '183004',
-  },
-];
-
-const status = ['Approve', 'Reject'];
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -58,149 +28,165 @@ const useStyles = makeStyles(() => ({
     padding: '30px',
     margin: '0',
   },
-  titleModule: {
-    margin: '0 0 40px 0',
+  titleCounter: {
+    margin: '0 0 30px 0',
     display: 'flex',
     justifyContent: 'space-between',
   },
-  buttonDelete: {
-    marginRight: '24px',
+  bar: {
+    display: 'flex',
+    flexDirection: 'row',
+    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
   },
-  accordionDetails: {
-    '&.MuiAccordionDetails-root': {
-      padding: '0 16px 0px ',
-    },
-  },
-  listComment: {
-    '& .MuiAccordionDetails-root': {
-      padding: '0 0 16px 0',
-      width: '100%',
-    },
-  },
-  inExpandingPanelFix: {
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  },
-  commentsLog: {
-    maxHeight: '400px',
+  searchBar: {
+    flexGrow: 1,
   },
 }));
 
+const tableColumns = [
+  {
+    key: 'creation date',
+    title: 'Creation date',
+    render: row => row.creationDate ?? '',
+    tooltip: row => row.creationDate ?? '',
+  },
+  {
+    key: 'last modification date',
+    title: `${fbt('Last modification date', '')}`,
+    render: row => row.lastModificationDate ?? '',
+    tooltip: row => row.lastModificationDate ?? '',
+  },
+  {
+    key: 'resource type',
+    title: `${fbt('Resource type', '')}`,
+    render: row => row.resourceType ?? '',
+    tooltip: row => row.resourceType ?? '',
+  },
+  {
+    key: 'change source',
+    title: `${fbt('Change source', '')}`,
+    render: row => row.changeSource ?? '',
+    tooltip: row => row.changeSource ?? '',
+  },
+  {
+    key: 'affected resources',
+    title: `${fbt('Affected resources', '')}`,
+    render: row => <CircleIndicator>{row.affectedResources}</CircleIndicator>,
+    tooltip: row => row.affectedResources ?? '',
+  },
+  {
+    key: 'status',
+    title: `${fbt('Status', '')}`,
+    render: row => (
+      <ButtonAlarmStatus skin={row.status}>{row.status}</ButtonAlarmStatus>
+    ),
+    tooltip: row => row.status ?? '',
+  },
+];
+
+const data = [
+  {
+    id: '686876767',
+    key: '01',
+    creationDate: '01/03/22',
+    lastModificationDate: '01/03/22',
+    resourceType: 'RNCellDU01',
+    changeSource: 'Manual',
+    affectedResources: '1',
+    status: 'Succesful',
+  },
+  {
+    id: '686876768',
+    key: '02',
+    creationDate: '01/04/22',
+    lastModificationDate: '01/05/22',
+    resourceType: 'RNCellDU02',
+    changeSource: 'Manual',
+    affectedResources: '6',
+    status: 'Scheduled',
+  },
+];
+
+export type Props = $ReadOnly<{||}>;
+
 const ChangeRequestTypes = () => {
+  const [filters, setFilters] = useState([]);
+  const [openDetails, setOpenDetails] = useState(false);
+  const [dataRow, setDataRow] = useState({});
+  const [openBulkRequest, setOpenBulkRequest] = useState(false);
+
   const classes = useStyles();
-
-  const [statusAlarm] = useState('Pending for approval');
-
+  const mostrarInfo = data => {
+    setDataRow(data);
+  };
+  const handleOpenDetails = () => {
+    setOpenDetails(prevStateDetails => !prevStateDetails);
+  };
+  const bulk = () => {
+    setOpenBulkRequest(prevStateBulk => !prevStateBulk);
+  };
+  if (openDetails) {
+    return (
+      <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails} />
+    );
+  }
+  if (openBulkRequest) {
+    return (
+      <ChangeRequestByBulk
+        onClick={() => setOpenBulkRequest(prevStateBulk => !prevStateBulk)}
+      />
+    );
+  }
   return (
     <Grid className={classes.root} container spacing={0}>
-      <Grid className={classes.titleModule} item xs={12}>
+      <Grid className={classes.titleCounter} item xs={12}>
         <ConfigureTitle
           title={fbt('Change Request', '')}
-          subtitle={fbt('', '  ')}
+          subtitle={fbt(
+            'Find and manage change request and their details',
+            '  ',
+          )}
         />
-        <Grid>
-          <ButtonSaveDelete className={classes.buttonDelete} variant="outlined">
-            Delete
-          </ButtonSaveDelete>
-          <ButtonSaveDelete>Save</ButtonSaveDelete>
-        </Grid>
+        <ButtonsChangeRequest onClickBulk={bulk} />
       </Grid>
-      <Grid style={{display: 'flex'}}>
-        <ButtonAlarmStatus skin={'yellow'}>
-          Status: {statusAlarm}{' '}
-        </ButtonAlarmStatus>
-        <FormField>
-          <TextField
-            required
-            id="outlined-select-action"
-            select
-            style={{
-              padding: '0',
-              marginLeft: '40px',
-              width: '250px',
-            }}
-            label="Action"
-            name="action"
-            defaultValue=""
-            variant="outlined">
-            {status.map((item, index) => (
-              <MenuItem key={index} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </TextField>
-        </FormField>
+      <Grid item xs={12}>
+        <div className={classes.bar}>
+          <div className={classes.searchBar}>
+            <PowerSearchBar
+              placeholder="Configuration management"
+              getSelectedFilter={filters => setFilters(filters)}
+              onFiltersChanged={filters => setFilters(filters)}
+              filterConfigs={[]}
+              searchConfig={[]}
+              exportPath={'/configurations_types'}
+              entity={'SERVICE'}
+            />
+          </div>
+        </div>
       </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={8}>
-          <CardAccordion className={classes.accordionDetails} title={'Details'}>
-            <FormField>
-              <Grid container spacing={1}>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="id"
-                    label="Id"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="resource_type"
-                    label="Resource type"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="change_source"
-                    label="Change source"
-                    variant="outlined"
-                    name="name"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    style={{width: '100%'}}
-                    id="change_source"
-                    label="Change source"
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                    name="name"
-                  />
-                </Grid>
-              </Grid>
-            </FormField>
-          </CardAccordion>
-          <CardAccordion title={'Target parameters'}>
-            <Tabla valuesTable={valuesTable} />
-          </CardAccordion>
-          <CardAccordion title={'Suggested change request schedule'}>
-            <CardSuggested />
-          </CardAccordion>
-        </Grid>
-        <Grid item xs={4}>
-          <CardAccordion
-            className={classes.listComment}
-            title={'Activity & Comments'}>
-            <Grid item xs={12}>
-              <CommentsActivitiesBox
-                boxElementsClass={classes.inExpandingPanelFix}
-                commentsLogClass={classes.commentsLog}
-                relatedEntityId={''}
-                relatedEntityType="%future added value"
-                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-                activities={[]}
-                comments={[]}
-              />
-            </Grid>
-          </CardAccordion>
-        </Grid>
+      <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
+        <Table
+          data={data}
+          columns={[
+            {
+              key: 'changeId',
+              title: 'Change ID',
+              getSortingValue: row => row.id,
+              render: row => (
+                <Button
+                  onClick={() => {
+                    handleOpenDetails();
+                    mostrarInfo(row);
+                  }}
+                  variant="text"
+                  tooltip={row.id ?? ''}>
+                  {row.id}
+                </Button>
+              ),
+            },
+            ...tableColumns,
+          ]}
+        />
       </Grid>
     </Grid>
   );
