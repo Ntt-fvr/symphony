@@ -30,7 +30,10 @@ type Props = $ReadOnly<{|
   className?: string,
 |}>;
 
+//const RECAPTCHA_KEY = parseInt(process.env.INTERNAL_PORT);
 const RECAPTCHA_KEY = '6LfefsUfAAAAAP9-SpZBA_i2W83k89X08mL4dfJy';
+
+console.log(process.env.INTERNAL_PORT);
 
 const useStyles = makeStyles(() => ({
   newCommentBox: {
