@@ -1403,6 +1403,10 @@ func (rr *ReconciliationRuleQuery) CollectFields(ctx context.Context, satisfies 
 func (rr *ReconciliationRuleQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ReconciliationRuleQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
+		case "ruleaction":
+			rr = rr.WithReconciliationRuleRuleAction(func(query *RuleActionQuery) {
+				query.collectField(ctx, field)
+			})
 		case "resourcespecification":
 			rr = rr.WithReconciliationRuleSpecification(func(query *ResourceSpecificationQuery) {
 				query.collectField(ctx, field)
@@ -1569,6 +1573,18 @@ func (r *RuleQuery) collectField(ctx *graphql.OperationContext, field graphql.Co
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ra *RuleActionQuery) CollectFields(ctx context.Context, satisfies ...string) *RuleActionQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		ra = ra.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return ra
+}
+
+func (ra *RuleActionQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RuleActionQuery {
+	return ra
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rat *RuleActionTemplateQuery) CollectFields(ctx context.Context, satisfies ...string) *RuleActionTemplateQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rat = rat.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1577,6 +1593,14 @@ func (rat *RuleActionTemplateQuery) CollectFields(ctx context.Context, satisfies
 }
 
 func (rat *RuleActionTemplateQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RuleActionTemplateQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "ruleaction":
+			rat = rat.WithRuleActionTemplateRuleAction(func(query *RuleActionQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return rat
 }
 

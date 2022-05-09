@@ -1816,6 +1816,14 @@ func (rr *ReconciliationRule) ReconciliationRuleSpecification(ctx context.Contex
 	return result, err
 }
 
+func (rr *ReconciliationRule) ReconciliationRuleRuleAction(ctx context.Context) ([]*RuleAction, error) {
+	result, err := rr.Edges.ReconciliationRuleRuleActionOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryReconciliationRuleRuleAction().All(ctx)
+	}
+	return result, err
+}
+
 func (rpt *ResourcePropertyType) ResourceSpecification(ctx context.Context) (*ResourceSpecification, error) {
 	result, err := rpt.Edges.ResourceSpecificationOrErr()
 	if IsNotLoaded(err) {
@@ -1988,6 +1996,30 @@ func (r *Rule) Rulelimitrule(ctx context.Context) ([]*RuleLimit, error) {
 	result, err := r.Edges.RulelimitruleOrErr()
 	if IsNotLoaded(err) {
 		result, err = r.QueryRulelimitrule().All(ctx)
+	}
+	return result, err
+}
+
+func (ra *RuleAction) Reconciliationrule(ctx context.Context) (*ReconciliationRule, error) {
+	result, err := ra.Edges.ReconciliationruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = ra.QueryReconciliationrule().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (ra *RuleAction) Ruleactiontemplate(ctx context.Context) (*RuleActionTemplate, error) {
+	result, err := ra.Edges.RuleactiontemplateOrErr()
+	if IsNotLoaded(err) {
+		result, err = ra.QueryRuleactiontemplate().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rat *RuleActionTemplate) RuleActionTemplateRuleAction(ctx context.Context) ([]*RuleAction, error) {
+	result, err := rat.Edges.RuleActionTemplateRuleActionOrErr()
+	if IsNotLoaded(err) {
+		result, err = rat.QueryRuleActionTemplateRuleAction().All(ctx)
 	}
 	return result, err
 }

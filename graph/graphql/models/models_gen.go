@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -451,6 +452,12 @@ type AddResourceTypeRelationshipInput struct {
 	LocationType                     *int                                                      `json:"locationType"`
 	ResourceTypeA                    int                                                       `json:"resourceTypeA"`
 	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
+}
+
+type AddRuleActionInput struct {
+	ReconciliationRule int                  `json:"reconciliationRule"`
+	RuleActionTemplate int                  `json:"ruleActionTemplate"`
+	Operation          ruleaction.Operation `json:"operation"`
 }
 
 type AddRuleActionTemplateInput struct {
@@ -1096,6 +1103,13 @@ type EditResourceTypeRelationshipInput struct {
 	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
 }
 
+type EditRuleActionInput struct {
+	ID                 int                  `json:"id"`
+	ReconciliationRule int                  `json:"reconciliationRule"`
+	RuleActionTemplate int                  `json:"ruleActionTemplate"`
+	Operation          ruleaction.Operation `json:"operation"`
+}
+
 type EditRuleActionTemplateInput struct {
 	ID   int    `json:"id"`
 	Text string `json:"text"`
@@ -1644,6 +1658,16 @@ type ResourceTypeRelationshipFilterInput struct {
 	IDSet             []int                                                      `json:"idSet"`
 	MaxDepth          *int                                                       `json:"maxDepth"`
 	StringSet         []string                                                   `json:"stringSet"`
+}
+
+type RuleActionFilterInput struct {
+	FilterType     RuleActionFilterType  `json:"filterType"`
+	Operator       enum.FilterOperator   `json:"operator"`
+	StringValue    *string               `json:"stringValue"`
+	OperationValue *ruleaction.Operation `json:"operationValue"`
+	IDSet          []int                 `json:"idSet"`
+	MaxDepth       *int                  `json:"maxDepth"`
+	StringSet      []string              `json:"stringSet"`
 }
 
 type RuleActionTemplateFilterInput struct {
@@ -3518,6 +3542,45 @@ func (e *ResourceTypeRelationshipFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ResourceTypeRelationshipFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RuleActionFilterType string
+
+const (
+	RuleActionFilterTypeOperation RuleActionFilterType = "OPERATION"
+)
+
+var AllRuleActionFilterType = []RuleActionFilterType{
+	RuleActionFilterTypeOperation,
+}
+
+func (e RuleActionFilterType) IsValid() bool {
+	switch e {
+	case RuleActionFilterTypeOperation:
+		return true
+	}
+	return false
+}
+
+func (e RuleActionFilterType) String() string {
+	return string(e)
+}
+
+func (e *RuleActionFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RuleActionFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RuleActionFilterType", str)
+	}
+	return nil
+}
+
+func (e RuleActionFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

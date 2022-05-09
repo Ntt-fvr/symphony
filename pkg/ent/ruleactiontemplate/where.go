@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
@@ -377,6 +378,34 @@ func TextEqualFold(v string) predicate.RuleActionTemplate {
 func TextContainsFold(v string) predicate.RuleActionTemplate {
 	return predicate.RuleActionTemplate(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldText), v))
+	})
+}
+
+// HasRuleActionTemplateRuleAction applies the HasEdge predicate on the "rule_action_template_rule_action" edge.
+func HasRuleActionTemplateRuleAction() predicate.RuleActionTemplate {
+	return predicate.RuleActionTemplate(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RuleActionTemplateRuleActionTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RuleActionTemplateRuleActionTable, RuleActionTemplateRuleActionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRuleActionTemplateRuleActionWith applies the HasEdge predicate on the "rule_action_template_rule_action" edge with a given conditions (other predicates).
+func HasRuleActionTemplateRuleActionWith(preds ...predicate.RuleAction) predicate.RuleActionTemplate {
+	return predicate.RuleActionTemplate(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RuleActionTemplateRuleActionInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RuleActionTemplateRuleActionTable, RuleActionTemplateRuleActionColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

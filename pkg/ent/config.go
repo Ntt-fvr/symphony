@@ -105,6 +105,7 @@ type hooks struct {
 	ResourceType                      []ent.Hook
 	ResourceTypeRelationship          []ent.Hook
 	Rule                              []ent.Hook
+	RuleAction                        []ent.Hook
 	RuleActionTemplate                []ent.Hook
 	RuleLimit                         []ent.Hook
 	RuleType                          []ent.Hook

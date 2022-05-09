@@ -94,6 +94,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -6101,7 +6102,7 @@ func (rr *ReconciliationRule) Node(ctx context.Context) (node *Node, err error) 
 		ID:     rr.ID,
 		Type:   "ReconciliationRule",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(rr.CreateTime); err != nil {
@@ -6144,6 +6145,16 @@ func (rr *ReconciliationRule) Node(ctx context.Context) (node *Node, err error) 
 	}
 	node.Edges[1].IDs, err = rr.QueryReconciliationRuleSpecification().
 		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "RuleAction",
+		Name: "reconciliation_rule_rule_action",
+	}
+	node.Edges[2].IDs, err = rr.QueryReconciliationRuleRuleAction().
+		Select(ruleaction.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -6891,12 +6902,67 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (ra *RuleAction) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ra.ID,
+		Type:   "RuleAction",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ra.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ra.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ra.Operation); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "ruleaction.Operation",
+		Name:  "operation",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ReconciliationRule",
+		Name: "reconciliationrule",
+	}
+	node.Edges[0].IDs, err = ra.QueryReconciliationrule().
+		Select(reconciliationrule.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "RuleActionTemplate",
+		Name: "ruleactiontemplate",
+	}
+	node.Edges[1].IDs, err = ra.QueryRuleactiontemplate().
+		Select(ruleactiontemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (rat *RuleActionTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     rat.ID,
 		Type:   "RuleActionTemplate",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 0),
+		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(rat.CreateTime); err != nil {
@@ -6922,6 +6988,16 @@ func (rat *RuleActionTemplate) Node(ctx context.Context) (node *Node, err error)
 		Type:  "string",
 		Name:  "text",
 		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "RuleAction",
+		Name: "rule_action_template_rule_action",
+	}
+	node.Edges[0].IDs, err = rat.QueryRuleActionTemplateRuleAction().
+		Select(ruleaction.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -10033,6 +10109,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Rule.Query().
 			Where(rule.ID(id)).
 			CollectFields(ctx, "Rule").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case ruleaction.Table:
+		n, err := c.RuleAction.Query().
+			Where(ruleaction.ID(id)).
+			CollectFields(ctx, "RuleAction").
 			Only(ctx)
 		if err != nil {
 			return nil, err

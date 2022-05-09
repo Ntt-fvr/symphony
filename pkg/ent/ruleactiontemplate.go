@@ -26,6 +26,27 @@ type RuleActionTemplate struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Text holds the value of the "text" field.
 	Text string `json:"text,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the RuleActionTemplateQuery when eager-loading is set.
+	Edges RuleActionTemplateEdges `json:"edges"`
+}
+
+// RuleActionTemplateEdges holds the relations/edges for other nodes in the graph.
+type RuleActionTemplateEdges struct {
+	// RuleActionTemplateRuleAction holds the value of the rule_action_template_rule_action edge.
+	RuleActionTemplateRuleAction []*RuleAction
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RuleActionTemplateRuleActionOrErr returns the RuleActionTemplateRuleAction value or an error if the edge
+// was not loaded in eager-loading.
+func (e RuleActionTemplateEdges) RuleActionTemplateRuleActionOrErr() ([]*RuleAction, error) {
+	if e.loadedTypes[0] {
+		return e.RuleActionTemplateRuleAction, nil
+	}
+	return nil, &NotLoadedError{edge: "rule_action_template_rule_action"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -66,6 +87,11 @@ func (rat *RuleActionTemplate) assignValues(values ...interface{}) error {
 		rat.Text = value.String
 	}
 	return nil
+}
+
+// QueryRuleActionTemplateRuleAction queries the rule_action_template_rule_action edge of the RuleActionTemplate.
+func (rat *RuleActionTemplate) QueryRuleActionTemplateRuleAction() *RuleActionQuery {
+	return (&RuleActionTemplateClient{config: rat.config}).QueryRuleActionTemplateRuleAction(rat)
 }
 
 // Update returns a builder for updating this RuleActionTemplate.

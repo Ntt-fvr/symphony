@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 )
 
 // ReconciliationRuleUpdate is the builder for updating ReconciliationRule entities.
@@ -68,6 +69,21 @@ func (rru *ReconciliationRuleUpdate) AddReconciliationRuleSpecification(r ...*Re
 	return rru.AddReconciliationRuleSpecificationIDs(ids...)
 }
 
+// AddReconciliationRuleRuleActionIDs adds the reconciliation_rule_rule_action edge to RuleAction by ids.
+func (rru *ReconciliationRuleUpdate) AddReconciliationRuleRuleActionIDs(ids ...int) *ReconciliationRuleUpdate {
+	rru.mutation.AddReconciliationRuleRuleActionIDs(ids...)
+	return rru
+}
+
+// AddReconciliationRuleRuleAction adds the reconciliation_rule_rule_action edges to RuleAction.
+func (rru *ReconciliationRuleUpdate) AddReconciliationRuleRuleAction(r ...*RuleAction) *ReconciliationRuleUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rru.AddReconciliationRuleRuleActionIDs(ids...)
+}
+
 // Mutation returns the ReconciliationRuleMutation object of the builder.
 func (rru *ReconciliationRuleUpdate) Mutation() *ReconciliationRuleMutation {
 	return rru.mutation
@@ -113,6 +129,27 @@ func (rru *ReconciliationRuleUpdate) RemoveReconciliationRuleSpecification(r ...
 		ids[i] = r[i].ID
 	}
 	return rru.RemoveReconciliationRuleSpecificationIDs(ids...)
+}
+
+// ClearReconciliationRuleRuleAction clears all "reconciliation_rule_rule_action" edges to type RuleAction.
+func (rru *ReconciliationRuleUpdate) ClearReconciliationRuleRuleAction() *ReconciliationRuleUpdate {
+	rru.mutation.ClearReconciliationRuleRuleAction()
+	return rru
+}
+
+// RemoveReconciliationRuleRuleActionIDs removes the reconciliation_rule_rule_action edge to RuleAction by ids.
+func (rru *ReconciliationRuleUpdate) RemoveReconciliationRuleRuleActionIDs(ids ...int) *ReconciliationRuleUpdate {
+	rru.mutation.RemoveReconciliationRuleRuleActionIDs(ids...)
+	return rru
+}
+
+// RemoveReconciliationRuleRuleAction removes reconciliation_rule_rule_action edges to RuleAction.
+func (rru *ReconciliationRuleUpdate) RemoveReconciliationRuleRuleAction(r ...*RuleAction) *ReconciliationRuleUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rru.RemoveReconciliationRuleRuleActionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -331,6 +368,60 @@ func (rru *ReconciliationRuleUpdate) sqlSave(ctx context.Context) (n int, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if rru.mutation.ReconciliationRuleRuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   reconciliationrule.ReconciliationRuleRuleActionTable,
+			Columns: []string{reconciliationrule.ReconciliationRuleRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rru.mutation.RemovedReconciliationRuleRuleActionIDs(); len(nodes) > 0 && !rru.mutation.ReconciliationRuleRuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   reconciliationrule.ReconciliationRuleRuleActionTable,
+			Columns: []string{reconciliationrule.ReconciliationRuleRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rru.mutation.ReconciliationRuleRuleActionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   reconciliationrule.ReconciliationRuleRuleActionTable,
+			Columns: []string{reconciliationrule.ReconciliationRuleRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, rru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{reconciliationrule.Label}
@@ -385,6 +476,21 @@ func (rruo *ReconciliationRuleUpdateOne) AddReconciliationRuleSpecification(r ..
 	return rruo.AddReconciliationRuleSpecificationIDs(ids...)
 }
 
+// AddReconciliationRuleRuleActionIDs adds the reconciliation_rule_rule_action edge to RuleAction by ids.
+func (rruo *ReconciliationRuleUpdateOne) AddReconciliationRuleRuleActionIDs(ids ...int) *ReconciliationRuleUpdateOne {
+	rruo.mutation.AddReconciliationRuleRuleActionIDs(ids...)
+	return rruo
+}
+
+// AddReconciliationRuleRuleAction adds the reconciliation_rule_rule_action edges to RuleAction.
+func (rruo *ReconciliationRuleUpdateOne) AddReconciliationRuleRuleAction(r ...*RuleAction) *ReconciliationRuleUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rruo.AddReconciliationRuleRuleActionIDs(ids...)
+}
+
 // Mutation returns the ReconciliationRuleMutation object of the builder.
 func (rruo *ReconciliationRuleUpdateOne) Mutation() *ReconciliationRuleMutation {
 	return rruo.mutation
@@ -430,6 +536,27 @@ func (rruo *ReconciliationRuleUpdateOne) RemoveReconciliationRuleSpecification(r
 		ids[i] = r[i].ID
 	}
 	return rruo.RemoveReconciliationRuleSpecificationIDs(ids...)
+}
+
+// ClearReconciliationRuleRuleAction clears all "reconciliation_rule_rule_action" edges to type RuleAction.
+func (rruo *ReconciliationRuleUpdateOne) ClearReconciliationRuleRuleAction() *ReconciliationRuleUpdateOne {
+	rruo.mutation.ClearReconciliationRuleRuleAction()
+	return rruo
+}
+
+// RemoveReconciliationRuleRuleActionIDs removes the reconciliation_rule_rule_action edge to RuleAction by ids.
+func (rruo *ReconciliationRuleUpdateOne) RemoveReconciliationRuleRuleActionIDs(ids ...int) *ReconciliationRuleUpdateOne {
+	rruo.mutation.RemoveReconciliationRuleRuleActionIDs(ids...)
+	return rruo
+}
+
+// RemoveReconciliationRuleRuleAction removes reconciliation_rule_rule_action edges to RuleAction.
+func (rruo *ReconciliationRuleUpdateOne) RemoveReconciliationRuleRuleAction(r ...*RuleAction) *ReconciliationRuleUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rruo.RemoveReconciliationRuleRuleActionIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -638,6 +765,60 @@ func (rruo *ReconciliationRuleUpdateOne) sqlSave(ctx context.Context) (_node *Re
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecification.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rruo.mutation.ReconciliationRuleRuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   reconciliationrule.ReconciliationRuleRuleActionTable,
+			Columns: []string{reconciliationrule.ReconciliationRuleRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rruo.mutation.RemovedReconciliationRuleRuleActionIDs(); len(nodes) > 0 && !rruo.mutation.ReconciliationRuleRuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   reconciliationrule.ReconciliationRuleRuleActionTable,
+			Columns: []string{reconciliationrule.ReconciliationRuleRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rruo.mutation.ReconciliationRuleRuleActionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   reconciliationrule.ReconciliationRuleRuleActionTable,
+			Columns: []string{reconciliationrule.ReconciliationRuleRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
 				},
 			},
 		}

@@ -1014,6 +1014,19 @@ func (f RuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return f(ctx, mv)
 }
 
+// The RuleActionFunc type is an adapter to allow the use of ordinary
+// function as RuleAction mutator.
+type RuleActionFunc func(context.Context, *ent.RuleActionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RuleActionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RuleActionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleActionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The RuleActionTemplateFunc type is an adapter to allow the use of ordinary
 // function as RuleActionTemplate mutator.
 type RuleActionTemplateFunc func(context.Context, *ent.RuleActionTemplateMutation) (ent.Value, error)

@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 )
 
@@ -56,6 +57,21 @@ func (ratc *RuleActionTemplateCreate) SetNillableUpdateTime(t *time.Time) *RuleA
 func (ratc *RuleActionTemplateCreate) SetText(s string) *RuleActionTemplateCreate {
 	ratc.mutation.SetText(s)
 	return ratc
+}
+
+// AddRuleActionTemplateRuleActionIDs adds the rule_action_template_rule_action edge to RuleAction by ids.
+func (ratc *RuleActionTemplateCreate) AddRuleActionTemplateRuleActionIDs(ids ...int) *RuleActionTemplateCreate {
+	ratc.mutation.AddRuleActionTemplateRuleActionIDs(ids...)
+	return ratc
+}
+
+// AddRuleActionTemplateRuleAction adds the rule_action_template_rule_action edges to RuleAction.
+func (ratc *RuleActionTemplateCreate) AddRuleActionTemplateRuleAction(r ...*RuleAction) *RuleActionTemplateCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ratc.AddRuleActionTemplateRuleActionIDs(ids...)
 }
 
 // Mutation returns the RuleActionTemplateMutation object of the builder.
@@ -186,6 +202,25 @@ func (ratc *RuleActionTemplateCreate) createSpec() (*RuleActionTemplate, *sqlgra
 			Column: ruleactiontemplate.FieldText,
 		})
 		_node.Text = value
+	}
+	if nodes := ratc.mutation.RuleActionTemplateRuleActionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleactiontemplate.RuleActionTemplateRuleActionTable,
+			Columns: []string{ruleactiontemplate.RuleActionTemplateRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

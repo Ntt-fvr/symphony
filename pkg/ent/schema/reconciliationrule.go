@@ -33,6 +33,8 @@ func (ReconciliationRule) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("resourcetype")),
 		edge.To("reconciliation_rule_specification", ResourceSpecification.Type).
 			Annotations(entgql.MapsTo("resourcespecification")),
+		edge.To("reconciliation_rule_rule_action", RuleAction.Type).
+			Annotations(entgql.MapsTo("ruleaction")),
 	}
 }
 

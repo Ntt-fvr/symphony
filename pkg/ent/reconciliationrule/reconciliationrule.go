@@ -28,6 +28,8 @@ const (
 	EdgeReconciliationRuleType = "reconciliation_rule_type"
 	// EdgeReconciliationRuleSpecification holds the string denoting the reconciliation_rule_specification edge name in mutations.
 	EdgeReconciliationRuleSpecification = "reconciliation_rule_specification"
+	// EdgeReconciliationRuleRuleAction holds the string denoting the reconciliation_rule_rule_action edge name in mutations.
+	EdgeReconciliationRuleRuleAction = "reconciliation_rule_rule_action"
 
 	// Table holds the table name of the reconciliationrule in the database.
 	Table = "reconciliation_rules"
@@ -45,6 +47,13 @@ const (
 	ReconciliationRuleSpecificationInverseTable = "resource_specifications"
 	// ReconciliationRuleSpecificationColumn is the table column denoting the reconciliation_rule_specification relation/edge.
 	ReconciliationRuleSpecificationColumn = "reconciliation_rule_reconciliation_rule_specification"
+	// ReconciliationRuleRuleActionTable is the table the holds the reconciliation_rule_rule_action relation/edge.
+	ReconciliationRuleRuleActionTable = "rule_actions"
+	// ReconciliationRuleRuleActionInverseTable is the table name for the RuleAction entity.
+	// It exists in this package in order to avoid circular dependency with the "ruleaction" package.
+	ReconciliationRuleRuleActionInverseTable = "rule_actions"
+	// ReconciliationRuleRuleActionColumn is the table column denoting the reconciliation_rule_rule_action relation/edge.
+	ReconciliationRuleRuleActionColumn = "reconciliation_rule_reconciliation_rule_rule_action"
 )
 
 // Columns holds all SQL columns for reconciliationrule fields.

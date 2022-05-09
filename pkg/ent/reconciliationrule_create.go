@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 )
 
 // ReconciliationRuleCreate is the builder for creating a ReconciliationRule entity.
@@ -88,6 +89,21 @@ func (rrc *ReconciliationRuleCreate) AddReconciliationRuleSpecification(r ...*Re
 		ids[i] = r[i].ID
 	}
 	return rrc.AddReconciliationRuleSpecificationIDs(ids...)
+}
+
+// AddReconciliationRuleRuleActionIDs adds the reconciliation_rule_rule_action edge to RuleAction by ids.
+func (rrc *ReconciliationRuleCreate) AddReconciliationRuleRuleActionIDs(ids ...int) *ReconciliationRuleCreate {
+	rrc.mutation.AddReconciliationRuleRuleActionIDs(ids...)
+	return rrc
+}
+
+// AddReconciliationRuleRuleAction adds the reconciliation_rule_rule_action edges to RuleAction.
+func (rrc *ReconciliationRuleCreate) AddReconciliationRuleRuleAction(r ...*RuleAction) *ReconciliationRuleCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rrc.AddReconciliationRuleRuleActionIDs(ids...)
 }
 
 // Mutation returns the ReconciliationRuleMutation object of the builder.
@@ -249,6 +265,25 @@ func (rrc *ReconciliationRuleCreate) createSpec() (*ReconciliationRule, *sqlgrap
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecification.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rrc.mutation.ReconciliationRuleRuleActionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   reconciliationrule.ReconciliationRuleRuleActionTable,
+			Columns: []string{reconciliationrule.ReconciliationRuleRuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ruleaction.FieldID,
 				},
 			},
 		}

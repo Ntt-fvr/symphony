@@ -91,6 +91,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -206,6 +207,7 @@ const (
 	TypeResourceType                      = "ResourceType"
 	TypeResourceTypeRelationship          = "ResourceTypeRelationship"
 	TypeRule                              = "Rule"
+	TypeRuleAction                        = "RuleAction"
 	TypeRuleActionTemplate                = "RuleActionTemplate"
 	TypeRuleLimit                         = "RuleLimit"
 	TypeRuleType                          = "RuleType"
@@ -56514,6 +56516,9 @@ type ReconciliationRuleMutation struct {
 	reconciliation_rule_specification        map[int]struct{}
 	removedreconciliation_rule_specification map[int]struct{}
 	clearedreconciliation_rule_specification bool
+	reconciliation_rule_rule_action          map[int]struct{}
+	removedreconciliation_rule_rule_action   map[int]struct{}
+	clearedreconciliation_rule_rule_action   bool
 	done                                     bool
 	oldValue                                 func(context.Context) (*ReconciliationRule, error)
 	predicates                               []predicate.ReconciliationRule
@@ -56815,6 +56820,59 @@ func (m *ReconciliationRuleMutation) ResetReconciliationRuleSpecification() {
 	m.removedreconciliation_rule_specification = nil
 }
 
+// AddReconciliationRuleRuleActionIDs adds the reconciliation_rule_rule_action edge to RuleAction by ids.
+func (m *ReconciliationRuleMutation) AddReconciliationRuleRuleActionIDs(ids ...int) {
+	if m.reconciliation_rule_rule_action == nil {
+		m.reconciliation_rule_rule_action = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.reconciliation_rule_rule_action[ids[i]] = struct{}{}
+	}
+}
+
+// ClearReconciliationRuleRuleAction clears the reconciliation_rule_rule_action edge to RuleAction.
+func (m *ReconciliationRuleMutation) ClearReconciliationRuleRuleAction() {
+	m.clearedreconciliation_rule_rule_action = true
+}
+
+// ReconciliationRuleRuleActionCleared returns if the edge reconciliation_rule_rule_action was cleared.
+func (m *ReconciliationRuleMutation) ReconciliationRuleRuleActionCleared() bool {
+	return m.clearedreconciliation_rule_rule_action
+}
+
+// RemoveReconciliationRuleRuleActionIDs removes the reconciliation_rule_rule_action edge to RuleAction by ids.
+func (m *ReconciliationRuleMutation) RemoveReconciliationRuleRuleActionIDs(ids ...int) {
+	if m.removedreconciliation_rule_rule_action == nil {
+		m.removedreconciliation_rule_rule_action = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedreconciliation_rule_rule_action[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedReconciliationRuleRuleAction returns the removed ids of reconciliation_rule_rule_action.
+func (m *ReconciliationRuleMutation) RemovedReconciliationRuleRuleActionIDs() (ids []int) {
+	for id := range m.removedreconciliation_rule_rule_action {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ReconciliationRuleRuleActionIDs returns the reconciliation_rule_rule_action ids in the mutation.
+func (m *ReconciliationRuleMutation) ReconciliationRuleRuleActionIDs() (ids []int) {
+	for id := range m.reconciliation_rule_rule_action {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetReconciliationRuleRuleAction reset all changes of the "reconciliation_rule_rule_action" edge.
+func (m *ReconciliationRuleMutation) ResetReconciliationRuleRuleAction() {
+	m.reconciliation_rule_rule_action = nil
+	m.clearedreconciliation_rule_rule_action = false
+	m.removedreconciliation_rule_rule_action = nil
+}
+
 // Op returns the operation name.
 func (m *ReconciliationRuleMutation) Op() Op {
 	return m.op
@@ -56964,12 +57022,15 @@ func (m *ReconciliationRuleMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ReconciliationRuleMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.reconciliation_rule_type != nil {
 		edges = append(edges, reconciliationrule.EdgeReconciliationRuleType)
 	}
 	if m.reconciliation_rule_specification != nil {
 		edges = append(edges, reconciliationrule.EdgeReconciliationRuleSpecification)
+	}
+	if m.reconciliation_rule_rule_action != nil {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleRuleAction)
 	}
 	return edges
 }
@@ -56990,6 +57051,12 @@ func (m *ReconciliationRuleMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case reconciliationrule.EdgeReconciliationRuleRuleAction:
+		ids := make([]ent.Value, 0, len(m.reconciliation_rule_rule_action))
+		for id := range m.reconciliation_rule_rule_action {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -56997,12 +57064,15 @@ func (m *ReconciliationRuleMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ReconciliationRuleMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedreconciliation_rule_type != nil {
 		edges = append(edges, reconciliationrule.EdgeReconciliationRuleType)
 	}
 	if m.removedreconciliation_rule_specification != nil {
 		edges = append(edges, reconciliationrule.EdgeReconciliationRuleSpecification)
+	}
+	if m.removedreconciliation_rule_rule_action != nil {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleRuleAction)
 	}
 	return edges
 }
@@ -57023,6 +57093,12 @@ func (m *ReconciliationRuleMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case reconciliationrule.EdgeReconciliationRuleRuleAction:
+		ids := make([]ent.Value, 0, len(m.removedreconciliation_rule_rule_action))
+		for id := range m.removedreconciliation_rule_rule_action {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -57030,12 +57106,15 @@ func (m *ReconciliationRuleMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ReconciliationRuleMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedreconciliation_rule_type {
 		edges = append(edges, reconciliationrule.EdgeReconciliationRuleType)
 	}
 	if m.clearedreconciliation_rule_specification {
 		edges = append(edges, reconciliationrule.EdgeReconciliationRuleSpecification)
+	}
+	if m.clearedreconciliation_rule_rule_action {
+		edges = append(edges, reconciliationrule.EdgeReconciliationRuleRuleAction)
 	}
 	return edges
 }
@@ -57048,6 +57127,8 @@ func (m *ReconciliationRuleMutation) EdgeCleared(name string) bool {
 		return m.clearedreconciliation_rule_type
 	case reconciliationrule.EdgeReconciliationRuleSpecification:
 		return m.clearedreconciliation_rule_specification
+	case reconciliationrule.EdgeReconciliationRuleRuleAction:
+		return m.clearedreconciliation_rule_rule_action
 	}
 	return false
 }
@@ -57070,6 +57151,9 @@ func (m *ReconciliationRuleMutation) ResetEdge(name string) error {
 		return nil
 	case reconciliationrule.EdgeReconciliationRuleSpecification:
 		m.ResetReconciliationRuleSpecification()
+		return nil
+	case reconciliationrule.EdgeReconciliationRuleRuleAction:
+		m.ResetReconciliationRuleRuleAction()
 		return nil
 	}
 	return fmt.Errorf("unknown ReconciliationRule edge %s", name)
@@ -64174,20 +64258,555 @@ func (m *RuleMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Rule edge %s", name)
 }
 
+// RuleActionMutation represents an operation that mutate the RuleActions
+// nodes in the graph.
+type RuleActionMutation struct {
+	config
+	op                        Op
+	typ                       string
+	id                        *int
+	create_time               *time.Time
+	update_time               *time.Time
+	operation                 *ruleaction.Operation
+	clearedFields             map[string]struct{}
+	reconciliationrule        *int
+	clearedreconciliationrule bool
+	ruleactiontemplate        *int
+	clearedruleactiontemplate bool
+	done                      bool
+	oldValue                  func(context.Context) (*RuleAction, error)
+	predicates                []predicate.RuleAction
+}
+
+var _ ent.Mutation = (*RuleActionMutation)(nil)
+
+// ruleactionOption allows to manage the mutation configuration using functional options.
+type ruleactionOption func(*RuleActionMutation)
+
+// newRuleActionMutation creates new mutation for RuleAction.
+func newRuleActionMutation(c config, op Op, opts ...ruleactionOption) *RuleActionMutation {
+	m := &RuleActionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRuleAction,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRuleActionID sets the id field of the mutation.
+func withRuleActionID(id int) ruleactionOption {
+	return func(m *RuleActionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RuleAction
+		)
+		m.oldValue = func(ctx context.Context) (*RuleAction, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RuleAction.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRuleAction sets the old RuleAction of the mutation.
+func withRuleAction(node *RuleAction) ruleactionOption {
+	return func(m *RuleActionMutation) {
+		m.oldValue = func(context.Context) (*RuleAction, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RuleActionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RuleActionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *RuleActionMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *RuleActionMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *RuleActionMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the RuleAction.
+// If the RuleAction object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RuleActionMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *RuleActionMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *RuleActionMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *RuleActionMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the RuleAction.
+// If the RuleAction object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RuleActionMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *RuleActionMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetOperation sets the operation field.
+func (m *RuleActionMutation) SetOperation(r ruleaction.Operation) {
+	m.operation = &r
+}
+
+// Operation returns the operation value in the mutation.
+func (m *RuleActionMutation) Operation() (r ruleaction.Operation, exists bool) {
+	v := m.operation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperation returns the old operation value of the RuleAction.
+// If the RuleAction object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RuleActionMutation) OldOperation(ctx context.Context) (v ruleaction.Operation, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOperation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOperation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperation: %w", err)
+	}
+	return oldValue.Operation, nil
+}
+
+// ResetOperation reset all changes of the "operation" field.
+func (m *RuleActionMutation) ResetOperation() {
+	m.operation = nil
+}
+
+// SetReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id.
+func (m *RuleActionMutation) SetReconciliationruleID(id int) {
+	m.reconciliationrule = &id
+}
+
+// ClearReconciliationrule clears the reconciliationrule edge to ReconciliationRule.
+func (m *RuleActionMutation) ClearReconciliationrule() {
+	m.clearedreconciliationrule = true
+}
+
+// ReconciliationruleCleared returns if the edge reconciliationrule was cleared.
+func (m *RuleActionMutation) ReconciliationruleCleared() bool {
+	return m.clearedreconciliationrule
+}
+
+// ReconciliationruleID returns the reconciliationrule id in the mutation.
+func (m *RuleActionMutation) ReconciliationruleID() (id int, exists bool) {
+	if m.reconciliationrule != nil {
+		return *m.reconciliationrule, true
+	}
+	return
+}
+
+// ReconciliationruleIDs returns the reconciliationrule ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ReconciliationruleID instead. It exists only for internal usage by the builders.
+func (m *RuleActionMutation) ReconciliationruleIDs() (ids []int) {
+	if id := m.reconciliationrule; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetReconciliationrule reset all changes of the "reconciliationrule" edge.
+func (m *RuleActionMutation) ResetReconciliationrule() {
+	m.reconciliationrule = nil
+	m.clearedreconciliationrule = false
+}
+
+// SetRuleactiontemplateID sets the ruleactiontemplate edge to RuleActionTemplate by id.
+func (m *RuleActionMutation) SetRuleactiontemplateID(id int) {
+	m.ruleactiontemplate = &id
+}
+
+// ClearRuleactiontemplate clears the ruleactiontemplate edge to RuleActionTemplate.
+func (m *RuleActionMutation) ClearRuleactiontemplate() {
+	m.clearedruleactiontemplate = true
+}
+
+// RuleactiontemplateCleared returns if the edge ruleactiontemplate was cleared.
+func (m *RuleActionMutation) RuleactiontemplateCleared() bool {
+	return m.clearedruleactiontemplate
+}
+
+// RuleactiontemplateID returns the ruleactiontemplate id in the mutation.
+func (m *RuleActionMutation) RuleactiontemplateID() (id int, exists bool) {
+	if m.ruleactiontemplate != nil {
+		return *m.ruleactiontemplate, true
+	}
+	return
+}
+
+// RuleactiontemplateIDs returns the ruleactiontemplate ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// RuleactiontemplateID instead. It exists only for internal usage by the builders.
+func (m *RuleActionMutation) RuleactiontemplateIDs() (ids []int) {
+	if id := m.ruleactiontemplate; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRuleactiontemplate reset all changes of the "ruleactiontemplate" edge.
+func (m *RuleActionMutation) ResetRuleactiontemplate() {
+	m.ruleactiontemplate = nil
+	m.clearedruleactiontemplate = false
+}
+
+// Op returns the operation name.
+func (m *RuleActionMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (RuleAction).
+func (m *RuleActionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *RuleActionMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, ruleaction.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, ruleaction.FieldUpdateTime)
+	}
+	if m.operation != nil {
+		fields = append(fields, ruleaction.FieldOperation)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *RuleActionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case ruleaction.FieldCreateTime:
+		return m.CreateTime()
+	case ruleaction.FieldUpdateTime:
+		return m.UpdateTime()
+	case ruleaction.FieldOperation:
+		return m.Operation()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *RuleActionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case ruleaction.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case ruleaction.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case ruleaction.FieldOperation:
+		return m.OldOperation(ctx)
+	}
+	return nil, fmt.Errorf("unknown RuleAction field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RuleActionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case ruleaction.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case ruleaction.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case ruleaction.FieldOperation:
+		v, ok := value.(ruleaction.Operation)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperation(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RuleAction field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *RuleActionMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *RuleActionMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RuleActionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown RuleAction numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *RuleActionMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *RuleActionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RuleActionMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown RuleAction nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *RuleActionMutation) ResetField(name string) error {
+	switch name {
+	case ruleaction.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case ruleaction.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case ruleaction.FieldOperation:
+		m.ResetOperation()
+		return nil
+	}
+	return fmt.Errorf("unknown RuleAction field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *RuleActionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.reconciliationrule != nil {
+		edges = append(edges, ruleaction.EdgeReconciliationrule)
+	}
+	if m.ruleactiontemplate != nil {
+		edges = append(edges, ruleaction.EdgeRuleactiontemplate)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *RuleActionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case ruleaction.EdgeReconciliationrule:
+		if id := m.reconciliationrule; id != nil {
+			return []ent.Value{*id}
+		}
+	case ruleaction.EdgeRuleactiontemplate:
+		if id := m.ruleactiontemplate; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *RuleActionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *RuleActionMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *RuleActionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedreconciliationrule {
+		edges = append(edges, ruleaction.EdgeReconciliationrule)
+	}
+	if m.clearedruleactiontemplate {
+		edges = append(edges, ruleaction.EdgeRuleactiontemplate)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *RuleActionMutation) EdgeCleared(name string) bool {
+	switch name {
+	case ruleaction.EdgeReconciliationrule:
+		return m.clearedreconciliationrule
+	case ruleaction.EdgeRuleactiontemplate:
+		return m.clearedruleactiontemplate
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *RuleActionMutation) ClearEdge(name string) error {
+	switch name {
+	case ruleaction.EdgeReconciliationrule:
+		m.ClearReconciliationrule()
+		return nil
+	case ruleaction.EdgeRuleactiontemplate:
+		m.ClearRuleactiontemplate()
+		return nil
+	}
+	return fmt.Errorf("unknown RuleAction unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *RuleActionMutation) ResetEdge(name string) error {
+	switch name {
+	case ruleaction.EdgeReconciliationrule:
+		m.ResetReconciliationrule()
+		return nil
+	case ruleaction.EdgeRuleactiontemplate:
+		m.ResetRuleactiontemplate()
+		return nil
+	}
+	return fmt.Errorf("unknown RuleAction edge %s", name)
+}
+
 // RuleActionTemplateMutation represents an operation that mutate the RuleActionTemplates
 // nodes in the graph.
 type RuleActionTemplateMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	create_time   *time.Time
-	update_time   *time.Time
-	text          *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*RuleActionTemplate, error)
-	predicates    []predicate.RuleActionTemplate
+	op                                      Op
+	typ                                     string
+	id                                      *int
+	create_time                             *time.Time
+	update_time                             *time.Time
+	text                                    *string
+	clearedFields                           map[string]struct{}
+	rule_action_template_rule_action        map[int]struct{}
+	removedrule_action_template_rule_action map[int]struct{}
+	clearedrule_action_template_rule_action bool
+	done                                    bool
+	oldValue                                func(context.Context) (*RuleActionTemplate, error)
+	predicates                              []predicate.RuleActionTemplate
 }
 
 var _ ent.Mutation = (*RuleActionTemplateMutation)(nil)
@@ -64380,6 +64999,59 @@ func (m *RuleActionTemplateMutation) ResetText() {
 	m.text = nil
 }
 
+// AddRuleActionTemplateRuleActionIDs adds the rule_action_template_rule_action edge to RuleAction by ids.
+func (m *RuleActionTemplateMutation) AddRuleActionTemplateRuleActionIDs(ids ...int) {
+	if m.rule_action_template_rule_action == nil {
+		m.rule_action_template_rule_action = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.rule_action_template_rule_action[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRuleActionTemplateRuleAction clears the rule_action_template_rule_action edge to RuleAction.
+func (m *RuleActionTemplateMutation) ClearRuleActionTemplateRuleAction() {
+	m.clearedrule_action_template_rule_action = true
+}
+
+// RuleActionTemplateRuleActionCleared returns if the edge rule_action_template_rule_action was cleared.
+func (m *RuleActionTemplateMutation) RuleActionTemplateRuleActionCleared() bool {
+	return m.clearedrule_action_template_rule_action
+}
+
+// RemoveRuleActionTemplateRuleActionIDs removes the rule_action_template_rule_action edge to RuleAction by ids.
+func (m *RuleActionTemplateMutation) RemoveRuleActionTemplateRuleActionIDs(ids ...int) {
+	if m.removedrule_action_template_rule_action == nil {
+		m.removedrule_action_template_rule_action = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedrule_action_template_rule_action[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRuleActionTemplateRuleAction returns the removed ids of rule_action_template_rule_action.
+func (m *RuleActionTemplateMutation) RemovedRuleActionTemplateRuleActionIDs() (ids []int) {
+	for id := range m.removedrule_action_template_rule_action {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RuleActionTemplateRuleActionIDs returns the rule_action_template_rule_action ids in the mutation.
+func (m *RuleActionTemplateMutation) RuleActionTemplateRuleActionIDs() (ids []int) {
+	for id := range m.rule_action_template_rule_action {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRuleActionTemplateRuleAction reset all changes of the "rule_action_template_rule_action" edge.
+func (m *RuleActionTemplateMutation) ResetRuleActionTemplateRuleAction() {
+	m.rule_action_template_rule_action = nil
+	m.clearedrule_action_template_rule_action = false
+	m.removedrule_action_template_rule_action = nil
+}
+
 // Op returns the operation name.
 func (m *RuleActionTemplateMutation) Op() Op {
 	return m.op
@@ -64529,45 +65201,76 @@ func (m *RuleActionTemplateMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *RuleActionTemplateMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.rule_action_template_rule_action != nil {
+		edges = append(edges, ruleactiontemplate.EdgeRuleActionTemplateRuleAction)
+	}
 	return edges
 }
 
 // AddedIDs returns all ids (to other nodes) that were added for
 // the given edge name.
 func (m *RuleActionTemplateMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case ruleactiontemplate.EdgeRuleActionTemplateRuleAction:
+		ids := make([]ent.Value, 0, len(m.rule_action_template_rule_action))
+		for id := range m.rule_action_template_rule_action {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *RuleActionTemplateMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedrule_action_template_rule_action != nil {
+		edges = append(edges, ruleactiontemplate.EdgeRuleActionTemplateRuleAction)
+	}
 	return edges
 }
 
 // RemovedIDs returns all ids (to other nodes) that were removed for
 // the given edge name.
 func (m *RuleActionTemplateMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case ruleactiontemplate.EdgeRuleActionTemplateRuleAction:
+		ids := make([]ent.Value, 0, len(m.removedrule_action_template_rule_action))
+		for id := range m.removedrule_action_template_rule_action {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *RuleActionTemplateMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedrule_action_template_rule_action {
+		edges = append(edges, ruleactiontemplate.EdgeRuleActionTemplateRuleAction)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean indicates if this edge was
 // cleared in this mutation.
 func (m *RuleActionTemplateMutation) EdgeCleared(name string) bool {
+	switch name {
+	case ruleactiontemplate.EdgeRuleActionTemplateRuleAction:
+		return m.clearedrule_action_template_rule_action
+	}
 	return false
 }
 
 // ClearEdge clears the value for the given name. It returns an
 // error if the edge name is not defined in the schema.
 func (m *RuleActionTemplateMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown RuleActionTemplate unique edge %s", name)
 }
 
@@ -64575,6 +65278,11 @@ func (m *RuleActionTemplateMutation) ClearEdge(name string) error {
 // given edge name. It returns an error if the edge is not
 // defined in the schema.
 func (m *RuleActionTemplateMutation) ResetEdge(name string) error {
+	switch name {
+	case ruleactiontemplate.EdgeRuleActionTemplateRuleAction:
+		m.ResetRuleActionTemplateRuleAction()
+		return nil
+	}
 	return fmt.Errorf("unknown RuleActionTemplate edge %s", name)
 }
 

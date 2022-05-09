@@ -3498,6 +3498,73 @@ type RuleActionTemplateEdge {
 }
 
 """
+Properties by which ruleactions connections can be ordered.
+"""
+enum RuleActionOrderField {
+  """
+  Order ruleactions by time.
+  """
+  OPERATION
+
+  """
+  Order ruleactions by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ruleactions by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ruleactions connections.
+"""
+input RuleActionOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ruleactions by.
+  """
+  field: RuleActionOrderField
+}
+
+"""
+A connection to a list of ruleactions.
+"""
+type RuleActionConnection {
+  """
+  Total ruleactions of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ruleactions edges.
+  """
+  edges: [RuleActionEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ruleactions edge in a connection.
+"""
+type RuleActionEdge {
+  """
+  The ruleactions at the end of the edge.
+  """
+  node: RuleAction
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
 Properties by which ruleTypes connections can be ordered.
 """
 enum RuleTypeOrderField {
@@ -7266,6 +7333,41 @@ type Query {
     """
     filterBy: [RuleActionTemplateFilterInput!]
   ): RuleActionTemplateConnection!
+
+  """
+  A list of ruleactions.
+  """
+  ruleactions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned ruleactions.
+    """
+    orderBy: RuleActionOrder
+
+    """
+    Filtering options for the returned ruleactions.
+    """
+    filterBy: [RuleActionFilterInput!]
+  ): RuleActionConnection!
   
   """
   A list of ruleTypes.
@@ -8392,6 +8494,9 @@ type Mutation {
   addRuleActionTemplate(input: AddRuleActionTemplateInput!):RuleActionTemplate!
   EditRuleActionTemplate(input: EditRuleActionTemplateInput!): RuleActionTemplate!
   removeRuleActionTemplate(id: ID!): ID!
+  addRuleAction(input: AddRuleActionInput!):RuleAction!
+  EditRuleAction(input: EditRuleActionInput!): RuleAction!
+  removeRuleAction(id: ID!): ID!
   addVendor(input: AddVendorInput!):Vendor!
   editVendor(input: EditVendorInput!): Vendor!
   removeVendor(id: ID!): ID!
@@ -8659,6 +8764,44 @@ input RuleActionTemplateFilterInput {
   filterType: RuleActionTemplateFilterType!
   operator: FilterOperator!
   stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+enum Operation
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/ruleaction.Operation"
+  ) {
+	NOAPLICA
+	MANUAL
+	AUTOMATICO
+}
+type RuleAction implements Node {
+  id: ID!
+  reconciliationRule: ReconciliationRule
+  ruleActionTemplate: RuleActionTemplate
+  operation: Operation!
+}
+input AddRuleActionInput {  
+  reconciliationRule: ID!
+  ruleActionTemplate: ID!
+  operation: Operation!
+}
+input EditRuleActionInput {
+  id: ID!
+  reconciliationRule: ID!
+  ruleActionTemplate: ID!
+  operation: Operation!
+}
+enum RuleActionFilterType {
+  OPERATION
+}
+input RuleActionFilterInput {
+  filterType: RuleActionFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  operationValue: Operation
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]

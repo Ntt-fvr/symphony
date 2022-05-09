@@ -24,8 +24,18 @@ const (
 	// FieldText holds the string denoting the text field in the database.
 	FieldText = "text"
 
+	// EdgeRuleActionTemplateRuleAction holds the string denoting the rule_action_template_rule_action edge name in mutations.
+	EdgeRuleActionTemplateRuleAction = "rule_action_template_rule_action"
+
 	// Table holds the table name of the ruleactiontemplate in the database.
 	Table = "rule_action_templates"
+	// RuleActionTemplateRuleActionTable is the table the holds the rule_action_template_rule_action relation/edge.
+	RuleActionTemplateRuleActionTable = "rule_actions"
+	// RuleActionTemplateRuleActionInverseTable is the table name for the RuleAction entity.
+	// It exists in this package in order to avoid circular dependency with the "ruleaction" package.
+	RuleActionTemplateRuleActionInverseTable = "rule_actions"
+	// RuleActionTemplateRuleActionColumn is the table column denoting the rule_action_template_rule_action relation/edge.
+	RuleActionTemplateRuleActionColumn = "rule_action_template_rule_action_template_rule_action"
 )
 
 // Columns holds all SQL columns for ruleactiontemplate fields.

@@ -87,6 +87,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -2224,6 +2225,29 @@ func init() {
 	ruleDescName := ruleFields[0].Descriptor()
 	// rule.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	rule.NameValidator = ruleDescName.Validators[0].(func(string) error)
+	ruleactionMixin := schema.RuleAction{}.Mixin()
+	ruleaction.Policy = privacy.NewPolicies(schema.RuleAction{})
+	ruleaction.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := ruleaction.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	ruleactionMixinFields0 := ruleactionMixin[0].Fields()
+	ruleactionFields := schema.RuleAction{}.Fields()
+	_ = ruleactionFields
+	// ruleactionDescCreateTime is the schema descriptor for create_time field.
+	ruleactionDescCreateTime := ruleactionMixinFields0[0].Descriptor()
+	// ruleaction.DefaultCreateTime holds the default value on creation for the create_time field.
+	ruleaction.DefaultCreateTime = ruleactionDescCreateTime.Default.(func() time.Time)
+	// ruleactionDescUpdateTime is the schema descriptor for update_time field.
+	ruleactionDescUpdateTime := ruleactionMixinFields0[1].Descriptor()
+	// ruleaction.DefaultUpdateTime holds the default value on creation for the update_time field.
+	ruleaction.DefaultUpdateTime = ruleactionDescUpdateTime.Default.(func() time.Time)
+	// ruleaction.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	ruleaction.UpdateDefaultUpdateTime = ruleactionDescUpdateTime.UpdateDefault.(func() time.Time)
 	ruleactiontemplateMixin := schema.RuleActionTemplate{}.Mixin()
 	ruleactiontemplate.Policy = privacy.NewPolicies(schema.RuleActionTemplate{})
 	ruleactiontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -90,6 +90,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -278,6 +279,8 @@ type Client struct {
 	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
+	// RuleAction is the client for interacting with the RuleAction builders.
+	RuleAction *RuleActionClient
 	// RuleActionTemplate is the client for interacting with the RuleActionTemplate builders.
 	RuleActionTemplate *RuleActionTemplateClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
@@ -416,6 +419,7 @@ func (c *Client) init() {
 	c.ResourceType = NewResourceTypeClient(c.config)
 	c.ResourceTypeRelationship = NewResourceTypeRelationshipClient(c.config)
 	c.Rule = NewRuleClient(c.config)
+	c.RuleAction = NewRuleActionClient(c.config)
 	c.RuleActionTemplate = NewRuleActionTemplateClient(c.config)
 	c.RuleLimit = NewRuleLimitClient(c.config)
 	c.RuleType = NewRuleTypeClient(c.config)
@@ -548,6 +552,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ResourceType:                      NewResourceTypeClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
+		RuleAction:                        NewRuleActionClient(cfg),
 		RuleActionTemplate:                NewRuleActionTemplateClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),
 		RuleType:                          NewRuleTypeClient(cfg),
@@ -663,6 +668,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ResourceType:                      NewResourceTypeClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
+		RuleAction:                        NewRuleActionClient(cfg),
 		RuleActionTemplate:                NewRuleActionTemplateClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),
 		RuleType:                          NewRuleTypeClient(cfg),
@@ -791,6 +797,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ResourceType.Use(hooks...)
 	c.ResourceTypeRelationship.Use(hooks...)
 	c.Rule.Use(hooks...)
+	c.RuleAction.Use(hooks...)
 	c.RuleActionTemplate.Use(hooks...)
 	c.RuleLimit.Use(hooks...)
 	c.RuleType.Use(hooks...)
@@ -10567,6 +10574,22 @@ func (c *ReconciliationRuleClient) QueryReconciliationRuleSpecification(rr *Reco
 	return query
 }
 
+// QueryReconciliationRuleRuleAction queries the reconciliation_rule_rule_action edge of a ReconciliationRule.
+func (c *ReconciliationRuleClient) QueryReconciliationRuleRuleAction(rr *ReconciliationRule) *RuleActionQuery {
+	query := &RuleActionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, id),
+			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleRuleActionTable, reconciliationrule.ReconciliationRuleRuleActionColumn),
+		)
+		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ReconciliationRuleClient) Hooks() []Hook {
 	hooks := c.hooks.ReconciliationRule
@@ -11637,6 +11660,127 @@ func (c *RuleClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], rule.Hooks[:]...)
 }
 
+// RuleActionClient is a client for the RuleAction schema.
+type RuleActionClient struct {
+	config
+}
+
+// NewRuleActionClient returns a client for the RuleAction from the given config.
+func NewRuleActionClient(c config) *RuleActionClient {
+	return &RuleActionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `ruleaction.Hooks(f(g(h())))`.
+func (c *RuleActionClient) Use(hooks ...Hook) {
+	c.hooks.RuleAction = append(c.hooks.RuleAction, hooks...)
+}
+
+// Create returns a create builder for RuleAction.
+func (c *RuleActionClient) Create() *RuleActionCreate {
+	mutation := newRuleActionMutation(c.config, OpCreate)
+	return &RuleActionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RuleAction entities.
+func (c *RuleActionClient) CreateBulk(builders ...*RuleActionCreate) *RuleActionCreateBulk {
+	return &RuleActionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RuleAction.
+func (c *RuleActionClient) Update() *RuleActionUpdate {
+	mutation := newRuleActionMutation(c.config, OpUpdate)
+	return &RuleActionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RuleActionClient) UpdateOne(ra *RuleAction) *RuleActionUpdateOne {
+	mutation := newRuleActionMutation(c.config, OpUpdateOne, withRuleAction(ra))
+	return &RuleActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RuleActionClient) UpdateOneID(id int) *RuleActionUpdateOne {
+	mutation := newRuleActionMutation(c.config, OpUpdateOne, withRuleActionID(id))
+	return &RuleActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RuleAction.
+func (c *RuleActionClient) Delete() *RuleActionDelete {
+	mutation := newRuleActionMutation(c.config, OpDelete)
+	return &RuleActionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RuleActionClient) DeleteOne(ra *RuleAction) *RuleActionDeleteOne {
+	return c.DeleteOneID(ra.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RuleActionClient) DeleteOneID(id int) *RuleActionDeleteOne {
+	builder := c.Delete().Where(ruleaction.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RuleActionDeleteOne{builder}
+}
+
+// Query returns a query builder for RuleAction.
+func (c *RuleActionClient) Query() *RuleActionQuery {
+	return &RuleActionQuery{config: c.config}
+}
+
+// Get returns a RuleAction entity by its id.
+func (c *RuleActionClient) Get(ctx context.Context, id int) (*RuleAction, error) {
+	return c.Query().Where(ruleaction.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RuleActionClient) GetX(ctx context.Context, id int) *RuleAction {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryReconciliationrule queries the reconciliationrule edge of a RuleAction.
+func (c *RuleActionClient) QueryReconciliationrule(ra *RuleAction) *ReconciliationRuleQuery {
+	query := &ReconciliationRuleQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ra.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, id),
+			sqlgraph.To(reconciliationrule.Table, reconciliationrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ruleaction.ReconciliationruleTable, ruleaction.ReconciliationruleColumn),
+		)
+		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRuleactiontemplate queries the ruleactiontemplate edge of a RuleAction.
+func (c *RuleActionClient) QueryRuleactiontemplate(ra *RuleAction) *RuleActionTemplateQuery {
+	query := &RuleActionTemplateQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ra.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, id),
+			sqlgraph.To(ruleactiontemplate.Table, ruleactiontemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ruleaction.RuleactiontemplateTable, ruleaction.RuleactiontemplateColumn),
+		)
+		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RuleActionClient) Hooks() []Hook {
+	hooks := c.hooks.RuleAction
+	return append(hooks[:len(hooks):len(hooks)], ruleaction.Hooks[:]...)
+}
+
 // RuleActionTemplateClient is a client for the RuleActionTemplate schema.
 type RuleActionTemplateClient struct {
 	config
@@ -11718,6 +11862,22 @@ func (c *RuleActionTemplateClient) GetX(ctx context.Context, id int) *RuleAction
 		panic(err)
 	}
 	return obj
+}
+
+// QueryRuleActionTemplateRuleAction queries the rule_action_template_rule_action edge of a RuleActionTemplate.
+func (c *RuleActionTemplateClient) QueryRuleActionTemplateRuleAction(rat *RuleActionTemplate) *RuleActionQuery {
+	query := &RuleActionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rat.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ruleactiontemplate.Table, ruleactiontemplate.FieldID, id),
+			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ruleactiontemplate.RuleActionTemplateRuleActionTable, ruleactiontemplate.RuleActionTemplateRuleActionColumn),
+		)
+		fromV = sqlgraph.Neighbors(rat.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

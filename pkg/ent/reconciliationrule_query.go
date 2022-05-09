@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 )
 
 // ReconciliationRuleQuery is the builder for querying ReconciliationRule entities.
@@ -33,6 +34,7 @@ type ReconciliationRuleQuery struct {
 	// eager-loading edges.
 	withReconciliationRuleType          *ResourceTypeQuery
 	withReconciliationRuleSpecification *ResourceSpecificationQuery
+	withReconciliationRuleRuleAction    *RuleActionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -99,6 +101,28 @@ func (rrq *ReconciliationRuleQuery) QueryReconciliationRuleSpecification() *Reso
 			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, selector),
 			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleSpecificationTable, reconciliationrule.ReconciliationRuleSpecificationColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rrq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryReconciliationRuleRuleAction chains the current query on the reconciliation_rule_rule_action edge.
+func (rrq *ReconciliationRuleQuery) QueryReconciliationRuleRuleAction() *RuleActionQuery {
+	query := &RuleActionQuery{config: rrq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rrq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rrq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, selector),
+			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleRuleActionTable, reconciliationrule.ReconciliationRuleRuleActionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rrq.driver.Dialect(), step)
 		return fromU, nil
@@ -284,6 +308,7 @@ func (rrq *ReconciliationRuleQuery) Clone() *ReconciliationRuleQuery {
 		predicates:                          append([]predicate.ReconciliationRule{}, rrq.predicates...),
 		withReconciliationRuleType:          rrq.withReconciliationRuleType.Clone(),
 		withReconciliationRuleSpecification: rrq.withReconciliationRuleSpecification.Clone(),
+		withReconciliationRuleRuleAction:    rrq.withReconciliationRuleRuleAction.Clone(),
 		// clone intermediate query.
 		sql:  rrq.sql.Clone(),
 		path: rrq.path,
@@ -309,6 +334,17 @@ func (rrq *ReconciliationRuleQuery) WithReconciliationRuleSpecification(opts ...
 		opt(query)
 	}
 	rrq.withReconciliationRuleSpecification = query
+	return rrq
+}
+
+//  WithReconciliationRuleRuleAction tells the query-builder to eager-loads the nodes that are connected to
+// the "reconciliation_rule_rule_action" edge. The optional arguments used to configure the query builder of the edge.
+func (rrq *ReconciliationRuleQuery) WithReconciliationRuleRuleAction(opts ...func(*RuleActionQuery)) *ReconciliationRuleQuery {
+	query := &RuleActionQuery{config: rrq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rrq.withReconciliationRuleRuleAction = query
 	return rrq
 }
 
@@ -381,9 +417,10 @@ func (rrq *ReconciliationRuleQuery) sqlAll(ctx context.Context) ([]*Reconciliati
 	var (
 		nodes       = []*ReconciliationRule{}
 		_spec       = rrq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			rrq.withReconciliationRuleType != nil,
 			rrq.withReconciliationRuleSpecification != nil,
+			rrq.withReconciliationRuleRuleAction != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -462,6 +499,35 @@ func (rrq *ReconciliationRuleQuery) sqlAll(ctx context.Context) ([]*Reconciliati
 				return nil, fmt.Errorf(`unexpected foreign-key "reconciliation_rule_reconciliation_rule_specification" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.ReconciliationRuleSpecification = append(node.Edges.ReconciliationRuleSpecification, n)
+		}
+	}
+
+	if query := rrq.withReconciliationRuleRuleAction; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*ReconciliationRule)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.ReconciliationRuleRuleAction = []*RuleAction{}
+		}
+		query.withFKs = true
+		query.Where(predicate.RuleAction(func(s *sql.Selector) {
+			s.Where(sql.InValues(reconciliationrule.ReconciliationRuleRuleActionColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.reconciliation_rule_reconciliation_rule_rule_action
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "reconciliation_rule_reconciliation_rule_rule_action" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "reconciliation_rule_reconciliation_rule_rule_action" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.ReconciliationRuleRuleAction = append(node.Edges.ReconciliationRuleRuleAction, n)
 		}
 	}
 

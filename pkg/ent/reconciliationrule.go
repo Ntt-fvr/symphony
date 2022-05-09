@@ -37,9 +37,11 @@ type ReconciliationRuleEdges struct {
 	ReconciliationRuleType []*ResourceType
 	// ReconciliationRuleSpecification holds the value of the reconciliation_rule_specification edge.
 	ReconciliationRuleSpecification []*ResourceSpecification
+	// ReconciliationRuleRuleAction holds the value of the reconciliation_rule_rule_action edge.
+	ReconciliationRuleRuleAction []*RuleAction
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // ReconciliationRuleTypeOrErr returns the ReconciliationRuleType value or an error if the edge
@@ -58,6 +60,15 @@ func (e ReconciliationRuleEdges) ReconciliationRuleSpecificationOrErr() ([]*Reso
 		return e.ReconciliationRuleSpecification, nil
 	}
 	return nil, &NotLoadedError{edge: "reconciliation_rule_specification"}
+}
+
+// ReconciliationRuleRuleActionOrErr returns the ReconciliationRuleRuleAction value or an error if the edge
+// was not loaded in eager-loading.
+func (e ReconciliationRuleEdges) ReconciliationRuleRuleActionOrErr() ([]*RuleAction, error) {
+	if e.loadedTypes[2] {
+		return e.ReconciliationRuleRuleAction, nil
+	}
+	return nil, &NotLoadedError{edge: "reconciliation_rule_rule_action"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -108,6 +119,11 @@ func (rr *ReconciliationRule) QueryReconciliationRuleType() *ResourceTypeQuery {
 // QueryReconciliationRuleSpecification queries the reconciliation_rule_specification edge of the ReconciliationRule.
 func (rr *ReconciliationRule) QueryReconciliationRuleSpecification() *ResourceSpecificationQuery {
 	return (&ReconciliationRuleClient{config: rr.config}).QueryReconciliationRuleSpecification(rr)
+}
+
+// QueryReconciliationRuleRuleAction queries the reconciliation_rule_rule_action edge of the ReconciliationRule.
+func (rr *ReconciliationRule) QueryReconciliationRuleRuleAction() *RuleActionQuery {
+	return (&ReconciliationRuleClient{config: rr.config}).QueryReconciliationRuleRuleAction(rr)
 }
 
 // Update returns a builder for updating this ReconciliationRule.

@@ -99,6 +99,7 @@ func (c *Client) ReadOnly() *Client {
 		ResourceType:                      NewResourceTypeClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
+		RuleAction:                        NewRuleActionClient(cfg),
 		RuleActionTemplate:                NewRuleActionTemplateClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),
 		RuleType:                          NewRuleTypeClient(cfg),

@@ -469,6 +469,12 @@ func (c *RuleClient) Instantiate(r *Rule) *Rule {
 }
 
 // Instantiate entity configuration.
+func (c *RuleActionClient) Instantiate(ra *RuleAction) *RuleAction {
+	ra.config = c.config
+	return ra
+}
+
+// Instantiate entity configuration.
 func (c *RuleActionTemplateClient) Instantiate(rat *RuleActionTemplate) *RuleActionTemplate {
 	rat.config = c.config
 	return rat

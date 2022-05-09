@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -16,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 )
 
@@ -27,6 +29,8 @@ type RuleActionTemplateQuery struct {
 	order      []OrderFunc
 	unique     []string
 	predicates []predicate.RuleActionTemplate
+	// eager-loading edges.
+	withRuleActionTemplateRuleAction *RuleActionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -54,6 +58,28 @@ func (ratq *RuleActionTemplateQuery) Offset(offset int) *RuleActionTemplateQuery
 func (ratq *RuleActionTemplateQuery) Order(o ...OrderFunc) *RuleActionTemplateQuery {
 	ratq.order = append(ratq.order, o...)
 	return ratq
+}
+
+// QueryRuleActionTemplateRuleAction chains the current query on the rule_action_template_rule_action edge.
+func (ratq *RuleActionTemplateQuery) QueryRuleActionTemplateRuleAction() *RuleActionQuery {
+	query := &RuleActionQuery{config: ratq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ratq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ratq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ruleactiontemplate.Table, ruleactiontemplate.FieldID, selector),
+			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ruleactiontemplate.RuleActionTemplateRuleActionTable, ruleactiontemplate.RuleActionTemplateRuleActionColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ratq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first RuleActionTemplate entity in the query. Returns *NotFoundError when no ruleactiontemplate was found.
@@ -226,16 +252,28 @@ func (ratq *RuleActionTemplateQuery) Clone() *RuleActionTemplateQuery {
 		return nil
 	}
 	return &RuleActionTemplateQuery{
-		config:     ratq.config,
-		limit:      ratq.limit,
-		offset:     ratq.offset,
-		order:      append([]OrderFunc{}, ratq.order...),
-		unique:     append([]string{}, ratq.unique...),
-		predicates: append([]predicate.RuleActionTemplate{}, ratq.predicates...),
+		config:                           ratq.config,
+		limit:                            ratq.limit,
+		offset:                           ratq.offset,
+		order:                            append([]OrderFunc{}, ratq.order...),
+		unique:                           append([]string{}, ratq.unique...),
+		predicates:                       append([]predicate.RuleActionTemplate{}, ratq.predicates...),
+		withRuleActionTemplateRuleAction: ratq.withRuleActionTemplateRuleAction.Clone(),
 		// clone intermediate query.
 		sql:  ratq.sql.Clone(),
 		path: ratq.path,
 	}
+}
+
+//  WithRuleActionTemplateRuleAction tells the query-builder to eager-loads the nodes that are connected to
+// the "rule_action_template_rule_action" edge. The optional arguments used to configure the query builder of the edge.
+func (ratq *RuleActionTemplateQuery) WithRuleActionTemplateRuleAction(opts ...func(*RuleActionQuery)) *RuleActionTemplateQuery {
+	query := &RuleActionQuery{config: ratq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ratq.withRuleActionTemplateRuleAction = query
+	return ratq
 }
 
 // GroupBy used to group vertices by one or more fields/columns.
@@ -305,8 +343,11 @@ func (ratq *RuleActionTemplateQuery) prepareQuery(ctx context.Context) error {
 
 func (ratq *RuleActionTemplateQuery) sqlAll(ctx context.Context) ([]*RuleActionTemplate, error) {
 	var (
-		nodes = []*RuleActionTemplate{}
-		_spec = ratq.querySpec()
+		nodes       = []*RuleActionTemplate{}
+		_spec       = ratq.querySpec()
+		loadedTypes = [1]bool{
+			ratq.withRuleActionTemplateRuleAction != nil,
+		}
 	)
 	_spec.ScanValues = func() []interface{} {
 		node := &RuleActionTemplate{config: ratq.config}
@@ -319,6 +360,7 @@ func (ratq *RuleActionTemplateQuery) sqlAll(ctx context.Context) ([]*RuleActionT
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(values...)
 	}
 	if err := sqlgraph.QueryNodes(ctx, ratq.driver, _spec); err != nil {
@@ -327,6 +369,36 @@ func (ratq *RuleActionTemplateQuery) sqlAll(ctx context.Context) ([]*RuleActionT
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := ratq.withRuleActionTemplateRuleAction; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*RuleActionTemplate)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.RuleActionTemplateRuleAction = []*RuleAction{}
+		}
+		query.withFKs = true
+		query.Where(predicate.RuleAction(func(s *sql.Selector) {
+			s.Where(sql.InValues(ruleactiontemplate.RuleActionTemplateRuleActionColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.rule_action_template_rule_action_template_rule_action
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "rule_action_template_rule_action_template_rule_action" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "rule_action_template_rule_action_template_rule_action" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.RuleActionTemplateRuleAction = append(node.Edges.RuleActionTemplateRuleAction, n)
+		}
+	}
+
 	return nodes, nil
 }
 

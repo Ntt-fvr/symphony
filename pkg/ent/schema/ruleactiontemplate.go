@@ -6,6 +6,7 @@ package schema
 
 import (
 	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
@@ -26,13 +27,12 @@ func (RuleActionTemplate) Fields() []ent.Field {
 }
 
 // Edges returns property type edges.
-/*func (Execution) Edges() []ent.Edge {
+func (RuleActionTemplate) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.to("ruleaction", User.Type).
-			Ref("RuleAction").
-			Unique().Annotations(entgql.OrderField("RULEACTION")),
+		edge.To("rule_action_template_rule_action", RuleAction.Type).
+			Annotations(entgql.MapsTo("ruleaction")),
 	}
-}*/
+}
 
 // Policy returns entity policy.
 func (RuleActionTemplate) Policy() ent.Policy {

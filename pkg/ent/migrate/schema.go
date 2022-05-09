@@ -2584,6 +2584,37 @@ var (
 			},
 		},
 	}
+	// RuleActionsColumns holds the columns for the "rule_actions" table.
+	RuleActionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"NOAPLICA", "MANUAL", "AUTOMATICO"}},
+		{Name: "reconciliation_rule_reconciliation_rule_rule_action", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_action_template_rule_action_template_rule_action", Type: field.TypeInt, Nullable: true},
+	}
+	// RuleActionsTable holds the schema information for the "rule_actions" table.
+	RuleActionsTable = &schema.Table{
+		Name:       "rule_actions",
+		Columns:    RuleActionsColumns,
+		PrimaryKey: []*schema.Column{RuleActionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "rule_actions_reconciliation_rules_reconciliation_rule_rule_action",
+				Columns: []*schema.Column{RuleActionsColumns[4]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "rule_actions_rule_action_templates_rule_action_template_rule_action",
+				Columns: []*schema.Column{RuleActionsColumns[5]},
+
+				RefColumns: []*schema.Column{RuleActionTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// RuleActionTemplatesColumns holds the columns for the "rule_action_templates" table.
 	RuleActionTemplatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3730,6 +3761,7 @@ var (
 		ResourceTypesTable,
 		ResourceTypeRelationshipsTable,
 		RulesTable,
+		RuleActionsTable,
 		RuleActionTemplatesTable,
 		RuleLimitsTable,
 		RuleTypesTable,
@@ -3900,6 +3932,8 @@ func init() {
 	RulesTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
 	RulesTable.ForeignKeys[2].RefTable = ThresholdsTable
+	RuleActionsTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
+	RuleActionsTable.ForeignKeys[1].RefTable = RuleActionTemplatesTable
 	RuleLimitsTable.ForeignKeys[0].RefTable = ComparatorsTable
 	RuleLimitsTable.ForeignKeys[1].RefTable = RulesTable
 	ServicesTable.ForeignKeys[0].RefTable = ServiceTypesTable

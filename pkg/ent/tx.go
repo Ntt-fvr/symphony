@@ -170,6 +170,8 @@ type Tx struct {
 	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
+	// RuleAction is the client for interacting with the RuleAction builders.
+	RuleAction *RuleActionClient
 	// RuleActionTemplate is the client for interacting with the RuleActionTemplate builders.
 	RuleActionTemplate *RuleActionTemplateClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
@@ -428,6 +430,7 @@ func (tx *Tx) init() {
 	tx.ResourceType = NewResourceTypeClient(tx.config)
 	tx.ResourceTypeRelationship = NewResourceTypeRelationshipClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
+	tx.RuleAction = NewRuleActionClient(tx.config)
 	tx.RuleActionTemplate = NewRuleActionTemplateClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)
 	tx.RuleType = NewRuleTypeClient(tx.config)

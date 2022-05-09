@@ -437,6 +437,34 @@ func HasReconciliationRuleSpecificationWith(preds ...predicate.ResourceSpecifica
 	})
 }
 
+// HasReconciliationRuleRuleAction applies the HasEdge predicate on the "reconciliation_rule_rule_action" edge.
+func HasReconciliationRuleRuleAction() predicate.ReconciliationRule {
+	return predicate.ReconciliationRule(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ReconciliationRuleRuleActionTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ReconciliationRuleRuleActionTable, ReconciliationRuleRuleActionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasReconciliationRuleRuleActionWith applies the HasEdge predicate on the "reconciliation_rule_rule_action" edge with a given conditions (other predicates).
+func HasReconciliationRuleRuleActionWith(preds ...predicate.RuleAction) predicate.ReconciliationRule {
+	return predicate.ReconciliationRule(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ReconciliationRuleRuleActionInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ReconciliationRuleRuleActionTable, ReconciliationRuleRuleActionColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.ReconciliationRule) predicate.ReconciliationRule {
 	return predicate.ReconciliationRule(func(s *sql.Selector) {
