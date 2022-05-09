@@ -95,6 +95,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -19034,6 +19035,268 @@ var DefaultRuleOrder = &RuleOrder{
 		field: rule.FieldID,
 		toCursor: func(r *Rule) Cursor {
 			return Cursor{ID: r.ID}
+		},
+	},
+}
+
+// RuleActionTemplateEdge is the edge representation of RuleActionTemplate.
+type RuleActionTemplateEdge struct {
+	Node   *RuleActionTemplate `json:"node"`
+	Cursor Cursor              `json:"cursor"`
+}
+
+// RuleActionTemplateConnection is the connection containing edges to RuleActionTemplate.
+type RuleActionTemplateConnection struct {
+	Edges      []*RuleActionTemplateEdge `json:"edges"`
+	PageInfo   PageInfo                  `json:"pageInfo"`
+	TotalCount int                       `json:"totalCount"`
+}
+
+// RuleActionTemplatePaginateOption enables pagination customization.
+type RuleActionTemplatePaginateOption func(*ruleActionTemplatePager) error
+
+// WithRuleActionTemplateOrder configures pagination ordering.
+func WithRuleActionTemplateOrder(order *RuleActionTemplateOrder) RuleActionTemplatePaginateOption {
+	if order == nil {
+		order = DefaultRuleActionTemplateOrder
+	}
+	o := *order
+	return func(pager *ruleActionTemplatePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultRuleActionTemplateOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithRuleActionTemplateFilter configures pagination filter.
+func WithRuleActionTemplateFilter(filter func(*RuleActionTemplateQuery) (*RuleActionTemplateQuery, error)) RuleActionTemplatePaginateOption {
+	return func(pager *ruleActionTemplatePager) error {
+		if filter == nil {
+			return errors.New("RuleActionTemplateQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type ruleActionTemplatePager struct {
+	order  *RuleActionTemplateOrder
+	filter func(*RuleActionTemplateQuery) (*RuleActionTemplateQuery, error)
+}
+
+func newRuleActionTemplatePager(opts []RuleActionTemplatePaginateOption) (*ruleActionTemplatePager, error) {
+	pager := &ruleActionTemplatePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultRuleActionTemplateOrder
+	}
+	return pager, nil
+}
+
+func (p *ruleActionTemplatePager) applyFilter(query *RuleActionTemplateQuery) (*RuleActionTemplateQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *ruleActionTemplatePager) toCursor(rat *RuleActionTemplate) Cursor {
+	return p.order.Field.toCursor(rat)
+}
+
+func (p *ruleActionTemplatePager) applyCursors(query *RuleActionTemplateQuery, after, before *Cursor) *RuleActionTemplateQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultRuleActionTemplateOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *ruleActionTemplatePager) applyOrder(query *RuleActionTemplateQuery, reverse bool) *RuleActionTemplateQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultRuleActionTemplateOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultRuleActionTemplateOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to RuleActionTemplate.
+func (rat *RuleActionTemplateQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...RuleActionTemplatePaginateOption,
+) (*RuleActionTemplateConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newRuleActionTemplatePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if rat, err = pager.applyFilter(rat); err != nil {
+		return nil, err
+	}
+
+	conn := &RuleActionTemplateConnection{Edges: []*RuleActionTemplateEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := rat.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := rat.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	rat = pager.applyCursors(rat, after, before)
+	rat = pager.applyOrder(rat, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		rat = rat.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		rat = rat.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := rat.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *RuleActionTemplate
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *RuleActionTemplate {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *RuleActionTemplate {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*RuleActionTemplateEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &RuleActionTemplateEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// RuleActionTemplateOrderFieldText orders RuleActionTemplate by text.
+	RuleActionTemplateOrderFieldText = &RuleActionTemplateOrderField{
+		field: ruleactiontemplate.FieldText,
+		toCursor: func(rat *RuleActionTemplate) Cursor {
+			return Cursor{
+				ID:    rat.ID,
+				Value: rat.Text,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f RuleActionTemplateOrderField) String() string {
+	var str string
+	switch f.field {
+	case ruleactiontemplate.FieldText:
+		str = "TEXT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f RuleActionTemplateOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *RuleActionTemplateOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("RuleActionTemplateOrderField %T must be a string", v)
+	}
+	switch str {
+	case "TEXT":
+		*f = *RuleActionTemplateOrderFieldText
+	default:
+		return fmt.Errorf("%s is not a valid RuleActionTemplateOrderField", str)
+	}
+	return nil
+}
+
+// RuleActionTemplateOrderField defines the ordering field of RuleActionTemplate.
+type RuleActionTemplateOrderField struct {
+	field    string
+	toCursor func(*RuleActionTemplate) Cursor
+}
+
+// RuleActionTemplateOrder defines the ordering of RuleActionTemplate.
+type RuleActionTemplateOrder struct {
+	Direction OrderDirection                `json:"direction"`
+	Field     *RuleActionTemplateOrderField `json:"field"`
+}
+
+// DefaultRuleActionTemplateOrder is the default ordering of RuleActionTemplate.
+var DefaultRuleActionTemplateOrder = &RuleActionTemplateOrder{
+	Direction: OrderDirectionAsc,
+	Field: &RuleActionTemplateOrderField{
+		field: ruleactiontemplate.FieldID,
+		toCursor: func(rat *RuleActionTemplate) Cursor {
+			return Cursor{ID: rat.ID}
 		},
 	},
 }

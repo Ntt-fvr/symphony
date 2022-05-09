@@ -2016,6 +2016,30 @@ func (f RuleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RuleMutation", m)
 }
 
+// The RuleActionTemplateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RuleActionTemplateQueryRuleFunc func(context.Context, *ent.RuleActionTemplateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RuleActionTemplateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RuleActionTemplateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RuleActionTemplateQuery", q)
+}
+
+// The RuleActionTemplateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RuleActionTemplateMutationRuleFunc func(context.Context, *ent.RuleActionTemplateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RuleActionTemplateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RuleActionTemplateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RuleActionTemplateMutation", m)
+}
+
 // The RuleLimitQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RuleLimitQueryRuleFunc func(context.Context, *ent.RuleLimitQuery) error

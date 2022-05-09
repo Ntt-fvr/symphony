@@ -523,6 +523,26 @@ func (r queryResolver) Executions(
 		)
 }
 
+func (r queryResolver) Ruleactiontemplates(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RuleActionTemplateOrder,
+	filterBy []*models.RuleActionTemplateFilterInput,
+) (*ent.RuleActionTemplateConnection, error) {
+	return r.ClientFrom(ctx).
+		RuleActionTemplate.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRuleActionTemplateOrder(orderBy),
+			ent.WithRuleActionTemplateFilter(
+				func(query *ent.RuleActionTemplateQuery) (*ent.RuleActionTemplateQuery, error) {
+					return resolverutil.RuleActionTemplateFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) RuleTypes(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

@@ -453,6 +453,10 @@ type AddResourceTypeRelationshipInput struct {
 	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
 }
 
+type AddRuleActionTemplateInput struct {
+	Text string `json:"text"`
+}
+
 type AddRuleInput struct {
 	Name            string     `json:"name"`
 	GracePeriod     int        `json:"gracePeriod"`
@@ -1092,6 +1096,11 @@ type EditResourceTypeRelationshipInput struct {
 	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
 }
 
+type EditRuleActionTemplateInput struct {
+	ID   int    `json:"id"`
+	Text string `json:"text"`
+}
+
 type EditRuleInput struct {
 	ID              int        `json:"id"`
 	Name            string     `json:"name"`
@@ -1635,6 +1644,15 @@ type ResourceTypeRelationshipFilterInput struct {
 	IDSet             []int                                                      `json:"idSet"`
 	MaxDepth          *int                                                       `json:"maxDepth"`
 	StringSet         []string                                                   `json:"stringSet"`
+}
+
+type RuleActionTemplateFilterInput struct {
+	FilterType  RuleActionTemplateFilterType `json:"filterType"`
+	Operator    enum.FilterOperator          `json:"operator"`
+	StringValue *string                      `json:"stringValue"`
+	IDSet       []int                        `json:"idSet"`
+	MaxDepth    *int                         `json:"maxDepth"`
+	StringSet   []string                     `json:"stringSet"`
 }
 
 type RuleInput struct {
@@ -3500,6 +3518,45 @@ func (e *ResourceTypeRelationshipFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ResourceTypeRelationshipFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RuleActionTemplateFilterType string
+
+const (
+	RuleActionTemplateFilterTypeText RuleActionTemplateFilterType = "TEXT"
+)
+
+var AllRuleActionTemplateFilterType = []RuleActionTemplateFilterType{
+	RuleActionTemplateFilterTypeText,
+}
+
+func (e RuleActionTemplateFilterType) IsValid() bool {
+	switch e {
+	case RuleActionTemplateFilterTypeText:
+		return true
+	}
+	return false
+}
+
+func (e RuleActionTemplateFilterType) String() string {
+	return string(e)
+}
+
+func (e *RuleActionTemplateFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RuleActionTemplateFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RuleActionTemplateFilterType", str)
+	}
+	return nil
+}
+
+func (e RuleActionTemplateFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

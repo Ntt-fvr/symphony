@@ -1014,6 +1014,19 @@ func (f RuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return f(ctx, mv)
 }
 
+// The RuleActionTemplateFunc type is an adapter to allow the use of ordinary
+// function as RuleActionTemplate mutator.
+type RuleActionTemplateFunc func(context.Context, *ent.RuleActionTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RuleActionTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RuleActionTemplateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleActionTemplateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The RuleLimitFunc type is an adapter to allow the use of ordinary
 // function as RuleLimit mutator.
 type RuleLimitFunc func(context.Context, *ent.RuleLimitMutation) (ent.Value, error)

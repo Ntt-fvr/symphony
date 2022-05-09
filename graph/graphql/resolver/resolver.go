@@ -225,6 +225,10 @@ func (r resolver) CounterFormula() generated.CounterFormulaResolver {
 	return executionResolver{}
 }*/
 
+/*func (r resolver) RuleActionTemplate() generated.RuleActionTemplateResolver {
+	return ruleActionTemplateResolver{}
+}*/
+
 func (r resolver) Counter() generated.CounterResolver {
 	return counterResolver{}
 }

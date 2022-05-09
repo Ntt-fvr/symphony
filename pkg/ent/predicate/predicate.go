@@ -241,6 +241,9 @@ type ResourceTypeRelationship func(*sql.Selector)
 // Rule is the predicate function for rule builders.
 type Rule func(*sql.Selector)
 
+// RuleActionTemplate is the predicate function for ruleactiontemplate builders.
+type RuleActionTemplate func(*sql.Selector)
+
 // RuleLimit is the predicate function for rulelimit builders.
 type RuleLimit func(*sql.Selector)
 

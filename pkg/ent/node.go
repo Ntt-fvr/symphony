@@ -94,6 +94,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -6890,6 +6891,41 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (rat *RuleActionTemplate) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rat.ID,
+		Type:   "RuleActionTemplate",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 0),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rat.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rat.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rat.Text); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "text",
+		Value: string(buf),
+	}
+	return node, nil
+}
+
 func (rl *RuleLimit) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     rl.ID,
@@ -9997,6 +10033,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Rule.Query().
 			Where(rule.ID(id)).
 			CollectFields(ctx, "Rule").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case ruleactiontemplate.Table:
+		n, err := c.RuleActionTemplate.Query().
+			Where(ruleactiontemplate.ID(id)).
+			CollectFields(ctx, "RuleActionTemplate").
 			Only(ctx)
 		if err != nil {
 			return nil, err

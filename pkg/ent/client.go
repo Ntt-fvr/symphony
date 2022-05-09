@@ -90,6 +90,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -277,6 +278,8 @@ type Client struct {
 	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
+	// RuleActionTemplate is the client for interacting with the RuleActionTemplate builders.
+	RuleActionTemplate *RuleActionTemplateClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
 	RuleLimit *RuleLimitClient
 	// RuleType is the client for interacting with the RuleType builders.
@@ -413,6 +416,7 @@ func (c *Client) init() {
 	c.ResourceType = NewResourceTypeClient(c.config)
 	c.ResourceTypeRelationship = NewResourceTypeRelationshipClient(c.config)
 	c.Rule = NewRuleClient(c.config)
+	c.RuleActionTemplate = NewRuleActionTemplateClient(c.config)
 	c.RuleLimit = NewRuleLimitClient(c.config)
 	c.RuleType = NewRuleTypeClient(c.config)
 	c.Service = NewServiceClient(c.config)
@@ -544,6 +548,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ResourceType:                      NewResourceTypeClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
+		RuleActionTemplate:                NewRuleActionTemplateClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),
 		RuleType:                          NewRuleTypeClient(cfg),
 		Service:                           NewServiceClient(cfg),
@@ -658,6 +663,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ResourceType:                      NewResourceTypeClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
+		RuleActionTemplate:                NewRuleActionTemplateClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),
 		RuleType:                          NewRuleTypeClient(cfg),
 		Service:                           NewServiceClient(cfg),
@@ -785,6 +791,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ResourceType.Use(hooks...)
 	c.ResourceTypeRelationship.Use(hooks...)
 	c.Rule.Use(hooks...)
+	c.RuleActionTemplate.Use(hooks...)
 	c.RuleLimit.Use(hooks...)
 	c.RuleType.Use(hooks...)
 	c.Service.Use(hooks...)
@@ -11628,6 +11635,95 @@ func (c *RuleClient) QueryRulelimitrule(r *Rule) *RuleLimitQuery {
 func (c *RuleClient) Hooks() []Hook {
 	hooks := c.hooks.Rule
 	return append(hooks[:len(hooks):len(hooks)], rule.Hooks[:]...)
+}
+
+// RuleActionTemplateClient is a client for the RuleActionTemplate schema.
+type RuleActionTemplateClient struct {
+	config
+}
+
+// NewRuleActionTemplateClient returns a client for the RuleActionTemplate from the given config.
+func NewRuleActionTemplateClient(c config) *RuleActionTemplateClient {
+	return &RuleActionTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `ruleactiontemplate.Hooks(f(g(h())))`.
+func (c *RuleActionTemplateClient) Use(hooks ...Hook) {
+	c.hooks.RuleActionTemplate = append(c.hooks.RuleActionTemplate, hooks...)
+}
+
+// Create returns a create builder for RuleActionTemplate.
+func (c *RuleActionTemplateClient) Create() *RuleActionTemplateCreate {
+	mutation := newRuleActionTemplateMutation(c.config, OpCreate)
+	return &RuleActionTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RuleActionTemplate entities.
+func (c *RuleActionTemplateClient) CreateBulk(builders ...*RuleActionTemplateCreate) *RuleActionTemplateCreateBulk {
+	return &RuleActionTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RuleActionTemplate.
+func (c *RuleActionTemplateClient) Update() *RuleActionTemplateUpdate {
+	mutation := newRuleActionTemplateMutation(c.config, OpUpdate)
+	return &RuleActionTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RuleActionTemplateClient) UpdateOne(rat *RuleActionTemplate) *RuleActionTemplateUpdateOne {
+	mutation := newRuleActionTemplateMutation(c.config, OpUpdateOne, withRuleActionTemplate(rat))
+	return &RuleActionTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RuleActionTemplateClient) UpdateOneID(id int) *RuleActionTemplateUpdateOne {
+	mutation := newRuleActionTemplateMutation(c.config, OpUpdateOne, withRuleActionTemplateID(id))
+	return &RuleActionTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RuleActionTemplate.
+func (c *RuleActionTemplateClient) Delete() *RuleActionTemplateDelete {
+	mutation := newRuleActionTemplateMutation(c.config, OpDelete)
+	return &RuleActionTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RuleActionTemplateClient) DeleteOne(rat *RuleActionTemplate) *RuleActionTemplateDeleteOne {
+	return c.DeleteOneID(rat.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RuleActionTemplateClient) DeleteOneID(id int) *RuleActionTemplateDeleteOne {
+	builder := c.Delete().Where(ruleactiontemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RuleActionTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for RuleActionTemplate.
+func (c *RuleActionTemplateClient) Query() *RuleActionTemplateQuery {
+	return &RuleActionTemplateQuery{config: c.config}
+}
+
+// Get returns a RuleActionTemplate entity by its id.
+func (c *RuleActionTemplateClient) Get(ctx context.Context, id int) (*RuleActionTemplate, error) {
+	return c.Query().Where(ruleactiontemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RuleActionTemplateClient) GetX(ctx context.Context, id int) *RuleActionTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *RuleActionTemplateClient) Hooks() []Hook {
+	hooks := c.hooks.RuleActionTemplate
+	return append(hooks[:len(hooks):len(hooks)], ruleactiontemplate.Hooks[:]...)
 }
 
 // RuleLimitClient is a client for the RuleLimit schema.

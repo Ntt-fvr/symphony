@@ -87,6 +87,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema"
@@ -2223,6 +2224,33 @@ func init() {
 	ruleDescName := ruleFields[0].Descriptor()
 	// rule.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	rule.NameValidator = ruleDescName.Validators[0].(func(string) error)
+	ruleactiontemplateMixin := schema.RuleActionTemplate{}.Mixin()
+	ruleactiontemplate.Policy = privacy.NewPolicies(schema.RuleActionTemplate{})
+	ruleactiontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := ruleactiontemplate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	ruleactiontemplateMixinFields0 := ruleactiontemplateMixin[0].Fields()
+	ruleactiontemplateFields := schema.RuleActionTemplate{}.Fields()
+	_ = ruleactiontemplateFields
+	// ruleactiontemplateDescCreateTime is the schema descriptor for create_time field.
+	ruleactiontemplateDescCreateTime := ruleactiontemplateMixinFields0[0].Descriptor()
+	// ruleactiontemplate.DefaultCreateTime holds the default value on creation for the create_time field.
+	ruleactiontemplate.DefaultCreateTime = ruleactiontemplateDescCreateTime.Default.(func() time.Time)
+	// ruleactiontemplateDescUpdateTime is the schema descriptor for update_time field.
+	ruleactiontemplateDescUpdateTime := ruleactiontemplateMixinFields0[1].Descriptor()
+	// ruleactiontemplate.DefaultUpdateTime holds the default value on creation for the update_time field.
+	ruleactiontemplate.DefaultUpdateTime = ruleactiontemplateDescUpdateTime.Default.(func() time.Time)
+	// ruleactiontemplate.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	ruleactiontemplate.UpdateDefaultUpdateTime = ruleactiontemplateDescUpdateTime.UpdateDefault.(func() time.Time)
+	// ruleactiontemplateDescText is the schema descriptor for text field.
+	ruleactiontemplateDescText := ruleactiontemplateFields[0].Descriptor()
+	// ruleactiontemplate.TextValidator is a validator for the "text" field. It is called by the builders before save.
+	ruleactiontemplate.TextValidator = ruleactiontemplateDescText.Validators[0].(func(string) error)
 	rulelimitMixin := schema.RuleLimit{}.Mixin()
 	rulelimit.Policy = privacy.NewPolicies(schema.RuleLimit{})
 	rulelimit.Hooks[0] = func(next ent.Mutator) ent.Mutator {

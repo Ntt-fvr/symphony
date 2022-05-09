@@ -1569,6 +1569,18 @@ func (r *RuleQuery) collectField(ctx *graphql.OperationContext, field graphql.Co
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rat *RuleActionTemplateQuery) CollectFields(ctx context.Context, satisfies ...string) *RuleActionTemplateQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rat = rat.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rat
+}
+
+func (rat *RuleActionTemplateQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RuleActionTemplateQuery {
+	return rat
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rl *RuleLimitQuery) CollectFields(ctx context.Context, satisfies ...string) *RuleLimitQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rl = rl.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

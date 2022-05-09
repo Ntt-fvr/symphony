@@ -3431,6 +3431,73 @@ type ExecutionEdge {
 }
 
 """
+Properties by which ruleactiontemplates connections can be ordered.
+"""
+enum RuleActionTemplateOrderField {
+  """
+  Order ruleactiontemplates by time.
+  """
+  TEXT
+
+  """
+  Order ruleactiontemplates by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ruleactiontemplates by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ruleactiontemplates connections.
+"""
+input RuleActionTemplateOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ruleactiontemplates by.
+  """
+  field: RuleActionTemplateOrderField
+}
+
+"""
+A connection to a list of ruleactiontemplates.
+"""
+type RuleActionTemplateConnection {
+  """
+  Total ruleactiontemplates of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ruleactiontemplates edges.
+  """
+  edges: [RuleActionTemplateEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ruleactiontemplates edge in a connection.
+"""
+type RuleActionTemplateEdge {
+  """
+  The ruleactiontemplates at the end of the edge.
+  """
+  node: RuleActionTemplate
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
 Properties by which ruleTypes connections can be ordered.
 """
 enum RuleTypeOrderField {
@@ -7130,7 +7197,7 @@ type Query {
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
 
-    """
+  """
   A list of executions.
   """
   executions(
@@ -7164,6 +7231,41 @@ type Query {
     """
     filterBy: [ExecutionFilterInput!]
   ): ExecutionConnection!
+
+  """
+  A list of ruleactiontemplates.
+  """
+  ruleactiontemplates(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned ruleactiontemplates.
+    """
+    orderBy: RuleActionTemplateOrder
+
+    """
+    Filtering options for the returned ruleactiontemplates.
+    """
+    filterBy: [RuleActionTemplateFilterInput!]
+  ): RuleActionTemplateConnection!
   
   """
   A list of ruleTypes.
@@ -8287,6 +8389,9 @@ type Mutation {
   addExecution(input: AddExecutionInput!):Execution!
   editExecution(input: EditExecutionInput!): Execution!
   removeExecution(id: ID!): ID!
+  addRuleActionTemplate(input: AddRuleActionTemplateInput!):RuleActionTemplate!
+  EditRuleActionTemplate(input: EditRuleActionTemplateInput!): RuleActionTemplate!
+  removeRuleActionTemplate(id: ID!): ID!
   addVendor(input: AddVendorInput!):Vendor!
   editVendor(input: EditVendorInput!): Vendor!
   removeVendor(id: ID!): ID!
@@ -8516,7 +8621,7 @@ input EditExecutionInput {
   id: ID!
   manualConfirmation: Time!
   user: ID!
-  
+
 }
 
 enum ExecutionFilterType {
@@ -8527,6 +8632,33 @@ input ExecutionFilterInput {
   filterType: ExecutionFilterType!
   operator: FilterOperator!
   timeValue: Time
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RuleActionTemplate implements Node {
+  id: ID!
+  text: String!
+}
+
+input AddRuleActionTemplateInput {
+  text: String!
+}
+
+input EditRuleActionTemplateInput {
+  id: ID!
+  text: String!
+}
+
+enum RuleActionTemplateFilterType {
+  TEXT
+}
+
+input RuleActionTemplateFilterInput {
+  filterType: RuleActionTemplateFilterType!
+  operator: FilterOperator!
+  stringValue: String
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]

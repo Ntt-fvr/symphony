@@ -2584,6 +2584,20 @@ var (
 			},
 		},
 	}
+	// RuleActionTemplatesColumns holds the columns for the "rule_action_templates" table.
+	RuleActionTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "text", Type: field.TypeString, Unique: true},
+	}
+	// RuleActionTemplatesTable holds the schema information for the "rule_action_templates" table.
+	RuleActionTemplatesTable = &schema.Table{
+		Name:        "rule_action_templates",
+		Columns:     RuleActionTemplatesColumns,
+		PrimaryKey:  []*schema.Column{RuleActionTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// RuleLimitsColumns holds the columns for the "rule_limits" table.
 	RuleLimitsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3716,6 +3730,7 @@ var (
 		ResourceTypesTable,
 		ResourceTypeRelationshipsTable,
 		RulesTable,
+		RuleActionTemplatesTable,
 		RuleLimitsTable,
 		RuleTypesTable,
 		ServicesTable,
