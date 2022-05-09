@@ -27,7 +27,8 @@ func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmod
 	if propertyValueSearch != nil {
 		return nil, fmt.Errorf("it is not possible to duplicate the name of a property for the same propertytype")
 	}
-
+	var typ *ent.PropertyTypeValue
+	var err error
 	if len(input.ParentPropertyType) > 0 {
 		var parentPropertyValueList []int
 		for _, parentPropertyTypeTraveled := range input.ParentPropertyType {
@@ -37,30 +38,23 @@ func (r mutationResolver) AddPropertyTypeValue(ctx context.Context, input pkgmod
 			).Only(ctx)
 			parentPropertyValueList = append(parentPropertyValueList, parentPropertyValue.ID)
 		}
-		typ, err := client.PropertyTypeValue.Create().
+		typ, err = client.PropertyTypeValue.Create().
 			SetName(input.Name).
 			SetPropertyTypeID(input.PropertyType).
 			SetNillableDeleted(input.IsDeleted).
 			AddParentPropertyTypeValueIDs(parentPropertyValueList...).
 			Save(ctx)
-
-		if err != nil {
-			return nil, err
-		}
-		return typ, nil
-
 	} else {
-		typ, err := client.PropertyTypeValue.Create().
+		typ, err = client.PropertyTypeValue.Create().
 			SetName(input.Name).
 			SetNillableDeleted(input.IsDeleted).
 			SetPropertyTypeID(input.PropertyType).
 			Save(ctx)
-
-		if err != nil {
-			return nil, err
-		}
-		return typ, nil
 	}
+	if err != nil {
+		return nil, err
+	}
+	return typ, nil
 }
 
 func (r mutationResolver) RemovePropertyTypeValue(ctx context.Context, id int) (int, error) {

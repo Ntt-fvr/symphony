@@ -223,6 +223,7 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 	return properties, err
 }
 
+// nolint: funlen
 func (r mutationResolver) AddPropertyTypes(ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), inputs []*pkgmodels.PropertyTypeInput) error {
 	var (
 		client   = r.ClientFrom(ctx)

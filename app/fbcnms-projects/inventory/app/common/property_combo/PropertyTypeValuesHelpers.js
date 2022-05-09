@@ -8,7 +8,7 @@
  * @format
  */
 
-import {PropertyTypeValues} from '../../../common/PropertyType';
+import {PropertyTypeValues} from '../PropertyType';
 
 export const getPropertyTypeValuesToReducer = (
   oldPropertyTypeValues: PropertyTypeValues[],
@@ -32,11 +32,11 @@ export const getPropertyTypeValuesToReducer = (
       oldPropertyTypeByRelated,
       dependencePropertyValues,
     );
-    if (differentPropertyTypeValue.parentPropertyTypeValue?.length > 1) {
+    if (differentPropertyTypeValue?.parentPropertyTypeValue?.length > 1) {
       // Delete only a relatedPropertyType
       const newPropertyTypeValue = {
         ...differentPropertyTypeValue,
-        parentPropertyTypeValue: differentPropertyTypeValue.parentPropertyTypeValue.filter(
+        parentPropertyTypeValue: differentPropertyTypeValue?.parentPropertyTypeValue.filter(
           related => related !== parentPropertyTypeValue,
         ),
       };
@@ -87,12 +87,12 @@ export const getPropertyTypeValuesToReducer = (
   }
 };
 
-const getPropertyTypeByRelated: PropertyTypeValues[] = (
+export const getPropertyTypeByRelated: PropertyTypeValues[] = (
   oldPropertyTypeValues: PropertyTypeValues[],
   parentPropertyTypeValue: string,
 ) => {
   return oldPropertyTypeValues.filter(propertyTypeValue =>
-    propertyTypeValue.parentPropertyTypeValue.find(
+    propertyTypeValue?.parentPropertyTypeValue.find(
       related => related === parentPropertyTypeValue,
     ),
   );
