@@ -78,6 +78,30 @@ func (r mutationResolver) AddResourceSpecification(ctx context.Context, input mo
 	return typ, nil
 }
 
+func (r mutationResolver) AddNewResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error) {
+
+	client := r.ClientFrom(ctx)
+	typ, err := client.
+		ResourceSpecification.Create().
+		SetName(input.Name).
+		SetNillableQuantity(input.Quantity).
+		SetResourcetypeID(input.ResourceType).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+		}
+		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	if err := r.AddResourcePropertyType(ctx, func(ptc *ent.ResourcePropertyTypeCreate) {
+		ptc.SetResourceSpecificationID(typ.ID)
+	}, input.ResourcePropertyTypes...); err != nil {
+		return nil, err
+	}
+	return typ, nil
+
+}
+
 func (r mutationResolver) RemoveResourceSpecification(ctx context.Context, id int) (int, error) {
 	client, logger := r.ClientFrom(ctx), r.logger.For(ctx).With(zap.Int("id", id))
 	resourcePropertyTypes, err := client.ResourcePropertyType.Query().

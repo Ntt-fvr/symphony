@@ -15,7 +15,6 @@ import type {PropertyTypesTableState} from './PropertyTypesTableState';
 import {getInitialPropertyType} from './PropertyTypesTableState';
 import {reorder} from '../../../draggable/DraggableUtils';
 import {sortByIndex} from '../../../draggable/DraggableUtils';
-
 export function getInitialState(
   propertyTypes: Array<PropertyType>,
 ): PropertyTypesTableState {
@@ -39,6 +38,16 @@ function editPropertyType<T: PropertyTypesTableState>(
   ];
 }
 
+function removePropertyType<T: PropertyTypesTableState>(
+  state: T,
+  deletedPropertyTypeId: string,
+): T {
+  const newState = state.filter(
+    propertyType => deletedPropertyTypeId !== propertyType.id,
+  );
+  return [...newState];
+}
+
 export function reducer(
   state: PropertyTypesTableState,
   action: PropertyTypeTableDispatcherActionType,
@@ -46,11 +55,13 @@ export function reducer(
   switch (action.type) {
     case 'ADD_PROPERTY_TYPE':
       return [...state, getInitialPropertyType(state.length)];
-    case 'REMOVE_PROPERTY_TYPE':
+    case 'DELETE_PROPERTY_TYPE':
       return editPropertyType(state, action.id, pt => ({
         ...pt,
         isDeleted: true,
       }));
+    case 'REMOVE_PROPERTY_TYPE':
+      return removePropertyType(state, action.id);
     case 'UPDATE_PROPERTY_TYPE_NAME':
       return editPropertyType(state, action.id, pt => ({
         ...pt,
@@ -79,10 +90,21 @@ export function reducer(
           action.sourceIndex,
           action.destinationIndex,
         ).map((p, index) => {
-          return {
-            ...p,
-            index,
-          };
+          return p.dependencePropertyTypes?.length > 0
+            ? {
+                ...p,
+                index,
+                dependencePropertyTypes: p.dependencePropertyTypes.map(
+                  (propertyType, i) => ({
+                    ...propertyType,
+                    index: index + i + 1,
+                  }),
+                ),
+              }
+            : {
+                ...p,
+                index,
+              };
         }),
         ...state.filter(pt => pt.isDeleted),
       ];

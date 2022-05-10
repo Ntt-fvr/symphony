@@ -27,7 +27,7 @@ import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSav
 import Grid from '@material-ui/core/Grid';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
-import PropertyValueInput from '../form/PropertyValueInput';
+import PropertyTypeInput from '../../common/property_combo/PropertyTypeInput';
 import React from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Select from '@symphony/design-system/components/Select/Select';
@@ -131,6 +131,54 @@ const addProjectCard__projectTypeQuery = graphql`
           isInstanceProperty
           isDeleted
           isMandatory
+          parentPropertyType {
+            id
+            name
+          }
+          dependencePropertyTypes {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isMandatory
+            isInstanceProperty
+            isDeleted
+            category
+            parentPropertyType {
+              id
+              name
+            }
+            propertyTypeValues {
+              id
+              isDeleted
+              name
+              parentPropertyTypeValue {
+                id
+                isDeleted
+                name
+              }
+            }
+          }
+          propertyTypeValues {
+            id
+            isDeleted
+            name
+            parentPropertyTypeValue {
+              id
+              isDeleted
+              name
+            }
+          }
         }
       }
     }
@@ -247,27 +295,18 @@ class AddProjectCard extends React.Component<Props, State> {
                         properties
                           .filter(property => !property.propertyType.isDeleted)
                           .map((property, index) => (
-                            <Grid
+                            <PropertyTypeInput
                               key={property.id}
-                              item
-                              xs={12}
-                              sm={6}
-                              lg={4}
-                              xl={4}>
-                              <PropertyValueInput
-                                required={!!property.propertyType.isMandatory}
-                                disabled={
-                                  !property.propertyType.isInstanceProperty
-                                }
-                                headlineVariant="form"
-                                fullWidth={true}
-                                label={property.propertyType.name}
-                                className={classes.gridInput}
-                                inputType="Property"
-                                property={property}
-                                onChange={this._propertyChangedHandler(index)}
-                              />
-                            </Grid>
+                              elementType={project}
+                              property={property}
+                              required={!!property.propertyType.isMandatory}
+                              classes={classes}
+                              properties={project.properties}
+                              index={index}
+                              _propertyChangedHandler={
+                                this._propertyChangedHandler
+                              }
+                            />
                           ))}
                     </Grid>
                   </ExpandingPanel>

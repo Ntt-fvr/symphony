@@ -283,7 +283,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       <Card margins="none">
         <ExpandingPanel title="Properties">
           <PropertyTypesTableDispatcher.Provider
-            value={propertyTypesDispatcher}>
+            value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
             <ExperimentalPropertyTypesTable
               supportDelete={true}
               propertyTypes={propertyTypes}

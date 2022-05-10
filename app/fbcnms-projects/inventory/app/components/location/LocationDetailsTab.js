@@ -13,11 +13,11 @@ import type {Location} from '../../common/Location.js';
 
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
 import DynamicPropertyCategoriesTable from '../DynamicPropertyCategoriesTable';
 import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';
 import React from 'react';
+import ResourceCard from '../resource/ResourceCard';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = $ReadOnly<{|
@@ -25,7 +25,9 @@ type Props = $ReadOnly<{|
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
   onWorkOrderSelected: (workOrderId: string) => void,
+  onResourceSelected: () => void,
   onAddEquipment: () => void,
+  onAddResource: () => void,
 |}>;
 
 const useStyles = makeStyles(_theme => ({
@@ -41,7 +43,9 @@ const LocationDetailsTab = (props: Props) => {
     selectedWorkOrderId,
     onEquipmentSelected,
     onWorkOrderSelected,
+    onResourceSelected,
     onAddEquipment,
+    onAddResource,
   } = props;
 
   const propTypes = location.locationType.propertyTypes;
@@ -51,8 +55,7 @@ const LocationDetailsTab = (props: Props) => {
       <LocationDetailsCard className={classes.card} location={location} />
       <Card className={classes.card}>
         <CardHeader>Properties</CardHeader>
-        <DynamicPropertyCategoriesTable
-        />
+        <DynamicPropertyCategoriesTable />
       </Card>
       <LocationEquipmentCard
         className={classes.card}
@@ -61,6 +64,10 @@ const LocationDetailsTab = (props: Props) => {
         onEquipmentSelected={onEquipmentSelected}
         onWorkOrderSelected={onWorkOrderSelected}
         onAddEquipment={onAddEquipment}
+      />
+      <ResourceCard
+        onResourceSelected={onResourceSelected}
+        onAddResource={onAddResource}
       />
     </div>
   );

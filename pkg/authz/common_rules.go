@@ -9,8 +9,10 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
@@ -58,47 +60,89 @@ func privacyDecision(allowed bool) error {
 }
 
 func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, workOrderTypeID *int, projectTypeID *int, woOrganizationID *int) bool {
-	switch r.IsAllowed {
-	case models.PermissionValueYes:
-		if woOrganizationID != nil {
-			userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
-			if !ok {
-				return false
-			}
+	userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+	if !ok {
+		return false
+	}
+	client := ent.FromContext(ctx)
+	policies, err := client.PermissionsPolicy.Query().
+		Where(
+			permissionspolicy.Or(
+				permissionspolicy.HasGroupsWith(
+					usersgroup.HasMembersWith(user.ID(userViewer.User().ID)),
+					usersgroup.StatusEQ(usersgroup.StatusActive),
+				))).
+		All(ctx)
+	if err != nil {
+		return false
+	}
+	multicontractor := false
 
-			//  uOrg, err := userViewer.User().Organization(ctx)
-			uOrg, err := userViewer.User().QueryOrganization().OnlyID(ctx)
-			if err != nil || uOrg == 0 {
-				return false
-			}
+	for _, policiesint := range policies {
+		if policiesint.IsMulticontractor {
+			multicontractor = true
+		}
+	}
 
-			if uOrg == *woOrganizationID {
+	if multicontractor {
+		switch r.IsAllowed {
+		case models.PermissionValueYes:
+			if woOrganizationID != nil {
+				userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+				if !ok {
+					return false
+				}
+				uOrg, err := userViewer.User().QueryOrganization().OnlyID(ctx)
+				if err != nil {
+					return false
+				}
+				if uOrg == *woOrganizationID {
+					return true
+				}
+			} else {
 				return true
 			}
-			// return false
-		} else {
-			return true
-		}
-	case models.PermissionValueByCondition:
-		if workOrderTypeID != nil {
-			for _, typeID := range r.WorkOrderTypeIds {
-				if typeID == *workOrderTypeID {
-					if woOrganizationID != nil {
-						for _, typeInterID := range r.OrganizationIds {
-							if typeInterID == *woOrganizationID {
-								return true
+		case models.PermissionValueByCondition:
+			if workOrderTypeID != nil {
+				for _, typeID := range r.WorkOrderTypeIds {
+					if typeID == *workOrderTypeID {
+						if woOrganizationID != nil {
+							for _, typeInterID := range r.OrganizationIds {
+								if typeInterID == *woOrganizationID {
+									return true
+								}
 							}
+						} else {
+							return true
 						}
-					} else {
+					}
+				}
+			}
+			if projectTypeID != nil {
+				for _, typeID := range r.ProjectTypeIds {
+					if typeID == *projectTypeID {
 						return true
 					}
 				}
 			}
 		}
-		if projectTypeID != nil {
-			for _, typeID := range r.ProjectTypeIds {
-				if typeID == *projectTypeID {
-					return true
+	} else {
+		switch r.IsAllowed {
+		case models.PermissionValueYes:
+			return true
+		case models.PermissionValueByCondition:
+			if workOrderTypeID != nil {
+				for _, typeID := range r.WorkOrderTypeIds {
+					if typeID == *workOrderTypeID {
+						return true
+					}
+				}
+			}
+			if projectTypeID != nil {
+				for _, typeID := range r.ProjectTypeIds {
+					if typeID == *projectTypeID {
+						return true
+					}
 				}
 			}
 		}
