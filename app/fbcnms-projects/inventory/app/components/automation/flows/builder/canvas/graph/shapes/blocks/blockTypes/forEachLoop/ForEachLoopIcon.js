@@ -15,7 +15,7 @@ type Props = $ReadOnly<{|
   className?: ?string,
 |}>;
 
-const GoToPresentation = (props: Props) => {
+const ForEachPresentation = (props: Props) => {
   return (
     <BaseIcon shape="circle" color="violet" {...props}>
       <g transform="translate(11.000000, 11.000000)">
@@ -30,4 +30,4 @@ const GoToPresentation = (props: Props) => {
   );
 };
 
-export default GoToPresentation;
+export default ForEachPresentation;

@@ -8,7 +8,7 @@
  * @format
  */
 import React, {useState} from 'react';
-import {Box, Grid, Tab, Tabs} from '@material-ui/core';
+import {Box, Tab, Tabs} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 function TabPanel(props) {
   const {children, value, index, ...other} = props;
@@ -19,7 +19,8 @@ function TabPanel(props) {
       hidden={value !== index}
       id={`scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}
-      {...other}>
+      {...other}
+      style={{paddingTop: 55}}>
       {value === index && (
         <Box py={4} px={3}>
           {children}
@@ -44,7 +45,13 @@ const useStyles = makeStyles(theme => ({
       minWidth: 44,
       fontSize: 12,
       textTransform: 'capitalize',
-      padding: '6px 8px',
+      padding: '0px 8px',
+      minHeight: 55,
+    },
+    '& .MuiTabs-root': {
+      position: 'fixed',
+      backgroundColor: theme.palette.common.white + '!important',
+      width: '100%',
     },
     '& .MuiTab-textColorPrimary': {
       color: theme.palette.secondary.dark,
@@ -63,29 +70,27 @@ const TansScrollable = ({tabs, scrollable}) => {
   };
 
   return (
-    <Grid container spacing={4} className={classes.root}>
-      <Grid item xs={12}>
-        <Tabs
-          variant={scrollable ? 'scrollable' : 'standard'}
-          value={activeTab}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          scrollButtons={scrollable ? 'auto' : 'off'}
-          aria-label="scrollable auto tabs example">
-          {tabs.map(({label, index}) => {
-            return <Tab key={index} label={label} {...a11yProps(index)} />;
-          })}
-        </Tabs>
-        {tabs.map(({index, view}) => {
-          return (
-            <TabPanel key={index} value={activeTab} index={index}>
-              {view}
-            </TabPanel>
-          );
+    <div className={classes.root}>
+      <Tabs
+        variant={scrollable ? 'scrollable' : 'standard'}
+        value={activeTab}
+        onChange={handleChange}
+        indicatorColor="primary"
+        textColor="primary"
+        scrollButtons={scrollable ? 'auto' : 'off'}
+        aria-label="scrollable auto tabs example">
+        {tabs.map(({label, index}) => {
+          return <Tab key={index} label={label} {...a11yProps(index)} />;
         })}
-      </Grid>
-    </Grid>
+      </Tabs>
+      {tabs.map(({index, view}) => {
+        return (
+          <TabPanel key={index} value={activeTab} index={index}>
+            {view}
+          </TabPanel>
+        );
+      })}
+    </div>
   );
 };
 

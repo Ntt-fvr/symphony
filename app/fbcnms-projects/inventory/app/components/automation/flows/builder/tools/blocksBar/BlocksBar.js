@@ -19,27 +19,60 @@ import ForEachLoop from '../../canvas/graph/shapes/blocks/blockTypes/forEachLoop
 import GoToBlockType from '../../canvas/graph/shapes/blocks/blockTypes/goTo/GoToBlockType';
 import InvokeRestApiBlockType from '../../canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiBlockType';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
-import ParallelBlockType from '../../canvas/graph/shapes/blocks/blockTypes/Parallel/ParallelBlockType';
+import ParallelBlockType from '../../canvas/graph/shapes/blocks/blockTypes/parallel/ParallelBlockType';
 import Timer from '../../canvas/graph/shapes/blocks/blockTypes/timer/TimerBlockType';
 import TriggerStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartBlockType';
 import TriggerWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerWorkforce/TriggerWorkforceBlockType';
 import UpdateInventoryBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateInventory/UpdateInventoryBlockType';
 import UpdateWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateWorkforce/UpdateWorkforceBlockType';
 import WaitSignalBlockType from '../../canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalBlockType';
+import {BackFlow} from '@symphony/design-system/icons';
 
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Sidebar from '../../../../inputs/Sidebar';
 import fbt from 'fbt';
+import {DARK} from '@symphony/design-system/theme/symphony';
+import {
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
+import {makeStyles} from '@material-ui/styles';
 import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 import {useMemo} from 'react';
+import {useRouter} from '@fbcnms/ui/hooks';
 const drawerWidth = 240;
+
+const useStyles = makeStyles(() => ({
+  root: {
+    '& div[class*="toolbar"]': {
+      borderBottom: `1px solid ${DARK.D100}`,
+    },
+  },
+  list: {
+    '& .MuiListItemIcon-root': {
+      minWidth: 0,
+      paddingRight: 8,
+    },
+    '& .MuiListItem-root': {
+      paddingTop: 12,
+      paddingBottom: 12,
+      borderBottom: `1px solid ${DARK.D100}`,
+    },
+  },
+}));
 
 type Props = $ReadOnly<{|
   title: React.Node,
 |}>;
 
 export default function BlocksBar(props: Props) {
+  const classes = useStyles();
   const {title} = props;
   const flow = useGraph();
+  const {history} = useRouter();
 
   const flowTypes = useMemo(
     () => [
@@ -98,10 +131,36 @@ export default function BlocksBar(props: Props) {
   };
 
   return (
-    <Sidebar
-      drawerWidth={drawerWidth}
-      title={title}
-      children={ListBlocksCategory()}
-    />
+    <div className={classes.root}>
+      <Sidebar
+        drawerWidth={drawerWidth}
+        title={title}
+        children={
+          <div>
+            <List disablePadding className={classes.list}>
+              <ListItem
+                button
+                onClick={() => {
+                  history.push('/automation/flows');
+                }}>
+                <ListItemIcon>
+                  <BackFlow />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Grid item xs zeroMinWidth>
+                      <Typography variant={'caption'} noWrap>
+                        {'Back to flows catalog'}
+                      </Typography>
+                    </Grid>
+                  }
+                />
+              </ListItem>
+            </List>
+            {ListBlocksCategory()}
+          </div>
+        }
+      />
+    </div>
   );
 }

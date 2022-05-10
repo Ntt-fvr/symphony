@@ -17,6 +17,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React from 'react';
+import Tooltip from '../../../inputs/Tooltip';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {Divider} from '@material-ui/core';
 import {DuplicateFlowIcon, EditFlowIcon} from '@symphony/design-system/icons';
@@ -120,12 +121,13 @@ export default function CustomizedMenus() {
 
   return (
     <div className={classes.root}>
-      <IconButton
-        tooltip={'More Actions'}
-        skin={'inherit'}
-        onClick={handleClick}
-        icon={MoreHorizIcon}
-      />
+      <Tooltip tooltip={'More Actions'}>
+        <IconButton
+          skin={'inherit'}
+          onClick={handleClick}
+          icon={MoreHorizIcon}
+        />
+      </Tooltip>
       <StyledMenu
         id="customized-menu"
         anchorEl={anchorEl}
