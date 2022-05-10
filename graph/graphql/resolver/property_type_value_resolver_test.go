@@ -7,7 +7,9 @@ package resolver_test
 import (
 	"context"
 	"testing"
+
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
@@ -52,15 +54,12 @@ func TestAddRemovePropertyTypeValue(t *testing.T) {
 	RemovePropertyTypeValueTest(ctx, t, mr, id1, id2)
 }
 func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
-
 	propertyType := prepareBasicPropertyType(ctx, t, mr)
-
 	propertyTypeValue1, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_1",
 		PropertyType: propertyType.ID,
 	})
 	require.NoError(t, err)
-
 	propertyTypeValue2, err := mr.AddPropertyTypeValue(ctx, pkgmodels.AddPropertyTypeValueInput{
 		Name:         "propertyTypeValue_test_2",
 		PropertyType: propertyType.ID,
@@ -77,7 +76,7 @@ func AddPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.Mu
 
 func EditPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	var deleted = true
-	var Id = 12345
+	var IDTest = 12345
 	_, err := mr.EditPropertyTypeValue(ctx, models.EditPropertyTypeValueInput{
 		ID:        &id1,
 		Name:      "propertyTypeValue_test_1.1",
@@ -85,7 +84,7 @@ func EditPropertyTypeValueTest(ctx context.Context, t *testing.T, mr generated.M
 	})
 	require.NoError(t, err)
 	_, err = mr.EditPropertyTypeValue(ctx, models.EditPropertyTypeValueInput{
-		ID:        &Id,
+		ID:        &IDTest,
 		Name:      "propertyTypeValue_test_1.1",
 		IsDeleted: &deleted,
 	})
@@ -187,5 +186,4 @@ func TestAddPropertyTypeValueWithParentPropertyTypeValue(t *testing.T) {
 		ParentPropertyTypeValue: nil,
 	})
 	require.Error(t, err)
-
 }

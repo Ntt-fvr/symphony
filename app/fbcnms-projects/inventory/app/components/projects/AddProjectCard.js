@@ -295,26 +295,18 @@ class AddProjectCard extends React.Component<Props, State> {
                         properties
                           .filter(property => !property.propertyType.isDeleted)
                           .map((property, index) => (
-                            <Grid
+                            <PropertyTypeInput
                               key={property.id}
-                              item
-                              xs={12}
-                              sm={6}
-                              lg={4}
-                              xl={4}>
-                              <PropertyTypeInput
-                                key={property.id}
-                                elementType={project}
-                                property={property}
-                                required={!!property.propertyType.isMandatory}
-                                classes={classes}
-                                properties={project.properties}
-                                index={index}
-                                _propertyChangedHandler={
-                                  this._propertyChangedHandler
-                                }
-                              />
-                            </Grid>
+                              elementType={project}
+                              property={property}
+                              required={!!property.propertyType.isMandatory}
+                              classes={classes}
+                              properties={project.properties}
+                              index={index}
+                              _propertyChangedHandler={
+                                this._propertyChangedHandler
+                              }
+                            />
                           ))}
                     </Grid>
                   </ExpandingPanel>
