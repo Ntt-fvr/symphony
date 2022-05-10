@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 )
@@ -76,6 +77,21 @@ func (ec *ExecutionCreate) SetNillableUserID(id *int) *ExecutionCreate {
 // SetUser sets the user edge to User.
 func (ec *ExecutionCreate) SetUser(u *User) *ExecutionCreate {
 	return ec.SetUserID(u.ID)
+}
+
+// AddExecutionIDs adds the execution edge to Action by ids.
+func (ec *ExecutionCreate) AddExecutionIDs(ids ...int) *ExecutionCreate {
+	ec.mutation.AddExecutionIDs(ids...)
+	return ec
+}
+
+// AddExecution adds the execution edges to Action.
+func (ec *ExecutionCreate) AddExecution(a ...*Action) *ExecutionCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ec.AddExecutionIDs(ids...)
 }
 
 // Mutation returns the ExecutionMutation object of the builder.
@@ -213,6 +229,25 @@ func (ec *ExecutionCreate) createSpec() (*Execution, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.ExecutionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   execution.ExecutionTable,
+			Columns: []string{execution.ExecutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
 				},
 			},
 		}

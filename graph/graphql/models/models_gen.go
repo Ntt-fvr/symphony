@@ -10,6 +10,7 @@ import (
 
 	models1 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -61,10 +62,29 @@ type ActionBlockInput struct {
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
+type ActionFilterInput struct {
+	FilterType      ActionFilterType    `json:"filterType"`
+	Operator        enum.FilterOperator `json:"operator"`
+	StatusValue     *action.Status      `json:"statusValue"`
+	UserActionValue *action.UserAction  `json:"userActionValue"`
+	StringValue     *string             `json:"stringValue"`
+	IDSet           []int               `json:"idSet"`
+	MaxDepth        *int                `json:"maxDepth"`
+	StringSet       []string            `json:"stringSet"`
+}
+
 type ActivityFilterInput struct {
 	Limit          int                   `json:"limit"`
 	OrderDirection ent.OrderDirection    `json:"orderDirection"`
 	ActivityType   activity.ActivityType `json:"activityType"`
+}
+
+type AddActionInput struct {
+	RuleAction   int               `json:"ruleAction"`
+	Execution    int               `json:"execution"`
+	Status       action.Status     `json:"status"`
+	UserAction   action.UserAction `json:"userAction"`
+	LogExecution string            `json:"logExecution"`
 }
 
 type AddAlarmFilterInput struct {
@@ -740,6 +760,15 @@ type DomainFilterInput struct {
 type DomainInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type EditActionInput struct {
+	ID           int                `json:"id"`
+	RuleAction   *int               `json:"ruleAction"`
+	Execution    *int               `json:"execution"`
+	Status       *action.Status     `json:"status"`
+	UserAction   *action.UserAction `json:"userAction"`
+	LogExecution *string            `json:"logExecution"`
 }
 
 type EditAlarmFilterInput struct {
@@ -2070,6 +2099,49 @@ type WorkOrderExecutionResult struct {
 	EquipmentRemoved []int            `json:"equipmentRemoved"`
 	LinkAdded        []*ent.Link      `json:"linkAdded"`
 	LinkRemoved      []int            `json:"linkRemoved"`
+}
+
+type ActionFilterType string
+
+const (
+	ActionFilterTypeStatus       ActionFilterType = "STATUS"
+	ActionFilterTypeUserAction   ActionFilterType = "USER_ACTION"
+	ActionFilterTypeLogexecution ActionFilterType = "LOGEXECUTION"
+)
+
+var AllActionFilterType = []ActionFilterType{
+	ActionFilterTypeStatus,
+	ActionFilterTypeUserAction,
+	ActionFilterTypeLogexecution,
+}
+
+func (e ActionFilterType) IsValid() bool {
+	switch e {
+	case ActionFilterTypeStatus, ActionFilterTypeUserAction, ActionFilterTypeLogexecution:
+		return true
+	}
+	return false
+}
+
+func (e ActionFilterType) String() string {
+	return string(e)
+}
+
+func (e *ActionFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ActionFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ActionFilterType", str)
+	}
+	return nil
+}
+
+func (e ActionFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type AlarmFilterFilterType string

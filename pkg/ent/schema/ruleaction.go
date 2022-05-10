@@ -36,6 +36,8 @@ func (RuleAction) Edges() []ent.Edge {
 			Ref("reconciliation_rule_rule_action").Unique().Annotations(entgql.OrderField("RECONCILIATION_RULE")),
 		edge.From("ruleactiontemplate", RuleActionTemplate.Type).
 			Ref("rule_action_template_rule_action").Unique().Annotations(entgql.OrderField("RULE_ACTION_TEMPLATE")),
+		edge.To("rule_action", Action.Type).
+			Annotations(entgql.MapsTo("action")),
 	}
 }
 

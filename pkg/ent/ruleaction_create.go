@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
@@ -96,6 +97,21 @@ func (rac *RuleActionCreate) SetNillableRuleactiontemplateID(id *int) *RuleActio
 // SetRuleactiontemplate sets the ruleactiontemplate edge to RuleActionTemplate.
 func (rac *RuleActionCreate) SetRuleactiontemplate(r *RuleActionTemplate) *RuleActionCreate {
 	return rac.SetRuleactiontemplateID(r.ID)
+}
+
+// AddRuleActionIDs adds the rule_action edge to Action by ids.
+func (rac *RuleActionCreate) AddRuleActionIDs(ids ...int) *RuleActionCreate {
+	rac.mutation.AddRuleActionIDs(ids...)
+	return rac
+}
+
+// AddRuleAction adds the rule_action edges to Action.
+func (rac *RuleActionCreate) AddRuleAction(a ...*Action) *RuleActionCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return rac.AddRuleActionIDs(ids...)
 }
 
 // Mutation returns the RuleActionMutation object of the builder.
@@ -257,6 +273,25 @@ func (rac *RuleActionCreate) createSpec() (*RuleAction, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: ruleactiontemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rac.mutation.RuleActionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleaction.RuleActionTable,
+			Columns: []string{ruleaction.RuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
 				},
 			},
 		}

@@ -523,7 +523,27 @@ func (r queryResolver) Executions(
 		)
 }
 
-func (r queryResolver) Ruleactiontemplates(
+func (r queryResolver) Actions(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.ActionOrder,
+	filterBy []*models.ActionFilterInput,
+) (*ent.ActionConnection, error) {
+	return r.ClientFrom(ctx).
+		Action.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithActionOrder(orderBy),
+			ent.WithActionFilter(
+				func(query *ent.ActionQuery) (*ent.ActionQuery, error) {
+					return resolverutil.ActionFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) RuleActionTemplates(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
@@ -543,7 +563,7 @@ func (r queryResolver) Ruleactiontemplates(
 		)
 }
 
-func (r queryResolver) Ruleactions(
+func (r queryResolver) RuleActions(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,

@@ -13,6 +13,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
@@ -125,6 +126,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Action is the client for interacting with the Action builders.
+	Action *ActionClient
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
 	// AlarmFilter is the client for interacting with the AlarmFilter builders.
@@ -342,6 +345,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Action = NewActionClient(c.config)
 	c.Activity = NewActivityClient(c.config)
 	c.AlarmFilter = NewAlarmFilterClient(c.config)
 	c.AlarmStatus = NewAlarmStatusClient(c.config)
@@ -475,6 +479,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                               ctx,
 		config:                            cfg,
+		Action:                            NewActionClient(cfg),
 		Activity:                          NewActivityClient(cfg),
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),
@@ -591,6 +596,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := config{driver: &txDriver{tx: tx, drv: c.driver}, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
 		config:                            cfg,
+		Action:                            NewActionClient(cfg),
 		Activity:                          NewActivityClient(cfg),
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),
@@ -698,7 +704,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Activity.
+//		Action.
 //		Query().
 //		Count(ctx)
 //
@@ -720,6 +726,7 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Action.Use(hooks...)
 	c.Activity.Use(hooks...)
 	c.AlarmFilter.Use(hooks...)
 	c.AlarmStatus.Use(hooks...)
@@ -821,6 +828,127 @@ func (c *Client) Use(hooks ...Hook) {
 	c.WorkOrderTemplate.Use(hooks...)
 	c.WorkOrderType.Use(hooks...)
 	c.WorkerType.Use(hooks...)
+}
+
+// ActionClient is a client for the Action schema.
+type ActionClient struct {
+	config
+}
+
+// NewActionClient returns a client for the Action from the given config.
+func NewActionClient(c config) *ActionClient {
+	return &ActionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `action.Hooks(f(g(h())))`.
+func (c *ActionClient) Use(hooks ...Hook) {
+	c.hooks.Action = append(c.hooks.Action, hooks...)
+}
+
+// Create returns a create builder for Action.
+func (c *ActionClient) Create() *ActionCreate {
+	mutation := newActionMutation(c.config, OpCreate)
+	return &ActionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Action entities.
+func (c *ActionClient) CreateBulk(builders ...*ActionCreate) *ActionCreateBulk {
+	return &ActionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Action.
+func (c *ActionClient) Update() *ActionUpdate {
+	mutation := newActionMutation(c.config, OpUpdate)
+	return &ActionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ActionClient) UpdateOne(a *Action) *ActionUpdateOne {
+	mutation := newActionMutation(c.config, OpUpdateOne, withAction(a))
+	return &ActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ActionClient) UpdateOneID(id int) *ActionUpdateOne {
+	mutation := newActionMutation(c.config, OpUpdateOne, withActionID(id))
+	return &ActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Action.
+func (c *ActionClient) Delete() *ActionDelete {
+	mutation := newActionMutation(c.config, OpDelete)
+	return &ActionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ActionClient) DeleteOne(a *Action) *ActionDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ActionClient) DeleteOneID(id int) *ActionDeleteOne {
+	builder := c.Delete().Where(action.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ActionDeleteOne{builder}
+}
+
+// Query returns a query builder for Action.
+func (c *ActionClient) Query() *ActionQuery {
+	return &ActionQuery{config: c.config}
+}
+
+// Get returns a Action entity by its id.
+func (c *ActionClient) Get(ctx context.Context, id int) (*Action, error) {
+	return c.Query().Where(action.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ActionClient) GetX(ctx context.Context, id int) *Action {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryExecution queries the execution edge of a Action.
+func (c *ActionClient) QueryExecution(a *Action) *ExecutionQuery {
+	query := &ExecutionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(action.Table, action.FieldID, id),
+			sqlgraph.To(execution.Table, execution.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, action.ExecutionTable, action.ExecutionColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRuleaction queries the ruleaction edge of a Action.
+func (c *ActionClient) QueryRuleaction(a *Action) *RuleActionQuery {
+	query := &RuleActionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(action.Table, action.FieldID, id),
+			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, action.RuleactionTable, action.RuleactionColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ActionClient) Hooks() []Hook {
+	hooks := c.hooks.Action
+	return append(hooks[:len(hooks):len(hooks)], action.Hooks[:]...)
 }
 
 // ActivityClient is a client for the Activity schema.
@@ -4735,6 +4863,22 @@ func (c *ExecutionClient) QueryUser(e *Execution) *UserQuery {
 			sqlgraph.From(execution.Table, execution.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, execution.UserTable, execution.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExecution queries the execution edge of a Execution.
+func (c *ExecutionClient) QueryExecution(e *Execution) *ActionQuery {
+	query := &ActionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(execution.Table, execution.FieldID, id),
+			sqlgraph.To(action.Table, action.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, execution.ExecutionTable, execution.ExecutionColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -11768,6 +11912,22 @@ func (c *RuleActionClient) QueryRuleactiontemplate(ra *RuleAction) *RuleActionTe
 			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, id),
 			sqlgraph.To(ruleactiontemplate.Table, ruleactiontemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ruleaction.RuleactiontemplateTable, ruleaction.RuleactiontemplateColumn),
+		)
+		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRuleAction queries the rule_action edge of a RuleAction.
+func (c *RuleActionClient) QueryRuleAction(ra *RuleAction) *ActionQuery {
+	query := &ActionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ra.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, id),
+			sqlgraph.To(action.Table, action.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ruleaction.RuleActionTable, ruleaction.RuleActionColumn),
 		)
 		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
 		return fromV, nil

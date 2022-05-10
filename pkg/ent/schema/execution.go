@@ -32,6 +32,8 @@ func (Execution) Edges() []ent.Edge {
 		edge.From("user", User.Type).
 			Ref("User").
 			Unique().Annotations(entgql.OrderField("USER")),
+		edge.To("execution", Action.Type).
+			Annotations(entgql.MapsTo("action")),
 	}
 }
 

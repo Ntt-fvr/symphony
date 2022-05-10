@@ -3431,6 +3431,83 @@ type ExecutionEdge {
 }
 
 """
+Properties by which Action connections can be ordered.
+"""
+enum ActionOrderField {
+  """
+  Order Action by Status.
+  """
+  STATUS
+  
+  """
+  Order Action by UserAction.
+  """
+  USER_ACTION
+
+  """
+  Order Action by LogExecution.
+  """
+  LOGEXECUTION
+
+  """
+  Order Action by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Action by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Action connections.
+"""
+input ActionOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Action by.
+  """
+  field: ActionOrderField
+}
+
+"""
+A connection to a list of Action.
+"""
+type ActionConnection {
+  """
+  Total Action of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Action edges.
+  """
+  edges: [ActionEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Action edge in a connection.
+"""
+type ActionEdge {
+  """
+  The Action at the end of the edge.
+  """
+  node: Action
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
 Properties by which ruleactiontemplates connections can be ordered.
 """
 enum RuleActionTemplateOrderField {
@@ -7299,10 +7376,10 @@ type Query {
     filterBy: [ExecutionFilterInput!]
   ): ExecutionConnection!
 
+"""
+  A list of actions.
   """
-  A list of ruleactiontemplates.
-  """
-  ruleactiontemplates(
+  actions(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7324,20 +7401,54 @@ type Query {
     last: Int @numberValue(min: 0)
 
     """
-    Ordering options for the returned ruleactiontemplates.
+    Ordering options for the returned actions.
+    """
+    orderBy: ActionOrder
+    
+    #Filtering options for the returned actions.
+    
+    filterBy: [ActionFilterInput!]
+  ): ActionConnection!
+
+  """
+  A list of ruleActionTemplates.
+  """
+  ruleActionTemplates(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned ruleActionTemplates.
     """
     orderBy: RuleActionTemplateOrder
 
     """
-    Filtering options for the returned ruleactiontemplates.
+    Filtering options for the returned ruleActionTemplates.
     """
     filterBy: [RuleActionTemplateFilterInput!]
   ): RuleActionTemplateConnection!
 
   """
-  A list of ruleactions.
+  A list of ruleActions.
   """
-  ruleactions(
+  ruleActions(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7359,12 +7470,12 @@ type Query {
     last: Int @numberValue(min: 0)
 
     """
-    Ordering options for the returned ruleactions.
+    Ordering options for the returned ruleActions.
     """
     orderBy: RuleActionOrder
 
     """
-    Filtering options for the returned ruleactions.
+    Filtering options for the returned ruleActions.
     """
     filterBy: [RuleActionFilterInput!]
   ): RuleActionConnection!
@@ -8491,6 +8602,9 @@ type Mutation {
   addExecution(input: AddExecutionInput!):Execution!
   editExecution(input: EditExecutionInput!): Execution!
   removeExecution(id: ID!): ID!
+  addAction(input: AddActionInput!):Action!
+  editAction(input: EditActionInput!): Action!
+  removeAction(id: ID!): ID!
   addRuleActionTemplate(input: AddRuleActionTemplateInput!):RuleActionTemplate!
   EditRuleActionTemplate(input: EditRuleActionTemplateInput!): RuleActionTemplate!
   removeRuleActionTemplate(id: ID!): ID!
@@ -8737,6 +8851,67 @@ input ExecutionFilterInput {
   filterType: ExecutionFilterType!
   operator: FilterOperator!
   timeValue: Time
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+enum StatusKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/action.Status"
+  ) {
+  PENDING
+	SUCCESFUL
+	FAILED
+}
+
+enum UserActionKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/action.UserAction"
+  ) {
+  CONFIRM
+	IGNORE
+	ALARM
+}
+
+type Action implements Node {
+  id: ID!
+  ruleAction: RuleAction!
+  execution: Execution!
+  status: StatusKind!
+  userAction: UserActionKind!
+  logExecution: String!
+}
+
+input AddActionInput {  
+  ruleAction: ID!
+  execution: ID!
+  status: StatusKind!
+  userAction: UserActionKind!
+  logExecution: String!
+}
+
+input EditActionInput {
+  id: ID!
+  ruleAction: ID
+  execution: ID
+  status: StatusKind
+  userAction: UserActionKind
+  logExecution: String
+}
+
+enum ActionFilterType {
+  STATUS
+  USER_ACTION
+  LOGEXECUTION
+}
+
+input ActionFilterInput {
+  filterType: ActionFilterType!
+  operator: FilterOperator!
+  statusValue: StatusKind
+  userActionValue: UserActionKind
+  stringValue: String
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]

@@ -10,6 +10,9 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 )
 
+// Action is the predicate function for action builders.
+type Action func(*sql.Selector)
+
 // Activity is the predicate function for activity builders.
 type Activity func(*sql.Selector)
 

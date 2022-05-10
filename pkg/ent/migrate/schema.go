@@ -12,6 +12,39 @@ import (
 )
 
 var (
+	// ActionsColumns holds the columns for the "actions" table.
+	ActionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "SUCCESFUL", "FAILED"}},
+		{Name: "user_action", Type: field.TypeEnum, Enums: []string{"CONFIRM", "IGNORE", "ALARM"}},
+		{Name: "log_execution", Type: field.TypeString, Unique: true},
+		{Name: "execution_execution", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_action_rule_action", Type: field.TypeInt, Nullable: true},
+	}
+	// ActionsTable holds the schema information for the "actions" table.
+	ActionsTable = &schema.Table{
+		Name:       "actions",
+		Columns:    ActionsColumns,
+		PrimaryKey: []*schema.Column{ActionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "actions_executions_execution",
+				Columns: []*schema.Column{ActionsColumns[6]},
+
+				RefColumns: []*schema.Column{ExecutionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "actions_rule_actions_rule_action",
+				Columns: []*schema.Column{ActionsColumns[7]},
+
+				RefColumns: []*schema.Column{RuleActionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// ActivitiesColumns holds the columns for the "activities" table.
 	ActivitiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3684,6 +3717,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		ActionsTable,
 		ActivitiesTable,
 		AlarmFiltersTable,
 		AlarmStatusTable,
@@ -3801,6 +3835,8 @@ var (
 )
 
 func init() {
+	ActionsTable.ForeignKeys[0].RefTable = ExecutionsTable
+	ActionsTable.ForeignKeys[1].RefTable = RuleActionsTable
 	ActivitiesTable.ForeignKeys[0].RefTable = UsersTable
 	ActivitiesTable.ForeignKeys[1].RefTable = WorkOrdersTable
 	AlarmFiltersTable.ForeignKeys[0].RefTable = AlarmStatusTable

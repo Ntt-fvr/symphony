@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
@@ -130,6 +131,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeAction                            = "Action"
 	TypeActivity                          = "Activity"
 	TypeAlarmFilter                       = "AlarmFilter"
 	TypeAlarmStatus                       = "AlarmStatus"
@@ -232,6 +234,648 @@ const (
 	TypeWorkOrderType                     = "WorkOrderType"
 	TypeWorkerType                        = "WorkerType"
 )
+
+// ActionMutation represents an operation that mutate the Actions
+// nodes in the graph.
+type ActionMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int
+	create_time       *time.Time
+	update_time       *time.Time
+	_Status           *action.Status
+	_UserAction       *action.UserAction
+	logExecution      *string
+	clearedFields     map[string]struct{}
+	execution         *int
+	clearedexecution  bool
+	ruleaction        *int
+	clearedruleaction bool
+	done              bool
+	oldValue          func(context.Context) (*Action, error)
+	predicates        []predicate.Action
+}
+
+var _ ent.Mutation = (*ActionMutation)(nil)
+
+// actionOption allows to manage the mutation configuration using functional options.
+type actionOption func(*ActionMutation)
+
+// newActionMutation creates new mutation for Action.
+func newActionMutation(c config, op Op, opts ...actionOption) *ActionMutation {
+	m := &ActionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAction,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withActionID sets the id field of the mutation.
+func withActionID(id int) actionOption {
+	return func(m *ActionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Action
+		)
+		m.oldValue = func(ctx context.Context) (*Action, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Action.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAction sets the old Action of the mutation.
+func withAction(node *Action) actionOption {
+	return func(m *ActionMutation) {
+		m.oldValue = func(context.Context) (*Action, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ActionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ActionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ActionMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ActionMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ActionMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the Action.
+// If the Action object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ActionMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ActionMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ActionMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ActionMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the Action.
+// If the Action object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ActionMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ActionMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetStatus sets the Status field.
+func (m *ActionMutation) SetStatus(a action.Status) {
+	m._Status = &a
+}
+
+// Status returns the Status value in the mutation.
+func (m *ActionMutation) Status() (r action.Status, exists bool) {
+	v := m._Status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old Status value of the Action.
+// If the Action object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ActionMutation) OldStatus(ctx context.Context) (v action.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "Status" field.
+func (m *ActionMutation) ResetStatus() {
+	m._Status = nil
+}
+
+// SetUserAction sets the UserAction field.
+func (m *ActionMutation) SetUserAction(aa action.UserAction) {
+	m._UserAction = &aa
+}
+
+// UserAction returns the UserAction value in the mutation.
+func (m *ActionMutation) UserAction() (r action.UserAction, exists bool) {
+	v := m._UserAction
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserAction returns the old UserAction value of the Action.
+// If the Action object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ActionMutation) OldUserAction(ctx context.Context) (v action.UserAction, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUserAction is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUserAction requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserAction: %w", err)
+	}
+	return oldValue.UserAction, nil
+}
+
+// ResetUserAction reset all changes of the "UserAction" field.
+func (m *ActionMutation) ResetUserAction() {
+	m._UserAction = nil
+}
+
+// SetLogExecution sets the logExecution field.
+func (m *ActionMutation) SetLogExecution(s string) {
+	m.logExecution = &s
+}
+
+// LogExecution returns the logExecution value in the mutation.
+func (m *ActionMutation) LogExecution() (r string, exists bool) {
+	v := m.logExecution
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogExecution returns the old logExecution value of the Action.
+// If the Action object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ActionMutation) OldLogExecution(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLogExecution is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLogExecution requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogExecution: %w", err)
+	}
+	return oldValue.LogExecution, nil
+}
+
+// ResetLogExecution reset all changes of the "logExecution" field.
+func (m *ActionMutation) ResetLogExecution() {
+	m.logExecution = nil
+}
+
+// SetExecutionID sets the execution edge to Execution by id.
+func (m *ActionMutation) SetExecutionID(id int) {
+	m.execution = &id
+}
+
+// ClearExecution clears the execution edge to Execution.
+func (m *ActionMutation) ClearExecution() {
+	m.clearedexecution = true
+}
+
+// ExecutionCleared returns if the edge execution was cleared.
+func (m *ActionMutation) ExecutionCleared() bool {
+	return m.clearedexecution
+}
+
+// ExecutionID returns the execution id in the mutation.
+func (m *ActionMutation) ExecutionID() (id int, exists bool) {
+	if m.execution != nil {
+		return *m.execution, true
+	}
+	return
+}
+
+// ExecutionIDs returns the execution ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ExecutionID instead. It exists only for internal usage by the builders.
+func (m *ActionMutation) ExecutionIDs() (ids []int) {
+	if id := m.execution; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetExecution reset all changes of the "execution" edge.
+func (m *ActionMutation) ResetExecution() {
+	m.execution = nil
+	m.clearedexecution = false
+}
+
+// SetRuleactionID sets the ruleaction edge to RuleAction by id.
+func (m *ActionMutation) SetRuleactionID(id int) {
+	m.ruleaction = &id
+}
+
+// ClearRuleaction clears the ruleaction edge to RuleAction.
+func (m *ActionMutation) ClearRuleaction() {
+	m.clearedruleaction = true
+}
+
+// RuleactionCleared returns if the edge ruleaction was cleared.
+func (m *ActionMutation) RuleactionCleared() bool {
+	return m.clearedruleaction
+}
+
+// RuleactionID returns the ruleaction id in the mutation.
+func (m *ActionMutation) RuleactionID() (id int, exists bool) {
+	if m.ruleaction != nil {
+		return *m.ruleaction, true
+	}
+	return
+}
+
+// RuleactionIDs returns the ruleaction ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// RuleactionID instead. It exists only for internal usage by the builders.
+func (m *ActionMutation) RuleactionIDs() (ids []int) {
+	if id := m.ruleaction; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRuleaction reset all changes of the "ruleaction" edge.
+func (m *ActionMutation) ResetRuleaction() {
+	m.ruleaction = nil
+	m.clearedruleaction = false
+}
+
+// Op returns the operation name.
+func (m *ActionMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Action).
+func (m *ActionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ActionMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, action.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, action.FieldUpdateTime)
+	}
+	if m._Status != nil {
+		fields = append(fields, action.FieldStatus)
+	}
+	if m._UserAction != nil {
+		fields = append(fields, action.FieldUserAction)
+	}
+	if m.logExecution != nil {
+		fields = append(fields, action.FieldLogExecution)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ActionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case action.FieldCreateTime:
+		return m.CreateTime()
+	case action.FieldUpdateTime:
+		return m.UpdateTime()
+	case action.FieldStatus:
+		return m.Status()
+	case action.FieldUserAction:
+		return m.UserAction()
+	case action.FieldLogExecution:
+		return m.LogExecution()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ActionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case action.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case action.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case action.FieldStatus:
+		return m.OldStatus(ctx)
+	case action.FieldUserAction:
+		return m.OldUserAction(ctx)
+	case action.FieldLogExecution:
+		return m.OldLogExecution(ctx)
+	}
+	return nil, fmt.Errorf("unknown Action field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ActionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case action.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case action.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case action.FieldStatus:
+		v, ok := value.(action.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case action.FieldUserAction:
+		v, ok := value.(action.UserAction)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserAction(v)
+		return nil
+	case action.FieldLogExecution:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogExecution(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Action field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ActionMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ActionMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ActionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Action numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ActionMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ActionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ActionMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Action nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ActionMutation) ResetField(name string) error {
+	switch name {
+	case action.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case action.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case action.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case action.FieldUserAction:
+		m.ResetUserAction()
+		return nil
+	case action.FieldLogExecution:
+		m.ResetLogExecution()
+		return nil
+	}
+	return fmt.Errorf("unknown Action field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ActionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.execution != nil {
+		edges = append(edges, action.EdgeExecution)
+	}
+	if m.ruleaction != nil {
+		edges = append(edges, action.EdgeRuleaction)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ActionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case action.EdgeExecution:
+		if id := m.execution; id != nil {
+			return []ent.Value{*id}
+		}
+	case action.EdgeRuleaction:
+		if id := m.ruleaction; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ActionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ActionMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ActionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedexecution {
+		edges = append(edges, action.EdgeExecution)
+	}
+	if m.clearedruleaction {
+		edges = append(edges, action.EdgeRuleaction)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ActionMutation) EdgeCleared(name string) bool {
+	switch name {
+	case action.EdgeExecution:
+		return m.clearedexecution
+	case action.EdgeRuleaction:
+		return m.clearedruleaction
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ActionMutation) ClearEdge(name string) error {
+	switch name {
+	case action.EdgeExecution:
+		m.ClearExecution()
+		return nil
+	case action.EdgeRuleaction:
+		m.ClearRuleaction()
+		return nil
+	}
+	return fmt.Errorf("unknown Action unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ActionMutation) ResetEdge(name string) error {
+	switch name {
+	case action.EdgeExecution:
+		m.ResetExecution()
+		return nil
+	case action.EdgeRuleaction:
+		m.ResetRuleaction()
+		return nil
+	}
+	return fmt.Errorf("unknown Action edge %s", name)
+}
 
 // ActivityMutation represents an operation that mutate the Activities
 // nodes in the graph.
@@ -21682,6 +22326,9 @@ type ExecutionMutation struct {
 	clearedFields      map[string]struct{}
 	user               *int
 	cleareduser        bool
+	execution          map[int]struct{}
+	removedexecution   map[int]struct{}
+	clearedexecution   bool
 	done               bool
 	oldValue           func(context.Context) (*Execution, error)
 	predicates         []predicate.Execution
@@ -21916,6 +22563,59 @@ func (m *ExecutionMutation) ResetUser() {
 	m.cleareduser = false
 }
 
+// AddExecutionIDs adds the execution edge to Action by ids.
+func (m *ExecutionMutation) AddExecutionIDs(ids ...int) {
+	if m.execution == nil {
+		m.execution = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.execution[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExecution clears the execution edge to Action.
+func (m *ExecutionMutation) ClearExecution() {
+	m.clearedexecution = true
+}
+
+// ExecutionCleared returns if the edge execution was cleared.
+func (m *ExecutionMutation) ExecutionCleared() bool {
+	return m.clearedexecution
+}
+
+// RemoveExecutionIDs removes the execution edge to Action by ids.
+func (m *ExecutionMutation) RemoveExecutionIDs(ids ...int) {
+	if m.removedexecution == nil {
+		m.removedexecution = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedexecution[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExecution returns the removed ids of execution.
+func (m *ExecutionMutation) RemovedExecutionIDs() (ids []int) {
+	for id := range m.removedexecution {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExecutionIDs returns the execution ids in the mutation.
+func (m *ExecutionMutation) ExecutionIDs() (ids []int) {
+	for id := range m.execution {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExecution reset all changes of the "execution" edge.
+func (m *ExecutionMutation) ResetExecution() {
+	m.execution = nil
+	m.clearedexecution = false
+	m.removedexecution = nil
+}
+
 // Op returns the operation name.
 func (m *ExecutionMutation) Op() Op {
 	return m.op
@@ -22065,9 +22765,12 @@ func (m *ExecutionMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ExecutionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.user != nil {
 		edges = append(edges, execution.EdgeUser)
+	}
+	if m.execution != nil {
+		edges = append(edges, execution.EdgeExecution)
 	}
 	return edges
 }
@@ -22080,6 +22783,12 @@ func (m *ExecutionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
+	case execution.EdgeExecution:
+		ids := make([]ent.Value, 0, len(m.execution))
+		for id := range m.execution {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -22087,7 +22796,10 @@ func (m *ExecutionMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ExecutionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removedexecution != nil {
+		edges = append(edges, execution.EdgeExecution)
+	}
 	return edges
 }
 
@@ -22095,6 +22807,12 @@ func (m *ExecutionMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *ExecutionMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case execution.EdgeExecution:
+		ids := make([]ent.Value, 0, len(m.removedexecution))
+		for id := range m.removedexecution {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -22102,9 +22820,12 @@ func (m *ExecutionMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ExecutionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareduser {
 		edges = append(edges, execution.EdgeUser)
+	}
+	if m.clearedexecution {
+		edges = append(edges, execution.EdgeExecution)
 	}
 	return edges
 }
@@ -22115,6 +22836,8 @@ func (m *ExecutionMutation) EdgeCleared(name string) bool {
 	switch name {
 	case execution.EdgeUser:
 		return m.cleareduser
+	case execution.EdgeExecution:
+		return m.clearedexecution
 	}
 	return false
 }
@@ -22137,6 +22860,9 @@ func (m *ExecutionMutation) ResetEdge(name string) error {
 	switch name {
 	case execution.EdgeUser:
 		m.ResetUser()
+		return nil
+	case execution.EdgeExecution:
+		m.ResetExecution()
 		return nil
 	}
 	return fmt.Errorf("unknown Execution edge %s", name)
@@ -64273,6 +64999,9 @@ type RuleActionMutation struct {
 	clearedreconciliationrule bool
 	ruleactiontemplate        *int
 	clearedruleactiontemplate bool
+	rule_action               map[int]struct{}
+	removedrule_action        map[int]struct{}
+	clearedrule_action        bool
 	done                      bool
 	oldValue                  func(context.Context) (*RuleAction, error)
 	predicates                []predicate.RuleAction
@@ -64546,6 +65275,59 @@ func (m *RuleActionMutation) ResetRuleactiontemplate() {
 	m.clearedruleactiontemplate = false
 }
 
+// AddRuleActionIDs adds the rule_action edge to Action by ids.
+func (m *RuleActionMutation) AddRuleActionIDs(ids ...int) {
+	if m.rule_action == nil {
+		m.rule_action = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.rule_action[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRuleAction clears the rule_action edge to Action.
+func (m *RuleActionMutation) ClearRuleAction() {
+	m.clearedrule_action = true
+}
+
+// RuleActionCleared returns if the edge rule_action was cleared.
+func (m *RuleActionMutation) RuleActionCleared() bool {
+	return m.clearedrule_action
+}
+
+// RemoveRuleActionIDs removes the rule_action edge to Action by ids.
+func (m *RuleActionMutation) RemoveRuleActionIDs(ids ...int) {
+	if m.removedrule_action == nil {
+		m.removedrule_action = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedrule_action[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRuleAction returns the removed ids of rule_action.
+func (m *RuleActionMutation) RemovedRuleActionIDs() (ids []int) {
+	for id := range m.removedrule_action {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RuleActionIDs returns the rule_action ids in the mutation.
+func (m *RuleActionMutation) RuleActionIDs() (ids []int) {
+	for id := range m.rule_action {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRuleAction reset all changes of the "rule_action" edge.
+func (m *RuleActionMutation) ResetRuleAction() {
+	m.rule_action = nil
+	m.clearedrule_action = false
+	m.removedrule_action = nil
+}
+
 // Op returns the operation name.
 func (m *RuleActionMutation) Op() Op {
 	return m.op
@@ -64695,12 +65477,15 @@ func (m *RuleActionMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *RuleActionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.reconciliationrule != nil {
 		edges = append(edges, ruleaction.EdgeReconciliationrule)
 	}
 	if m.ruleactiontemplate != nil {
 		edges = append(edges, ruleaction.EdgeRuleactiontemplate)
+	}
+	if m.rule_action != nil {
+		edges = append(edges, ruleaction.EdgeRuleAction)
 	}
 	return edges
 }
@@ -64717,6 +65502,12 @@ func (m *RuleActionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.ruleactiontemplate; id != nil {
 			return []ent.Value{*id}
 		}
+	case ruleaction.EdgeRuleAction:
+		ids := make([]ent.Value, 0, len(m.rule_action))
+		for id := range m.rule_action {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -64724,7 +65515,10 @@ func (m *RuleActionMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *RuleActionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.removedrule_action != nil {
+		edges = append(edges, ruleaction.EdgeRuleAction)
+	}
 	return edges
 }
 
@@ -64732,6 +65526,12 @@ func (m *RuleActionMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *RuleActionMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case ruleaction.EdgeRuleAction:
+		ids := make([]ent.Value, 0, len(m.removedrule_action))
+		for id := range m.removedrule_action {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -64739,12 +65539,15 @@ func (m *RuleActionMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *RuleActionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedreconciliationrule {
 		edges = append(edges, ruleaction.EdgeReconciliationrule)
 	}
 	if m.clearedruleactiontemplate {
 		edges = append(edges, ruleaction.EdgeRuleactiontemplate)
+	}
+	if m.clearedrule_action {
+		edges = append(edges, ruleaction.EdgeRuleAction)
 	}
 	return edges
 }
@@ -64757,6 +65560,8 @@ func (m *RuleActionMutation) EdgeCleared(name string) bool {
 		return m.clearedreconciliationrule
 	case ruleaction.EdgeRuleactiontemplate:
 		return m.clearedruleactiontemplate
+	case ruleaction.EdgeRuleAction:
+		return m.clearedrule_action
 	}
 	return false
 }
@@ -64785,6 +65590,9 @@ func (m *RuleActionMutation) ResetEdge(name string) error {
 		return nil
 	case ruleaction.EdgeRuleactiontemplate:
 		m.ResetRuleactiontemplate()
+		return nil
+	case ruleaction.EdgeRuleAction:
+		m.ResetRuleAction()
 		return nil
 	}
 	return fmt.Errorf("unknown RuleAction edge %s", name)

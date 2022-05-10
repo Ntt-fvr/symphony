@@ -88,10 +88,13 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Executions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ExecutionOrder, _ []*models.ExecutionFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.Ruleactiontemplates = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleActionTemplateOrder, _ []*models.RuleActionTemplateFilterInput) int {
+	complexity.Query.Actions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ActionOrder, _ []*models.ActionFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.Ruleactions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleActionOrder, _ []*models.RuleActionFilterInput) int {
+	complexity.Query.RuleActionTemplates = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleActionTemplateOrder, _ []*models.RuleActionTemplateFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.RuleActions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleActionOrder, _ []*models.RuleActionFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.Counters = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterOrder, _ []*models.CounterFilterInput) int {

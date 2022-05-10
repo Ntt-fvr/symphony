@@ -22,6 +22,7 @@ func (c *Client) ReadOnly() *Client {
 	return &Client{
 		config:                            cfg,
 		Schema:                            migrate.NewSchema(cfg.driver),
+		Action:                            NewActionClient(cfg),
 		Activity:                          NewActivityClient(cfg),
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),

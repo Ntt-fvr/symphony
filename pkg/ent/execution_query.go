@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -15,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -29,8 +31,9 @@ type ExecutionQuery struct {
 	unique     []string
 	predicates []predicate.Execution
 	// eager-loading edges.
-	withUser *UserQuery
-	withFKs  bool
+	withUser      *UserQuery
+	withExecution *ActionQuery
+	withFKs       bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +78,28 @@ func (eq *ExecutionQuery) QueryUser() *UserQuery {
 			sqlgraph.From(execution.Table, execution.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, execution.UserTable, execution.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExecution chains the current query on the execution edge.
+func (eq *ExecutionQuery) QueryExecution() *ActionQuery {
+	query := &ActionQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(execution.Table, execution.FieldID, selector),
+			sqlgraph.To(action.Table, action.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, execution.ExecutionTable, execution.ExecutionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -252,13 +277,14 @@ func (eq *ExecutionQuery) Clone() *ExecutionQuery {
 		return nil
 	}
 	return &ExecutionQuery{
-		config:     eq.config,
-		limit:      eq.limit,
-		offset:     eq.offset,
-		order:      append([]OrderFunc{}, eq.order...),
-		unique:     append([]string{}, eq.unique...),
-		predicates: append([]predicate.Execution{}, eq.predicates...),
-		withUser:   eq.withUser.Clone(),
+		config:        eq.config,
+		limit:         eq.limit,
+		offset:        eq.offset,
+		order:         append([]OrderFunc{}, eq.order...),
+		unique:        append([]string{}, eq.unique...),
+		predicates:    append([]predicate.Execution{}, eq.predicates...),
+		withUser:      eq.withUser.Clone(),
+		withExecution: eq.withExecution.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
 		path: eq.path,
@@ -273,6 +299,17 @@ func (eq *ExecutionQuery) WithUser(opts ...func(*UserQuery)) *ExecutionQuery {
 		opt(query)
 	}
 	eq.withUser = query
+	return eq
+}
+
+//  WithExecution tells the query-builder to eager-loads the nodes that are connected to
+// the "execution" edge. The optional arguments used to configure the query builder of the edge.
+func (eq *ExecutionQuery) WithExecution(opts ...func(*ActionQuery)) *ExecutionQuery {
+	query := &ActionQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withExecution = query
 	return eq
 }
 
@@ -346,8 +383,9 @@ func (eq *ExecutionQuery) sqlAll(ctx context.Context) ([]*Execution, error) {
 		nodes       = []*Execution{}
 		withFKs     = eq.withFKs
 		_spec       = eq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			eq.withUser != nil,
+			eq.withExecution != nil,
 		}
 	)
 	if eq.withUser != nil {
@@ -402,6 +440,35 @@ func (eq *ExecutionQuery) sqlAll(ctx context.Context) ([]*Execution, error) {
 			for i := range nodes {
 				nodes[i].Edges.User = n
 			}
+		}
+	}
+
+	if query := eq.withExecution; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Execution)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Execution = []*Action{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Action(func(s *sql.Selector) {
+			s.Where(sql.InValues(execution.ExecutionColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.execution_execution
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "execution_execution" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "execution_execution" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Execution = append(node.Edges.Execution, n)
 		}
 	}
 

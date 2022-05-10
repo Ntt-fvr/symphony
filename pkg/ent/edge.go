@@ -8,6 +8,22 @@ package ent
 
 import "context"
 
+func (a *Action) Execution(ctx context.Context) (*Execution, error) {
+	result, err := a.Edges.ExecutionOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryExecution().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *Action) Ruleaction(ctx context.Context) (*RuleAction, error) {
+	result, err := a.Edges.RuleactionOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryRuleaction().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (a *Activity) Author(ctx context.Context) (*User, error) {
 	result, err := a.Edges.AuthorOrErr()
 	if IsNotLoaded(err) {
@@ -678,6 +694,14 @@ func (e *Execution) User(ctx context.Context) (*User, error) {
 		result, err = e.QueryUser().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (e *Execution) Execution(ctx context.Context) ([]*Action, error) {
+	result, err := e.Edges.ExecutionOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryExecution().All(ctx)
+	}
+	return result, err
 }
 
 func (ep *ExitPoint) NextEntryPoints(ctx context.Context) ([]*EntryPoint, error) {
@@ -2014,6 +2038,14 @@ func (ra *RuleAction) Ruleactiontemplate(ctx context.Context) (*RuleActionTempla
 		result, err = ra.QueryRuleactiontemplate().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (ra *RuleAction) RuleAction(ctx context.Context) ([]*Action, error) {
+	result, err := ra.Edges.RuleActionOrErr()
+	if IsNotLoaded(err) {
+		result, err = ra.QueryRuleAction().All(ctx)
+	}
+	return result, err
 }
 
 func (rat *RuleActionTemplate) RuleActionTemplateRuleAction(ctx context.Context) ([]*RuleAction, error) {

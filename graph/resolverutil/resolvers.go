@@ -260,6 +260,16 @@ func ExecutionFilter(query *ent.ExecutionQuery, filters []*models.ExecutionFilte
 	return query, nil
 }
 
+func ActionFilter(query *ent.ActionQuery, filters []*models.ActionFilterInput) (*ent.ActionQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleActionFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
 func RuleActionTemplateFilter(query *ent.RuleActionTemplateQuery, filters []*models.RuleActionTemplateFilterInput) (*ent.RuleActionTemplateQuery, error) {
 	var err error
 	for _, f := range filters {

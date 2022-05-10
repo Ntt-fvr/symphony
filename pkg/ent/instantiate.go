@@ -7,6 +7,12 @@
 package ent
 
 // Instantiate entity configuration.
+func (c *ActionClient) Instantiate(a *Action) *Action {
+	a.config = c.config
+	return a
+}
+
+// Instantiate entity configuration.
 func (c *ActivityClient) Instantiate(a *Activity) *Activity {
 	a.config = c.config
 	return a

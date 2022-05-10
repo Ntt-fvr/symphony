@@ -10,6 +10,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
@@ -121,6 +122,33 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	actionMixin := schema.Action{}.Mixin()
+	action.Policy = privacy.NewPolicies(schema.Action{})
+	action.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := action.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	actionMixinFields0 := actionMixin[0].Fields()
+	actionFields := schema.Action{}.Fields()
+	_ = actionFields
+	// actionDescCreateTime is the schema descriptor for create_time field.
+	actionDescCreateTime := actionMixinFields0[0].Descriptor()
+	// action.DefaultCreateTime holds the default value on creation for the create_time field.
+	action.DefaultCreateTime = actionDescCreateTime.Default.(func() time.Time)
+	// actionDescUpdateTime is the schema descriptor for update_time field.
+	actionDescUpdateTime := actionMixinFields0[1].Descriptor()
+	// action.DefaultUpdateTime holds the default value on creation for the update_time field.
+	action.DefaultUpdateTime = actionDescUpdateTime.Default.(func() time.Time)
+	// action.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	action.UpdateDefaultUpdateTime = actionDescUpdateTime.UpdateDefault.(func() time.Time)
+	// actionDescLogExecution is the schema descriptor for logExecution field.
+	actionDescLogExecution := actionFields[2].Descriptor()
+	// action.LogExecutionValidator is a validator for the "logExecution" field. It is called by the builders before save.
+	action.LogExecutionValidator = actionDescLogExecution.Validators[0].(func(string) error)
 	activityMixin := schema.Activity{}.Mixin()
 	activity.Policy = privacy.NewPolicies(schema.Activity{})
 	activity.Hooks[0] = func(next ent.Mutator) ent.Mutator {

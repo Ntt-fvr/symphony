@@ -26,6 +26,8 @@ const (
 
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
+	// EdgeExecution holds the string denoting the execution edge name in mutations.
+	EdgeExecution = "execution"
 
 	// Table holds the table name of the execution in the database.
 	Table = "executions"
@@ -36,6 +38,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_user"
+	// ExecutionTable is the table the holds the execution relation/edge.
+	ExecutionTable = "actions"
+	// ExecutionInverseTable is the table name for the Action entity.
+	// It exists in this package in order to avoid circular dependency with the "action" package.
+	ExecutionInverseTable = "actions"
+	// ExecutionColumn is the table column denoting the execution relation/edge.
+	ExecutionColumn = "execution_execution"
 )
 
 // Columns holds all SQL columns for execution fields.

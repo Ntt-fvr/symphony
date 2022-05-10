@@ -367,6 +367,34 @@ func HasRuleactiontemplateWith(preds ...predicate.RuleActionTemplate) predicate.
 	})
 }
 
+// HasRuleAction applies the HasEdge predicate on the "rule_action" edge.
+func HasRuleAction() predicate.RuleAction {
+	return predicate.RuleAction(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RuleActionTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RuleActionTable, RuleActionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRuleActionWith applies the HasEdge predicate on the "rule_action" edge with a given conditions (other predicates).
+func HasRuleActionWith(preds ...predicate.Action) predicate.RuleAction {
+	return predicate.RuleAction(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RuleActionInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RuleActionTable, RuleActionColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.RuleAction) predicate.RuleAction {
 	return predicate.RuleAction(func(s *sql.Selector) {

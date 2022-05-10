@@ -17,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
@@ -147,6 +148,77 @@ type Edge struct {
 	Type string `json:"type,omitempty"` // edge type.
 	Name string `json:"name,omitempty"` // edge name.
 	IDs  []int  `json:"ids,omitempty"`  // node ids (where this edge point to).
+}
+
+func (a *Action) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     a.ID,
+		Type:   "Action",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(a.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "action.Status",
+		Name:  "Status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.UserAction); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "action.UserAction",
+		Name:  "UserAction",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.LogExecution); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "logExecution",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Execution",
+		Name: "execution",
+	}
+	node.Edges[0].IDs, err = a.QueryExecution().
+		Select(execution.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "RuleAction",
+		Name: "ruleaction",
+	}
+	node.Edges[1].IDs, err = a.QueryRuleaction().
+		Select(ruleaction.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
 }
 
 func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
@@ -2396,7 +2468,7 @@ func (e *Execution) Node(ctx context.Context) (node *Node, err error) {
 		ID:     e.ID,
 		Type:   "Execution",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 1),
+		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(e.CreateTime); err != nil {
@@ -2429,6 +2501,16 @@ func (e *Execution) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = e.QueryUser().
 		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Action",
+		Name: "execution",
+	}
+	node.Edges[1].IDs, err = e.QueryExecution().
+		Select(action.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -6907,7 +6989,7 @@ func (ra *RuleAction) Node(ctx context.Context) (node *Node, err error) {
 		ID:     ra.ID,
 		Type:   "RuleAction",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(ra.CreateTime); err != nil {
@@ -6950,6 +7032,16 @@ func (ra *RuleAction) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = ra.QueryRuleactiontemplate().
 		Select(ruleactiontemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "Action",
+		Name: "rule_action",
+	}
+	node.Edges[2].IDs, err = ra.QueryRuleAction().
+		Select(action.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -9421,6 +9513,15 @@ func (c *Client) Noder(ctx context.Context, id int, opts ...NodeOption) (_ Noder
 
 func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 	switch tbl {
+	case action.Table:
+		n, err := c.Action.Query().
+			Where(action.ID(id)).
+			CollectFields(ctx, "Action").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case activity.Table:
 		n, err := c.Activity.Query().
 			Where(activity.ID(id)).

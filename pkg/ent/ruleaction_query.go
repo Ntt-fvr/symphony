@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -15,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
@@ -32,6 +34,7 @@ type RuleActionQuery struct {
 	// eager-loading edges.
 	withReconciliationrule *ReconciliationRuleQuery
 	withRuleactiontemplate *RuleActionTemplateQuery
+	withRuleAction         *ActionQuery
 	withFKs                bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -99,6 +102,28 @@ func (raq *RuleActionQuery) QueryRuleactiontemplate() *RuleActionTemplateQuery {
 			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, selector),
 			sqlgraph.To(ruleactiontemplate.Table, ruleactiontemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ruleaction.RuleactiontemplateTable, ruleaction.RuleactiontemplateColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(raq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRuleAction chains the current query on the rule_action edge.
+func (raq *RuleActionQuery) QueryRuleAction() *ActionQuery {
+	query := &ActionQuery{config: raq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := raq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := raq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, selector),
+			sqlgraph.To(action.Table, action.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ruleaction.RuleActionTable, ruleaction.RuleActionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(raq.driver.Dialect(), step)
 		return fromU, nil
@@ -284,6 +309,7 @@ func (raq *RuleActionQuery) Clone() *RuleActionQuery {
 		predicates:             append([]predicate.RuleAction{}, raq.predicates...),
 		withReconciliationrule: raq.withReconciliationrule.Clone(),
 		withRuleactiontemplate: raq.withRuleactiontemplate.Clone(),
+		withRuleAction:         raq.withRuleAction.Clone(),
 		// clone intermediate query.
 		sql:  raq.sql.Clone(),
 		path: raq.path,
@@ -309,6 +335,17 @@ func (raq *RuleActionQuery) WithRuleactiontemplate(opts ...func(*RuleActionTempl
 		opt(query)
 	}
 	raq.withRuleactiontemplate = query
+	return raq
+}
+
+//  WithRuleAction tells the query-builder to eager-loads the nodes that are connected to
+// the "rule_action" edge. The optional arguments used to configure the query builder of the edge.
+func (raq *RuleActionQuery) WithRuleAction(opts ...func(*ActionQuery)) *RuleActionQuery {
+	query := &ActionQuery{config: raq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	raq.withRuleAction = query
 	return raq
 }
 
@@ -382,9 +419,10 @@ func (raq *RuleActionQuery) sqlAll(ctx context.Context) ([]*RuleAction, error) {
 		nodes       = []*RuleAction{}
 		withFKs     = raq.withFKs
 		_spec       = raq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			raq.withReconciliationrule != nil,
 			raq.withRuleactiontemplate != nil,
+			raq.withRuleAction != nil,
 		}
 	)
 	if raq.withReconciliationrule != nil || raq.withRuleactiontemplate != nil {
@@ -464,6 +502,35 @@ func (raq *RuleActionQuery) sqlAll(ctx context.Context) ([]*RuleAction, error) {
 			for i := range nodes {
 				nodes[i].Edges.Ruleactiontemplate = n
 			}
+		}
+	}
+
+	if query := raq.withRuleAction; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*RuleAction)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.RuleAction = []*Action{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Action(func(s *sql.Selector) {
+			s.Where(sql.InValues(ruleaction.RuleActionColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.rule_action_rule_action
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "rule_action_rule_action" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "rule_action_rule_action" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.RuleAction = append(node.Edges.RuleAction, n)
 		}
 	}
 

@@ -14,6 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -57,6 +58,21 @@ func (eu *ExecutionUpdate) SetUser(u *User) *ExecutionUpdate {
 	return eu.SetUserID(u.ID)
 }
 
+// AddExecutionIDs adds the execution edge to Action by ids.
+func (eu *ExecutionUpdate) AddExecutionIDs(ids ...int) *ExecutionUpdate {
+	eu.mutation.AddExecutionIDs(ids...)
+	return eu
+}
+
+// AddExecution adds the execution edges to Action.
+func (eu *ExecutionUpdate) AddExecution(a ...*Action) *ExecutionUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return eu.AddExecutionIDs(ids...)
+}
+
 // Mutation returns the ExecutionMutation object of the builder.
 func (eu *ExecutionUpdate) Mutation() *ExecutionMutation {
 	return eu.mutation
@@ -66,6 +82,27 @@ func (eu *ExecutionUpdate) Mutation() *ExecutionMutation {
 func (eu *ExecutionUpdate) ClearUser() *ExecutionUpdate {
 	eu.mutation.ClearUser()
 	return eu
+}
+
+// ClearExecution clears all "execution" edges to type Action.
+func (eu *ExecutionUpdate) ClearExecution() *ExecutionUpdate {
+	eu.mutation.ClearExecution()
+	return eu
+}
+
+// RemoveExecutionIDs removes the execution edge to Action by ids.
+func (eu *ExecutionUpdate) RemoveExecutionIDs(ids ...int) *ExecutionUpdate {
+	eu.mutation.RemoveExecutionIDs(ids...)
+	return eu
+}
+
+// RemoveExecution removes execution edges to Action.
+func (eu *ExecutionUpdate) RemoveExecution(a ...*Action) *ExecutionUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return eu.RemoveExecutionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -195,6 +232,60 @@ func (eu *ExecutionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if eu.mutation.ExecutionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   execution.ExecutionTable,
+			Columns: []string{execution.ExecutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedExecutionIDs(); len(nodes) > 0 && !eu.mutation.ExecutionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   execution.ExecutionTable,
+			Columns: []string{execution.ExecutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.ExecutionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   execution.ExecutionTable,
+			Columns: []string{execution.ExecutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{execution.Label}
@@ -238,6 +329,21 @@ func (euo *ExecutionUpdateOne) SetUser(u *User) *ExecutionUpdateOne {
 	return euo.SetUserID(u.ID)
 }
 
+// AddExecutionIDs adds the execution edge to Action by ids.
+func (euo *ExecutionUpdateOne) AddExecutionIDs(ids ...int) *ExecutionUpdateOne {
+	euo.mutation.AddExecutionIDs(ids...)
+	return euo
+}
+
+// AddExecution adds the execution edges to Action.
+func (euo *ExecutionUpdateOne) AddExecution(a ...*Action) *ExecutionUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return euo.AddExecutionIDs(ids...)
+}
+
 // Mutation returns the ExecutionMutation object of the builder.
 func (euo *ExecutionUpdateOne) Mutation() *ExecutionMutation {
 	return euo.mutation
@@ -247,6 +353,27 @@ func (euo *ExecutionUpdateOne) Mutation() *ExecutionMutation {
 func (euo *ExecutionUpdateOne) ClearUser() *ExecutionUpdateOne {
 	euo.mutation.ClearUser()
 	return euo
+}
+
+// ClearExecution clears all "execution" edges to type Action.
+func (euo *ExecutionUpdateOne) ClearExecution() *ExecutionUpdateOne {
+	euo.mutation.ClearExecution()
+	return euo
+}
+
+// RemoveExecutionIDs removes the execution edge to Action by ids.
+func (euo *ExecutionUpdateOne) RemoveExecutionIDs(ids ...int) *ExecutionUpdateOne {
+	euo.mutation.RemoveExecutionIDs(ids...)
+	return euo
+}
+
+// RemoveExecution removes execution edges to Action.
+func (euo *ExecutionUpdateOne) RemoveExecution(a ...*Action) *ExecutionUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return euo.RemoveExecutionIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -366,6 +493,60 @@ func (euo *ExecutionUpdateOne) sqlSave(ctx context.Context) (_node *Execution, e
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.ExecutionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   execution.ExecutionTable,
+			Columns: []string{execution.ExecutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedExecutionIDs(); len(nodes) > 0 && !euo.mutation.ExecutionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   execution.ExecutionTable,
+			Columns: []string{execution.ExecutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.ExecutionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   execution.ExecutionTable,
+			Columns: []string{execution.ExecutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
 				},
 			},
 		}

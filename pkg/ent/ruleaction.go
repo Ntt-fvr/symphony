@@ -41,9 +41,11 @@ type RuleActionEdges struct {
 	Reconciliationrule *ReconciliationRule
 	// Ruleactiontemplate holds the value of the ruleactiontemplate edge.
 	Ruleactiontemplate *RuleActionTemplate
+	// RuleAction holds the value of the rule_action edge.
+	RuleAction []*Action
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // ReconciliationruleOrErr returns the Reconciliationrule value or an error if the edge
@@ -72,6 +74,15 @@ func (e RuleActionEdges) RuleactiontemplateOrErr() (*RuleActionTemplate, error) 
 		return e.Ruleactiontemplate, nil
 	}
 	return nil, &NotLoadedError{edge: "ruleactiontemplate"}
+}
+
+// RuleActionOrErr returns the RuleAction value or an error if the edge
+// was not loaded in eager-loading.
+func (e RuleActionEdges) RuleActionOrErr() ([]*Action, error) {
+	if e.loadedTypes[2] {
+		return e.RuleAction, nil
+	}
+	return nil, &NotLoadedError{edge: "rule_action"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -145,6 +156,11 @@ func (ra *RuleAction) QueryReconciliationrule() *ReconciliationRuleQuery {
 // QueryRuleactiontemplate queries the ruleactiontemplate edge of the RuleAction.
 func (ra *RuleAction) QueryRuleactiontemplate() *RuleActionTemplateQuery {
 	return (&RuleActionClient{config: ra.config}).QueryRuleactiontemplate(ra)
+}
+
+// QueryRuleAction queries the rule_action edge of the RuleAction.
+func (ra *RuleAction) QueryRuleAction() *ActionQuery {
+	return (&RuleActionClient{config: ra.config}).QueryRuleAction(ra)
 }
 
 // Update returns a builder for updating this RuleAction.

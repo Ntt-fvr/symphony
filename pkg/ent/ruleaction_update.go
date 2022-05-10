@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
@@ -76,6 +77,21 @@ func (rau *RuleActionUpdate) SetRuleactiontemplate(r *RuleActionTemplate) *RuleA
 	return rau.SetRuleactiontemplateID(r.ID)
 }
 
+// AddRuleActionIDs adds the rule_action edge to Action by ids.
+func (rau *RuleActionUpdate) AddRuleActionIDs(ids ...int) *RuleActionUpdate {
+	rau.mutation.AddRuleActionIDs(ids...)
+	return rau
+}
+
+// AddRuleAction adds the rule_action edges to Action.
+func (rau *RuleActionUpdate) AddRuleAction(a ...*Action) *RuleActionUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return rau.AddRuleActionIDs(ids...)
+}
+
 // Mutation returns the RuleActionMutation object of the builder.
 func (rau *RuleActionUpdate) Mutation() *RuleActionMutation {
 	return rau.mutation
@@ -91,6 +107,27 @@ func (rau *RuleActionUpdate) ClearReconciliationrule() *RuleActionUpdate {
 func (rau *RuleActionUpdate) ClearRuleactiontemplate() *RuleActionUpdate {
 	rau.mutation.ClearRuleactiontemplate()
 	return rau
+}
+
+// ClearRuleAction clears all "rule_action" edges to type Action.
+func (rau *RuleActionUpdate) ClearRuleAction() *RuleActionUpdate {
+	rau.mutation.ClearRuleAction()
+	return rau
+}
+
+// RemoveRuleActionIDs removes the rule_action edge to Action by ids.
+func (rau *RuleActionUpdate) RemoveRuleActionIDs(ids ...int) *RuleActionUpdate {
+	rau.mutation.RemoveRuleActionIDs(ids...)
+	return rau
+}
+
+// RemoveRuleAction removes rule_action edges to Action.
+func (rau *RuleActionUpdate) RemoveRuleAction(a ...*Action) *RuleActionUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return rau.RemoveRuleActionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -271,6 +308,60 @@ func (rau *RuleActionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if rau.mutation.RuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleaction.RuleActionTable,
+			Columns: []string{ruleaction.RuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rau.mutation.RemovedRuleActionIDs(); len(nodes) > 0 && !rau.mutation.RuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleaction.RuleActionTable,
+			Columns: []string{ruleaction.RuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rau.mutation.RuleActionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleaction.RuleActionTable,
+			Columns: []string{ruleaction.RuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, rau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{ruleaction.Label}
@@ -333,6 +424,21 @@ func (rauo *RuleActionUpdateOne) SetRuleactiontemplate(r *RuleActionTemplate) *R
 	return rauo.SetRuleactiontemplateID(r.ID)
 }
 
+// AddRuleActionIDs adds the rule_action edge to Action by ids.
+func (rauo *RuleActionUpdateOne) AddRuleActionIDs(ids ...int) *RuleActionUpdateOne {
+	rauo.mutation.AddRuleActionIDs(ids...)
+	return rauo
+}
+
+// AddRuleAction adds the rule_action edges to Action.
+func (rauo *RuleActionUpdateOne) AddRuleAction(a ...*Action) *RuleActionUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return rauo.AddRuleActionIDs(ids...)
+}
+
 // Mutation returns the RuleActionMutation object of the builder.
 func (rauo *RuleActionUpdateOne) Mutation() *RuleActionMutation {
 	return rauo.mutation
@@ -348,6 +454,27 @@ func (rauo *RuleActionUpdateOne) ClearReconciliationrule() *RuleActionUpdateOne 
 func (rauo *RuleActionUpdateOne) ClearRuleactiontemplate() *RuleActionUpdateOne {
 	rauo.mutation.ClearRuleactiontemplate()
 	return rauo
+}
+
+// ClearRuleAction clears all "rule_action" edges to type Action.
+func (rauo *RuleActionUpdateOne) ClearRuleAction() *RuleActionUpdateOne {
+	rauo.mutation.ClearRuleAction()
+	return rauo
+}
+
+// RemoveRuleActionIDs removes the rule_action edge to Action by ids.
+func (rauo *RuleActionUpdateOne) RemoveRuleActionIDs(ids ...int) *RuleActionUpdateOne {
+	rauo.mutation.RemoveRuleActionIDs(ids...)
+	return rauo
+}
+
+// RemoveRuleAction removes rule_action edges to Action.
+func (rauo *RuleActionUpdateOne) RemoveRuleAction(a ...*Action) *RuleActionUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return rauo.RemoveRuleActionIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -518,6 +645,60 @@ func (rauo *RuleActionUpdateOne) sqlSave(ctx context.Context) (_node *RuleAction
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: ruleactiontemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rauo.mutation.RuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleaction.RuleActionTable,
+			Columns: []string{ruleaction.RuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rauo.mutation.RemovedRuleActionIDs(); len(nodes) > 0 && !rauo.mutation.RuleActionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleaction.RuleActionTable,
+			Columns: []string{ruleaction.RuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rauo.mutation.RuleActionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ruleaction.RuleActionTable,
+			Columns: []string{ruleaction.RuleActionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: action.FieldID,
 				},
 			},
 		}

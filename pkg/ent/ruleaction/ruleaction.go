@@ -31,6 +31,8 @@ const (
 	EdgeReconciliationrule = "reconciliationrule"
 	// EdgeRuleactiontemplate holds the string denoting the ruleactiontemplate edge name in mutations.
 	EdgeRuleactiontemplate = "ruleactiontemplate"
+	// EdgeRuleAction holds the string denoting the rule_action edge name in mutations.
+	EdgeRuleAction = "rule_action"
 
 	// Table holds the table name of the ruleaction in the database.
 	Table = "rule_actions"
@@ -48,6 +50,13 @@ const (
 	RuleactiontemplateInverseTable = "rule_action_templates"
 	// RuleactiontemplateColumn is the table column denoting the ruleactiontemplate relation/edge.
 	RuleactiontemplateColumn = "rule_action_template_rule_action_template_rule_action"
+	// RuleActionTable is the table the holds the rule_action relation/edge.
+	RuleActionTable = "actions"
+	// RuleActionInverseTable is the table name for the Action entity.
+	// It exists in this package in order to avoid circular dependency with the "action" package.
+	RuleActionInverseTable = "actions"
+	// RuleActionColumn is the table column denoting the rule_action relation/edge.
+	RuleActionColumn = "rule_action_rule_action"
 )
 
 // Columns holds all SQL columns for ruleaction fields.

@@ -13,6 +13,18 @@ import (
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (a *ActionQuery) CollectFields(ctx context.Context, satisfies ...string) *ActionQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		a = a.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return a
+}
+
+func (a *ActionQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ActionQuery {
+	return a
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (a *ActivityQuery) CollectFields(ctx context.Context, satisfies ...string) *ActivityQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		a = a.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -569,6 +581,14 @@ func (e *ExecutionQuery) CollectFields(ctx context.Context, satisfies ...string)
 }
 
 func (e *ExecutionQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ExecutionQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "action":
+			e = e.WithExecution(func(query *ActionQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return e
 }
 
@@ -1581,6 +1601,14 @@ func (ra *RuleActionQuery) CollectFields(ctx context.Context, satisfies ...strin
 }
 
 func (ra *RuleActionQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RuleActionQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "action":
+			ra = ra.WithRuleAction(func(query *ActionQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return ra
 }
 

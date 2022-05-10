@@ -37,9 +37,11 @@ type Execution struct {
 type ExecutionEdges struct {
 	// User holds the value of the user edge.
 	User *User
+	// Execution holds the value of the execution edge.
+	Execution []*Action
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -54,6 +56,15 @@ func (e ExecutionEdges) UserOrErr() (*User, error) {
 		return e.User, nil
 	}
 	return nil, &NotLoadedError{edge: "user"}
+}
+
+// ExecutionOrErr returns the Execution value or an error if the edge
+// was not loaded in eager-loading.
+func (e ExecutionEdges) ExecutionOrErr() ([]*Action, error) {
+	if e.loadedTypes[1] {
+		return e.Execution, nil
+	}
+	return nil, &NotLoadedError{edge: "execution"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -115,6 +126,11 @@ func (e *Execution) assignValues(values ...interface{}) error {
 // QueryUser queries the user edge of the Execution.
 func (e *Execution) QueryUser() *UserQuery {
 	return (&ExecutionClient{config: e.config}).QueryUser(e)
+}
+
+// QueryExecution queries the execution edge of the Execution.
+func (e *Execution) QueryExecution() *ActionQuery {
+	return (&ExecutionClient{config: e.config}).QueryExecution(e)
 }
 
 // Update returns a builder for updating this Execution.

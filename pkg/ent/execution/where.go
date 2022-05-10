@@ -374,6 +374,34 @@ func HasUserWith(preds ...predicate.User) predicate.Execution {
 	})
 }
 
+// HasExecution applies the HasEdge predicate on the "execution" edge.
+func HasExecution() predicate.Execution {
+	return predicate.Execution(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ExecutionTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExecutionTable, ExecutionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasExecutionWith applies the HasEdge predicate on the "execution" edge with a given conditions (other predicates).
+func HasExecutionWith(preds ...predicate.Action) predicate.Execution {
+	return predicate.Execution(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ExecutionInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExecutionTable, ExecutionColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Execution) predicate.Execution {
 	return predicate.Execution(func(s *sql.Selector) {

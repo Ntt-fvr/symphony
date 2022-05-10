@@ -28,6 +28,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
+	Action                            []ent.Hook
 	Activity                          []ent.Hook
 	AlarmFilter                       []ent.Hook
 	AlarmStatus                       []ent.Hook
