@@ -251,7 +251,6 @@ class Inventory extends React.Component<Props, State> {
           />
           <div className={classes.propertiesCard}>
             <InventoryErrorBoundary>
-              <NavbarResourceInstance />
               {card.type == 'location' && (
                 <LocationCard
                   mode={card.mode}
