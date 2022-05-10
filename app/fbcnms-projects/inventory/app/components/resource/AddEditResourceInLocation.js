@@ -13,10 +13,16 @@ import React, {useState} from 'react';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import Event from '@material-ui/icons/Event';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import MomentUtils from '@date-io/moment';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
+import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -71,21 +77,44 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
+type ResourceType = {
+  data: {
+    name: string,
+    externalID: string,
+    id: string,
+    administrativeSubstate: string,
+  },
+};
+
 type Props = $ReadOnly<{|
   closeFormAddEdit: () => void,
+  dataformModal: any,
 |}>;
 
 const AddEditResourceInLocation = (props: Props) => {
-  const {closeFormAddEdit} = props;
+  const {closeFormAddEdit, dataformModal} = props;
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [resourceType, setResourceType] = useState<ResourceType>({data: {}});
+  const [slotStartDate, setSlotStartDate] = useState(moment);
+  const [slotEndDate, setSlotEndDate] = useState(moment);
+  const [slotInstallDate, setSlotInstallDate] = useState(moment);
+
+  function handleChange({target}) {
+    setResourceType({
+      data: {
+        ...resourceType.data,
+        [target.name]: target.value,
+      },
+    });
+  }
 
   return (
     <>
       <Grid item xs={12} sm={12} lg={12} xl={12}>
         <Card margins="none">
           <CardHeader className={classes.cardHeader}>
-            OltCard_Huawei_H200
+            {dataformModal.name}
           </CardHeader>
           <Grid container>
             <Grid item xs={6}>
@@ -95,6 +124,7 @@ const AddEditResourceInLocation = (props: Props) => {
                   label="Name"
                   variant="outlined"
                   name="name"
+                  onChange={handleChange}
                   fullWidth
                 />
               </form>
@@ -105,6 +135,7 @@ const AddEditResourceInLocation = (props: Props) => {
                   label="External ID"
                   variant="outlined"
                   name="externalID"
+                  onChange={handleChange}
                   fullWidth
                 />
               </form>
@@ -118,6 +149,7 @@ const AddEditResourceInLocation = (props: Props) => {
                   required
                   label="ID"
                   variant="outlined"
+                  onChange={handleChange}
                   name="id"
                   fullWidth
                 />
@@ -128,40 +160,89 @@ const AddEditResourceInLocation = (props: Props) => {
                 <TextField
                   label="Administrative Substate"
                   variant="outlined"
+                  onChange={handleChange}
                   name="administrativeSubstate"
                   fullWidth
                 />
               </form>
             </Grid>
             <Grid item xs={6}>
-              <form className={classes.formField} autoComplete="off">
-                <TextField
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
                   label="In Service Date"
-                  variant="outlined"
-                  name="inServiceDate"
-                  fullWidth
+                  variant="inline"
+                  inputVariant="outlined"
+                  className={classes.formField}
+                  style={{
+                    width: '-webkit-fill-available',
+                    marginBottom: '41px',
+                  }}
+                  value={slotStartDate}
+                  onChange={setSlotStartDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-              </form>
+              </MuiPickersUtilsProvider>
             </Grid>
             <Grid item xs={6}>
-              <form className={classes.formField} autoComplete="off">
-                <TextField
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
                   label="Out of Service Date"
-                  variant="outlined"
-                  name="outOfServiceDate"
-                  fullWidth
+                  variant="inline"
+                  inputVariant="outlined"
+                  className={classes.formField}
+                  style={{
+                    width: '-webkit-fill-available',
+                    marginBottom: '41px',
+                  }}
+                  value={slotEndDate}
+                  onChange={setSlotEndDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-              </form>
+              </MuiPickersUtilsProvider>
             </Grid>
             <Grid item xs={6}>
-              <form className={classes.formField} autoComplete="off">
-                <TextField
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DateTimePicker
                   label="Install Date"
-                  variant="outlined"
-                  name="installDate"
-                  fullWidth
+                  variant="inline"
+                  inputVariant="outlined"
+                  className={classes.formField}
+                  style={{
+                    width: '-webkit-fill-available',
+                    marginBottom: '41px',
+                  }}
+                  value={slotInstallDate}
+                  onChange={setSlotInstallDate}
+                  format="yyyy/MM/DD HH:mm a"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton>
+                          <Event style={{color: '#8895AD'}} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-              </form>
+              </MuiPickersUtilsProvider>
             </Grid>
             <Grid item xs={3}>
               <form className={classes.formField} autoComplete="off">
@@ -169,6 +250,7 @@ const AddEditResourceInLocation = (props: Props) => {
                   label="Bandwith from"
                   variant="outlined"
                   name="bandwithFrom"
+                  onChange={handleChange}
                   fullWidth
                 />
               </form>
@@ -179,6 +261,7 @@ const AddEditResourceInLocation = (props: Props) => {
                   label="Bandwith to"
                   variant="outlined"
                   name="bandwithTo"
+                  onChange={handleChange}
                   fullWidth
                 />
               </form>

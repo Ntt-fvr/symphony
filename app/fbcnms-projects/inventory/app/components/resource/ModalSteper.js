@@ -18,7 +18,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import React from 'react';
+import React, {useState} from 'react';
 import RouterIcon from '@material-ui/icons/Router';
 import Step from '@material-ui/core/Step';
 import StepConnector from '@material-ui/core/StepConnector/StepConnector';
@@ -110,15 +110,17 @@ function customStepIcon(props) {
 type Props = $ReadOnly<{|
   openModal: boolean,
   onClose: () => void,
-  saveModal?: () => void,
+  saveModal: (selectedResourceType: {}) => void,
   titleSteps: Array<string>,
+  dataListStepper: any,
 |}>;
 
 const ModalSteper = (props: Props) => {
-  const {openModal, onClose, saveModal, titleSteps} = props;
+  const {openModal, onClose, saveModal, titleSteps, dataListStepper} = props;
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(1);
-  const [selectedIndex, setSelectedIndex] = React.useState(null);
+  const [activeStep, setActiveStep] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [getDataList, setGetDataList] = useState({});
 
   const connector = (
     <StepConnector
@@ -135,8 +137,9 @@ const ModalSteper = (props: Props) => {
     setSelectedIndex(null);
   };
 
-  const handleListItemClick = (event, index) => {
+  const handleListItemClick = (event, index, item) => {
     setSelectedIndex(index);
+    setGetDataList(item.node);
   };
 
   return (
@@ -166,46 +169,69 @@ const ModalSteper = (props: Props) => {
             Select a {activeStep === 1 && titleSteps[0]}
             {activeStep === 2 && titleSteps[1]}
           </Typography>
-          <List component="nav">
-            {titleSteps.length === 1 ? (
-              <ListItem
-                button
-                selected={selectedIndex === 0}
-                onClick={event => handleListItemClick(event, 0)}>
-                <ListItemAvatar>
-                  <Avatar>
-                    <RouterIcon fontSize="medium" color="primary" />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="CLARK" />
-              </ListItem>
-            ) : (
-              <>
-                <ListItem
-                  button
-                  selected={selectedIndex === 0}
-                  onClick={event => handleListItemClick(event, 0)}>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <RouterIcon fontSize="medium" color="primary" />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="OLZ" />
-                </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 1}
-                  onClick={event => handleListItemClick(event, 1)}>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <RouterIcon fontSize="medium" color="primary" />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="XYP" />
-                </ListItem>
-              </>
-            )}
-          </List>
+          {titleSteps.length === 2 ? (
+            <>
+              {activeStep === 1 &&
+                dataListStepper?.resourceTypes?.edges.map((item, index) => (
+                  <List component="nav">
+                    <ListItem
+                      button
+                      key={item.node.id}
+                      selected={selectedIndex === index}
+                      onClick={event =>
+                        handleListItemClick(event, index, item)
+                      }>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <RouterIcon fontSize="medium" color="primary" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={item.node.name} />
+                    </ListItem>
+                  </List>
+                ))}
+              {activeStep === 2 &&
+                dataListStepper?.resourceSpecifications?.edges.map(
+                  (item, index) => (
+                    <List component="nav">
+                      <ListItem
+                        button
+                        key={item.node.id}
+                        selected={selectedIndex === index}
+                        onClick={event =>
+                          handleListItemClick(event, index, item)
+                        }>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <RouterIcon fontSize="medium" color="primary" />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={item.node.name} />
+                      </ListItem>
+                    </List>
+                  ),
+                )}
+            </>
+          ) : (
+            dataListStepper?.resourceSpecifications?.edges.map(
+              (item, index) => (
+                <List component="nav">
+                  <ListItem
+                    button
+                    key={item.node.id}
+                    selected={selectedIndex === index}
+                    onClick={event => handleListItemClick(event, index, item)}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <RouterIcon fontSize="medium" color="primary" />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={item.node.name} />
+                  </ListItem>
+                </List>
+              ),
+            )
+          )}
         </DialogContent>
         <DialogActions>
           <Button
@@ -219,7 +245,11 @@ const ModalSteper = (props: Props) => {
             variant="contained"
             color="primary"
             disabled={selectedIndex !== null ? false : true}
-            onClick={activeStep === titleSteps.length ? saveModal : handleNext}>
+            onClick={
+              activeStep === titleSteps.length
+                ? () => saveModal(getDataList)
+                : handleNext
+            }>
             Next
           </Button>
         </DialogActions>
