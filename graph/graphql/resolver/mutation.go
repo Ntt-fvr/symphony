@@ -3121,6 +3121,7 @@ func (r mutationResolver) EditIsListable(ctx context.Context, input models.EditI
 	return et, nil
 }
 
+// nolint: funlen
 func (r mutationResolver) updatePropType(ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), input *pkgmodels.PropertyTypeInput) error {
 	var (
 		client = r.ClientFrom(ctx)
@@ -3137,12 +3138,6 @@ func (r mutationResolver) updatePropType(ctx context.Context, parentSetter func(
 		SetNillableMandatory(input.IsMandatory).
 		SetNillableDeleted(input.IsDeleted).
 		SetNillableListable(input.IsListable)
-
-	if input.PropertyCategoryID != nil {
-		et.SetPropertyCategoryID(*input.PropertyCategoryID)
-	} else {
-		et.ClearPropertyCategory()
-	}
 	switch input.Type {
 	case propertytype.TypeDate,
 		propertytype.TypeEmail,
