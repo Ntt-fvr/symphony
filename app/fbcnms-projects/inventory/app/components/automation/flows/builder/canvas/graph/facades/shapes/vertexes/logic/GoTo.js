@@ -20,7 +20,7 @@ import {
   getInitObject,
 } from '../BaseVertext';
 
-export const TYPE = 'GotoBlock';
+export const TYPE = 'GoToBlock';
 
 const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
 

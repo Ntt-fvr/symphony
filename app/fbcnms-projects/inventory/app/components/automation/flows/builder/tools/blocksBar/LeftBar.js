@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     right: 0,
     top: 67,
-    paddingTop: 67,
+    paddingTop: 60,
     height: 'calc(100vh - 67px)',
     background:
       'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF',
@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: 4,
   },
   options: {
-    transform: 'translate(0px, 30px) scale(1) rotate(-90deg)',
+    transform: 'translate(0px, 40px) scale(1) rotate(-90deg)',
   },
 }));
 

@@ -7,17 +7,46 @@
  * @flow
  * @format
  */
-import {useState} from 'react';
+import useSideEffectCallback from '../../../admin/userManagement/utils/useSideEffectCallback';
+import {isEqual} from 'lodash';
+import {useEffect, useState} from 'react';
 
-export const useForm = (initialState = {}) => {
-  const [values, setValues] = useState(initialState);
+export const useForm = (propValues = {}) => {
+  const [fieldValues, setFieldValues] = useState<string>({});
+  useEffect(() => setFieldValues(propValues), []);
 
-  const handleInputChange = ({target}) => {
-    setValues({
-      ...values,
-      [target.name]: target.value,
-    });
+  const onValueChanged = fieldValues => {
+    setFieldValues(fieldValues);
   };
 
-  return [values, handleInputChange];
+  const handleInputChange = ({target}) => {
+    const fieldValuesNew = {
+      ...fieldValues,
+      [target.name]: target.value,
+    };
+    setFieldValues(fieldValuesNew);
+    updateOnValueChange(fieldValuesNew);
+  };
+
+  const handleAllInputChange = fieldValuesNew => {
+    setFieldValues(fieldValuesNew);
+    updateOnValueChange(fieldValuesNew);
+  };
+
+  const callOnValueChanged = useSideEffectCallback(
+    onValueChanged ? () => onValueChanged(fieldValues) : null,
+  );
+  const updateOnValueChange = updatedValues => {
+    const isOnGoingChange = updatedValues != null && updatedValues != {};
+    const currentValue = isOnGoingChange ? updatedValues : fieldValues;
+    if (!isOnGoingChange && !isEqual(currentValue, fieldValues)) {
+      setFieldValues(updatedValues);
+    }
+    if (isEqual(currentValue, fieldValues)) {
+      return;
+    }
+    callOnValueChanged();
+  };
+
+  return [fieldValues, handleInputChange, handleAllInputChange];
 };

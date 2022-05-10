@@ -110,6 +110,7 @@ export default class ShapesFactory {
   }
 
   createBlock(type: string, id?: ?string) {
+    debugger;
     const VertexCtor = nullthrows(VERTEXES[type]);
     const vertexModel = new VertexCtor(id);
 

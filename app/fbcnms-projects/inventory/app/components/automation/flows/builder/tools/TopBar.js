@@ -15,6 +15,7 @@ import MenuTopBar from './MenuTopBar';
 import React, {useCallback, useState} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
+import Tooltip from '../../../inputs/Tooltip';
 import fbt from 'fbt';
 import {BLUE, DARK, GREEN} from '@symphony/design-system/theme/symphony';
 import {
@@ -134,7 +135,8 @@ function BuilderTopBar() {
           variant: 'success',
         });
       })
-      .catch(() => {
+      .catch(error => {
+        console.log(error);
         enqueueSnackbar(
           `${fbt(
             'There was an error when trying to save the flow draft.',
@@ -178,43 +180,50 @@ function BuilderTopBar() {
   return (
     <ToolsBar className={classes.root}>
       <div className={classes.left}>
-        <IconButton
-          className={!isGrid ? classes.blue : null}
-          tooltip={'Show Grid'}
-          skin={'inherit'}
-          onClick={() => handleShowGrid()}
-          icon={GridIcon}
-        />
-        <IconButton
-          className={classes.marginLeft}
-          tooltip={'Undo'}
-          skin={'inherit'}
-          icon={UndoIcon}
-        />
-        <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
+        <Tooltip tooltip={'Show Grid'}>
+          <IconButton
+            className={!isGrid ? classes.blue : null}
+            skin={'inherit'}
+            onClick={() => handleShowGrid()}
+            icon={GridIcon}
+          />
+        </Tooltip>
+        <Tooltip tooltip={'Undo'}>
+          <IconButton
+            className={classes.marginLeft}
+            skin={'inherit'}
+            icon={UndoIcon}
+          />
+        </Tooltip>
+        <Tooltip tooltip={'Redo'}>
+          <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
+        </Tooltip>
       </div>
       <div className={classes.left}>
         {copyPaste.allowDuplicate && (
-          <IconButton
-            tooltip={'Duplicate'}
-            skin={'inherit'}
-            icon={DuplicateFlowIcon}
-            onClick={copyPaste.duplicate}
-            disabled={!copyPaste.allowDuplicate}
-          />
+          <Tooltip tooltip={'Duplicate'}>
+            <IconButton
+              skin={'inherit'}
+              icon={DuplicateFlowIcon}
+              onClick={copyPaste.duplicate}
+              disabled={!copyPaste.allowDuplicate}
+            />
+          </Tooltip>
         )}
         {!(
           selection.selectedElements.length === 0 && !selection.selectedLink
         ) && (
-          <IconButton
-            tooltip={'Delete block'}
-            skin={'inherit'}
-            icon={DeleteOutlineIcon}
-            onClick={deleteSelected}
-            disabled={
-              selection.selectedElements.length === 0 && !selection.selectedLink
-            }
-          />
+          <Tooltip tooltip={'Delete block'}>
+            <IconButton
+              skin={'inherit'}
+              icon={DeleteOutlineIcon}
+              onClick={deleteSelected}
+              disabled={
+                selection.selectedElements.length === 0 &&
+                !selection.selectedLink
+              }
+            />
+          </Tooltip>
         )}
       </div>
 
@@ -230,13 +239,14 @@ function BuilderTopBar() {
           {isSaved() ? 'Saved' : Strings.common.saveButton}
         </Button>
         <MenuTopBar />
-        <Button
-          onClick={publish}
-          tooltip="publish last saved version"
-          disabled={isSaved() && flowData.hasPublish}
-          className={flowData.hasPublish ? classes.publish : null}>
-          {flowData.hasPublish ? 'Published' : 'Publish'}
-        </Button>
+        <Tooltip tooltip={'publish last saved version'}>
+          <Button
+            onClick={publish}
+            disabled={isSaved() && flowData.hasPublish}
+            className={flowData.hasPublish ? classes.publish : null}>
+            {flowData.hasPublish ? 'Published' : 'Publish'}
+          </Button>
+        </Tooltip>
       </div>
     </ToolsBar>
   );

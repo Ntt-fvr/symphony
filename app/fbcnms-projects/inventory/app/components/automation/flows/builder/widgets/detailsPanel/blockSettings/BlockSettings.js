@@ -11,35 +11,25 @@
 import type {IBlock} from '../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
+import ConfigureSettings from './configureSettings/index';
 import ErrorHandlingSettings from './errorHandlingSettings';
 import InputSettings from './inputSettings';
 import OutputSettings from './outputSettings';
 import Tabs from '../../../../../inputs/Tabs';
-import {makeStyles} from '@material-ui/styles';
+import {Box} from '@material-ui/core';
 type Props = $ReadOnly<{|
   block: IBlock,
 |}>;
 
-const useStyles = makeStyles(() => ({
-  root: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  title: {
-    marginBottom: '27px',
-  },
-}));
 export default function BlockSettings(props: Props) {
   const {block} = props;
-  const classes = useStyles();
   console.log('Block', block);
 
   const tabs = [
     {
       label: 'Configurations',
       index: 0,
-      view: <div />,
+      view: <ConfigureSettings block={block} />,
     },
     {
       label: 'Input',
@@ -59,8 +49,8 @@ export default function BlockSettings(props: Props) {
   ];
 
   return (
-    <div className={classes.root}>
+    <Box py={1} px={0}>
       <Tabs tabs={tabs} scrollable={false} />
-    </div>
+    </Box>
   );
 }

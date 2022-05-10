@@ -74,6 +74,7 @@ export {default as WifiIcon} from './Indications/WifiIcon';
 export {default as WorkOrdersIcon} from './Indications/WorkOrdersIcon';
 export {default as YesNoIcon} from './Indications/YesNoIcon';
 
+export {default as BackFlow} from './Navigation/BackFlow';
 export {default as ArrowDownIcon} from './Navigation/ArrowDownIcon';
 export {default as ArrowLeftIcon} from './Navigation/ArrowLeftIcon';
 export {default as ArrowRightIcon} from './Navigation/ArrowRightIcon';

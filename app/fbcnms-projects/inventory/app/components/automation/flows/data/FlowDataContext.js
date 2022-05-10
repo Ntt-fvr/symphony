@@ -370,7 +370,7 @@ function FlowDataContextProviderComponent(props: Props) {
       }
 
       if (gotoBlocks.length > 0) {
-        flowData.gotoBlocks = gotoBlocks;
+        flowData.goToBlocks = gotoBlocks;
       }
 
       if (trueFalseBlocks.length > 0) {
