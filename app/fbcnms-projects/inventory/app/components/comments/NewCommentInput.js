@@ -30,11 +30,6 @@ type Props = $ReadOnly<{|
   className?: string,
 |}>;
 
-//const RECAPTCHA_KEY = parseInt(process.env.INTERNAL_PORT);
-const RECAPTCHA_KEY = '6LfefsUfAAAAAP9-SpZBA_i2W83k89X08mL4dfJy';
-
-console.log(process.env.INTERNAL_PORT);
-
 const useStyles = makeStyles(() => ({
   newCommentBox: {
     width: '100%',
@@ -79,12 +74,14 @@ const NewCommentInput = (props: Props) => {
   };
 
   const handleVerify = () => {
-    console.log('verify');
+    console.log('Verify');
   };
 
   return (
     <div className={classNames(className, classes.newCommentBox)}>
-      <GoogleReCaptchaProvider language="en-US" reCaptchaKey={RECAPTCHA_KEY}>
+      <GoogleReCaptchaProvider
+        language="en-US"
+        reCaptchaKey={process.env.RECAPTCHA_KEY}>
         <FormField>
           <TextInput
             className={classes.newCommentInput}
