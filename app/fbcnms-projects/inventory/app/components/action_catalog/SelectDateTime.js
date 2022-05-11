@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
       borderRadius: '4px',
     },
   },
-  item: {
+  itemList: {
     '&:hover': {
       backgroundColor: '#EDF0F9',
     },
@@ -84,7 +84,7 @@ const SelectDateTime = (props: Props) => {
         {dateTime.map(item => (
           <ListItem
             onClick={() => handleSelectDate(item)}
-            className={classes.item}
+            className={classes.itemList}
             key={item.id}
             selected={selectedDateOpt === item.id}
             button>

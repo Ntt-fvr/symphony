@@ -12,7 +12,6 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import TableConfigurtionParameter from './TableConfigurtionParameter';
 import Text from '@symphony/design-system/components/Text';
@@ -23,11 +22,6 @@ const useStyles = makeStyles(() => ({
   root: {},
   title: {
     padding: '0',
-  },
-  rootCard: {
-    '&.root': {
-      padding: '0px',
-    },
   },
   dialogActions: {
     padding: '0 24px',
@@ -40,7 +34,6 @@ const useStyles = makeStyles(() => ({
     zIndex: 2,
   },
   option: {
-    // width: '111px',
     height: '36px',
   },
 }));

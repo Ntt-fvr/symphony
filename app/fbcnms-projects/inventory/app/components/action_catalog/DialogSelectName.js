@@ -9,7 +9,6 @@
  */
 
 import Button from '@material-ui/core/Button';
-import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -22,7 +21,6 @@ import Radio from '@material-ui/core/Radio';
 import React, {useCallback, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
 import {StepperName} from './StepperName';
 import {makeStyles} from '@material-ui/styles';
@@ -96,7 +94,7 @@ const DialogSelectName = (props: Props) => {
     setCheckedHidden(prevStateChecked => !prevStateChecked);
   };
   const nameType = e => {
-    console.log(e.target.value);
+    setWritename(e.target.value);
   };
 
   const classes = useStyles();
@@ -156,7 +154,6 @@ const DialogSelectName = (props: Props) => {
               <Button
                 onClick={() => {
                   handleClickOpenConfirmChange();
-                  // handleSelectDate();
                   handleConfirmDate();
                 }}
                 className={classes.option}
