@@ -38,10 +38,6 @@ import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
 import {useContext} from 'react';
-<<<<<<< HEAD
-
-=======
->>>>>>> 22989673f6fba62d839a71dff5e8a0056e0bf3ec
 const useStyles = makeStyles(() => ({
   container: {
     overflowX: 'auto',

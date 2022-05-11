@@ -22,6 +22,7 @@ import React, {useState} from 'react';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
+import {Configuration} from '../resource_instance/Configuration';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/styles';
 
@@ -185,9 +186,7 @@ const ResourcePropertiesCard = (props: Props) => {
           ) : null}
           {selectedTab === 'ports' ? <div>soy ports</div> : null}
           {selectedTab === 'network' ? <div>soy network</div> : null}
-          {selectedTab === 'configuration' ? (
-            <div>soy configuration</div>
-          ) : null}
+          {selectedTab === 'configuration' ? <Configuration /> : null}
           {selectedTab === 'services' ? <div>soy services</div> : null}
         </PerfectScrollbar>
         {openDialog && (
