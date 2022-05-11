@@ -32,6 +32,11 @@ const useStyles = makeStyles(() => ({
   title: {
     padding: '30px',
   },
+  nameTypeAction: {
+    '& .MuiInputBase-input:invalid': {
+      height: '20px',
+    },
+  },
   input: {
     ...inventoryTheme.textField,
     marginTop: '0px',
@@ -110,17 +115,19 @@ const DialogSelectName = (props: Props) => {
             </Grid>
             <Grid className={classes.title}>
               <CardHeader>Name and Type action</CardHeader>
-              <FormField>
-                <TextField
-                  style={{width: '50%'}}
-                  required
-                  label="Name"
-                  variant="outlined"
-                  fullWidth
-                  name="name"
-                  onChange={nameType}
-                />
-              </FormField>
+              <Grid item xs={6}>
+                <FormField>
+                  <TextField
+                    className={classes.nameTypeAction}
+                    required
+                    label="Name"
+                    variant="outlined"
+                    name="name"
+                    size="small"
+                    onChange={nameType}
+                  />
+                </FormField>
+              </Grid>
               <Grid className={classes.subtitle}>
                 <Text variant={'subtitle2'}>Select Type Action</Text>
               </Grid>

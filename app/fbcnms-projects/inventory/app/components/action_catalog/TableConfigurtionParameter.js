@@ -27,11 +27,13 @@ import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
+import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 // import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
@@ -46,13 +48,16 @@ const useStyles = makeStyles(() => ({
   },
   root: {
     marginBottom: '12px',
-    // maxWidth: '100%',
+    maxWidth: '100%',
+  },
+  configurationParameterName: {
+    width: '48px',
   },
   input: {
     ...inventoryTheme.textField,
     marginTop: '0px',
     marginBottom: '0px',
-    // width: '100%',
+    width: '100%',
   },
   formField: {
     width: '100%',
@@ -84,7 +89,9 @@ const useStyles = makeStyles(() => ({
     },
   },
   selectField: {
-    width: '100%',
+    '& .MuiOutlinedInput-root': {
+      height: '36px',
+    },
   },
   checkbox: {
     textAlign: 'center',
@@ -110,11 +117,10 @@ const actionTypes = [{}];
 
 const TableConfigurtionParameter = (props: Props) => {
   const {} = props;
-  const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const classes = useStyles();
 
   const handleModal = () => {
-    setIsDialogSelectDate(preventState => !preventState);
+    console.log('ADD PARAMETER');
   };
 
   return (
@@ -122,69 +128,64 @@ const TableConfigurtionParameter = (props: Props) => {
       <Table component="div" className={classes.root}>
         <TableHead component="div">
           <TableRow component="div">
-            <TableCell component="div">
+            <TableCell style={{width: '50%'}} component="div">
               <fbt desc="">Configuration Parameter</fbt>
             </TableCell>
-            <TableCell component="div">
+            <TableCell style={{width: '40%'}} component="div">
               <fbt desc="">Value</fbt>
             </TableCell>
-            <TableCell component="div">
+            <TableCell style={{width: '10%'}} component="div">
               <fbt desc="">Delete</fbt>
             </TableCell>
-            <TableCell component="div" />
           </TableRow>
         </TableHead>
 
         {actionTypes?.map((item, i) => (
-          <div key={i}>
-            <TableCell style={{width: '50%'}} component="div" scope="row">
+          <TableRow component="div" key={i}>
+            <TableCell component="div" scope="row">
+              <FormField>
+                <TextField
+                  required
+                  id="outlined-select-parameter"
+                  select
+                  className={classes.selectField}
+                  placeholder="Select Parameter"
+                  name="family"
+                  defaultValue=""
+                  variant="outlined">
+                  <MenuItem>one</MenuItem>
+                  <MenuItem>two</MenuItem>
+                  <MenuItem>three</MenuItem>
+                </TextField>
+              </FormField>
+            </TableCell>
+
+            <TableCell component="div" scope="row">
               <FormField>
                 <TextInput
                   autoFocus={true}
-                  placeholder="Name"
+                  placeholder="Value"
                   autoComplete="off"
                   className={classes.input}
                 />
               </FormField>
             </TableCell>
 
-            <TableCell
-              style={{width: '10%'}}
-              className={classes.checkbox}
-              component="div">
+            <TableCell component="div" scope="row">
               <FormAction>
                 <IconButton aria-label="delete">
                   <DeleteOutlinedIcon color="primary" />
                 </IconButton>
               </FormAction>
             </TableCell>
-
-            <TableCell
-              style={{width: '10%'}}
-              className={classes.checkbox}
-              component="div">
-              <FormAction>
-                <IconButton aria-label="delete">
-                  <EditIcon color="primary" />
-                </IconButton>
-              </FormAction>
-            </TableCell>
-
-            <TableCell style={{width: '50%'}} component="div" scope="row" />
-          </div>
+          </TableRow>
         ))}
       </Table>
       <FormAction>
         <Button variant="text" onClick={handleModal} leftIcon={PlusIcon}>
-          <fbt desc="">Add Property</fbt>
+          <fbt desc="">Add Parameter</fbt>
         </Button>
       </FormAction>
-      {isDialogSelectDate && (
-        <DialogSelectName
-          isDialogSelectDate={isDialogSelectDate}
-          onClose={handleModal}
-        />
-      )}
     </div>
   );
 };

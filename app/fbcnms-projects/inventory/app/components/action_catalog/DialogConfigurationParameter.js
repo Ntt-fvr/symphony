@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
     zIndex: 2,
   },
   option: {
-    width: '111px',
+    // width: '111px',
     height: '36px',
   },
 }));
@@ -72,7 +72,6 @@ const DialogConfigurationParameter = (props: Props) => {
           </Text>
         </Grid>
       </Card>
-      {/**tabla** */}
       <Grid style={{margin: '20px 30px 20px 30px'}} item xs={12}>
         <TableConfigurtionParameter />
       </Grid>
@@ -82,14 +81,14 @@ const DialogConfigurationParameter = (props: Props) => {
           variant="outlined"
           color="primary"
           onClick={() => {
-            handleBack();
-            handleBackStep();
+            onClose();
           }}>
           Cancel
         </Button>
         <Button
           onClick={() => {
-            onClose();
+            handleBack();
+            handleBackStep();
           }}
           style={{height: '36px'}}
           variant="contained"

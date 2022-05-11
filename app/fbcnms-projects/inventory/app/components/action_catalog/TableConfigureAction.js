@@ -113,7 +113,7 @@ const TableConfigureAction = (props: Props) => {
   const classes = useStyles();
   // const dispatch = useContext(ParameterTypesTableDispatcher);
 
-  const handleModal = () => {
+  const handleModalAddAction = () => {
     setIsDialogSelectDate(preventState => !preventState);
   };
 
@@ -122,21 +122,28 @@ const TableConfigureAction = (props: Props) => {
       <Table component="div" className={classes.root}>
         <TableHead component="div">
           <TableRow component="div">
-            <TableCell component="div">
+            <TableCell style={{width: '40%'}} component="div">
               <fbt desc="">Name</fbt>
             </TableCell>
-            <TableCell className={classes.checkbox} component="div">
+            <TableCell
+              style={{width: '5%'}}
+              // className={classes.checkbox}
+              component="div">
               <fbt desc="">Delete</fbt>
             </TableCell>
-            <TableCell className={classes.checkbox} component="div">
+            <TableCell
+              style={{width: '5%'}}
+              // className={classes.checkbox}
+              component="div">
               <fbt desc="">Edit</fbt>
             </TableCell>
+            <TableCell style={{width: '50%'}} />
           </TableRow>
         </TableHead>
 
         {actionTypes?.map((item, i) => (
-          <div key={i}>
-            <TableCell style={{width: '50%'}} component="div" scope="row">
+          <TableRow component="div" key={i}>
+            <TableCell component="div" scope="row">
               <FormField>
                 <TextInput
                   autoFocus={true}
@@ -148,8 +155,7 @@ const TableConfigureAction = (props: Props) => {
             </TableCell>
 
             <TableCell
-              style={{width: '10%'}}
-              className={classes.checkbox}
+              // className={classes.checkbox}
               component="div">
               <FormAction>
                 <IconButton aria-label="delete">
@@ -159,8 +165,7 @@ const TableConfigureAction = (props: Props) => {
             </TableCell>
 
             <TableCell
-              style={{width: '10%'}}
-              className={classes.checkbox}
+              // className={classes.checkbox}
               component="div">
               <FormAction>
                 <IconButton aria-label="delete">
@@ -169,19 +174,22 @@ const TableConfigureAction = (props: Props) => {
               </FormAction>
             </TableCell>
 
-            <TableCell style={{width: '50%'}} component="div" scope="row" />
-          </div>
+            <TableCell component="div" scope="row" />
+          </TableRow>
         ))}
       </Table>
       <FormAction>
-        <Button variant="text" onClick={handleModal} leftIcon={PlusIcon}>
-          <fbt desc="">Add Property</fbt>
+        <Button
+          variant="text"
+          onClick={handleModalAddAction}
+          leftIcon={PlusIcon}>
+          <fbt desc="">Add Action</fbt>
         </Button>
       </FormAction>
       {isDialogSelectDate && (
         <DialogSelectName
           isDialogSelectDate={isDialogSelectDate}
-          onClose={handleModal}
+          onClose={handleModalAddAction}
         />
       )}
     </div>
