@@ -21,8 +21,8 @@ func (r mutationResolver) AddAction(ctx context.Context, input models.AddActionI
 	client := r.ClientFrom(ctx)
 	typ, err := client.
 		Action.Create().
-		//SetRuleActionID(input.RuleAction).
 		SetExecutionID(input.Execution).
+		SetRuleactionID(input.RuleAction).
 		SetStatus(input.Status).
 		SetUserAction(input.UserAction).
 		SetLogExecution(input.LogExecution).
@@ -76,8 +76,8 @@ func (r mutationResolver) EditAction(ctx context.Context, input models.EditActio
 	if change {
 		if et, err = client.Action.
 			UpdateOne(et).
-			//SetRuleActionID(input.RuleAction).
 			SetExecutionID(*input.Execution).
+			SetRuleactionID(*input.RuleAction).
 			SetStatus(actionStatus).
 			SetUserAction(actionUserAction).
 			SetLogExecution(*input.LogExecution).
