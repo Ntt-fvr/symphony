@@ -1,4 +1,4 @@
- # Copyright (c) 2004-present Facebook All rights reserved.
+# Copyright (c) 2004-present Facebook All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
@@ -380,6 +380,7 @@ type PermissionsPolicy implements Node {
   name: String!
   description: String
   isGlobal: Boolean!
+  isMulticontractor: Boolean!
   policy: SystemPolicy!
   groups: [UsersGroup!]!
 }
@@ -388,6 +389,7 @@ input AddPermissionsPolicyInput {
   name: String!
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -400,6 +402,7 @@ input EditPermissionsPolicyInput {
   name: String
   description: String
   isGlobal: Boolean
+  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -1680,6 +1683,9 @@ type PropertyType implements Node {
   isDeleted: Boolean
   propertyCategory: PropertyCategory
   isListable: Boolean
+  parentPropertyType: PropertyType @goField(name: "PropertyType") 
+  dependencePropertyTypes: [PropertyType]!
+  propertyTypeValues: [PropertyTypeValue!]
 }
 
 type DocumentCategory implements Node {
@@ -1734,6 +1740,8 @@ input PropertyTypeInput
   isDeleted: Boolean
   propertyCategoryID: ID
   isListable: Boolean
+  dependencePropertyTypes: [PropertyTypeInput]
+  propertyTypeValues: [AddPropertyTypeValueInput]
 }
 
 input EditIsListableInput {
@@ -1754,6 +1762,8 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
+  dependenceProperties: [Property!]
+  propertyTypeValue: PropertyTypeValue
 }
 
 input PropertyInput {
@@ -1770,6 +1780,8 @@ input PropertyInput {
   nodeIDValue: ID
   isEditable: Boolean
   isInstanceProperty: Boolean
+  dependenceProperties: [PropertyInput!]
+  propertyTypeValueID: ID
 }
 
 """
@@ -3686,7 +3698,6 @@ type KqiEdge {
   cursor: Cursor!
 }
 
-
 """
 Properties by which Organization connections can be ordered.
 """
@@ -4289,6 +4300,74 @@ type KqiTargetEdge {
   """
   cursor: Cursor!
 }
+
+"""
+Properties by which PropertyTypeValues connections can be ordered.
+"""
+enum PropertyTypeValueOrderField {
+  """
+  Order propertyTypeValue by name.
+  """
+  NAME
+
+  """
+  Order propertyTypeValue by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order propertyTypeValue by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for propertyTypeValues connections.
+"""
+input PropertyTypeValueOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kpi's by.
+  """
+  field: PropertyTypeValueOrderField
+}
+
+"""
+A connection to a list of kpi's.
+"""
+type PropertyTypeValueConnection {
+  """
+  Total kpi's of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kpi's edges.
+  """
+  edges: [PropertyTypeValueEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kpi's edge in a connection.
+"""
+type PropertyTypeValueEdge {
+  """
+  The kpi's at the end of the edge.
+  """
+  node: PropertyTypeValue
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 """
 Properties by which formulas connections can be ordered.
 """
@@ -5140,6 +5219,7 @@ enum ProjectFilterType {
   LOCATION_INST
   PROJECT_PRIORITY
   PROPERTY
+  PROJECT_CREATION_DATE
 }
 
 input ProjectFilterInput {
@@ -5150,6 +5230,7 @@ input ProjectFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: PropertyTypeInput
+  timeValue: Time
 }
 
 enum CounterFilterType {
@@ -6663,47 +6744,12 @@ type Query {
     """
     orderBy: CounterOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [CounterFilterInput!]
   ): CounterConnection!
   
-  """
-  A list of resourceSpecificationRelationships.
-  """
-  resourceSpecificationRelationships(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceSpecificationRelationships.
-    """
-    orderBy: ResourceSpecificationRelationshipOrder
-
-    
-    #Filtering options for the returned resourceSpecificationRelationships.
-    
-    filterBy: [ResourceSpecificationRelationshipFilterInput!]
-  ): ResourceSpecificationRelationshipConnection!
-
   """
   A list of kpis.
   """
@@ -6733,9 +6779,9 @@ type Query {
     """
     orderBy: KpiOrder
 
-    
-    #Filtering options for the returned kpis.
-    
+    """
+    Filtering options for the returned kpis.
+    """
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
 
@@ -6768,9 +6814,9 @@ type Query {
     """
     orderBy: KpiCategoryOrder
 
-    
-    #Filtering options for the returned kpiCategoriess.
-    
+    """
+    Filtering options for the returned kpiCategoriess.
+    """
     filterBy: [KpiCategoryFilterInput!]
   ): KpiCategoryConnection!
 
@@ -6803,9 +6849,9 @@ type Query {
     """
     orderBy: ThresholdOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [ThresholdFilterInput!]
   ): ThresholdConnection!
   
@@ -6838,12 +6884,11 @@ type Query {
     """
     orderBy: AlarmFilterOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [AlarmFilterFilterInput!]
   ): AlarmFilterConnection!
-
   
   """
   A list of domains.
@@ -6874,9 +6919,9 @@ type Query {
     """
     orderBy: DomainOrder
 
-    
-    #Filtering options for the returned domains.
-    
+    """
+    Filtering options for the returned domains.
+    """
     filterBy: [DomainFilterInput!]
   ): DomainConnection!
 
@@ -6909,9 +6954,9 @@ type Query {
     """
     orderBy: VendorOrder
 
-    
-    #Filtering options for the returned vendors.
-    
+    """
+    Filtering options for the returned vendors.
+    """
     filterBy: [VendorFilterInput!]
   ): VendorConnection!
 
@@ -6944,12 +6989,11 @@ type Query {
     """
     orderBy: CounterFamilyOrder
 
-    
-    #Filtering options for the returned counterFamilies.
-    
+    """
+    Filtering options for the returned counterFamilies.
+    """
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
-
   
   """
   A list of ruleTypes.
@@ -6980,9 +7024,9 @@ type Query {
     """
     orderBy: RuleTypeOrder
 
-    
-    #Filtering options for the returned ruleTypes.
-    
+    """
+    Filtering options for the returned ruleTypes.
+    """
     filterBy: [RuleTypeFilterInput!]
   ): RuleTypeConnection!
 
@@ -7015,16 +7059,15 @@ type Query {
     """
     orderBy: EventSeverityOrder
 
-    
-    #Filtering options for the returned eventSeverities.
-    
+    """
+    Filtering options for the returned eventSeverities.
+    """
     filterBy: [EventSeverityFilterInput!]
   ): EventSeverityConnection!
   
   """
   A list of comparator.
   """
-  
   comparators(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7051,16 +7094,15 @@ type Query {
     """
     orderBy: ComparatorOrder
 
-    
-    #Filtering options for the returned comparator.
-    
+    """
+    Filtering options for the returned comparator.
+    """
     filterBy: [ComparatorFilterInput!]
   ): ComparatorConnection!
 
   """
   A list of alarmStatus.
-  """
-  
+  """  
   alarmStatus(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7087,9 +7129,9 @@ type Query {
     """
     orderBy: AlarmStatusOrder
 
-    
-    #Filtering options for the returned alarmStatus.
-    
+    """
+    Filtering options for the returned alarmStatus.
+    """
     filterBy: [AlarmStatusFilterInput!]
   ): AlarmStatusConnection!
 
@@ -7122,9 +7164,9 @@ type Query {
     """
     orderBy: KqiOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [KqiFilterInput!]
   ): KqiConnection!
   
@@ -7157,9 +7199,9 @@ type Query {
     """
     orderBy: KqiCategoryOrder
 
-    
-    #Filtering options for the returned kqiCategories.
-    
+    """
+    Filtering options for the returned kqiCategories.
+    """
     filterBy: [KqiCategoryFilterInput!]
   ): KqiCategoryConnection!
 
@@ -7192,9 +7234,9 @@ type Query {
     """
     orderBy: KqiPerspectiveOrder
 
-    
-    #Filtering options for the returned kqiPerspectives.
-    
+    """
+    Filtering options for the returned kqiPerspectives.
+    """
     filterBy: [KqiPerspectiveFilterInput!]
   ): KqiPerspectiveConnection!
 
@@ -7227,9 +7269,9 @@ type Query {
     """
     orderBy: KqiTemporalFrequencyOrder
 
-    
-    #Filtering options for the returned kqiTemporalFrequency.
-    
+    """
+    Filtering options for the returned kqiTemporalFrequency.
+    """
     filterBy: [KqiTemporalFrequencyFilterInput!]
   ): KqiTemporalFrequencyConnection!
 
@@ -7262,9 +7304,9 @@ type Query {
     """
     orderBy: KqiSourceOrder
 
-    
-    #Filtering options for the returned kqiSource.
-    
+    """
+    Filtering options for the returned kqiSource.
+    """
     filterBy: [KqiSourceFilterInput!]
   ): KqiSourceConnection!
 
@@ -7297,15 +7339,15 @@ type Query {
     """
     orderBy: KqiTargetOrder
 
-    
-    #Filtering options for the returned kqiTarget.
+    """
+    Filtering options for the returned kqiTarget.
+    """
     filterBy: [KqiTargetFilterInput!]
   ): KqiTargetConnection!
 
   """
   A list of organization.
   """
-  
   organizations(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7332,11 +7374,12 @@ type Query {
     """
     orderBy: OrganizationOrder
 
-    
-    #Filtering options for the returned organization.
-    
+    """
+    Filtering options for the returned organization.
+    """
     filterBy: [OrganizationFilterInput!]
   ): OrganizationConnection!
+
   """
   A list of Recommendations.
   """
@@ -7366,11 +7409,12 @@ type Query {
     """
     orderBy: RecommendationsOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsFilterInput!]
   ): RecommendationsConnection!
+
   """
   A list of RecommendationsSources.
   """
@@ -7400,11 +7444,12 @@ type Query {
     """
     orderBy: RecommendationsSourcesOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsSourcesFilterInput!]
   ): RecommendationsSourcesConnection!
+
   """
   A list of RecommendationsCategories.
   """
@@ -7434,12 +7479,13 @@ type Query {
     """
     orderBy: RecommendationsCategoryOrder
 
-    
-    #Filtering options for the returned counters.
-    
+    """
+    Filtering options for the returned counters.
+    """
     filterBy: [RecommendationsCategoryFilterInput!]
   ): RecommendationsCategoryConnection!
-     """
+
+  """
   A list of formulas.
   """
   formulas(
@@ -7468,12 +7514,47 @@ type Query {
     """
     orderBy: FormulaOrder
 
-    
-    #Filtering options for the returned formulas.
-    
+    """
+    Filtering options for the returned formulas.
+    """
     filterBy: [FormulaFilterInput!]
   ): FormulaConnection!
 
+  """
+  A list of propertyTypeValue.
+  """
+  propertyTypeValues(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned networkTypes.
+    """
+    orderBy: PropertyTypeValueOrder
+
+    """
+    Filtering options for the returned networkTypes.
+    """
+    filterBy: [PropertyTypeValueFilterInput!]
+  ): PropertyTypeValueConnection!
+  
   """
   A list of techs.
   """
@@ -7503,9 +7584,9 @@ type Query {
     """
     orderBy: TechOrder
 
-    
-    #Filtering options for the returned techs.
-    
+    """
+    Filtering options for the returned techs.
+    """
     filterBy: [TechFilterInput!]
   ): TechConnection!
 
@@ -7538,116 +7619,11 @@ type Query {
     """
     orderBy: NetworkTypeOrder
 
-    
-    #Filtering options for the returned networkTypes.
-    
+    """
+    Filtering options for the returned networkTypes.
+    """
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
-
-    """
-  A list of resourceTypes.
-  """
-  resourceTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypes.
-    """
-    orderBy: ResourceTypeOrder
-
-    
-    #Filtering options for the returned resourceTypes.
-    
-    filterBy: [ResourceTypeFilterInput!]
-  ): ResourceTypeConnection!
-  
-  """
-  A list of resourceTypeRelationships.
-  """
-  resourceTypeRelationships(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeRelationships.
-    """
-    orderBy: ResourceTypeRelationshipOrder
-
-    
-    #Filtering options for the returned resourceTypeRelationships.
-    
-    filterBy: [ResourceTypeRelationshipFilterInput!]
-  ): ResourceTypeRelationshipConnection!
-
-  """
-  A list of resourceSpecifications.
-  """
-  resourceSpecifications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceSpecifications.
-    """
-    orderBy: ResourceSpecificationOrder
-
-    
-    #Filtering options for the returned resourceSpecifications.
-    
-    filterBy: [ResourceSpecificationFilterInput!]
-  ): ResourceSpecificationConnection!
  
   appointments(
     after: Cursor
@@ -7736,6 +7712,146 @@ type Query {
     #Filtering options for the returned ResourceSpecificationItems.
     filterBy: [ResourceSpecificationItemsFilterInput!]
   ): ResourceSpecificationItemsConnection!
+
+  """
+  A list of resourceSpecificationRelationships.
+  """
+  resourceSpecificationRelationships(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceSpecificationRelationships.
+    """
+    orderBy: ResourceSpecificationRelationshipOrder
+
+    
+    #Filtering options for the returned resourceSpecificationRelationships.
+    
+    filterBy: [ResourceSpecificationRelationshipFilterInput!]
+  ): ResourceSpecificationRelationshipConnection!
+
+  """
+  A list of resourceTypeRelationships.
+  """
+  resourceTypeRelationships(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceTypeRelationships.
+    """
+    orderBy: ResourceTypeRelationshipOrder
+
+    
+    #Filtering options for the returned resourceTypeRelationships.
+    
+    filterBy: [ResourceTypeRelationshipFilterInput!]
+  ): ResourceTypeRelationshipConnection!
+
+  """
+  A list of resourceSpecifications.
+  """
+  resourceSpecifications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceSpecifications.
+    """
+    orderBy: ResourceSpecificationOrder
+
+    
+    #Filtering options for the returned resourceSpecifications.
+    
+    filterBy: [ResourceSpecificationFilterInput!]
+  ): ResourceSpecificationConnection!
+
+  """
+  A list of resourceTypes.
+  """
+  resourceTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceTypes.
+    """
+    orderBy: ResourceTypeOrder
+
+    
+    #Filtering options for the returned resourceTypes.
+    
+    filterBy: [ResourceTypeFilterInput!]
+  ): ResourceTypeConnection!
 }
 
 
@@ -8024,6 +8140,7 @@ type Mutation {
   addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
+  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -8070,6 +8187,9 @@ type Mutation {
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems!
   editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems!
   removeResourceSpecificationItems(id: ID!): ID!
+  addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
+  editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
+  removePropertyTypeValue(id: ID!): ID!
 }
 
 """
@@ -8220,6 +8340,53 @@ enum DomainFilterType {
 
 input DomainFilterInput {
   filterType: DomainFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type PropertyTypeValue implements Node {
+  id: ID!
+  name: String!
+  isDeleted: Boolean
+  propertyType: PropertyType
+  parentPropertyTypeValue: [PropertyTypeValue]
+}
+
+input AddPropertyTypeValueInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.AddPropertyTypeValueInput"
+  ) {
+  id: ID
+  name: String!
+  isDeleted: Boolean
+  propertyType: ID
+  parentPropertyTypeValue: [String]
+  parentPropertyType: [ParentPropertyTypeValueInput]
+}
+
+input ParentPropertyTypeValueInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ParentPropertyValueInput"
+  ) {
+  parentPropertyTypeValue: String
+  parentPropertyType: ID
+}
+
+input EditPropertyTypeValueInput {
+  id: ID
+  name: String!
+  isDeleted: Boolean
+}
+
+enum PropertyTypeValueFilterType {
+  NAME
+}
+
+input PropertyTypeValueFilterInput {
+  filterType: PropertyTypeValueFilterType!
   operator: FilterOperator!
   stringValue: String
   idSet: [ID!]
@@ -9363,6 +9530,16 @@ input ResourceSpecificationFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]  
+}
+
+input ResourceSpecificationRelationshipItemsInput {
+  id_destino: ID
+}
+
+input AddResourceSpecificationRelationshipList {
+  name: String!
+  resourceSpecification: ID!
+  resourceSpecificationRelationshipItems: [ResourceSpecificationRelationshipItemsInput]
 }
 
 type ResourceSpecificationRelationship implements Node {

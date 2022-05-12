@@ -242,11 +242,12 @@ func TestEditEquipmentPortTypeWithLinkProperties(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, portType.Name, newType.Name, "successfully edited EquipmentPort type name")
 
-	strProp = portType.QueryLinkPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
+	linkProps := newType.QueryLinkPropertyTypes().AllX(ctx)
+	strProp = newType.QueryLinkPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	require.Equal(t, "str_prop_new", strProp.Name, "successfully edited prop type name")
 	require.Equal(t, strValue, pointer.GetString(strProp.StringVal), "successfully edited prop type string value")
 
-	intProp := portType.QueryLinkPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeInt)).OnlyX(ctx)
+	intProp := newType.QueryLinkPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeInt)).OnlyX(ctx)
 	require.Equal(t, "int_prop", intProp.Name, "successfully edited prop type name")
 	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 

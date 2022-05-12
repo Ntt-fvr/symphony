@@ -48,6 +48,20 @@ export type PropertyTypeInput = {|
   isDeleted?: ?boolean,
   propertyCategoryID?: ?string,
   isListable?: ?boolean,
+  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+|};
+export type AddPropertyTypeValueInput = {|
+  id?: ?string,
+  name: string,
+  isDeleted?: ?boolean,
+  propertyType?: ?string,
+  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
+|};
+export type ParentPropertyTypeValueInput = {|
+  parentPropertyTypeValue?: ?string,
+  parentPropertyType?: ?string,
 |};
 export type EquipmentTypeahead_equipmentQueryVariables = {|
   filters: $ReadOnlyArray<EquipmentFilterInput>

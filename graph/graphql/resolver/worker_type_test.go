@@ -199,13 +199,13 @@ func TestEditWorkerTypeWithProperties(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, eqType.Name, newType.Name, "successfully edited worker type name")
 
-	strProp = eqType.QueryPropertyTypes().
+	strProp = newType.QueryPropertyTypes().
 		Where(propertytype.TypeEQ(propertytype.TypeString)).
 		OnlyX(ctx)
 	require.Equal(t, "str_prop_new", strProp.Name, "successfully edited prop type name")
 	require.Equal(t, "Foo - edited", pointer.GetString(strProp.StringVal), "successfully edited prop type string value")
 
-	intProp := eqType.QueryPropertyTypes().
+	intProp := newType.QueryPropertyTypes().
 		Where(propertytype.TypeEQ(propertytype.TypeInt)).
 		OnlyX(ctx)
 	require.Equal(t, "int_prop", intProp.Name, "successfully edited prop type name")

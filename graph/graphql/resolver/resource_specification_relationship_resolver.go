@@ -53,6 +53,34 @@ func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.C
 	return resourceSpecification, nil
 }
 
+func (r mutationResolver) AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipList) (*ent.ResourceSpecificationRelationship, error) {
+	client := r.ClientFrom(ctx)
+	typ, err := client.ResourceSpecificationRelationship.
+		Create().
+		SetName(input.Name).
+		SetNillableResourcespecificationID(&input.ResourceSpecification).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+		}
+		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	if len(input.ResourceSpecificationRelationshipItems) > 0 {
+		for _, item := range input.ResourceSpecificationRelationshipItems {
+			inputItem := models.AddResourceSpecificationItemsInput{
+				ResourceSpecificationRelationship: typ.ID,
+				ResourceSpecification:             item.IDDestino,
+			}
+			_, err := r.AddResourceSpecificationItems(ctx, inputItem)
+			if err != nil {
+				return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+			}
+		}
+	}
+	return typ, nil
+}
+
 func (r mutationResolver) AddResourceSpecificationRelationship(ctx context.Context, input models.AddResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

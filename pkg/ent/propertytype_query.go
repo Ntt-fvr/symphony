@@ -25,6 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -51,6 +52,9 @@ type PropertyTypeQuery struct {
 	withProjectType           *ProjectTypeQuery
 	withProjectTemplate       *ProjectTemplateQuery
 	withWorkerType            *WorkerTypeQuery
+	withPropertyTypeValues    *PropertyTypeValueQuery
+	withParentPropertyType    *PropertyTypeQuery
+	withPropertyType          *PropertyTypeQuery
 	withPropertyCategory      *PropertyCategoryQuery
 	withFKs                   bool
 	// intermediate query (i.e. traversal path).
@@ -324,6 +328,72 @@ func (ptq *PropertyTypeQuery) QueryWorkerType() *WorkerTypeQuery {
 	return query
 }
 
+// QueryPropertyTypeValues chains the current query on the property_type_values edge.
+func (ptq *PropertyTypeQuery) QueryPropertyTypeValues() *PropertyTypeValueQuery {
+	query := &PropertyTypeValueQuery{config: ptq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, selector),
+			sqlgraph.To(propertytypevalue.Table, propertytypevalue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytype.PropertyTypeValuesTable, propertytype.PropertyTypeValuesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryParentPropertyType chains the current query on the parent_property_type edge.
+func (ptq *PropertyTypeQuery) QueryParentPropertyType() *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: ptq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, selector),
+			sqlgraph.To(propertytype.Table, propertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ParentPropertyTypeTable, propertytype.ParentPropertyTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPropertyType chains the current query on the property_type edge.
+func (ptq *PropertyTypeQuery) QueryPropertyType() *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: ptq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, selector),
+			sqlgraph.To(propertytype.Table, propertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, propertytype.PropertyTypeTable, propertytype.PropertyTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryPropertyCategory chains the current query on the property_category edge.
 func (ptq *PropertyTypeQuery) QueryPropertyCategory() *PropertyCategoryQuery {
 	query := &PropertyCategoryQuery{config: ptq.config}
@@ -533,6 +603,9 @@ func (ptq *PropertyTypeQuery) Clone() *PropertyTypeQuery {
 		withProjectType:           ptq.withProjectType.Clone(),
 		withProjectTemplate:       ptq.withProjectTemplate.Clone(),
 		withWorkerType:            ptq.withWorkerType.Clone(),
+		withPropertyTypeValues:    ptq.withPropertyTypeValues.Clone(),
+		withParentPropertyType:    ptq.withParentPropertyType.Clone(),
+		withPropertyType:          ptq.withPropertyType.Clone(),
 		withPropertyCategory:      ptq.withPropertyCategory.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
@@ -661,6 +734,39 @@ func (ptq *PropertyTypeQuery) WithWorkerType(opts ...func(*WorkerTypeQuery)) *Pr
 	return ptq
 }
 
+//  WithPropertyTypeValues tells the query-builder to eager-loads the nodes that are connected to
+// the "property_type_values" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithPropertyTypeValues(opts ...func(*PropertyTypeValueQuery)) *PropertyTypeQuery {
+	query := &PropertyTypeValueQuery{config: ptq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withPropertyTypeValues = query
+	return ptq
+}
+
+//  WithParentPropertyType tells the query-builder to eager-loads the nodes that are connected to
+// the "parent_property_type" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithParentPropertyType(opts ...func(*PropertyTypeQuery)) *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: ptq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withParentPropertyType = query
+	return ptq
+}
+
+//  WithPropertyType tells the query-builder to eager-loads the nodes that are connected to
+// the "property_type" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithPropertyType(opts ...func(*PropertyTypeQuery)) *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: ptq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withPropertyType = query
+	return ptq
+}
+
 //  WithPropertyCategory tells the query-builder to eager-loads the nodes that are connected to
 // the "property_category" edge. The optional arguments used to configure the query builder of the edge.
 func (ptq *PropertyTypeQuery) WithPropertyCategory(opts ...func(*PropertyCategoryQuery)) *PropertyTypeQuery {
@@ -742,7 +848,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		nodes       = []*PropertyType{}
 		withFKs     = ptq.withFKs
 		_spec       = ptq.querySpec()
-		loadedTypes = [12]bool{
+		loadedTypes = [15]bool{
 			ptq.withProperties != nil,
 			ptq.withLocationType != nil,
 			ptq.withEquipmentPortType != nil,
@@ -754,10 +860,13 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			ptq.withProjectType != nil,
 			ptq.withProjectTemplate != nil,
 			ptq.withWorkerType != nil,
+			ptq.withPropertyTypeValues != nil,
+			ptq.withParentPropertyType != nil,
+			ptq.withPropertyType != nil,
 			ptq.withPropertyCategory != nil,
 		}
 	)
-	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withPropertyCategory != nil {
+	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil || ptq.withParentPropertyType != nil || ptq.withPropertyCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -1063,6 +1172,89 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			for i := range nodes {
 				nodes[i].Edges.WorkerType = n
 			}
+		}
+	}
+
+	if query := ptq.withPropertyTypeValues; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*PropertyType)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PropertyTypeValues = []*PropertyTypeValue{}
+		}
+		query.withFKs = true
+		query.Where(predicate.PropertyTypeValue(func(s *sql.Selector) {
+			s.Where(sql.InValues(propertytype.PropertyTypeValuesColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.property_type_property_type_values
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "property_type_property_type_values" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "property_type_property_type_values" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.PropertyTypeValues = append(node.Edges.PropertyTypeValues, n)
+		}
+	}
+
+	if query := ptq.withParentPropertyType; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*PropertyType)
+		for i := range nodes {
+			if fk := nodes[i].property_type_property_type; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(propertytype.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "property_type_property_type" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.ParentPropertyType = n
+			}
+		}
+	}
+
+	if query := ptq.withPropertyType; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*PropertyType)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PropertyType = []*PropertyType{}
+		}
+		query.withFKs = true
+		query.Where(predicate.PropertyType(func(s *sql.Selector) {
+			s.Where(sql.InValues(propertytype.PropertyTypeColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.property_type_property_type
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "property_type_property_type" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "property_type_property_type" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.PropertyType = append(node.Edges.PropertyType, n)
 		}
 	}
 

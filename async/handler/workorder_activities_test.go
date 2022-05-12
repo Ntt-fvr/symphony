@@ -47,6 +47,7 @@ func TestAddWorkOrderActivities(t *testing.T) {
 		switch a.ActivityType {
 		case activity.ActivityTypeCreationDateChanged:
 			require.Empty(t, a.OldValue)
+			require.Equal(t, a.NewValue, strconv.FormatInt(now.Unix(), 10))
 			require.True(t, a.IsCreate)
 		case activity.ActivityTypeOwnerChanged, activity.ActivityTypeAssigneeChanged:
 			require.Empty(t, a.OldValue)

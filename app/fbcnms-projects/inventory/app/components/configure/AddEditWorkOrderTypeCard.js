@@ -43,6 +43,10 @@ import {
   getInitialStateFromChecklistDefinitions,
   reducer,
 } from '../checklist/ChecklistCategoriesMutateReducer';
+import {
+  getPropertyTypesWithoutParentsInformation,
+  orderPropertyTypesIndex,
+} from '../../common/property_combo/PropertyComboHelpers';
 import {makeStyles} from '@material-ui/styles';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
@@ -188,12 +192,15 @@ const AddEditWorkOrderTypeCard = ({
 
   const onSaveClicked = () => {
     setIsSaving(true);
+    const propertyTypesFinal = isTempId(editingWorkOrderType.id)
+      ? orderPropertyTypesIndex(propertyTypes)
+      : getPropertyTypesWithoutParentsInformation(propertyTypes);
     const workOrderToSave: WorkOrderType = {
       ...editingWorkOrderType,
       checklistCategoryDefinitions: convertChecklistCategoriesStateToDefinitions(
         editingCategories,
       ),
-      propertyTypes,
+      propertyTypes: propertyTypesFinal,
     };
     const saveAction = isTempId(editingWorkOrderType.id)
       ? addWorkOrderType
@@ -295,10 +302,11 @@ const AddEditWorkOrderTypeCard = ({
           </ExpandingPanel>
           <ExpandingPanel title="Properties">
             <PropertyTypesTableDispatcher.Provider
-              value={propertyTypesDispatcher}>
+              value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
               <ExperimentalPropertyTypesTable
                 supportDelete={true}
                 propertyTypes={propertyTypes}
+                showPropertyCombo={isTempId(editingWorkOrderType.id)}
               />
             </PropertyTypesTableDispatcher.Provider>
           </ExpandingPanel>
@@ -341,6 +349,50 @@ export default createFragmentContainer(withAlert(AddEditWorkOrderTypeCard), {
         isInstanceProperty
         isDeleted
         category
+        dependencePropertyTypes {
+          id
+          name
+          type
+          nodeType
+          index
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          isEditable
+          isMandatory
+          isInstanceProperty
+          isDeleted
+          category
+          propertyTypeValues {
+            id
+            isDeleted
+            name
+            parentPropertyTypeValue {
+              id
+              isDeleted
+              name
+            }
+          }
+        }
+        propertyTypeValues {
+          id
+          isDeleted
+          name
+          parentPropertyTypeValue {
+            id
+            isDeleted
+            name
+          }
+        }
+        parentPropertyType {
+          id
+          name
+        }
       }
       checkListCategoryDefinitions {
         id
