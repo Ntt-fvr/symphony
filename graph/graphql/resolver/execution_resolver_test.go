@@ -19,7 +19,6 @@ import (
 )
 
 func CreateFKUser(ctx context.Context, t *testing.T, mr generated.MutationResolver) int {
-
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 	require.Equal(t, user.StatusActive, u.Status)
 	require.Empty(t, u.FirstName)
@@ -32,8 +31,29 @@ func CreateFKUser(ctx context.Context, t *testing.T, mr generated.MutationResolv
 	require.NoError(t, err)
 
 	return u.ID
-
 }
+
+func CreateExecutions(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
+
+	userID := CreateFKUser(ctx, t, mr)
+
+	Time, _ := time.Parse(time.RFC3339, "2021-06-23T00:00:00Z")
+
+	execution_1, err := mr.AddExecution(ctx, models.AddExecutionInput{
+		User:               userID,
+		ManualConfirmation: Time,
+	})
+	require.NoError(t, err)
+
+	execution_2, err := mr.AddExecution(ctx, models.AddExecutionInput{
+		User:               userID,
+		ManualConfirmation: Time,
+	})
+	require.NoError(t, err)
+
+	return execution_1.ID, execution_2.ID, userID
+}
+
 func TestAddExecution(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -41,12 +61,13 @@ func TestAddExecution(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	fechaComoString := "2021-06-23T00:00:00Z"
-	Time, err := time.Parse(time.RFC3339, fechaComoString)
-	UserID := CreateFKUser(ctx, t, mr)
 
-	_, err = mr.AddExecution(ctx, models.AddExecutionInput{
-		User:               UserID,
+	userID := CreateFKUser(ctx, t, mr)
+
+	Time, _ := time.Parse(time.RFC3339, "2021-06-23T00:00:00Z")
+
+	_, err := mr.AddExecution(ctx, models.AddExecutionInput{
+		User:               userID,
 		ManualConfirmation: Time,
 	})
 	require.NoError(t, err)
@@ -60,21 +81,14 @@ func TestEditExecution(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	fechaComoString := "2021-06-23T00:00:00Z"
-	fechaComoString2 := "2020-07-23T00:00:00Z"
-	Time, err := time.Parse(time.RFC3339, fechaComoString)
-	Time2, err := time.Parse(time.RFC3339, fechaComoString2)
-	UserID := CreateFKUser(ctx, t, mr)
 
-	execution_1, err := mr.AddExecution(ctx, models.AddExecutionInput{
-		User:               UserID,
-		ManualConfirmation: Time,
-	})
-	require.NoError(t, err)
+	Time2, _ := time.Parse(time.RFC3339, "2020-07-23T00:00:00Z")
 
-	_, err = mr.EditExecution(ctx, models.EditExecutionInput{
-		ID:                 execution_1.ID,
-		User:               UserID,
+	execution_1, _, userID := CreateExecutions(ctx, t, mr)
+
+	_, err := mr.EditExecution(ctx, models.EditExecutionInput{
+		ID:                 execution_1,
+		User:               userID,
 		ManualConfirmation: Time2,
 	})
 	require.NoError(t, err)
@@ -88,19 +102,14 @@ func TestRemoveExecution(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	fechaComoString := "2021-06-23T00:00:00Z"
-	Time, err := time.Parse(time.RFC3339, fechaComoString)
-	UserID := CreateFKUser(ctx, t, mr)
 
-	execution_1, err := mr.AddExecution(ctx, models.AddExecutionInput{
-		User:               UserID,
-		ManualConfirmation: Time,
-	})
-	require.NoError(t, err)
+	execution_1, execution_2, _ := CreateExecutions(ctx, t, mr)
 
-	_, err = mr.RemoveExecution(ctx, execution_1.ID)
+	_, err := mr.RemoveExecution(ctx, execution_1)
 	require.NoError(t, err)
-	_, err = mr.RemoveExecution(ctx, execution_1.ID)
+	_, err = mr.RemoveExecution(ctx, execution_2)
+	require.NoError(t, err)
+	_, err = mr.RemoveExecution(ctx, execution_1)
 	require.Error(t, err)
 
 }
