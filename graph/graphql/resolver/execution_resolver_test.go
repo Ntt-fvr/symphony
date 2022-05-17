@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -21,14 +20,6 @@ import (
 func CreateFKUser(ctx context.Context, t *testing.T, mr generated.MutationResolver) int {
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 	require.Equal(t, user.StatusActive, u.Status)
-	require.Empty(t, u.FirstName)
-
-	u, err := mr.EditUser(ctx, models.EditUserInput{
-		ID:        u.ID,
-		Status:    toUserStatusPointer(user.StatusDeactivated),
-		FirstName: pointer.ToString("John"),
-		LastName:  pointer.ToString("Doe")})
-	require.NoError(t, err)
 
 	return u.ID
 }
