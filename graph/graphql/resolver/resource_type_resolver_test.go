@@ -143,8 +143,8 @@ func TestRemoveResourceType(t *testing.T) {
 
 	_, err := mr.RemoveResourceType(ctx, resourceTypeID_1)
 	require.NoError(t, err)
-	_, err = mr.RemoveRuleAction(ctx, resourceTypeID_2)
+	_, err = mr.RemoveResourceType(ctx, resourceTypeID_2)
 	require.NoError(t, err)
-	_, err = mr.RemoveRuleAction(ctx, resourceTypeID_1)
+	_, err = mr.RemoveResourceType(ctx, resourceTypeID_1)
 	require.Error(t, err)
 }

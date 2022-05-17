@@ -80,17 +80,21 @@ func TestEditResourceSpecification(t *testing.T) {
 
 	mr := r.Mutation()
 
-	resourceSpecificationID_1, _, _, _, _ := CreateResourceSpecifications(ctx, t, mr)
+	resourceSpecificationID_1, resourceTypeID_1, _, reconciliationRuleID_1, _ := CreateResourceSpecifications(ctx, t, mr)
 
 	_, err := mr.EditResourceSpecification(ctx, models.EditResourceSpecificationInput{
-		ID:   resourceSpecificationID_1,
-		Name: "ResourceSpecification_2",
+		ID:                 resourceSpecificationID_1,
+		Name:               "ResourceSpecification_1",
+		ReconciliationRule: &reconciliationRuleID_1,
+		ResourceType:       &resourceTypeID_1,
 	})
 	require.NoError(t, err)
 
 	_, err = mr.EditResourceSpecification(ctx, models.EditResourceSpecificationInput{
-		ID:   123,
-		Name: "ResourceSpecification_2",
+		ID:                 123,
+		Name:               "ResourceSpecification_2",
+		ReconciliationRule: &reconciliationRuleID_1,
+		ResourceType:       &resourceTypeID_1,
 	})
 	require.Error(t, err)
 }
@@ -104,9 +108,9 @@ func TestRemoveResourceSpecification(t *testing.T) {
 
 	resourceSpecificationID_1, _, _, _, _ := CreateResourceSpecifications(ctx, t, mr)
 
-	_, err := mr.RemoveResourceType(ctx, resourceSpecificationID_1)
+	_, err := mr.RemoveResourceSpecification(ctx, resourceSpecificationID_1)
 	require.NoError(t, err)
-	_, err = mr.RemoveRuleAction(ctx, resourceSpecificationID_1)
+	_, err = mr.RemoveResourceSpecification(ctx, resourceSpecificationID_1)
 	require.Error(t, err)
 
 }
