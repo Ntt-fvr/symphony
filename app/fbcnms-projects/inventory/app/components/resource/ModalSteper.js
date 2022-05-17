@@ -14,18 +14,22 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import React, {useState} from 'react';
 import RouterIcon from '@material-ui/icons/Router';
+import SearchIcon from '@material-ui/icons/Search';
 import Step from '@material-ui/core/Step';
 import StepConnector from '@material-ui/core/StepConnector/StepConnector';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -62,6 +66,24 @@ const useStyles = makeStyles(theme => ({
   },
   connectorLine: {
     transition: theme.transitions.create('border-color'),
+  },
+  textField: {
+    width: '100%',
+    '& .MuiOutlinedInput-root': {
+      color: symphony.palette.D300,
+      height: '30px',
+      '& .Mui-focused.MuiOutlinedInput-notchedOutline': {
+        border: '1px solid black',
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderRadius: '4px',
+        borderWidth: '1px',
+        borderColor: symphony.palette.D300,
+      },
+      '& .MuiOutlinedInput-notchedOutline:hover': {
+        borderColor: symphony.palette.D100,
+      },
+    },
   },
 }));
 
@@ -121,6 +143,7 @@ const ModalSteper = (props: Props) => {
   const [activeStep, setActiveStep] = useState(1);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [getDataList, setGetDataList] = useState({});
+  const [searchData, setSearchData] = useState('');
 
   const connector = (
     <StepConnector
@@ -132,6 +155,7 @@ const ModalSteper = (props: Props) => {
       }}
     />
   );
+
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     setSelectedIndex(null);
@@ -142,6 +166,21 @@ const ModalSteper = (props: Props) => {
     setGetDataList(item.node);
   };
 
+  const searchResourceType = dataListStepper?.resourceTypes?.edges.filter(
+    item =>
+      item.node?.name
+        .toString()
+        .toLowerCase()
+        .includes(searchData.toLocaleLowerCase()),
+  );
+
+  const searchResourceSpecifications = dataListStepper?.resourceSpecifications?.edges.filter(
+    item =>
+      item.node?.name
+        .toString()
+        .toLowerCase()
+        .includes(searchData.toLocaleLowerCase()),
+  );
   return (
     <div>
       <Dialog
@@ -165,14 +204,31 @@ const ModalSteper = (props: Props) => {
           </Stepper>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="h6">
+          <Typography variant="h6" align="center" style={{margin: '1rem 0'}}>
             Select a {activeStep === 1 && titleSteps[0]}
             {activeStep === 2 && titleSteps[1]}
           </Typography>
+          <TextField
+            className={classes.textField}
+            placeholder="Label"
+            color="primary"
+            type="text"
+            variant="outlined"
+            value={searchData}
+            autoComplete="off"
+            onChange={event => setSearchData(event.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
           {titleSteps.length === 2 ? (
             <>
               {activeStep === 1 &&
-                dataListStepper?.resourceTypes?.edges.map((item, index) => (
+                searchResourceType.map((item, index) => (
                   <List component="nav">
                     <ListItem
                       button
@@ -191,46 +247,42 @@ const ModalSteper = (props: Props) => {
                   </List>
                 ))}
               {activeStep === 2 &&
-                dataListStepper?.resourceSpecifications?.edges.map(
-                  (item, index) => (
-                    <List component="nav">
-                      <ListItem
-                        button
-                        key={item.node.id}
-                        selected={selectedIndex === index}
-                        onClick={event =>
-                          handleListItemClick(event, index, item)
-                        }>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <RouterIcon fontSize="medium" color="primary" />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={item.node.name} />
-                      </ListItem>
-                    </List>
-                  ),
-                )}
+                searchResourceSpecifications.map((item, index) => (
+                  <List component="nav">
+                    <ListItem
+                      button
+                      key={item.node.id}
+                      selected={selectedIndex === index}
+                      onClick={event =>
+                        handleListItemClick(event, index, item)
+                      }>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <RouterIcon fontSize="medium" color="primary" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={item.node.name} />
+                    </ListItem>
+                  </List>
+                ))}
             </>
           ) : (
-            dataListStepper?.resourceSpecifications?.edges.map(
-              (item, index) => (
-                <List component="nav">
-                  <ListItem
-                    button
-                    key={item.node.id}
-                    selected={selectedIndex === index}
-                    onClick={event => handleListItemClick(event, index, item)}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <RouterIcon fontSize="medium" color="primary" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={item.node.name} />
-                  </ListItem>
-                </List>
-              ),
-            )
+            searchResourceSpecifications.map((item, index) => (
+              <List component="nav">
+                <ListItem
+                  button
+                  key={item.node.id}
+                  selected={selectedIndex === index}
+                  onClick={event => handleListItemClick(event, index, item)}>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <RouterIcon fontSize="medium" color="primary" />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={item.node.name} />
+                </ListItem>
+              </List>
+            ))
           )}
         </DialogContent>
         <DialogActions>
