@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
     '& .MuiDialogTitle-root': {
       padding: '0',
     },
+    '& .MuiDialog-paperScrollPaper': {
+      height: '75%',
+    },
   },
   backButton: {
     marginRight: theme.spacing(1),

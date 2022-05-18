@@ -23,6 +23,7 @@ import TextField from '@material-ui/core/TextField';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import {MenuItem} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -83,6 +84,11 @@ type ResourceType = {
     externalID: string,
     id: string,
     administrativeSubstate: string,
+    lifesycleState: string,
+    planningStatus: string,
+    administrativeStatus: string,
+    operationalStatus: string,
+    usageStatus: string,
   },
 };
 
@@ -108,6 +114,13 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
+  const selectListData = {
+    lifesycleState: ['Planning', 'Installing', 'Operating', 'Retired'],
+    planningStatus: ['Proposed', 'Feasibility Checked', 'Designed', 'Ordered'],
+    administrativeStatus: ['Activated', 'Deactivated'],
+    operationalStatus: ['Working', 'Not Working'],
+    usageStatus: ['Available', 'Reserved', 'Not Available', 'Assigned'],
+  };
 
   return (
     <>
@@ -140,6 +153,102 @@ const AddEditResourceInLocation = (props: Props) => {
                 />
               </form>
             </Grid>
+            <Grid item xs={6}>
+              <form className={classes.formField} autoComplete="off">
+                <TextField
+                  select
+                  label="Lifesycle state"
+                  variant="outlined"
+                  name="lifesycleState"
+                  onChange={handleChange}
+                  fullWidth>
+                  {selectListData.lifesycleState.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {item}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </form>
+            </Grid>
+
+            {resourceType.data.lifesycleState === 'Planning' ? (
+              <Grid item xs={6}>
+                <form className={classes.formField}>
+                  <TextField
+                    select
+                    label="Planning Status"
+                    variant="outlined"
+                    name="planningStatus"
+                    onChange={handleChange}
+                    fullWidth>
+                    {selectListData.planningStatus.map((item, index) => (
+                      <MenuItem key={index} value={index}>
+                        {item}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </form>
+              </Grid>
+            ) : null}
+
+            {resourceType.data.lifesycleState === 'Operating' ? (
+              <>
+                <Grid item xs={6}>
+                  <form className={classes.formField}>
+                    <TextField
+                      select
+                      label="Administrative Status"
+                      variant="outlined"
+                      name="administrativeStatus"
+                      onChange={handleChange}
+                      fullWidth>
+                      {selectListData.administrativeStatus.map(
+                        (item, index) => (
+                          <MenuItem key={index} value={index}>
+                            {item}
+                          </MenuItem>
+                        ),
+                      )}
+                    </TextField>
+                  </form>
+                </Grid>
+                <Grid item xs={6}>
+                  <form className={classes.formField}>
+                    <TextField
+                      select
+                      label="Operational Status"
+                      variant="outlined"
+                      name="operationalStatus"
+                      onChange={handleChange}
+                      fullWidth>
+                      {selectListData.operationalStatus.map((item, index) => (
+                        <MenuItem key={index} value={index}>
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
+                </Grid>
+                <Grid item xs={6}>
+                  <form className={classes.formField}>
+                    <TextField
+                      select
+                      label="Usage Status"
+                      variant="outlined"
+                      name="usageStatus"
+                      onChange={handleChange}
+                      fullWidth>
+                      {selectListData.usageStatus.map((item, index) => (
+                        <MenuItem key={index} value={index}>
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
+                </Grid>
+              </>
+            ) : null}
+
             <Grid item xs={12}>
               <CardHeader className={classes.cardHeader}>Properties</CardHeader>
             </Grid>
