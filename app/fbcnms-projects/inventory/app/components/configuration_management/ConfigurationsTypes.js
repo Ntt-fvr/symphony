@@ -143,10 +143,10 @@ const data = [
     },
   },
 ];
+const PROJECTS_PAGE_SIZE = 2;
 
 const ConfigurationsTypes = () => {
   const [filters, setFilters] = useState([]);
-  const PROJECTS_PAGE_SIZE = 10;
   const classes = useStyles();
 
   return (
