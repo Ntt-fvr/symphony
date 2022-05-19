@@ -74,7 +74,7 @@ const NewCommentInput = (props: Props) => {
   };
 
   const handleVerify = () => {
-    console.log('Verify');
+    console.log('Verify ReCaptcha');
   };
 
   return (

@@ -2026,8 +2026,8 @@
 "@fbcnms/auth@file:@fbcnms/auth":
   version "0.1.2"
   dependencies:
-    "@fbcnms/express-middleware" "file:../../../../.cache/yarn/v6/npm-@fbcnms-auth-0.1.2-5a04400b-6f53-4703-9af3-65690ece6c00-1651721948778/node_modules/@fbcnms/express-middleware"
-    "@fbcnms/sequelize-models" "file:../../../../.cache/yarn/v6/npm-@fbcnms-auth-0.1.2-5a04400b-6f53-4703-9af3-65690ece6c00-1651721948778/node_modules/@fbcnms/sequelize-models"
+    "@fbcnms/express-middleware" "file:../../../../.cache/yarn/v6/npm-@fbcnms-auth-0.1.2-0d925a6c-f57b-451b-a052-3096d96ddbec-1652924315529/node_modules/@fbcnms/express-middleware"
+    "@fbcnms/sequelize-models" "file:../../../../.cache/yarn/v6/npm-@fbcnms-auth-0.1.2-0d925a6c-f57b-451b-a052-3096d96ddbec-1652924315529/node_modules/@fbcnms/sequelize-models"
     "@fbcnms/webpack-config" "^0.1.0"
     email-validator "^2.0.4"
     openid-client "2.4.5"
@@ -2041,7 +2041,7 @@
   version "0.1.1"
   dependencies:
     "@fbcnms/logging" "^0.1.0"
-    "@fbcnms/sequelize-models" "file:../../../../.cache/yarn/v6/npm-@fbcnms-express-middleware-0.1.1-cb20e281-64c6-4c7f-ab1e-a0a7759afe29-1651721948884/node_modules/@fbcnms/sequelize-models"
+    "@fbcnms/sequelize-models" "file:../../../../.cache/yarn/v6/npm-@fbcnms-express-middleware-0.1.1-a96082ff-7f20-4dcd-a2a2-af6ae15baea6-1652924315651/node_modules/@fbcnms/sequelize-models"
     body-parser "^1.18.3"
     compression "^1.7.1"
     cookie-parser "^1.4.3"
@@ -2073,12 +2073,12 @@
 "@fbcnms/platform-server@file:@fbcnms/platform-server":
   version "0.1.25"
   dependencies:
-    "@fbcnms/auth" "file:../../../../.cache/yarn/v6/npm-@fbcnms-platform-server-0.1.25-d9a46159-1ebb-4853-966d-506a3e0d82ba-1651721948916/node_modules/@fbcnms/auth"
+    "@fbcnms/auth" "file:../../../../.cache/yarn/v6/npm-@fbcnms-platform-server-0.1.25-a3ea0a0a-e8bd-4155-9d56-948a33cb82b5-1652924315683/node_modules/@fbcnms/auth"
     "@fbcnms/babel-register" "^0.1.0"
-    "@fbcnms/express-middleware" "file:../../../../.cache/yarn/v6/npm-@fbcnms-platform-server-0.1.25-d9a46159-1ebb-4853-966d-506a3e0d82ba-1651721948916/node_modules/@fbcnms/express-middleware"
+    "@fbcnms/express-middleware" "file:../../../../.cache/yarn/v6/npm-@fbcnms-platform-server-0.1.25-a3ea0a0a-e8bd-4155-9d56-948a33cb82b5-1652924315683/node_modules/@fbcnms/express-middleware"
     "@fbcnms/logging" "^0.1.0"
     "@fbcnms/magma-api" "^0.1.0"
-    "@fbcnms/sequelize-models" "file:../../../../.cache/yarn/v6/npm-@fbcnms-platform-server-0.1.25-d9a46159-1ebb-4853-966d-506a3e0d82ba-1651721948916/node_modules/@fbcnms/sequelize-models"
+    "@fbcnms/sequelize-models" "file:../../../../.cache/yarn/v6/npm-@fbcnms-platform-server-0.1.25-a3ea0a0a-e8bd-4155-9d56-948a33cb82b5-1652924315683/node_modules/@fbcnms/sequelize-models"
     "@fbcnms/types" "^0.1.10"
     "@fbcnms/util" "^0.1.0"
     add "^2.0.6"
