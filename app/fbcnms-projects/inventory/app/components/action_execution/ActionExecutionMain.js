@@ -84,12 +84,23 @@ export default function ActionExecutionMain() {
   const [activeTabBar, setActiveTabBar] = useState<number>(
     tabIndex !== -1 ? tabIndex : 0,
   );
+  const [canChangeHistory, setCanChangeHistory] = useState(true);
+
+  const changeTab = index => {
+    setCanChangeHistory(true);
+    setActiveTabBar(index);
+  };
+  window.onpopstate = () => {
+    setCanChangeHistory(false);
+    setActiveTabBar(tabIndex);
+  };
 
   useEffect(() => {
     ServerLogger.info(LogEvents.ACTION_EXECUTION_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-    history.push(`/inventory/action_execution/${tabBars[activeTabBar].path}`);
+    canChangeHistory &&
+      history.push(`/inventory/action_execution/${tabBars[activeTabBar].path}`);
   }, [tabBars, activeTabBar, history]);
 
   return (
@@ -98,8 +109,8 @@ export default function ActionExecutionMain() {
         spread={true}
         size="large"
         tabs={tabBars.map(tabBar => tabBar.tab)}
-        activeTabIndex={activeTabBar}
-        onChange={setActiveTabBar}
+        activeTabIndex={tabIndex === 0 ? 0 : activeTabBar}
+        onChange={changeTab}
       />
       <InventoryErrorBoundary>
         <InventorySuspense>
@@ -114,7 +125,7 @@ export default function ActionExecutionMain() {
             />
             <Redirect
               from={relativeUrl('/')}
-              to={relativeUrl('/schedule_actions_types')}
+              to={relativeUrl('/scheduled_actions_types')}
             />
           </Switch>
         </InventorySuspense>
