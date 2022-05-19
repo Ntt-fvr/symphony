@@ -3,6 +3,12 @@ FROM node:12.18-alpine
 # Install dependencies required by some node modules
 RUN apk add --no-cache curl python g++ make libx11 glew-dev libxi-dev
 
+#Builds args
+ARG recaptcha
+
+#Environment vars
+ENV RECAPTCHA_KEY=$recaptcha
+
 # Create app directory
 WORKDIR /app
 
