@@ -116,7 +116,7 @@ const ChangeRequestTypes = () => {
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
 
   const classes = useStyles();
-  const mostrarInfo = data => {
+  const showInfo = data => {
     setDataRow(data);
   };
   const handleOpenDetails = () => {
@@ -176,7 +176,7 @@ const ChangeRequestTypes = () => {
                 <Button
                   onClick={() => {
                     handleOpenDetails();
-                    mostrarInfo(row);
+                    showInfo(row);
                   }}
                   variant="text"
                   tooltip={row.id ?? ''}>
