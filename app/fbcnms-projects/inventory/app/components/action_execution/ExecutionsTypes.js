@@ -126,7 +126,7 @@ const ExecutionsTypes = () => {
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
-  const mostrarInfo = data => {
+  const showInfo = data => {
     setDataRow(data);
   };
   if (openDetails) {
@@ -172,7 +172,7 @@ const ExecutionsTypes = () => {
                 <Button
                   onClick={() => {
                     handleOpenDetails();
-                    mostrarInfo(row);
+                    showInfo(row);
                   }}
                   variant="text"
                   tooltip={row.id ?? ''}>

@@ -8,16 +8,18 @@
  * @format
  */
 
+import * as React from 'react';
+import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitle from './common/ConfigureTitle';
-import React from 'react';
 import fbt from 'fbt';
+import {ExecutionsTypes} from './ExecutionsTypes';
 import {Grid} from '@material-ui/core';
 import {TableAffectedResources} from './common/TableAffectedResources';
 import {TableDetails} from './common/TableDetails';
 import {TableLogs} from './common/TableLogs';
 import {makeStyles} from '@material-ui/styles';
+import {useState} from 'react';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -44,14 +46,31 @@ export type Props = $ReadOnly<{|
 const ResourceTypeDetails = (props: Props) => {
   const {data} = props;
   const classes = useStyles();
+  const [returnExecutionsTypes, setReturnExecutionsTypes] = useState(false);
+  const showExecutionsTypes = () => {
+    setReturnExecutionsTypes(prevStateReturn => !prevStateReturn);
+  };
+  if (returnExecutionsTypes) {
+    return <ExecutionsTypes />;
+  }
 
   return (
     <div>
       <Grid className={classes.root} container spacing={0}>
         <Grid className={classes.titleModule} item xs={12}>
-          <ConfigureTitle
-            title={fbt('Execution/', '')}
-            subtitle={fbt('', '  ')}
+          <Breadcrumbs
+            breadcrumbs={[
+              {
+                id: 'Executions',
+                name: fbt('Executions', ''),
+                onClick: () => showExecutionsTypes(),
+              },
+              true && {
+                id: data.id,
+                name: `${data.id}`,
+              },
+            ]}
+            size="large"
           />
         </Grid>
         <Grid container spacing={0}>
