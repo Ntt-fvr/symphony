@@ -146,7 +146,7 @@ const data = [
 
 const ConfigurationsTypes = () => {
   const [filters, setFilters] = useState([]);
-
+  const PROJECTS_PAGE_SIZE = 10;
   const classes = useStyles();
 
   return (
@@ -176,7 +176,19 @@ const ConfigurationsTypes = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <Table data={data} columns={tableColumns} />
+        <Table
+          data={data}
+          columns={tableColumns}
+          paginationSettings={{
+            loadNext: onCompleted => {
+              loadNext(PROJECTS_PAGE_SIZE, {
+                onComplete: () => onCompleted && onCompleted(),
+              });
+            },
+            pageSize: PROJECTS_PAGE_SIZE,
+            totalRowsCount: 10,
+          }}
+        />
       </Grid>
     </Grid>
   );
