@@ -59,7 +59,7 @@ export type Props = $ReadOnly<{|
   valuesTable: Array<Values>,
 |}>;
 
-const Tabla = (props: Props) => {
+const TableResource = (props: Props) => {
   const {valuesTable} = props;
   const classes = useStyles();
 
@@ -100,4 +100,4 @@ const Tabla = (props: Props) => {
     </div>
   );
 };
-export {Tabla};
+export {TableResource};
