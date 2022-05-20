@@ -8,7 +8,7 @@
  * @format
  */
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {Drawer, IconButton} from '@material-ui/core';
 import {MenuCloseIcon} from '@symphony/design-system/icons';
@@ -23,6 +23,7 @@ const Sidebar = ({
   children,
   collapsed,
 }) => {
+
   const [open, setOpen] = useState(openDefault ? openDefault : false);
 
   const useStyles = makeStyles(theme => {
