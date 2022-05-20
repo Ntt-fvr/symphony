@@ -9,24 +9,18 @@
  */
 
 import * as React from 'react';
-import Select from '../../../../../../inputs/Select';
 import TextField from '../../../../../../inputs/TextField';
-import Switch from '../../../../../../inputs/Switch';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 
 const ConfigurationTriggeredStart = () => {
-
   const [configurationsValues, handleInputChange] = useForm({
     signalModule: '',
     blockUntilReception: false,
-    signalType: ''
+    signalType: '',
   });
 
-  const { 
-    signalModule,
-    signalType
-  } = configurationsValues;
+  const {signalModule, signalType} = configurationsValues;
 
   return (
     <>

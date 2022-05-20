@@ -9,27 +9,19 @@
  */
 
 import * as React from 'react';
-import Select from '../../../../../../inputs/Select';
-import TextField from '../../../../../../inputs/TextField';
 import Switch from '../../../../../../inputs/Switch';
+import TextField from '../../../../../../inputs/TextField';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 
 const ConfigurationWaitForSignal = () => {
-
   const [configurationsValues, handleInputChange] = useForm({
     signalModule: '',
     blockUntilReception: false,
-    signalType: ''
+    signalType: '',
   });
 
-  const { 
-    signalModule,
-    blockUntilReception, 
-    signalType
-  } = configurationsValues;
-
-  console.log(configurationsValues);
+  const {signalModule, blockUntilReception, signalType} = configurationsValues;
 
   return (
     <>

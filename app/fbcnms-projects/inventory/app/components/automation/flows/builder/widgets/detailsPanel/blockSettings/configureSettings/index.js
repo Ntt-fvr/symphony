@@ -8,31 +8,30 @@
  * @format
  */
 
-import * as React from 'react';
-import {Grid} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
-import BlockNameInput from './BlockNameInput';
 import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
+import * as React from 'react';
+import BlockNameInput from './BlockNameInput';
 import ConfigurationExecuteFlow from './ConfigurationExecuteFlow';
+import ConfigurationForEachLoop from './ConfigurationForEachLoop';
 import ConfigurationGoTo from './ConfigurationGoTo';
-import ConfigurationTimer from './ConfigurationTimer';
-import ConfigurationWaitForSignal from './ConfigurationWaitForSignal';
-import ConfigurationTriggeredStart from './ConfigurationTriggeredStart';
 import ConfigurationInvokeApi from './ConfigurationInvokeApi';
 import ConfigurationNetworkAction from './ConfigurationNetworkAction';
-import ConfigurationForEachLoop from './ConfigurationForEachLoop';
 import ConfigurationParallel from './ConfigurationParallel';
-import ConfigurationChoice from './ConfigurationChoice';
-import {TYPE as GoToType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
-import {TYPE as Decision} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
+import ConfigurationTimer from './ConfigurationTimer';
+import ConfigurationTriggeredStart from './ConfigurationTriggeredStart';
+import ConfigurationWaitForSignal from './ConfigurationWaitForSignal';
+import {TYPE as ExecuteFlowType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
+import {TYPE as ExecuteNetworkActionType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
 import {TYPE as ForEachLoopType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
+import {TYPE as GoToType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
+import {Grid} from '@material-ui/core';
+import {TYPE as InvokeRestApiType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
 import {TYPE as Parallel} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/Parallel';
 import {TYPE as TimerType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
-import {TYPE as WaitSignalType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
 import {TYPE as TriggerStartType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
-import {TYPE as ExecuteFlowType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
-import {TYPE as InvokeRestApiType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
-import {TYPE as ExecuteNetworkActionType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
+import {TYPE as WaitSignalType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
+import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -74,11 +73,9 @@ const ConfigureSettings = ({block}: Props) => {
       case ExecuteNetworkActionType:
         return <ConfigurationNetworkAction block={block} />;
       case ForEachLoopType:
-        return <ConfigurationForEachLoop block={block} />;  
+        return <ConfigurationForEachLoop block={block} />;
       case Parallel:
-        return <ConfigurationParallel block={block} />;  
-      case Decision:
-        return <ConfigurationChoice block={block} />;  
+        return <ConfigurationParallel block={block} />;
       default:
         return '';
     }

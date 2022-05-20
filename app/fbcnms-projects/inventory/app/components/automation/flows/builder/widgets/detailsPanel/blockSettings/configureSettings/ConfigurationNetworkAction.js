@@ -15,23 +15,19 @@ import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 
 const ConfigurationNetworkAction = () => {
-
   const urlMethods = [
-    { name: 'GET', id: 'get'},
-    { name: 'POST', id: 'post'},
-    { name: 'PUT', id: 'put'},
-    { name: 'DELETE', id: 'delete'},
-  ] 
+    {name: 'GET', id: 'get'},
+    {name: 'POST', id: 'post'},
+    {name: 'PUT', id: 'put'},
+    {name: 'DELETE', id: 'delete'},
+  ];
 
   const [configurationsValues, handleInputChange] = useForm({
     urlMethod: '',
-    connectionTimeout: 0
+    connectionTimeout: 0,
   });
 
-  const { 
-    urlMethod,
-    connectionTimeout
-  } = configurationsValues;
+  const {urlMethod, connectionTimeout} = configurationsValues;
 
   return (
     <>
