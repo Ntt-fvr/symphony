@@ -92,8 +92,8 @@ const CardSuggested = (props: Props) => {
                   marginLeft: '40px',
                   width: '70%',
                 }}
-                label="Family name"
-                name="family"
+                label="Day"
+                name="day"
                 defaultValue=""
                 variant="outlined">
                 {days.map((item, index) => (

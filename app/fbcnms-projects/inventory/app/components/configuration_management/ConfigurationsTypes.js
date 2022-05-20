@@ -56,13 +56,13 @@ const tableColumns = [
     ),
   },
   {
-    key: 'type',
+    key: 'type_arfcndu',
     title: `${fbt('arfcndu', '')}`,
     render: row => row.arfcndu?.name ?? '',
     tooltip: row => row.arfcndu?.name ?? '',
   },
   {
-    key: 'type',
+    key: 'type_nRTAC',
     title: `${fbt('nRTAC', '')}`,
     render: row => row.nRTAC?.name ?? '',
     tooltip: row => row.nRTAC?.name ?? '',
@@ -89,8 +89,8 @@ const data = [
     },
   },
   {
-    id: '386547056643',
-    key: '386547056643',
+    id: '386547056644',
+    key: '386547056644',
     location: {
       id: '219043332105',
       name: 'P10177',
@@ -107,8 +107,8 @@ const data = [
     },
   },
   {
-    id: '386547056643',
-    key: '386547056643',
+    id: '386547056645',
+    key: '386547056645',
     location: {
       id: '219043332105',
       name: 'S17589',
@@ -125,8 +125,8 @@ const data = [
     },
   },
   {
-    id: '386547056643',
-    key: '386547056643',
+    id: '386547056646',
+    key: '386547056646',
     location: {
       id: '219043332105',
       name: 'S19161',
@@ -143,10 +143,10 @@ const data = [
     },
   },
 ];
+const PROJECTS_PAGE_SIZE = 2;
 
 const ConfigurationsTypes = () => {
   const [filters, setFilters] = useState([]);
-
   const classes = useStyles();
 
   return (
@@ -176,7 +176,19 @@ const ConfigurationsTypes = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <Table data={data} columns={tableColumns} />
+        <Table
+          data={data}
+          columns={tableColumns}
+          paginationSettings={{
+            loadNext: onCompleted => {
+              loadNext(PROJECTS_PAGE_SIZE, {
+                onComplete: () => onCompleted && onCompleted(),
+              });
+            },
+            pageSize: PROJECTS_PAGE_SIZE,
+            totalRowsCount: 10,
+          }}
+        />
       </Grid>
     </Grid>
   );

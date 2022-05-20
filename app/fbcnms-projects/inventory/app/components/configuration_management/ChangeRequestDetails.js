@@ -20,7 +20,7 @@ import {CardSuggested} from './common/CardSuggested';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
 import {MenuItem} from '@material-ui/core';
-import {Tabla} from './common/Tabla';
+import {TableResource} from './common/TableResource';
 import {makeStyles} from '@material-ui/styles';
 import {useFormInput} from '../assurance/common/useFormInput';
 
@@ -203,7 +203,7 @@ const ChangeRequestDetails = (props: Props) => {
               </FormField>
             </CardAccordion>
             <CardAccordion title={'Target parameters'}>
-              <Tabla valuesTable={valuesTable} />
+              <TableResource valuesTable={valuesTable} />
             </CardAccordion>
             <CardAccordion title={'Suggested change request schedule'}>
               <CardSuggested />

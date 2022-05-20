@@ -106,6 +106,7 @@ const data = [
     status: 'Scheduled',
   },
 ];
+const PROJECTS_PAGE_SIZE = 1;
 
 export type Props = $ReadOnly<{||}>;
 
@@ -114,9 +115,8 @@ const ChangeRequestTypes = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const [dataRow, setDataRow] = useState({});
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
-
   const classes = useStyles();
-  const mostrarInfo = data => {
+  const showInfo = data => {
     setDataRow(data);
   };
   const handleOpenDetails = () => {
@@ -176,7 +176,7 @@ const ChangeRequestTypes = () => {
                 <Button
                   onClick={() => {
                     handleOpenDetails();
-                    mostrarInfo(row);
+                    showInfo(row);
                   }}
                   variant="text"
                   tooltip={row.id ?? ''}>
@@ -186,6 +186,15 @@ const ChangeRequestTypes = () => {
             },
             ...tableColumns,
           ]}
+          paginationSettings={{
+            loadNext: onCompleted => {
+              loadNext(PROJECTS_PAGE_SIZE, {
+                onComplete: () => onCompleted && onCompleted(),
+              });
+            },
+            pageSize: PROJECTS_PAGE_SIZE,
+            totalRowsCount: 10,
+          }}
         />
       </Grid>
     </Grid>

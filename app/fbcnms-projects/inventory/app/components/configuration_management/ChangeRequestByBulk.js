@@ -21,7 +21,7 @@ import {CardAccordion} from './common/CardAccordion';
 import {CardSuggested} from './common/CardSuggested';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
-import {Tabla} from './common/Tabla';
+import {TableResource} from './common/TableResource';
 import {makeStyles} from '@material-ui/styles';
 
 const valuesTable = [
@@ -172,7 +172,7 @@ const ChangeRequestByBulk = (props: Props) => {
               </FormField>
             </CardAccordion>
             <CardAccordion title={'Upload change'}>
-              <Tabla valuesTable={valuesTable} />
+              <TableResource valuesTable={valuesTable} />
             </CardAccordion>
             <Grid item xs={6}>
               <CardAccordion title={'Suggested change request schedule'}>

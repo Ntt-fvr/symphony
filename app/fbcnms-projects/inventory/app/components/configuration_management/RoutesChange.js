@@ -84,14 +84,25 @@ export default function Configure() {
   const [activeTabBar, setActiveTabBar] = useState<number>(
     tabIndex !== -1 ? tabIndex : 0,
   );
+  const [canChangeHistory, setCanChangeHistory] = useState(true);
+
+  const changeTab = index => {
+    setCanChangeHistory(true);
+    setActiveTabBar(index);
+  };
+  window.onpopstate = () => {
+    setCanChangeHistory(false);
+    setActiveTabBar(tabIndex);
+  };
 
   useEffect(() => {
     ServerLogger.info(LogEvents.CHANGE_REQUEST_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-    history.push(
-      `/inventory/configuration_management/${tabBars[activeTabBar].path}`,
-    );
+    canChangeHistory &&
+      history.push(
+        `/inventory/configuration_management/${tabBars[activeTabBar].path}`,
+      );
   }, [tabBars, activeTabBar, history]);
 
   return (
@@ -100,8 +111,8 @@ export default function Configure() {
         spread={true}
         size="large"
         tabs={tabBars.map(tabBar => tabBar.tab)}
-        activeTabIndex={activeTabBar}
-        onChange={setActiveTabBar}
+        activeTabIndex={tabIndex === 0 ? 0 : activeTabBar}
+        onChange={changeTab}
       />
       <InventoryErrorBoundary>
         <InventorySuspense>

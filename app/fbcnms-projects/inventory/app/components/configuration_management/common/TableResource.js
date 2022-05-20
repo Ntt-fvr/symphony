@@ -24,7 +24,7 @@ import {withStyles} from '@material-ui/core/styles';
 const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'white',
-    color: symphony.palette.B600,
+    color: symphony.palette.D500,
   },
 }))(TableCell);
 
@@ -59,7 +59,7 @@ export type Props = $ReadOnly<{|
   valuesTable: Array<Values>,
 |}>;
 
-const Tabla = (props: Props) => {
+const TableResource = (props: Props) => {
   const {valuesTable} = props;
   const classes = useStyles();
 
@@ -100,4 +100,4 @@ const Tabla = (props: Props) => {
     </div>
   );
 };
-export {Tabla};
+export {TableResource};
