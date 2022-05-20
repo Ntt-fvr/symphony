@@ -12,6 +12,7 @@ import * as React from 'react';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import StepperAction from './StepperAction';
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
 import {ScheduledActionsTypes} from './ScheduledActionsTypes';
@@ -76,8 +77,8 @@ const CreateAction = (props: Props) => {
             size="large"
           />
         </Grid>
-        <Grid container spacing={0}>
-          CONTENEDOR
+        <Grid item xs={12}>
+          <StepperAction />
         </Grid>
       </Grid>
     </div>
