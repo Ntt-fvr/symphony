@@ -17,8 +17,8 @@ import React, {useState} from 'react';
 
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
+import {CreateAction} from './CreateAction';
 import {Grid} from '@material-ui/core';
-import {ResourceTypeDetails} from './ResourceTypeDetails';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -154,23 +154,14 @@ export const PROJECTS_PAGE_SIZE = 15;
 
 const ScheduledActionsTypes = () => {
   const classes = useStyles();
-  const [filters, setFilters] = useState([]);
-  const [openDetails, setOpenDetails] = useState(false);
-  const [dataRow, setDataRow] = useState({});
+  const [setFilters] = useState([]);
+  const [openCreateAction, setOpenCreateAction] = useState(false);
 
-  const handleOpenDetails = () => {
-    setOpenDetails(prevStateDetails => !prevStateDetails);
-  };
-  const showInfo = data => {
-    setDataRow(data);
-  };
   const handleCreateAction = () => {
-    console.log('open page');
+    setOpenCreateAction(setStateCreateAction => !setStateCreateAction);
   };
-  if (openDetails) {
-    return (
-      <ResourceTypeDetails data={dataRow} setOpenDetails={setOpenDetails} />
-    );
+  if (openCreateAction) {
+    return <CreateAction />;
   }
 
   return (
