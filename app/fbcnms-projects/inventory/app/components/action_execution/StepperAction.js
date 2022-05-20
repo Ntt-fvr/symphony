@@ -11,19 +11,28 @@
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import ConfigureTitle from './common/ConfigureTitle';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogConfirmChange from './DialogConfirmChange';
 import Grid from '@material-ui/core/Grid';
 import React, {useCallback, useState} from 'react';
+import Text from '@symphony/design-system/components/Text';
+import fbt from 'fbt';
 import {SelectDateTime} from './SelectDateTime';
 import {StepToStep} from './StepToStep';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {},
-  title: {
+  CardContiner: {
     padding: '0',
+  },
+  title: {
+    color: 'red',
+  },
+  subTitle: {
+    color: 'blue',
   },
   dialogActions: {
     padding: '0 24px',
@@ -76,9 +85,17 @@ const StepperAction = (props: Props) => {
   return (
     <div>
       <Grid item xs={12}>
-        <Card className={classes.title}>
+        <Card className={classes.CardContiner}>
           <Grid container justify={'center'}>
             <StepToStep activeStep={activeStep} />
+          </Grid>
+          <Grid container direction="column">
+            <Text className={classes.title} variant="h6" weight="bold">
+              Define the behavior of the action
+            </Text>
+            <Text className={classes.subTitle} variant="subtitle2">
+              Use the filter to find resources to apply the actions
+            </Text>
           </Grid>
           <Grid>
             <Button
