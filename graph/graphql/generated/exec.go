@@ -22675,6 +22675,7 @@ input AddKqiTargetInput {
   endTime: Time!
   status: Boolean!
   kqi: ID!
+  kqiComparator: AddKqiComparatorInput
 }
 
 input EditKqiTargetInput {
@@ -22711,7 +22712,7 @@ type KqiComparator implements Node {
 }
 
 input AddKqiComparatorInput {
-  kqiTargetFk: ID!
+  kqiTargetFk: ID
   comparatorFk: ID!
   number: Float!
   comparatorType: String!
@@ -84622,7 +84623,7 @@ func (ec *executionContext) unmarshalInputAddKqiComparatorInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kqiTargetFk"))
-			it.KqiTargetFk, err = ec.unmarshalNID2int(ctx, v)
+			it.KqiTargetFk, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -84847,6 +84848,14 @@ func (ec *executionContext) unmarshalInputAddKqiTargetInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kqi"))
 			it.Kqi, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kqiComparator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kqiComparator"))
+			it.KqiComparator, err = ec.unmarshalOAddKqiComparatorInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKqiComparatorInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -121650,6 +121659,14 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAddKqiComparatorInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKqiComparatorInput(ctx context.Context, v interface{}) (*models.AddKqiComparatorInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddKqiComparatorInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
