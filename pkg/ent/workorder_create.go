@@ -205,6 +205,20 @@ func (woc *WorkOrderCreate) SetNillableDueDate(t *time.Time) *WorkOrderCreate {
 	return woc
 }
 
+// SetIsNameEditable sets the is_name_editable field.
+func (woc *WorkOrderCreate) SetIsNameEditable(b bool) *WorkOrderCreate {
+	woc.mutation.SetIsNameEditable(b)
+	return woc
+}
+
+// SetNillableIsNameEditable sets the is_name_editable field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableIsNameEditable(b *bool) *WorkOrderCreate {
+	if b != nil {
+		woc.SetIsNameEditable(*b)
+	}
+	return woc
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (woc *WorkOrderCreate) SetTypeID(id int) *WorkOrderCreate {
 	woc.mutation.SetTypeID(id)
@@ -533,6 +547,10 @@ func (woc *WorkOrderCreate) defaults() {
 		v := workorder.DefaultPriority
 		woc.mutation.SetPriority(v)
 	}
+	if _, ok := woc.mutation.IsNameEditable(); !ok {
+		v := workorder.DefaultIsNameEditable
+		woc.mutation.SetIsNameEditable(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -703,6 +721,14 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Column: workorder.FieldDueDate,
 		})
 		_node.DueDate = &value
+	}
+	if value, ok := woc.mutation.IsNameEditable(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workorder.FieldIsNameEditable,
+		})
+		_node.IsNameEditable = value
 	}
 	if nodes := woc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

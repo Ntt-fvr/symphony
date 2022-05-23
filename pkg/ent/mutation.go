@@ -74989,6 +74989,7 @@ type WorkOrderMutation struct {
 	addduration                  *float64
 	scheduled_at                 *time.Time
 	due_date                     *time.Time
+	is_name_editable             *bool
 	clearedFields                map[string]struct{}
 	_type                        *int
 	cleared_type                 bool
@@ -75727,6 +75728,56 @@ func (m *WorkOrderMutation) DueDateCleared() bool {
 func (m *WorkOrderMutation) ResetDueDate() {
 	m.due_date = nil
 	delete(m.clearedFields, workorder.FieldDueDate)
+}
+
+// SetIsNameEditable sets the is_name_editable field.
+func (m *WorkOrderMutation) SetIsNameEditable(b bool) {
+	m.is_name_editable = &b
+}
+
+// IsNameEditable returns the is_name_editable value in the mutation.
+func (m *WorkOrderMutation) IsNameEditable() (r bool, exists bool) {
+	v := m.is_name_editable
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsNameEditable returns the old is_name_editable value of the WorkOrder.
+// If the WorkOrder object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderMutation) OldIsNameEditable(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIsNameEditable is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIsNameEditable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsNameEditable: %w", err)
+	}
+	return oldValue.IsNameEditable, nil
+}
+
+// ClearIsNameEditable clears the value of is_name_editable.
+func (m *WorkOrderMutation) ClearIsNameEditable() {
+	m.is_name_editable = nil
+	m.clearedFields[workorder.FieldIsNameEditable] = struct{}{}
+}
+
+// IsNameEditableCleared returns if the field is_name_editable was cleared in this mutation.
+func (m *WorkOrderMutation) IsNameEditableCleared() bool {
+	_, ok := m.clearedFields[workorder.FieldIsNameEditable]
+	return ok
+}
+
+// ResetIsNameEditable reset all changes of the "is_name_editable" field.
+func (m *WorkOrderMutation) ResetIsNameEditable() {
+	m.is_name_editable = nil
+	delete(m.clearedFields, workorder.FieldIsNameEditable)
 }
 
 // SetTypeID sets the type edge to WorkOrderType by id.
@@ -76493,7 +76544,7 @@ func (m *WorkOrderMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.create_time != nil {
 		fields = append(fields, workorder.FieldCreateTime)
 	}
@@ -76533,6 +76584,9 @@ func (m *WorkOrderMutation) Fields() []string {
 	if m.due_date != nil {
 		fields = append(fields, workorder.FieldDueDate)
 	}
+	if m.is_name_editable != nil {
+		fields = append(fields, workorder.FieldIsNameEditable)
+	}
 	return fields
 }
 
@@ -76567,6 +76621,8 @@ func (m *WorkOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.ScheduledAt()
 	case workorder.FieldDueDate:
 		return m.DueDate()
+	case workorder.FieldIsNameEditable:
+		return m.IsNameEditable()
 	}
 	return nil, false
 }
@@ -76602,6 +76658,8 @@ func (m *WorkOrderMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldScheduledAt(ctx)
 	case workorder.FieldDueDate:
 		return m.OldDueDate(ctx)
+	case workorder.FieldIsNameEditable:
+		return m.OldIsNameEditable(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -76702,6 +76760,13 @@ func (m *WorkOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDueDate(v)
 		return nil
+	case workorder.FieldIsNameEditable:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsNameEditable(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -76780,6 +76845,9 @@ func (m *WorkOrderMutation) ClearedFields() []string {
 	if m.FieldCleared(workorder.FieldDueDate) {
 		fields = append(fields, workorder.FieldDueDate)
 	}
+	if m.FieldCleared(workorder.FieldIsNameEditable) {
+		fields = append(fields, workorder.FieldIsNameEditable)
+	}
 	return fields
 }
 
@@ -76814,6 +76882,9 @@ func (m *WorkOrderMutation) ClearField(name string) error {
 		return nil
 	case workorder.FieldDueDate:
 		m.ClearDueDate()
+		return nil
+	case workorder.FieldIsNameEditable:
+		m.ClearIsNameEditable()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder nullable field %s", name)
@@ -76862,6 +76933,9 @@ func (m *WorkOrderMutation) ResetField(name string) error {
 		return nil
 	case workorder.FieldDueDate:
 		m.ResetDueDate()
+		return nil
+	case workorder.FieldIsNameEditable:
+		m.ResetIsNameEditable()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)

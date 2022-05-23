@@ -445,6 +445,7 @@ type AddWorkOrderInput struct {
 	Duration            *float64                  `json:"duration"`
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
+	IsNameEditable      *bool                     `json:"isNameEditable"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -1046,6 +1047,7 @@ type EditWorkOrderInput struct {
 	Duration            *float64                  `json:"duration"`
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
+	IsNameEditable      *bool                     `json:"isNameEditable"`
 }
 
 type EditWorkOrderTypeInput struct {
