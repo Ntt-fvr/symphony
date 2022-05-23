@@ -11,9 +11,11 @@ import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
 import BlockNameInput from './BlockNameInput';
+import ConfigurationChoice from './ConfigurationChoice';
 import ConfigurationExecuteFlow from './ConfigurationExecuteFlow';
 import ConfigurationGoTo from './ConfigurationGoTo';
 import ConfigurationTimer from './ConfigurationTimer';
+import {TYPE as ChoiceType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as ExecuteFlowType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
 import {TYPE as GoToType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
 import {Grid} from '@material-ui/core';
@@ -44,7 +46,6 @@ const ConfigureSettings = ({block}: Props) => {
   const classes = useStyles();
 
   const getConfigurationBlock = ({type}) => {
-    debugger;
     switch (type) {
       case TimerType:
         return <ConfigurationTimer block={block} />;
@@ -52,6 +53,8 @@ const ConfigureSettings = ({block}: Props) => {
         return <ConfigurationGoTo block={block} />;
       case ExecuteFlowType:
         return <ConfigurationExecuteFlow block={block} />;
+      case ChoiceType:
+        return <ConfigurationChoice block={block} />;
       default:
         return '';
     }

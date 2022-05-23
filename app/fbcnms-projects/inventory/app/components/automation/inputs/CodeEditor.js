@@ -8,44 +8,61 @@
  * @format
  */
 
+import type {RuleType} from './context/rules/RuleType';
+
 import 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/ext-language_tools.js';
 import 'react-ace-builds/webpack-resolver-min';
 import AceEditor from 'react-ace-builds';
 import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+  codeEditor: {
+    border: `1px ${theme.palette.grey[200]} solid`,
+  },
+  span: {
+    fontSize: theme.typography.pxToRem(11),
+    color: theme.palette.text.secondary,
+  },
+}));
 
 type Props = $ReadOnly<{|
   mode: string,
+  onChange: () => void,
+  rule: RuleType,
 |}>;
 
 const CodeEditor = (props: Props) => {
-  const {mode} = props;
-  const onChange = newValue => {
-    console.log('newValue', newValue);
-  };
+  const {mode, onChange, rule} = props;
+  const classes = useStyles();
 
   return (
-    <>
-      <AceEditor
-        mode={mode}
-        theme="tomorrow"
-        onChange={onChange}
-        fontSize={14}
-        showPrintMargin={true}
-        showGutter={true}
-        highlightActiveLine={true}
-        name="json-input"
-        height="100px"
-        width="200px"
-        setOptions={{
-          enableBasicAutocompletion: false,
-          enableLiveAutocompletion: false,
-          enableSnippets: true,
-          showLineNumbers: true,
-          tabSize: 2,
-        }}
-      />
-    </>
+    <div>
+      <span className={classes.span}> Rule </span>
+      <div className={classes.codeEditor}>
+        <AceEditor
+          mode={mode}
+          value={rule.value}
+          theme="tomorrow"
+          onChange={onChange}
+          fontSize={14}
+          showPrintMargin={true}
+          showGutter={false}
+          highlightActiveLine={true}
+          name="json-input"
+          height="80px"
+          width="240px"
+          setOptions={{
+            enableBasicAutocompletion: false,
+            enableLiveAutocompletion: false,
+            enableSnippets: true,
+            showLineNumbers: false,
+            tabSize: 2,
+          }}
+        />
+      </div>
+    </div>
   );
 };
 export default CodeEditor;
