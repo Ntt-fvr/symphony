@@ -9044,6 +9044,7 @@ input AddKqiTargetInput {
   endTime: Time!
   status: Boolean!
   kqi: ID!
+  kqiComparator: AddKqiComparatorInput
 }
 
 input EditKqiTargetInput {
@@ -9080,7 +9081,7 @@ type KqiComparator implements Node {
 }
 
 input AddKqiComparatorInput {
-  kqiTargetFk: ID!
+  kqiTargetFk: ID
   comparatorFk: ID!
   number: Float!
   comparatorType: String!

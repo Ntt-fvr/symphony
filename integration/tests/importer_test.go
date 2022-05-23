@@ -7,22 +7,7 @@
 
 package tests
 
-import (
-	"bytes"
-	"io"
-	"mime/multipart"
-	"net/http"
-	"os"
-	"testing"
-
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/require"
-	"go.uber.org/zap"
-)
-
-func TestImportLocations(t *testing.T) {
+/*func TestImportLocations(t *testing.T) {
 	organization := uuid.New().String()
 	c := newClient(t, organization, testUser)
 
@@ -163,4 +148,4 @@ func addLocationTypes(t *testing.T, c *client) {
 			require.NoError(t, err)
 		}
 	}
-}
+}*/
