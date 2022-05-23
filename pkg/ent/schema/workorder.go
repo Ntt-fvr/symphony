@@ -172,6 +172,9 @@ func (WorkOrder) Fields() []ent.Field {
 		field.Time("due_date").
 			Optional().
 			Nillable(),
+		field.Bool("is_name_editable").
+			Optional().
+			Default(true),
 	}
 }
 

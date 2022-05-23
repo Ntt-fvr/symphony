@@ -2341,6 +2341,7 @@ type ComplexityRoot struct {
 		Images              func(childComplexity int) int
 		Index               func(childComplexity int) int
 		InstallDate         func(childComplexity int) int
+		IsNameEditable      func(childComplexity int) int
 		LinksToAdd          func(childComplexity int) int
 		LinksToRemove       func(childComplexity int) int
 		Location            func(childComplexity int) int
@@ -14517,6 +14518,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkOrder.InstallDate(childComplexity), true
 
+	case "WorkOrder.isNameEditable":
+		if e.complexity.WorkOrder.IsNameEditable == nil {
+			break
+		}
+
+		return e.complexity.WorkOrder.IsNameEditable(childComplexity), true
+
 	case "WorkOrder.linksToAdd":
 		if e.complexity.WorkOrder.LinksToAdd == nil {
 			break
@@ -15969,6 +15977,7 @@ input AddWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input EditWorkOrderInput {
@@ -15990,6 +15999,7 @@ input EditWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input TechnicianCheckListItemInput {
@@ -17257,6 +17267,7 @@ type WorkOrder implements Node & NamedNode {
   organizationFk: Organization
   scheduledAt: Time
   Appointments:[Appointment]
+  isNameEditable: Boolean
 }
 
 """
@@ -86032,6 +86043,38 @@ func (ec *executionContext) _WorkOrder_Appointments(ctx context.Context, field g
 	return ec.marshalOAppointment2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkOrder_isNameEditable(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrder) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrder",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsNameEditable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkOrderConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -92345,6 +92388,14 @@ func (ec *executionContext) unmarshalInputAddWorkOrderInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
+		case "isNameEditable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isNameEditable"))
+			it.IsNameEditable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -96980,6 +97031,14 @@ func (ec *executionContext) unmarshalInputEditWorkOrderInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scheduledAt"))
 			it.ScheduledAt, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isNameEditable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isNameEditable"))
+			it.IsNameEditable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -119150,6 +119209,8 @@ func (ec *executionContext) _WorkOrder(ctx context.Context, sel ast.SelectionSet
 				res = ec._WorkOrder_Appointments(ctx, field, obj)
 				return res
 			})
+		case "isNameEditable":
+			out.Values[i] = ec._WorkOrder_isNameEditable(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
