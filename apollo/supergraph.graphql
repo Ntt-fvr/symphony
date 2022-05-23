@@ -1033,6 +1033,7 @@ input AddWorkOrderInput {
   dueDate: Time
   duration: Float
   index: Int
+  isNameEditable: Boolean
   locationId: ID
   name: String!
   organizationFk: ID
@@ -3509,6 +3510,7 @@ input EditWorkOrderInput {
   id: ID!
   index: Int
   installDate: Time
+  isNameEditable: Boolean
   locationId: ID
   name: String!
   organizationFk: ID
@@ -11372,6 +11374,7 @@ type WorkOrder implements NamedNode & Node {
   images: [File]!
   index: Int!
   installDate: Time
+  isNameEditable: Boolean
   linksToAdd: [Link]!
   linksToRemove: [Link]!
   location: Location
