@@ -1,0 +1,5645 @@
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @auth(
+  password: AuthRule
+  query: AuthRule
+  add: AuthRule
+  update: AuthRule
+  delete: AuthRule
+) on OBJECT | INTERFACE
+directive @generate(
+  query: GenerateQueryParams
+  mutation: GenerateMutationParams
+  subscription: Boolean
+) on OBJECT | INTERFACE
+directive @id on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @lambda on FIELD_DEFINITION
+enum _CancellationRequestOrdering {
+  id_asc
+  id_desc
+  _atType_asc
+  _atType_desc
+  cancellationReason_asc
+  cancellationReason_desc
+  externalId_asc
+  externalId_desc
+  href_asc
+  href_desc
+  requestedCancellationDate_asc
+  requestedCancellationDate_desc
+  state_asc
+  state_desc
+  _id_asc
+  _id_desc
+}
+
+enum _CharacteristicOrdering {
+  id_asc
+  id_desc
+  _atType_asc
+  _atType_desc
+  name_asc
+  name_desc
+  unitOfMeasure_asc
+  unitOfMeasure_desc
+  value_asc
+  value_desc
+  valueType_asc
+  valueType_desc
+  valueUnits_asc
+  valueUnits_desc
+  _id_asc
+  _id_desc
+}
+
+enum _FlowExecutionRefOrdering {
+  id_asc
+  id_desc
+  domainId_asc
+  domainId_desc
+  projectId_asc
+  projectId_desc
+  runId_asc
+  runId_desc
+  workflowId_asc
+  workflowId_desc
+  _id_asc
+  _id_desc
+}
+
+enum _ModificationRequestOrdering {
+  id_asc
+  id_desc
+  _atType_asc
+  _atType_desc
+  externalId_asc
+  externalId_desc
+  modifyReason_asc
+  modifyReason_desc
+  requestedCompletionDate_asc
+  requestedCompletionDate_desc
+  _id_asc
+  _id_desc
+}
+
+enum _NoteOrdering {
+  id_asc
+  id_desc
+  author_asc
+  author_desc
+  date_asc
+  date_desc
+  text_asc
+  text_desc
+  _id_asc
+  _id_desc
+}
+
+enum _PartyOrdering {
+  id_asc
+  id_desc
+  href_asc
+  href_desc
+  name_asc
+  name_desc
+  role_asc
+  role_desc
+  _id_asc
+  _id_desc
+}
+
+enum _PlaceOrdering {
+  id_asc
+  id_desc
+  name_asc
+  name_desc
+  role_asc
+  role_desc
+  _atType_asc
+  _atType_desc
+  _id_asc
+  _id_desc
+}
+
+enum _RelationDirections {
+  IN
+  OUT
+}
+
+enum _ServiceOrderItemOrdering {
+  id_asc
+  id_desc
+  _atType_asc
+  _atType_desc
+  action_asc
+  action_desc
+  _id_asc
+  _id_desc
+}
+
+enum _ServiceOrderOrdering {
+  id_asc
+  id_desc
+  _atType_asc
+  _atType_desc
+  category_asc
+  category_desc
+  description_asc
+  description_desc
+  externalId_asc
+  externalId_desc
+  priority_asc
+  priority_desc
+  requestedCompletionDate_asc
+  requestedCompletionDate_desc
+  requestedStartDate_asc
+  requestedStartDate_desc
+  state_asc
+  state_desc
+  _id_asc
+  _id_desc
+}
+
+enum _ServiceSOMOrdering {
+  id_asc
+  id_desc
+  href_asc
+  href_desc
+  category_asc
+  category_desc
+  description_asc
+  description_desc
+  externalId_asc
+  externalId_desc
+  hasStarted_asc
+  hasStarted_desc
+  isServiceEnabled_asc
+  isServiceEnabled_desc
+  isStateful_asc
+  isStateful_desc
+  name_asc
+  name_desc
+  serviceDate_asc
+  serviceDate_desc
+  serviceState_asc
+  serviceState_desc
+  serviceType_asc
+  serviceType_desc
+  state_asc
+  state_desc
+  type_asc
+  type_desc
+  relationshipType_asc
+  relationshipType_desc
+  _atSchemaLocation_asc
+  _atSchemaLocation_desc
+  _atType_asc
+  _atType_desc
+  _id_asc
+  _id_desc
+}
+
+enum _ServiceSpecificationRefOrdering {
+  id_asc
+  id_desc
+  _atReferredType_asc
+  _atReferredType_desc
+  _atType_asc
+  _atType_desc
+  href_asc
+  href_desc
+  name_asc
+  name_desc
+  version_asc
+  version_desc
+  _id_asc
+  _id_desc
+}
+
+enum _SupportingServiceOrdering {
+  id_asc
+  id_desc
+  href_asc
+  href_desc
+  _atReferredType_asc
+  _atReferredType_desc
+  _atType_asc
+  _atType_desc
+  _id_asc
+  _id_desc
+}
+
+input AddAppointmentRefInput {
+  href: String
+  description: String
+}
+
+type AddAppointmentRefPayload {
+  appointmentRef(
+    filter: AppointmentRefFilter
+    order: AppointmentRefOrder
+    first: Int
+    offset: Int
+  ): [AppointmentRef]
+  numUids: Int
+}
+
+input AddCancellationRequestInput {
+  _atType: String
+  cancellationReason: String
+  externalId: String
+  href: String
+  requestedCancellationDate: String
+  state: String
+  serviceorders: [ServiceOrderRef]
+}
+
+type AddCancellationRequestPayload {
+  cancellationRequest(
+    filter: CancellationRequestFilter
+    order: CancellationRequestOrder
+    first: Int
+    offset: Int
+  ): [CancellationRequest]
+  numUids: Int
+}
+
+input AddChangeItemInput {
+  resource: ResourceRef
+  parameterType: ConfigurationParameterTypeRef!
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  status: ChangeItemStatus!
+}
+
+type AddChangeItemPayload {
+  changeItem(
+    filter: ChangeItemFilter
+    order: ChangeItemOrder
+    first: Int
+    offset: Int
+  ): [ChangeItem]
+  numUids: Int
+}
+
+input AddChangeRequestActivityInput {
+  author: Int64!
+  isCreate: Boolean!
+  activityType: ChangeRequestActivityField!
+  oldValue: String
+  newValue: String
+  createTime: DateTime!
+  changeRequest: ChangeRequestRef!
+}
+
+type AddChangeRequestActivityPayload {
+  changeRequestActivity(
+    filter: ChangeRequestActivityFilter
+    order: ChangeRequestActivityOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequestActivity]
+  numUids: Int
+}
+
+input AddChangeRequestInput {
+  description: String!
+  items: [ChangeItemRef!]!
+  scheduler: SchedulerConfigRef
+  activities: [ChangeRequestActivityRef]
+  type: ChangeRequestType
+  source: ChangeRequestSource
+  requester: Int64!
+  aprobator: Int64!
+  status: ChangeRequestStatus!
+}
+
+type AddChangeRequestPayload {
+  changeRequest(
+    filter: ChangeRequestFilter
+    order: ChangeRequestOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequest]
+  numUids: Int
+}
+
+input AddCharacteristicInput {
+  id: String!
+  _atType: String
+  name: String
+  unitOfMeasure: String
+  value: String
+  valueType: String
+  valueUnits: String
+  services: [ServiceSOMRef]
+  characteristicRelationship: [CharacteristicRelationshipRef]
+}
+
+type AddCharacteristicPayload {
+  characteristic(
+    filter: CharacteristicFilter
+    order: CharacteristicOrder
+    first: Int
+    offset: Int
+  ): [Characteristic]
+  numUids: Int
+}
+
+input AddCharacteristicRelationshipInput {
+  relationshipType: String
+}
+
+type AddCharacteristicRelationshipPayload {
+  characteristicRelationship(
+    filter: CharacteristicRelationshipFilter
+    order: CharacteristicRelationshipOrder
+    first: Int
+    offset: Int
+  ): [CharacteristicRelationship]
+  numUids: Int
+}
+
+input AddCMVersionInput {
+  parameters: [ParameterRef!]!
+  previous: CMVersionRef
+  validFrom: DateTime
+  validTo: DateTime
+  status: VersionStatus!
+  resource: ResourceRef!
+}
+
+type AddCMVersionPayload {
+  cMVersion(
+    filter: CMVersionFilter
+    order: CMVersionOrder
+    first: Int
+    offset: Int
+  ): [CMVersion]
+  numUids: Int
+}
+
+input AddConfigParamTagInput {
+  name: String!
+  parameters: [ConfigurationParameterTypeRef]
+}
+
+type AddConfigParamTagPayload {
+  configParamTag(
+    filter: ConfigParamTagFilter
+    order: ConfigParamTagOrder
+    first: Int
+    offset: Int
+  ): [ConfigParamTag]
+  numUids: Int
+}
+
+input AddConfigurationParameterTypeInput {
+  externalId: String
+  name: String!
+  type: ParameterKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  isListable: Boolean
+  isPrioritary: Boolean
+  mappingIn: String
+  mappingOut: String
+  tags: [ConfigParamTagRef!]
+  parameters: [ParameterRef!]
+  resourceSpecification: Int64!
+}
+
+type AddConfigurationParameterTypePayload {
+  configurationParameterType(
+    filter: ConfigurationParameterTypeFilter
+    order: ConfigurationParameterTypeOrder
+    first: Int
+    offset: Int
+  ): [ConfigurationParameterType]
+  numUids: Int
+}
+
+input AddExternalReferenceInput {
+  id: String!
+  href: String
+  externalReferenceType: String
+  name: String
+}
+
+type AddExternalReferencePayload {
+  externalReference(
+    filter: ExternalReferenceFilter
+    order: ExternalReferenceOrder
+    first: Int
+    offset: Int
+  ): [ExternalReference]
+  numUids: Int
+}
+
+input AddFeatureInput {
+  isBundle: Boolean
+  isEnabled: Boolean
+  name: String
+}
+
+type AddFeaturePayload {
+  feature(
+    filter: FeatureFilter
+    order: FeatureOrder
+    first: Int
+    offset: Int
+  ): [Feature]
+  numUids: Int
+}
+
+input AddFlowExecutionRefInput {
+  domainId: String
+  projectId: String
+  runId: String
+  workflowId: String
+  creationDate: String
+  executionDate: String
+  endExecutionDate: String
+  cancelto: FlowExecutionRefRef
+  serviceorders: ServiceOrderRef
+}
+
+type AddFlowExecutionRefPayload {
+  flowExecutionRef(
+    filter: FlowExecutionRefFilter
+    order: FlowExecutionRefOrder
+    first: Int
+    offset: Int
+  ): [FlowExecutionRef]
+  numUids: Int
+}
+
+input AddGeometryInput {
+  x: String!
+  y: String!
+}
+
+type AddGeometryPayload {
+  geometry(
+    filter: GeometryFilter
+    order: GeometryOrder
+    first: Int
+    offset: Int
+  ): [Geometry]
+  numUids: Int
+}
+
+input AddModificationRequestInput {
+  _atType: String!
+  externalId: String
+  modifyReason: String!
+  requestedCompletionDate: String!
+  serviceorders: [ServiceOrderRef]
+}
+
+type AddModificationRequestPayload {
+  modificationRequest(
+    filter: ModificationRequestFilter
+    order: ModificationRequestOrder
+    first: Int
+    offset: Int
+  ): [ModificationRequest]
+  numUids: Int
+}
+
+input AddNoteInput {
+  author: String!
+  date: String!
+  text: String!
+  serviceorder: [ServiceOrderRef]
+}
+
+type AddNotePayload {
+  note(filter: NoteFilter, order: NoteOrder, first: Int, offset: Int): [Note]
+  numUids: Int
+}
+
+input AddParameterInput {
+  parameterType: ConfigurationParameterTypeRef!
+  previous: ParameterRef
+  versionCM: [CMVersionRef]!
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+}
+
+type AddParameterPayload {
+  parameter(
+    filter: ParameterFilter
+    order: ParameterOrder
+    first: Int
+    offset: Int
+  ): [Parameter]
+  numUids: Int
+}
+
+input AddPartyInput {
+  id: String!
+  href: String
+  name: String
+  role: String
+  serviceOrders: [ServiceOrderRef]
+  baseType: String
+  schemaLocation: String
+  type: String
+  referredType: String
+}
+
+type AddPartyPayload {
+  party(
+    filter: PartyFilter
+    order: PartyOrder
+    first: Int
+    offset: Int
+  ): [Party]
+  numUids: Int
+}
+
+input AddPlaceInput {
+  id: String
+  href: String
+  name: String
+  role: String
+  type: String
+  services: [ServiceSOMRef]
+  geometryType: String
+  accuracy: String
+  spatialRef: String
+  geometry: [GeometryRef]
+}
+
+type AddPlacePayload {
+  place(
+    filter: PlaceFilter
+    order: PlaceOrder
+    first: Int
+    offset: Int
+  ): [Place]
+  numUids: Int
+}
+
+input AddRelatedEntityInput {
+  id: String!
+  href: String
+  name: String
+  role: String!
+}
+
+type AddRelatedEntityPayload {
+  relatedEntity(
+    filter: RelatedEntityFilter
+    order: RelatedEntityOrder
+    first: Int
+    offset: Int
+  ): [RelatedEntity]
+  numUids: Int
+}
+
+input AddResourceInput {
+  name: String!
+  available: Boolean
+  externalId: String
+  lifecycleStatus: LifecycleStatus
+  typePlanningSubStatus: TypePlanningSubStatus
+  planningSubStatus: PlanningSubStatus
+  operationalSubStatus: OperationalSubStatus
+  usageSubStatus: UsageSubStatus
+  belongsTo: ResourceRef
+  composedOf: [ResourceRef]
+  locatedIn: Int64
+  physicalLink: ResourceRef
+  physicalLinkInv: [ResourceRef]
+  logicalLink: ResourceRef
+  logicalLinkInv: [ResourceRef]
+  crossConnection: ResourceRef
+  crossconnectionInv: [ResourceRef]
+  resourceSpecification: Int64!
+  resourcePropertys: [ResourcePropertyRef]
+  isDelete: Boolean!
+}
+
+type AddResourcePayload {
+  resource(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  numUids: Int
+}
+
+input AddResourcePropertyInput {
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  rawValue: String
+  resource: ResourceRef
+  resourcePropertyType: Int64!
+}
+
+type AddResourcePropertyPayload {
+  resourceProperty(
+    filter: ResourcePropertyFilter
+    order: ResourcePropertyOrder
+    first: Int
+    offset: Int
+  ): [ResourceProperty]
+  numUids: Int
+}
+
+input AddResourceReferenceInput {
+  id: String!
+  href: String
+  name: String!
+}
+
+type AddResourceReferencePayload {
+  resourceReference(
+    filter: ResourceReferenceFilter
+    order: ResourceReferenceOrder
+    first: Int
+    offset: Int
+  ): [ResourceReference]
+  numUids: Int
+}
+
+input AddSchedulerConfigInput {
+  name: String
+  weekDay: WeekDay!
+  time: DateTime
+  createTime: DateTime!
+  status: SchedulerConfigStatus!
+  changeRequest: ChangeRequestRef!
+  rollbackPolicy: RollbackPolicyConfig
+}
+
+type AddSchedulerConfigPayload {
+  schedulerConfig(
+    filter: SchedulerConfigFilter
+    order: SchedulerConfigOrder
+    first: Int
+    offset: Int
+  ): [SchedulerConfig]
+  numUids: Int
+}
+
+input AddServiceOrderInput {
+  _atType: String
+  category: String
+  description: String
+  externalId: String
+  priority: String
+  orderDate: String
+  startDate: String
+  requestedCompletionDate: String
+  requestedStartDate: String
+  state: String
+  externalReference: [ExternalReferenceRef]
+  orderRelationship: [ServiceOrderRelationshipRef]
+  relatedParty: [PartyRef]
+  flowExecutionRef: FlowExecutionRefRef
+  cancelRequest: CancellationRequestRef
+  modifyRequest: [ModificationRequestRef]
+  serviceOrderItem: [ServiceOrderItemRef]
+  note: [NoteRef]
+}
+
+input AddServiceOrderItemInput {
+  quantity: Int
+  appointment: AppointmentRefRef
+  id: String!
+  type: String!
+  action: String!
+  service: ServiceSOMRef!
+  state: String
+}
+
+type AddServiceOrderItemPayload {
+  serviceOrderItem(
+    filter: ServiceOrderItemFilter
+    order: ServiceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderItem]
+  numUids: Int
+}
+
+type AddServiceOrderPayload {
+  serviceOrder(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  numUids: Int
+}
+
+input AddServiceOrderRelationshipInput {
+  id: String!
+  href: String
+  relationshipType: String
+}
+
+type AddServiceOrderRelationshipPayload {
+  serviceOrderRelationship(
+    filter: ServiceOrderRelationshipFilter
+    order: ServiceOrderRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderRelationship]
+  numUids: Int
+}
+
+input AddServiceRefInput {
+  id: String!
+  href: String
+  name: String
+  supportingResource: [ResourceIntRef]
+}
+
+type AddServiceRefPayload {
+  serviceRef(
+    filter: ServiceRefFilter
+    order: ServiceRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceRef]
+  numUids: Int
+}
+
+input AddServiceRelationshipInput {
+  relationshipType: String!
+  service: ServiceSOMRef
+  serviceRelationshipCharacteristic: [CharacteristicRef]
+}
+
+type AddServiceRelationshipPayload {
+  serviceRelationship(
+    filter: ServiceRelationshipFilter
+    order: ServiceRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceRelationship]
+  numUids: Int
+}
+
+input AddServiceSOMInput {
+  href: String
+  category: String
+  description: String
+  endDate: String
+  isBundle: Boolean
+  startDate: String
+  startMode: String
+  externalId: String
+  hasStarted: Boolean
+  isServiceEnabled: Boolean
+  isStateful: Boolean
+  name: String
+  serviceDate: String
+  serviceType: String
+  state: String
+  type: String
+  relatedParty: [PartyRef]
+  place: [PlaceRef]
+  serviceSpecification: ServiceSpecificationRefRef
+  serviceCharacteristic: [CharacteristicRef]
+  supportingService: [ServiceSOMRef]
+  supportingResource: [ResourceIntRef]
+  serviceRelationship: [ServiceRelationshipRef]
+  relatedEntity: [RelatedEntityRef]
+  note: [NoteRef]
+  feature: [FeatureRef]
+}
+
+type AddServiceSOMPayload {
+  serviceSOM(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  numUids: Int
+}
+
+input AddServiceSpecificationRefInput {
+  id: String!
+  referredType: String
+  type: String
+  href: String
+  name: String!
+  version: String
+  services: [ServiceSOMRef]
+}
+
+type AddServiceSpecificationRefPayload {
+  serviceSpecificationRef(
+    filter: ServiceSpecificationRefFilter
+    order: ServiceSpecificationRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceSpecificationRef]
+  numUids: Int
+}
+
+input AddSubscriberInput {
+  callback: String
+  topic: String
+}
+
+type AddSubscriberPayload {
+  subscriber(
+    filter: SubscriberFilter
+    order: SubscriberOrder
+    first: Int
+    offset: Int
+  ): [Subscriber]
+  numUids: Int
+}
+
+type AppointmentRef {
+  id: ID!
+  href: String
+  description: String
+}
+
+type AppointmentRefAggregateResult {
+  count: Int
+  hrefMin: String
+  hrefMax: String
+  descriptionMin: String
+  descriptionMax: String
+}
+
+input AppointmentRefFilter {
+  id: [ID!]
+  has: [AppointmentRefHasFilter]
+  and: [AppointmentRefFilter]
+  or: [AppointmentRefFilter]
+  not: AppointmentRefFilter
+}
+
+enum AppointmentRefHasFilter {
+  href
+  description
+}
+
+input AppointmentRefOrder {
+  asc: AppointmentRefOrderable
+  desc: AppointmentRefOrderable
+  then: AppointmentRefOrder
+}
+
+enum AppointmentRefOrderable {
+  href
+  description
+}
+
+input AppointmentRefPatch {
+  href: String
+  description: String
+}
+
+input AppointmentRefRef {
+  id: ID
+  href: String
+  description: String
+}
+
+input AuthRule {
+  and: [AuthRule]
+  or: [AuthRule]
+  not: AuthRule
+  rule: String
+}
+
+type CancellationRequest {
+  id: ID!
+  _atType: String
+  cancellationReason: String
+  externalId: String
+  href: String
+  requestedCancellationDate: String
+  state: String
+  serviceorders(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  serviceordersAggregate(
+    filter: ServiceOrderFilter
+  ): ServiceOrderAggregateResult
+}
+
+type CancellationRequestAggregateResult {
+  count: Int
+  _atTypeMin: String
+  _atTypeMax: String
+  cancellationReasonMin: String
+  cancellationReasonMax: String
+  externalIdMin: String
+  externalIdMax: String
+  hrefMin: String
+  hrefMax: String
+  requestedCancellationDateMin: String
+  requestedCancellationDateMax: String
+  stateMin: String
+  stateMax: String
+}
+
+input CancellationRequestFilter {
+  id: [ID!]
+  externalId: StringHashFilter
+  has: [CancellationRequestHasFilter]
+  and: [CancellationRequestFilter]
+  or: [CancellationRequestFilter]
+  not: CancellationRequestFilter
+}
+
+enum CancellationRequestHasFilter {
+  _atType
+  cancellationReason
+  externalId
+  href
+  requestedCancellationDate
+  state
+  serviceorders
+}
+
+input CancellationRequestOrder {
+  asc: CancellationRequestOrderable
+  desc: CancellationRequestOrderable
+  then: CancellationRequestOrder
+}
+
+enum CancellationRequestOrderable {
+  _atType
+  cancellationReason
+  externalId
+  href
+  requestedCancellationDate
+  state
+}
+
+input CancellationRequestPatch {
+  _atType: String
+  cancellationReason: String
+  externalId: String
+  href: String
+  requestedCancellationDate: String
+  state: String
+  serviceorders: [ServiceOrderRef]
+}
+
+input CancellationRequestRef {
+  id: ID
+  _atType: String
+  cancellationReason: String
+  externalId: String
+  href: String
+  requestedCancellationDate: String
+  state: String
+  serviceorders: [ServiceOrderRef]
+}
+
+type ChangeItem {
+  id: ID!
+  resource(filter: ResourceFilter): Resource
+  parameterType(
+    filter: ConfigurationParameterTypeFilter
+  ): ConfigurationParameterType!
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  status: ChangeItemStatus!
+}
+
+type ChangeItemAggregateResult {
+  count: Int
+  stringValueMin: String
+  stringValueMax: String
+  intValueMin: Int
+  intValueMax: Int
+  intValueSum: Int
+  intValueAvg: Float
+  floatValueMin: Float
+  floatValueMax: Float
+  floatValueSum: Float
+  floatValueAvg: Float
+  latitudeValueMin: Float
+  latitudeValueMax: Float
+  latitudeValueSum: Float
+  latitudeValueAvg: Float
+  longitudeValueMin: Float
+  longitudeValueMax: Float
+  longitudeValueSum: Float
+  longitudeValueAvg: Float
+  rangeFromValueMin: Float
+  rangeFromValueMax: Float
+  rangeFromValueSum: Float
+  rangeFromValueAvg: Float
+  rangeToValueMin: Float
+  rangeToValueMax: Float
+  rangeToValueSum: Float
+  rangeToValueAvg: Float
+}
+
+input ChangeItemFilter {
+  id: [ID!]
+  has: [ChangeItemHasFilter]
+  and: [ChangeItemFilter]
+  or: [ChangeItemFilter]
+  not: ChangeItemFilter
+}
+
+enum ChangeItemHasFilter {
+  resource
+  parameterType
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  status
+}
+
+input ChangeItemOrder {
+  asc: ChangeItemOrderable
+  desc: ChangeItemOrderable
+  then: ChangeItemOrder
+}
+
+enum ChangeItemOrderable {
+  stringValue
+  intValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+}
+
+input ChangeItemPatch {
+  resource: ResourceRef
+  parameterType: ConfigurationParameterTypeRef
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  status: ChangeItemStatus
+}
+
+input ChangeItemRef {
+  id: ID
+  resource: ResourceRef
+  parameterType: ConfigurationParameterTypeRef
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  status: ChangeItemStatus
+}
+
+enum ChangeItemStatus {
+  CANCELLED
+  PENDING
+  IN_EXECUTION
+  SUCCESSFUL
+  FAILED
+}
+
+type ChangeRequest {
+  id: ID!
+  description: String!
+  items(
+    filter: ChangeItemFilter
+    order: ChangeItemOrder
+    first: Int
+    offset: Int
+  ): [ChangeItem!]!
+  scheduler(filter: SchedulerConfigFilter): SchedulerConfig
+  activities(
+    filter: ChangeRequestActivityFilter
+    order: ChangeRequestActivityOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequestActivity]
+  type: ChangeRequestType
+  source: ChangeRequestSource
+  requester: Int64!
+  aprobator: Int64!
+  status: ChangeRequestStatus!
+  itemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
+  activitiesAggregate(
+    filter: ChangeRequestActivityFilter
+  ): ChangeRequestActivityAggregateResult
+}
+
+type ChangeRequestActivity {
+  id: ID!
+  author: Int64!
+  isCreate: Boolean!
+  activityType: ChangeRequestActivityField!
+  oldValue: String
+  newValue: String
+  createTime: DateTime!
+  changeRequest(filter: ChangeRequestFilter): ChangeRequest!
+}
+
+type ChangeRequestActivityAggregateResult {
+  count: Int
+  authorMin: Int64
+  authorMax: Int64
+  authorSum: Int64
+  authorAvg: Float
+  oldValueMin: String
+  oldValueMax: String
+  newValueMin: String
+  newValueMax: String
+  createTimeMin: DateTime
+  createTimeMax: DateTime
+}
+
+enum ChangeRequestActivityField {
+  STATUS
+  PRIORITY
+  CREATION_DATE
+  REQUESTER
+  NAME
+  DESCRIPTION
+}
+
+input ChangeRequestActivityFilter {
+  id: [ID!]
+  has: [ChangeRequestActivityHasFilter]
+  and: [ChangeRequestActivityFilter]
+  or: [ChangeRequestActivityFilter]
+  not: ChangeRequestActivityFilter
+}
+
+enum ChangeRequestActivityHasFilter {
+  author
+  isCreate
+  activityType
+  oldValue
+  newValue
+  createTime
+  changeRequest
+}
+
+input ChangeRequestActivityOrder {
+  asc: ChangeRequestActivityOrderable
+  desc: ChangeRequestActivityOrderable
+  then: ChangeRequestActivityOrder
+}
+
+enum ChangeRequestActivityOrderable {
+  author
+  oldValue
+  newValue
+  createTime
+}
+
+input ChangeRequestActivityPatch {
+  author: Int64
+  isCreate: Boolean
+  activityType: ChangeRequestActivityField
+  oldValue: String
+  newValue: String
+  createTime: DateTime
+  changeRequest: ChangeRequestRef
+}
+
+input ChangeRequestActivityRef {
+  id: ID
+  author: Int64
+  isCreate: Boolean
+  activityType: ChangeRequestActivityField
+  oldValue: String
+  newValue: String
+  createTime: DateTime
+  changeRequest: ChangeRequestRef
+}
+
+type ChangeRequestAggregateResult {
+  count: Int
+  descriptionMin: String
+  descriptionMax: String
+  requesterMin: Int64
+  requesterMax: Int64
+  requesterSum: Int64
+  requesterAvg: Float
+  aprobatorMin: Int64
+  aprobatorMax: Int64
+  aprobatorSum: Int64
+  aprobatorAvg: Float
+}
+
+input ChangeRequestFilter {
+  id: [ID!]
+  has: [ChangeRequestHasFilter]
+  and: [ChangeRequestFilter]
+  or: [ChangeRequestFilter]
+  not: ChangeRequestFilter
+}
+
+enum ChangeRequestHasFilter {
+  description
+  items
+  scheduler
+  activities
+  type
+  source
+  requester
+  aprobator
+  status
+}
+
+input ChangeRequestOrder {
+  asc: ChangeRequestOrderable
+  desc: ChangeRequestOrderable
+  then: ChangeRequestOrder
+}
+
+enum ChangeRequestOrderable {
+  description
+  requester
+  aprobator
+}
+
+input ChangeRequestPatch {
+  description: String
+  items: [ChangeItemRef!]
+  scheduler: SchedulerConfigRef
+  activities: [ChangeRequestActivityRef]
+  type: ChangeRequestType
+  source: ChangeRequestSource
+  requester: Int64
+  aprobator: Int64
+  status: ChangeRequestStatus
+}
+
+input ChangeRequestRef {
+  id: ID
+  description: String
+  items: [ChangeItemRef!]
+  scheduler: SchedulerConfigRef
+  activities: [ChangeRequestActivityRef]
+  type: ChangeRequestType
+  source: ChangeRequestSource
+  requester: Int64
+  aprobator: Int64
+  status: ChangeRequestStatus
+}
+
+enum ChangeRequestSource {
+  NON_RT_RIC
+  NSSMF
+  WORKFLOW
+  GUI
+}
+
+enum ChangeRequestStatus {
+  SUBMITTED
+  CANCELLED
+  PENDING
+  APPROVAL
+  REJECTED
+  SCHEDULED
+  IN_EXECUTION
+  SUCCESSFUL
+  SUCCESSFUL_WITH_WARNINGS
+  FAILED
+}
+
+enum ChangeRequestType {
+  MANUAL
+  AUTOMATIC
+}
+
+type Characteristic {
+  characteristicId: ID!
+  id: String!
+  _atType: String
+  name: String
+  unitOfMeasure: String
+  value: String
+  valueType: String
+  valueUnits: String
+  services(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  characteristicRelationship(
+    filter: CharacteristicRelationshipFilter
+    order: CharacteristicRelationshipOrder
+    first: Int
+    offset: Int
+  ): [CharacteristicRelationship]
+  servicesAggregate(filter: ServiceSOMFilter): ServiceSOMAggregateResult
+  characteristicRelationshipAggregate(
+    filter: CharacteristicRelationshipFilter
+  ): CharacteristicRelationshipAggregateResult
+}
+
+type CharacteristicAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  _atTypeMin: String
+  _atTypeMax: String
+  nameMin: String
+  nameMax: String
+  unitOfMeasureMin: String
+  unitOfMeasureMax: String
+  valueMin: String
+  valueMax: String
+  valueTypeMin: String
+  valueTypeMax: String
+  valueUnitsMin: String
+  valueUnitsMax: String
+}
+
+input CharacteristicFilter {
+  characteristicId: [ID!]
+  id: StringHashFilter
+  has: [CharacteristicHasFilter]
+  and: [CharacteristicFilter]
+  or: [CharacteristicFilter]
+  not: CharacteristicFilter
+}
+
+enum CharacteristicHasFilter {
+  id
+  _atType
+  name
+  unitOfMeasure
+  value
+  valueType
+  valueUnits
+  services
+  characteristicRelationship
+}
+
+input CharacteristicOrder {
+  asc: CharacteristicOrderable
+  desc: CharacteristicOrderable
+  then: CharacteristicOrder
+}
+
+enum CharacteristicOrderable {
+  id
+  _atType
+  name
+  unitOfMeasure
+  value
+  valueType
+  valueUnits
+}
+
+input CharacteristicPatch {
+  id: String
+  _atType: String
+  name: String
+  unitOfMeasure: String
+  value: String
+  valueType: String
+  valueUnits: String
+  services: [ServiceSOMRef]
+  characteristicRelationship: [CharacteristicRelationshipRef]
+}
+
+input CharacteristicRef {
+  characteristicId: ID
+  id: String
+  _atType: String
+  name: String
+  unitOfMeasure: String
+  value: String
+  valueType: String
+  valueUnits: String
+  services: [ServiceSOMRef]
+  characteristicRelationship: [CharacteristicRelationshipRef]
+}
+
+type CharacteristicRelationship {
+  id: ID!
+  relationshipType: String
+}
+
+type CharacteristicRelationshipAggregateResult {
+  count: Int
+  relationshipTypeMin: String
+  relationshipTypeMax: String
+}
+
+input CharacteristicRelationshipFilter {
+  id: [ID!]
+  has: [CharacteristicRelationshipHasFilter]
+  and: [CharacteristicRelationshipFilter]
+  or: [CharacteristicRelationshipFilter]
+  not: CharacteristicRelationshipFilter
+}
+
+enum CharacteristicRelationshipHasFilter {
+  relationshipType
+}
+
+input CharacteristicRelationshipOrder {
+  asc: CharacteristicRelationshipOrderable
+  desc: CharacteristicRelationshipOrderable
+  then: CharacteristicRelationshipOrder
+}
+
+enum CharacteristicRelationshipOrderable {
+  relationshipType
+}
+
+input CharacteristicRelationshipPatch {
+  relationshipType: String
+}
+
+input CharacteristicRelationshipRef {
+  id: ID
+  relationshipType: String
+}
+
+type CMVersion {
+  id: ID!
+  parameters(
+    filter: ParameterFilter
+    order: ParameterOrder
+    first: Int
+    offset: Int
+  ): [Parameter!]!
+  previous(filter: CMVersionFilter): CMVersion
+  validFrom: DateTime
+  validTo: DateTime
+  status: VersionStatus!
+  resource(filter: ResourceFilter): Resource!
+  parametersAggregate(filter: ParameterFilter): ParameterAggregateResult
+}
+
+type CMVersionAggregateResult {
+  count: Int
+  validFromMin: DateTime
+  validFromMax: DateTime
+  validToMin: DateTime
+  validToMax: DateTime
+}
+
+input CMVersionFilter {
+  id: [ID!]
+  has: [CMVersionHasFilter]
+  and: [CMVersionFilter]
+  or: [CMVersionFilter]
+  not: CMVersionFilter
+}
+
+enum CMVersionHasFilter {
+  parameters
+  previous
+  validFrom
+  validTo
+  status
+  resource
+}
+
+input CMVersionOrder {
+  asc: CMVersionOrderable
+  desc: CMVersionOrderable
+  then: CMVersionOrder
+}
+
+enum CMVersionOrderable {
+  validFrom
+  validTo
+}
+
+input CMVersionPatch {
+  parameters: [ParameterRef!]
+  previous: CMVersionRef
+  validFrom: DateTime
+  validTo: DateTime
+  status: VersionStatus
+  resource: ResourceRef
+}
+
+input CMVersionRef {
+  id: ID
+  parameters: [ParameterRef!]
+  previous: CMVersionRef
+  validFrom: DateTime
+  validTo: DateTime
+  status: VersionStatus
+  resource: ResourceRef
+}
+
+type ConfigParamTag {
+  id: ID!
+  name: String!
+  parameters(
+    filter: ConfigurationParameterTypeFilter
+    order: ConfigurationParameterTypeOrder
+    first: Int
+    offset: Int
+  ): [ConfigurationParameterType]
+  parametersAggregate(
+    filter: ConfigurationParameterTypeFilter
+  ): ConfigurationParameterTypeAggregateResult
+}
+
+type ConfigParamTagAggregateResult {
+  count: Int
+  nameMin: String
+  nameMax: String
+}
+
+input ConfigParamTagFilter {
+  id: [ID!]
+  has: [ConfigParamTagHasFilter]
+  and: [ConfigParamTagFilter]
+  or: [ConfigParamTagFilter]
+  not: ConfigParamTagFilter
+}
+
+enum ConfigParamTagHasFilter {
+  name
+  parameters
+}
+
+input ConfigParamTagOrder {
+  asc: ConfigParamTagOrderable
+  desc: ConfigParamTagOrderable
+  then: ConfigParamTagOrder
+}
+
+enum ConfigParamTagOrderable {
+  name
+}
+
+input ConfigParamTagPatch {
+  name: String
+  parameters: [ConfigurationParameterTypeRef]
+}
+
+input ConfigParamTagRef {
+  id: ID
+  name: String
+  parameters: [ConfigurationParameterTypeRef]
+}
+
+type ConfigurationParameterType {
+  id: ID!
+  externalId: String
+  name: String!
+  type: ParameterKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  isListable: Boolean
+  isPrioritary: Boolean
+  mappingIn: String
+  mappingOut: String
+  tags(
+    filter: ConfigParamTagFilter
+    order: ConfigParamTagOrder
+    first: Int
+    offset: Int
+  ): [ConfigParamTag!]
+  parameters(
+    filter: ParameterFilter
+    order: ParameterOrder
+    first: Int
+    offset: Int
+  ): [Parameter!]
+  resourceSpecification: Int64!
+  tagsAggregate(filter: ConfigParamTagFilter): ConfigParamTagAggregateResult
+  parametersAggregate(filter: ParameterFilter): ParameterAggregateResult
+}
+
+type ConfigurationParameterTypeAggregateResult {
+  count: Int
+  externalIdMin: String
+  externalIdMax: String
+  nameMin: String
+  nameMax: String
+  nodeTypeMin: String
+  nodeTypeMax: String
+  indexMin: Int
+  indexMax: Int
+  indexSum: Int
+  indexAvg: Float
+  categoryMin: String
+  categoryMax: String
+  rawValueMin: String
+  rawValueMax: String
+  stringValueMin: String
+  stringValueMax: String
+  intValueMin: Int
+  intValueMax: Int
+  intValueSum: Int
+  intValueAvg: Float
+  floatValueMin: Float
+  floatValueMax: Float
+  floatValueSum: Float
+  floatValueAvg: Float
+  latitudeValueMin: Float
+  latitudeValueMax: Float
+  latitudeValueSum: Float
+  latitudeValueAvg: Float
+  longitudeValueMin: Float
+  longitudeValueMax: Float
+  longitudeValueSum: Float
+  longitudeValueAvg: Float
+  rangeFromValueMin: Float
+  rangeFromValueMax: Float
+  rangeFromValueSum: Float
+  rangeFromValueAvg: Float
+  rangeToValueMin: Float
+  rangeToValueMax: Float
+  rangeToValueSum: Float
+  rangeToValueAvg: Float
+  mappingInMin: String
+  mappingInMax: String
+  mappingOutMin: String
+  mappingOutMax: String
+  resourceSpecificationMin: Int64
+  resourceSpecificationMax: Int64
+  resourceSpecificationSum: Int64
+  resourceSpecificationAvg: Float
+}
+
+input ConfigurationParameterTypeFilter {
+  id: [ID!]
+  has: [ConfigurationParameterTypeHasFilter]
+  and: [ConfigurationParameterTypeFilter]
+  or: [ConfigurationParameterTypeFilter]
+  not: ConfigurationParameterTypeFilter
+}
+
+enum ConfigurationParameterTypeHasFilter {
+  externalId
+  name
+  type
+  nodeType
+  index
+  category
+  rawValue
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  isEditable
+  isMandatory
+  isDeleted
+  isListable
+  isPrioritary
+  mappingIn
+  mappingOut
+  tags
+  parameters
+  resourceSpecification
+}
+
+input ConfigurationParameterTypeOrder {
+  asc: ConfigurationParameterTypeOrderable
+  desc: ConfigurationParameterTypeOrderable
+  then: ConfigurationParameterTypeOrder
+}
+
+enum ConfigurationParameterTypeOrderable {
+  externalId
+  name
+  nodeType
+  index
+  category
+  rawValue
+  stringValue
+  intValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  mappingIn
+  mappingOut
+  resourceSpecification
+}
+
+input ConfigurationParameterTypePatch {
+  externalId: String
+  name: String
+  type: ParameterKind
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  isListable: Boolean
+  isPrioritary: Boolean
+  mappingIn: String
+  mappingOut: String
+  tags: [ConfigParamTagRef!]
+  parameters: [ParameterRef!]
+  resourceSpecification: Int64
+}
+
+input ConfigurationParameterTypeRef {
+  id: ID
+  externalId: String
+  name: String
+  type: ParameterKind
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  isListable: Boolean
+  isPrioritary: Boolean
+  mappingIn: String
+  mappingOut: String
+  tags: [ConfigParamTagRef!]
+  parameters: [ParameterRef!]
+  resourceSpecification: Int64
+}
+
+input ContainsFilter {
+  point: PointRef
+  polygon: PolygonRef
+}
+
+input CustomHTTP {
+  url: String!
+  method: HTTPMethod!
+  body: String
+  graphql: String
+  mode: Mode
+  forwardHeaders: [String!]
+  secretHeaders: [String!]
+  introspectionHeaders: [String!]
+  skipIntrospection: Boolean
+}
+
+# The DateTime scalar type
+# represents date and time as a string in RFC3339 format.
+# For example: "1985-04-12T23:20:50.52Z" represents 20 minutes and 50.52 seconds
+# after the 23rd hour of April 12th, 1985 in UTC.
+scalar DateTime
+
+input DateTimeFilter {
+  eq: DateTime
+  in: [DateTime]
+  le: DateTime
+  lt: DateTime
+  ge: DateTime
+  gt: DateTime
+  between: DateTimeRange
+}
+
+input DateTimeRange {
+  min: DateTime!
+  max: DateTime!
+}
+
+type DeleteAppointmentRefPayload {
+  appointmentRef(
+    filter: AppointmentRefFilter
+    order: AppointmentRefOrder
+    first: Int
+    offset: Int
+  ): [AppointmentRef]
+  msg: String
+  numUids: Int
+}
+
+type DeleteCancellationRequestPayload {
+  cancellationRequest(
+    filter: CancellationRequestFilter
+    order: CancellationRequestOrder
+    first: Int
+    offset: Int
+  ): [CancellationRequest]
+  msg: String
+  numUids: Int
+}
+
+type DeleteChangeItemPayload {
+  changeItem(
+    filter: ChangeItemFilter
+    order: ChangeItemOrder
+    first: Int
+    offset: Int
+  ): [ChangeItem]
+  msg: String
+  numUids: Int
+}
+
+type DeleteChangeRequestActivityPayload {
+  changeRequestActivity(
+    filter: ChangeRequestActivityFilter
+    order: ChangeRequestActivityOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequestActivity]
+  msg: String
+  numUids: Int
+}
+
+type DeleteChangeRequestPayload {
+  changeRequest(
+    filter: ChangeRequestFilter
+    order: ChangeRequestOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequest]
+  msg: String
+  numUids: Int
+}
+
+type DeleteCharacteristicPayload {
+  characteristic(
+    filter: CharacteristicFilter
+    order: CharacteristicOrder
+    first: Int
+    offset: Int
+  ): [Characteristic]
+  msg: String
+  numUids: Int
+}
+
+type DeleteCharacteristicRelationshipPayload {
+  characteristicRelationship(
+    filter: CharacteristicRelationshipFilter
+    order: CharacteristicRelationshipOrder
+    first: Int
+    offset: Int
+  ): [CharacteristicRelationship]
+  msg: String
+  numUids: Int
+}
+
+type DeleteCMVersionPayload {
+  cMVersion(
+    filter: CMVersionFilter
+    order: CMVersionOrder
+    first: Int
+    offset: Int
+  ): [CMVersion]
+  msg: String
+  numUids: Int
+}
+
+type DeleteConfigParamTagPayload {
+  configParamTag(
+    filter: ConfigParamTagFilter
+    order: ConfigParamTagOrder
+    first: Int
+    offset: Int
+  ): [ConfigParamTag]
+  msg: String
+  numUids: Int
+}
+
+type DeleteConfigurationParameterTypePayload {
+  configurationParameterType(
+    filter: ConfigurationParameterTypeFilter
+    order: ConfigurationParameterTypeOrder
+    first: Int
+    offset: Int
+  ): [ConfigurationParameterType]
+  msg: String
+  numUids: Int
+}
+
+type DeleteExternalReferencePayload {
+  externalReference(
+    filter: ExternalReferenceFilter
+    order: ExternalReferenceOrder
+    first: Int
+    offset: Int
+  ): [ExternalReference]
+  msg: String
+  numUids: Int
+}
+
+type DeleteFeaturePayload {
+  feature(
+    filter: FeatureFilter
+    order: FeatureOrder
+    first: Int
+    offset: Int
+  ): [Feature]
+  msg: String
+  numUids: Int
+}
+
+type DeleteFlowExecutionRefPayload {
+  flowExecutionRef(
+    filter: FlowExecutionRefFilter
+    order: FlowExecutionRefOrder
+    first: Int
+    offset: Int
+  ): [FlowExecutionRef]
+  msg: String
+  numUids: Int
+}
+
+type DeleteGeometryPayload {
+  geometry(
+    filter: GeometryFilter
+    order: GeometryOrder
+    first: Int
+    offset: Int
+  ): [Geometry]
+  msg: String
+  numUids: Int
+}
+
+type DeleteModificationRequestPayload {
+  modificationRequest(
+    filter: ModificationRequestFilter
+    order: ModificationRequestOrder
+    first: Int
+    offset: Int
+  ): [ModificationRequest]
+  msg: String
+  numUids: Int
+}
+
+type DeleteNotePayload {
+  note(filter: NoteFilter, order: NoteOrder, first: Int, offset: Int): [Note]
+  msg: String
+  numUids: Int
+}
+
+type DeleteParameterPayload {
+  parameter(
+    filter: ParameterFilter
+    order: ParameterOrder
+    first: Int
+    offset: Int
+  ): [Parameter]
+  msg: String
+  numUids: Int
+}
+
+type DeletePartyPayload {
+  party(
+    filter: PartyFilter
+    order: PartyOrder
+    first: Int
+    offset: Int
+  ): [Party]
+  msg: String
+  numUids: Int
+}
+
+type DeletePlacePayload {
+  place(
+    filter: PlaceFilter
+    order: PlaceOrder
+    first: Int
+    offset: Int
+  ): [Place]
+  msg: String
+  numUids: Int
+}
+
+type DeleteRelatedEntityPayload {
+  relatedEntity(
+    filter: RelatedEntityFilter
+    order: RelatedEntityOrder
+    first: Int
+    offset: Int
+  ): [RelatedEntity]
+  msg: String
+  numUids: Int
+}
+
+type DeleteResourceIntPayload {
+  resourceInt(
+    filter: ResourceIntFilter
+    order: ResourceIntOrder
+    first: Int
+    offset: Int
+  ): [ResourceInt]
+  msg: String
+  numUids: Int
+}
+
+type DeleteResourcePayload {
+  resource(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  msg: String
+  numUids: Int
+}
+
+type DeleteResourcePropertyPayload {
+  resourceProperty(
+    filter: ResourcePropertyFilter
+    order: ResourcePropertyOrder
+    first: Int
+    offset: Int
+  ): [ResourceProperty]
+  msg: String
+  numUids: Int
+}
+
+type DeleteResourceReferencePayload {
+  resourceReference(
+    filter: ResourceReferenceFilter
+    order: ResourceReferenceOrder
+    first: Int
+    offset: Int
+  ): [ResourceReference]
+  msg: String
+  numUids: Int
+}
+
+type DeleteSchedulerConfigPayload {
+  schedulerConfig(
+    filter: SchedulerConfigFilter
+    order: SchedulerConfigOrder
+    first: Int
+    offset: Int
+  ): [SchedulerConfig]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceOrderItemPayload {
+  serviceOrderItem(
+    filter: ServiceOrderItemFilter
+    order: ServiceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderItem]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceOrderPayload {
+  serviceOrder(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceOrderRelationshipPayload {
+  serviceOrderRelationship(
+    filter: ServiceOrderRelationshipFilter
+    order: ServiceOrderRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderRelationship]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceReferencePayload {
+  serviceReference(
+    filter: ServiceReferenceFilter
+    order: ServiceReferenceOrder
+    first: Int
+    offset: Int
+  ): [ServiceReference]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceRefPayload {
+  serviceRef(
+    filter: ServiceRefFilter
+    order: ServiceRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceRef]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceRelationshipPayload {
+  serviceRelationship(
+    filter: ServiceRelationshipFilter
+    order: ServiceRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceRelationship]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceSOMPayload {
+  serviceSOM(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  msg: String
+  numUids: Int
+}
+
+type DeleteServiceSpecificationRefPayload {
+  serviceSpecificationRef(
+    filter: ServiceSpecificationRefFilter
+    order: ServiceSpecificationRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceSpecificationRef]
+  msg: String
+  numUids: Int
+}
+
+type DeleteSubscriberPayload {
+  subscriber(
+    filter: SubscriberFilter
+    order: SubscriberOrder
+    first: Int
+    offset: Int
+  ): [Subscriber]
+  msg: String
+  numUids: Int
+}
+
+enum DgraphIndex {
+  int
+  int64
+  float
+  bool
+  hash
+  exact
+  term
+  fulltext
+  trigram
+  regexp
+  year
+  month
+  day
+  hour
+  geo
+}
+
+type ExternalReference {
+  id: String!
+  href: String
+  externalReferenceType: String
+  name: String
+}
+
+type ExternalReferenceAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  hrefMin: String
+  hrefMax: String
+  externalReferenceTypeMin: String
+  externalReferenceTypeMax: String
+  nameMin: String
+  nameMax: String
+}
+
+input ExternalReferenceFilter {
+  id: StringHashFilter
+  has: [ExternalReferenceHasFilter]
+  and: [ExternalReferenceFilter]
+  or: [ExternalReferenceFilter]
+  not: ExternalReferenceFilter
+}
+
+enum ExternalReferenceHasFilter {
+  id
+  href
+  externalReferenceType
+  name
+}
+
+input ExternalReferenceOrder {
+  asc: ExternalReferenceOrderable
+  desc: ExternalReferenceOrderable
+  then: ExternalReferenceOrder
+}
+
+enum ExternalReferenceOrderable {
+  id
+  href
+  externalReferenceType
+  name
+}
+
+input ExternalReferencePatch {
+  href: String
+  externalReferenceType: String
+  name: String
+}
+
+input ExternalReferenceRef {
+  id: String
+  href: String
+  externalReferenceType: String
+  name: String
+}
+
+type Feature {
+  id: ID!
+  isBundle: Boolean
+  isEnabled: Boolean
+  name: String
+}
+
+type FeatureAggregateResult {
+  count: Int
+  nameMin: String
+  nameMax: String
+}
+
+input FeatureFilter {
+  id: [ID!]
+  has: [FeatureHasFilter]
+  and: [FeatureFilter]
+  or: [FeatureFilter]
+  not: FeatureFilter
+}
+
+enum FeatureHasFilter {
+  isBundle
+  isEnabled
+  name
+}
+
+input FeatureOrder {
+  asc: FeatureOrderable
+  desc: FeatureOrderable
+  then: FeatureOrder
+}
+
+enum FeatureOrderable {
+  name
+}
+
+input FeaturePatch {
+  isBundle: Boolean
+  isEnabled: Boolean
+  name: String
+}
+
+input FeatureRef {
+  id: ID
+  isBundle: Boolean
+  isEnabled: Boolean
+  name: String
+}
+
+input FloatFilter {
+  eq: Float
+  in: [Float]
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: FloatRange
+}
+
+input FloatRange {
+  min: Float!
+  max: Float!
+}
+
+type FlowExecutionRef {
+  id: ID!
+  domainId: String
+  projectId: String
+  runId: String
+  workflowId: String
+  creationDate: String
+  executionDate: String
+  endExecutionDate: String
+  cancelto(filter: FlowExecutionRefFilter): FlowExecutionRef
+  serviceorders(filter: ServiceOrderFilter): ServiceOrder
+}
+
+type FlowExecutionRefAggregateResult {
+  count: Int
+  domainIdMin: String
+  domainIdMax: String
+  projectIdMin: String
+  projectIdMax: String
+  runIdMin: String
+  runIdMax: String
+  workflowIdMin: String
+  workflowIdMax: String
+  creationDateMin: String
+  creationDateMax: String
+  executionDateMin: String
+  executionDateMax: String
+  endExecutionDateMin: String
+  endExecutionDateMax: String
+}
+
+input FlowExecutionRefFilter {
+  id: [ID!]
+  creationDate: StringExactFilter
+  executionDate: StringExactFilter
+  endExecutionDate: StringExactFilter
+  has: [FlowExecutionRefHasFilter]
+  and: [FlowExecutionRefFilter]
+  or: [FlowExecutionRefFilter]
+  not: FlowExecutionRefFilter
+}
+
+enum FlowExecutionRefHasFilter {
+  domainId
+  projectId
+  runId
+  workflowId
+  creationDate
+  executionDate
+  endExecutionDate
+  cancelto
+  serviceorders
+}
+
+input FlowExecutionRefOrder {
+  asc: FlowExecutionRefOrderable
+  desc: FlowExecutionRefOrderable
+  then: FlowExecutionRefOrder
+}
+
+enum FlowExecutionRefOrderable {
+  domainId
+  projectId
+  runId
+  workflowId
+  creationDate
+  executionDate
+  endExecutionDate
+}
+
+input FlowExecutionRefPatch {
+  domainId: String
+  projectId: String
+  runId: String
+  workflowId: String
+  creationDate: String
+  executionDate: String
+  endExecutionDate: String
+  cancelto: FlowExecutionRefRef
+  serviceorders: ServiceOrderRef
+}
+
+input FlowExecutionRefRef {
+  id: ID
+  domainId: String
+  projectId: String
+  runId: String
+  workflowId: String
+  creationDate: String
+  executionDate: String
+  endExecutionDate: String
+  cancelto: FlowExecutionRefRef
+  serviceorders: ServiceOrderRef
+}
+
+input GenerateMutationParams {
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+}
+
+input GenerateQueryParams {
+  get: Boolean
+  query: Boolean
+  password: Boolean
+  aggregate: Boolean
+}
+
+type Geometry {
+  x: String!
+  y: String!
+}
+
+type GeometryAggregateResult {
+  count: Int
+  xMin: String
+  xMax: String
+  yMin: String
+  yMax: String
+}
+
+input GeometryFilter {
+  x: StringHashFilter
+  y: StringHashFilter
+  has: [GeometryHasFilter]
+  and: [GeometryFilter]
+  or: [GeometryFilter]
+  not: GeometryFilter
+}
+
+enum GeometryHasFilter {
+  x
+  y
+}
+
+input GeometryOrder {
+  asc: GeometryOrderable
+  desc: GeometryOrderable
+  then: GeometryOrder
+}
+
+enum GeometryOrderable {
+  x
+  y
+}
+
+input GeometryRef {
+  x: String
+  y: String
+}
+
+enum HTTPMethod {
+  GET
+  POST
+  PUT
+  PATCH
+  DELETE
+}
+
+# The Int64 scalar type
+# represents a signed 64‐bit numeric non‐fractional value.
+# Int64 can represent values in range [-(2^63),(2^63 - 1)].
+scalar Int64
+
+input Int64Filter {
+  eq: Int64
+  in: [Int64]
+  le: Int64
+  lt: Int64
+  ge: Int64
+  gt: Int64
+  between: Int64Range
+}
+
+input Int64Range {
+  min: Int64!
+  max: Int64!
+}
+
+input IntersectsFilter {
+  polygon: PolygonRef
+  multiPolygon: MultiPolygonRef
+}
+
+input IntFilter {
+  eq: Int
+  in: [Int]
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: IntRange
+}
+
+input IntRange {
+  min: Int!
+  max: Int!
+}
+
+enum LifecycleStatus {
+  PLANNING
+  INSTALLING
+  OPERATING
+  RETIRING
+}
+
+enum Mode {
+  BATCH
+  SINGLE
+}
+
+type ModificationRequest {
+  id: ID!
+  _atType: String!
+  externalId: String
+  modifyReason: String!
+  requestedCompletionDate: String!
+  serviceorders(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  serviceordersAggregate(
+    filter: ServiceOrderFilter
+  ): ServiceOrderAggregateResult
+}
+
+type ModificationRequestAggregateResult {
+  count: Int
+  _atTypeMin: String
+  _atTypeMax: String
+  externalIdMin: String
+  externalIdMax: String
+  modifyReasonMin: String
+  modifyReasonMax: String
+  requestedCompletionDateMin: String
+  requestedCompletionDateMax: String
+}
+
+input ModificationRequestFilter {
+  id: [ID!]
+  externalId: StringHashFilter
+  has: [ModificationRequestHasFilter]
+  and: [ModificationRequestFilter]
+  or: [ModificationRequestFilter]
+  not: ModificationRequestFilter
+}
+
+enum ModificationRequestHasFilter {
+  _atType
+  externalId
+  modifyReason
+  requestedCompletionDate
+  serviceorders
+}
+
+input ModificationRequestOrder {
+  asc: ModificationRequestOrderable
+  desc: ModificationRequestOrderable
+  then: ModificationRequestOrder
+}
+
+enum ModificationRequestOrderable {
+  _atType
+  externalId
+  modifyReason
+  requestedCompletionDate
+}
+
+input ModificationRequestPatch {
+  _atType: String
+  externalId: String
+  modifyReason: String
+  requestedCompletionDate: String
+  serviceorders: [ServiceOrderRef]
+}
+
+input ModificationRequestRef {
+  id: ID
+  _atType: String
+  externalId: String
+  modifyReason: String
+  requestedCompletionDate: String
+  serviceorders: [ServiceOrderRef]
+}
+
+type MultiPolygon {
+  polygons: [Polygon!]!
+}
+
+input MultiPolygonRef {
+  polygons: [PolygonRef!]!
+}
+
+type Mutation {
+  addResource(input: [AddResourceInput!]!, upsert: Boolean): AddResourcePayload
+  updateResource(input: UpdateResourceInput!): UpdateResourcePayload
+  deleteResource(filter: ResourceFilter!): DeleteResourcePayload
+  addResourceProperty(
+    input: [AddResourcePropertyInput!]!
+  ): AddResourcePropertyPayload
+  updateResourceProperty(
+    input: UpdateResourcePropertyInput!
+  ): UpdateResourcePropertyPayload
+  deleteResourceProperty(
+    filter: ResourcePropertyFilter!
+  ): DeleteResourcePropertyPayload
+  addCMVersion(input: [AddCMVersionInput!]!): AddCMVersionPayload
+  updateCMVersion(input: UpdateCMVersionInput!): UpdateCMVersionPayload
+  deleteCMVersion(filter: CMVersionFilter!): DeleteCMVersionPayload
+  addParameter(input: [AddParameterInput!]!): AddParameterPayload
+  updateParameter(input: UpdateParameterInput!): UpdateParameterPayload
+  deleteParameter(filter: ParameterFilter!): DeleteParameterPayload
+  addConfigurationParameterType(
+    input: [AddConfigurationParameterTypeInput!]!
+  ): AddConfigurationParameterTypePayload
+  updateConfigurationParameterType(
+    input: UpdateConfigurationParameterTypeInput!
+  ): UpdateConfigurationParameterTypePayload
+  deleteConfigurationParameterType(
+    filter: ConfigurationParameterTypeFilter!
+  ): DeleteConfigurationParameterTypePayload
+  addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload
+  updateConfigParamTag(
+    input: UpdateConfigParamTagInput!
+  ): UpdateConfigParamTagPayload
+  deleteConfigParamTag(
+    filter: ConfigParamTagFilter!
+  ): DeleteConfigParamTagPayload
+  addChangeItem(input: [AddChangeItemInput!]!): AddChangeItemPayload
+  updateChangeItem(input: UpdateChangeItemInput!): UpdateChangeItemPayload
+  deleteChangeItem(filter: ChangeItemFilter!): DeleteChangeItemPayload
+  addSchedulerConfig(
+    input: [AddSchedulerConfigInput!]!
+  ): AddSchedulerConfigPayload
+  updateSchedulerConfig(
+    input: UpdateSchedulerConfigInput!
+  ): UpdateSchedulerConfigPayload
+  deleteSchedulerConfig(
+    filter: SchedulerConfigFilter!
+  ): DeleteSchedulerConfigPayload
+  addChangeRequest(input: [AddChangeRequestInput!]!): AddChangeRequestPayload
+  updateChangeRequest(
+    input: UpdateChangeRequestInput!
+  ): UpdateChangeRequestPayload
+  deleteChangeRequest(filter: ChangeRequestFilter!): DeleteChangeRequestPayload
+  addChangeRequestActivity(
+    input: [AddChangeRequestActivityInput!]!
+  ): AddChangeRequestActivityPayload
+  updateChangeRequestActivity(
+    input: UpdateChangeRequestActivityInput!
+  ): UpdateChangeRequestActivityPayload
+  deleteChangeRequestActivity(
+    filter: ChangeRequestActivityFilter!
+  ): DeleteChangeRequestActivityPayload
+  addParty(input: [AddPartyInput!]!, upsert: Boolean): AddPartyPayload
+  updateParty(input: UpdatePartyInput!): UpdatePartyPayload
+  deleteParty(filter: PartyFilter!): DeletePartyPayload
+  addExternalReference(
+    input: [AddExternalReferenceInput!]!
+    upsert: Boolean
+  ): AddExternalReferencePayload
+  updateExternalReference(
+    input: UpdateExternalReferenceInput!
+  ): UpdateExternalReferencePayload
+  deleteExternalReference(
+    filter: ExternalReferenceFilter!
+  ): DeleteExternalReferencePayload
+  addServiceOrderRelationship(
+    input: [AddServiceOrderRelationshipInput!]!
+    upsert: Boolean
+  ): AddServiceOrderRelationshipPayload
+  updateServiceOrderRelationship(
+    input: UpdateServiceOrderRelationshipInput!
+  ): UpdateServiceOrderRelationshipPayload
+  deleteServiceOrderRelationship(
+    filter: ServiceOrderRelationshipFilter!
+  ): DeleteServiceOrderRelationshipPayload
+  addAppointmentRef(input: [AddAppointmentRefInput!]!): AddAppointmentRefPayload
+  updateAppointmentRef(
+    input: UpdateAppointmentRefInput!
+  ): UpdateAppointmentRefPayload
+  deleteAppointmentRef(
+    filter: AppointmentRefFilter!
+  ): DeleteAppointmentRefPayload
+  addServiceOrderItem(
+    input: [AddServiceOrderItemInput!]!
+  ): AddServiceOrderItemPayload
+  updateServiceOrderItem(
+    input: UpdateServiceOrderItemInput!
+  ): UpdateServiceOrderItemPayload
+  deleteServiceOrderItem(
+    filter: ServiceOrderItemFilter!
+  ): DeleteServiceOrderItemPayload
+  addServiceSOM(input: [AddServiceSOMInput!]!): AddServiceSOMPayload
+  updateServiceSOM(input: UpdateServiceSOMInput!): UpdateServiceSOMPayload
+  deleteServiceSOM(filter: ServiceSOMFilter!): DeleteServiceSOMPayload
+  addServiceRelationship(
+    input: [AddServiceRelationshipInput!]!
+  ): AddServiceRelationshipPayload
+  updateServiceRelationship(
+    input: UpdateServiceRelationshipInput!
+  ): UpdateServiceRelationshipPayload
+  deleteServiceRelationship(
+    filter: ServiceRelationshipFilter!
+  ): DeleteServiceRelationshipPayload
+  addFeature(input: [AddFeatureInput!]!): AddFeaturePayload
+  updateFeature(input: UpdateFeatureInput!): UpdateFeaturePayload
+  deleteFeature(filter: FeatureFilter!): DeleteFeaturePayload
+  addRelatedEntity(
+    input: [AddRelatedEntityInput!]!
+    upsert: Boolean
+  ): AddRelatedEntityPayload
+  updateRelatedEntity(
+    input: UpdateRelatedEntityInput!
+  ): UpdateRelatedEntityPayload
+  deleteRelatedEntity(filter: RelatedEntityFilter!): DeleteRelatedEntityPayload
+  addResourceReference(
+    input: [AddResourceReferenceInput!]!
+    upsert: Boolean
+  ): AddResourceReferencePayload
+  updateResourceReference(
+    input: UpdateResourceReferenceInput!
+  ): UpdateResourceReferencePayload
+  deleteResourceReference(
+    filter: ResourceReferenceFilter!
+  ): DeleteResourceReferencePayload
+  addPlace(input: [AddPlaceInput!]!): AddPlacePayload
+  updatePlace(input: UpdatePlaceInput!): UpdatePlacePayload
+  deletePlace(filter: PlaceFilter!): DeletePlacePayload
+  addGeometry(input: [AddGeometryInput!]!, upsert: Boolean): AddGeometryPayload
+  deleteGeometry(filter: GeometryFilter!): DeleteGeometryPayload
+  addServiceSpecificationRef(
+    input: [AddServiceSpecificationRefInput!]!
+    upsert: Boolean
+  ): AddServiceSpecificationRefPayload
+  updateServiceSpecificationRef(
+    input: UpdateServiceSpecificationRefInput!
+  ): UpdateServiceSpecificationRefPayload
+  deleteServiceSpecificationRef(
+    filter: ServiceSpecificationRefFilter!
+  ): DeleteServiceSpecificationRefPayload
+  addCharacteristic(input: [AddCharacteristicInput!]!): AddCharacteristicPayload
+  updateCharacteristic(
+    input: UpdateCharacteristicInput!
+  ): UpdateCharacteristicPayload
+  deleteCharacteristic(
+    filter: CharacteristicFilter!
+  ): DeleteCharacteristicPayload
+  addCharacteristicRelationship(
+    input: [AddCharacteristicRelationshipInput!]!
+  ): AddCharacteristicRelationshipPayload
+  updateCharacteristicRelationship(
+    input: UpdateCharacteristicRelationshipInput!
+  ): UpdateCharacteristicRelationshipPayload
+  deleteCharacteristicRelationship(
+    filter: CharacteristicRelationshipFilter!
+  ): DeleteCharacteristicRelationshipPayload
+  addNote(input: [AddNoteInput!]!): AddNotePayload
+  updateNote(input: UpdateNoteInput!): UpdateNotePayload
+  deleteNote(filter: NoteFilter!): DeleteNotePayload
+  addFlowExecutionRef(
+    input: [AddFlowExecutionRefInput!]!
+  ): AddFlowExecutionRefPayload
+  updateFlowExecutionRef(
+    input: UpdateFlowExecutionRefInput!
+  ): UpdateFlowExecutionRefPayload
+  deleteFlowExecutionRef(
+    filter: FlowExecutionRefFilter!
+  ): DeleteFlowExecutionRefPayload
+  addCancellationRequest(
+    input: [AddCancellationRequestInput!]!
+  ): AddCancellationRequestPayload
+  updateCancellationRequest(
+    input: UpdateCancellationRequestInput!
+  ): UpdateCancellationRequestPayload
+  deleteCancellationRequest(
+    filter: CancellationRequestFilter!
+  ): DeleteCancellationRequestPayload
+  addModificationRequest(
+    input: [AddModificationRequestInput!]!
+  ): AddModificationRequestPayload
+  updateModificationRequest(
+    input: UpdateModificationRequestInput!
+  ): UpdateModificationRequestPayload
+  deleteModificationRequest(
+    filter: ModificationRequestFilter!
+  ): DeleteModificationRequestPayload
+  addServiceOrder(input: [AddServiceOrderInput!]!): AddServiceOrderPayload
+  updateServiceOrder(input: UpdateServiceOrderInput!): UpdateServiceOrderPayload
+  deleteServiceOrder(filter: ServiceOrderFilter!): DeleteServiceOrderPayload
+  addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload
+  updateSubscriber(input: UpdateSubscriberInput!): UpdateSubscriberPayload
+  deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload
+  deleteResourceInt(filter: ResourceIntFilter!): DeleteResourceIntPayload
+  updateServiceReference(
+    input: UpdateServiceReferenceInput!
+  ): UpdateServiceReferencePayload
+  deleteServiceReference(
+    filter: ServiceReferenceFilter!
+  ): DeleteServiceReferencePayload
+  addServiceRef(
+    input: [AddServiceRefInput!]!
+    upsert: Boolean
+  ): AddServiceRefPayload
+  updateServiceRef(input: UpdateServiceRefInput!): UpdateServiceRefPayload
+  deleteServiceRef(filter: ServiceRefFilter!): DeleteServiceRefPayload
+}
+
+input NearFilter {
+  distance: Float!
+  coordinate: PointRef!
+}
+
+type Note {
+  id: ID!
+  author: String!
+  date: String!
+  text: String!
+  serviceorder(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  serviceorderAggregate(filter: ServiceOrderFilter): ServiceOrderAggregateResult
+}
+
+type NoteAggregateResult {
+  count: Int
+  authorMin: String
+  authorMax: String
+  dateMin: String
+  dateMax: String
+  textMin: String
+  textMax: String
+}
+
+input NoteFilter {
+  id: [ID!]
+  has: [NoteHasFilter]
+  and: [NoteFilter]
+  or: [NoteFilter]
+  not: NoteFilter
+}
+
+enum NoteHasFilter {
+  author
+  date
+  text
+  serviceorder
+}
+
+input NoteOrder {
+  asc: NoteOrderable
+  desc: NoteOrderable
+  then: NoteOrder
+}
+
+enum NoteOrderable {
+  author
+  date
+  text
+}
+
+input NotePatch {
+  author: String
+  date: String
+  text: String
+  serviceorder: [ServiceOrderRef]
+}
+
+input NoteRef {
+  id: ID
+  author: String
+  date: String
+  text: String
+  serviceorder: [ServiceOrderRef]
+}
+
+enum OperationalSubStatus {
+  WORKING
+  NOT_WORKING
+}
+
+type Parameter {
+  id: ID!
+  parameterType(
+    filter: ConfigurationParameterTypeFilter
+  ): ConfigurationParameterType!
+  previous(filter: ParameterFilter): Parameter
+  versionCM(
+    filter: CMVersionFilter
+    order: CMVersionOrder
+    first: Int
+    offset: Int
+  ): [CMVersion]!
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  versionCMAggregate(filter: CMVersionFilter): CMVersionAggregateResult
+}
+
+type ParameterAggregateResult {
+  count: Int
+  stringValueMin: String
+  stringValueMax: String
+  intValueMin: Int
+  intValueMax: Int
+  intValueSum: Int
+  intValueAvg: Float
+  floatValueMin: Float
+  floatValueMax: Float
+  floatValueSum: Float
+  floatValueAvg: Float
+  latitudeValueMin: Float
+  latitudeValueMax: Float
+  latitudeValueSum: Float
+  latitudeValueAvg: Float
+  longitudeValueMin: Float
+  longitudeValueMax: Float
+  longitudeValueSum: Float
+  longitudeValueAvg: Float
+  rangeFromValueMin: Float
+  rangeFromValueMax: Float
+  rangeFromValueSum: Float
+  rangeFromValueAvg: Float
+  rangeToValueMin: Float
+  rangeToValueMax: Float
+  rangeToValueSum: Float
+  rangeToValueAvg: Float
+}
+
+input ParameterFilter {
+  id: [ID!]
+  has: [ParameterHasFilter]
+  and: [ParameterFilter]
+  or: [ParameterFilter]
+  not: ParameterFilter
+}
+
+enum ParameterHasFilter {
+  parameterType
+  previous
+  versionCM
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+}
+
+enum ParameterKind {
+  string
+  int
+  bool
+  float
+  date
+  enum
+  range
+  email
+  gps_location
+  datetime_local
+}
+
+input ParameterOrder {
+  asc: ParameterOrderable
+  desc: ParameterOrderable
+  then: ParameterOrder
+}
+
+enum ParameterOrderable {
+  stringValue
+  intValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+}
+
+input ParameterPatch {
+  parameterType: ConfigurationParameterTypeRef
+  previous: ParameterRef
+  versionCM: [CMVersionRef]
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+}
+
+input ParameterRef {
+  id: ID
+  parameterType: ConfigurationParameterTypeRef
+  previous: ParameterRef
+  versionCM: [CMVersionRef]
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+}
+
+type Party {
+  id: String!
+  href: String
+  name: String
+  role: String
+  serviceOrders(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  baseType: String
+  schemaLocation: String
+  type: String
+  referredType: String
+  serviceOrdersAggregate(
+    filter: ServiceOrderFilter
+  ): ServiceOrderAggregateResult
+}
+
+type PartyAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  hrefMin: String
+  hrefMax: String
+  nameMin: String
+  nameMax: String
+  roleMin: String
+  roleMax: String
+  baseTypeMin: String
+  baseTypeMax: String
+  schemaLocationMin: String
+  schemaLocationMax: String
+  typeMin: String
+  typeMax: String
+  referredTypeMin: String
+  referredTypeMax: String
+}
+
+input PartyFilter {
+  id: StringHashFilter
+  has: [PartyHasFilter]
+  and: [PartyFilter]
+  or: [PartyFilter]
+  not: PartyFilter
+}
+
+enum PartyHasFilter {
+  id
+  href
+  name
+  role
+  serviceOrders
+  baseType
+  schemaLocation
+  type
+  referredType
+}
+
+input PartyOrder {
+  asc: PartyOrderable
+  desc: PartyOrderable
+  then: PartyOrder
+}
+
+enum PartyOrderable {
+  id
+  href
+  name
+  role
+  baseType
+  schemaLocation
+  type
+  referredType
+}
+
+input PartyPatch {
+  href: String
+  name: String
+  role: String
+  serviceOrders: [ServiceOrderRef]
+  baseType: String
+  schemaLocation: String
+  type: String
+  referredType: String
+}
+
+input PartyRef {
+  id: String
+  href: String
+  name: String
+  role: String
+  serviceOrders: [ServiceOrderRef]
+  baseType: String
+  schemaLocation: String
+  type: String
+  referredType: String
+}
+
+type Place {
+  placeId: ID!
+  id: String
+  href: String
+  name: String
+  role: String
+  type: String
+  services(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  geometryType: String
+  accuracy: String
+  spatialRef: String
+  geometry(
+    filter: GeometryFilter
+    order: GeometryOrder
+    first: Int
+    offset: Int
+  ): [Geometry]
+  servicesAggregate(filter: ServiceSOMFilter): ServiceSOMAggregateResult
+  geometryAggregate(filter: GeometryFilter): GeometryAggregateResult
+}
+
+type PlaceAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  hrefMin: String
+  hrefMax: String
+  nameMin: String
+  nameMax: String
+  roleMin: String
+  roleMax: String
+  typeMin: String
+  typeMax: String
+  geometryTypeMin: String
+  geometryTypeMax: String
+  accuracyMin: String
+  accuracyMax: String
+  spatialRefMin: String
+  spatialRefMax: String
+}
+
+input PlaceFilter {
+  placeId: [ID!]
+  id: StringHashFilter
+  spatialRef: StringHashFilter
+  has: [PlaceHasFilter]
+  and: [PlaceFilter]
+  or: [PlaceFilter]
+  not: PlaceFilter
+}
+
+enum PlaceHasFilter {
+  id
+  href
+  name
+  role
+  type
+  services
+  geometryType
+  accuracy
+  spatialRef
+  geometry
+}
+
+input PlaceOrder {
+  asc: PlaceOrderable
+  desc: PlaceOrderable
+  then: PlaceOrder
+}
+
+enum PlaceOrderable {
+  id
+  href
+  name
+  role
+  type
+  geometryType
+  accuracy
+  spatialRef
+}
+
+input PlacePatch {
+  id: String
+  href: String
+  name: String
+  role: String
+  type: String
+  services: [ServiceSOMRef]
+  geometryType: String
+  accuracy: String
+  spatialRef: String
+  geometry: [GeometryRef]
+}
+
+input PlaceRef {
+  placeId: ID
+  id: String
+  href: String
+  name: String
+  role: String
+  type: String
+  services: [ServiceSOMRef]
+  geometryType: String
+  accuracy: String
+  spatialRef: String
+  geometry: [GeometryRef]
+}
+
+enum PlanningSubStatus {
+  ACTIVATED
+  DESACTIVATED
+}
+
+type Point {
+  longitude: Float!
+  latitude: Float!
+}
+
+input PointGeoFilter {
+  near: NearFilter
+  within: WithinFilter
+}
+
+type PointList {
+  points: [Point!]!
+}
+
+input PointListRef {
+  points: [PointRef!]!
+}
+
+input PointRef {
+  longitude: Float!
+  latitude: Float!
+}
+
+type Polygon {
+  coordinates: [PointList!]!
+}
+
+input PolygonGeoFilter {
+  near: NearFilter
+  within: WithinFilter
+  contains: ContainsFilter
+  intersects: IntersectsFilter
+}
+
+input PolygonRef {
+  coordinates: [PointListRef!]!
+}
+
+type Query {
+  getResource(id: ID, name: String): Resource
+  queryResource(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  aggregateResource(filter: ResourceFilter): ResourceAggregateResult
+  getResourceProperty(id: ID!): ResourceProperty
+  queryResourceProperty(
+    filter: ResourcePropertyFilter
+    order: ResourcePropertyOrder
+    first: Int
+    offset: Int
+  ): [ResourceProperty]
+  aggregateResourceProperty(
+    filter: ResourcePropertyFilter
+  ): ResourcePropertyAggregateResult
+  getCMVersion(id: ID!): CMVersion
+  queryCMVersion(
+    filter: CMVersionFilter
+    order: CMVersionOrder
+    first: Int
+    offset: Int
+  ): [CMVersion]
+  aggregateCMVersion(filter: CMVersionFilter): CMVersionAggregateResult
+  getParameter(id: ID!): Parameter
+  queryParameter(
+    filter: ParameterFilter
+    order: ParameterOrder
+    first: Int
+    offset: Int
+  ): [Parameter]
+  aggregateParameter(filter: ParameterFilter): ParameterAggregateResult
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType
+  queryConfigurationParameterType(
+    filter: ConfigurationParameterTypeFilter
+    order: ConfigurationParameterTypeOrder
+    first: Int
+    offset: Int
+  ): [ConfigurationParameterType]
+  aggregateConfigurationParameterType(
+    filter: ConfigurationParameterTypeFilter
+  ): ConfigurationParameterTypeAggregateResult
+  getConfigParamTag(id: ID!): ConfigParamTag
+  queryConfigParamTag(
+    filter: ConfigParamTagFilter
+    order: ConfigParamTagOrder
+    first: Int
+    offset: Int
+  ): [ConfigParamTag]
+  aggregateConfigParamTag(
+    filter: ConfigParamTagFilter
+  ): ConfigParamTagAggregateResult
+  getChangeItem(id: ID!): ChangeItem
+  queryChangeItem(
+    filter: ChangeItemFilter
+    order: ChangeItemOrder
+    first: Int
+    offset: Int
+  ): [ChangeItem]
+  aggregateChangeItem(filter: ChangeItemFilter): ChangeItemAggregateResult
+  getSchedulerConfig(id: ID!): SchedulerConfig
+  querySchedulerConfig(
+    filter: SchedulerConfigFilter
+    order: SchedulerConfigOrder
+    first: Int
+    offset: Int
+  ): [SchedulerConfig]
+  aggregateSchedulerConfig(
+    filter: SchedulerConfigFilter
+  ): SchedulerConfigAggregateResult
+  getChangeRequest(id: ID!): ChangeRequest
+  queryChangeRequest(
+    filter: ChangeRequestFilter
+    order: ChangeRequestOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequest]
+  aggregateChangeRequest(
+    filter: ChangeRequestFilter
+  ): ChangeRequestAggregateResult
+  getChangeRequestActivity(id: ID!): ChangeRequestActivity
+  queryChangeRequestActivity(
+    filter: ChangeRequestActivityFilter
+    order: ChangeRequestActivityOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequestActivity]
+  aggregateChangeRequestActivity(
+    filter: ChangeRequestActivityFilter
+  ): ChangeRequestActivityAggregateResult
+  getParty(id: String!): Party
+  queryParty(
+    filter: PartyFilter
+    order: PartyOrder
+    first: Int
+    offset: Int
+  ): [Party]
+  aggregateParty(filter: PartyFilter): PartyAggregateResult
+  getExternalReference(id: String!): ExternalReference
+  queryExternalReference(
+    filter: ExternalReferenceFilter
+    order: ExternalReferenceOrder
+    first: Int
+    offset: Int
+  ): [ExternalReference]
+  aggregateExternalReference(
+    filter: ExternalReferenceFilter
+  ): ExternalReferenceAggregateResult
+  getServiceOrderRelationship(id: String!): ServiceOrderRelationship
+  queryServiceOrderRelationship(
+    filter: ServiceOrderRelationshipFilter
+    order: ServiceOrderRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderRelationship]
+  aggregateServiceOrderRelationship(
+    filter: ServiceOrderRelationshipFilter
+  ): ServiceOrderRelationshipAggregateResult
+  getAppointmentRef(id: ID!): AppointmentRef
+  queryAppointmentRef(
+    filter: AppointmentRefFilter
+    order: AppointmentRefOrder
+    first: Int
+    offset: Int
+  ): [AppointmentRef]
+  aggregateAppointmentRef(
+    filter: AppointmentRefFilter
+  ): AppointmentRefAggregateResult
+  getServiceOrderItem(serviceOrderItemId: ID!): ServiceOrderItem
+  queryServiceOrderItem(
+    filter: ServiceOrderItemFilter
+    order: ServiceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderItem]
+  aggregateServiceOrderItem(
+    filter: ServiceOrderItemFilter
+  ): ServiceOrderItemAggregateResult
+  getServiceSOM(id: ID!): ServiceSOM
+  queryServiceSOM(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  aggregateServiceSOM(filter: ServiceSOMFilter): ServiceSOMAggregateResult
+  getServiceRelationship(id: ID!): ServiceRelationship
+  queryServiceRelationship(
+    filter: ServiceRelationshipFilter
+    order: ServiceRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceRelationship]
+  aggregateServiceRelationship(
+    filter: ServiceRelationshipFilter
+  ): ServiceRelationshipAggregateResult
+  getFeature(id: ID!): Feature
+  queryFeature(
+    filter: FeatureFilter
+    order: FeatureOrder
+    first: Int
+    offset: Int
+  ): [Feature]
+  aggregateFeature(filter: FeatureFilter): FeatureAggregateResult
+  getRelatedEntity(id: String!): RelatedEntity
+  queryRelatedEntity(
+    filter: RelatedEntityFilter
+    order: RelatedEntityOrder
+    first: Int
+    offset: Int
+  ): [RelatedEntity]
+  aggregateRelatedEntity(
+    filter: RelatedEntityFilter
+  ): RelatedEntityAggregateResult
+  getResourceReference(id: String, name: String): ResourceReference
+  queryResourceReference(
+    filter: ResourceReferenceFilter
+    order: ResourceReferenceOrder
+    first: Int
+    offset: Int
+  ): [ResourceReference]
+  aggregateResourceReference(
+    filter: ResourceReferenceFilter
+  ): ResourceReferenceAggregateResult
+  getPlace(placeId: ID!): Place
+  queryPlace(
+    filter: PlaceFilter
+    order: PlaceOrder
+    first: Int
+    offset: Int
+  ): [Place]
+  aggregatePlace(filter: PlaceFilter): PlaceAggregateResult
+  getGeometry(x: String, y: String): Geometry
+  queryGeometry(
+    filter: GeometryFilter
+    order: GeometryOrder
+    first: Int
+    offset: Int
+  ): [Geometry]
+  aggregateGeometry(filter: GeometryFilter): GeometryAggregateResult
+  getServiceSpecificationRef(id: String!): ServiceSpecificationRef
+  queryServiceSpecificationRef(
+    filter: ServiceSpecificationRefFilter
+    order: ServiceSpecificationRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceSpecificationRef]
+  aggregateServiceSpecificationRef(
+    filter: ServiceSpecificationRefFilter
+  ): ServiceSpecificationRefAggregateResult
+  getCharacteristic(characteristicId: ID!): Characteristic
+  queryCharacteristic(
+    filter: CharacteristicFilter
+    order: CharacteristicOrder
+    first: Int
+    offset: Int
+  ): [Characteristic]
+  aggregateCharacteristic(
+    filter: CharacteristicFilter
+  ): CharacteristicAggregateResult
+  getCharacteristicRelationship(id: ID!): CharacteristicRelationship
+  queryCharacteristicRelationship(
+    filter: CharacteristicRelationshipFilter
+    order: CharacteristicRelationshipOrder
+    first: Int
+    offset: Int
+  ): [CharacteristicRelationship]
+  aggregateCharacteristicRelationship(
+    filter: CharacteristicRelationshipFilter
+  ): CharacteristicRelationshipAggregateResult
+  getNote(id: ID!): Note
+  queryNote(
+    filter: NoteFilter
+    order: NoteOrder
+    first: Int
+    offset: Int
+  ): [Note]
+  aggregateNote(filter: NoteFilter): NoteAggregateResult
+  getFlowExecutionRef(id: ID!): FlowExecutionRef
+  queryFlowExecutionRef(
+    filter: FlowExecutionRefFilter
+    order: FlowExecutionRefOrder
+    first: Int
+    offset: Int
+  ): [FlowExecutionRef]
+  aggregateFlowExecutionRef(
+    filter: FlowExecutionRefFilter
+  ): FlowExecutionRefAggregateResult
+  getCancellationRequest(id: ID!): CancellationRequest
+  queryCancellationRequest(
+    filter: CancellationRequestFilter
+    order: CancellationRequestOrder
+    first: Int
+    offset: Int
+  ): [CancellationRequest]
+  aggregateCancellationRequest(
+    filter: CancellationRequestFilter
+  ): CancellationRequestAggregateResult
+  getModificationRequest(id: ID!): ModificationRequest
+  queryModificationRequest(
+    filter: ModificationRequestFilter
+    order: ModificationRequestOrder
+    first: Int
+    offset: Int
+  ): [ModificationRequest]
+  aggregateModificationRequest(
+    filter: ModificationRequestFilter
+  ): ModificationRequestAggregateResult
+  getServiceOrder(id: ID!): ServiceOrder
+  queryServiceOrder(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  aggregateServiceOrder(filter: ServiceOrderFilter): ServiceOrderAggregateResult
+  getSubscriber(id: ID!): Subscriber
+  querySubscriber(
+    filter: SubscriberFilter
+    order: SubscriberOrder
+    first: Int
+    offset: Int
+  ): [Subscriber]
+  aggregateSubscriber(filter: SubscriberFilter): SubscriberAggregateResult
+  getResourceInt(name: String!): ResourceInt
+    @deprecated(
+      reason: "@id argument for get query on interface is being deprecated, it will be removed in v21.11.0, please update your query to not use that argument"
+    )
+  queryResourceInt(
+    filter: ResourceIntFilter
+    order: ResourceIntOrder
+    first: Int
+    offset: Int
+  ): [ResourceInt]
+  aggregateResourceInt(filter: ResourceIntFilter): ResourceIntAggregateResult
+  queryServiceReference(
+    filter: ServiceReferenceFilter
+    order: ServiceReferenceOrder
+    first: Int
+    offset: Int
+  ): [ServiceReference]
+  aggregateServiceReference(
+    filter: ServiceReferenceFilter
+  ): ServiceReferenceAggregateResult
+  getServiceRef(id: String!): ServiceRef
+  queryServiceRef(
+    filter: ServiceRefFilter
+    order: ServiceRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceRef]
+  aggregateServiceRef(filter: ServiceRefFilter): ServiceRefAggregateResult
+}
+
+type RelatedEntity {
+  id: String!
+  href: String
+  name: String
+  role: String!
+}
+
+type RelatedEntityAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  hrefMin: String
+  hrefMax: String
+  nameMin: String
+  nameMax: String
+  roleMin: String
+  roleMax: String
+}
+
+input RelatedEntityFilter {
+  id: StringHashFilter
+  has: [RelatedEntityHasFilter]
+  and: [RelatedEntityFilter]
+  or: [RelatedEntityFilter]
+  not: RelatedEntityFilter
+}
+
+enum RelatedEntityHasFilter {
+  id
+  href
+  name
+  role
+}
+
+input RelatedEntityOrder {
+  asc: RelatedEntityOrderable
+  desc: RelatedEntityOrderable
+  then: RelatedEntityOrder
+}
+
+enum RelatedEntityOrderable {
+  id
+  href
+  name
+  role
+}
+
+input RelatedEntityPatch {
+  href: String
+  name: String
+  role: String
+}
+
+input RelatedEntityRef {
+  id: String
+  href: String
+  name: String
+  role: String
+}
+
+type Resource implements ResourceInt {
+  id: ID!
+  name: String!
+  available: Boolean
+  externalId: String
+  lifecycleStatus: LifecycleStatus
+  typePlanningSubStatus: TypePlanningSubStatus
+  planningSubStatus: PlanningSubStatus
+  operationalSubStatus: OperationalSubStatus
+  usageSubStatus: UsageSubStatus
+  belongsTo(filter: ResourceFilter): Resource
+  composedOf(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  locatedIn: Int64
+  physicalLink(filter: ResourceFilter): Resource
+  physicalLinkInv(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  logicalLink(filter: ResourceFilter): Resource
+  logicalLinkInv(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  crossConnection(filter: ResourceFilter): Resource
+  crossconnectionInv(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  resourceSpecification: Int64!
+  resourcePropertys(
+    filter: ResourcePropertyFilter
+    order: ResourcePropertyOrder
+    first: Int
+    offset: Int
+  ): [ResourceProperty]
+  isDelete: Boolean!
+  composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
+  physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  crossconnectionInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  resourcePropertysAggregate(
+    filter: ResourcePropertyFilter
+  ): ResourcePropertyAggregateResult
+}
+
+type ResourceAggregateResult {
+  count: Int
+  nameMin: String
+  nameMax: String
+  externalIdMin: String
+  externalIdMax: String
+  locatedInMin: Int64
+  locatedInMax: Int64
+  locatedInSum: Int64
+  locatedInAvg: Float
+  resourceSpecificationMin: Int64
+  resourceSpecificationMax: Int64
+  resourceSpecificationSum: Int64
+  resourceSpecificationAvg: Float
+}
+
+input ResourceFilter {
+  id: [ID!]
+  name: StringHashFilter
+  has: [ResourceHasFilter]
+  and: [ResourceFilter]
+  or: [ResourceFilter]
+  not: ResourceFilter
+}
+
+enum ResourceHasFilter {
+  name
+  available
+  externalId
+  lifecycleStatus
+  typePlanningSubStatus
+  planningSubStatus
+  operationalSubStatus
+  usageSubStatus
+  belongsTo
+  composedOf
+  locatedIn
+  physicalLink
+  physicalLinkInv
+  logicalLink
+  logicalLinkInv
+  crossConnection
+  crossconnectionInv
+  resourceSpecification
+  resourcePropertys
+  isDelete
+}
+
+interface ResourceInt {
+  name: String!
+}
+
+type ResourceIntAggregateResult {
+  count: Int
+  nameMin: String
+  nameMax: String
+}
+
+input ResourceIntFilter {
+  name: StringHashFilter
+  has: [ResourceIntHasFilter]
+  and: [ResourceIntFilter]
+  or: [ResourceIntFilter]
+  not: ResourceIntFilter
+}
+
+enum ResourceIntHasFilter {
+  name
+}
+
+input ResourceIntOrder {
+  asc: ResourceIntOrderable
+  desc: ResourceIntOrderable
+  then: ResourceIntOrder
+}
+
+enum ResourceIntOrderable {
+  name
+}
+
+input ResourceIntRef {
+  name: String!
+}
+
+input ResourceOrder {
+  asc: ResourceOrderable
+  desc: ResourceOrderable
+  then: ResourceOrder
+}
+
+enum ResourceOrderable {
+  name
+  externalId
+  locatedIn
+  resourceSpecification
+}
+
+input ResourcePatch {
+  available: Boolean
+  externalId: String
+  lifecycleStatus: LifecycleStatus
+  typePlanningSubStatus: TypePlanningSubStatus
+  planningSubStatus: PlanningSubStatus
+  operationalSubStatus: OperationalSubStatus
+  usageSubStatus: UsageSubStatus
+  belongsTo: ResourceRef
+  composedOf: [ResourceRef]
+  locatedIn: Int64
+  physicalLink: ResourceRef
+  physicalLinkInv: [ResourceRef]
+  logicalLink: ResourceRef
+  logicalLinkInv: [ResourceRef]
+  crossConnection: ResourceRef
+  crossconnectionInv: [ResourceRef]
+  resourceSpecification: Int64
+  resourcePropertys: [ResourcePropertyRef]
+  isDelete: Boolean
+}
+
+type ResourceProperty {
+  id: ID!
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  rawValue: String
+  resource(filter: ResourceFilter): Resource
+  resourcePropertyType: Int64!
+}
+
+type ResourcePropertyAggregateResult {
+  count: Int
+  stringValueMin: String
+  stringValueMax: String
+  intValueMin: Int
+  intValueMax: Int
+  intValueSum: Int
+  intValueAvg: Float
+  floatValueMin: Float
+  floatValueMax: Float
+  floatValueSum: Float
+  floatValueAvg: Float
+  latitudeValueMin: Float
+  latitudeValueMax: Float
+  latitudeValueSum: Float
+  latitudeValueAvg: Float
+  longitudeValueMin: Float
+  longitudeValueMax: Float
+  longitudeValueSum: Float
+  longitudeValueAvg: Float
+  rangeFromValueMin: Float
+  rangeFromValueMax: Float
+  rangeFromValueSum: Float
+  rangeFromValueAvg: Float
+  rangeToValueMin: Float
+  rangeToValueMax: Float
+  rangeToValueSum: Float
+  rangeToValueAvg: Float
+  rawValueMin: String
+  rawValueMax: String
+  resourcePropertyTypeMin: Int64
+  resourcePropertyTypeMax: Int64
+  resourcePropertyTypeSum: Int64
+  resourcePropertyTypeAvg: Float
+}
+
+input ResourcePropertyFilter {
+  id: [ID!]
+  stringValue: StringTermFilter
+  has: [ResourcePropertyHasFilter]
+  and: [ResourcePropertyFilter]
+  or: [ResourcePropertyFilter]
+  not: ResourcePropertyFilter
+}
+
+enum ResourcePropertyHasFilter {
+  stringValue
+  intValue
+  booleanValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  rawValue
+  resource
+  resourcePropertyType
+}
+
+input ResourcePropertyOrder {
+  asc: ResourcePropertyOrderable
+  desc: ResourcePropertyOrderable
+  then: ResourcePropertyOrder
+}
+
+enum ResourcePropertyOrderable {
+  stringValue
+  intValue
+  floatValue
+  latitudeValue
+  longitudeValue
+  rangeFromValue
+  rangeToValue
+  rawValue
+  resourcePropertyType
+}
+
+input ResourcePropertyPatch {
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  rawValue: String
+  resource: ResourceRef
+  resourcePropertyType: Int64
+}
+
+input ResourcePropertyRef {
+  id: ID
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  rawValue: String
+  resource: ResourceRef
+  resourcePropertyType: Int64
+}
+
+input ResourceRef {
+  id: ID
+  name: String
+  available: Boolean
+  externalId: String
+  lifecycleStatus: LifecycleStatus
+  typePlanningSubStatus: TypePlanningSubStatus
+  planningSubStatus: PlanningSubStatus
+  operationalSubStatus: OperationalSubStatus
+  usageSubStatus: UsageSubStatus
+  belongsTo: ResourceRef
+  composedOf: [ResourceRef]
+  locatedIn: Int64
+  physicalLink: ResourceRef
+  physicalLinkInv: [ResourceRef]
+  logicalLink: ResourceRef
+  logicalLinkInv: [ResourceRef]
+  crossConnection: ResourceRef
+  crossconnectionInv: [ResourceRef]
+  resourceSpecification: Int64
+  resourcePropertys: [ResourcePropertyRef]
+  isDelete: Boolean
+}
+
+type ResourceReference implements ResourceInt {
+  id: String!
+  href: String
+  name: String!
+}
+
+type ResourceReferenceAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  hrefMin: String
+  hrefMax: String
+  nameMin: String
+  nameMax: String
+}
+
+input ResourceReferenceFilter {
+  id: StringHashFilter
+  name: StringHashFilter
+  has: [ResourceReferenceHasFilter]
+  and: [ResourceReferenceFilter]
+  or: [ResourceReferenceFilter]
+  not: ResourceReferenceFilter
+}
+
+enum ResourceReferenceHasFilter {
+  id
+  href
+  name
+}
+
+input ResourceReferenceOrder {
+  asc: ResourceReferenceOrderable
+  desc: ResourceReferenceOrderable
+  then: ResourceReferenceOrder
+}
+
+enum ResourceReferenceOrderable {
+  id
+  href
+  name
+}
+
+input ResourceReferencePatch {
+  href: String
+}
+
+input ResourceReferenceRef {
+  id: String
+  href: String
+  name: String
+}
+
+enum RollbackPolicyConfig {
+  APPROVED
+  REJECTED
+}
+
+type SchedulerConfig {
+  id: ID!
+  name: String
+  weekDay: WeekDay!
+  time: DateTime
+  createTime: DateTime!
+  status: SchedulerConfigStatus!
+  changeRequest(filter: ChangeRequestFilter): ChangeRequest!
+  rollbackPolicy: RollbackPolicyConfig
+}
+
+type SchedulerConfigAggregateResult {
+  count: Int
+  nameMin: String
+  nameMax: String
+  timeMin: DateTime
+  timeMax: DateTime
+  createTimeMin: DateTime
+  createTimeMax: DateTime
+}
+
+input SchedulerConfigFilter {
+  id: [ID!]
+  has: [SchedulerConfigHasFilter]
+  and: [SchedulerConfigFilter]
+  or: [SchedulerConfigFilter]
+  not: SchedulerConfigFilter
+}
+
+enum SchedulerConfigHasFilter {
+  name
+  weekDay
+  time
+  createTime
+  status
+  changeRequest
+  rollbackPolicy
+}
+
+input SchedulerConfigOrder {
+  asc: SchedulerConfigOrderable
+  desc: SchedulerConfigOrderable
+  then: SchedulerConfigOrder
+}
+
+enum SchedulerConfigOrderable {
+  name
+  time
+  createTime
+}
+
+input SchedulerConfigPatch {
+  name: String
+  weekDay: WeekDay
+  time: DateTime
+  createTime: DateTime
+  status: SchedulerConfigStatus
+  changeRequest: ChangeRequestRef
+  rollbackPolicy: RollbackPolicyConfig
+}
+
+input SchedulerConfigRef {
+  id: ID
+  name: String
+  weekDay: WeekDay
+  time: DateTime
+  createTime: DateTime
+  status: SchedulerConfigStatus
+  changeRequest: ChangeRequestRef
+  rollbackPolicy: RollbackPolicyConfig
+}
+
+enum SchedulerConfigStatus {
+  APPROVED
+  REJECTED
+}
+
+type ServiceOrder {
+  id: ID!
+  _atType: String
+  category: String
+  description: String
+  externalId: String
+  priority: String
+  orderDate: String
+  startDate: String
+  requestedCompletionDate: String
+  requestedStartDate: String
+  state: String
+  externalReference(
+    filter: ExternalReferenceFilter
+    order: ExternalReferenceOrder
+    first: Int
+    offset: Int
+  ): [ExternalReference]
+  orderRelationship(
+    filter: ServiceOrderRelationshipFilter
+    order: ServiceOrderRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderRelationship]
+  relatedParty(
+    filter: PartyFilter
+    order: PartyOrder
+    first: Int
+    offset: Int
+  ): [Party]
+  flowExecutionRef(filter: FlowExecutionRefFilter): FlowExecutionRef
+  cancelRequest(filter: CancellationRequestFilter): CancellationRequest
+  modifyRequest(
+    filter: ModificationRequestFilter
+    order: ModificationRequestOrder
+    first: Int
+    offset: Int
+  ): [ModificationRequest]
+  serviceOrderItem(
+    filter: ServiceOrderItemFilter
+    order: ServiceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderItem]
+  note(filter: NoteFilter, order: NoteOrder, first: Int, offset: Int): [Note]
+  externalReferenceAggregate(
+    filter: ExternalReferenceFilter
+  ): ExternalReferenceAggregateResult
+  orderRelationshipAggregate(
+    filter: ServiceOrderRelationshipFilter
+  ): ServiceOrderRelationshipAggregateResult
+  relatedPartyAggregate(filter: PartyFilter): PartyAggregateResult
+  modifyRequestAggregate(
+    filter: ModificationRequestFilter
+  ): ModificationRequestAggregateResult
+  serviceOrderItemAggregate(
+    filter: ServiceOrderItemFilter
+  ): ServiceOrderItemAggregateResult
+  noteAggregate(filter: NoteFilter): NoteAggregateResult
+}
+
+type ServiceOrderAggregateResult {
+  count: Int
+  _atTypeMin: String
+  _atTypeMax: String
+  categoryMin: String
+  categoryMax: String
+  descriptionMin: String
+  descriptionMax: String
+  externalIdMin: String
+  externalIdMax: String
+  priorityMin: String
+  priorityMax: String
+  orderDateMin: String
+  orderDateMax: String
+  startDateMin: String
+  startDateMax: String
+  requestedCompletionDateMin: String
+  requestedCompletionDateMax: String
+  requestedStartDateMin: String
+  requestedStartDateMax: String
+  stateMin: String
+  stateMax: String
+}
+
+input ServiceOrderFilter {
+  id: [ID!]
+  description: StringFullTextFilter
+  orderDate: StringExactFilter
+  startDate: StringExactFilter
+  state: StringHashFilter
+  has: [ServiceOrderHasFilter]
+  and: [ServiceOrderFilter]
+  or: [ServiceOrderFilter]
+  not: ServiceOrderFilter
+}
+
+enum ServiceOrderHasFilter {
+  _atType
+  category
+  description
+  externalId
+  priority
+  orderDate
+  startDate
+  requestedCompletionDate
+  requestedStartDate
+  state
+  externalReference
+  orderRelationship
+  relatedParty
+  flowExecutionRef
+  cancelRequest
+  modifyRequest
+  serviceOrderItem
+  note
+}
+
+type ServiceOrderItem {
+  serviceOrderItemId: ID!
+  quantity: Int
+  appointment(filter: AppointmentRefFilter): AppointmentRef
+  id: String!
+  type: String!
+  action: String!
+  service(filter: ServiceSOMFilter): ServiceSOM!
+  state: String
+}
+
+type ServiceOrderItemAggregateResult {
+  count: Int
+  quantityMin: Int
+  quantityMax: Int
+  quantitySum: Int
+  quantityAvg: Float
+  idMin: String
+  idMax: String
+  typeMin: String
+  typeMax: String
+  actionMin: String
+  actionMax: String
+  stateMin: String
+  stateMax: String
+}
+
+input ServiceOrderItemFilter {
+  serviceOrderItemId: [ID!]
+  id: StringHashFilter
+  has: [ServiceOrderItemHasFilter]
+  and: [ServiceOrderItemFilter]
+  or: [ServiceOrderItemFilter]
+  not: ServiceOrderItemFilter
+}
+
+enum ServiceOrderItemHasFilter {
+  quantity
+  appointment
+  id
+  type
+  action
+  service
+  state
+}
+
+input ServiceOrderItemOrder {
+  asc: ServiceOrderItemOrderable
+  desc: ServiceOrderItemOrderable
+  then: ServiceOrderItemOrder
+}
+
+enum ServiceOrderItemOrderable {
+  quantity
+  id
+  type
+  action
+  state
+}
+
+input ServiceOrderItemPatch {
+  quantity: Int
+  appointment: AppointmentRefRef
+  id: String
+  type: String
+  action: String
+  service: ServiceSOMRef
+  state: String
+}
+
+input ServiceOrderItemRef {
+  serviceOrderItemId: ID
+  quantity: Int
+  appointment: AppointmentRefRef
+  id: String
+  type: String
+  action: String
+  service: ServiceSOMRef
+  state: String
+}
+
+input ServiceOrderOrder {
+  asc: ServiceOrderOrderable
+  desc: ServiceOrderOrderable
+  then: ServiceOrderOrder
+}
+
+enum ServiceOrderOrderable {
+  _atType
+  category
+  description
+  externalId
+  priority
+  orderDate
+  startDate
+  requestedCompletionDate
+  requestedStartDate
+  state
+}
+
+input ServiceOrderPatch {
+  _atType: String
+  category: String
+  description: String
+  externalId: String
+  priority: String
+  orderDate: String
+  startDate: String
+  requestedCompletionDate: String
+  requestedStartDate: String
+  state: String
+  externalReference: [ExternalReferenceRef]
+  orderRelationship: [ServiceOrderRelationshipRef]
+  relatedParty: [PartyRef]
+  flowExecutionRef: FlowExecutionRefRef
+  cancelRequest: CancellationRequestRef
+  modifyRequest: [ModificationRequestRef]
+  serviceOrderItem: [ServiceOrderItemRef]
+  note: [NoteRef]
+}
+
+input ServiceOrderRef {
+  id: ID
+  _atType: String
+  category: String
+  description: String
+  externalId: String
+  priority: String
+  orderDate: String
+  startDate: String
+  requestedCompletionDate: String
+  requestedStartDate: String
+  state: String
+  externalReference: [ExternalReferenceRef]
+  orderRelationship: [ServiceOrderRelationshipRef]
+  relatedParty: [PartyRef]
+  flowExecutionRef: FlowExecutionRefRef
+  cancelRequest: CancellationRequestRef
+  modifyRequest: [ModificationRequestRef]
+  serviceOrderItem: [ServiceOrderItemRef]
+  note: [NoteRef]
+}
+
+type ServiceOrderRelationship {
+  id: String!
+  href: String
+  relationshipType: String
+}
+
+type ServiceOrderRelationshipAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  hrefMin: String
+  hrefMax: String
+  relationshipTypeMin: String
+  relationshipTypeMax: String
+}
+
+input ServiceOrderRelationshipFilter {
+  id: StringHashFilter
+  has: [ServiceOrderRelationshipHasFilter]
+  and: [ServiceOrderRelationshipFilter]
+  or: [ServiceOrderRelationshipFilter]
+  not: ServiceOrderRelationshipFilter
+}
+
+enum ServiceOrderRelationshipHasFilter {
+  id
+  href
+  relationshipType
+}
+
+input ServiceOrderRelationshipOrder {
+  asc: ServiceOrderRelationshipOrderable
+  desc: ServiceOrderRelationshipOrderable
+  then: ServiceOrderRelationshipOrder
+}
+
+enum ServiceOrderRelationshipOrderable {
+  id
+  href
+  relationshipType
+}
+
+input ServiceOrderRelationshipPatch {
+  href: String
+  relationshipType: String
+}
+
+input ServiceOrderRelationshipRef {
+  id: String
+  href: String
+  relationshipType: String
+}
+
+type ServiceRef implements ServiceReference {
+  id: String!
+  href: String
+  name: String
+  supportingResource(
+    filter: ResourceIntFilter
+    order: ResourceIntOrder
+    first: Int
+    offset: Int
+  ): [ResourceInt]
+  supportingResourceAggregate(
+    filter: ResourceIntFilter
+  ): ResourceIntAggregateResult
+}
+
+type ServiceRefAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  hrefMin: String
+  hrefMax: String
+  nameMin: String
+  nameMax: String
+}
+
+interface ServiceReference {
+  href: String
+}
+
+type ServiceReferenceAggregateResult {
+  count: Int
+  hrefMin: String
+  hrefMax: String
+}
+
+input ServiceReferenceFilter {
+  has: [ServiceReferenceHasFilter]
+  and: [ServiceReferenceFilter]
+  or: [ServiceReferenceFilter]
+  not: ServiceReferenceFilter
+}
+
+enum ServiceReferenceHasFilter {
+  href
+}
+
+input ServiceReferenceOrder {
+  asc: ServiceReferenceOrderable
+  desc: ServiceReferenceOrderable
+  then: ServiceReferenceOrder
+}
+
+enum ServiceReferenceOrderable {
+  href
+}
+
+input ServiceReferencePatch {
+  href: String
+}
+
+input ServiceRefFilter {
+  id: StringHashFilter
+  has: [ServiceRefHasFilter]
+  and: [ServiceRefFilter]
+  or: [ServiceRefFilter]
+  not: ServiceRefFilter
+}
+
+enum ServiceRefHasFilter {
+  id
+  href
+  name
+  supportingResource
+}
+
+input ServiceRefOrder {
+  asc: ServiceRefOrderable
+  desc: ServiceRefOrderable
+  then: ServiceRefOrder
+}
+
+enum ServiceRefOrderable {
+  id
+  href
+  name
+}
+
+input ServiceRefPatch {
+  href: String
+  name: String
+  supportingResource: [ResourceIntRef]
+}
+
+input ServiceRefRef {
+  id: String
+  href: String
+  name: String
+  supportingResource: [ResourceIntRef]
+}
+
+type ServiceRelationship {
+  id: ID!
+  relationshipType: String!
+  service(filter: ServiceSOMFilter): ServiceSOM
+  serviceRelationshipCharacteristic(
+    filter: CharacteristicFilter
+    order: CharacteristicOrder
+    first: Int
+    offset: Int
+  ): [Characteristic]
+  serviceRelationshipCharacteristicAggregate(
+    filter: CharacteristicFilter
+  ): CharacteristicAggregateResult
+}
+
+type ServiceRelationshipAggregateResult {
+  count: Int
+  relationshipTypeMin: String
+  relationshipTypeMax: String
+}
+
+input ServiceRelationshipFilter {
+  id: [ID!]
+  has: [ServiceRelationshipHasFilter]
+  and: [ServiceRelationshipFilter]
+  or: [ServiceRelationshipFilter]
+  not: ServiceRelationshipFilter
+}
+
+enum ServiceRelationshipHasFilter {
+  relationshipType
+  service
+  serviceRelationshipCharacteristic
+}
+
+input ServiceRelationshipOrder {
+  asc: ServiceRelationshipOrderable
+  desc: ServiceRelationshipOrderable
+  then: ServiceRelationshipOrder
+}
+
+enum ServiceRelationshipOrderable {
+  relationshipType
+}
+
+input ServiceRelationshipPatch {
+  relationshipType: String
+  service: ServiceSOMRef
+  serviceRelationshipCharacteristic: [CharacteristicRef]
+}
+
+input ServiceRelationshipRef {
+  id: ID
+  relationshipType: String
+  service: ServiceSOMRef
+  serviceRelationshipCharacteristic: [CharacteristicRef]
+}
+
+type ServiceSOM implements ServiceReference {
+  id: ID!
+  href: String
+  category: String
+  description: String
+  endDate: String
+  isBundle: Boolean
+  startDate: String
+  startMode: String
+  externalId: String
+  hasStarted: Boolean
+  isServiceEnabled: Boolean
+  isStateful: Boolean
+  name: String
+  serviceDate: String
+  serviceType: String
+  state: String
+  type: String
+  relatedParty(
+    filter: PartyFilter
+    order: PartyOrder
+    first: Int
+    offset: Int
+  ): [Party]
+  place(
+    filter: PlaceFilter
+    order: PlaceOrder
+    first: Int
+    offset: Int
+  ): [Place]
+  serviceSpecification(
+    filter: ServiceSpecificationRefFilter
+  ): ServiceSpecificationRef
+  serviceCharacteristic(
+    filter: CharacteristicFilter
+    order: CharacteristicOrder
+    first: Int
+    offset: Int
+  ): [Characteristic]
+  supportingService(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  supportingResource(
+    filter: ResourceIntFilter
+    order: ResourceIntOrder
+    first: Int
+    offset: Int
+  ): [ResourceInt]
+  serviceRelationship(
+    filter: ServiceRelationshipFilter
+    order: ServiceRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceRelationship]
+  relatedEntity(
+    filter: RelatedEntityFilter
+    order: RelatedEntityOrder
+    first: Int
+    offset: Int
+  ): [RelatedEntity]
+  note(filter: NoteFilter, order: NoteOrder, first: Int, offset: Int): [Note]
+  feature(
+    filter: FeatureFilter
+    order: FeatureOrder
+    first: Int
+    offset: Int
+  ): [Feature]
+  relatedPartyAggregate(filter: PartyFilter): PartyAggregateResult
+  placeAggregate(filter: PlaceFilter): PlaceAggregateResult
+  serviceCharacteristicAggregate(
+    filter: CharacteristicFilter
+  ): CharacteristicAggregateResult
+  supportingServiceAggregate(
+    filter: ServiceSOMFilter
+  ): ServiceSOMAggregateResult
+  supportingResourceAggregate(
+    filter: ResourceIntFilter
+  ): ResourceIntAggregateResult
+  serviceRelationshipAggregate(
+    filter: ServiceRelationshipFilter
+  ): ServiceRelationshipAggregateResult
+  relatedEntityAggregate(
+    filter: RelatedEntityFilter
+  ): RelatedEntityAggregateResult
+  noteAggregate(filter: NoteFilter): NoteAggregateResult
+  featureAggregate(filter: FeatureFilter): FeatureAggregateResult
+}
+
+type ServiceSOMAggregateResult {
+  count: Int
+  hrefMin: String
+  hrefMax: String
+  categoryMin: String
+  categoryMax: String
+  descriptionMin: String
+  descriptionMax: String
+  endDateMin: String
+  endDateMax: String
+  startDateMin: String
+  startDateMax: String
+  startModeMin: String
+  startModeMax: String
+  externalIdMin: String
+  externalIdMax: String
+  nameMin: String
+  nameMax: String
+  serviceDateMin: String
+  serviceDateMax: String
+  serviceTypeMin: String
+  serviceTypeMax: String
+  stateMin: String
+  stateMax: String
+  typeMin: String
+  typeMax: String
+}
+
+input ServiceSOMFilter {
+  id: [ID!]
+  category: StringHashFilter
+  externalId: StringHashFilter
+  state: StringHashFilter
+  has: [ServiceSOMHasFilter]
+  and: [ServiceSOMFilter]
+  or: [ServiceSOMFilter]
+  not: ServiceSOMFilter
+}
+
+enum ServiceSOMHasFilter {
+  href
+  category
+  description
+  endDate
+  isBundle
+  startDate
+  startMode
+  externalId
+  hasStarted
+  isServiceEnabled
+  isStateful
+  name
+  serviceDate
+  serviceType
+  state
+  type
+  relatedParty
+  place
+  serviceSpecification
+  serviceCharacteristic
+  supportingService
+  supportingResource
+  serviceRelationship
+  relatedEntity
+  note
+  feature
+}
+
+input ServiceSOMOrder {
+  asc: ServiceSOMOrderable
+  desc: ServiceSOMOrderable
+  then: ServiceSOMOrder
+}
+
+enum ServiceSOMOrderable {
+  href
+  category
+  description
+  endDate
+  startDate
+  startMode
+  externalId
+  name
+  serviceDate
+  serviceType
+  state
+  type
+}
+
+input ServiceSOMPatch {
+  href: String
+  category: String
+  description: String
+  endDate: String
+  isBundle: Boolean
+  startDate: String
+  startMode: String
+  externalId: String
+  hasStarted: Boolean
+  isServiceEnabled: Boolean
+  isStateful: Boolean
+  name: String
+  serviceDate: String
+  serviceType: String
+  state: String
+  type: String
+  relatedParty: [PartyRef]
+  place: [PlaceRef]
+  serviceSpecification: ServiceSpecificationRefRef
+  serviceCharacteristic: [CharacteristicRef]
+  supportingService: [ServiceSOMRef]
+  supportingResource: [ResourceIntRef]
+  serviceRelationship: [ServiceRelationshipRef]
+  relatedEntity: [RelatedEntityRef]
+  note: [NoteRef]
+  feature: [FeatureRef]
+}
+
+input ServiceSOMRef {
+  id: ID
+  href: String
+  category: String
+  description: String
+  endDate: String
+  isBundle: Boolean
+  startDate: String
+  startMode: String
+  externalId: String
+  hasStarted: Boolean
+  isServiceEnabled: Boolean
+  isStateful: Boolean
+  name: String
+  serviceDate: String
+  serviceType: String
+  state: String
+  type: String
+  relatedParty: [PartyRef]
+  place: [PlaceRef]
+  serviceSpecification: ServiceSpecificationRefRef
+  serviceCharacteristic: [CharacteristicRef]
+  supportingService: [ServiceSOMRef]
+  supportingResource: [ResourceIntRef]
+  serviceRelationship: [ServiceRelationshipRef]
+  relatedEntity: [RelatedEntityRef]
+  note: [NoteRef]
+  feature: [FeatureRef]
+}
+
+type ServiceSpecificationRef {
+  id: String!
+  referredType: String
+  type: String
+  href: String
+  name: String!
+  version: String
+  services(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  servicesAggregate(filter: ServiceSOMFilter): ServiceSOMAggregateResult
+}
+
+type ServiceSpecificationRefAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  referredTypeMin: String
+  referredTypeMax: String
+  typeMin: String
+  typeMax: String
+  hrefMin: String
+  hrefMax: String
+  nameMin: String
+  nameMax: String
+  versionMin: String
+  versionMax: String
+}
+
+input ServiceSpecificationRefFilter {
+  id: StringHashFilter
+  has: [ServiceSpecificationRefHasFilter]
+  and: [ServiceSpecificationRefFilter]
+  or: [ServiceSpecificationRefFilter]
+  not: ServiceSpecificationRefFilter
+}
+
+enum ServiceSpecificationRefHasFilter {
+  id
+  referredType
+  type
+  href
+  name
+  version
+  services
+}
+
+input ServiceSpecificationRefOrder {
+  asc: ServiceSpecificationRefOrderable
+  desc: ServiceSpecificationRefOrderable
+  then: ServiceSpecificationRefOrder
+}
+
+enum ServiceSpecificationRefOrderable {
+  id
+  referredType
+  type
+  href
+  name
+  version
+}
+
+input ServiceSpecificationRefPatch {
+  referredType: String
+  type: String
+  href: String
+  name: String
+  version: String
+  services: [ServiceSOMRef]
+}
+
+input ServiceSpecificationRefRef {
+  id: String
+  referredType: String
+  type: String
+  href: String
+  name: String
+  version: String
+  services: [ServiceSOMRef]
+}
+
+input StringExactFilter {
+  eq: String
+  in: [String]
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  between: StringRange
+}
+
+input StringFullTextFilter {
+  alloftext: String
+  anyoftext: String
+}
+
+input StringHashFilter {
+  eq: String
+  in: [String]
+}
+
+input StringRange {
+  min: String!
+  max: String!
+}
+
+input StringRegExpFilter {
+  regexp: String
+}
+
+input StringTermFilter {
+  allofterms: String
+  anyofterms: String
+}
+
+type Subscriber {
+  id: ID!
+  callback: String
+  topic: String
+}
+
+type SubscriberAggregateResult {
+  count: Int
+  callbackMin: String
+  callbackMax: String
+  topicMin: String
+  topicMax: String
+}
+
+input SubscriberFilter {
+  id: [ID!]
+  topic: StringHashFilter
+  has: [SubscriberHasFilter]
+  and: [SubscriberFilter]
+  or: [SubscriberFilter]
+  not: SubscriberFilter
+}
+
+enum SubscriberHasFilter {
+  callback
+  topic
+}
+
+input SubscriberOrder {
+  asc: SubscriberOrderable
+  desc: SubscriberOrderable
+  then: SubscriberOrder
+}
+
+enum SubscriberOrderable {
+  callback
+  topic
+}
+
+input SubscriberPatch {
+  callback: String
+  topic: String
+}
+
+input SubscriberRef {
+  id: ID
+  callback: String
+  topic: String
+}
+
+enum TypePlanningSubStatus {
+  PROPOSED
+  FEASIBILITY_CHECKED
+  DESIGNED
+  ORDERED
+}
+
+input UpdateAppointmentRefInput {
+  filter: AppointmentRefFilter!
+  set: AppointmentRefPatch
+  remove: AppointmentRefPatch
+}
+
+type UpdateAppointmentRefPayload {
+  appointmentRef(
+    filter: AppointmentRefFilter
+    order: AppointmentRefOrder
+    first: Int
+    offset: Int
+  ): [AppointmentRef]
+  numUids: Int
+}
+
+input UpdateCancellationRequestInput {
+  filter: CancellationRequestFilter!
+  set: CancellationRequestPatch
+  remove: CancellationRequestPatch
+}
+
+type UpdateCancellationRequestPayload {
+  cancellationRequest(
+    filter: CancellationRequestFilter
+    order: CancellationRequestOrder
+    first: Int
+    offset: Int
+  ): [CancellationRequest]
+  numUids: Int
+}
+
+input UpdateChangeItemInput {
+  filter: ChangeItemFilter!
+  set: ChangeItemPatch
+  remove: ChangeItemPatch
+}
+
+type UpdateChangeItemPayload {
+  changeItem(
+    filter: ChangeItemFilter
+    order: ChangeItemOrder
+    first: Int
+    offset: Int
+  ): [ChangeItem]
+  numUids: Int
+}
+
+input UpdateChangeRequestActivityInput {
+  filter: ChangeRequestActivityFilter!
+  set: ChangeRequestActivityPatch
+  remove: ChangeRequestActivityPatch
+}
+
+type UpdateChangeRequestActivityPayload {
+  changeRequestActivity(
+    filter: ChangeRequestActivityFilter
+    order: ChangeRequestActivityOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequestActivity]
+  numUids: Int
+}
+
+input UpdateChangeRequestInput {
+  filter: ChangeRequestFilter!
+  set: ChangeRequestPatch
+  remove: ChangeRequestPatch
+}
+
+type UpdateChangeRequestPayload {
+  changeRequest(
+    filter: ChangeRequestFilter
+    order: ChangeRequestOrder
+    first: Int
+    offset: Int
+  ): [ChangeRequest]
+  numUids: Int
+}
+
+input UpdateCharacteristicInput {
+  filter: CharacteristicFilter!
+  set: CharacteristicPatch
+  remove: CharacteristicPatch
+}
+
+type UpdateCharacteristicPayload {
+  characteristic(
+    filter: CharacteristicFilter
+    order: CharacteristicOrder
+    first: Int
+    offset: Int
+  ): [Characteristic]
+  numUids: Int
+}
+
+input UpdateCharacteristicRelationshipInput {
+  filter: CharacteristicRelationshipFilter!
+  set: CharacteristicRelationshipPatch
+  remove: CharacteristicRelationshipPatch
+}
+
+type UpdateCharacteristicRelationshipPayload {
+  characteristicRelationship(
+    filter: CharacteristicRelationshipFilter
+    order: CharacteristicRelationshipOrder
+    first: Int
+    offset: Int
+  ): [CharacteristicRelationship]
+  numUids: Int
+}
+
+input UpdateCMVersionInput {
+  filter: CMVersionFilter!
+  set: CMVersionPatch
+  remove: CMVersionPatch
+}
+
+type UpdateCMVersionPayload {
+  cMVersion(
+    filter: CMVersionFilter
+    order: CMVersionOrder
+    first: Int
+    offset: Int
+  ): [CMVersion]
+  numUids: Int
+}
+
+input UpdateConfigParamTagInput {
+  filter: ConfigParamTagFilter!
+  set: ConfigParamTagPatch
+  remove: ConfigParamTagPatch
+}
+
+type UpdateConfigParamTagPayload {
+  configParamTag(
+    filter: ConfigParamTagFilter
+    order: ConfigParamTagOrder
+    first: Int
+    offset: Int
+  ): [ConfigParamTag]
+  numUids: Int
+}
+
+input UpdateConfigurationParameterTypeInput {
+  filter: ConfigurationParameterTypeFilter!
+  set: ConfigurationParameterTypePatch
+  remove: ConfigurationParameterTypePatch
+}
+
+type UpdateConfigurationParameterTypePayload {
+  configurationParameterType(
+    filter: ConfigurationParameterTypeFilter
+    order: ConfigurationParameterTypeOrder
+    first: Int
+    offset: Int
+  ): [ConfigurationParameterType]
+  numUids: Int
+}
+
+input UpdateExternalReferenceInput {
+  filter: ExternalReferenceFilter!
+  set: ExternalReferencePatch
+  remove: ExternalReferencePatch
+}
+
+type UpdateExternalReferencePayload {
+  externalReference(
+    filter: ExternalReferenceFilter
+    order: ExternalReferenceOrder
+    first: Int
+    offset: Int
+  ): [ExternalReference]
+  numUids: Int
+}
+
+input UpdateFeatureInput {
+  filter: FeatureFilter!
+  set: FeaturePatch
+  remove: FeaturePatch
+}
+
+type UpdateFeaturePayload {
+  feature(
+    filter: FeatureFilter
+    order: FeatureOrder
+    first: Int
+    offset: Int
+  ): [Feature]
+  numUids: Int
+}
+
+input UpdateFlowExecutionRefInput {
+  filter: FlowExecutionRefFilter!
+  set: FlowExecutionRefPatch
+  remove: FlowExecutionRefPatch
+}
+
+type UpdateFlowExecutionRefPayload {
+  flowExecutionRef(
+    filter: FlowExecutionRefFilter
+    order: FlowExecutionRefOrder
+    first: Int
+    offset: Int
+  ): [FlowExecutionRef]
+  numUids: Int
+}
+
+input UpdateModificationRequestInput {
+  filter: ModificationRequestFilter!
+  set: ModificationRequestPatch
+  remove: ModificationRequestPatch
+}
+
+type UpdateModificationRequestPayload {
+  modificationRequest(
+    filter: ModificationRequestFilter
+    order: ModificationRequestOrder
+    first: Int
+    offset: Int
+  ): [ModificationRequest]
+  numUids: Int
+}
+
+input UpdateNoteInput {
+  filter: NoteFilter!
+  set: NotePatch
+  remove: NotePatch
+}
+
+type UpdateNotePayload {
+  note(filter: NoteFilter, order: NoteOrder, first: Int, offset: Int): [Note]
+  numUids: Int
+}
+
+input UpdateParameterInput {
+  filter: ParameterFilter!
+  set: ParameterPatch
+  remove: ParameterPatch
+}
+
+type UpdateParameterPayload {
+  parameter(
+    filter: ParameterFilter
+    order: ParameterOrder
+    first: Int
+    offset: Int
+  ): [Parameter]
+  numUids: Int
+}
+
+input UpdatePartyInput {
+  filter: PartyFilter!
+  set: PartyPatch
+  remove: PartyPatch
+}
+
+type UpdatePartyPayload {
+  party(
+    filter: PartyFilter
+    order: PartyOrder
+    first: Int
+    offset: Int
+  ): [Party]
+  numUids: Int
+}
+
+input UpdatePlaceInput {
+  filter: PlaceFilter!
+  set: PlacePatch
+  remove: PlacePatch
+}
+
+type UpdatePlacePayload {
+  place(
+    filter: PlaceFilter
+    order: PlaceOrder
+    first: Int
+    offset: Int
+  ): [Place]
+  numUids: Int
+}
+
+input UpdateRelatedEntityInput {
+  filter: RelatedEntityFilter!
+  set: RelatedEntityPatch
+  remove: RelatedEntityPatch
+}
+
+type UpdateRelatedEntityPayload {
+  relatedEntity(
+    filter: RelatedEntityFilter
+    order: RelatedEntityOrder
+    first: Int
+    offset: Int
+  ): [RelatedEntity]
+  numUids: Int
+}
+
+input UpdateResourceInput {
+  filter: ResourceFilter!
+  set: ResourcePatch
+  remove: ResourcePatch
+}
+
+type UpdateResourcePayload {
+  resource(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]
+  numUids: Int
+}
+
+input UpdateResourcePropertyInput {
+  filter: ResourcePropertyFilter!
+  set: ResourcePropertyPatch
+  remove: ResourcePropertyPatch
+}
+
+type UpdateResourcePropertyPayload {
+  resourceProperty(
+    filter: ResourcePropertyFilter
+    order: ResourcePropertyOrder
+    first: Int
+    offset: Int
+  ): [ResourceProperty]
+  numUids: Int
+}
+
+input UpdateResourceReferenceInput {
+  filter: ResourceReferenceFilter!
+  set: ResourceReferencePatch
+  remove: ResourceReferencePatch
+}
+
+type UpdateResourceReferencePayload {
+  resourceReference(
+    filter: ResourceReferenceFilter
+    order: ResourceReferenceOrder
+    first: Int
+    offset: Int
+  ): [ResourceReference]
+  numUids: Int
+}
+
+input UpdateSchedulerConfigInput {
+  filter: SchedulerConfigFilter!
+  set: SchedulerConfigPatch
+  remove: SchedulerConfigPatch
+}
+
+type UpdateSchedulerConfigPayload {
+  schedulerConfig(
+    filter: SchedulerConfigFilter
+    order: SchedulerConfigOrder
+    first: Int
+    offset: Int
+  ): [SchedulerConfig]
+  numUids: Int
+}
+
+input UpdateServiceOrderInput {
+  filter: ServiceOrderFilter!
+  set: ServiceOrderPatch
+  remove: ServiceOrderPatch
+}
+
+input UpdateServiceOrderItemInput {
+  filter: ServiceOrderItemFilter!
+  set: ServiceOrderItemPatch
+  remove: ServiceOrderItemPatch
+}
+
+type UpdateServiceOrderItemPayload {
+  serviceOrderItem(
+    filter: ServiceOrderItemFilter
+    order: ServiceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderItem]
+  numUids: Int
+}
+
+type UpdateServiceOrderPayload {
+  serviceOrder(
+    filter: ServiceOrderFilter
+    order: ServiceOrderOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrder]
+  numUids: Int
+}
+
+input UpdateServiceOrderRelationshipInput {
+  filter: ServiceOrderRelationshipFilter!
+  set: ServiceOrderRelationshipPatch
+  remove: ServiceOrderRelationshipPatch
+}
+
+type UpdateServiceOrderRelationshipPayload {
+  serviceOrderRelationship(
+    filter: ServiceOrderRelationshipFilter
+    order: ServiceOrderRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceOrderRelationship]
+  numUids: Int
+}
+
+input UpdateServiceReferenceInput {
+  filter: ServiceReferenceFilter!
+  set: ServiceReferencePatch
+  remove: ServiceReferencePatch
+}
+
+type UpdateServiceReferencePayload {
+  serviceReference(
+    filter: ServiceReferenceFilter
+    order: ServiceReferenceOrder
+    first: Int
+    offset: Int
+  ): [ServiceReference]
+  numUids: Int
+}
+
+input UpdateServiceRefInput {
+  filter: ServiceRefFilter!
+  set: ServiceRefPatch
+  remove: ServiceRefPatch
+}
+
+type UpdateServiceRefPayload {
+  serviceRef(
+    filter: ServiceRefFilter
+    order: ServiceRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceRef]
+  numUids: Int
+}
+
+input UpdateServiceRelationshipInput {
+  filter: ServiceRelationshipFilter!
+  set: ServiceRelationshipPatch
+  remove: ServiceRelationshipPatch
+}
+
+type UpdateServiceRelationshipPayload {
+  serviceRelationship(
+    filter: ServiceRelationshipFilter
+    order: ServiceRelationshipOrder
+    first: Int
+    offset: Int
+  ): [ServiceRelationship]
+  numUids: Int
+}
+
+input UpdateServiceSOMInput {
+  filter: ServiceSOMFilter!
+  set: ServiceSOMPatch
+  remove: ServiceSOMPatch
+}
+
+type UpdateServiceSOMPayload {
+  serviceSOM(
+    filter: ServiceSOMFilter
+    order: ServiceSOMOrder
+    first: Int
+    offset: Int
+  ): [ServiceSOM]
+  numUids: Int
+}
+
+input UpdateServiceSpecificationRefInput {
+  filter: ServiceSpecificationRefFilter!
+  set: ServiceSpecificationRefPatch
+  remove: ServiceSpecificationRefPatch
+}
+
+type UpdateServiceSpecificationRefPayload {
+  serviceSpecificationRef(
+    filter: ServiceSpecificationRefFilter
+    order: ServiceSpecificationRefOrder
+    first: Int
+    offset: Int
+  ): [ServiceSpecificationRef]
+  numUids: Int
+}
+
+input UpdateSubscriberInput {
+  filter: SubscriberFilter!
+  set: SubscriberPatch
+  remove: SubscriberPatch
+}
+
+type UpdateSubscriberPayload {
+  subscriber(
+    filter: SubscriberFilter
+    order: SubscriberOrder
+    first: Int
+    offset: Int
+  ): [Subscriber]
+  numUids: Int
+}
+
+enum UsageSubStatus {
+  AVAILABLE
+  RESERVED
+  NO_AVAILABLE
+  ASSIGNED
+}
+
+enum VersionStatus {
+  CURRENT
+  REPLACED
+}
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+input WithinFilter {
+  polygon: PolygonRef!
+}
+

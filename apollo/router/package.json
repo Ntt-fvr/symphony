@@ -1,0 +1,20 @@
+{
+  "name": "supergraph-router",
+  "version": "1.1.15",
+  "description": "",
+  "main": "router.js",
+  "scripts": {
+    "start": "node router.js"
+  },
+  "dependencies": {
+    "@apollo/gateway": "2.0.0",
+    "apollo-server": "3.7.0",
+    "fs": "0.0.1-security"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@apollo/rover": "^0.6.0"
+  }
+}
