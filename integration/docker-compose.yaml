@@ -66,6 +66,7 @@ services:
       - conf/telemetry.env
     networks:
       - private
+      - public 
     depends_on:
       - migrate-graph
       - mysql
@@ -164,6 +165,7 @@ services:
       - 443:443
       - 33060:33060
       - 9000:9000
+      - 80:80
     networks:
       public:
         aliases:
@@ -178,6 +180,21 @@ services:
     healthcheck:
       test: curl -Ifk https://localhost/healthz
     restart: on-failure
+
+  apollo:
+    build:
+      <<: *buildctx
+      dockerfile: apollo/router/Dockerfile
+    image: apollo
+    environment:
+      - APOLLO_SCHEMA_CONFIG_EMBEDDED=true
+    volumes:
+      - .././apollo/supergraph.graphql:/etc/config/supergraph.graphql
+    ports:
+      - "4000:80"
+    networks:
+      - private
+      - public
 
   mysql:
     image: mysql
