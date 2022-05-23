@@ -879,6 +879,7 @@ input AddWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input EditWorkOrderInput {
@@ -900,6 +901,7 @@ input EditWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input TechnicianCheckListItemInput {
@@ -2167,6 +2169,7 @@ type WorkOrder implements Node & NamedNode {
   organizationFk: Organization
   scheduledAt: Time
   Appointments:[Appointment]
+  isNameEditable: Boolean
 }
 
 """
@@ -9044,6 +9047,7 @@ input AddKqiTargetInput {
   endTime: Time!
   status: Boolean!
   kqi: ID!
+  kqiComparator: AddKqiComparatorInput
 }
 
 input EditKqiTargetInput {
@@ -9080,7 +9084,7 @@ type KqiComparator implements Node {
 }
 
 input AddKqiComparatorInput {
-  kqiTargetFk: ID!
+  kqiTargetFk: ID
   comparatorFk: ID!
   number: Float!
   comparatorType: String!

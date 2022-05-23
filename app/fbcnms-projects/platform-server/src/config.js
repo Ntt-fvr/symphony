@@ -20,6 +20,7 @@ const MAPBOX_ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN || '';
 
 const ADMIN_HOST = process.env.ADMIN_HOST || 'admin';
 const GRAPH_HOST = process.env.GRAPH_HOST || 'graph';
+const APOLLO_HOST = process.env.APOLLO_HOST || 'apollo';
 const STORE_HOST = process.env.STORE_HOST || 'store';
 const DOCS_HOST = process.env.DOCS_HOST || 'docs';
 const ID_HOST = process.env.ID_HOST || 'id';
@@ -34,4 +35,5 @@ module.exports = {
   STORE_HOST,
   DOCS_HOST,
   ID_HOST,
+  APOLLO_HOST,
 };

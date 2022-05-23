@@ -33,14 +33,15 @@ import ExperimentalPropertyTypesTableParameters from '../form/ExperimentalProper
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
+import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {toMutablePropertyType} from '../../common/PropertyType';
-import {useDisabledButton} from './../assurance/common/useDisabledButton';
-import {useDisabledButtonEdit} from './../assurance/common/useDisabledButton';
+import {useDisabledButton} from '../assurance/common/useDisabledButton';
+import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useFormInput} from '../assurance/common/useFormInput';
 import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
-import {useValidationEdit} from './../assurance/common/useValidation';
+import {useValidationEdit} from '../assurance/common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -300,6 +301,9 @@ export const AddEditResourceSpecification = (props: Props) => {
               parameterTypes={parameterTypes}
             />
           </ParameterTypesTableDispatcher.Provider>
+        </ExpandingPanel>
+        <ExpandingPanel title="Configure Actions">
+          <TableConfigureAction />
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (

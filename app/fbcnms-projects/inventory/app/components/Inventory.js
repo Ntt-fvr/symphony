@@ -8,6 +8,7 @@
  * @format
  */
 
+import ActionExecutionMain from './action_execution/ActionExecutionMain';
 import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
@@ -78,6 +79,10 @@ function Index() {
           <Route
             path={relativeUrl('/assurance')}
             component={PerformanceCatalog}
+          />
+          <Route
+            path={relativeUrl('/action_execution')}
+            component={ActionExecutionMain}
           />
           <Route path={relativeUrl('/inventory')} component={Inventory} />
           <Route path={relativeUrl('/map')} component={LocationsMap} />
