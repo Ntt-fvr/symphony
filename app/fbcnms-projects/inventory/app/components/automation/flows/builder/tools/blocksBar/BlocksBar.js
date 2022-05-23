@@ -74,6 +74,8 @@ export default function BlocksBar(props: Props) {
   const flow = useGraph();
   const {history} = useRouter();
 
+  const [sidebarOpened, setSidebarOpened] = React.useState(false)
+
   const flowTypes = useMemo(
     () => [
       new ManualStartBlockType(flow),
@@ -135,6 +137,8 @@ export default function BlocksBar(props: Props) {
       <Sidebar
         drawerWidth={drawerWidth}
         title={title}
+        openDefault={false}
+        collapsed={value => setSidebarOpened(value)}
         children={
           <div>
             <List disablePadding className={classes.list}>
@@ -146,15 +150,16 @@ export default function BlocksBar(props: Props) {
                 <ListItemIcon>
                   <BackFlow />
                 </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Grid item xs zeroMinWidth>
-                      <Typography variant={'caption'} noWrap>
-                        {'Back to flows catalog'}
-                      </Typography>
-                    </Grid>
-                  }
-                />
+                { !sidebarOpened && <ListItemText
+                    primary={
+                      <Grid item xs zeroMinWidth>
+                        <Typography variant={'caption'} noWrap>
+                          {'Back to flows catalog'}
+                        </Typography>
+                      </Grid>
+                    }
+                  />
+                }
               </ListItem>
             </List>
             {ListBlocksCategory()}
