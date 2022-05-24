@@ -61,7 +61,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogExecuteNow = (props: Props) => {
-  const {onClose, dataRow, onClick} = props;
+  const {onClose, dataRow} = props;
 
   const classes = useStyles();
   return (

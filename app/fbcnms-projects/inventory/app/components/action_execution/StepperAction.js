@@ -89,7 +89,6 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   open?: boolean,
   onClose?: () => void,
-  isDialogSelectDate: boolean,
   returnSheduledAction?: () => void,
 |}>;
 const tableColumns = [
@@ -147,28 +146,14 @@ const data = [
   },
 ];
 const StepperAction = (props: Props) => {
-  const {onClose, isDialogSelectDate, returnSheduledAction} = props;
-  const [setFilters] = useState([]);
-  const [isDialogConfirmChange, setIsDialogConfirmChange] = useState(
-    isDialogSelectDate,
-  );
+  const {returnSheduledAction} = props;
 
   const [activeStep, setActiveStep] = useState(1);
   const [checked, setChecked] = useState(true);
   const [checkedResource, setCheckedResource] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
 
-  const handleSelectDate = useCallback(clickedDate => {
-    const selectedDate = clickedDate?.id;
-    setSelectedDate(selectedDate);
-    setActiveStep(1);
-  }, []);
   const handleConfirmDate = () => {
     setActiveStep(2);
-  };
-
-  const handleClickOpenConfirmChange = () => {
-    setIsDialogConfirmChange(prev => !prev);
   };
 
   const classes = useStyles();
@@ -233,8 +218,8 @@ const StepperAction = (props: Props) => {
               <div className={classes.searchBar}>
                 <PowerSearchBar
                   placeholder="Filter Resource Type"
-                  getSelectedFilter={filters => setFilters(filters)}
-                  onFiltersChanged={filters => setFilters(filters)}
+                  getSelectedFilter={[]}
+                  onFiltersChanged={[]}
                   filterConfigs={[]}
                   searchConfig={[]}
                   entity={'SERVICE'}
@@ -310,8 +295,6 @@ const StepperAction = (props: Props) => {
             <Button
               disabled
               onClick={() => {
-                handleClickOpenConfirmChange();
-                handleSelectDate();
                 handleConfirmDate();
               }}
               className={classes.option}

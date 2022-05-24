@@ -154,7 +154,6 @@ export const PROJECTS_PAGE_SIZE = 15;
 
 const ScheduledActionsTypes = () => {
   const classes = useStyles();
-  const [setFilters] = useState([]);
   const [openCreateAction, setOpenCreateAction] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [dataRow, setDataRow] = useState({});
@@ -193,8 +192,8 @@ const ScheduledActionsTypes = () => {
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Filter Resource Type"
-              getSelectedFilter={filters => setFilters(filters)}
-              onFiltersChanged={filters => setFilters(filters)}
+              getSelectedFilter={[]}
+              onFiltersChanged={[]}
               filterConfigs={[]}
               searchConfig={[]}
               entity={'SERVICE'}

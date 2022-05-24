@@ -30,7 +30,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 export type Props = $ReadOnly<{|
-  setOpenDetails: any,
   data?: any,
 |}>;
 
