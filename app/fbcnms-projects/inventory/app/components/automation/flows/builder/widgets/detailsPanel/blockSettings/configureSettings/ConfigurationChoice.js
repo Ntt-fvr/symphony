@@ -32,7 +32,7 @@ const ConfigurationChoice = () => {
             variant="text"
             onClick={() => rulesDispatcher({type: 'ADD_PROPERTY_TYPE'})}
             leftIcon={PlusIcon}>
-            <fbt desc="">Add Rule</fbt>
+            <fbt desc="add rule">Add Rule</fbt>
           </Button>
         </FormAction>
       </Grid>
