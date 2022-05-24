@@ -157,9 +157,11 @@ const ScheduledActionsTypes = () => {
   const [setFilters] = useState([]);
   const [openCreateAction, setOpenCreateAction] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [dataRow, setDataRow] = useState({});
 
   const handleOpenModal = dataRow => {
     setOpenModal(prevStateOpenModal => !prevStateOpenModal);
+    setDataRow(dataRow);
   };
   const handleCreateAction = () => {
     setOpenCreateAction(setStateCreateAction => !setStateCreateAction);
@@ -229,7 +231,14 @@ const ScheduledActionsTypes = () => {
           }}
         />
       </Grid>
-      {openModal && <DialogExecuteNow />}
+      {openModal && (
+        <DialogExecuteNow
+          dataRow={dataRow}
+          onClose={() =>
+            setOpenModal(prevStateOpenModal => !prevStateOpenModal)
+          }
+        />
+      )}
     </Grid>
   );
 };

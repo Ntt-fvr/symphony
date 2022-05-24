@@ -10,80 +10,147 @@
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
+    '& .MuiDialog-paperWidthSm': {
+      maxWidth: '700px',
+    },
+  },
+  rootCard: {
+    '&.root': {
+      padding: '0px',
+    },
   },
   dialogActions: {
-    padding: '0 24px',
+    padding: '6px 0',
     marginBottom: '30px',
     bottom: 0,
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     zIndex: 2,
+    '&.MuiDialogActions-spacing > :not(:first-child)': {
+      marginLeft: '20px',
+    },
   },
   option: {
-    width: '74px',
+    width: '111px',
     height: '36px',
+  },
+  textarea: {
+    minHeight: '60px',
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
   },
 }));
 
 type Props = $ReadOnly<{|
-  deleteItem?: () => void,
+  onClick?: () => void,
+  name?: string,
   open?: boolean,
   onClose: () => void,
+  dataRow: any,
 |}>;
 
 const DialogExecuteNow = (props: Props) => {
-  const {onClose} = props;
+  const {onClose, dataRow, onClick} = props;
 
   const classes = useStyles();
   return (
     <Dialog
-      maxWidth="md"
+      maxWidth="sm"
       open={true}
       onClose={onClose}
       fullWidth={true}
       className={classes.root}>
-      <Grid>
-        <IconButton
+      <Card variant={'none'}>
+        <Grid
           style={{
-            position: 'relative',
-            top: '0px',
-            left: '0px',
-          }}
-          onClick={onClose}
-          size={'small'}>
-          <CloseIcon color="action" />
-        </IconButton>
-      </Grid>
-      <Card variant={'message'}>
-        <Grid style={{margin: '0 0 16px 16px'}} item xs={12}>
-          <Text useEllipsis={true} weight={'medium'} variant={'subtitle1'}>
-            The actions were executed on the following resources
-          </Text>
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginBottom: '30px',
+          }}>
+          <IconButton
+            style={{
+              position: 'relative',
+              top: '0px',
+              right: '0px',
+            }}
+            onClick={onClose}
+            size={'small'}>
+            <CloseIcon color="action" />
+          </IconButton>
+        </Grid>
+        <Grid>
+          <Card variant={'message'} className={classes.rootCard}>
+            <Grid container direction="row">
+              <Grid item xs={1}>
+                <InfoOutlinedIcon color={'primary'} />
+              </Grid>
+              <Grid container item xs={11}>
+                <CardHeader>Are you sure to run the action now?</CardHeader>
+                <Text>
+                  This will perform the action inmediately on the selected
+                  resource and cannot be undone
+                </Text>
+                <Grid
+                  style={{marginTop: '20px'}}
+                  container
+                  direction="column"
+                  item
+                  xs={2}>
+                  <Text useEllipsis={true} weight="bold">
+                    Action:
+                  </Text>
+                  <Text useEllipsis={true} weight="bold">
+                    Resource:
+                  </Text>
+                </Grid>
+                <Grid
+                  style={{marginTop: '20px'}}
+                  container
+                  direction="column"
+                  item
+                  xs={2}>
+                  <Text>{dataRow.actionTempleate}</Text>
+                  <Text>{dataRow.resourceSpecification}</Text>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Card>
         </Grid>
       </Card>
       <DialogActions className={classes.dialogActions}>
         <Button
-          onClick={() => {
-            onClose();
-          }}
+          className={classes.option}
+          variant="outlined"
+          color="primary"
+          onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          onClick={onClose}
           className={classes.option}
           variant="contained"
           color="primary">
-          Close
+          Execute Now
         </Button>
       </DialogActions>
     </Dialog>
