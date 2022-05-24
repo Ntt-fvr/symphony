@@ -91,7 +91,7 @@ const DialogExecuteNow = (props: Props) => {
             style={{
               position: 'relative',
               top: '0px',
-              right: '0px',
+              right: '-7px',
             }}
             onClick={onClose}
             size={'small'}>

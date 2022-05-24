@@ -96,8 +96,9 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   open?: boolean,
-  onClose: () => void,
+  onClose?: () => void,
   isDialogSelectDate: boolean,
+  returnSheduledAction?: () => void,
 |}>;
 const tableColumns = [
   {
@@ -154,7 +155,7 @@ const data = [
   },
 ];
 const StepperAction = (props: Props) => {
-  const {onClose, isDialogSelectDate} = props;
+  const {onClose, isDialogSelectDate, returnSheduledAction} = props;
   const [setFilters] = useState([]);
   const [isDialogConfirmChange, setIsDialogConfirmChange] = useState(
     isDialogSelectDate,
@@ -172,9 +173,6 @@ const StepperAction = (props: Props) => {
   }, []);
   const handleConfirmDate = () => {
     setActiveStep(2);
-  };
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
   const handleClickOpenConfirmChange = () => {
@@ -313,8 +311,7 @@ const StepperAction = (props: Props) => {
               variant="outlined"
               color="primary"
               onClick={() => {
-                onClose();
-                handleBack();
+                returnSheduledAction();
               }}>
               Cancel
             </Button>
