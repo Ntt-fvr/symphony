@@ -23,6 +23,9 @@ const ConfigurationTimer = () => {
     {name: 'Fixed Interval', id: 'fixed_interval'},
     {name: 'Specific date and time', id: 'date_time'},
   ];
+  const dateTimeValues = [
+    {name: 'test', id:'test'}
+  ]
   const [
     configurationsValues,
     handleInputChange,
@@ -76,6 +79,24 @@ const ConfigurationTimer = () => {
           name={'expressionLanguage'}
           value={expressionLanguage}
           handleInputChange={handleInputChange}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          label={'Seconds'}
+          type={'number'}
+          name={'secondsNumber'}
+          value={secondsNumber}
+          handleInputChange={handleInputChange}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Select
+          label={'Date and Time'}
+          name={'dateTimerExpression'}
+          value={dateTimerExpression}
+          onChange={handleInputChange}
+          items={dateTimeValues}
         />
       </Grid>
       {expressionLanguage ? (
