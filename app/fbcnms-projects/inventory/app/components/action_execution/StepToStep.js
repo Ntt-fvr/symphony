@@ -9,8 +9,7 @@
  */
 
 import * as React from 'react';
-import LensIcon from '@material-ui/icons/Lens';
-import PanoramaFishEyeIcon from '@material-ui/icons/PanoramaFishEye';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Step from '@material-ui/core/Step';
 import StepConnector from '@material-ui/core/StepConnector';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -22,12 +21,9 @@ import {withStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '100%',
+    width: '30%',
     flexGrow: '0',
     margin: '0',
-  },
-  stepperRoot: {
-    background: '#F5F7FC',
   },
   stepLabelRoot: {
     color: 'blue',
@@ -42,11 +38,17 @@ const useStyles = makeStyles(() => ({
     color: '#784af4',
   },
   circleStep: {
-    fontSize: '16px',
-    color: symphony.palette.D400,
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    background: 'gray',
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   completedStep: {
-    fontSize: '16px',
+    fontSize: '28px',
     color: symphony.palette.B600,
     zIndex: 1,
   },
@@ -55,8 +57,8 @@ const useStyles = makeStyles(() => ({
 const QontoConnector = withStyles({
   alternativeLabel: {
     top: 10,
-    left: 'calc(-50% + 7px)',
-    right: 'calc(50% + 7px)',
+    left: 'calc(-50% + 15px)',
+    right: 'calc(50% + 15px)',
   },
   active: {
     '& $line': {
@@ -85,15 +87,15 @@ function QontoStepIcon(props) {
         [classes.activeStep]: active,
       })}>
       {completed ? (
-        <LensIcon className={classes.completedStep} />
+        <CheckCircleIcon className={classes.completedStep} />
       ) : (
-        <PanoramaFishEyeIcon className={classes.circleStep} />
+        <div className={classes.circleStep}>2</div>
       )}
     </div>
   );
 }
 
-const steps = ['Select Date', 'Confirm Change'];
+const steps = ['Action Definition', 'Select Actions'];
 
 type Props = $ReadOnly<{|
   activeStep: any,
@@ -106,7 +108,6 @@ const StepToStep = (props: Props) => {
   return (
     <div className={classes.root}>
       <Stepper
-        className={classes.stepperRoot}
         alternativeLabel
         activeStep={activeStep}
         connector={<QontoConnector />}>

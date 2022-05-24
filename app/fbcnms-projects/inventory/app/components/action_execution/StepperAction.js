@@ -36,10 +36,11 @@ const useStyles = makeStyles(() => ({
     padding: '0',
   },
   title: {
-    color: 'red',
+    color: symphony.palette.D400,
+    paddingBottom: '16px',
   },
   subTitle: {
-    color: 'blue',
+    color: symphony.palette.D400,
   },
   formField: {
     '& .MuiOutlinedInput-notchedOutline': {
@@ -70,8 +71,9 @@ const useStyles = makeStyles(() => ({
     },
   },
   option: {
-    width: '111px',
+    width: '75px',
     height: '36px',
+    marginLeft: '24px',
   },
   bar: {
     display: 'flex',
@@ -98,16 +100,6 @@ type Props = $ReadOnly<{|
   isDialogSelectDate: boolean,
 |}>;
 const tableColumns = [
-  {
-    key: 'id',
-    title: 'ID',
-    getSortingValue: row => row.id,
-    render: row => (
-      <Button color="primary" variant="text" tooltip={row.id ?? ''}>
-        {row.id}
-      </Button>
-    ),
-  },
   {
     key: 'location',
     title: 'Location',
@@ -168,8 +160,9 @@ const StepperAction = (props: Props) => {
     isDialogSelectDate,
   );
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const [checked, setChecked] = useState(true);
+  const [checkedResource, setCheckedResource] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
   const handleSelectDate = useCallback(clickedDate => {
@@ -193,10 +186,17 @@ const StepperAction = (props: Props) => {
     <div>
       <Grid item xs={12}>
         <Card className={classes.CardContiner}>
-          <Grid container justify={'center'}>
+          <Grid
+            style={{
+              marginBottom: '22px',
+              borderBottom: '1px solid',
+              color: symphony.palette.D100,
+            }}
+            container
+            justify={'center'}>
             <StepToStep activeStep={activeStep} />
           </Grid>
-          <Grid container direction="column">
+          <Grid style={{marginBottom: '26px'}} container direction="column">
             <Text className={classes.title} variant="h6" weight="bold">
               Define the behavior of the action
             </Text>
@@ -206,6 +206,7 @@ const StepperAction = (props: Props) => {
           </Grid>
           <Grid
             style={{
+              paddingBottom: '19px',
               marginBottom: '30px',
               borderBottom: '1px solid',
               color: symphony.palette.D100,
@@ -216,6 +217,7 @@ const StepperAction = (props: Props) => {
             <Grid item xs={5}>
               <TextField
                 className={classes.formField}
+                helperText={'*Required'}
                 required
                 label="Name"
                 fullWidth
@@ -236,7 +238,7 @@ const StepperAction = (props: Props) => {
               />
             </Grid>
           </Grid>
-          <Grid item xs={12}>
+          <Grid style={{marginBottom: '40px'}} item xs={12}>
             <div className={classes.bar}>
               <div className={classes.searchBar}>
                 <PowerSearchBar
@@ -250,13 +252,14 @@ const StepperAction = (props: Props) => {
               </div>
             </div>
           </Grid>
-          <Grid container justify="space-between">
+          <Grid
+            style={{marginBottom: '20px'}}
+            container
+            justify="space-between">
             <Checkbox
               checked={checked}
               title="Select All"
-              onChange={selection =>
-                setChecked(selection === 'checked' ? true : false)
-              }
+              onChange={() => setChecked(prevStateChecked => !prevStateChecked)}
             />
             <TextField
               required
@@ -272,14 +275,39 @@ const StepperAction = (props: Props) => {
               <MenuItem>Update</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
+          <Grid item xs={12} style={{margin: '20px 0 20px 0'}}>
             <Table
               className={classes.tableInside}
               data={data}
-              columns={tableColumns}
+              columns={[
+                {
+                  key: 'id',
+                  title: 'ID',
+                  getSortingValue: row => row.id,
+                  render: row => (
+                    <Checkbox
+                      checked={checkedResource}
+                      title={
+                        <Button
+                          color="primary"
+                          variant="text"
+                          tooltip={row.id ?? ''}>
+                          {row.id}
+                        </Button>
+                      }
+                      onChange={() =>
+                        setCheckedResource(
+                          prevStateCheckResource => !prevStateCheckResource,
+                        )
+                      }
+                    />
+                  ),
+                },
+                ...tableColumns,
+              ]}
             />
           </Grid>
-          <Grid container>
+          <Grid container justify="flex-end">
             <Button
               className={classes.option}
               variant="outlined"
@@ -291,6 +319,7 @@ const StepperAction = (props: Props) => {
               Cancel
             </Button>
             <Button
+              disabled
               onClick={() => {
                 handleClickOpenConfirmChange();
                 handleSelectDate();
@@ -309,3 +338,12 @@ const StepperAction = (props: Props) => {
 };
 
 export default StepperAction;
+/**
+  {/* <Button
+                        color="primary"
+                        variant="text"
+                        tooltip={row.id ?? ''}>
+                        {row.id}
+                      </Button>
+                    </div> *
+*/

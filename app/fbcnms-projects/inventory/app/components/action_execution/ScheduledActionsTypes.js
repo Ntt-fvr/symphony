@@ -10,11 +10,11 @@
 
 import Button from '@symphony/design-system/components/Button';
 import ConfigureTitle from './common/ConfigureTitle';
+import DialogExecuteNow from './common/DialogExecuteNow';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
-
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {CreateAction} from './CreateAction';
@@ -156,7 +156,11 @@ const ScheduledActionsTypes = () => {
   const classes = useStyles();
   const [setFilters] = useState([]);
   const [openCreateAction, setOpenCreateAction] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
+  const handleOpenModal = dataRow => {
+    setOpenModal(prevStateOpenModal => !prevStateOpenModal);
+  };
   const handleCreateAction = () => {
     setOpenCreateAction(setStateCreateAction => !setStateCreateAction);
   };
@@ -209,7 +213,7 @@ const ScheduledActionsTypes = () => {
                   tooltip={row.id ?? ''}
                   skin="gray"
                   icon={LaunchIcon}
-                  onClick={() => console.log('INFO ROW', row)}
+                  onClick={() => handleOpenModal(row)}
                 />
               ),
             },
@@ -225,6 +229,7 @@ const ScheduledActionsTypes = () => {
           }}
         />
       </Grid>
+      {openModal && <DialogExecuteNow />}
     </Grid>
   );
 };
