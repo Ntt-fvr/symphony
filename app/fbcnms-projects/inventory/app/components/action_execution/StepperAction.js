@@ -10,23 +10,15 @@
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
-import ConfigureTitle from './common/ConfigureTitle';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogConfirmChange from './DialogConfirmChange';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useCallback, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
-import {SelectDateTime} from './SelectDateTime';
 import {StepToStep} from './StepToStep';
 import {makeStyles} from '@material-ui/styles';
 
@@ -35,7 +27,7 @@ const useStyles = makeStyles(() => ({
   CardContiner: {
     padding: '0',
   },
-  title: {
+  titleCard: {
     color: symphony.palette.D400,
     paddingBottom: '16px',
   },
@@ -195,7 +187,7 @@ const StepperAction = (props: Props) => {
             <StepToStep activeStep={activeStep} />
           </Grid>
           <Grid style={{marginBottom: '26px'}} container direction="column">
-            <Text className={classes.title} variant="h6" weight="bold">
+            <Text className={classes.titleCard} variant="h6" weight="bold">
               Define the behavior of the action
             </Text>
             <Text className={classes.subTitle} variant="subtitle2">
@@ -335,12 +327,3 @@ const StepperAction = (props: Props) => {
 };
 
 export default StepperAction;
-/**
-  {/* <Button
-                        color="primary"
-                        variant="text"
-                        tooltip={row.id ?? ''}>
-                        {row.id}
-                      </Button>
-                    </div> *
-*/

@@ -10,15 +10,10 @@
 
 import * as React from 'react';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import StepperAction from './StepperAction';
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
 import {ScheduledActionsTypes} from './ScheduledActionsTypes';
-import {TableAffectedResources} from './common/TableAffectedResources';
-import {TableDetails} from './common/TableDetails';
-import {TableLogs} from './common/TableLogs';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 
@@ -32,11 +27,6 @@ const useStyles = makeStyles(() => ({
     margin: '0 0 40px 0',
     display: 'flex',
     justifyContent: 'space-between',
-  },
-  accordionDetails: {
-    '&.MuiAccordionDetails-root': {
-      padding: '0 16px 0px ',
-    },
   },
 }));
 export type Props = $ReadOnly<{|

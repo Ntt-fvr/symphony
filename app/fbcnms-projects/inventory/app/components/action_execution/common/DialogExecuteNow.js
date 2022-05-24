@@ -19,7 +19,6 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -50,14 +49,6 @@ const useStyles = makeStyles(() => ({
   option: {
     width: '111px',
     height: '36px',
-  },
-  textarea: {
-    minHeight: '60px',
-    '& textarea': {
-      height: '100%',
-      overflow: 'auto',
-      lineHeight: '1.5',
-    },
   },
 }));
 
