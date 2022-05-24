@@ -7,11 +7,11 @@
  * @flow
  * @format
  */
-
 import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
 import BlockNameInput from './BlockNameInput';
+import ConfigurationChoice from './ConfigurationChoice';
 import ConfigurationExecuteFlow from './ConfigurationExecuteFlow';
 import ConfigurationForEachLoop from './ConfigurationForEachLoop';
 import ConfigurationGoTo from './ConfigurationGoTo';
@@ -21,6 +21,7 @@ import ConfigurationParallel from './ConfigurationParallel';
 import ConfigurationTimer from './ConfigurationTimer';
 import ConfigurationTriggeredStart from './ConfigurationTriggeredStart';
 import ConfigurationWaitForSignal from './ConfigurationWaitForSignal';
+import {TYPE as ChoiceType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as ExecuteFlowType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
 import {TYPE as ExecuteNetworkActionType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
 import {TYPE as ForEachLoopType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
@@ -57,6 +58,7 @@ const ConfigureSettings = ({block}: Props) => {
   const classes = useStyles();
 
   const getConfigurationBlock = ({type}) => {
+    debugger;
     switch (type) {
       case TimerType:
         return <ConfigurationTimer block={block} />;
@@ -76,6 +78,8 @@ const ConfigureSettings = ({block}: Props) => {
         return <ConfigurationForEachLoop block={block} />;
       case Parallel:
         return <ConfigurationParallel block={block} />;
+      case ChoiceType:
+        return <ConfigurationChoice block={block} />;
       default:
         return '';
     }
