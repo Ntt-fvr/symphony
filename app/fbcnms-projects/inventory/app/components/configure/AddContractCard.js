@@ -93,7 +93,8 @@ type Rule = {
     },
   };
 
-const AddContractCard = () => {
+const AddContractCard = (props) => {
+  const {hideContractForm} = props;
   const classes = useStyles();
   const [rule, setRule] = useState<Rule>({data: {}});
   const [slotStartDate, setSlotStartDate] = useState(moment);
@@ -136,7 +137,7 @@ const AddContractCard = () => {
             <ButtonSaveDelete
               variant={'outlined'}
               onClick={() => {
-                hideEditCounterForm();
+                hideContractForm();
               }}>
               {'Cancel'}
             </ButtonSaveDelete>

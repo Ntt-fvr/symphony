@@ -56,12 +56,12 @@ const useStyles = makeStyles(() => ({
 
 const ContractsTypes = () => {
   const classes = useStyles();
-  const [open, setOpen] = useState(true);
   const [showAddCard, setShowAddCard] = useState(false);
-  function handleOpen(event) {
-    event.stopPropagation();
-    setOpen(!open);
-  }
+
+  const hideContractForm = () => {
+    setShowAddCard(false);
+  };
+
 
   const showAddContractTypeCard = (woType: ?WorkOrderTypeNode) => {
     setShowAddCard(true);
@@ -70,7 +70,9 @@ const ContractsTypes = () => {
   if (showAddCard) {
     return (
       <div className={classes.paper}>
-        <AddContractCard />
+        <AddContractCard 
+        hideContractForm={hideContractForm}
+        />
       </div>
     );
   }
