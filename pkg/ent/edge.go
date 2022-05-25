@@ -288,6 +288,22 @@ func (c *Comparator) Comparatorkqitargetfk(ctx context.Context) ([]*KqiComparato
 	return result, err
 }
 
+func (c *Cost) Uplitem(ctx context.Context) (*UplItem, error) {
+	result, err := c.Edges.UplitemOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryUplitem().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Cost) Workorder(ctx context.Context) (*WorkOrder, error) {
+	result, err := c.Edges.WorkorderOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryWorkorder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
 	result, err := c.Edges.CounterfamilyOrErr()
 	if IsNotLoaded(err) {
@@ -2392,6 +2408,14 @@ func (t *Threshold) Rulethreshold(ctx context.Context) ([]*Rule, error) {
 	return result, err
 }
 
+func (ui *UplItem) UplItem(ctx context.Context) (*Cost, error) {
+	result, err := ui.Edges.UplItemOrErr()
+	if IsNotLoaded(err) {
+		result, err = ui.QueryUplItem().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (u *User) ProfilePhoto(ctx context.Context) (*File, error) {
 	result, err := u.Edges.ProfilePhotoOrErr()
 	if IsNotLoaded(err) {
@@ -2646,6 +2670,14 @@ func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
 		result, err = wo.QueryAppointment().All(ctx)
 	}
 	return result, err
+}
+
+func (wo *WorkOrder) Workorder(ctx context.Context) (*Cost, error) {
+	result, err := wo.Edges.WorkorderOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryWorkorder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (wod *WorkOrderDefinition) Type(ctx context.Context) (*WorkOrderType, error) {

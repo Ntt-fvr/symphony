@@ -129,6 +129,16 @@ type AddComparatorInput struct {
 	Name string `json:"name"`
 }
 
+type AddCostInput struct {
+	Item      string  `json:"item"`
+	Uplitem   int     `json:"uplitem"`
+	Unit      float64 `json:"unit"`
+	Price     float64 `json:"price"`
+	Quantity  int     `json:"quantity"`
+	Total     float64 `json:"total"`
+	Workorder int     `json:"workorder"`
+}
+
 type AddCounterFamilyInput struct {
 	Name string `json:"name"`
 }
@@ -528,6 +538,13 @@ type AddThresholdInput struct {
 	Kpi         int    `json:"kpi"`
 }
 
+type AddUplItemInput struct {
+	ExternalID string  `json:"externalId"`
+	Item       string  `json:"item"`
+	Unit       float64 `json:"unit"`
+	Price      float64 `json:"price"`
+}
+
 type AddUsersGroupInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
@@ -697,6 +714,15 @@ type Coordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
+type CostFilterInput struct {
+	FilterType  CostFilterType      `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type CounterFamilyFilterInput struct {
 	FilterType  CounterFamilyFilterType `json:"filterType"`
 	Operator    enum.FilterOperator     `json:"operator"`
@@ -813,6 +839,17 @@ type EditBlockInstanceInput struct {
 type EditComparatorInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type EditCostInput struct {
+	ID        int     `json:"id"`
+	Item      string  `json:"item"`
+	Uplitem   int     `json:"uplitem"`
+	Unit      float64 `json:"unit"`
+	Price     float64 `json:"price"`
+	Quantity  int     `json:"quantity"`
+	Total     float64 `json:"total"`
+	Workorder int     `json:"workorder"`
 }
 
 type EditCounterFamilyInput struct {
@@ -1183,6 +1220,14 @@ type EditThresholdInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      bool   `json:"status"`
+}
+
+type EditUplItemInput struct {
+	ID         int     `json:"id"`
+	ExternalID string  `json:"externalId"`
+	Item       string  `json:"item"`
+	Unit       float64 `json:"unit"`
+	Price      float64 `json:"price"`
 }
 
 type EditUserInput struct {
@@ -2035,6 +2080,15 @@ type UpdateUserGroupsInput struct {
 	RemoveGroupIds []int `json:"removeGroupIds"`
 }
 
+type UplItemFilterInput struct {
+	FilterType  UplItemFilterType   `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type UserAvailability struct {
 	User          *ent.User `json:"user"`
 	SlotStartDate time.Time `json:"slotStartDate"`
@@ -2299,6 +2353,45 @@ func (e *ComparatorFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ComparatorFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CostFilterType string
+
+const (
+	CostFilterTypeItem CostFilterType = "ITEM"
+)
+
+var AllCostFilterType = []CostFilterType{
+	CostFilterTypeItem,
+}
+
+func (e CostFilterType) IsValid() bool {
+	switch e {
+	case CostFilterTypeItem:
+		return true
+	}
+	return false
+}
+
+func (e CostFilterType) String() string {
+	return string(e)
+}
+
+func (e *CostFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CostFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CostFilterType", str)
+	}
+	return nil
+}
+
+func (e CostFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -3952,6 +4045,45 @@ func (e *TopologyLinkType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e TopologyLinkType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type UplItemFilterType string
+
+const (
+	UplItemFilterTypeItem UplItemFilterType = "ITEM"
+)
+
+var AllUplItemFilterType = []UplItemFilterType{
+	UplItemFilterTypeItem,
+}
+
+func (e UplItemFilterType) IsValid() bool {
+	switch e {
+	case UplItemFilterTypeItem:
+		return true
+	}
+	return false
+}
+
+func (e UplItemFilterType) String() string {
+	return string(e)
+}
+
+func (e *UplItemFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UplItemFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UplItemFilterType", str)
+	}
+	return nil
+}
+
+func (e UplItemFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

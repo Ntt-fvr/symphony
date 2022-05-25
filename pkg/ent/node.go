@@ -30,6 +30,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -111,6 +112,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -1308,6 +1310,93 @@ func (c *Comparator) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = c.QueryComparatorkqitargetfk().
 		Select(kqicomparator.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (c *Cost) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     c.ID,
+		Type:   "Cost",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(c.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Item); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "item",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Unit); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "float64",
+		Name:  "unit",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Price); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "price",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Quantity); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "quantity",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Total); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "float64",
+		Name:  "total",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "UplItem",
+		Name: "uplitem",
+	}
+	node.Edges[0].IDs, err = c.QueryUplitem().
+		Select(uplitem.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "WorkOrder",
+		Name: "workorder",
+	}
+	node.Edges[1].IDs, err = c.QueryWorkorder().
+		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -8548,6 +8637,75 @@ func (t *Threshold) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ui.ID,
+		Type:   "UplItem",
+		Fields: make([]*Field, 6),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ui.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Externalid); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "externalid",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Item); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "item",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Unit); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "unit",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Price); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "float64",
+		Name:  "price",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Cost",
+		Name: "UplItem",
+	}
+	node.Edges[0].IDs, err = ui.QueryUplItem().
+		Select(cost.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
@@ -8882,7 +9040,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 		ID:     wo.ID,
 		Type:   "WorkOrder",
 		Fields: make([]*Field, 13),
-		Edges:  make([]*Edge, 16),
+		Edges:  make([]*Edge, 17),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(wo.CreateTime); err != nil {
@@ -9145,6 +9303,16 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[15].IDs, err = wo.QueryAppointment().
 		Select(appointment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[16] = &Edge{
+		Type: "Cost",
+		Name: "workorder",
+	}
+	node.Edges[16].IDs, err = wo.QueryWorkorder().
+		Select(cost.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -9625,6 +9793,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Comparator.Query().
 			Where(comparator.ID(id)).
 			CollectFields(ctx, "Comparator").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case cost.Table:
+		n, err := c.Cost.Query().
+			Where(cost.ID(id)).
+			CollectFields(ctx, "Cost").
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -10354,6 +10531,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Threshold.Query().
 			Where(threshold.ID(id)).
 			CollectFields(ctx, "Threshold").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case uplitem.Table:
+		n, err := c.UplItem.Query().
+			Where(uplitem.ID(id)).
+			CollectFields(ctx, "UplItem").
 			Only(ctx)
 		if err != nil {
 			return nil, err

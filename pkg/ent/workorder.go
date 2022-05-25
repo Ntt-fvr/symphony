@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -98,9 +99,11 @@ type WorkOrderEdges struct {
 	Assignee *User
 	// Appointment holds the value of the appointment edge.
 	Appointment []*Appointment
+	// Workorder holds the value of the workorder edge.
+	Workorder *Cost
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [16]bool
+	loadedTypes [17]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -280,6 +283,20 @@ func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
 		return e.Appointment, nil
 	}
 	return nil, &NotLoadedError{edge: "appointment"}
+}
+
+// WorkorderOrErr returns the Workorder value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e WorkOrderEdges) WorkorderOrErr() (*Cost, error) {
+	if e.loadedTypes[16] {
+		if e.Workorder == nil {
+			// The edge workorder was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: cost.Label}
+		}
+		return e.Workorder, nil
+	}
+	return nil, &NotLoadedError{edge: "workorder"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -524,6 +541,11 @@ func (wo *WorkOrder) QueryAssignee() *UserQuery {
 // QueryAppointment queries the appointment edge of the WorkOrder.
 func (wo *WorkOrder) QueryAppointment() *AppointmentQuery {
 	return (&WorkOrderClient{config: wo.config}).QueryAppointment(wo)
+}
+
+// QueryWorkorder queries the workorder edge of the WorkOrder.
+func (wo *WorkOrder) QueryWorkorder() *CostQuery {
+	return (&WorkOrderClient{config: wo.config}).QueryWorkorder(wo)
 }
 
 // Update returns a builder for updating this WorkOrder.

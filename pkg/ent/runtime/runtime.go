@@ -23,6 +23,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -105,6 +106,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -451,6 +453,29 @@ func init() {
 	comparatorDescName := comparatorFields[0].Descriptor()
 	// comparator.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	comparator.NameValidator = comparatorDescName.Validators[0].(func(string) error)
+	costMixin := schema.Cost{}.Mixin()
+	cost.Policy = privacy.NewPolicies(schema.Cost{})
+	cost.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := cost.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	costMixinFields0 := costMixin[0].Fields()
+	costFields := schema.Cost{}.Fields()
+	_ = costFields
+	// costDescCreateTime is the schema descriptor for create_time field.
+	costDescCreateTime := costMixinFields0[0].Descriptor()
+	// cost.DefaultCreateTime holds the default value on creation for the create_time field.
+	cost.DefaultCreateTime = costDescCreateTime.Default.(func() time.Time)
+	// costDescUpdateTime is the schema descriptor for update_time field.
+	costDescUpdateTime := costMixinFields0[1].Descriptor()
+	// cost.DefaultUpdateTime holds the default value on creation for the update_time field.
+	cost.DefaultUpdateTime = costDescUpdateTime.Default.(func() time.Time)
+	// cost.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	cost.UpdateDefaultUpdateTime = costDescUpdateTime.UpdateDefault.(func() time.Time)
 	counterMixin := schema.Counter{}.Mixin()
 	counter.Policy = privacy.NewPolicies(schema.Counter{})
 	counter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2665,6 +2690,29 @@ func init() {
 	thresholdDescDescription := thresholdFields[1].Descriptor()
 	// threshold.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	threshold.DescriptionValidator = thresholdDescDescription.Validators[0].(func(string) error)
+	uplitemMixin := schema.UplItem{}.Mixin()
+	uplitem.Policy = privacy.NewPolicies(schema.UplItem{})
+	uplitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := uplitem.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	uplitemMixinFields0 := uplitemMixin[0].Fields()
+	uplitemFields := schema.UplItem{}.Fields()
+	_ = uplitemFields
+	// uplitemDescCreateTime is the schema descriptor for create_time field.
+	uplitemDescCreateTime := uplitemMixinFields0[0].Descriptor()
+	// uplitem.DefaultCreateTime holds the default value on creation for the create_time field.
+	uplitem.DefaultCreateTime = uplitemDescCreateTime.Default.(func() time.Time)
+	// uplitemDescUpdateTime is the schema descriptor for update_time field.
+	uplitemDescUpdateTime := uplitemMixinFields0[1].Descriptor()
+	// uplitem.DefaultUpdateTime holds the default value on creation for the update_time field.
+	uplitem.DefaultUpdateTime = uplitemDescUpdateTime.Default.(func() time.Time)
+	// uplitem.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	uplitem.UpdateDefaultUpdateTime = uplitemDescUpdateTime.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

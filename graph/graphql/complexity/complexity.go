@@ -97,6 +97,12 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.RuleActions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleActionOrder, _ []*models.RuleActionFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.UplItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.UplItemOrder, _ []*models.UplItemFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Costs = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CostOrder, _ []*models.CostFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.Counters = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterOrder, _ []*models.CounterFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}

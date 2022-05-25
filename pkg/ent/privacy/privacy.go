@@ -480,6 +480,30 @@ func (f ComparatorMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ComparatorMutation", m)
 }
 
+// The CostQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CostQueryRuleFunc func(context.Context, *ent.CostQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CostQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CostQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CostQuery", q)
+}
+
+// The CostMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CostMutationRuleFunc func(context.Context, *ent.CostMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CostMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CostMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CostMutation", m)
+}
+
 // The CounterQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CounterQueryRuleFunc func(context.Context, *ent.CounterQuery) error
@@ -2422,6 +2446,30 @@ func (f ThresholdMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ThresholdMutation", m)
+}
+
+// The UplItemQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UplItemQueryRuleFunc func(context.Context, *ent.UplItemQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UplItemQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UplItemQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UplItemQuery", q)
+}
+
+// The UplItemMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UplItemMutationRuleFunc func(context.Context, *ent.UplItemMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UplItemMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UplItemMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UplItemMutation", m)
 }
 
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary

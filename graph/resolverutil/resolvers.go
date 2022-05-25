@@ -553,3 +553,23 @@ func ReconciliationRuleFilter(query *ent.ReconciliationRuleQuery, filters []*mod
 	}
 	return query, nil
 }
+
+func CostFilter(query *ent.CostQuery, filters []*models.CostFilterInput) (*ent.CostQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleCostFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func UplItemFilter(query *ent.UplItemQuery, filters []*models.UplItemFilterInput) (*ent.UplItemQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleUplItemFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

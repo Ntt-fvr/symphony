@@ -189,6 +189,18 @@ func (c *ComparatorQuery) collectField(ctx *graphql.OperationContext, field grap
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (c *CostQuery) CollectFields(ctx context.Context, satisfies ...string) *CostQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return c
+}
+
+func (c *CostQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CostQuery {
+	return c
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (c *CounterQuery) CollectFields(ctx context.Context, satisfies ...string) *CounterQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1825,6 +1837,26 @@ func (t *ThresholdQuery) collectField(ctx *graphql.OperationContext, field graph
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ui *UplItemQuery) CollectFields(ctx context.Context, satisfies ...string) *UplItemQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		ui = ui.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return ui
+}
+
+func (ui *UplItemQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *UplItemQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "uplitem":
+			ui = ui.WithUplItem(func(query *CostQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return ui
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) *UserQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		u = u.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1941,6 +1973,10 @@ func (wo *WorkOrderQuery) collectField(ctx *graphql.OperationContext, field grap
 			})
 		case "workOrderType":
 			wo = wo.WithType(func(query *WorkOrderTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		case "workorder":
+			wo = wo.WithWorkorder(func(query *CostQuery) {
 				query.collectField(ctx, field)
 			})
 		}

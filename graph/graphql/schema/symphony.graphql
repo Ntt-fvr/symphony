@@ -3431,6 +3431,140 @@ type ExecutionEdge {
 }
 
 """
+Properties by which uplitem connections can be ordered.
+"""
+enum UplItemOrderField {
+  """
+  Order uplitems by string.
+  """
+  ITEM
+
+  """
+  Order uplitems by creation string.
+  """
+  CREATED_AT
+
+  """
+  Order uplitems by update string.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for uplitems connections.
+"""
+input UplItemOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order uplitems by.
+  """
+  field: UplItemOrderField
+}
+
+"""
+A connection to a list of uplitems.
+"""
+type UplItemConnection {
+  """
+  Total uplitems of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of uplitems edges.
+  """
+  edges: [UplItemEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A uplitems edge in a connection.
+"""
+type UplItemEdge {
+  """
+  The uplitems at the end of the edge.
+  """
+  node: UplItem
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which cost connections can be ordered.
+"""
+enum CostOrderField {
+  """
+  Order costs by string.
+  """
+  ITEM
+
+  """
+  Order costs by creation string.
+  """
+  CREATED_AT
+
+  """
+  Order costs by update string.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for uplitems connections.
+"""
+input CostOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order costs by.
+  """
+  field: CostOrderField
+}
+
+"""
+A connection to a list of costs.
+"""
+type CostConnection {
+  """
+  Total costs of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of costs edges.
+  """
+  edges: [CostEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A costs edge in a connection.
+"""
+type CostEdge {
+  """
+  The costs at the end of the edge.
+  """
+  node: Cost
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
 Properties by which Action connections can be ordered.
 """
 enum ActionOrderField {
@@ -7376,6 +7510,76 @@ type Query {
     filterBy: [ExecutionFilterInput!]
   ): ExecutionConnection!
 
+  """
+  A list of uplitems.
+  """
+  uplItems(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned uplitems.
+    """
+    orderBy: UplItemOrder
+
+    """
+    Filtering options for the returned uplitems.
+    """
+    filterBy: [UplItemFilterInput!]
+  ): UplItemConnection!
+
+  """
+  A list of costs.
+  """
+  costs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned costs.
+    """
+    orderBy: CostOrder
+
+    """
+    Filtering options for the returned costs.
+    """
+    filterBy: [CostFilterInput!]
+  ): CostConnection!
+
 """
   A list of actions.
   """
@@ -8725,6 +8929,12 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
+  addUplItem(input: AddUplItemInput!): UplItem!
+  editUplItem(input: EditUplItemInput!): UplItem!
+  removeUplItem(id: ID!): ID!
+  addCost(input: AddCostInput!): Cost!
+  editCost(input: EditCostInput!): Cost!
+  removeCost(id: ID!): ID!
 }
 
 """
@@ -10210,6 +10420,88 @@ input EditParameterCatalogInput {
   index: Int!
   disabled: Boolean
 }
+
+type UplItem implements Node {
+  id: ID!
+  externalId: String!
+  item: String!
+  unit: Float!
+  price: Float!
+}
+
+input AddUplItemInput {
+  externalId: String!
+  item: String!
+  unit: Float!
+  price: Float!
+}
+
+input EditUplItemInput {
+  id: ID!
+  externalId: String!
+  item: String!
+  unit: Float!
+  price: Float!
+}
+
+enum UplItemFilterType {
+  ITEM
+}
+
+input UplItemFilterInput {
+  filterType: UplItemFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type Cost implements Node {
+  id: ID!
+  item: String!
+  unit: Float!
+  price: Float!
+  quantity: Int!
+  total: Float!
+  uplitem: UplItem!
+  workorder: WorkOrder!
+}
+
+input AddCostInput {
+  item: String!
+  uplitem: ID!
+  unit: Float!
+  price: Float!
+  quantity: Int!
+  total: Float!
+  workorder: ID!
+}
+
+input EditCostInput {
+  id: ID!
+  item: String!
+  uplitem: ID!
+  unit: Float!
+  price: Float!
+  quantity: Int!
+  total: Float!
+  workorder: ID!
+}
+
+enum CostFilterType {
+  ITEM
+}
+
+input CostFilterInput {
+  filterType: CostFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 
 """
 Appointment Status

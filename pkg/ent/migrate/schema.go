@@ -460,6 +460,41 @@ var (
 		PrimaryKey:  []*schema.Column{ComparatorsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// CostsColumns holds the columns for the "costs" table.
+	CostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "item", Type: field.TypeString},
+		{Name: "unit", Type: field.TypeFloat64},
+		{Name: "price", Type: field.TypeFloat64},
+		{Name: "quantity", Type: field.TypeInt},
+		{Name: "total", Type: field.TypeFloat64},
+		{Name: "upl_item_upl_item", Type: field.TypeInt, Unique: true, Nullable: true},
+		{Name: "work_order_workorder", Type: field.TypeInt, Unique: true, Nullable: true},
+	}
+	// CostsTable holds the schema information for the "costs" table.
+	CostsTable = &schema.Table{
+		Name:       "costs",
+		Columns:    CostsColumns,
+		PrimaryKey: []*schema.Column{CostsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "costs_upl_items_UplItem",
+				Columns: []*schema.Column{CostsColumns[8]},
+
+				RefColumns: []*schema.Column{UplItemsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "costs_work_orders_workorder",
+				Columns: []*schema.Column{CostsColumns[9]},
+
+				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// CountersColumns holds the columns for the "counters" table.
 	CountersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3125,6 +3160,23 @@ var (
 			},
 		},
 	}
+	// UplItemsColumns holds the columns for the "upl_items" table.
+	UplItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "externalid", Type: field.TypeString},
+		{Name: "item", Type: field.TypeString},
+		{Name: "unit", Type: field.TypeFloat64},
+		{Name: "price", Type: field.TypeFloat64},
+	}
+	// UplItemsTable holds the schema information for the "upl_items" table.
+	UplItemsTable = &schema.Table{
+		Name:        "upl_items",
+		Columns:     UplItemsColumns,
+		PrimaryKey:  []*schema.Column{UplItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3730,6 +3782,7 @@ var (
 		CheckListItemDefinitionsTable,
 		CommentsTable,
 		ComparatorsTable,
+		CostsTable,
 		CountersTable,
 		CounterFamiliesTable,
 		CounterFormulasTable,
@@ -3811,6 +3864,7 @@ var (
 		SurveyWiFiScansTable,
 		TechesTable,
 		ThresholdsTable,
+		UplItemsTable,
 		UsersTable,
 		UsersGroupsTable,
 		VendorsTable,
@@ -3857,6 +3911,8 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = UsersTable
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
+	CostsTable.ForeignKeys[0].RefTable = UplItemsTable
+	CostsTable.ForeignKeys[1].RefTable = WorkOrdersTable
 	CountersTable.ForeignKeys[0].RefTable = CounterFamiliesTable
 	CountersTable.ForeignKeys[1].RefTable = VendorsTable
 	CounterFormulasTable.ForeignKeys[0].RefTable = CountersTable

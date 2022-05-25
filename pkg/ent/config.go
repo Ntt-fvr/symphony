@@ -41,6 +41,7 @@ type hooks struct {
 	CheckListItemDefinition           []ent.Hook
 	Comment                           []ent.Hook
 	Comparator                        []ent.Hook
+	Cost                              []ent.Hook
 	Counter                           []ent.Hook
 	CounterFamily                     []ent.Hook
 	CounterFormula                    []ent.Hook
@@ -122,6 +123,7 @@ type hooks struct {
 	SurveyWiFiScan                    []ent.Hook
 	Tech                              []ent.Hook
 	Threshold                         []ent.Hook
+	UplItem                           []ent.Hook
 	User                              []ent.Hook
 	UsersGroup                        []ent.Hook
 	Vendor                            []ent.Hook

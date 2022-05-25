@@ -26,6 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -107,6 +108,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -152,6 +154,8 @@ type Client struct {
 	Comment *CommentClient
 	// Comparator is the client for interacting with the Comparator builders.
 	Comparator *ComparatorClient
+	// Cost is the client for interacting with the Cost builders.
+	Cost *CostClient
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -314,6 +318,8 @@ type Client struct {
 	Tech *TechClient
 	// Threshold is the client for interacting with the Threshold builders.
 	Threshold *ThresholdClient
+	// UplItem is the client for interacting with the UplItem builders.
+	UplItem *UplItemClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -358,6 +364,7 @@ func (c *Client) init() {
 	c.CheckListItemDefinition = NewCheckListItemDefinitionClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Comparator = NewComparatorClient(c.config)
+	c.Cost = NewCostClient(c.config)
 	c.Counter = NewCounterClient(c.config)
 	c.CounterFamily = NewCounterFamilyClient(c.config)
 	c.CounterFormula = NewCounterFormulaClient(c.config)
@@ -439,6 +446,7 @@ func (c *Client) init() {
 	c.SurveyWiFiScan = NewSurveyWiFiScanClient(c.config)
 	c.Tech = NewTechClient(c.config)
 	c.Threshold = NewThresholdClient(c.config)
+	c.UplItem = NewUplItemClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UsersGroup = NewUsersGroupClient(c.config)
 	c.Vendor = NewVendorClient(c.config)
@@ -492,6 +500,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
 		Comment:                           NewCommentClient(cfg),
 		Comparator:                        NewComparatorClient(cfg),
+		Cost:                              NewCostClient(cfg),
 		Counter:                           NewCounterClient(cfg),
 		CounterFamily:                     NewCounterFamilyClient(cfg),
 		CounterFormula:                    NewCounterFormulaClient(cfg),
@@ -573,6 +582,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
 		Tech:                              NewTechClient(cfg),
 		Threshold:                         NewThresholdClient(cfg),
+		UplItem:                           NewUplItemClient(cfg),
 		User:                              NewUserClient(cfg),
 		UsersGroup:                        NewUsersGroupClient(cfg),
 		Vendor:                            NewVendorClient(cfg),
@@ -609,6 +619,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
 		Comment:                           NewCommentClient(cfg),
 		Comparator:                        NewComparatorClient(cfg),
+		Cost:                              NewCostClient(cfg),
 		Counter:                           NewCounterClient(cfg),
 		CounterFamily:                     NewCounterFamilyClient(cfg),
 		CounterFormula:                    NewCounterFormulaClient(cfg),
@@ -690,6 +701,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
 		Tech:                              NewTechClient(cfg),
 		Threshold:                         NewThresholdClient(cfg),
+		UplItem:                           NewUplItemClient(cfg),
 		User:                              NewUserClient(cfg),
 		UsersGroup:                        NewUsersGroupClient(cfg),
 		Vendor:                            NewVendorClient(cfg),
@@ -739,6 +751,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CheckListItemDefinition.Use(hooks...)
 	c.Comment.Use(hooks...)
 	c.Comparator.Use(hooks...)
+	c.Cost.Use(hooks...)
 	c.Counter.Use(hooks...)
 	c.CounterFamily.Use(hooks...)
 	c.CounterFormula.Use(hooks...)
@@ -820,6 +833,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.SurveyWiFiScan.Use(hooks...)
 	c.Tech.Use(hooks...)
 	c.Threshold.Use(hooks...)
+	c.UplItem.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UsersGroup.Use(hooks...)
 	c.Vendor.Use(hooks...)
@@ -2545,6 +2559,127 @@ func (c *ComparatorClient) QueryComparatorkqitargetfk(co *Comparator) *KqiCompar
 func (c *ComparatorClient) Hooks() []Hook {
 	hooks := c.hooks.Comparator
 	return append(hooks[:len(hooks):len(hooks)], comparator.Hooks[:]...)
+}
+
+// CostClient is a client for the Cost schema.
+type CostClient struct {
+	config
+}
+
+// NewCostClient returns a client for the Cost from the given config.
+func NewCostClient(c config) *CostClient {
+	return &CostClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cost.Hooks(f(g(h())))`.
+func (c *CostClient) Use(hooks ...Hook) {
+	c.hooks.Cost = append(c.hooks.Cost, hooks...)
+}
+
+// Create returns a create builder for Cost.
+func (c *CostClient) Create() *CostCreate {
+	mutation := newCostMutation(c.config, OpCreate)
+	return &CostCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Cost entities.
+func (c *CostClient) CreateBulk(builders ...*CostCreate) *CostCreateBulk {
+	return &CostCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Cost.
+func (c *CostClient) Update() *CostUpdate {
+	mutation := newCostMutation(c.config, OpUpdate)
+	return &CostUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CostClient) UpdateOne(co *Cost) *CostUpdateOne {
+	mutation := newCostMutation(c.config, OpUpdateOne, withCost(co))
+	return &CostUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CostClient) UpdateOneID(id int) *CostUpdateOne {
+	mutation := newCostMutation(c.config, OpUpdateOne, withCostID(id))
+	return &CostUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Cost.
+func (c *CostClient) Delete() *CostDelete {
+	mutation := newCostMutation(c.config, OpDelete)
+	return &CostDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *CostClient) DeleteOne(co *Cost) *CostDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *CostClient) DeleteOneID(id int) *CostDeleteOne {
+	builder := c.Delete().Where(cost.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CostDeleteOne{builder}
+}
+
+// Query returns a query builder for Cost.
+func (c *CostClient) Query() *CostQuery {
+	return &CostQuery{config: c.config}
+}
+
+// Get returns a Cost entity by its id.
+func (c *CostClient) Get(ctx context.Context, id int) (*Cost, error) {
+	return c.Query().Where(cost.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CostClient) GetX(ctx context.Context, id int) *Cost {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUplitem queries the uplitem edge of a Cost.
+func (c *CostClient) QueryUplitem(co *Cost) *UplItemQuery {
+	query := &UplItemQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cost.Table, cost.FieldID, id),
+			sqlgraph.To(uplitem.Table, uplitem.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, cost.UplitemTable, cost.UplitemColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWorkorder queries the workorder edge of a Cost.
+func (c *CostClient) QueryWorkorder(co *Cost) *WorkOrderQuery {
+	query := &WorkOrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cost.Table, cost.FieldID, id),
+			sqlgraph.To(workorder.Table, workorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, cost.WorkorderTable, cost.WorkorderColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CostClient) Hooks() []Hook {
+	hooks := c.hooks.Cost
+	return append(hooks[:len(hooks):len(hooks)], cost.Hooks[:]...)
 }
 
 // CounterClient is a client for the Counter schema.
@@ -13964,6 +14099,111 @@ func (c *ThresholdClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], threshold.Hooks[:]...)
 }
 
+// UplItemClient is a client for the UplItem schema.
+type UplItemClient struct {
+	config
+}
+
+// NewUplItemClient returns a client for the UplItem from the given config.
+func NewUplItemClient(c config) *UplItemClient {
+	return &UplItemClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `uplitem.Hooks(f(g(h())))`.
+func (c *UplItemClient) Use(hooks ...Hook) {
+	c.hooks.UplItem = append(c.hooks.UplItem, hooks...)
+}
+
+// Create returns a create builder for UplItem.
+func (c *UplItemClient) Create() *UplItemCreate {
+	mutation := newUplItemMutation(c.config, OpCreate)
+	return &UplItemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UplItem entities.
+func (c *UplItemClient) CreateBulk(builders ...*UplItemCreate) *UplItemCreateBulk {
+	return &UplItemCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UplItem.
+func (c *UplItemClient) Update() *UplItemUpdate {
+	mutation := newUplItemMutation(c.config, OpUpdate)
+	return &UplItemUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UplItemClient) UpdateOne(ui *UplItem) *UplItemUpdateOne {
+	mutation := newUplItemMutation(c.config, OpUpdateOne, withUplItem(ui))
+	return &UplItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UplItemClient) UpdateOneID(id int) *UplItemUpdateOne {
+	mutation := newUplItemMutation(c.config, OpUpdateOne, withUplItemID(id))
+	return &UplItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UplItem.
+func (c *UplItemClient) Delete() *UplItemDelete {
+	mutation := newUplItemMutation(c.config, OpDelete)
+	return &UplItemDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UplItemClient) DeleteOne(ui *UplItem) *UplItemDeleteOne {
+	return c.DeleteOneID(ui.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UplItemClient) DeleteOneID(id int) *UplItemDeleteOne {
+	builder := c.Delete().Where(uplitem.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UplItemDeleteOne{builder}
+}
+
+// Query returns a query builder for UplItem.
+func (c *UplItemClient) Query() *UplItemQuery {
+	return &UplItemQuery{config: c.config}
+}
+
+// Get returns a UplItem entity by its id.
+func (c *UplItemClient) Get(ctx context.Context, id int) (*UplItem, error) {
+	return c.Query().Where(uplitem.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UplItemClient) GetX(ctx context.Context, id int) *UplItem {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUplItem queries the UplItem edge of a UplItem.
+func (c *UplItemClient) QueryUplItem(ui *UplItem) *CostQuery {
+	query := &CostQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ui.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uplitem.Table, uplitem.FieldID, id),
+			sqlgraph.To(cost.Table, cost.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, uplitem.UplItemTable, uplitem.UplItemColumn),
+		)
+		fromV = sqlgraph.Neighbors(ui.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UplItemClient) Hooks() []Hook {
+	hooks := c.hooks.UplItem
+	return append(hooks[:len(hooks):len(hooks)], uplitem.Hooks[:]...)
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -14819,6 +15059,22 @@ func (c *WorkOrderClient) QueryAppointment(wo *WorkOrder) *AppointmentQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(appointment.Table, appointment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.AppointmentTable, workorder.AppointmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWorkorder queries the workorder edge of a WorkOrder.
+func (c *WorkOrderClient) QueryWorkorder(wo *WorkOrder) *CostQuery {
+	query := &CostQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, id),
+			sqlgraph.To(cost.Table, cost.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, workorder.WorkorderTable, workorder.WorkorderColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil

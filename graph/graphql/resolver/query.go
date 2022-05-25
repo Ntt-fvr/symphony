@@ -583,6 +583,46 @@ func (r queryResolver) RuleActions(
 		)
 }
 
+func (r queryResolver) UplItems(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.UplItemOrder,
+	filterBy []*models.UplItemFilterInput,
+) (*ent.UplItemConnection, error) {
+	return r.ClientFrom(ctx).
+		UplItem.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithUplItemOrder(orderBy),
+			ent.WithUplItemFilter(
+				func(query *ent.UplItemQuery) (*ent.UplItemQuery, error) {
+					return resolverutil.UplItemFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) Costs(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.CostOrder,
+	filterBy []*models.CostFilterInput,
+) (*ent.CostConnection, error) {
+	return r.ClientFrom(ctx).
+		Cost.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithCostOrder(orderBy),
+			ent.WithCostFilter(
+				func(query *ent.CostQuery) (*ent.CostQuery, error) {
+					return resolverutil.CostFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) RuleTypes(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

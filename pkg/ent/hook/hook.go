@@ -182,6 +182,19 @@ func (f ComparatorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+// The CostFunc type is an adapter to allow the use of ordinary
+// function as Cost mutator.
+type CostFunc func(context.Context, *ent.CostMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CostFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CostMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CostMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CounterFunc type is an adapter to allow the use of ordinary
 // function as Counter mutator.
 type CounterFunc func(context.Context, *ent.CounterMutation) (ent.Value, error)
@@ -1231,6 +1244,19 @@ func (f ThresholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	mv, ok := m.(*ent.ThresholdMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ThresholdMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UplItemFunc type is an adapter to allow the use of ordinary
+// function as UplItem mutator.
+type UplItemFunc func(context.Context, *ent.UplItemMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UplItemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UplItemMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UplItemMutation", m)
 	}
 	return f(ctx, mv)
 }

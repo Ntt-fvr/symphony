@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
@@ -501,6 +502,25 @@ func (wou *WorkOrderUpdate) AddAppointment(a ...*Appointment) *WorkOrderUpdate {
 	return wou.AddAppointmentIDs(ids...)
 }
 
+// SetWorkorderID sets the workorder edge to Cost by id.
+func (wou *WorkOrderUpdate) SetWorkorderID(id int) *WorkOrderUpdate {
+	wou.mutation.SetWorkorderID(id)
+	return wou
+}
+
+// SetNillableWorkorderID sets the workorder edge to Cost by id if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableWorkorderID(id *int) *WorkOrderUpdate {
+	if id != nil {
+		wou = wou.SetWorkorderID(*id)
+	}
+	return wou
+}
+
+// SetWorkorder sets the workorder edge to Cost.
+func (wou *WorkOrderUpdate) SetWorkorder(c *Cost) *WorkOrderUpdate {
+	return wou.SetWorkorderID(c.ID)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wou *WorkOrderUpdate) Mutation() *WorkOrderMutation {
 	return wou.mutation
@@ -735,6 +755,12 @@ func (wou *WorkOrderUpdate) RemoveAppointment(a ...*Appointment) *WorkOrderUpdat
 		ids[i] = a[i].ID
 	}
 	return wou.RemoveAppointmentIDs(ids...)
+}
+
+// ClearWorkorder clears the "workorder" edge to type Cost.
+func (wou *WorkOrderUpdate) ClearWorkorder() *WorkOrderUpdate {
+	wou.mutation.ClearWorkorder()
+	return wou
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1715,6 +1741,41 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if wou.mutation.WorkorderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   workorder.WorkorderTable,
+			Columns: []string{workorder.WorkorderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.WorkorderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   workorder.WorkorderTable,
+			Columns: []string{workorder.WorkorderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorder.Label}
@@ -2187,6 +2248,25 @@ func (wouo *WorkOrderUpdateOne) AddAppointment(a ...*Appointment) *WorkOrderUpda
 	return wouo.AddAppointmentIDs(ids...)
 }
 
+// SetWorkorderID sets the workorder edge to Cost by id.
+func (wouo *WorkOrderUpdateOne) SetWorkorderID(id int) *WorkOrderUpdateOne {
+	wouo.mutation.SetWorkorderID(id)
+	return wouo
+}
+
+// SetNillableWorkorderID sets the workorder edge to Cost by id if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableWorkorderID(id *int) *WorkOrderUpdateOne {
+	if id != nil {
+		wouo = wouo.SetWorkorderID(*id)
+	}
+	return wouo
+}
+
+// SetWorkorder sets the workorder edge to Cost.
+func (wouo *WorkOrderUpdateOne) SetWorkorder(c *Cost) *WorkOrderUpdateOne {
+	return wouo.SetWorkorderID(c.ID)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wouo *WorkOrderUpdateOne) Mutation() *WorkOrderMutation {
 	return wouo.mutation
@@ -2421,6 +2501,12 @@ func (wouo *WorkOrderUpdateOne) RemoveAppointment(a ...*Appointment) *WorkOrderU
 		ids[i] = a[i].ID
 	}
 	return wouo.RemoveAppointmentIDs(ids...)
+}
+
+// ClearWorkorder clears the "workorder" edge to type Cost.
+func (wouo *WorkOrderUpdateOne) ClearWorkorder() *WorkOrderUpdateOne {
+	wouo.mutation.ClearWorkorder()
+	return wouo
 }
 
 // Save executes the query and returns the updated entity.
@@ -3391,6 +3477,41 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wouo.mutation.WorkorderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   workorder.WorkorderTable,
+			Columns: []string{workorder.WorkorderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.WorkorderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   workorder.WorkorderTable,
+			Columns: []string{workorder.WorkorderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
 				},
 			},
 		}

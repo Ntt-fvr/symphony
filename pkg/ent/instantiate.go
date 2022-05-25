@@ -85,6 +85,12 @@ func (c *ComparatorClient) Instantiate(co *Comparator) *Comparator {
 }
 
 // Instantiate entity configuration.
+func (c *CostClient) Instantiate(co *Cost) *Cost {
+	co.config = c.config
+	return co
+}
+
+// Instantiate entity configuration.
 func (c *CounterClient) Instantiate(co *Counter) *Counter {
 	co.config = c.config
 	return co
@@ -568,6 +574,12 @@ func (c *TechClient) Instantiate(t *Tech) *Tech {
 func (c *ThresholdClient) Instantiate(t *Threshold) *Threshold {
 	t.config = c.config
 	return t
+}
+
+// Instantiate entity configuration.
+func (c *UplItemClient) Instantiate(ui *UplItem) *UplItem {
+	ui.config = c.config
+	return ui
 }
 
 // Instantiate entity configuration.
