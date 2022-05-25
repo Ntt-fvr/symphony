@@ -108,6 +108,7 @@ const CountersTypes = () => {
   const [counterTypes, setCounterTypes] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState<Counters>({});
+  
 
   useEffect(() => {
     isCompleted();
