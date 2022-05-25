@@ -28,101 +28,6 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-<<<<<<< HEAD
-	Activity                    []ent.Hook
-	AlarmFilter                 []ent.Hook
-	AlarmStatus                 []ent.Hook
-	Appointment                 []ent.Hook
-	Block                       []ent.Hook
-	BlockInstance               []ent.Hook
-	CheckListCategory           []ent.Hook
-	CheckListCategoryDefinition []ent.Hook
-	CheckListItem               []ent.Hook
-	CheckListItemDefinition     []ent.Hook
-	Comment                     []ent.Hook
-	Comparator                  []ent.Hook
-	Contract                    []ent.Hook
-	Counter                     []ent.Hook
-	CounterFamily               []ent.Hook
-	CounterFormula              []ent.Hook
-	Customer                    []ent.Hook
-	DocumentCategory            []ent.Hook
-	Domain                      []ent.Hook
-	EntryPoint                  []ent.Hook
-	Equipment                   []ent.Hook
-	EquipmentCategory           []ent.Hook
-	EquipmentPort               []ent.Hook
-	EquipmentPortDefinition     []ent.Hook
-	EquipmentPortType           []ent.Hook
-	EquipmentPosition           []ent.Hook
-	EquipmentPositionDefinition []ent.Hook
-	EquipmentType               []ent.Hook
-	EventSeverity               []ent.Hook
-	ExitPoint                   []ent.Hook
-	ExportTask                  []ent.Hook
-	Feature                     []ent.Hook
-	File                        []ent.Hook
-	FloorPlan                   []ent.Hook
-	FloorPlanReferencePoint     []ent.Hook
-	FloorPlanScale              []ent.Hook
-	Flow                        []ent.Hook
-	FlowDraft                   []ent.Hook
-	FlowExecutionTemplate       []ent.Hook
-	FlowInstance                []ent.Hook
-	Formula                     []ent.Hook
-	Hyperlink                   []ent.Hook
-	Kpi                         []ent.Hook
-	KpiCategory                 []ent.Hook
-	Kqi                         []ent.Hook
-	KqiCategory                 []ent.Hook
-	KqiComparator               []ent.Hook
-	KqiPerspective              []ent.Hook
-	KqiSource                   []ent.Hook
-	KqiTarget                   []ent.Hook
-	KqiTemporalFrequency        []ent.Hook
-	Link                        []ent.Hook
-	Location                    []ent.Hook
-	LocationType                []ent.Hook
-	NetworkType                 []ent.Hook
-	Organization                []ent.Hook
-	ParameterCatalog            []ent.Hook
-	PermissionsPolicy           []ent.Hook
-	Project                     []ent.Hook
-	ProjectTemplate             []ent.Hook
-	ProjectType                 []ent.Hook
-	Property                    []ent.Hook
-	PropertyCategory            []ent.Hook
-	PropertyType                []ent.Hook
-	PropertyTypeValue           []ent.Hook
-	Recommendations             []ent.Hook
-	RecommendationsCategory     []ent.Hook
-	RecommendationsSources      []ent.Hook
-	ReportFilter                []ent.Hook
-	Rule                        []ent.Hook
-	RuleLimit                   []ent.Hook
-	RuleType                    []ent.Hook
-	Service                     []ent.Hook
-	ServiceEndpoint             []ent.Hook
-	ServiceEndpointDefinition   []ent.Hook
-	ServiceType                 []ent.Hook
-	Survey                      []ent.Hook
-	SurveyCellScan              []ent.Hook
-	SurveyQuestion              []ent.Hook
-	SurveyTemplateCategory      []ent.Hook
-	SurveyTemplateQuestion      []ent.Hook
-	SurveyWiFiScan              []ent.Hook
-	Tech                        []ent.Hook
-	Threshold                   []ent.Hook
-	Upl                         []ent.Hook
-	User                        []ent.Hook
-	UsersGroup                  []ent.Hook
-	Vendor                      []ent.Hook
-	WorkOrder                   []ent.Hook
-	WorkOrderDefinition         []ent.Hook
-	WorkOrderTemplate           []ent.Hook
-	WorkOrderType               []ent.Hook
-	WorkerType                  []ent.Hook
-=======
 	Action                            []ent.Hook
 	Activity                          []ent.Hook
 	AlarmFilter                       []ent.Hook
@@ -136,6 +41,7 @@ type hooks struct {
 	CheckListItemDefinition           []ent.Hook
 	Comment                           []ent.Hook
 	Comparator                        []ent.Hook
+	Contract                          []ent.Hook
 	Cost                              []ent.Hook
 	Counter                           []ent.Hook
 	CounterFamily                     []ent.Hook
@@ -218,6 +124,7 @@ type hooks struct {
 	SurveyWiFiScan                    []ent.Hook
 	Tech                              []ent.Hook
 	Threshold                         []ent.Hook
+	Upl                               []ent.Hook
 	UplItem                           []ent.Hook
 	User                              []ent.Hook
 	UsersGroup                        []ent.Hook
@@ -227,7 +134,6 @@ type hooks struct {
 	WorkOrderTemplate                 []ent.Hook
 	WorkOrderType                     []ent.Hook
 	WorkerType                        []ent.Hook
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 // Options applies the options on the config object.

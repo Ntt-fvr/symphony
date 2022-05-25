@@ -23,11 +23,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -110,11 +107,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -461,25 +455,16 @@ func init() {
 	comparatorDescName := comparatorFields[0].Descriptor()
 	// comparator.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	comparator.NameValidator = comparatorDescName.Validators[0].(func(string) error)
-<<<<<<< HEAD
 	contractMixin := schema.Contract{}.Mixin()
 	contract.Policy = privacy.NewPolicies(schema.Contract{})
 	contract.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := contract.Policy.EvalMutation(ctx, m); err != nil {
-=======
-	costMixin := schema.Cost{}.Mixin()
-	cost.Policy = privacy.NewPolicies(schema.Cost{})
-	cost.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := cost.Policy.EvalMutation(ctx, m); err != nil {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-<<<<<<< HEAD
 	contractMixinFields0 := contractMixin[0].Fields()
 	contractFields := schema.Contract{}.Fields()
 	_ = contractFields
@@ -509,7 +494,16 @@ func init() {
 	contractDescDescription := contractFields[5].Descriptor()
 	// contract.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	contract.DescriptionValidator = contractDescDescription.Validators[0].(func(string) error)
-=======
+	costMixin := schema.Cost{}.Mixin()
+	cost.Policy = privacy.NewPolicies(schema.Cost{})
+	cost.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := cost.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	costMixinFields0 := costMixin[0].Fields()
 	costFields := schema.Cost{}.Fields()
 	_ = costFields
@@ -523,7 +517,6 @@ func init() {
 	cost.DefaultUpdateTime = costDescUpdateTime.Default.(func() time.Time)
 	// cost.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	cost.UpdateDefaultUpdateTime = costDescUpdateTime.UpdateDefault.(func() time.Time)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	counterMixin := schema.Counter{}.Mixin()
 	counter.Policy = privacy.NewPolicies(schema.Counter{})
 	counter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2738,25 +2731,16 @@ func init() {
 	thresholdDescDescription := thresholdFields[1].Descriptor()
 	// threshold.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	threshold.DescriptionValidator = thresholdDescDescription.Validators[0].(func(string) error)
-<<<<<<< HEAD
 	uplMixin := schema.Upl{}.Mixin()
 	upl.Policy = privacy.NewPolicies(schema.Upl{})
 	upl.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := upl.Policy.EvalMutation(ctx, m); err != nil {
-=======
-	uplitemMixin := schema.UplItem{}.Mixin()
-	uplitem.Policy = privacy.NewPolicies(schema.UplItem{})
-	uplitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := uplitem.Policy.EvalMutation(ctx, m); err != nil {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-<<<<<<< HEAD
 	uplMixinFields0 := uplMixin[0].Fields()
 	uplFields := schema.Upl{}.Fields()
 	_ = uplFields
@@ -2778,7 +2762,16 @@ func init() {
 	uplDescDescription := uplFields[1].Descriptor()
 	// upl.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	upl.DescriptionValidator = uplDescDescription.Validators[0].(func(string) error)
-=======
+	uplitemMixin := schema.UplItem{}.Mixin()
+	uplitem.Policy = privacy.NewPolicies(schema.UplItem{})
+	uplitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := uplitem.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	uplitemMixinFields0 := uplitemMixin[0].Fields()
 	uplitemFields := schema.UplItem{}.Fields()
 	_ = uplitemFields
@@ -2792,7 +2785,6 @@ func init() {
 	uplitem.DefaultUpdateTime = uplitemDescUpdateTime.Default.(func() time.Time)
 	// uplitem.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	uplitem.UpdateDefaultUpdateTime = uplitemDescUpdateTime.UpdateDefault.(func() time.Time)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

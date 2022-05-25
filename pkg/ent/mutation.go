@@ -26,11 +26,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -114,11 +111,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -141,101 +135,6 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-<<<<<<< HEAD
-	TypeActivity                    = "Activity"
-	TypeAlarmFilter                 = "AlarmFilter"
-	TypeAlarmStatus                 = "AlarmStatus"
-	TypeAppointment                 = "Appointment"
-	TypeBlock                       = "Block"
-	TypeBlockInstance               = "BlockInstance"
-	TypeCheckListCategory           = "CheckListCategory"
-	TypeCheckListCategoryDefinition = "CheckListCategoryDefinition"
-	TypeCheckListItem               = "CheckListItem"
-	TypeCheckListItemDefinition     = "CheckListItemDefinition"
-	TypeComment                     = "Comment"
-	TypeComparator                  = "Comparator"
-	TypeContract                    = "Contract"
-	TypeCounter                     = "Counter"
-	TypeCounterFamily               = "CounterFamily"
-	TypeCounterFormula              = "CounterFormula"
-	TypeCustomer                    = "Customer"
-	TypeDocumentCategory            = "DocumentCategory"
-	TypeDomain                      = "Domain"
-	TypeEntryPoint                  = "EntryPoint"
-	TypeEquipment                   = "Equipment"
-	TypeEquipmentCategory           = "EquipmentCategory"
-	TypeEquipmentPort               = "EquipmentPort"
-	TypeEquipmentPortDefinition     = "EquipmentPortDefinition"
-	TypeEquipmentPortType           = "EquipmentPortType"
-	TypeEquipmentPosition           = "EquipmentPosition"
-	TypeEquipmentPositionDefinition = "EquipmentPositionDefinition"
-	TypeEquipmentType               = "EquipmentType"
-	TypeEventSeverity               = "EventSeverity"
-	TypeExitPoint                   = "ExitPoint"
-	TypeExportTask                  = "ExportTask"
-	TypeFeature                     = "Feature"
-	TypeFile                        = "File"
-	TypeFloorPlan                   = "FloorPlan"
-	TypeFloorPlanReferencePoint     = "FloorPlanReferencePoint"
-	TypeFloorPlanScale              = "FloorPlanScale"
-	TypeFlow                        = "Flow"
-	TypeFlowDraft                   = "FlowDraft"
-	TypeFlowExecutionTemplate       = "FlowExecutionTemplate"
-	TypeFlowInstance                = "FlowInstance"
-	TypeFormula                     = "Formula"
-	TypeHyperlink                   = "Hyperlink"
-	TypeKpi                         = "Kpi"
-	TypeKpiCategory                 = "KpiCategory"
-	TypeKqi                         = "Kqi"
-	TypeKqiCategory                 = "KqiCategory"
-	TypeKqiComparator               = "KqiComparator"
-	TypeKqiPerspective              = "KqiPerspective"
-	TypeKqiSource                   = "KqiSource"
-	TypeKqiTarget                   = "KqiTarget"
-	TypeKqiTemporalFrequency        = "KqiTemporalFrequency"
-	TypeLink                        = "Link"
-	TypeLocation                    = "Location"
-	TypeLocationType                = "LocationType"
-	TypeNetworkType                 = "NetworkType"
-	TypeOrganization                = "Organization"
-	TypeParameterCatalog            = "ParameterCatalog"
-	TypePermissionsPolicy           = "PermissionsPolicy"
-	TypeProject                     = "Project"
-	TypeProjectTemplate             = "ProjectTemplate"
-	TypeProjectType                 = "ProjectType"
-	TypeProperty                    = "Property"
-	TypePropertyCategory            = "PropertyCategory"
-	TypePropertyType                = "PropertyType"
-	TypePropertyTypeValue           = "PropertyTypeValue"
-	TypeRecommendations             = "Recommendations"
-	TypeRecommendationsCategory     = "RecommendationsCategory"
-	TypeRecommendationsSources      = "RecommendationsSources"
-	TypeReportFilter                = "ReportFilter"
-	TypeRule                        = "Rule"
-	TypeRuleLimit                   = "RuleLimit"
-	TypeRuleType                    = "RuleType"
-	TypeService                     = "Service"
-	TypeServiceEndpoint             = "ServiceEndpoint"
-	TypeServiceEndpointDefinition   = "ServiceEndpointDefinition"
-	TypeServiceType                 = "ServiceType"
-	TypeSurvey                      = "Survey"
-	TypeSurveyCellScan              = "SurveyCellScan"
-	TypeSurveyQuestion              = "SurveyQuestion"
-	TypeSurveyTemplateCategory      = "SurveyTemplateCategory"
-	TypeSurveyTemplateQuestion      = "SurveyTemplateQuestion"
-	TypeSurveyWiFiScan              = "SurveyWiFiScan"
-	TypeTech                        = "Tech"
-	TypeThreshold                   = "Threshold"
-	TypeUpl                         = "Upl"
-	TypeUser                        = "User"
-	TypeUsersGroup                  = "UsersGroup"
-	TypeVendor                      = "Vendor"
-	TypeWorkOrder                   = "WorkOrder"
-	TypeWorkOrderDefinition         = "WorkOrderDefinition"
-	TypeWorkOrderTemplate           = "WorkOrderTemplate"
-	TypeWorkOrderType               = "WorkOrderType"
-	TypeWorkerType                  = "WorkerType"
-=======
 	TypeAction                            = "Action"
 	TypeActivity                          = "Activity"
 	TypeAlarmFilter                       = "AlarmFilter"
@@ -249,6 +148,7 @@ const (
 	TypeCheckListItemDefinition           = "CheckListItemDefinition"
 	TypeComment                           = "Comment"
 	TypeComparator                        = "Comparator"
+	TypeContract                          = "Contract"
 	TypeCost                              = "Cost"
 	TypeCounter                           = "Counter"
 	TypeCounterFamily                     = "CounterFamily"
@@ -331,6 +231,7 @@ const (
 	TypeSurveyWiFiScan                    = "SurveyWiFiScan"
 	TypeTech                              = "Tech"
 	TypeThreshold                         = "Threshold"
+	TypeUpl                               = "Upl"
 	TypeUplItem                           = "UplItem"
 	TypeUser                              = "User"
 	TypeUsersGroup                        = "UsersGroup"
@@ -340,7 +241,6 @@ const (
 	TypeWorkOrderTemplate                 = "WorkOrderTemplate"
 	TypeWorkOrderType                     = "WorkOrderType"
 	TypeWorkerType                        = "WorkerType"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 )
 
 // ActionMutation represents an operation that mutate the Actions
@@ -11237,7 +11137,6 @@ func (m *ComparatorMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Comparator edge %s", name)
 }
 
-<<<<<<< HEAD
 // ContractMutation represents an operation that mutate the Contracts
 // nodes in the graph.
 type ContractMutation struct {
@@ -12205,10 +12104,7 @@ func (m *ContractMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Contract edge %s", name)
 }
 
-// CounterMutation represents an operation that mutate the Counters
-=======
 // CostMutation represents an operation that mutate the Costs
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 // nodes in the graph.
 type CostMutation struct {
 	config
@@ -82613,6 +82509,534 @@ func (m *ThresholdMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Threshold edge %s", name)
 }
 
+// UplMutation represents an operation that mutate the Upls
+// nodes in the graph.
+type UplMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	create_time     *time.Time
+	update_time     *time.Time
+	name            *string
+	description     *string
+	clearedFields   map[string]struct{}
+	contract        *int
+	clearedcontract bool
+	done            bool
+	oldValue        func(context.Context) (*Upl, error)
+	predicates      []predicate.Upl
+}
+
+var _ ent.Mutation = (*UplMutation)(nil)
+
+// uplOption allows to manage the mutation configuration using functional options.
+type uplOption func(*UplMutation)
+
+// newUplMutation creates new mutation for Upl.
+func newUplMutation(c config, op Op, opts ...uplOption) *UplMutation {
+	m := &UplMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUpl,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUplID sets the id field of the mutation.
+func withUplID(id int) uplOption {
+	return func(m *UplMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Upl
+		)
+		m.oldValue = func(ctx context.Context) (*Upl, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Upl.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUpl sets the old Upl of the mutation.
+func withUpl(node *Upl) uplOption {
+	return func(m *UplMutation) {
+		m.oldValue = func(context.Context) (*Upl, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UplMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UplMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *UplMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *UplMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *UplMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the Upl.
+// If the Upl object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UplMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *UplMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *UplMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *UplMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the Upl.
+// If the Upl object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UplMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *UplMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *UplMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *UplMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the Upl.
+// If the Upl object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UplMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *UplMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the description field.
+func (m *UplMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *UplMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old description value of the Upl.
+// If the Upl object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UplMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription reset all changes of the "description" field.
+func (m *UplMutation) ResetDescription() {
+	m.description = nil
+}
+
+// SetContractID sets the contract edge to Contract by id.
+func (m *UplMutation) SetContractID(id int) {
+	m.contract = &id
+}
+
+// ClearContract clears the contract edge to Contract.
+func (m *UplMutation) ClearContract() {
+	m.clearedcontract = true
+}
+
+// ContractCleared returns if the edge contract was cleared.
+func (m *UplMutation) ContractCleared() bool {
+	return m.clearedcontract
+}
+
+// ContractID returns the contract id in the mutation.
+func (m *UplMutation) ContractID() (id int, exists bool) {
+	if m.contract != nil {
+		return *m.contract, true
+	}
+	return
+}
+
+// ContractIDs returns the contract ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ContractID instead. It exists only for internal usage by the builders.
+func (m *UplMutation) ContractIDs() (ids []int) {
+	if id := m.contract; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetContract reset all changes of the "contract" edge.
+func (m *UplMutation) ResetContract() {
+	m.contract = nil
+	m.clearedcontract = false
+}
+
+// Op returns the operation name.
+func (m *UplMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Upl).
+func (m *UplMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *UplMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, upl.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, upl.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, upl.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, upl.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *UplMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case upl.FieldCreateTime:
+		return m.CreateTime()
+	case upl.FieldUpdateTime:
+		return m.UpdateTime()
+	case upl.FieldName:
+		return m.Name()
+	case upl.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *UplMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case upl.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case upl.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case upl.FieldName:
+		return m.OldName(ctx)
+	case upl.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown Upl field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *UplMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case upl.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case upl.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case upl.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case upl.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Upl field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *UplMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *UplMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *UplMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Upl numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *UplMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *UplMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UplMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Upl nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *UplMutation) ResetField(name string) error {
+	switch name {
+	case upl.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case upl.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case upl.FieldName:
+		m.ResetName()
+		return nil
+	case upl.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown Upl field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *UplMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.contract != nil {
+		edges = append(edges, upl.EdgeContract)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *UplMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case upl.EdgeContract:
+		if id := m.contract; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *UplMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *UplMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *UplMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedcontract {
+		edges = append(edges, upl.EdgeContract)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *UplMutation) EdgeCleared(name string) bool {
+	switch name {
+	case upl.EdgeContract:
+		return m.clearedcontract
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *UplMutation) ClearEdge(name string) error {
+	switch name {
+	case upl.EdgeContract:
+		m.ClearContract()
+		return nil
+	}
+	return fmt.Errorf("unknown Upl unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *UplMutation) ResetEdge(name string) error {
+	switch name {
+	case upl.EdgeContract:
+		m.ResetContract()
+		return nil
+	}
+	return fmt.Errorf("unknown Upl edge %s", name)
+}
+
 // UplItemMutation represents an operation that mutate the UplItems
 // nodes in the graph.
 type UplItemMutation struct {
@@ -83318,534 +83742,6 @@ func (m *UplItemMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown UplItem edge %s", name)
-}
-
-// UplMutation represents an operation that mutate the Upls
-// nodes in the graph.
-type UplMutation struct {
-	config
-	op              Op
-	typ             string
-	id              *int
-	create_time     *time.Time
-	update_time     *time.Time
-	name            *string
-	description     *string
-	clearedFields   map[string]struct{}
-	contract        *int
-	clearedcontract bool
-	done            bool
-	oldValue        func(context.Context) (*Upl, error)
-	predicates      []predicate.Upl
-}
-
-var _ ent.Mutation = (*UplMutation)(nil)
-
-// uplOption allows to manage the mutation configuration using functional options.
-type uplOption func(*UplMutation)
-
-// newUplMutation creates new mutation for Upl.
-func newUplMutation(c config, op Op, opts ...uplOption) *UplMutation {
-	m := &UplMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeUpl,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withUplID sets the id field of the mutation.
-func withUplID(id int) uplOption {
-	return func(m *UplMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Upl
-		)
-		m.oldValue = func(ctx context.Context) (*Upl, error) {
-			once.Do(func() {
-				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Upl.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withUpl sets the old Upl of the mutation.
-func withUpl(node *Upl) uplOption {
-	return func(m *UplMutation) {
-		m.oldValue = func(context.Context) (*Upl, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m UplMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m UplMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the id value in the mutation. Note that, the id
-// is available only if it was provided to the builder.
-func (m *UplMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// SetCreateTime sets the create_time field.
-func (m *UplMutation) SetCreateTime(t time.Time) {
-	m.create_time = &t
-}
-
-// CreateTime returns the create_time value in the mutation.
-func (m *UplMutation) CreateTime() (r time.Time, exists bool) {
-	v := m.create_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreateTime returns the old create_time value of the Upl.
-// If the Upl object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *UplMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
-	}
-	return oldValue.CreateTime, nil
-}
-
-// ResetCreateTime reset all changes of the "create_time" field.
-func (m *UplMutation) ResetCreateTime() {
-	m.create_time = nil
-}
-
-// SetUpdateTime sets the update_time field.
-func (m *UplMutation) SetUpdateTime(t time.Time) {
-	m.update_time = &t
-}
-
-// UpdateTime returns the update_time value in the mutation.
-func (m *UplMutation) UpdateTime() (r time.Time, exists bool) {
-	v := m.update_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateTime returns the old update_time value of the Upl.
-// If the Upl object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *UplMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
-	}
-	return oldValue.UpdateTime, nil
-}
-
-// ResetUpdateTime reset all changes of the "update_time" field.
-func (m *UplMutation) ResetUpdateTime() {
-	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *UplMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *UplMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the Upl.
-// If the Upl object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *UplMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *UplMutation) ResetName() {
-	m.name = nil
-}
-
-// SetDescription sets the description field.
-func (m *UplMutation) SetDescription(s string) {
-	m.description = &s
-}
-
-// Description returns the description value in the mutation.
-func (m *UplMutation) Description() (r string, exists bool) {
-	v := m.description
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDescription returns the old description value of the Upl.
-// If the Upl object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *UplMutation) OldDescription(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
-	}
-	return oldValue.Description, nil
-}
-
-// ResetDescription reset all changes of the "description" field.
-func (m *UplMutation) ResetDescription() {
-	m.description = nil
-}
-
-// SetContractID sets the contract edge to Contract by id.
-func (m *UplMutation) SetContractID(id int) {
-	m.contract = &id
-}
-
-// ClearContract clears the contract edge to Contract.
-func (m *UplMutation) ClearContract() {
-	m.clearedcontract = true
-}
-
-// ContractCleared returns if the edge contract was cleared.
-func (m *UplMutation) ContractCleared() bool {
-	return m.clearedcontract
-}
-
-// ContractID returns the contract id in the mutation.
-func (m *UplMutation) ContractID() (id int, exists bool) {
-	if m.contract != nil {
-		return *m.contract, true
-	}
-	return
-}
-
-// ContractIDs returns the contract ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// ContractID instead. It exists only for internal usage by the builders.
-func (m *UplMutation) ContractIDs() (ids []int) {
-	if id := m.contract; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetContract reset all changes of the "contract" edge.
-func (m *UplMutation) ResetContract() {
-	m.contract = nil
-	m.clearedcontract = false
-}
-
-// Op returns the operation name.
-func (m *UplMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (Upl).
-func (m *UplMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during
-// this mutation. Note that, in order to get all numeric
-// fields that were in/decremented, call AddedFields().
-func (m *UplMutation) Fields() []string {
-	fields := make([]string, 0, 4)
-	if m.create_time != nil {
-		fields = append(fields, upl.FieldCreateTime)
-	}
-	if m.update_time != nil {
-		fields = append(fields, upl.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, upl.FieldName)
-	}
-	if m.description != nil {
-		fields = append(fields, upl.FieldDescription)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name.
-// The second boolean value indicates that this field was
-// not set, or was not define in the schema.
-func (m *UplMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case upl.FieldCreateTime:
-		return m.CreateTime()
-	case upl.FieldUpdateTime:
-		return m.UpdateTime()
-	case upl.FieldName:
-		return m.Name()
-	case upl.FieldDescription:
-		return m.Description()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database.
-// An error is returned if the mutation operation is not UpdateOne,
-// or the query to the database was failed.
-func (m *UplMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case upl.FieldCreateTime:
-		return m.OldCreateTime(ctx)
-	case upl.FieldUpdateTime:
-		return m.OldUpdateTime(ctx)
-	case upl.FieldName:
-		return m.OldName(ctx)
-	case upl.FieldDescription:
-		return m.OldDescription(ctx)
-	}
-	return nil, fmt.Errorf("unknown Upl field %s", name)
-}
-
-// SetField sets the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *UplMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case upl.FieldCreateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreateTime(v)
-		return nil
-	case upl.FieldUpdateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateTime(v)
-		return nil
-	case upl.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	case upl.FieldDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDescription(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Upl field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented
-// or decremented during this mutation.
-func (m *UplMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was in/decremented
-// from a field with the given name. The second value indicates
-// that this field was not set, or was not define in the schema.
-func (m *UplMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *UplMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown Upl numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared
-// during this mutation.
-func (m *UplMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicates if this field was
-// cleared in this mutation.
-func (m *UplMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value for the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *UplMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown Upl nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation regarding the
-// given field name. It returns an error if the field is not
-// defined in the schema.
-func (m *UplMutation) ResetField(name string) error {
-	switch name {
-	case upl.FieldCreateTime:
-		m.ResetCreateTime()
-		return nil
-	case upl.FieldUpdateTime:
-		m.ResetUpdateTime()
-		return nil
-	case upl.FieldName:
-		m.ResetName()
-		return nil
-	case upl.FieldDescription:
-		m.ResetDescription()
-		return nil
-	}
-	return fmt.Errorf("unknown Upl field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this
-// mutation.
-func (m *UplMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.contract != nil {
-		edges = append(edges, upl.EdgeContract)
-	}
-	return edges
-}
-
-// AddedIDs returns all ids (to other nodes) that were added for
-// the given edge name.
-func (m *UplMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case upl.EdgeContract:
-		if id := m.contract; id != nil {
-			return []ent.Value{*id}
-		}
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this
-// mutation.
-func (m *UplMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
-	return edges
-}
-
-// RemovedIDs returns all ids (to other nodes) that were removed for
-// the given edge name.
-func (m *UplMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this
-// mutation.
-func (m *UplMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedcontract {
-		edges = append(edges, upl.EdgeContract)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean indicates if this edge was
-// cleared in this mutation.
-func (m *UplMutation) EdgeCleared(name string) bool {
-	switch name {
-	case upl.EdgeContract:
-		return m.clearedcontract
-	}
-	return false
-}
-
-// ClearEdge clears the value for the given name. It returns an
-// error if the edge name is not defined in the schema.
-func (m *UplMutation) ClearEdge(name string) error {
-	switch name {
-	case upl.EdgeContract:
-		m.ClearContract()
-		return nil
-	}
-	return fmt.Errorf("unknown Upl unique edge %s", name)
-}
-
-// ResetEdge resets all changes in the mutation regarding the
-// given edge name. It returns an error if the edge is not
-// defined in the schema.
-func (m *UplMutation) ResetEdge(name string) error {
-	switch name {
-	case upl.EdgeContract:
-		m.ResetContract()
-		return nil
-	}
-	return fmt.Errorf("unknown Upl edge %s", name)
 }
 
 // UserMutation represents an operation that mutate the Users
@@ -88863,7 +88759,7 @@ func (m *WorkOrderMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *WorkOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 17)
+	edges := make([]string, 0, 18)
 	if m._type != nil {
 		edges = append(edges, workorder.EdgeType)
 	}
@@ -89022,7 +88918,7 @@ func (m *WorkOrderMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *WorkOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 17)
+	edges := make([]string, 0, 18)
 	if m.removedequipment != nil {
 		edges = append(edges, workorder.EdgeEquipment)
 	}
@@ -89118,7 +89014,7 @@ func (m *WorkOrderMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *WorkOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 17)
+	edges := make([]string, 0, 18)
 	if m.cleared_type {
 		edges = append(edges, workorder.EdgeType)
 	}

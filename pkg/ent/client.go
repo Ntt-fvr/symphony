@@ -26,11 +26,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -112,11 +109,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -162,13 +156,10 @@ type Client struct {
 	Comment *CommentClient
 	// Comparator is the client for interacting with the Comparator builders.
 	Comparator *ComparatorClient
-<<<<<<< HEAD
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
-=======
 	// Cost is the client for interacting with the Cost builders.
 	Cost *CostClient
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -331,13 +322,10 @@ type Client struct {
 	Tech *TechClient
 	// Threshold is the client for interacting with the Threshold builders.
 	Threshold *ThresholdClient
-<<<<<<< HEAD
 	// Upl is the client for interacting with the Upl builders.
 	Upl *UplClient
-=======
 	// UplItem is the client for interacting with the UplItem builders.
 	UplItem *UplItemClient
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -382,11 +370,8 @@ func (c *Client) init() {
 	c.CheckListItemDefinition = NewCheckListItemDefinitionClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Comparator = NewComparatorClient(c.config)
-<<<<<<< HEAD
 	c.Contract = NewContractClient(c.config)
-=======
 	c.Cost = NewCostClient(c.config)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	c.Counter = NewCounterClient(c.config)
 	c.CounterFamily = NewCounterFamilyClient(c.config)
 	c.CounterFormula = NewCounterFormulaClient(c.config)
@@ -468,11 +453,8 @@ func (c *Client) init() {
 	c.SurveyWiFiScan = NewSurveyWiFiScanClient(c.config)
 	c.Tech = NewTechClient(c.config)
 	c.Threshold = NewThresholdClient(c.config)
-<<<<<<< HEAD
 	c.Upl = NewUplClient(c.config)
-=======
 	c.UplItem = NewUplItemClient(c.config)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	c.User = NewUserClient(c.config)
 	c.UsersGroup = NewUsersGroupClient(c.config)
 	c.Vendor = NewVendorClient(c.config)
@@ -511,103 +493,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	}
 	cfg := config{driver: tx, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
-<<<<<<< HEAD
-		ctx:                         ctx,
-		config:                      cfg,
-		Activity:                    NewActivityClient(cfg),
-		AlarmFilter:                 NewAlarmFilterClient(cfg),
-		AlarmStatus:                 NewAlarmStatusClient(cfg),
-		Appointment:                 NewAppointmentClient(cfg),
-		Block:                       NewBlockClient(cfg),
-		BlockInstance:               NewBlockInstanceClient(cfg),
-		CheckListCategory:           NewCheckListCategoryClient(cfg),
-		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
-		CheckListItem:               NewCheckListItemClient(cfg),
-		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
-		Comment:                     NewCommentClient(cfg),
-		Comparator:                  NewComparatorClient(cfg),
-		Contract:                    NewContractClient(cfg),
-		Counter:                     NewCounterClient(cfg),
-		CounterFamily:               NewCounterFamilyClient(cfg),
-		CounterFormula:              NewCounterFormulaClient(cfg),
-		Customer:                    NewCustomerClient(cfg),
-		DocumentCategory:            NewDocumentCategoryClient(cfg),
-		Domain:                      NewDomainClient(cfg),
-		EntryPoint:                  NewEntryPointClient(cfg),
-		Equipment:                   NewEquipmentClient(cfg),
-		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
-		EquipmentPort:               NewEquipmentPortClient(cfg),
-		EquipmentPortDefinition:     NewEquipmentPortDefinitionClient(cfg),
-		EquipmentPortType:           NewEquipmentPortTypeClient(cfg),
-		EquipmentPosition:           NewEquipmentPositionClient(cfg),
-		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
-		EquipmentType:               NewEquipmentTypeClient(cfg),
-		EventSeverity:               NewEventSeverityClient(cfg),
-		ExitPoint:                   NewExitPointClient(cfg),
-		ExportTask:                  NewExportTaskClient(cfg),
-		Feature:                     NewFeatureClient(cfg),
-		File:                        NewFileClient(cfg),
-		FloorPlan:                   NewFloorPlanClient(cfg),
-		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
-		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
-		Flow:                        NewFlowClient(cfg),
-		FlowDraft:                   NewFlowDraftClient(cfg),
-		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
-		FlowInstance:                NewFlowInstanceClient(cfg),
-		Formula:                     NewFormulaClient(cfg),
-		Hyperlink:                   NewHyperlinkClient(cfg),
-		Kpi:                         NewKpiClient(cfg),
-		KpiCategory:                 NewKpiCategoryClient(cfg),
-		Kqi:                         NewKqiClient(cfg),
-		KqiCategory:                 NewKqiCategoryClient(cfg),
-		KqiComparator:               NewKqiComparatorClient(cfg),
-		KqiPerspective:              NewKqiPerspectiveClient(cfg),
-		KqiSource:                   NewKqiSourceClient(cfg),
-		KqiTarget:                   NewKqiTargetClient(cfg),
-		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
-		Link:                        NewLinkClient(cfg),
-		Location:                    NewLocationClient(cfg),
-		LocationType:                NewLocationTypeClient(cfg),
-		NetworkType:                 NewNetworkTypeClient(cfg),
-		Organization:                NewOrganizationClient(cfg),
-		ParameterCatalog:            NewParameterCatalogClient(cfg),
-		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
-		Project:                     NewProjectClient(cfg),
-		ProjectTemplate:             NewProjectTemplateClient(cfg),
-		ProjectType:                 NewProjectTypeClient(cfg),
-		Property:                    NewPropertyClient(cfg),
-		PropertyCategory:            NewPropertyCategoryClient(cfg),
-		PropertyType:                NewPropertyTypeClient(cfg),
-		PropertyTypeValue:           NewPropertyTypeValueClient(cfg),
-		Recommendations:             NewRecommendationsClient(cfg),
-		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
-		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
-		ReportFilter:                NewReportFilterClient(cfg),
-		Rule:                        NewRuleClient(cfg),
-		RuleLimit:                   NewRuleLimitClient(cfg),
-		RuleType:                    NewRuleTypeClient(cfg),
-		Service:                     NewServiceClient(cfg),
-		ServiceEndpoint:             NewServiceEndpointClient(cfg),
-		ServiceEndpointDefinition:   NewServiceEndpointDefinitionClient(cfg),
-		ServiceType:                 NewServiceTypeClient(cfg),
-		Survey:                      NewSurveyClient(cfg),
-		SurveyCellScan:              NewSurveyCellScanClient(cfg),
-		SurveyQuestion:              NewSurveyQuestionClient(cfg),
-		SurveyTemplateCategory:      NewSurveyTemplateCategoryClient(cfg),
-		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
-		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
-		Tech:                        NewTechClient(cfg),
-		Threshold:                   NewThresholdClient(cfg),
-		Upl:                         NewUplClient(cfg),
-		User:                        NewUserClient(cfg),
-		UsersGroup:                  NewUsersGroupClient(cfg),
-		Vendor:                      NewVendorClient(cfg),
-		WorkOrder:                   NewWorkOrderClient(cfg),
-		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
-		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
-		WorkOrderType:               NewWorkOrderTypeClient(cfg),
-		WorkerType:                  NewWorkerTypeClient(cfg),
-=======
 		ctx:                               ctx,
 		config:                            cfg,
 		Action:                            NewActionClient(cfg),
@@ -623,6 +508,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
 		Comment:                           NewCommentClient(cfg),
 		Comparator:                        NewComparatorClient(cfg),
+		Contract:                          NewContractClient(cfg),
 		Cost:                              NewCostClient(cfg),
 		Counter:                           NewCounterClient(cfg),
 		CounterFamily:                     NewCounterFamilyClient(cfg),
@@ -705,6 +591,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
 		Tech:                              NewTechClient(cfg),
 		Threshold:                         NewThresholdClient(cfg),
+		Upl:                               NewUplClient(cfg),
 		UplItem:                           NewUplItemClient(cfg),
 		User:                              NewUserClient(cfg),
 		UsersGroup:                        NewUsersGroupClient(cfg),
@@ -714,7 +601,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		WorkOrderTemplate:                 NewWorkOrderTemplateClient(cfg),
 		WorkOrderType:                     NewWorkOrderTypeClient(cfg),
 		WorkerType:                        NewWorkerTypeClient(cfg),
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}, nil
 }
 
@@ -729,102 +615,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	}
 	cfg := config{driver: &txDriver{tx: tx, drv: c.driver}, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
-<<<<<<< HEAD
-		config:                      cfg,
-		Activity:                    NewActivityClient(cfg),
-		AlarmFilter:                 NewAlarmFilterClient(cfg),
-		AlarmStatus:                 NewAlarmStatusClient(cfg),
-		Appointment:                 NewAppointmentClient(cfg),
-		Block:                       NewBlockClient(cfg),
-		BlockInstance:               NewBlockInstanceClient(cfg),
-		CheckListCategory:           NewCheckListCategoryClient(cfg),
-		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
-		CheckListItem:               NewCheckListItemClient(cfg),
-		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
-		Comment:                     NewCommentClient(cfg),
-		Comparator:                  NewComparatorClient(cfg),
-		Contract:                    NewContractClient(cfg),
-		Counter:                     NewCounterClient(cfg),
-		CounterFamily:               NewCounterFamilyClient(cfg),
-		CounterFormula:              NewCounterFormulaClient(cfg),
-		Customer:                    NewCustomerClient(cfg),
-		DocumentCategory:            NewDocumentCategoryClient(cfg),
-		Domain:                      NewDomainClient(cfg),
-		EntryPoint:                  NewEntryPointClient(cfg),
-		Equipment:                   NewEquipmentClient(cfg),
-		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
-		EquipmentPort:               NewEquipmentPortClient(cfg),
-		EquipmentPortDefinition:     NewEquipmentPortDefinitionClient(cfg),
-		EquipmentPortType:           NewEquipmentPortTypeClient(cfg),
-		EquipmentPosition:           NewEquipmentPositionClient(cfg),
-		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
-		EquipmentType:               NewEquipmentTypeClient(cfg),
-		EventSeverity:               NewEventSeverityClient(cfg),
-		ExitPoint:                   NewExitPointClient(cfg),
-		ExportTask:                  NewExportTaskClient(cfg),
-		Feature:                     NewFeatureClient(cfg),
-		File:                        NewFileClient(cfg),
-		FloorPlan:                   NewFloorPlanClient(cfg),
-		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
-		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
-		Flow:                        NewFlowClient(cfg),
-		FlowDraft:                   NewFlowDraftClient(cfg),
-		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
-		FlowInstance:                NewFlowInstanceClient(cfg),
-		Formula:                     NewFormulaClient(cfg),
-		Hyperlink:                   NewHyperlinkClient(cfg),
-		Kpi:                         NewKpiClient(cfg),
-		KpiCategory:                 NewKpiCategoryClient(cfg),
-		Kqi:                         NewKqiClient(cfg),
-		KqiCategory:                 NewKqiCategoryClient(cfg),
-		KqiComparator:               NewKqiComparatorClient(cfg),
-		KqiPerspective:              NewKqiPerspectiveClient(cfg),
-		KqiSource:                   NewKqiSourceClient(cfg),
-		KqiTarget:                   NewKqiTargetClient(cfg),
-		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
-		Link:                        NewLinkClient(cfg),
-		Location:                    NewLocationClient(cfg),
-		LocationType:                NewLocationTypeClient(cfg),
-		NetworkType:                 NewNetworkTypeClient(cfg),
-		Organization:                NewOrganizationClient(cfg),
-		ParameterCatalog:            NewParameterCatalogClient(cfg),
-		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
-		Project:                     NewProjectClient(cfg),
-		ProjectTemplate:             NewProjectTemplateClient(cfg),
-		ProjectType:                 NewProjectTypeClient(cfg),
-		Property:                    NewPropertyClient(cfg),
-		PropertyCategory:            NewPropertyCategoryClient(cfg),
-		PropertyType:                NewPropertyTypeClient(cfg),
-		PropertyTypeValue:           NewPropertyTypeValueClient(cfg),
-		Recommendations:             NewRecommendationsClient(cfg),
-		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
-		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
-		ReportFilter:                NewReportFilterClient(cfg),
-		Rule:                        NewRuleClient(cfg),
-		RuleLimit:                   NewRuleLimitClient(cfg),
-		RuleType:                    NewRuleTypeClient(cfg),
-		Service:                     NewServiceClient(cfg),
-		ServiceEndpoint:             NewServiceEndpointClient(cfg),
-		ServiceEndpointDefinition:   NewServiceEndpointDefinitionClient(cfg),
-		ServiceType:                 NewServiceTypeClient(cfg),
-		Survey:                      NewSurveyClient(cfg),
-		SurveyCellScan:              NewSurveyCellScanClient(cfg),
-		SurveyQuestion:              NewSurveyQuestionClient(cfg),
-		SurveyTemplateCategory:      NewSurveyTemplateCategoryClient(cfg),
-		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
-		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
-		Tech:                        NewTechClient(cfg),
-		Threshold:                   NewThresholdClient(cfg),
-		Upl:                         NewUplClient(cfg),
-		User:                        NewUserClient(cfg),
-		UsersGroup:                  NewUsersGroupClient(cfg),
-		Vendor:                      NewVendorClient(cfg),
-		WorkOrder:                   NewWorkOrderClient(cfg),
-		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
-		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
-		WorkOrderType:               NewWorkOrderTypeClient(cfg),
-		WorkerType:                  NewWorkerTypeClient(cfg),
-=======
 		config:                            cfg,
 		Action:                            NewActionClient(cfg),
 		Activity:                          NewActivityClient(cfg),
@@ -839,6 +629,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
 		Comment:                           NewCommentClient(cfg),
 		Comparator:                        NewComparatorClient(cfg),
+		Contract:                          NewContractClient(cfg),
 		Cost:                              NewCostClient(cfg),
 		Counter:                           NewCounterClient(cfg),
 		CounterFamily:                     NewCounterFamilyClient(cfg),
@@ -921,6 +712,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
 		Tech:                              NewTechClient(cfg),
 		Threshold:                         NewThresholdClient(cfg),
+		Upl:                               NewUplClient(cfg),
 		UplItem:                           NewUplItemClient(cfg),
 		User:                              NewUserClient(cfg),
 		UsersGroup:                        NewUsersGroupClient(cfg),
@@ -930,7 +722,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		WorkOrderTemplate:                 NewWorkOrderTemplateClient(cfg),
 		WorkOrderType:                     NewWorkOrderTypeClient(cfg),
 		WorkerType:                        NewWorkerTypeClient(cfg),
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}, nil
 }
 
@@ -972,11 +763,8 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CheckListItemDefinition.Use(hooks...)
 	c.Comment.Use(hooks...)
 	c.Comparator.Use(hooks...)
-<<<<<<< HEAD
 	c.Contract.Use(hooks...)
-=======
 	c.Cost.Use(hooks...)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	c.Counter.Use(hooks...)
 	c.CounterFamily.Use(hooks...)
 	c.CounterFormula.Use(hooks...)
@@ -1058,11 +846,8 @@ func (c *Client) Use(hooks ...Hook) {
 	c.SurveyWiFiScan.Use(hooks...)
 	c.Tech.Use(hooks...)
 	c.Threshold.Use(hooks...)
-<<<<<<< HEAD
 	c.Upl.Use(hooks...)
-=======
 	c.UplItem.Use(hooks...)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	c.User.Use(hooks...)
 	c.UsersGroup.Use(hooks...)
 	c.Vendor.Use(hooks...)
@@ -2790,7 +2575,6 @@ func (c *ComparatorClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], comparator.Hooks[:]...)
 }
 
-<<<<<<< HEAD
 // ContractClient is a client for the Contract schema.
 type ContractClient struct {
 	config
@@ -2844,7 +2628,90 @@ func (c *ContractClient) Delete() *ContractDelete {
 
 // DeleteOne returns a delete builder for the given entity.
 func (c *ContractClient) DeleteOne(co *Contract) *ContractDeleteOne {
-=======
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ContractClient) DeleteOneID(id int) *ContractDeleteOne {
+	builder := c.Delete().Where(contract.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ContractDeleteOne{builder}
+}
+
+// Query returns a query builder for Contract.
+func (c *ContractClient) Query() *ContractQuery {
+	return &ContractQuery{config: c.config}
+}
+
+// Get returns a Contract entity by its id.
+func (c *ContractClient) Get(ctx context.Context, id int) (*Contract, error) {
+	return c.Query().Where(contract.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ContractClient) GetX(ctx context.Context, id int) *Contract {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOrganization queries the organization edge of a Contract.
+func (c *ContractClient) QueryOrganization(co *Contract) *OrganizationQuery {
+	query := &OrganizationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(contract.Table, contract.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, contract.OrganizationTable, contract.OrganizationColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUplContract queries the upl_contract edge of a Contract.
+func (c *ContractClient) QueryUplContract(co *Contract) *UplQuery {
+	query := &UplQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(contract.Table, contract.FieldID, id),
+			sqlgraph.To(upl.Table, upl.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, contract.UplContractTable, contract.UplContractColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWorkOrderContract queries the work_order_contract edge of a Contract.
+func (c *ContractClient) QueryWorkOrderContract(co *Contract) *WorkOrderQuery {
+	query := &WorkOrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(contract.Table, contract.FieldID, id),
+			sqlgraph.To(workorder.Table, workorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, contract.WorkOrderContractTable, contract.WorkOrderContractColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ContractClient) Hooks() []Hook {
+	hooks := c.hooks.Contract
+	return append(hooks[:len(hooks):len(hooks)], contract.Hooks[:]...)
+}
+
 // CostClient is a client for the Cost schema.
 type CostClient struct {
 	config
@@ -2898,32 +2765,10 @@ func (c *CostClient) Delete() *CostDelete {
 
 // DeleteOne returns a delete builder for the given entity.
 func (c *CostClient) DeleteOne(co *Cost) *CostDeleteOne {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	return c.DeleteOneID(co.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-<<<<<<< HEAD
-func (c *ContractClient) DeleteOneID(id int) *ContractDeleteOne {
-	builder := c.Delete().Where(contract.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ContractDeleteOne{builder}
-}
-
-// Query returns a query builder for Contract.
-func (c *ContractClient) Query() *ContractQuery {
-	return &ContractQuery{config: c.config}
-}
-
-// Get returns a Contract entity by its id.
-func (c *ContractClient) Get(ctx context.Context, id int) (*Contract, error) {
-	return c.Query().Where(contract.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ContractClient) GetX(ctx context.Context, id int) *Contract {
-=======
 func (c *CostClient) DeleteOneID(id int) *CostDeleteOne {
 	builder := c.Delete().Where(cost.ID(id))
 	builder.mutation.id = &id
@@ -2943,7 +2788,6 @@ func (c *CostClient) Get(ctx context.Context, id int) (*Cost, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *CostClient) GetX(ctx context.Context, id int) *Cost {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -2951,17 +2795,6 @@ func (c *CostClient) GetX(ctx context.Context, id int) *Cost {
 	return obj
 }
 
-<<<<<<< HEAD
-// QueryOrganization queries the organization edge of a Contract.
-func (c *ContractClient) QueryOrganization(co *Contract) *OrganizationQuery {
-	query := &OrganizationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(contract.Table, contract.FieldID, id),
-			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, contract.OrganizationTable, contract.OrganizationColumn),
-=======
 // QueryUplitem queries the uplitem edge of a Cost.
 func (c *CostClient) QueryUplitem(co *Cost) *UplItemQuery {
 	query := &UplItemQuery{config: c.config}
@@ -2971,7 +2804,6 @@ func (c *CostClient) QueryUplitem(co *Cost) *UplItemQuery {
 			sqlgraph.From(cost.Table, cost.FieldID, id),
 			sqlgraph.To(uplitem.Table, uplitem.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, cost.UplitemTable, cost.UplitemColumn),
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -2979,42 +2811,15 @@ func (c *CostClient) QueryUplitem(co *Cost) *UplItemQuery {
 	return query
 }
 
-<<<<<<< HEAD
-// QueryUplContract queries the upl_contract edge of a Contract.
-func (c *ContractClient) QueryUplContract(co *Contract) *UplQuery {
-	query := &UplQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(contract.Table, contract.FieldID, id),
-			sqlgraph.To(upl.Table, upl.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, contract.UplContractTable, contract.UplContractColumn),
-		)
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryWorkOrderContract queries the work_order_contract edge of a Contract.
-func (c *ContractClient) QueryWorkOrderContract(co *Contract) *WorkOrderQuery {
-=======
 // QueryWorkorder queries the workorder edge of a Cost.
 func (c *CostClient) QueryWorkorder(co *Cost) *WorkOrderQuery {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	query := &WorkOrderQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := co.ID
 		step := sqlgraph.NewStep(
-<<<<<<< HEAD
-			sqlgraph.From(contract.Table, contract.FieldID, id),
-			sqlgraph.To(workorder.Table, workorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, contract.WorkOrderContractTable, contract.WorkOrderContractColumn),
-=======
 			sqlgraph.From(cost.Table, cost.FieldID, id),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, cost.WorkorderTable, cost.WorkorderColumn),
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -3023,15 +2828,9 @@ func (c *CostClient) QueryWorkorder(co *Cost) *WorkOrderQuery {
 }
 
 // Hooks returns the client hooks.
-<<<<<<< HEAD
-func (c *ContractClient) Hooks() []Hook {
-	hooks := c.hooks.Contract
-	return append(hooks[:len(hooks):len(hooks)], contract.Hooks[:]...)
-=======
 func (c *CostClient) Hooks() []Hook {
 	hooks := c.hooks.Cost
 	return append(hooks[:len(hooks):len(hooks)], cost.Hooks[:]...)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 // CounterClient is a client for the Counter schema.
@@ -14467,7 +14266,6 @@ func (c *ThresholdClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], threshold.Hooks[:]...)
 }
 
-<<<<<<< HEAD
 // UplClient is a client for the Upl schema.
 type UplClient struct {
 	config
@@ -14544,7 +14342,35 @@ func (c *UplClient) Get(ctx context.Context, id int) (*Upl, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *UplClient) GetX(ctx context.Context, id int) *Upl {
-=======
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryContract queries the contract edge of a Upl.
+func (c *UplClient) QueryContract(u *Upl) *ContractQuery {
+	query := &ContractQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(upl.Table, upl.FieldID, id),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, upl.ContractTable, upl.ContractColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UplClient) Hooks() []Hook {
+	hooks := c.hooks.Upl
+	return append(hooks[:len(hooks):len(hooks)], upl.Hooks[:]...)
+}
+
 // UplItemClient is a client for the UplItem schema.
 type UplItemClient struct {
 	config
@@ -14621,7 +14447,6 @@ func (c *UplItemClient) Get(ctx context.Context, id int) (*UplItem, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *UplItemClient) GetX(ctx context.Context, id int) *UplItem {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -14629,19 +14454,6 @@ func (c *UplItemClient) GetX(ctx context.Context, id int) *UplItem {
 	return obj
 }
 
-<<<<<<< HEAD
-// QueryContract queries the contract edge of a Upl.
-func (c *UplClient) QueryContract(u *Upl) *ContractQuery {
-	query := &ContractQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(upl.Table, upl.FieldID, id),
-			sqlgraph.To(contract.Table, contract.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, upl.ContractTable, upl.ContractColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-=======
 // QueryUplItem queries the UplItem edge of a UplItem.
 func (c *UplItemClient) QueryUplItem(ui *UplItem) *CostQuery {
 	query := &CostQuery{config: c.config}
@@ -14653,22 +14465,15 @@ func (c *UplItemClient) QueryUplItem(ui *UplItem) *CostQuery {
 			sqlgraph.Edge(sqlgraph.O2O, false, uplitem.UplItemTable, uplitem.UplItemColumn),
 		)
 		fromV = sqlgraph.Neighbors(ui.driver.Dialect(), step)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-<<<<<<< HEAD
-func (c *UplClient) Hooks() []Hook {
-	hooks := c.hooks.Upl
-	return append(hooks[:len(hooks):len(hooks)], upl.Hooks[:]...)
-=======
 func (c *UplItemClient) Hooks() []Hook {
 	hooks := c.hooks.UplItem
 	return append(hooks[:len(hooks):len(hooks)], uplitem.Hooks[:]...)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 // UserClient is a client for the User schema.

@@ -12,11 +12,8 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -110,7 +107,7 @@ type WorkOrderEdges struct {
 	Workorder *Cost
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [17]bool
+	loadedTypes [18]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -309,7 +306,7 @@ func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
 // WorkorderOrErr returns the Workorder value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e WorkOrderEdges) WorkorderOrErr() (*Cost, error) {
-	if e.loadedTypes[16] {
+	if e.loadedTypes[17] {
 		if e.Workorder == nil {
 			// The edge workorder was loaded in eager-loading,
 			// but was not found.

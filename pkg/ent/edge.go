@@ -288,22 +288,14 @@ func (c *Comparator) Comparatorkqitargetfk(ctx context.Context) ([]*KqiComparato
 	return result, err
 }
 
-<<<<<<< HEAD
 func (c *Contract) Organization(ctx context.Context) (*Organization, error) {
 	result, err := c.Edges.OrganizationOrErr()
 	if IsNotLoaded(err) {
 		result, err = c.QueryOrganization().Only(ctx)
-=======
-func (c *Cost) Uplitem(ctx context.Context) (*UplItem, error) {
-	result, err := c.Edges.UplitemOrErr()
-	if IsNotLoaded(err) {
-		result, err = c.QueryUplitem().Only(ctx)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return result, MaskNotFound(err)
 }
 
-<<<<<<< HEAD
 func (c *Contract) UplContract(ctx context.Context) ([]*Upl, error) {
 	result, err := c.Edges.UplContractOrErr()
 	if IsNotLoaded(err) {
@@ -318,14 +310,22 @@ func (c *Contract) WorkOrderContract(ctx context.Context) ([]*WorkOrder, error) 
 		result, err = c.QueryWorkOrderContract().All(ctx)
 	}
 	return result, err
-=======
+}
+
+func (c *Cost) Uplitem(ctx context.Context) (*UplItem, error) {
+	result, err := c.Edges.UplitemOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryUplitem().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (c *Cost) Workorder(ctx context.Context) (*WorkOrder, error) {
 	result, err := c.Edges.WorkorderOrErr()
 	if IsNotLoaded(err) {
 		result, err = c.QueryWorkorder().Only(ctx)
 	}
 	return result, MaskNotFound(err)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
@@ -2440,17 +2440,18 @@ func (t *Threshold) Rulethreshold(ctx context.Context) ([]*Rule, error) {
 	return result, err
 }
 
-<<<<<<< HEAD
 func (u *Upl) Contract(ctx context.Context) (*Contract, error) {
 	result, err := u.Edges.ContractOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QueryContract().Only(ctx)
-=======
+	}
+	return result, MaskNotFound(err)
+}
+
 func (ui *UplItem) UplItem(ctx context.Context) (*Cost, error) {
 	result, err := ui.Edges.UplItemOrErr()
 	if IsNotLoaded(err) {
 		result, err = ui.QueryUplItem().Only(ctx)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return result, MaskNotFound(err)
 }

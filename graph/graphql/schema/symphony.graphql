@@ -3860,7 +3860,6 @@ type RuleActionEdge {
 }
 
 """
-<<<<<<< HEAD
 Properties by which Contract connections can be ordered.
 """
 enum ContractOrderField {
@@ -3998,9 +3997,7 @@ type UplEdge {
 
 """
 Properties by which Recommendations connections can be ordered.
-=======
 Properties by which ruleTypes connections can be ordered.
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 """
 enum RuleTypeOrderField {
   """
@@ -9161,14 +9158,12 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
-<<<<<<< HEAD
   addContract(input: AddContractInput!):Contract!
   editContract(input: EditContractInput!): Contract!
   removeContract(id: ID!): ID!
   addUpl(input: AddUplInput!):Upl!
   editUpl(input: EditUplInput!): Upl!
   removeUpl(id: ID!): ID!
-=======
   addResourceType(input: AddResourceTypeInput!):ResourceType!
   editResourceType(input: EditResourceTypeInput!): ResourceType!
   removeResourceType(id: ID!): ID!
@@ -9182,7 +9177,6 @@ type Mutation {
   addReconciliationRule(input: AddReconciliationRuleInput!):ReconciliationRule!
   editReconciliationRule(input: EditReconciliationRuleInput!): ReconciliationRule!
   removeReconciliationRule(id: ID!): ID!
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!

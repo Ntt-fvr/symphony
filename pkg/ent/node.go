@@ -30,11 +30,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -116,11 +113,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -1325,21 +1319,12 @@ func (c *Comparator) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-<<<<<<< HEAD
 func (c *Contract) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
 		Type:   "Contract",
 		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 3),
-=======
-func (c *Cost) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     c.ID,
-		Type:   "Cost",
-		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 2),
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	var buf []byte
 	if buf, err = json.Marshal(c.CreateTime); err != nil {
@@ -1358,16 +1343,11 @@ func (c *Cost) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-<<<<<<< HEAD
 	if buf, err = json.Marshal(c.ExternalID); err != nil {
-=======
-	if buf, err = json.Marshal(c.Item); err != nil {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[2] = &Field{
 		Type:  "string",
-<<<<<<< HEAD
 		Name:  "external_id",
 		Value: string(buf),
 	}
@@ -1425,7 +1405,62 @@ func (c *Cost) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = c.QueryOrganization().
 		Select(organization.FieldID).
-=======
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Upl",
+		Name: "upl_contract",
+	}
+	node.Edges[1].IDs, err = c.QueryUplContract().
+		Select(upl.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order_contract",
+	}
+	node.Edges[2].IDs, err = c.QueryWorkOrderContract().
+		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (c *Cost) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     c.ID,
+		Type:   "Cost",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(c.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Item); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
 		Name:  "item",
 		Value: string(buf),
 	}
@@ -1467,33 +1502,15 @@ func (c *Cost) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = c.QueryUplitem().
 		Select(uplitem.FieldID).
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-<<<<<<< HEAD
-		Type: "Upl",
-		Name: "upl_contract",
-	}
-	node.Edges[1].IDs, err = c.QueryUplContract().
-		Select(upl.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		Type: "WorkOrder",
-		Name: "work_order_contract",
-	}
-	node.Edges[2].IDs, err = c.QueryWorkOrderContract().
-=======
 		Type: "WorkOrder",
 		Name: "workorder",
 	}
 	node.Edges[1].IDs, err = c.QueryWorkorder().
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -8745,7 +8762,6 @@ func (t *Threshold) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-<<<<<<< HEAD
 func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
@@ -8755,17 +8771,6 @@ func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
-=======
-func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     ui.ID,
-		Type:   "UplItem",
-		Fields: make([]*Field, 6),
-		Edges:  make([]*Edge, 1),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(ui.CreateTime); err != nil {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[0] = &Field{
@@ -8773,11 +8778,7 @@ func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "create_time",
 		Value: string(buf),
 	}
-<<<<<<< HEAD
 	if buf, err = json.Marshal(u.UpdateTime); err != nil {
-=======
-	if buf, err = json.Marshal(ui.UpdateTime); err != nil {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[1] = &Field{
@@ -8785,31 +8786,19 @@ func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-<<<<<<< HEAD
 	if buf, err = json.Marshal(u.Name); err != nil {
-=======
-	if buf, err = json.Marshal(ui.Externalid); err != nil {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[2] = &Field{
 		Type:  "string",
-<<<<<<< HEAD
 		Name:  "name",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(u.Description); err != nil {
-=======
-		Name:  "externalid",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ui.Item); err != nil {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[3] = &Field{
 		Type:  "string",
-<<<<<<< HEAD
 		Name:  "description",
 		Value: string(buf),
 	}
@@ -8819,7 +8808,50 @@ func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = u.QueryContract().
 		Select(contract.FieldID).
-=======
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ui.ID,
+		Type:   "UplItem",
+		Fields: make([]*Field, 6),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ui.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Externalid); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "externalid",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Item); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
 		Name:  "item",
 		Value: string(buf),
 	}
@@ -8845,7 +8877,6 @@ func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = ui.QueryUplItem().
 		Select(cost.FieldID).
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -9187,7 +9218,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 		ID:     wo.ID,
 		Type:   "WorkOrder",
 		Fields: make([]*Field, 13),
-		Edges:  make([]*Edge, 17),
+		Edges:  make([]*Edge, 18),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(wo.CreateTime); err != nil {
@@ -9464,11 +9495,11 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[16] = &Edge{
+	node.Edges[17] = &Edge{
 		Type: "Cost",
 		Name: "workorder",
 	}
-	node.Edges[16].IDs, err = wo.QueryWorkorder().
+	node.Edges[17].IDs, err = wo.QueryWorkorder().
 		Select(cost.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -9955,17 +9986,19 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
-<<<<<<< HEAD
 	case contract.Table:
 		n, err := c.Contract.Query().
 			Where(contract.ID(id)).
 			CollectFields(ctx, "Contract").
-=======
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case cost.Table:
 		n, err := c.Cost.Query().
 			Where(cost.ID(id)).
 			CollectFields(ctx, "Cost").
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -10700,17 +10733,19 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
-<<<<<<< HEAD
 	case upl.Table:
 		n, err := c.Upl.Query().
 			Where(upl.ID(id)).
 			CollectFields(ctx, "Upl").
-=======
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case uplitem.Table:
 		n, err := c.UplItem.Query().
 			Where(uplitem.ID(id)).
 			CollectFields(ctx, "UplItem").
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			Only(ctx)
 		if err != nil {
 			return nil, err

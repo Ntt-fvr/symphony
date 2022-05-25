@@ -480,7 +480,6 @@ func (f ComparatorMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ComparatorMutation", m)
 }
 
-<<<<<<< HEAD
 // The ContractQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ContractQueryRuleFunc func(context.Context, *ent.ContractQuery) error
@@ -503,7 +502,8 @@ func (f ContractMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ContractMutation", m)
-=======
+}
+
 // The CostQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CostQueryRuleFunc func(context.Context, *ent.CostQuery) error
@@ -526,7 +526,6 @@ func (f CostMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CostMutation", m)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 // The CounterQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -2473,7 +2472,6 @@ func (f ThresholdMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ThresholdMutation", m)
 }
 
-<<<<<<< HEAD
 // The UplQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UplQueryRuleFunc func(context.Context, *ent.UplQuery) error
@@ -2496,7 +2494,8 @@ func (f UplMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) e
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UplMutation", m)
-=======
+}
+
 // The UplItemQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UplItemQueryRuleFunc func(context.Context, *ent.UplItemQuery) error
@@ -2519,7 +2518,6 @@ func (f UplItemMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UplItemMutation", m)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary

@@ -31,11 +31,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -117,11 +114,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
-<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
-=======
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -3508,7 +3502,6 @@ var DefaultComparatorOrder = &ComparatorOrder{
 	},
 }
 
-<<<<<<< HEAD
 // ContractEdge is the edge representation of Contract.
 type ContractEdge struct {
 	Node   *Contract `json:"node"`
@@ -3771,16 +3764,10 @@ var DefaultContractOrder = &ContractOrder{
 	},
 }
 
-// CounterEdge is the edge representation of Counter.
-type CounterEdge struct {
-	Node   *Counter `json:"node"`
-	Cursor Cursor   `json:"cursor"`
-=======
 // CostEdge is the edge representation of Cost.
 type CostEdge struct {
 	Node   *Cost  `json:"node"`
 	Cursor Cursor `json:"cursor"`
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 // CostConnection is the connection containing edges to Cost.
@@ -23647,7 +23634,6 @@ var DefaultThresholdOrder = &ThresholdOrder{
 	},
 }
 
-<<<<<<< HEAD
 // UplEdge is the edge representation of Upl.
 type UplEdge struct {
 	Node   *Upl   `json:"node"`
@@ -23671,7 +23657,245 @@ func WithUplOrder(order *UplOrder) UplPaginateOption {
 	}
 	o := *order
 	return func(pager *uplPager) error {
-=======
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultUplOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithUplFilter configures pagination filter.
+func WithUplFilter(filter func(*UplQuery) (*UplQuery, error)) UplPaginateOption {
+	return func(pager *uplPager) error {
+		if filter == nil {
+			return errors.New("UplQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type uplPager struct {
+	order  *UplOrder
+	filter func(*UplQuery) (*UplQuery, error)
+}
+
+func newUplPager(opts []UplPaginateOption) (*uplPager, error) {
+	pager := &uplPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultUplOrder
+	}
+	return pager, nil
+}
+
+func (p *uplPager) applyFilter(query *UplQuery) (*UplQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *uplPager) toCursor(u *Upl) Cursor {
+	return p.order.Field.toCursor(u)
+}
+
+func (p *uplPager) applyCursors(query *UplQuery, after, before *Cursor) *UplQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultUplOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *uplPager) applyOrder(query *UplQuery, reverse bool) *UplQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultUplOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultUplOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Upl.
+func (u *UplQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...UplPaginateOption,
+) (*UplConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newUplPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if u, err = pager.applyFilter(u); err != nil {
+		return nil, err
+	}
+
+	conn := &UplConnection{Edges: []*UplEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := u.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := u.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	u = pager.applyCursors(u, after, before)
+	u = pager.applyOrder(u, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		u = u.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		u = u.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := u.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *Upl
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Upl {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Upl {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*UplEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &UplEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// UplOrderFieldName orders Upl by name.
+	UplOrderFieldName = &UplOrderField{
+		field: upl.FieldName,
+		toCursor: func(u *Upl) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f UplOrderField) String() string {
+	var str string
+	switch f.field {
+	case upl.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f UplOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *UplOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("UplOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *UplOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid UplOrderField", str)
+	}
+	return nil
+}
+
+// UplOrderField defines the ordering field of Upl.
+type UplOrderField struct {
+	field    string
+	toCursor func(*Upl) Cursor
+}
+
+// UplOrder defines the ordering of Upl.
+type UplOrder struct {
+	Direction OrderDirection `json:"direction"`
+	Field     *UplOrderField `json:"field"`
+}
+
+// DefaultUplOrder is the default ordering of Upl.
+var DefaultUplOrder = &UplOrder{
+	Direction: OrderDirectionAsc,
+	Field: &UplOrderField{
+		field: upl.FieldID,
+		toCursor: func(u *Upl) Cursor {
+			return Cursor{ID: u.ID}
+		},
+	},
+}
+
 // UplItemEdge is the edge representation of UplItem.
 type UplItemEdge struct {
 	Node   *UplItem `json:"node"`
@@ -23695,50 +23919,28 @@ func WithUplItemOrder(order *UplItemOrder) UplItemPaginateOption {
 	}
 	o := *order
 	return func(pager *uplItemPager) error {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-<<<<<<< HEAD
-			o.Field = DefaultUplOrder.Field
-=======
 			o.Field = DefaultUplItemOrder.Field
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-<<<<<<< HEAD
-// WithUplFilter configures pagination filter.
-func WithUplFilter(filter func(*UplQuery) (*UplQuery, error)) UplPaginateOption {
-	return func(pager *uplPager) error {
-		if filter == nil {
-			return errors.New("UplQuery filter cannot be nil")
-=======
 // WithUplItemFilter configures pagination filter.
 func WithUplItemFilter(filter func(*UplItemQuery) (*UplItemQuery, error)) UplItemPaginateOption {
 	return func(pager *uplItemPager) error {
 		if filter == nil {
 			return errors.New("UplItemQuery filter cannot be nil")
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-<<<<<<< HEAD
-type uplPager struct {
-	order  *UplOrder
-	filter func(*UplQuery) (*UplQuery, error)
-}
-
-func newUplPager(opts []UplPaginateOption) (*uplPager, error) {
-	pager := &uplPager{}
-=======
 type uplItemPager struct {
 	order  *UplItemOrder
 	filter func(*UplItemQuery) (*UplItemQuery, error)
@@ -23746,43 +23948,24 @@ type uplItemPager struct {
 
 func newUplItemPager(opts []UplItemPaginateOption) (*uplItemPager, error) {
 	pager := &uplItemPager{}
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-<<<<<<< HEAD
-		pager.order = DefaultUplOrder
-=======
 		pager.order = DefaultUplItemOrder
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return pager, nil
 }
 
-<<<<<<< HEAD
-func (p *uplPager) applyFilter(query *UplQuery) (*UplQuery, error) {
-=======
 func (p *uplItemPager) applyFilter(query *UplItemQuery) (*UplItemQuery, error) {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-<<<<<<< HEAD
-func (p *uplPager) toCursor(u *Upl) Cursor {
-	return p.order.Field.toCursor(u)
-}
-
-func (p *uplPager) applyCursors(query *UplQuery, after, before *Cursor) *UplQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultUplOrder.Field.field,
-=======
 func (p *uplItemPager) toCursor(ui *UplItem) Cursor {
 	return p.order.Field.toCursor(ui)
 }
@@ -23791,45 +23974,24 @@ func (p *uplItemPager) applyCursors(query *UplItemQuery, after, before *Cursor) 
 	for _, predicate := range cursorsToPredicates(
 		p.order.Direction, after, before,
 		p.order.Field.field, DefaultUplItemOrder.Field.field,
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	) {
 		query = query.Where(predicate)
 	}
 	return query
 }
 
-<<<<<<< HEAD
-func (p *uplPager) applyOrder(query *UplQuery, reverse bool) *UplQuery {
-=======
 func (p *uplItemPager) applyOrder(query *UplItemQuery, reverse bool) *UplItemQuery {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
-<<<<<<< HEAD
-	if p.order.Field != DefaultUplOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultUplOrder.Field.field))
-=======
 	if p.order.Field != DefaultUplItemOrder.Field {
 		query = query.Order(direction.orderFunc(DefaultUplItemOrder.Field.field))
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return query
 }
 
-<<<<<<< HEAD
-// Paginate executes the query and returns a relay based cursor connection to Upl.
-func (u *UplQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...UplPaginateOption,
-) (*UplConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newUplPager(opts)
-=======
 // Paginate executes the query and returns a relay based cursor connection to UplItem.
 func (ui *UplItemQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
@@ -23839,34 +24001,21 @@ func (ui *UplItemQuery) Paginate(
 		return nil, err
 	}
 	pager, err := newUplItemPager(opts)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	if err != nil {
 		return nil, err
 	}
 
-<<<<<<< HEAD
-	if u, err = pager.applyFilter(u); err != nil {
-		return nil, err
-	}
-
-	conn := &UplConnection{Edges: []*UplEdge{}}
-=======
 	if ui, err = pager.applyFilter(ui); err != nil {
 		return nil, err
 	}
 
 	conn := &UplItemConnection{Edges: []*UplItemEdge{}}
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	if !hasCollectedField(ctx, edgesField) ||
 		first != nil && *first == 0 ||
 		last != nil && *last == 0 {
 		if hasCollectedField(ctx, totalCountField) ||
 			hasCollectedField(ctx, pageInfoField) {
-<<<<<<< HEAD
-			count, err := u.Count(ctx)
-=======
 			count, err := ui.Count(ctx)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			if err != nil {
 				return nil, err
 			}
@@ -23879,24 +24028,15 @@ func (ui *UplItemQuery) Paginate(
 
 	if (after != nil || first != nil || before != nil || last != nil) &&
 		hasCollectedField(ctx, totalCountField) {
-<<<<<<< HEAD
-		count, err := u.Clone().Count(ctx)
-=======
 		count, err := ui.Clone().Count(ctx)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		if err != nil {
 			return nil, err
 		}
 		conn.TotalCount = count
 	}
 
-<<<<<<< HEAD
-	u = pager.applyCursors(u, after, before)
-	u = pager.applyOrder(u, last != nil)
-=======
 	ui = pager.applyCursors(ui, after, before)
 	ui = pager.applyOrder(ui, last != nil)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	var limit int
 	if first != nil {
 		limit = *first + 1
@@ -23904,16 +24044,6 @@ func (ui *UplItemQuery) Paginate(
 		limit = *last + 1
 	}
 	if limit > 0 {
-<<<<<<< HEAD
-		u = u.Limit(limit)
-	}
-
-	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		u = u.collectField(graphql.GetOperationContext(ctx), *field)
-	}
-
-	nodes, err := u.All(ctx)
-=======
 		ui = ui.Limit(limit)
 	}
 
@@ -23922,7 +24052,6 @@ func (ui *UplItemQuery) Paginate(
 	}
 
 	nodes, err := ui.All(ctx)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	if err != nil || len(nodes) == 0 {
 		return conn, err
 	}
@@ -23933,16 +24062,6 @@ func (ui *UplItemQuery) Paginate(
 		nodes = nodes[:len(nodes)-1]
 	}
 
-<<<<<<< HEAD
-	var nodeAt func(int) *Upl
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *Upl {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *Upl {
-=======
 	var nodeAt func(int) *UplItem
 	if last != nil {
 		n := len(nodes) - 1
@@ -23951,22 +24070,14 @@ func (ui *UplItemQuery) Paginate(
 		}
 	} else {
 		nodeAt = func(i int) *UplItem {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			return nodes[i]
 		}
 	}
 
-<<<<<<< HEAD
-	conn.Edges = make([]*UplEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		conn.Edges[i] = &UplEdge{
-=======
 	conn.Edges = make([]*UplItemEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
 		conn.Edges[i] = &UplItemEdge{
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -23982,15 +24093,6 @@ func (ui *UplItemQuery) Paginate(
 }
 
 var (
-<<<<<<< HEAD
-	// UplOrderFieldName orders Upl by name.
-	UplOrderFieldName = &UplOrderField{
-		field: upl.FieldName,
-		toCursor: func(u *Upl) Cursor {
-			return Cursor{
-				ID:    u.ID,
-				Value: u.Name,
-=======
 	// UplItemOrderFieldExternalid orders UplItem by externalid.
 	UplItemOrderFieldExternalid = &UplItemOrderField{
 		field: uplitem.FieldExternalid,
@@ -24028,20 +24130,12 @@ var (
 			return Cursor{
 				ID:    ui.ID,
 				Value: ui.Price,
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			}
 		},
 	}
 )
 
 // String implement fmt.Stringer interface.
-<<<<<<< HEAD
-func (f UplOrderField) String() string {
-	var str string
-	switch f.field {
-	case upl.FieldName:
-		str = "NAME"
-=======
 func (f UplItemOrderField) String() string {
 	var str string
 	switch f.field {
@@ -24053,33 +24147,16 @@ func (f UplItemOrderField) String() string {
 		str = "UNIT"
 	case uplitem.FieldPrice:
 		str = "PRICE"
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return str
 }
 
 // MarshalGQL implements graphql.Marshaler interface.
-<<<<<<< HEAD
-func (f UplOrderField) MarshalGQL(w io.Writer) {
-=======
 func (f UplItemOrderField) MarshalGQL(w io.Writer) {
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	io.WriteString(w, strconv.Quote(f.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-<<<<<<< HEAD
-func (f *UplOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("UplOrderField %T must be a string", v)
-	}
-	switch str {
-	case "NAME":
-		*f = *UplOrderFieldName
-	default:
-		return fmt.Errorf("%s is not a valid UplOrderField", str)
-=======
 func (f *UplItemOrderField) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
@@ -24096,32 +24173,10 @@ func (f *UplItemOrderField) UnmarshalGQL(v interface{}) error {
 		*f = *UplItemOrderFieldPrice
 	default:
 		return fmt.Errorf("%s is not a valid UplItemOrderField", str)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return nil
 }
 
-<<<<<<< HEAD
-// UplOrderField defines the ordering field of Upl.
-type UplOrderField struct {
-	field    string
-	toCursor func(*Upl) Cursor
-}
-
-// UplOrder defines the ordering of Upl.
-type UplOrder struct {
-	Direction OrderDirection `json:"direction"`
-	Field     *UplOrderField `json:"field"`
-}
-
-// DefaultUplOrder is the default ordering of Upl.
-var DefaultUplOrder = &UplOrder{
-	Direction: OrderDirectionAsc,
-	Field: &UplOrderField{
-		field: upl.FieldID,
-		toCursor: func(u *Upl) Cursor {
-			return Cursor{ID: u.ID}
-=======
 // UplItemOrderField defines the ordering field of UplItem.
 type UplItemOrderField struct {
 	field    string
@@ -24141,7 +24196,6 @@ var DefaultUplItemOrder = &UplItemOrder{
 		field: uplitem.FieldID,
 		toCursor: func(ui *UplItem) Cursor {
 			return Cursor{ID: ui.ID}
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		},
 	},
 }

@@ -42,13 +42,10 @@ type Tx struct {
 	Comment *CommentClient
 	// Comparator is the client for interacting with the Comparator builders.
 	Comparator *ComparatorClient
-<<<<<<< HEAD
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
-=======
 	// Cost is the client for interacting with the Cost builders.
 	Cost *CostClient
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -211,13 +208,10 @@ type Tx struct {
 	Tech *TechClient
 	// Threshold is the client for interacting with the Threshold builders.
 	Threshold *ThresholdClient
-<<<<<<< HEAD
 	// Upl is the client for interacting with the Upl builders.
 	Upl *UplClient
-=======
 	// UplItem is the client for interacting with the UplItem builders.
 	UplItem *UplItemClient
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -382,11 +376,8 @@ func (tx *Tx) init() {
 	tx.CheckListItemDefinition = NewCheckListItemDefinitionClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Comparator = NewComparatorClient(tx.config)
-<<<<<<< HEAD
 	tx.Contract = NewContractClient(tx.config)
-=======
 	tx.Cost = NewCostClient(tx.config)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	tx.Counter = NewCounterClient(tx.config)
 	tx.CounterFamily = NewCounterFamilyClient(tx.config)
 	tx.CounterFormula = NewCounterFormulaClient(tx.config)
@@ -468,11 +459,8 @@ func (tx *Tx) init() {
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
 	tx.Tech = NewTechClient(tx.config)
 	tx.Threshold = NewThresholdClient(tx.config)
-<<<<<<< HEAD
 	tx.Upl = NewUplClient(tx.config)
-=======
 	tx.UplItem = NewUplItemClient(tx.config)
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)
 	tx.Vendor = NewVendorClient(tx.config)

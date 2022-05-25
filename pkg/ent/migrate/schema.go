@@ -460,7 +460,6 @@ var (
 		PrimaryKey:  []*schema.Column{ComparatorsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
-<<<<<<< HEAD
 	// ContractsColumns holds the columns for the "contracts" table.
 	ContractsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -486,7 +485,10 @@ var (
 				Columns: []*schema.Column{ContractsColumns[10]},
 
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-=======
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// CostsColumns holds the columns for the "costs" table.
 	CostsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -518,7 +520,6 @@ var (
 				Columns: []*schema.Column{CostsColumns[9]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -3188,7 +3189,6 @@ var (
 			},
 		},
 	}
-<<<<<<< HEAD
 	// UplsColumns holds the columns for the "upls" table.
 	UplsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3212,7 +3212,7 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
-=======
+	}
 	// UplItemsColumns holds the columns for the "upl_items" table.
 	UplItemsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3229,7 +3229,6 @@ var (
 		Columns:     UplItemsColumns,
 		PrimaryKey:  []*schema.Column{UplItemsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -3844,11 +3843,8 @@ var (
 		CheckListItemDefinitionsTable,
 		CommentsTable,
 		ComparatorsTable,
-<<<<<<< HEAD
 		ContractsTable,
-=======
 		CostsTable,
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		CountersTable,
 		CounterFamiliesTable,
 		CounterFormulasTable,
@@ -3930,11 +3926,8 @@ var (
 		SurveyWiFiScansTable,
 		TechesTable,
 		ThresholdsTable,
-<<<<<<< HEAD
 		UplsTable,
-=======
 		UplItemsTable,
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		UsersTable,
 		UsersGroupsTable,
 		VendorsTable,
@@ -3981,12 +3974,9 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = UsersTable
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
-<<<<<<< HEAD
 	ContractsTable.ForeignKeys[0].RefTable = OrganizationsTable
-=======
 	CostsTable.ForeignKeys[0].RefTable = UplItemsTable
 	CostsTable.ForeignKeys[1].RefTable = WorkOrdersTable
->>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	CountersTable.ForeignKeys[0].RefTable = CounterFamiliesTable
 	CountersTable.ForeignKeys[1].RefTable = VendorsTable
 	CounterFormulasTable.ForeignKeys[0].RefTable = CountersTable
