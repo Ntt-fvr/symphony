@@ -144,7 +144,6 @@ export default function AddCounterItemForm(props: Props) {
     });
   }
 
-  console.log(counterNames)
 
   function handleClick() {
     const variables: AddCounterMutationVariables = {
