@@ -13,35 +13,44 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-// Organization defines the property type schema.
-type Organization struct {
+// Contract defines the property type schema.
+type Contract struct {
 	schema
 }
 
-// Organization returns property type organization.
-func (Organization) Fields() []ent.Field {
+// Contract returns property type contract.
+func (Contract) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("external_id").NotEmpty().Unique(),
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
-		field.String("description"),
+		field.String("category").NotEmpty(),
+		field.Time("effective_date"),
+		field.Time("expiration_date"),
+		field.String("description").NotEmpty(),
+		field.Enum("status").
+			Values(
+				"ACTIVE",
+				"EXPIRE",
+				"PENDING",
+			),
 	}
 }
 
 // Edges returns property type edges.
-func (Organization) Edges() []ent.Edge {
+func (Contract) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user_fk", User.Type).
-			Annotations(entgql.MapsTo("user")),
-		edge.To("contract_organization", Contract.Type).
-			Annotations(entgql.MapsTo("contract")),
-		edge.To("work_order_fk", WorkOrder.Type).
+		edge.From("organization", Organization.Type).
+			Ref("contract_organization").Unique().Annotations(entgql.OrderField("ORGANIZATION")),
+		edge.To("upl_contract", Upl.Type).
+			Annotations(entgql.MapsTo("upl")),
+		edge.To("work_order_contract", WorkOrder.Type).
 			Annotations(entgql.MapsTo("workorder")),
-		edge.To("policies", PermissionsPolicy.Type),
 	}
 }
 
 // Policy returns entity policy.
-func (Organization) Policy() ent.Policy {
+func (Contract) Policy() ent.Policy {
 	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),

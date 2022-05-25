@@ -427,6 +427,35 @@ var (
 		PrimaryKey:  []*schema.Column{ComparatorsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ContractsColumns holds the columns for the "contracts" table.
+	ContractsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "external_id", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "category", Type: field.TypeString},
+		{Name: "effective_date", Type: field.TypeTime},
+		{Name: "expiration_date", Type: field.TypeTime},
+		{Name: "description", Type: field.TypeString},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "EXPIRE", "PENDING"}},
+		{Name: "organization_contract_organization", Type: field.TypeInt, Nullable: true},
+	}
+	// ContractsTable holds the schema information for the "contracts" table.
+	ContractsTable = &schema.Table{
+		Name:       "contracts",
+		Columns:    ContractsColumns,
+		PrimaryKey: []*schema.Column{ContractsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "contracts_organizations_contract_organization",
+				Columns: []*schema.Column{ContractsColumns[10]},
+
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// CountersColumns holds the columns for the "counters" table.
 	CountersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2804,6 +2833,30 @@ var (
 			},
 		},
 	}
+	// UplsColumns holds the columns for the "upls" table.
+	UplsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
+		{Name: "contract_upl_contract", Type: field.TypeInt, Nullable: true},
+	}
+	// UplsTable holds the schema information for the "upls" table.
+	UplsTable = &schema.Table{
+		Name:       "upls",
+		Columns:    UplsColumns,
+		PrimaryKey: []*schema.Column{UplsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "upls_contracts_upl_contract",
+				Columns: []*schema.Column{UplsColumns[5]},
+
+				RefColumns: []*schema.Column{ContractsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2879,6 +2932,7 @@ var (
 		{Name: "duration", Type: field.TypeFloat64, Nullable: true},
 		{Name: "scheduled_at", Type: field.TypeTime, Nullable: true},
 		{Name: "due_date", Type: field.TypeTime, Nullable: true},
+		{Name: "contract_work_order_contract", Type: field.TypeInt, Nullable: true},
 		{Name: "organization_work_order_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "project_work_orders", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type", Type: field.TypeInt, Nullable: true},
@@ -2894,50 +2948,57 @@ var (
 		PrimaryKey: []*schema.Column{WorkOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "work_orders_organizations_work_order_fk",
+				Symbol:  "work_orders_contracts_work_order_contract",
 				Columns: []*schema.Column{WorkOrdersColumns[14]},
+
+				RefColumns: []*schema.Column{ContractsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "work_orders_organizations_work_order_fk",
+				Columns: []*schema.Column{WorkOrdersColumns[15]},
 
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_projects_work_orders",
-				Columns: []*schema.Column{WorkOrdersColumns[15]},
+				Columns: []*schema.Column{WorkOrdersColumns[16]},
 
 				RefColumns: []*schema.Column{ProjectsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_types_type",
-				Columns: []*schema.Column{WorkOrdersColumns[16]},
+				Columns: []*schema.Column{WorkOrdersColumns[17]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_templates_template",
-				Columns: []*schema.Column{WorkOrdersColumns[17]},
+				Columns: []*schema.Column{WorkOrdersColumns[18]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_locations_location",
-				Columns: []*schema.Column{WorkOrdersColumns[18]},
+				Columns: []*schema.Column{WorkOrdersColumns[19]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_owner",
-				Columns: []*schema.Column{WorkOrdersColumns[19]},
+				Columns: []*schema.Column{WorkOrdersColumns[20]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_assignee",
-				Columns: []*schema.Column{WorkOrdersColumns[20]},
+				Columns: []*schema.Column{WorkOrdersColumns[21]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -3408,6 +3469,7 @@ var (
 		CheckListItemDefinitionsTable,
 		CommentsTable,
 		ComparatorsTable,
+		ContractsTable,
 		CountersTable,
 		CounterFamiliesTable,
 		CounterFormulasTable,
@@ -3479,6 +3541,7 @@ var (
 		SurveyWiFiScansTable,
 		TechesTable,
 		ThresholdsTable,
+		UplsTable,
 		UsersTable,
 		UsersGroupsTable,
 		VendorsTable,
@@ -3523,6 +3586,7 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = UsersTable
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
+	ContractsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	CountersTable.ForeignKeys[0].RefTable = CounterFamiliesTable
 	CountersTable.ForeignKeys[1].RefTable = VendorsTable
 	CounterFormulasTable.ForeignKeys[0].RefTable = CountersTable
@@ -3643,14 +3707,16 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	ThresholdsTable.ForeignKeys[0].RefTable = KpisTable
+	UplsTable.ForeignKeys[0].RefTable = ContractsTable
 	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
-	WorkOrdersTable.ForeignKeys[0].RefTable = OrganizationsTable
-	WorkOrdersTable.ForeignKeys[1].RefTable = ProjectsTable
-	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
-	WorkOrdersTable.ForeignKeys[3].RefTable = WorkOrderTemplatesTable
-	WorkOrdersTable.ForeignKeys[4].RefTable = LocationsTable
-	WorkOrdersTable.ForeignKeys[5].RefTable = UsersTable
+	WorkOrdersTable.ForeignKeys[0].RefTable = ContractsTable
+	WorkOrdersTable.ForeignKeys[1].RefTable = OrganizationsTable
+	WorkOrdersTable.ForeignKeys[2].RefTable = ProjectsTable
+	WorkOrdersTable.ForeignKeys[3].RefTable = WorkOrderTypesTable
+	WorkOrdersTable.ForeignKeys[4].RefTable = WorkOrderTemplatesTable
+	WorkOrdersTable.ForeignKeys[5].RefTable = LocationsTable
 	WorkOrdersTable.ForeignKeys[6].RefTable = UsersTable
+	WorkOrdersTable.ForeignKeys[7].RefTable = UsersTable
 	WorkOrderDefinitionsTable.ForeignKeys[0].RefTable = ProjectTemplatesTable
 	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
 	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable

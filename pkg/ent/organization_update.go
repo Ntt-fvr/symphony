@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -58,6 +59,21 @@ func (ou *OrganizationUpdate) AddUserFk(u ...*User) *OrganizationUpdate {
 		ids[i] = u[i].ID
 	}
 	return ou.AddUserFkIDs(ids...)
+}
+
+// AddContractOrganizationIDs adds the contract_organization edge to Contract by ids.
+func (ou *OrganizationUpdate) AddContractOrganizationIDs(ids ...int) *OrganizationUpdate {
+	ou.mutation.AddContractOrganizationIDs(ids...)
+	return ou
+}
+
+// AddContractOrganization adds the contract_organization edges to Contract.
+func (ou *OrganizationUpdate) AddContractOrganization(c ...*Contract) *OrganizationUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ou.AddContractOrganizationIDs(ids...)
 }
 
 // AddWorkOrderFkIDs adds the work_order_fk edge to WorkOrder by ids.
@@ -114,6 +130,27 @@ func (ou *OrganizationUpdate) RemoveUserFk(u ...*User) *OrganizationUpdate {
 		ids[i] = u[i].ID
 	}
 	return ou.RemoveUserFkIDs(ids...)
+}
+
+// ClearContractOrganization clears all "contract_organization" edges to type Contract.
+func (ou *OrganizationUpdate) ClearContractOrganization() *OrganizationUpdate {
+	ou.mutation.ClearContractOrganization()
+	return ou
+}
+
+// RemoveContractOrganizationIDs removes the contract_organization edge to Contract by ids.
+func (ou *OrganizationUpdate) RemoveContractOrganizationIDs(ids ...int) *OrganizationUpdate {
+	ou.mutation.RemoveContractOrganizationIDs(ids...)
+	return ou
+}
+
+// RemoveContractOrganization removes contract_organization edges to Contract.
+func (ou *OrganizationUpdate) RemoveContractOrganization(c ...*Contract) *OrganizationUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ou.RemoveContractOrganizationIDs(ids...)
 }
 
 // ClearWorkOrderFk clears all "work_order_fk" edges to type WorkOrder.
@@ -327,6 +364,60 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.ContractOrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.ContractOrganizationTable,
+			Columns: []string{organization.ContractOrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedContractOrganizationIDs(); len(nodes) > 0 && !ou.mutation.ContractOrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.ContractOrganizationTable,
+			Columns: []string{organization.ContractOrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.ContractOrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.ContractOrganizationTable,
+			Columns: []string{organization.ContractOrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.WorkOrderFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -480,6 +571,21 @@ func (ouo *OrganizationUpdateOne) AddUserFk(u ...*User) *OrganizationUpdateOne {
 	return ouo.AddUserFkIDs(ids...)
 }
 
+// AddContractOrganizationIDs adds the contract_organization edge to Contract by ids.
+func (ouo *OrganizationUpdateOne) AddContractOrganizationIDs(ids ...int) *OrganizationUpdateOne {
+	ouo.mutation.AddContractOrganizationIDs(ids...)
+	return ouo
+}
+
+// AddContractOrganization adds the contract_organization edges to Contract.
+func (ouo *OrganizationUpdateOne) AddContractOrganization(c ...*Contract) *OrganizationUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ouo.AddContractOrganizationIDs(ids...)
+}
+
 // AddWorkOrderFkIDs adds the work_order_fk edge to WorkOrder by ids.
 func (ouo *OrganizationUpdateOne) AddWorkOrderFkIDs(ids ...int) *OrganizationUpdateOne {
 	ouo.mutation.AddWorkOrderFkIDs(ids...)
@@ -534,6 +640,27 @@ func (ouo *OrganizationUpdateOne) RemoveUserFk(u ...*User) *OrganizationUpdateOn
 		ids[i] = u[i].ID
 	}
 	return ouo.RemoveUserFkIDs(ids...)
+}
+
+// ClearContractOrganization clears all "contract_organization" edges to type Contract.
+func (ouo *OrganizationUpdateOne) ClearContractOrganization() *OrganizationUpdateOne {
+	ouo.mutation.ClearContractOrganization()
+	return ouo
+}
+
+// RemoveContractOrganizationIDs removes the contract_organization edge to Contract by ids.
+func (ouo *OrganizationUpdateOne) RemoveContractOrganizationIDs(ids ...int) *OrganizationUpdateOne {
+	ouo.mutation.RemoveContractOrganizationIDs(ids...)
+	return ouo
+}
+
+// RemoveContractOrganization removes contract_organization edges to Contract.
+func (ouo *OrganizationUpdateOne) RemoveContractOrganization(c ...*Contract) *OrganizationUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ouo.RemoveContractOrganizationIDs(ids...)
 }
 
 // ClearWorkOrderFk clears all "work_order_fk" edges to type WorkOrder.
@@ -737,6 +864,60 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.ContractOrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.ContractOrganizationTable,
+			Columns: []string{organization.ContractOrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedContractOrganizationIDs(); len(nodes) > 0 && !ouo.mutation.ContractOrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.ContractOrganizationTable,
+			Columns: []string{organization.ContractOrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.ContractOrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.ContractOrganizationTable,
+			Columns: []string{organization.ContractOrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
 				},
 			},
 		}

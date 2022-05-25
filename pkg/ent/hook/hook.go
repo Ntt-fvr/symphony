@@ -169,6 +169,19 @@ func (f ComparatorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+// The ContractFunc type is an adapter to allow the use of ordinary
+// function as Contract mutator.
+type ContractFunc func(context.Context, *ent.ContractMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ContractMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContractMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CounterFunc type is an adapter to allow the use of ordinary
 // function as Counter mutator.
 type CounterFunc func(context.Context, *ent.CounterMutation) (ent.Value, error)
@@ -1088,6 +1101,19 @@ func (f ThresholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	mv, ok := m.(*ent.ThresholdMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ThresholdMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UplFunc type is an adapter to allow the use of ordinary
+// function as Upl mutator.
+type UplFunc func(context.Context, *ent.UplMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UplFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UplMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UplMutation", m)
 	}
 	return f(ctx, mv)
 }

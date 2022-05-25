@@ -177,6 +177,30 @@ func (c *ComparatorQuery) collectField(ctx *graphql.OperationContext, field grap
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (c *ContractQuery) CollectFields(ctx context.Context, satisfies ...string) *ContractQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return c
+}
+
+func (c *ContractQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ContractQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "upl":
+			c = c.WithUplContract(func(query *UplQuery) {
+				query.collectField(ctx, field)
+			})
+		case "workorder":
+			c = c.WithWorkOrderContract(func(query *WorkOrderQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return c
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (c *CounterQuery) CollectFields(ctx context.Context, satisfies ...string) *CounterQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1075,6 +1099,10 @@ func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...stri
 func (o *OrganizationQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *OrganizationQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
+		case "contract":
+			o = o.WithContractOrganization(func(query *ContractQuery) {
+				query.collectField(ctx, field)
+			})
 		case "user":
 			o = o.WithUserFk(func(query *UserQuery) {
 				query.collectField(ctx, field)
@@ -1602,6 +1630,18 @@ func (t *ThresholdQuery) collectField(ctx *graphql.OperationContext, field graph
 		}
 	}
 	return t
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (u *UplQuery) CollectFields(ctx context.Context, satisfies ...string) *UplQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		u = u.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return u
+}
+
+func (u *UplQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *UplQuery {
+	return u
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

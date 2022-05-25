@@ -1414,6 +1414,34 @@ func HasOrganizationWith(preds ...predicate.Organization) predicate.WorkOrder {
 	})
 }
 
+// HasContract applies the HasEdge predicate on the "contract" edge.
+func HasContract() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ContractTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ContractTable, ContractColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasContractWith applies the HasEdge predicate on the "contract" edge with a given conditions (other predicates).
+func HasContractWith(preds ...predicate.Contract) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ContractInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ContractTable, ContractColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasFiles applies the HasEdge predicate on the "files" edge.
 func HasFiles() predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {

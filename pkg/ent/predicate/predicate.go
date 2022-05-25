@@ -46,6 +46,9 @@ type Comment func(*sql.Selector)
 // Comparator is the predicate function for comparator builders.
 type Comparator func(*sql.Selector)
 
+// Contract is the predicate function for contract builders.
+type Contract func(*sql.Selector)
+
 // Counter is the predicate function for counter builders.
 type Counter func(*sql.Selector)
 
@@ -258,6 +261,9 @@ type Tech func(*sql.Selector)
 
 // Threshold is the predicate function for threshold builders.
 type Threshold func(*sql.Selector)
+
+// Upl is the predicate function for upl builders.
+type Upl func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

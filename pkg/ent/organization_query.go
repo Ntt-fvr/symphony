@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -32,9 +33,10 @@ type OrganizationQuery struct {
 	unique     []string
 	predicates []predicate.Organization
 	// eager-loading edges.
-	withUserFk      *UserQuery
-	withWorkOrderFk *WorkOrderQuery
-	withPolicies    *PermissionsPolicyQuery
+	withUserFk               *UserQuery
+	withContractOrganization *ContractQuery
+	withWorkOrderFk          *WorkOrderQuery
+	withPolicies             *PermissionsPolicyQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -79,6 +81,28 @@ func (oq *OrganizationQuery) QueryUserFk() *UserQuery {
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.UserFkTable, organization.UserFkColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryContractOrganization chains the current query on the contract_organization edge.
+func (oq *OrganizationQuery) QueryContractOrganization() *ContractQuery {
+	query := &ContractQuery{config: oq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.ContractOrganizationTable, organization.ContractOrganizationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -300,15 +324,16 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		return nil
 	}
 	return &OrganizationQuery{
-		config:          oq.config,
-		limit:           oq.limit,
-		offset:          oq.offset,
-		order:           append([]OrderFunc{}, oq.order...),
-		unique:          append([]string{}, oq.unique...),
-		predicates:      append([]predicate.Organization{}, oq.predicates...),
-		withUserFk:      oq.withUserFk.Clone(),
-		withWorkOrderFk: oq.withWorkOrderFk.Clone(),
-		withPolicies:    oq.withPolicies.Clone(),
+		config:                   oq.config,
+		limit:                    oq.limit,
+		offset:                   oq.offset,
+		order:                    append([]OrderFunc{}, oq.order...),
+		unique:                   append([]string{}, oq.unique...),
+		predicates:               append([]predicate.Organization{}, oq.predicates...),
+		withUserFk:               oq.withUserFk.Clone(),
+		withContractOrganization: oq.withContractOrganization.Clone(),
+		withWorkOrderFk:          oq.withWorkOrderFk.Clone(),
+		withPolicies:             oq.withPolicies.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -323,6 +348,17 @@ func (oq *OrganizationQuery) WithUserFk(opts ...func(*UserQuery)) *OrganizationQ
 		opt(query)
 	}
 	oq.withUserFk = query
+	return oq
+}
+
+//  WithContractOrganization tells the query-builder to eager-loads the nodes that are connected to
+// the "contract_organization" edge. The optional arguments used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithContractOrganization(opts ...func(*ContractQuery)) *OrganizationQuery {
+	query := &ContractQuery{config: oq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withContractOrganization = query
 	return oq
 }
 
@@ -417,8 +453,9 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context) ([]*Organization, error
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			oq.withUserFk != nil,
+			oq.withContractOrganization != nil,
 			oq.withWorkOrderFk != nil,
 			oq.withPolicies != nil,
 		}
@@ -470,6 +507,35 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context) ([]*Organization, error
 				return nil, fmt.Errorf(`unexpected foreign-key "organization_user_fk" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.UserFk = append(node.Edges.UserFk, n)
+		}
+	}
+
+	if query := oq.withContractOrganization; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Organization)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.ContractOrganization = []*Contract{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Contract(func(s *sql.Selector) {
+			s.Where(sql.InValues(organization.ContractOrganizationColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.organization_contract_organization
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "organization_contract_organization" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "organization_contract_organization" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.ContractOrganization = append(node.Edges.ContractOrganization, n)
 		}
 	}
 

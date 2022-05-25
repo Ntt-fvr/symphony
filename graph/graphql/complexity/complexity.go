@@ -115,6 +115,12 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Organizations = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.OrganizationOrder, _ []*models.OrganizationFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.Contracts = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ContractOrder, _ []*models.ContractFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Upls = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.UplOrder, _ []*models.UplFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.Formulas = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.FormulaOrder, _ []*models.FormulaFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}

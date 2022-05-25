@@ -190,6 +190,8 @@ func (WorkOrder) Edges() []ent.Edge {
 			Ref("work_order"),
 		edge.From("organization", Organization.Type).
 			Ref("work_order_fk").Unique().Annotations(entgql.OrderField("ORGANIZATION")),
+		edge.From("contract", Contract.Type).
+			Ref("work_order_contract").Unique().Annotations(entgql.OrderField("CONTRACT")),
 		edge.To("files", File.Type),
 		edge.To("hyperlinks", Hyperlink.Type).
 			Annotations(entgql.Bind()),

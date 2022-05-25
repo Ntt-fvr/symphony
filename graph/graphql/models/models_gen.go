@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
@@ -103,6 +104,17 @@ type AddBulkServiceLinksAndPortsInput struct {
 
 type AddComparatorInput struct {
 	Name string `json:"name"`
+}
+
+type AddContractInput struct {
+	ExternalID     string          `json:"externalID"`
+	Name           string          `json:"name"`
+	Category       string          `json:"category"`
+	EffectiveDate  time.Time       `json:"effective_date"`
+	ExpirationDate time.Time       `json:"expiration_date"`
+	Description    string          `json:"description"`
+	Organization   int             `json:"organization"`
+	Status         contract.Status `json:"status"`
 }
 
 type AddCounterFamilyInput struct {
@@ -415,6 +427,11 @@ type AddThresholdInput struct {
 	Kpi         int    `json:"kpi"`
 }
 
+type AddUplInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type AddUsersGroupInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
@@ -579,6 +596,15 @@ type ConnectorInput struct {
 	TargetPoint    *EntryPointInput `json:"targetPoint"`
 }
 
+type ContractFilterInput struct {
+	FilterType  ContractFilterType  `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type Coordinates struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
@@ -691,6 +717,16 @@ type EditBlockInstanceInput struct {
 type EditComparatorInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type EditContractInput struct {
+	ID             int       `json:"id"`
+	ExternalID     string    `json:"externalID"`
+	Name           string    `json:"name"`
+	Category       string    `json:"category"`
+	ExpirationDate time.Time `json:"expiration_date"`
+	Organization   int       `json:"organization"`
+	Description    string    `json:"description"`
 }
 
 type EditCounterFamilyInput struct {
@@ -1000,6 +1036,12 @@ type EditThresholdInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      bool   `json:"status"`
+}
+
+type EditUplInput struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 type EditUserInput struct {
@@ -1760,6 +1802,15 @@ type UpdateUserGroupsInput struct {
 	RemoveGroupIds []int `json:"removeGroupIds"`
 }
 
+type UplFilterInput struct {
+	FilterType  UplFilterType       `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type UserAvailability struct {
 	User          *ent.User `json:"user"`
 	SlotStartDate time.Time `json:"slotStartDate"`
@@ -1981,6 +2032,45 @@ func (e *ComparatorFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ComparatorFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ContractFilterType string
+
+const (
+	ContractFilterTypeName ContractFilterType = "NAME"
+)
+
+var AllContractFilterType = []ContractFilterType{
+	ContractFilterTypeName,
+}
+
+func (e ContractFilterType) IsValid() bool {
+	switch e {
+	case ContractFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e ContractFilterType) String() string {
+	return string(e)
+}
+
+func (e *ContractFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ContractFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ContractFilterType", str)
+	}
+	return nil
+}
+
+func (e ContractFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -3259,6 +3349,45 @@ func (e *TopologyLinkType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e TopologyLinkType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type UplFilterType string
+
+const (
+	UplFilterTypeName UplFilterType = "NAME"
+)
+
+var AllUplFilterType = []UplFilterType{
+	UplFilterTypeName,
+}
+
+func (e UplFilterType) IsValid() bool {
+	switch e {
+	case UplFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e UplFilterType) String() string {
+	return string(e)
+}
+
+func (e *UplFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UplFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UplFilterType", str)
+	}
+	return nil
+}
+
+func (e UplFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

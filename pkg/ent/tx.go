@@ -40,6 +40,8 @@ type Tx struct {
 	Comment *CommentClient
 	// Comparator is the client for interacting with the Comparator builders.
 	Comparator *ComparatorClient
+	// Contract is the client for interacting with the Contract builders.
+	Contract *ContractClient
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -182,6 +184,8 @@ type Tx struct {
 	Tech *TechClient
 	// Threshold is the client for interacting with the Threshold builders.
 	Threshold *ThresholdClient
+	// Upl is the client for interacting with the Upl builders.
+	Upl *UplClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -345,6 +349,7 @@ func (tx *Tx) init() {
 	tx.CheckListItemDefinition = NewCheckListItemDefinitionClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Comparator = NewComparatorClient(tx.config)
+	tx.Contract = NewContractClient(tx.config)
 	tx.Counter = NewCounterClient(tx.config)
 	tx.CounterFamily = NewCounterFamilyClient(tx.config)
 	tx.CounterFormula = NewCounterFormulaClient(tx.config)
@@ -416,6 +421,7 @@ func (tx *Tx) init() {
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
 	tx.Tech = NewTechClient(tx.config)
 	tx.Threshold = NewThresholdClient(tx.config)
+	tx.Upl = NewUplClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)
 	tx.Vendor = NewVendorClient(tx.config)

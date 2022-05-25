@@ -561,6 +561,44 @@ func (r queryResolver) Organizations(
 			),
 		)
 }
+func (r queryResolver) Contracts(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.ContractOrder,
+	filterBy []*models.ContractFilterInput,
+) (*ent.ContractConnection, error) {
+	return r.ClientFrom(ctx).
+		Contract.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithContractOrder(orderBy),
+			ent.WithContractFilter(
+				func(query *ent.ContractQuery) (*ent.ContractQuery, error) {
+					return resolverutil.ContractFilter(query, filterBy)
+				},
+			),
+		)
+}
+func (r queryResolver) Upls(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.UplOrder,
+	filterBy []*models.UplFilterInput,
+) (*ent.UplConnection, error) {
+	return r.ClientFrom(ctx).
+		Upl.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithUplOrder(orderBy),
+			ent.WithUplFilter(
+				func(query *ent.UplQuery) (*ent.UplQuery, error) {
+					return resolverutil.UplFilter(query, filterBy)
+				},
+			),
+		)
+}
 func (r queryResolver) Formulas(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

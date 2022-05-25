@@ -272,6 +272,30 @@ func (c *Comparator) Comparatorkqitargetfk(ctx context.Context) ([]*KqiComparato
 	return result, err
 }
 
+func (c *Contract) Organization(ctx context.Context) (*Organization, error) {
+	result, err := c.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryOrganization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Contract) UplContract(ctx context.Context) ([]*Upl, error) {
+	result, err := c.Edges.UplContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryUplContract().All(ctx)
+	}
+	return result, err
+}
+
+func (c *Contract) WorkOrderContract(ctx context.Context) ([]*WorkOrder, error) {
+	result, err := c.Edges.WorkOrderContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryWorkOrderContract().All(ctx)
+	}
+	return result, err
+}
+
 func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
 	result, err := c.Edges.CounterfamilyOrErr()
 	if IsNotLoaded(err) {
@@ -1272,6 +1296,14 @@ func (o *Organization) UserFk(ctx context.Context) ([]*User, error) {
 	return result, err
 }
 
+func (o *Organization) ContractOrganization(ctx context.Context) ([]*Contract, error) {
+	result, err := o.Edges.ContractOrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryContractOrganization().All(ctx)
+	}
+	return result, err
+}
+
 func (o *Organization) WorkOrderFk(ctx context.Context) ([]*WorkOrder, error) {
 	result, err := o.Edges.WorkOrderFkOrErr()
 	if IsNotLoaded(err) {
@@ -2144,6 +2176,14 @@ func (t *Threshold) Rulethreshold(ctx context.Context) ([]*Rule, error) {
 	return result, err
 }
 
+func (u *Upl) Contract(ctx context.Context) (*Contract, error) {
+	result, err := u.Edges.ContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryContract().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (u *User) ProfilePhoto(ctx context.Context) (*File, error) {
 	result, err := u.Edges.ProfilePhotoOrErr()
 	if IsNotLoaded(err) {
@@ -2300,6 +2340,14 @@ func (wo *WorkOrder) Organization(ctx context.Context) (*Organization, error) {
 	result, err := wo.Edges.OrganizationOrErr()
 	if IsNotLoaded(err) {
 		result, err = wo.QueryOrganization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (wo *WorkOrder) Contract(ctx context.Context) (*Contract, error) {
+	result, err := wo.Edges.ContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryContract().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }

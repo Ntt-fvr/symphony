@@ -309,6 +309,26 @@ func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.Organiza
 	return query, nil
 }
 
+func ContractFilter(query *ent.ContractQuery, filters []*models.ContractFilterInput) (*ent.ContractQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleContractFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func UplFilter(query *ent.UplQuery, filters []*models.UplFilterInput) (*ent.UplQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleUplFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
 func RecommendationsSourcesFilter(query *ent.RecommendationsSourcesQuery, filters []*models.RecommendationsSourcesFilterInput) (*ent.RecommendationsSourcesQuery, error) {
 	var err error
 	for _, f := range filters {

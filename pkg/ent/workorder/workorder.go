@@ -57,6 +57,8 @@ const (
 	EdgeLinks = "links"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
+	// EdgeContract holds the string denoting the contract edge name in mutations.
+	EdgeContract = "contract"
 	// EdgeFiles holds the string denoting the files edge name in mutations.
 	EdgeFiles = "files"
 	// EdgeHyperlinks holds the string denoting the hyperlinks edge name in mutations.
@@ -117,6 +119,13 @@ const (
 	OrganizationInverseTable = "organizations"
 	// OrganizationColumn is the table column denoting the organization relation/edge.
 	OrganizationColumn = "organization_work_order_fk"
+	// ContractTable is the table the holds the contract relation/edge.
+	ContractTable = "work_orders"
+	// ContractInverseTable is the table name for the Contract entity.
+	// It exists in this package in order to avoid circular dependency with the "contract" package.
+	ContractInverseTable = "contracts"
+	// ContractColumn is the table column denoting the contract relation/edge.
+	ContractColumn = "contract_work_order_contract"
 	// FilesTable is the table the holds the files relation/edge.
 	FilesTable = "files"
 	// FilesInverseTable is the table name for the File entity.
@@ -216,6 +225,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrder type.
 var ForeignKeys = []string{
+	"contract_work_order_contract",
 	"organization_work_order_fk",
 	"project_work_orders",
 	"work_order_type",

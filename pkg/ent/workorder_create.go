@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
@@ -290,6 +291,25 @@ func (woc *WorkOrderCreate) SetNillableOrganizationID(id *int) *WorkOrderCreate 
 // SetOrganization sets the organization edge to Organization.
 func (woc *WorkOrderCreate) SetOrganization(o *Organization) *WorkOrderCreate {
 	return woc.SetOrganizationID(o.ID)
+}
+
+// SetContractID sets the contract edge to Contract by id.
+func (woc *WorkOrderCreate) SetContractID(id int) *WorkOrderCreate {
+	woc.mutation.SetContractID(id)
+	return woc
+}
+
+// SetNillableContractID sets the contract edge to Contract by id if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableContractID(id *int) *WorkOrderCreate {
+	if id != nil {
+		woc = woc.SetContractID(*id)
+	}
+	return woc
+}
+
+// SetContract sets the contract edge to Contract.
+func (woc *WorkOrderCreate) SetContract(c *Contract) *WorkOrderCreate {
+	return woc.SetContractID(c.ID)
 }
 
 // AddFileIDs adds the files edge to File by ids.
@@ -791,6 +811,25 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := woc.mutation.ContractIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.ContractTable,
+			Columns: []string{workorder.ContractColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
 				},
 			},
 		}

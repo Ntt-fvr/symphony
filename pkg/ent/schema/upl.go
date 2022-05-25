@@ -13,35 +13,30 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-// Organization defines the property type schema.
-type Organization struct {
+// Upl defines the property type schema.
+type Upl struct {
 	schema
 }
 
-// Organization returns property type organization.
-func (Organization) Fields() []ent.Field {
+// Upl returns property type upl.
+func (Upl) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
-		field.String("description"),
+		field.String("description").NotEmpty(),
 	}
 }
 
 // Edges returns property type edges.
-func (Organization) Edges() []ent.Edge {
+func (Upl) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user_fk", User.Type).
-			Annotations(entgql.MapsTo("user")),
-		edge.To("contract_organization", Contract.Type).
-			Annotations(entgql.MapsTo("contract")),
-		edge.To("work_order_fk", WorkOrder.Type).
-			Annotations(entgql.MapsTo("workorder")),
-		edge.To("policies", PermissionsPolicy.Type),
+		edge.From("contract", Contract.Type).
+			Ref("upl_contract").Unique().Annotations(entgql.OrderField("CONTRACT")),
 	}
 }
 
 // Policy returns entity policy.
-func (Organization) Policy() ent.Policy {
+func (Upl) Policy() ent.Policy {
 	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),

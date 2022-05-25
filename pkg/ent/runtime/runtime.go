@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -94,6 +95,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
+	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -413,6 +415,45 @@ func init() {
 	comparatorDescName := comparatorFields[0].Descriptor()
 	// comparator.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	comparator.NameValidator = comparatorDescName.Validators[0].(func(string) error)
+	contractMixin := schema.Contract{}.Mixin()
+	contract.Policy = privacy.NewPolicies(schema.Contract{})
+	contract.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := contract.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	contractMixinFields0 := contractMixin[0].Fields()
+	contractFields := schema.Contract{}.Fields()
+	_ = contractFields
+	// contractDescCreateTime is the schema descriptor for create_time field.
+	contractDescCreateTime := contractMixinFields0[0].Descriptor()
+	// contract.DefaultCreateTime holds the default value on creation for the create_time field.
+	contract.DefaultCreateTime = contractDescCreateTime.Default.(func() time.Time)
+	// contractDescUpdateTime is the schema descriptor for update_time field.
+	contractDescUpdateTime := contractMixinFields0[1].Descriptor()
+	// contract.DefaultUpdateTime holds the default value on creation for the update_time field.
+	contract.DefaultUpdateTime = contractDescUpdateTime.Default.(func() time.Time)
+	// contract.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	contract.UpdateDefaultUpdateTime = contractDescUpdateTime.UpdateDefault.(func() time.Time)
+	// contractDescExternalID is the schema descriptor for external_id field.
+	contractDescExternalID := contractFields[0].Descriptor()
+	// contract.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
+	contract.ExternalIDValidator = contractDescExternalID.Validators[0].(func(string) error)
+	// contractDescName is the schema descriptor for name field.
+	contractDescName := contractFields[1].Descriptor()
+	// contract.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	contract.NameValidator = contractDescName.Validators[0].(func(string) error)
+	// contractDescCategory is the schema descriptor for category field.
+	contractDescCategory := contractFields[2].Descriptor()
+	// contract.CategoryValidator is a validator for the "category" field. It is called by the builders before save.
+	contract.CategoryValidator = contractDescCategory.Validators[0].(func(string) error)
+	// contractDescDescription is the schema descriptor for description field.
+	contractDescDescription := contractFields[5].Descriptor()
+	// contract.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	contract.DescriptionValidator = contractDescDescription.Validators[0].(func(string) error)
 	counterMixin := schema.Counter{}.Mixin()
 	counter.Policy = privacy.NewPolicies(schema.Counter{})
 	counter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2357,6 +2398,37 @@ func init() {
 	thresholdDescDescription := thresholdFields[1].Descriptor()
 	// threshold.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	threshold.DescriptionValidator = thresholdDescDescription.Validators[0].(func(string) error)
+	uplMixin := schema.Upl{}.Mixin()
+	upl.Policy = privacy.NewPolicies(schema.Upl{})
+	upl.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := upl.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	uplMixinFields0 := uplMixin[0].Fields()
+	uplFields := schema.Upl{}.Fields()
+	_ = uplFields
+	// uplDescCreateTime is the schema descriptor for create_time field.
+	uplDescCreateTime := uplMixinFields0[0].Descriptor()
+	// upl.DefaultCreateTime holds the default value on creation for the create_time field.
+	upl.DefaultCreateTime = uplDescCreateTime.Default.(func() time.Time)
+	// uplDescUpdateTime is the schema descriptor for update_time field.
+	uplDescUpdateTime := uplMixinFields0[1].Descriptor()
+	// upl.DefaultUpdateTime holds the default value on creation for the update_time field.
+	upl.DefaultUpdateTime = uplDescUpdateTime.Default.(func() time.Time)
+	// upl.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	upl.UpdateDefaultUpdateTime = uplDescUpdateTime.UpdateDefault.(func() time.Time)
+	// uplDescName is the schema descriptor for name field.
+	uplDescName := uplFields[0].Descriptor()
+	// upl.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	upl.NameValidator = uplDescName.Validators[0].(func(string) error)
+	// uplDescDescription is the schema descriptor for description field.
+	uplDescDescription := uplFields[1].Descriptor()
+	// upl.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	upl.DescriptionValidator = uplDescDescription.Validators[0].(func(string) error)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

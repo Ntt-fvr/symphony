@@ -2204,6 +2204,90 @@ input OrganizationFilterInput {
   stringSet: [String!]
 }
 
+enum ContractStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/contract.Status"
+  ) {
+  ACTIVE
+  EXPIRE
+  PENDING
+}
+
+type Contract implements Node {
+  id: ID!
+  externalID: String!
+  name: String!
+  category: String!
+  effective_date: Time!
+  expiration_date: Time!
+  description: String!
+  organization: Organization!
+  status: ContractStatus!  
+}
+
+input AddContractInput {  
+  externalID: String!
+  name: String!
+  category: String!
+  effective_date: Time!
+  expiration_date: Time!
+  description: String!
+  organization: ID!
+  status: ContractStatus! 
+}
+
+input EditContractInput {
+  id: ID!
+  externalID: String!
+  name: String!
+  category: String!
+  expiration_date: Time!
+  organization: ID!
+  description: String! 
+}
+
+enum ContractFilterType {
+  NAME
+}
+
+input ContractFilterInput {
+  filterType: ContractFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type Upl implements Node {
+  id: ID!
+  name: String!
+  description: String!
+}
+
+input AddUplInput {  
+  name: String!
+  description: String!
+}
+
+input EditUplInput {
+  id: ID!
+  name: String!
+  description: String!
+}
+enum UplFilterType {
+  NAME
+}
+
+input UplFilterInput {
+  filterType: UplFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 """
 A connection to a list of permissions policies.
 """
@@ -3680,6 +3764,142 @@ type OrganizationEdge {
   """
   cursor: Cursor!
 }
+
+"""
+Properties by which Contract connections can be ordered.
+"""
+enum ContractOrderField {
+  """
+  Order Contract by name.
+  """
+  NAME
+
+  """
+  Order Contract by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Contract by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Contract connections.
+"""
+input ContractOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Contract by.
+  """
+  field: ContractOrderField
+}
+
+"""
+A connection to a list of Contract.
+"""
+type ContractConnection {
+  """
+  Total Contract of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Contract edges.
+  """
+  edges: [ContractEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Contract edge in a connection.
+"""
+type ContractEdge {
+  """
+  The Contract at the end of the edge.
+  """
+  node: Contract
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+
+"""
+Properties by which Upl connections can be ordered.
+"""
+enum UplOrderField {
+  """
+  Order Upl by name.
+  """
+  NAME
+
+  """
+  Order Upl by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Upl by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Upl connections.
+"""
+input UplOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Upl by.
+  """
+  field: UplOrderField
+}
+
+"""
+A connection to a list of Upl.
+"""
+type UplConnection {
+  """
+  Total Upl of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Upl edges.
+  """
+  edges: [UplEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Upl edge in a connection.
+"""
+type UplEdge {
+  """
+  The Upl at the end of the edge.
+  """
+  node: Upl
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 
 """
 Properties by which Recommendations connections can be ordered.
@@ -7031,6 +7251,76 @@ type Query {
   ): OrganizationConnection!
 
   """
+  A list of contract.
+  """
+  contracts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned contract.
+    """
+    orderBy: ContractOrder
+
+    """
+    Filtering options for the returned contract.
+    """
+    filterBy: [ContractFilterInput!]
+  ): ContractConnection!
+
+  """
+  A list of upl.
+  """
+  upls(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned upl.
+    """
+    orderBy: UplOrder
+
+    """
+    Filtering options for the returned upl.
+    """
+    filterBy: [UplFilterInput!]
+  ): UplConnection!
+
+  """
   A list of Recommendations.
   """
   Recommendations(
@@ -7274,7 +7564,7 @@ type Query {
     """
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
- 
+
   appointments(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -7612,6 +7902,12 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
+  addContract(input: AddContractInput!):Contract!
+  editContract(input: EditContractInput!): Contract!
+  removeContract(id: ID!): ID!
+  addUpl(input: AddUplInput!):Upl!
+  editUpl(input: EditUplInput!): Upl!
+  removeUpl(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!

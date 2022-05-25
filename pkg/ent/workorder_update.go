@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
@@ -328,6 +329,25 @@ func (wou *WorkOrderUpdate) SetOrganization(o *Organization) *WorkOrderUpdate {
 	return wou.SetOrganizationID(o.ID)
 }
 
+// SetContractID sets the contract edge to Contract by id.
+func (wou *WorkOrderUpdate) SetContractID(id int) *WorkOrderUpdate {
+	wou.mutation.SetContractID(id)
+	return wou
+}
+
+// SetNillableContractID sets the contract edge to Contract by id if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableContractID(id *int) *WorkOrderUpdate {
+	if id != nil {
+		wou = wou.SetContractID(*id)
+	}
+	return wou
+}
+
+// SetContract sets the contract edge to Contract.
+func (wou *WorkOrderUpdate) SetContract(c *Contract) *WorkOrderUpdate {
+	return wou.SetContractID(c.ID)
+}
+
 // AddFileIDs adds the files edge to File by ids.
 func (wou *WorkOrderUpdate) AddFileIDs(ids ...int) *WorkOrderUpdate {
 	wou.mutation.AddFileIDs(ids...)
@@ -563,6 +583,12 @@ func (wou *WorkOrderUpdate) RemoveLinks(l ...*Link) *WorkOrderUpdate {
 // ClearOrganization clears the "organization" edge to type Organization.
 func (wou *WorkOrderUpdate) ClearOrganization() *WorkOrderUpdate {
 	wou.mutation.ClearOrganization()
+	return wou
+}
+
+// ClearContract clears the "contract" edge to type Contract.
+func (wou *WorkOrderUpdate) ClearContract() *WorkOrderUpdate {
+	wou.mutation.ClearContract()
 	return wou
 }
 
@@ -1189,6 +1215,41 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wou.mutation.ContractCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.ContractTable,
+			Columns: []string{workorder.ContractColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.ContractIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.ContractTable,
+			Columns: []string{workorder.ContractColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
 				},
 			},
 		}
@@ -2014,6 +2075,25 @@ func (wouo *WorkOrderUpdateOne) SetOrganization(o *Organization) *WorkOrderUpdat
 	return wouo.SetOrganizationID(o.ID)
 }
 
+// SetContractID sets the contract edge to Contract by id.
+func (wouo *WorkOrderUpdateOne) SetContractID(id int) *WorkOrderUpdateOne {
+	wouo.mutation.SetContractID(id)
+	return wouo
+}
+
+// SetNillableContractID sets the contract edge to Contract by id if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableContractID(id *int) *WorkOrderUpdateOne {
+	if id != nil {
+		wouo = wouo.SetContractID(*id)
+	}
+	return wouo
+}
+
+// SetContract sets the contract edge to Contract.
+func (wouo *WorkOrderUpdateOne) SetContract(c *Contract) *WorkOrderUpdateOne {
+	return wouo.SetContractID(c.ID)
+}
+
 // AddFileIDs adds the files edge to File by ids.
 func (wouo *WorkOrderUpdateOne) AddFileIDs(ids ...int) *WorkOrderUpdateOne {
 	wouo.mutation.AddFileIDs(ids...)
@@ -2249,6 +2329,12 @@ func (wouo *WorkOrderUpdateOne) RemoveLinks(l ...*Link) *WorkOrderUpdateOne {
 // ClearOrganization clears the "organization" edge to type Organization.
 func (wouo *WorkOrderUpdateOne) ClearOrganization() *WorkOrderUpdateOne {
 	wouo.mutation.ClearOrganization()
+	return wouo
+}
+
+// ClearContract clears the "contract" edge to type Contract.
+func (wouo *WorkOrderUpdateOne) ClearContract() *WorkOrderUpdateOne {
+	wouo.mutation.ClearContract()
 	return wouo
 }
 
@@ -2873,6 +2959,41 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wouo.mutation.ContractCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.ContractTable,
+			Columns: []string{workorder.ContractColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.ContractIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.ContractTable,
+			Columns: []string{workorder.ContractColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: contract.FieldID,
 				},
 			},
 		}

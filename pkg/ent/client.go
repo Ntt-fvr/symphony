@@ -25,6 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -96,6 +97,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
+	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -139,6 +141,8 @@ type Client struct {
 	Comment *CommentClient
 	// Comparator is the client for interacting with the Comparator builders.
 	Comparator *ComparatorClient
+	// Contract is the client for interacting with the Contract builders.
+	Contract *ContractClient
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -281,6 +285,8 @@ type Client struct {
 	Tech *TechClient
 	// Threshold is the client for interacting with the Threshold builders.
 	Threshold *ThresholdClient
+	// Upl is the client for interacting with the Upl builders.
+	Upl *UplClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -324,6 +330,7 @@ func (c *Client) init() {
 	c.CheckListItemDefinition = NewCheckListItemDefinitionClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Comparator = NewComparatorClient(c.config)
+	c.Contract = NewContractClient(c.config)
 	c.Counter = NewCounterClient(c.config)
 	c.CounterFamily = NewCounterFamilyClient(c.config)
 	c.CounterFormula = NewCounterFormulaClient(c.config)
@@ -395,6 +402,7 @@ func (c *Client) init() {
 	c.SurveyWiFiScan = NewSurveyWiFiScanClient(c.config)
 	c.Tech = NewTechClient(c.config)
 	c.Threshold = NewThresholdClient(c.config)
+	c.Upl = NewUplClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UsersGroup = NewUsersGroupClient(c.config)
 	c.Vendor = NewVendorClient(c.config)
@@ -447,6 +455,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
 		Comparator:                  NewComparatorClient(cfg),
+		Contract:                    NewContractClient(cfg),
 		Counter:                     NewCounterClient(cfg),
 		CounterFamily:               NewCounterFamilyClient(cfg),
 		CounterFormula:              NewCounterFormulaClient(cfg),
@@ -518,6 +527,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
 		Tech:                        NewTechClient(cfg),
 		Threshold:                   NewThresholdClient(cfg),
+		Upl:                         NewUplClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
 		Vendor:                      NewVendorClient(cfg),
@@ -553,6 +563,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
 		Comparator:                  NewComparatorClient(cfg),
+		Contract:                    NewContractClient(cfg),
 		Counter:                     NewCounterClient(cfg),
 		CounterFamily:               NewCounterFamilyClient(cfg),
 		CounterFormula:              NewCounterFormulaClient(cfg),
@@ -624,6 +635,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
 		Tech:                        NewTechClient(cfg),
 		Threshold:                   NewThresholdClient(cfg),
+		Upl:                         NewUplClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
 		Vendor:                      NewVendorClient(cfg),
@@ -672,6 +684,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CheckListItemDefinition.Use(hooks...)
 	c.Comment.Use(hooks...)
 	c.Comparator.Use(hooks...)
+	c.Contract.Use(hooks...)
 	c.Counter.Use(hooks...)
 	c.CounterFamily.Use(hooks...)
 	c.CounterFormula.Use(hooks...)
@@ -743,6 +756,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.SurveyWiFiScan.Use(hooks...)
 	c.Tech.Use(hooks...)
 	c.Threshold.Use(hooks...)
+	c.Upl.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UsersGroup.Use(hooks...)
 	c.Vendor.Use(hooks...)
@@ -2347,6 +2361,143 @@ func (c *ComparatorClient) QueryComparatorkqitargetfk(co *Comparator) *KqiCompar
 func (c *ComparatorClient) Hooks() []Hook {
 	hooks := c.hooks.Comparator
 	return append(hooks[:len(hooks):len(hooks)], comparator.Hooks[:]...)
+}
+
+// ContractClient is a client for the Contract schema.
+type ContractClient struct {
+	config
+}
+
+// NewContractClient returns a client for the Contract from the given config.
+func NewContractClient(c config) *ContractClient {
+	return &ContractClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `contract.Hooks(f(g(h())))`.
+func (c *ContractClient) Use(hooks ...Hook) {
+	c.hooks.Contract = append(c.hooks.Contract, hooks...)
+}
+
+// Create returns a create builder for Contract.
+func (c *ContractClient) Create() *ContractCreate {
+	mutation := newContractMutation(c.config, OpCreate)
+	return &ContractCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Contract entities.
+func (c *ContractClient) CreateBulk(builders ...*ContractCreate) *ContractCreateBulk {
+	return &ContractCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Contract.
+func (c *ContractClient) Update() *ContractUpdate {
+	mutation := newContractMutation(c.config, OpUpdate)
+	return &ContractUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ContractClient) UpdateOne(co *Contract) *ContractUpdateOne {
+	mutation := newContractMutation(c.config, OpUpdateOne, withContract(co))
+	return &ContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ContractClient) UpdateOneID(id int) *ContractUpdateOne {
+	mutation := newContractMutation(c.config, OpUpdateOne, withContractID(id))
+	return &ContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Contract.
+func (c *ContractClient) Delete() *ContractDelete {
+	mutation := newContractMutation(c.config, OpDelete)
+	return &ContractDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ContractClient) DeleteOne(co *Contract) *ContractDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ContractClient) DeleteOneID(id int) *ContractDeleteOne {
+	builder := c.Delete().Where(contract.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ContractDeleteOne{builder}
+}
+
+// Query returns a query builder for Contract.
+func (c *ContractClient) Query() *ContractQuery {
+	return &ContractQuery{config: c.config}
+}
+
+// Get returns a Contract entity by its id.
+func (c *ContractClient) Get(ctx context.Context, id int) (*Contract, error) {
+	return c.Query().Where(contract.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ContractClient) GetX(ctx context.Context, id int) *Contract {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOrganization queries the organization edge of a Contract.
+func (c *ContractClient) QueryOrganization(co *Contract) *OrganizationQuery {
+	query := &OrganizationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(contract.Table, contract.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, contract.OrganizationTable, contract.OrganizationColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUplContract queries the upl_contract edge of a Contract.
+func (c *ContractClient) QueryUplContract(co *Contract) *UplQuery {
+	query := &UplQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(contract.Table, contract.FieldID, id),
+			sqlgraph.To(upl.Table, upl.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, contract.UplContractTable, contract.UplContractColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWorkOrderContract queries the work_order_contract edge of a Contract.
+func (c *ContractClient) QueryWorkOrderContract(co *Contract) *WorkOrderQuery {
+	query := &WorkOrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(contract.Table, contract.FieldID, id),
+			sqlgraph.To(workorder.Table, workorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, contract.WorkOrderContractTable, contract.WorkOrderContractColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ContractClient) Hooks() []Hook {
+	hooks := c.hooks.Contract
+	return append(hooks[:len(hooks):len(hooks)], contract.Hooks[:]...)
 }
 
 // CounterClient is a client for the Counter schema.
@@ -8170,6 +8321,22 @@ func (c *OrganizationClient) QueryUserFk(o *Organization) *UserQuery {
 	return query
 }
 
+// QueryContractOrganization queries the contract_organization edge of a Organization.
+func (c *OrganizationClient) QueryContractOrganization(o *Organization) *ContractQuery {
+	query := &ContractQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.ContractOrganizationTable, organization.ContractOrganizationColumn),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryWorkOrderFk queries the work_order_fk edge of a Organization.
 func (c *OrganizationClient) QueryWorkOrderFk(o *Organization) *WorkOrderQuery {
 	query := &WorkOrderQuery{config: c.config}
@@ -12412,6 +12579,111 @@ func (c *ThresholdClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], threshold.Hooks[:]...)
 }
 
+// UplClient is a client for the Upl schema.
+type UplClient struct {
+	config
+}
+
+// NewUplClient returns a client for the Upl from the given config.
+func NewUplClient(c config) *UplClient {
+	return &UplClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `upl.Hooks(f(g(h())))`.
+func (c *UplClient) Use(hooks ...Hook) {
+	c.hooks.Upl = append(c.hooks.Upl, hooks...)
+}
+
+// Create returns a create builder for Upl.
+func (c *UplClient) Create() *UplCreate {
+	mutation := newUplMutation(c.config, OpCreate)
+	return &UplCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Upl entities.
+func (c *UplClient) CreateBulk(builders ...*UplCreate) *UplCreateBulk {
+	return &UplCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Upl.
+func (c *UplClient) Update() *UplUpdate {
+	mutation := newUplMutation(c.config, OpUpdate)
+	return &UplUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UplClient) UpdateOne(u *Upl) *UplUpdateOne {
+	mutation := newUplMutation(c.config, OpUpdateOne, withUpl(u))
+	return &UplUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UplClient) UpdateOneID(id int) *UplUpdateOne {
+	mutation := newUplMutation(c.config, OpUpdateOne, withUplID(id))
+	return &UplUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Upl.
+func (c *UplClient) Delete() *UplDelete {
+	mutation := newUplMutation(c.config, OpDelete)
+	return &UplDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UplClient) DeleteOne(u *Upl) *UplDeleteOne {
+	return c.DeleteOneID(u.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UplClient) DeleteOneID(id int) *UplDeleteOne {
+	builder := c.Delete().Where(upl.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UplDeleteOne{builder}
+}
+
+// Query returns a query builder for Upl.
+func (c *UplClient) Query() *UplQuery {
+	return &UplQuery{config: c.config}
+}
+
+// Get returns a Upl entity by its id.
+func (c *UplClient) Get(ctx context.Context, id int) (*Upl, error) {
+	return c.Query().Where(upl.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UplClient) GetX(ctx context.Context, id int) *Upl {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryContract queries the contract edge of a Upl.
+func (c *UplClient) QueryContract(u *Upl) *ContractQuery {
+	query := &ContractQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(upl.Table, upl.FieldID, id),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, upl.ContractTable, upl.ContractColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UplClient) Hooks() []Hook {
+	hooks := c.hooks.Upl
+	return append(hooks[:len(hooks):len(hooks)], upl.Hooks[:]...)
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -13075,6 +13347,22 @@ func (c *WorkOrderClient) QueryOrganization(wo *WorkOrder) *OrganizationQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(organization.Table, organization.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, workorder.OrganizationTable, workorder.OrganizationColumn),
+		)
+		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryContract queries the contract edge of a WorkOrder.
+func (c *WorkOrderClient) QueryContract(wo *WorkOrder) *ContractQuery {
+	query := &ContractQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, id),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, workorder.ContractTable, workorder.ContractColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil
