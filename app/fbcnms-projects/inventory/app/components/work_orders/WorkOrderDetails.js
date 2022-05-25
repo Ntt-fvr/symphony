@@ -790,6 +790,11 @@ const WorkOrderDetails = ({
                               properties={properties}
                               classes={classes}
                               index={index}
+                              required={
+                                !!property.propertyType.isMandatory &&
+                                (workOrder.status === closedStatus.value ||
+                                  !mandatoryPropertiesOnCloseEnabled)
+                              }
                               _propertyChangedHandler={_propertyChangedHandler}
                             />
                           ))}

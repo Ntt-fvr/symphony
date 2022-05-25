@@ -241,6 +241,26 @@ func (wou *WorkOrderUpdate) ClearDueDate() *WorkOrderUpdate {
 	return wou
 }
 
+// SetIsNameEditable sets the is_name_editable field.
+func (wou *WorkOrderUpdate) SetIsNameEditable(b bool) *WorkOrderUpdate {
+	wou.mutation.SetIsNameEditable(b)
+	return wou
+}
+
+// SetNillableIsNameEditable sets the is_name_editable field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableIsNameEditable(b *bool) *WorkOrderUpdate {
+	if b != nil {
+		wou.SetIsNameEditable(*b)
+	}
+	return wou
+}
+
+// ClearIsNameEditable clears the value of is_name_editable.
+func (wou *WorkOrderUpdate) ClearIsNameEditable() *WorkOrderUpdate {
+	wou.mutation.ClearIsNameEditable()
+	return wou
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (wou *WorkOrderUpdate) SetTypeID(id int) *WorkOrderUpdate {
 	wou.mutation.SetTypeID(id)
@@ -982,6 +1002,19 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldDueDate,
+		})
+	}
+	if value, ok := wou.mutation.IsNameEditable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workorder.FieldIsNameEditable,
+		})
+	}
+	if wou.mutation.IsNameEditableCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: workorder.FieldIsNameEditable,
 		})
 	}
 	if wou.mutation.TypeCleared() {
@@ -1927,6 +1960,26 @@ func (wouo *WorkOrderUpdateOne) ClearDueDate() *WorkOrderUpdateOne {
 	return wouo
 }
 
+// SetIsNameEditable sets the is_name_editable field.
+func (wouo *WorkOrderUpdateOne) SetIsNameEditable(b bool) *WorkOrderUpdateOne {
+	wouo.mutation.SetIsNameEditable(b)
+	return wouo
+}
+
+// SetNillableIsNameEditable sets the is_name_editable field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableIsNameEditable(b *bool) *WorkOrderUpdateOne {
+	if b != nil {
+		wouo.SetIsNameEditable(*b)
+	}
+	return wouo
+}
+
+// ClearIsNameEditable clears the value of is_name_editable.
+func (wouo *WorkOrderUpdateOne) ClearIsNameEditable() *WorkOrderUpdateOne {
+	wouo.mutation.ClearIsNameEditable()
+	return wouo
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (wouo *WorkOrderUpdateOne) SetTypeID(id int) *WorkOrderUpdateOne {
 	wouo.mutation.SetTypeID(id)
@@ -2666,6 +2719,19 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldDueDate,
+		})
+	}
+	if value, ok := wouo.mutation.IsNameEditable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workorder.FieldIsNameEditable,
+		})
+	}
+	if wouo.mutation.IsNameEditableCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: workorder.FieldIsNameEditable,
 		})
 	}
 	if wouo.mutation.TypeCleared() {
