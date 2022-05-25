@@ -39,7 +39,6 @@ import {useContext} from 'react';
 
 const useStyles = makeStyles(() => ({
   container: {
-    maxWidth: '1366px',
     overflowX: 'auto',
   },
   root: {
@@ -52,9 +51,16 @@ const useStyles = makeStyles(() => ({
     marginBottom: '0px',
     width: '100%',
   },
-  cell: {
-    paddingLeft: '0px',
-    width: 'unset',
+  gridRight: {
+    '& div': {
+      padding: '0'
+    }
+  },
+  checkbox: {
+    textAlign: 'center',
+    '& div': {
+      justifyContent: 'center'
+    }
   },
   selectMenu: {
     height: '14px',
@@ -91,31 +97,27 @@ const ExperimentalPropertyTypesTable = ({
       <Table component="div" className={classes.root}>
         <TableHead component="div">
           <TableRow component="div">
-            <TableCell size="small" padding="none" component="div" />
-            <TableCell component="div" className={classes.cell}>
+            <TableCell component="div" />
+            <TableCell component="div">
               <fbt desc="">Name</fbt>
             </TableCell>
-            <TableCell component="div" className={classes.cell}>
+            <TableCell component="div">
               <fbt desc="">Property Type</fbt>
             </TableCell>
-            <TableCell component="div" className={classes.cell}>
+            <TableCell component="div">
               <fbt desc="">Default Value</fbt>
             </TableCell>
-            <TableCell
-              padding="checkbox"
-              component="div"
-              className={classes.cell}>
+            <TableCell className={classes.checkbox} component="div">
               <fbt desc="">Fixed Value</fbt>
             </TableCell>
             {supportMandatory && (
-              <TableCell
-                padding="checkbox"
-                component="div"
-                className={classes.cell}>
+              <TableCell className={classes.checkbox} component="div">
                 <fbt desc="">Mandatory</fbt>
               </TableCell>
             )}
-            <TableCell component="div" />
+            <TableCell className={classes.checkbox} component="div">
+              <fbt desc="">Delete</fbt>
+            </TableCell>
           </TableRow>
         </TableHead>
         <DroppableTableBody
@@ -292,3 +294,4 @@ const ExperimentalPropertyTypesTable = ({
 };
 
 export default ExperimentalPropertyTypesTable;
+ 

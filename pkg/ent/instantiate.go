@@ -7,6 +7,12 @@
 package ent
 
 // Instantiate entity configuration.
+func (c *ActionClient) Instantiate(a *Action) *Action {
+	a.config = c.config
+	return a
+}
+
+// Instantiate entity configuration.
 func (c *ActivityClient) Instantiate(a *Activity) *Activity {
 	a.config = c.config
 	return a
@@ -79,7 +85,11 @@ func (c *ComparatorClient) Instantiate(co *Comparator) *Comparator {
 }
 
 // Instantiate entity configuration.
+<<<<<<< HEAD
 func (c *ContractClient) Instantiate(co *Contract) *Contract {
+=======
+func (c *CostClient) Instantiate(co *Cost) *Cost {
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	co.config = c.config
 	return co
 }
@@ -178,6 +188,12 @@ func (c *EquipmentTypeClient) Instantiate(et *EquipmentType) *EquipmentType {
 func (c *EventSeverityClient) Instantiate(es *EventSeverity) *EventSeverity {
 	es.config = c.config
 	return es
+}
+
+// Instantiate entity configuration.
+func (c *ExecutionClient) Instantiate(e *Execution) *Execution {
+	e.config = c.config
+	return e
 }
 
 // Instantiate entity configuration.
@@ -415,15 +431,69 @@ func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *
 }
 
 // Instantiate entity configuration.
+func (c *ReconciliationRuleClient) Instantiate(rr *ReconciliationRule) *ReconciliationRule {
+	rr.config = c.config
+	return rr
+}
+
+// Instantiate entity configuration.
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf
 }
 
 // Instantiate entity configuration.
+func (c *ResourcePropertyTypeClient) Instantiate(rpt *ResourcePropertyType) *ResourcePropertyType {
+	rpt.config = c.config
+	return rpt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationClient) Instantiate(rs *ResourceSpecification) *ResourceSpecification {
+	rs.config = c.config
+	return rs
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationItemsClient) Instantiate(rsi *ResourceSpecificationItems) *ResourceSpecificationItems {
+	rsi.config = c.config
+	return rsi
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationRelationshipClient) Instantiate(rsr *ResourceSpecificationRelationship) *ResourceSpecificationRelationship {
+	rsr.config = c.config
+	return rsr
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeClient) Instantiate(rt *ResourceType) *ResourceType {
+	rt.config = c.config
+	return rt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeRelationshipClient) Instantiate(rtr *ResourceTypeRelationship) *ResourceTypeRelationship {
+	rtr.config = c.config
+	return rtr
+}
+
+// Instantiate entity configuration.
 func (c *RuleClient) Instantiate(r *Rule) *Rule {
 	r.config = c.config
 	return r
+}
+
+// Instantiate entity configuration.
+func (c *RuleActionClient) Instantiate(ra *RuleAction) *RuleAction {
+	ra.config = c.config
+	return ra
+}
+
+// Instantiate entity configuration.
+func (c *RuleActionTemplateClient) Instantiate(rat *RuleActionTemplate) *RuleActionTemplate {
+	rat.config = c.config
+	return rat
 }
 
 // Instantiate entity configuration.
@@ -511,9 +581,15 @@ func (c *ThresholdClient) Instantiate(t *Threshold) *Threshold {
 }
 
 // Instantiate entity configuration.
+<<<<<<< HEAD
 func (c *UplClient) Instantiate(u *Upl) *Upl {
 	u.config = c.config
 	return u
+=======
+func (c *UplItemClient) Instantiate(ui *UplItem) *UplItem {
+	ui.config = c.config
+	return ui
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 }
 
 // Instantiate entity configuration.

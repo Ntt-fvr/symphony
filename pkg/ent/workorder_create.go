@@ -18,7 +18,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
+=======
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
@@ -483,6 +487,25 @@ func (woc *WorkOrderCreate) AddAppointment(a ...*Appointment) *WorkOrderCreate {
 		ids[i] = a[i].ID
 	}
 	return woc.AddAppointmentIDs(ids...)
+}
+
+// SetWorkorderID sets the workorder edge to Cost by id.
+func (woc *WorkOrderCreate) SetWorkorderID(id int) *WorkOrderCreate {
+	woc.mutation.SetWorkorderID(id)
+	return woc
+}
+
+// SetNillableWorkorderID sets the workorder edge to Cost by id if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableWorkorderID(id *int) *WorkOrderCreate {
+	if id != nil {
+		woc = woc.SetWorkorderID(*id)
+	}
+	return woc
+}
+
+// SetWorkorder sets the workorder edge to Cost.
+func (woc *WorkOrderCreate) SetWorkorder(c *Cost) *WorkOrderCreate {
+	return woc.SetWorkorderID(c.ID)
 }
 
 // Mutation returns the WorkOrderMutation object of the builder.
@@ -1039,6 +1062,25 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := woc.mutation.WorkorderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   workorder.WorkorderTable,
+			Columns: []string{workorder.WorkorderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
 				},
 			},
 		}

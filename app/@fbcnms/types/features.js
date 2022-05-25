@@ -45,6 +45,7 @@ export type FeatureID =
   | 'projects_bulk_upload'
   | 'enable_backplane_connections'
   | 'projects_column_selector'
+  | 'enable_resource_catalog_&_relationships'
   | 'multicontractor'
   | 'scheduling_filter_dates'
   | 'property_combo'

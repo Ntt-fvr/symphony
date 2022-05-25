@@ -12,6 +12,39 @@ import (
 )
 
 var (
+	// ActionsColumns holds the columns for the "actions" table.
+	ActionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "SUCCESFUL", "FAILED"}},
+		{Name: "user_action", Type: field.TypeEnum, Enums: []string{"CONFIRM", "IGNORE", "ALARM"}},
+		{Name: "log_execution", Type: field.TypeString, Unique: true},
+		{Name: "execution_execution", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_action_rule_action", Type: field.TypeInt, Nullable: true},
+	}
+	// ActionsTable holds the schema information for the "actions" table.
+	ActionsTable = &schema.Table{
+		Name:       "actions",
+		Columns:    ActionsColumns,
+		PrimaryKey: []*schema.Column{ActionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "actions_executions_execution",
+				Columns: []*schema.Column{ActionsColumns[6]},
+
+				RefColumns: []*schema.Column{ExecutionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "actions_rule_actions_rule_action",
+				Columns: []*schema.Column{ActionsColumns[7]},
+
+				RefColumns: []*schema.Column{RuleActionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// ActivitiesColumns holds the columns for the "activities" table.
 	ActivitiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -427,6 +460,7 @@ var (
 		PrimaryKey:  []*schema.Column{ComparatorsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+<<<<<<< HEAD
 	// ContractsColumns holds the columns for the "contracts" table.
 	ContractsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -452,6 +486,39 @@ var (
 				Columns: []*schema.Column{ContractsColumns[10]},
 
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+=======
+	// CostsColumns holds the columns for the "costs" table.
+	CostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "item", Type: field.TypeString},
+		{Name: "unit", Type: field.TypeFloat64},
+		{Name: "price", Type: field.TypeFloat64},
+		{Name: "quantity", Type: field.TypeInt},
+		{Name: "total", Type: field.TypeFloat64},
+		{Name: "upl_item_upl_item", Type: field.TypeInt, Unique: true, Nullable: true},
+		{Name: "work_order_workorder", Type: field.TypeInt, Unique: true, Nullable: true},
+	}
+	// CostsTable holds the schema information for the "costs" table.
+	CostsTable = &schema.Table{
+		Name:       "costs",
+		Columns:    CostsColumns,
+		PrimaryKey: []*schema.Column{CostsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "costs_upl_items_UplItem",
+				Columns: []*schema.Column{CostsColumns[8]},
+
+				RefColumns: []*schema.Column{UplItemsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "costs_work_orders_workorder",
+				Columns: []*schema.Column{CostsColumns[9]},
+
+				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -880,6 +947,29 @@ var (
 		Columns:     EventSeveritiesColumns,
 		PrimaryKey:  []*schema.Column{EventSeveritiesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// ExecutionsColumns holds the columns for the "executions" table.
+	ExecutionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "manual_confirmation", Type: field.TypeTime},
+		{Name: "user_user", Type: field.TypeInt, Nullable: true},
+	}
+	// ExecutionsTable holds the schema information for the "executions" table.
+	ExecutionsTable = &schema.Table{
+		Name:       "executions",
+		Columns:    ExecutionsColumns,
+		PrimaryKey: []*schema.Column{ExecutionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "executions_users_User",
+				Columns: []*schema.Column{ExecutionsColumns[4]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// ExitPointsColumns holds the columns for the "exit_points" table.
 	ExitPointsColumns = []*schema.Column{
@@ -2301,6 +2391,20 @@ var (
 		PrimaryKey:  []*schema.Column{RecommendationsSourcesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ReconciliationRulesColumns holds the columns for the "reconciliation_rules" table.
+	ReconciliationRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// ReconciliationRulesTable holds the schema information for the "reconciliation_rules" table.
+	ReconciliationRulesTable = &schema.Table{
+		Name:        "reconciliation_rules",
+		Columns:     ReconciliationRulesColumns,
+		PrimaryKey:  []*schema.Column{ReconciliationRulesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// ReportFiltersColumns holds the columns for the "report_filters" table.
 	ReportFiltersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2321,6 +2425,212 @@ var (
 				Name:    "reportfilter_name_entity",
 				Unique:  true,
 				Columns: []*schema.Column{ReportFiltersColumns[3], ReportFiltersColumns[4]},
+			},
+		},
+	}
+	// ResourcePropertyTypesColumns holds the columns for the "resource_property_types" table.
+	ResourcePropertyTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"string", "int", "bool", "float", "date", "enum", "range", "email", "gps_location", "datetime_local", "node"}},
+		{Name: "name", Type: field.TypeString},
+		{Name: "external_id", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "index", Type: field.TypeInt, Nullable: true},
+		{Name: "category", Type: field.TypeString, Nullable: true},
+		{Name: "int_val", Type: field.TypeInt, Nullable: true},
+		{Name: "bool_val", Type: field.TypeBool, Nullable: true},
+		{Name: "float_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "latitude_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "longitude_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "string_val", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "range_from_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "range_to_val", Type: field.TypeFloat64, Nullable: true},
+		{Name: "is_instance_property", Type: field.TypeBool, Default: true},
+		{Name: "editable", Type: field.TypeBool, Default: true},
+		{Name: "mandatory", Type: field.TypeBool},
+		{Name: "deleted", Type: field.TypeBool},
+		{Name: "listable", Type: field.TypeBool},
+		{Name: "node_type", Type: field.TypeString, Nullable: true},
+		{Name: "property_category_resource_properties_type", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_specification_resource_property_type", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourcePropertyTypesTable holds the schema information for the "resource_property_types" table.
+	ResourcePropertyTypesTable = &schema.Table{
+		Name:       "resource_property_types",
+		Columns:    ResourcePropertyTypesColumns,
+		PrimaryKey: []*schema.Column{ResourcePropertyTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_property_types_property_categories_resource_properties_type",
+				Columns: []*schema.Column{ResourcePropertyTypesColumns[22]},
+
+				RefColumns: []*schema.Column{PropertyCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_property_types_resource_specifications_resource_property_type",
+				Columns: []*schema.Column{ResourcePropertyTypesColumns[23]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "resourcepropertytype_name_property_category_resource_properties_type",
+				Unique:  false,
+				Columns: []*schema.Column{ResourcePropertyTypesColumns[4], ResourcePropertyTypesColumns[22]},
+			},
+		},
+	}
+	// ResourceSpecificationsColumns holds the columns for the "resource_specifications" table.
+	ResourceSpecificationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "quantity", Type: field.TypeInt, Nullable: true},
+		{Name: "reconciliation_rule_reconciliation_rule_specification", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_type_resource_specification", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceSpecificationsTable holds the schema information for the "resource_specifications" table.
+	ResourceSpecificationsTable = &schema.Table{
+		Name:       "resource_specifications",
+		Columns:    ResourceSpecificationsColumns,
+		PrimaryKey: []*schema.Column{ResourceSpecificationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_specifications_reconciliation_rules_reconciliation_rule_specification",
+				Columns: []*schema.Column{ResourceSpecificationsColumns[5]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_specifications_resource_types_resource_specification",
+				Columns: []*schema.Column{ResourceSpecificationsColumns[6]},
+
+				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ResourceSpecificationItemsColumns holds the columns for the "resource_specification_items" table.
+	ResourceSpecificationItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "resource_specification_resource_specification_items", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_specification_relationship_resource_sr", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceSpecificationItemsTable holds the schema information for the "resource_specification_items" table.
+	ResourceSpecificationItemsTable = &schema.Table{
+		Name:       "resource_specification_items",
+		Columns:    ResourceSpecificationItemsColumns,
+		PrimaryKey: []*schema.Column{ResourceSpecificationItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_specification_items_resource_specifications_resource_specification_items",
+				Columns: []*schema.Column{ResourceSpecificationItemsColumns[3]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_specification_items_resource_specification_relationships_resource_sr",
+				Columns: []*schema.Column{ResourceSpecificationItemsColumns[4]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationRelationshipsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ResourceSpecificationRelationshipsColumns holds the columns for the "resource_specification_relationships" table.
+	ResourceSpecificationRelationshipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "resource_specification_resource_specification", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceSpecificationRelationshipsTable holds the schema information for the "resource_specification_relationships" table.
+	ResourceSpecificationRelationshipsTable = &schema.Table{
+		Name:       "resource_specification_relationships",
+		Columns:    ResourceSpecificationRelationshipsColumns,
+		PrimaryKey: []*schema.Column{ResourceSpecificationRelationshipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_specification_relationships_resource_specifications_resource_specification",
+				Columns: []*schema.Column{ResourceSpecificationRelationshipsColumns[4]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ResourceTypesColumns holds the columns for the "resource_types" table.
+	ResourceTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "resource_type_class", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "SLOT", "RACK", "PORT", "CARD", "VLAN"}},
+		{Name: "resource_type_base_type", Type: field.TypeEnum, Enums: []string{"LOGICAL_RESOURCE", "PHYSICAL_RESOURCE", "VIRTUAL_RESOURCE"}},
+		{Name: "reconciliation_rule_reconciliation_rule_type", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceTypesTable holds the schema information for the "resource_types" table.
+	ResourceTypesTable = &schema.Table{
+		Name:       "resource_types",
+		Columns:    ResourceTypesColumns,
+		PrimaryKey: []*schema.Column{ResourceTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_types_reconciliation_rules_reconciliation_rule_type",
+				Columns: []*schema.Column{ResourceTypesColumns[6]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ResourceTypeRelationshipsColumns holds the columns for the "resource_type_relationships" table.
+	ResourceTypeRelationshipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "resource_relationship_type", Type: field.TypeEnum, Enums: []string{"BELONGS_TO", "LOCATED_IN", "PHYSICAL_LINK", "LOGICAL_LINK", "CROSS_CONNECTION"}},
+		{Name: "resource_relationship_multiplicity", Type: field.TypeEnum, Enums: []string{"ONE_TO_ONE", "ONE_TO_MANY", "MANY_TO_ONE", "MANY_TO_MANY"}},
+		{Name: "location_type_resource_relationship_location", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_type_resource_relationship_a", Type: field.TypeInt, Nullable: true},
+		{Name: "resource_type_resource_relationship_b", Type: field.TypeInt, Nullable: true},
+	}
+	// ResourceTypeRelationshipsTable holds the schema information for the "resource_type_relationships" table.
+	ResourceTypeRelationshipsTable = &schema.Table{
+		Name:       "resource_type_relationships",
+		Columns:    ResourceTypeRelationshipsColumns,
+		PrimaryKey: []*schema.Column{ResourceTypeRelationshipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_type_relationships_location_types_resource_relationship_location",
+				Columns: []*schema.Column{ResourceTypeRelationshipsColumns[5]},
+
+				RefColumns: []*schema.Column{LocationTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_type_relationships_resource_types_resource_relationship_a",
+				Columns: []*schema.Column{ResourceTypeRelationshipsColumns[6]},
+
+				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_type_relationships_resource_types_resource_relationship_b",
+				Columns: []*schema.Column{ResourceTypeRelationshipsColumns[7]},
+
+				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -2369,6 +2679,51 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// RuleActionsColumns holds the columns for the "rule_actions" table.
+	RuleActionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"NOAPLICA", "MANUAL", "AUTOMATICO"}},
+		{Name: "reconciliation_rule_reconciliation_rule_rule_action", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_action_template_rule_action_template_rule_action", Type: field.TypeInt, Nullable: true},
+	}
+	// RuleActionsTable holds the schema information for the "rule_actions" table.
+	RuleActionsTable = &schema.Table{
+		Name:       "rule_actions",
+		Columns:    RuleActionsColumns,
+		PrimaryKey: []*schema.Column{RuleActionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "rule_actions_reconciliation_rules_reconciliation_rule_rule_action",
+				Columns: []*schema.Column{RuleActionsColumns[4]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "rule_actions_rule_action_templates_rule_action_template_rule_action",
+				Columns: []*schema.Column{RuleActionsColumns[5]},
+
+				RefColumns: []*schema.Column{RuleActionTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// RuleActionTemplatesColumns holds the columns for the "rule_action_templates" table.
+	RuleActionTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "text", Type: field.TypeString, Unique: true},
+	}
+	// RuleActionTemplatesTable holds the schema information for the "rule_action_templates" table.
+	RuleActionTemplatesTable = &schema.Table{
+		Name:        "rule_action_templates",
+		Columns:     RuleActionTemplatesColumns,
+		PrimaryKey:  []*schema.Column{RuleActionTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// RuleLimitsColumns holds the columns for the "rule_limits" table.
 	RuleLimitsColumns = []*schema.Column{
@@ -2833,6 +3188,7 @@ var (
 			},
 		},
 	}
+<<<<<<< HEAD
 	// UplsColumns holds the columns for the "upls" table.
 	UplsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2856,6 +3212,24 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+=======
+	// UplItemsColumns holds the columns for the "upl_items" table.
+	UplItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "externalid", Type: field.TypeString},
+		{Name: "item", Type: field.TypeString},
+		{Name: "unit", Type: field.TypeFloat64},
+		{Name: "price", Type: field.TypeFloat64},
+	}
+	// UplItemsTable holds the schema information for the "upl_items" table.
+	UplItemsTable = &schema.Table{
+		Name:        "upl_items",
+		Columns:     UplItemsColumns,
+		PrimaryKey:  []*schema.Column{UplItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -3457,6 +3831,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		ActionsTable,
 		ActivitiesTable,
 		AlarmFiltersTable,
 		AlarmStatusTable,
@@ -3469,7 +3844,11 @@ var (
 		CheckListItemDefinitionsTable,
 		CommentsTable,
 		ComparatorsTable,
+<<<<<<< HEAD
 		ContractsTable,
+=======
+		CostsTable,
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		CountersTable,
 		CounterFamiliesTable,
 		CounterFormulasTable,
@@ -3486,6 +3865,7 @@ var (
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
 		EventSeveritiesTable,
+		ExecutionsTable,
 		ExitPointsTable,
 		ExportTasksTable,
 		FeaturesTable,
@@ -3525,8 +3905,17 @@ var (
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
 		RecommendationsSourcesTable,
+		ReconciliationRulesTable,
 		ReportFiltersTable,
+		ResourcePropertyTypesTable,
+		ResourceSpecificationsTable,
+		ResourceSpecificationItemsTable,
+		ResourceSpecificationRelationshipsTable,
+		ResourceTypesTable,
+		ResourceTypeRelationshipsTable,
 		RulesTable,
+		RuleActionsTable,
+		RuleActionTemplatesTable,
 		RuleLimitsTable,
 		RuleTypesTable,
 		ServicesTable,
@@ -3541,7 +3930,11 @@ var (
 		SurveyWiFiScansTable,
 		TechesTable,
 		ThresholdsTable,
+<<<<<<< HEAD
 		UplsTable,
+=======
+		UplItemsTable,
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		UsersTable,
 		UsersGroupsTable,
 		VendorsTable,
@@ -3566,6 +3959,8 @@ var (
 )
 
 func init() {
+	ActionsTable.ForeignKeys[0].RefTable = ExecutionsTable
+	ActionsTable.ForeignKeys[1].RefTable = RuleActionsTable
 	ActivitiesTable.ForeignKeys[0].RefTable = UsersTable
 	ActivitiesTable.ForeignKeys[1].RefTable = WorkOrdersTable
 	AlarmFiltersTable.ForeignKeys[0].RefTable = AlarmStatusTable
@@ -3586,7 +3981,12 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = UsersTable
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
+<<<<<<< HEAD
 	ContractsTable.ForeignKeys[0].RefTable = OrganizationsTable
+=======
+	CostsTable.ForeignKeys[0].RefTable = UplItemsTable
+	CostsTable.ForeignKeys[1].RefTable = WorkOrdersTable
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	CountersTable.ForeignKeys[0].RefTable = CounterFamiliesTable
 	CountersTable.ForeignKeys[1].RefTable = VendorsTable
 	CounterFormulasTable.ForeignKeys[0].RefTable = CountersTable
@@ -3606,6 +4006,7 @@ func init() {
 	EquipmentPositionsTable.ForeignKeys[1].RefTable = EquipmentPositionDefinitionsTable
 	EquipmentPositionDefinitionsTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTypesTable.ForeignKeys[0].RefTable = EquipmentCategoriesTable
+	ExecutionsTable.ForeignKeys[0].RefTable = UsersTable
 	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	FilesTable.ForeignKeys[1].RefTable = DocumentCategoriesTable
@@ -3683,9 +4084,22 @@ func init() {
 	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable
 	RecommendationsTable.ForeignKeys[3].RefTable = UsersTable
 	RecommendationsTable.ForeignKeys[4].RefTable = VendorsTable
+	ResourcePropertyTypesTable.ForeignKeys[0].RefTable = PropertyCategoriesTable
+	ResourcePropertyTypesTable.ForeignKeys[1].RefTable = ResourceSpecificationsTable
+	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
+	ResourceSpecificationsTable.ForeignKeys[1].RefTable = ResourceTypesTable
+	ResourceSpecificationItemsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
+	ResourceSpecificationItemsTable.ForeignKeys[1].RefTable = ResourceSpecificationRelationshipsTable
+	ResourceSpecificationRelationshipsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
+	ResourceTypesTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
+	ResourceTypeRelationshipsTable.ForeignKeys[0].RefTable = LocationTypesTable
+	ResourceTypeRelationshipsTable.ForeignKeys[1].RefTable = ResourceTypesTable
+	ResourceTypeRelationshipsTable.ForeignKeys[2].RefTable = ResourceTypesTable
 	RulesTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
 	RulesTable.ForeignKeys[2].RefTable = ThresholdsTable
+	RuleActionsTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
+	RuleActionsTable.ForeignKeys[1].RefTable = RuleActionTemplatesTable
 	RuleLimitsTable.ForeignKeys[0].RefTable = ComparatorsTable
 	RuleLimitsTable.ForeignKeys[1].RefTable = RulesTable
 	ServicesTable.ForeignKeys[0].RefTable = ServiceTypesTable

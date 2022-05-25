@@ -85,6 +85,24 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.CounterFamilies = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterFamilyOrder, _ []*models.CounterFamilyFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.Executions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ExecutionOrder, _ []*models.ExecutionFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Actions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ActionOrder, _ []*models.ActionFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.RuleActionTemplates = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleActionTemplateOrder, _ []*models.RuleActionTemplateFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.RuleActions = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleActionOrder, _ []*models.RuleActionFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.UplItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.UplItemOrder, _ []*models.UplItemFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Costs = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CostOrder, _ []*models.CostFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.Counters = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterOrder, _ []*models.CounterFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
@@ -183,6 +201,24 @@ func New() (complexity generated.ComplexityRoot) {
 	}
 	complexity.Query.PropertyCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.PropertyCategoryOrder) int {
 		return SearchComplexity(childComplexity, nil)
+	}
+	complexity.Query.ResourceSpecificationRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationRelationshipOrder, _ []*models.ResourceSpecificationRelationshipFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceSpecificationItems = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.ResourceSpecificationItemsFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceTypeRelationships = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeRelationshipOrder, _ []*models.ResourceTypeRelationshipFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceSpecifications = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceSpecificationOrder, _ []*models.ResourceSpecificationFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ResourceTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ResourceTypeOrder, _ []*models.ResourceTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.ReconciliationRules = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ReconciliationRuleOrder, _ []*models.ReconciliationRuleFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {

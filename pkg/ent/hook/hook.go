@@ -13,6 +13,19 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 )
 
+// The ActionFunc type is an adapter to allow the use of ordinary
+// function as Action mutator.
+type ActionFunc func(context.Context, *ent.ActionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ActionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ActionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ActionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ActivityFunc type is an adapter to allow the use of ordinary
 // function as Activity mutator.
 type ActivityFunc func(context.Context, *ent.ActivityMutation) (ent.Value, error)
@@ -169,6 +182,7 @@ func (f ComparatorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+<<<<<<< HEAD
 // The ContractFunc type is an adapter to allow the use of ordinary
 // function as Contract mutator.
 type ContractFunc func(context.Context, *ent.ContractMutation) (ent.Value, error)
@@ -178,6 +192,17 @@ func (f ContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	mv, ok := m.(*ent.ContractMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContractMutation", m)
+=======
+// The CostFunc type is an adapter to allow the use of ordinary
+// function as Cost mutator.
+type CostFunc func(context.Context, *ent.CostMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CostFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CostMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CostMutation", m)
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return f(ctx, mv)
 }
@@ -386,6 +411,19 @@ func (f EventSeverityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	mv, ok := m.(*ent.EventSeverityMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventSeverityMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ExecutionFunc type is an adapter to allow the use of ordinary
+// function as Execution mutator.
+type ExecutionFunc func(context.Context, *ent.ExecutionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExecutionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ExecutionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExecutionMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -897,6 +935,19 @@ func (f RecommendationsSourcesFunc) Mutate(ctx context.Context, m ent.Mutation) 
 	return f(ctx, mv)
 }
 
+// The ReconciliationRuleFunc type is an adapter to allow the use of ordinary
+// function as ReconciliationRule mutator.
+type ReconciliationRuleFunc func(context.Context, *ent.ReconciliationRuleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ReconciliationRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ReconciliationRuleMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReconciliationRuleMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ReportFilterFunc type is an adapter to allow the use of ordinary
 // function as ReportFilter mutator.
 type ReportFilterFunc func(context.Context, *ent.ReportFilterMutation) (ent.Value, error)
@@ -910,6 +961,84 @@ func (f ReportFilterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The ResourcePropertyTypeFunc type is an adapter to allow the use of ordinary
+// function as ResourcePropertyType mutator.
+type ResourcePropertyTypeFunc func(context.Context, *ent.ResourcePropertyTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourcePropertyTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourcePropertyTypeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourcePropertyTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceSpecificationFunc type is an adapter to allow the use of ordinary
+// function as ResourceSpecification mutator.
+type ResourceSpecificationFunc func(context.Context, *ent.ResourceSpecificationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceSpecificationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceSpecificationMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceSpecificationMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceSpecificationItemsFunc type is an adapter to allow the use of ordinary
+// function as ResourceSpecificationItems mutator.
+type ResourceSpecificationItemsFunc func(context.Context, *ent.ResourceSpecificationItemsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceSpecificationItemsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceSpecificationItemsMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceSpecificationItemsMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceSpecificationRelationshipFunc type is an adapter to allow the use of ordinary
+// function as ResourceSpecificationRelationship mutator.
+type ResourceSpecificationRelationshipFunc func(context.Context, *ent.ResourceSpecificationRelationshipMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceSpecificationRelationshipFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceSpecificationRelationshipMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceSpecificationRelationshipMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceTypeFunc type is an adapter to allow the use of ordinary
+// function as ResourceType mutator.
+type ResourceTypeFunc func(context.Context, *ent.ResourceTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceTypeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ResourceTypeRelationshipFunc type is an adapter to allow the use of ordinary
+// function as ResourceTypeRelationship mutator.
+type ResourceTypeRelationshipFunc func(context.Context, *ent.ResourceTypeRelationshipMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ResourceTypeRelationshipFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ResourceTypeRelationshipMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ResourceTypeRelationshipMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The RuleFunc type is an adapter to allow the use of ordinary
 // function as Rule mutator.
 type RuleFunc func(context.Context, *ent.RuleMutation) (ent.Value, error)
@@ -919,6 +1048,32 @@ func (f RuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	mv, ok := m.(*ent.RuleMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RuleActionFunc type is an adapter to allow the use of ordinary
+// function as RuleAction mutator.
+type RuleActionFunc func(context.Context, *ent.RuleActionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RuleActionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RuleActionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleActionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RuleActionTemplateFunc type is an adapter to allow the use of ordinary
+// function as RuleActionTemplate mutator.
+type RuleActionTemplateFunc func(context.Context, *ent.RuleActionTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RuleActionTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RuleActionTemplateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleActionTemplateMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -1105,6 +1260,7 @@ func (f ThresholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return f(ctx, mv)
 }
 
+<<<<<<< HEAD
 // The UplFunc type is an adapter to allow the use of ordinary
 // function as Upl mutator.
 type UplFunc func(context.Context, *ent.UplMutation) (ent.Value, error)
@@ -1114,6 +1270,17 @@ func (f UplFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) 
 	mv, ok := m.(*ent.UplMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UplMutation", m)
+=======
+// The UplItemFunc type is an adapter to allow the use of ordinary
+// function as UplItem mutator.
+type UplItemFunc func(context.Context, *ent.UplItemMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UplItemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UplItemMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UplItemMutation", m)
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	return f(ctx, mv)
 }

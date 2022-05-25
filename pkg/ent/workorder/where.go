@@ -1750,6 +1750,34 @@ func HasAppointmentWith(preds ...predicate.Appointment) predicate.WorkOrder {
 	})
 }
 
+// HasWorkorder applies the HasEdge predicate on the "workorder" edge.
+func HasWorkorder() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(WorkorderTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, WorkorderTable, WorkorderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWorkorderWith applies the HasEdge predicate on the "workorder" edge with a given conditions (other predicates).
+func HasWorkorderWith(preds ...predicate.Cost) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(WorkorderInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, WorkorderTable, WorkorderColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.WorkOrder) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {

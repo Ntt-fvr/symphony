@@ -10,6 +10,9 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 )
 
+// Action is the predicate function for action builders.
+type Action func(*sql.Selector)
+
 // Activity is the predicate function for activity builders.
 type Activity func(*sql.Selector)
 
@@ -46,8 +49,13 @@ type Comment func(*sql.Selector)
 // Comparator is the predicate function for comparator builders.
 type Comparator func(*sql.Selector)
 
+<<<<<<< HEAD
 // Contract is the predicate function for contract builders.
 type Contract func(*sql.Selector)
+=======
+// Cost is the predicate function for cost builders.
+type Cost func(*sql.Selector)
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 
 // Counter is the predicate function for counter builders.
 type Counter func(*sql.Selector)
@@ -96,6 +104,9 @@ type EquipmentType func(*sql.Selector)
 
 // EventSeverity is the predicate function for eventseverity builders.
 type EventSeverity func(*sql.Selector)
+
+// Execution is the predicate function for execution builders.
+type Execution func(*sql.Selector)
 
 // ExitPoint is the predicate function for exitpoint builders.
 type ExitPoint func(*sql.Selector)
@@ -214,11 +225,38 @@ type RecommendationsCategory func(*sql.Selector)
 // RecommendationsSources is the predicate function for recommendationssources builders.
 type RecommendationsSources func(*sql.Selector)
 
+// ReconciliationRule is the predicate function for reconciliationrule builders.
+type ReconciliationRule func(*sql.Selector)
+
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
 
+// ResourcePropertyType is the predicate function for resourcepropertytype builders.
+type ResourcePropertyType func(*sql.Selector)
+
+// ResourceSpecification is the predicate function for resourcespecification builders.
+type ResourceSpecification func(*sql.Selector)
+
+// ResourceSpecificationItems is the predicate function for resourcespecificationitems builders.
+type ResourceSpecificationItems func(*sql.Selector)
+
+// ResourceSpecificationRelationship is the predicate function for resourcespecificationrelationship builders.
+type ResourceSpecificationRelationship func(*sql.Selector)
+
+// ResourceType is the predicate function for resourcetype builders.
+type ResourceType func(*sql.Selector)
+
+// ResourceTypeRelationship is the predicate function for resourcetyperelationship builders.
+type ResourceTypeRelationship func(*sql.Selector)
+
 // Rule is the predicate function for rule builders.
 type Rule func(*sql.Selector)
+
+// RuleAction is the predicate function for ruleaction builders.
+type RuleAction func(*sql.Selector)
+
+// RuleActionTemplate is the predicate function for ruleactiontemplate builders.
+type RuleActionTemplate func(*sql.Selector)
 
 // RuleLimit is the predicate function for rulelimit builders.
 type RuleLimit func(*sql.Selector)
@@ -262,8 +300,13 @@ type Tech func(*sql.Selector)
 // Threshold is the predicate function for threshold builders.
 type Threshold func(*sql.Selector)
 
+<<<<<<< HEAD
 // Upl is the predicate function for upl builders.
 type Upl func(*sql.Selector)
+=======
+// UplItem is the predicate function for uplitem builders.
+type UplItem func(*sql.Selector)
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

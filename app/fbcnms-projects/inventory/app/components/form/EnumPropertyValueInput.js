@@ -86,6 +86,7 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
 
   const options = isJSON(jsonStr) ? JSON.parse(jsonStr) : [];
   const optionsArr = Array.isArray(options) ? options : [];
+  const classes = useStyles();
   const [tokens, setTokens] = useState(
     optionsArr.map(option => ({
       id: option,
@@ -95,8 +96,7 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
   const [viewDialogProperty, setViewDialogProperty] = useState(false);
   const showDialog = () => setViewDialogProperty(true);
   const hideDialog = () => setViewDialogProperty(false);
-  const classes = useStyles();
-
+  
   return (
     <div className={classes.container}>
       <Tokenizer
@@ -171,3 +171,4 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
 }
 
 export default EnumPropertyValueInput;
+ 

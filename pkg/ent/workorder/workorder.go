@@ -81,6 +81,8 @@ const (
 	EdgeAssignee = "assignee"
 	// EdgeAppointment holds the string denoting the appointment edge name in mutations.
 	EdgeAppointment = "appointment"
+	// EdgeWorkorder holds the string denoting the workorder edge name in mutations.
+	EdgeWorkorder = "workorder"
 
 	// Table holds the table name of the workorder in the database.
 	Table = "work_orders"
@@ -203,6 +205,13 @@ const (
 	AppointmentInverseTable = "appointments"
 	// AppointmentColumn is the table column denoting the appointment relation/edge.
 	AppointmentColumn = "work_order_appointment"
+	// WorkorderTable is the table the holds the workorder relation/edge.
+	WorkorderTable = "costs"
+	// WorkorderInverseTable is the table name for the Cost entity.
+	// It exists in this package in order to avoid circular dependency with the "cost" package.
+	WorkorderInverseTable = "costs"
+	// WorkorderColumn is the table column denoting the workorder relation/edge.
+	WorkorderColumn = "work_order_workorder"
 )
 
 // Columns holds all SQL columns for workorder fields.

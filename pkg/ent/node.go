@@ -17,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
@@ -29,7 +30,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
+=======
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -46,6 +51,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
+	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
@@ -85,8 +91,17 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
+	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
+	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -101,7 +116,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
+<<<<<<< HEAD
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
+=======
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -139,6 +158,77 @@ type Edge struct {
 	Type string `json:"type,omitempty"` // edge type.
 	Name string `json:"name,omitempty"` // edge name.
 	IDs  []int  `json:"ids,omitempty"`  // node ids (where this edge point to).
+}
+
+func (a *Action) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     a.ID,
+		Type:   "Action",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(a.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "action.Status",
+		Name:  "Status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.UserAction); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "action.UserAction",
+		Name:  "UserAction",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.LogExecution); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "logExecution",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Execution",
+		Name: "execution",
+	}
+	node.Edges[0].IDs, err = a.QueryExecution().
+		Select(execution.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "RuleAction",
+		Name: "ruleaction",
+	}
+	node.Edges[1].IDs, err = a.QueryRuleaction().
+		Select(ruleaction.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
 }
 
 func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
@@ -1235,12 +1325,21 @@ func (c *Comparator) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+<<<<<<< HEAD
 func (c *Contract) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
 		Type:   "Contract",
 		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 3),
+=======
+func (c *Cost) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     c.ID,
+		Type:   "Cost",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 2),
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	}
 	var buf []byte
 	if buf, err = json.Marshal(c.CreateTime); err != nil {
@@ -1259,11 +1358,16 @@ func (c *Contract) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
+<<<<<<< HEAD
 	if buf, err = json.Marshal(c.ExternalID); err != nil {
+=======
+	if buf, err = json.Marshal(c.Item); err != nil {
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[2] = &Field{
 		Type:  "string",
+<<<<<<< HEAD
 		Name:  "external_id",
 		Value: string(buf),
 	}
@@ -1321,11 +1425,55 @@ func (c *Contract) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = c.QueryOrganization().
 		Select(organization.FieldID).
+=======
+		Name:  "item",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Unit); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "float64",
+		Name:  "unit",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Price); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "price",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Quantity); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "quantity",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Total); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "float64",
+		Name:  "total",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "UplItem",
+		Name: "uplitem",
+	}
+	node.Edges[0].IDs, err = c.QueryUplitem().
+		Select(uplitem.FieldID).
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
+<<<<<<< HEAD
 		Type: "Upl",
 		Name: "upl_contract",
 	}
@@ -1340,6 +1488,12 @@ func (c *Contract) Node(ctx context.Context) (node *Node, err error) {
 		Name: "work_order_contract",
 	}
 	node.Edges[2].IDs, err = c.QueryWorkOrderContract().
+=======
+		Type: "WorkOrder",
+		Name: "workorder",
+	}
+	node.Edges[1].IDs, err = c.QueryWorkorder().
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -2489,6 +2643,61 @@ func (es *EventSeverity) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = es.QueryEventseverityrule().
 		Select(rule.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (e *Execution) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     e.ID,
+		Type:   "Execution",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(e.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.ManualConfirmation); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "manualConfirmation",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user",
+	}
+	node.Edges[0].IDs, err = e.QueryUser().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Action",
+		Name: "execution",
+	}
+	node.Edges[1].IDs, err = e.QueryExecution().
+		Select(action.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -4495,7 +4704,7 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     lt.ID,
 		Type:   "LocationType",
 		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 4),
+		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(lt.CreateTime); err != nil {
@@ -4585,10 +4794,20 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
+		Type: "ResourceTypeRelationship",
+		Name: "resource_relationship_location",
+	}
+	node.Edges[3].IDs, err = lt.QueryResourceRelationshipLocation().
+		Select(resourcetyperelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
 		Type: "DocumentCategory",
 		Name: "document_category",
 	}
-	node.Edges[3].IDs, err = lt.QueryDocumentCategory().
+	node.Edges[4].IDs, err = lt.QueryDocumentCategory().
 		Select(documentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -5430,7 +5649,7 @@ func (pc *PropertyCategory) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pc.ID,
 		Type:   "PropertyCategory",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pc.CreateTime); err != nil {
@@ -5476,10 +5695,20 @@ func (pc *PropertyCategory) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
+		Type: "ResourcePropertyType",
+		Name: "resource_properties_type",
+	}
+	node.Edges[1].IDs, err = pc.QueryResourcePropertiesType().
+		Select(resourcepropertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
 		Type: "ParameterCatalog",
 		Name: "parameter_catalog",
 	}
-	node.Edges[1].IDs, err = pc.QueryParameterCatalog().
+	node.Edges[2].IDs, err = pc.QueryParameterCatalog().
 		Select(parametercatalog.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -6147,6 +6376,71 @@ func (rs *RecommendationsSources) Node(ctx context.Context) (node *Node, err err
 	return node, nil
 }
 
+func (rr *ReconciliationRule) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rr.ID,
+		Type:   "ReconciliationRule",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rr.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rr.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rr.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceType",
+		Name: "reconciliation_rule_type",
+	}
+	node.Edges[0].IDs, err = rr.QueryReconciliationRuleType().
+		Select(resourcetype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "reconciliation_rule_specification",
+	}
+	node.Edges[1].IDs, err = rr.QueryReconciliationRuleSpecification().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "RuleAction",
+		Name: "reconciliation_rule_rule_action",
+	}
+	node.Edges[2].IDs, err = rr.QueryReconciliationRuleRuleAction().
+		Select(ruleaction.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     rf.ID,
@@ -6194,6 +6488,564 @@ func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 		Type:  "string",
 		Name:  "filters",
 		Value: string(buf),
+	}
+	return node, nil
+}
+
+func (rpt *ResourcePropertyType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rpt.ID,
+		Type:   "ResourcePropertyType",
+		Fields: make([]*Field, 21),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rpt.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Type); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "resourcepropertytype.Type",
+		Name:  "type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.ExternalID); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "external_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "index",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Category); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "category",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.IntVal); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "int",
+		Name:  "int_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.BoolVal); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "bool",
+		Name:  "bool_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.FloatVal); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "float64",
+		Name:  "float_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.LatitudeVal); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "float64",
+		Name:  "latitude_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.LongitudeVal); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "float64",
+		Name:  "longitude_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.StringVal); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "string",
+		Name:  "string_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.RangeFromVal); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "float64",
+		Name:  "range_from_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.RangeToVal); err != nil {
+		return nil, err
+	}
+	node.Fields[14] = &Field{
+		Type:  "float64",
+		Name:  "range_to_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.IsInstanceProperty); err != nil {
+		return nil, err
+	}
+	node.Fields[15] = &Field{
+		Type:  "bool",
+		Name:  "is_instance_property",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Editable); err != nil {
+		return nil, err
+	}
+	node.Fields[16] = &Field{
+		Type:  "bool",
+		Name:  "editable",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Mandatory); err != nil {
+		return nil, err
+	}
+	node.Fields[17] = &Field{
+		Type:  "bool",
+		Name:  "mandatory",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Deleted); err != nil {
+		return nil, err
+	}
+	node.Fields[18] = &Field{
+		Type:  "bool",
+		Name:  "deleted",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.Listable); err != nil {
+		return nil, err
+	}
+	node.Fields[19] = &Field{
+		Type:  "bool",
+		Name:  "listable",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rpt.NodeType); err != nil {
+		return nil, err
+	}
+	node.Fields[20] = &Field{
+		Type:  "string",
+		Name:  "nodeType",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "resourceSpecification",
+	}
+	node.Edges[0].IDs, err = rpt.QueryResourceSpecification().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "PropertyCategory",
+		Name: "property_category",
+	}
+	node.Edges[1].IDs, err = rpt.QueryPropertyCategory().
+		Select(propertycategory.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rs.ID,
+		Type:   "ResourceSpecification",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 5),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rs.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rs.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rs.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rs.Quantity); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "int",
+		Name:  "quantity",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceType",
+		Name: "resourcetype",
+	}
+	node.Edges[0].IDs, err = rs.QueryResourcetype().
+		Select(resourcetype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ReconciliationRule",
+		Name: "reconciliationrule",
+	}
+	node.Edges[1].IDs, err = rs.QueryReconciliationrule().
+		Select(reconciliationrule.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "ResourcePropertyType",
+		Name: "resource_property_type",
+	}
+	node.Edges[2].IDs, err = rs.QueryResourcePropertyType().
+		Select(resourcepropertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "ResourceSpecificationRelationship",
+		Name: "resource_specification",
+	}
+	node.Edges[3].IDs, err = rs.QueryResourceSpecification().
+		Select(resourcespecificationrelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "ResourceSpecificationItems",
+		Name: "resource_specification_items",
+	}
+	node.Edges[4].IDs, err = rs.QueryResourceSpecificationItems().
+		Select(resourcespecificationitems.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (rsi *ResourceSpecificationItems) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rsi.ID,
+		Type:   "ResourceSpecificationItems",
+		Fields: make([]*Field, 2),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rsi.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rsi.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceSpecificationRelationship",
+		Name: "resourcespecificationrelationship",
+	}
+	node.Edges[0].IDs, err = rsi.QueryResourcespecificationrelationship().
+		Select(resourcespecificationrelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "resourcespecificationitems",
+	}
+	node.Edges[1].IDs, err = rsi.QueryResourcespecificationitems().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (rsr *ResourceSpecificationRelationship) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rsr.ID,
+		Type:   "ResourceSpecificationRelationship",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rsr.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rsr.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rsr.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "resourcespecification",
+	}
+	node.Edges[0].IDs, err = rsr.QueryResourcespecification().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ResourceSpecificationItems",
+		Name: "resource_sr",
+	}
+	node.Edges[1].IDs, err = rsr.QueryResourceSr().
+		Select(resourcespecificationitems.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (rt *ResourceType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rt.ID,
+		Type:   "ResourceType",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 4),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rt.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rt.ResourceTypeClass); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "resourcetype.ResourceTypeClass",
+		Name:  "ResourceTypeClass",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rt.ResourceTypeBaseType); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "resourcetype.ResourceTypeBaseType",
+		Name:  "ResourceTypeBaseType",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ReconciliationRule",
+		Name: "reconciliationrule",
+	}
+	node.Edges[0].IDs, err = rt.QueryReconciliationrule().
+		Select(reconciliationrule.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ResourceTypeRelationship",
+		Name: "resource_relationship_a",
+	}
+	node.Edges[1].IDs, err = rt.QueryResourceRelationshipA().
+		Select(resourcetyperelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "ResourceTypeRelationship",
+		Name: "resource_relationship_b",
+	}
+	node.Edges[2].IDs, err = rt.QueryResourceRelationshipB().
+		Select(resourcetyperelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "resource_specification",
+	}
+	node.Edges[3].IDs, err = rt.QueryResourceSpecification().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (rtr *ResourceTypeRelationship) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rtr.ID,
+		Type:   "ResourceTypeRelationship",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rtr.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rtr.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rtr.ResourceRelationshipType); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "resourcetyperelationship.ResourceRelationshipType",
+		Name:  "ResourceRelationshipType",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rtr.ResourceRelationshipMultiplicity); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "resourcetyperelationship.ResourceRelationshipMultiplicity",
+		Name:  "ResourceRelationshipMultiplicity",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ResourceType",
+		Name: "resourcetypea",
+	}
+	node.Edges[0].IDs, err = rtr.QueryResourcetypea().
+		Select(resourcetype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "ResourceType",
+		Name: "resourcetypeb",
+	}
+	node.Edges[1].IDs, err = rtr.QueryResourcetypeb().
+		Select(resourcetype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "LocationType",
+		Name: "locationType",
+	}
+	node.Edges[2].IDs, err = rtr.QueryLocationType().
+		Select(locationtype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -6322,6 +7174,116 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[3].IDs, err = r.QueryRulelimitrule().
 		Select(rulelimit.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (ra *RuleAction) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ra.ID,
+		Type:   "RuleAction",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ra.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ra.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ra.Operation); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "ruleaction.Operation",
+		Name:  "operation",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "ReconciliationRule",
+		Name: "reconciliationrule",
+	}
+	node.Edges[0].IDs, err = ra.QueryReconciliationrule().
+		Select(reconciliationrule.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "RuleActionTemplate",
+		Name: "ruleactiontemplate",
+	}
+	node.Edges[1].IDs, err = ra.QueryRuleactiontemplate().
+		Select(ruleactiontemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "Action",
+		Name: "rule_action",
+	}
+	node.Edges[2].IDs, err = ra.QueryRuleAction().
+		Select(action.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (rat *RuleActionTemplate) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     rat.ID,
+		Type:   "RuleActionTemplate",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(rat.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rat.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(rat.Text); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "text",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "RuleAction",
+		Name: "rule_action_template_rule_action",
+	}
+	node.Edges[0].IDs, err = rat.QueryRuleActionTemplateRuleAction().
+		Select(ruleaction.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -7783,6 +8745,7 @@ func (t *Threshold) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+<<<<<<< HEAD
 func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
@@ -7792,6 +8755,17 @@ func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
+=======
+func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ui.ID,
+		Type:   "UplItem",
+		Fields: make([]*Field, 6),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ui.CreateTime); err != nil {
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[0] = &Field{
@@ -7799,7 +8773,11 @@ func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "create_time",
 		Value: string(buf),
 	}
+<<<<<<< HEAD
 	if buf, err = json.Marshal(u.UpdateTime); err != nil {
+=======
+	if buf, err = json.Marshal(ui.UpdateTime); err != nil {
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[1] = &Field{
@@ -7807,19 +8785,31 @@ func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
+<<<<<<< HEAD
 	if buf, err = json.Marshal(u.Name); err != nil {
+=======
+	if buf, err = json.Marshal(ui.Externalid); err != nil {
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[2] = &Field{
 		Type:  "string",
+<<<<<<< HEAD
 		Name:  "name",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(u.Description); err != nil {
+=======
+		Name:  "externalid",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Item); err != nil {
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		return nil, err
 	}
 	node.Fields[3] = &Field{
 		Type:  "string",
+<<<<<<< HEAD
 		Name:  "description",
 		Value: string(buf),
 	}
@@ -7829,6 +8819,33 @@ func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = u.QueryContract().
 		Select(contract.FieldID).
+=======
+		Name:  "item",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Unit); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "unit",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ui.Price); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "float64",
+		Name:  "price",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Cost",
+		Name: "UplItem",
+	}
+	node.Edges[0].IDs, err = ui.QueryUplItem().
+		Select(cost.FieldID).
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -7841,7 +8858,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 10),
+		Edges:  make([]*Edge, 11),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -7947,70 +8964,80 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		Type: "UsersGroup",
-		Name: "groups",
+		Type: "Execution",
+		Name: "User",
 	}
-	node.Edges[3].IDs, err = u.QueryGroups().
-		Select(usersgroup.FieldID).
+	node.Edges[3].IDs, err = u.QueryUser().
+		Select(execution.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		Type: "Organization",
-		Name: "organization",
+		Type: "UsersGroup",
+		Name: "groups",
 	}
-	node.Edges[4].IDs, err = u.QueryOrganization().
-		Select(organization.FieldID).
+	node.Edges[4].IDs, err = u.QueryGroups().
+		Select(usersgroup.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		Type: "WorkOrder",
-		Name: "owned_work_orders",
+		Type: "Organization",
+		Name: "organization",
 	}
-	node.Edges[5].IDs, err = u.QueryOwnedWorkOrders().
-		Select(workorder.FieldID).
+	node.Edges[5].IDs, err = u.QueryOrganization().
+		Select(organization.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
 		Type: "WorkOrder",
-		Name: "assigned_work_orders",
+		Name: "owned_work_orders",
 	}
-	node.Edges[6].IDs, err = u.QueryAssignedWorkOrders().
+	node.Edges[6].IDs, err = u.QueryOwnedWorkOrders().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		Type: "Project",
-		Name: "created_projects",
+		Type: "WorkOrder",
+		Name: "assigned_work_orders",
 	}
-	node.Edges[7].IDs, err = u.QueryCreatedProjects().
-		Select(project.FieldID).
+	node.Edges[7].IDs, err = u.QueryAssignedWorkOrders().
+		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		Type: "Feature",
-		Name: "features",
+		Type: "Project",
+		Name: "created_projects",
 	}
-	node.Edges[8].IDs, err = u.QueryFeatures().
-		Select(feature.FieldID).
+	node.Edges[8].IDs, err = u.QueryCreatedProjects().
+		Select(project.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[9] = &Edge{
+		Type: "Feature",
+		Name: "features",
+	}
+	node.Edges[9].IDs, err = u.QueryFeatures().
+		Select(feature.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[10] = &Edge{
 		Type: "Appointment",
 		Name: "appointment",
 	}
-	node.Edges[9].IDs, err = u.QueryAppointment().
+	node.Edges[10].IDs, err = u.QueryAppointment().
 		Select(appointment.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -8437,6 +9464,16 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[16] = &Edge{
+		Type: "Cost",
+		Name: "workorder",
+	}
+	node.Edges[16].IDs, err = wo.QueryWorkorder().
+		Select(cost.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -8801,6 +9838,15 @@ func (c *Client) Noder(ctx context.Context, id int, opts ...NodeOption) (_ Noder
 
 func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 	switch tbl {
+	case action.Table:
+		n, err := c.Action.Query().
+			Where(action.ID(id)).
+			CollectFields(ctx, "Action").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case activity.Table:
 		n, err := c.Activity.Query().
 			Where(activity.ID(id)).
@@ -8909,10 +9955,17 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+<<<<<<< HEAD
 	case contract.Table:
 		n, err := c.Contract.Query().
 			Where(contract.ID(id)).
 			CollectFields(ctx, "Contract").
+=======
+	case cost.Table:
+		n, err := c.Cost.Query().
+			Where(cost.ID(id)).
+			CollectFields(ctx, "Cost").
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -9057,6 +10110,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.EventSeverity.Query().
 			Where(eventseverity.ID(id)).
 			CollectFields(ctx, "EventSeverity").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case execution.Table:
+		n, err := c.Execution.Query().
+			Where(execution.ID(id)).
+			CollectFields(ctx, "Execution").
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -9413,6 +10475,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case reconciliationrule.Table:
+		n, err := c.ReconciliationRule.Query().
+			Where(reconciliationrule.ID(id)).
+			CollectFields(ctx, "ReconciliationRule").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case reportfilter.Table:
 		n, err := c.ReportFilter.Query().
 			Where(reportfilter.ID(id)).
@@ -9422,10 +10493,82 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case resourcepropertytype.Table:
+		n, err := c.ResourcePropertyType.Query().
+			Where(resourcepropertytype.ID(id)).
+			CollectFields(ctx, "ResourcePropertyType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case resourcespecification.Table:
+		n, err := c.ResourceSpecification.Query().
+			Where(resourcespecification.ID(id)).
+			CollectFields(ctx, "ResourceSpecification").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case resourcespecificationitems.Table:
+		n, err := c.ResourceSpecificationItems.Query().
+			Where(resourcespecificationitems.ID(id)).
+			CollectFields(ctx, "ResourceSpecificationItems").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case resourcespecificationrelationship.Table:
+		n, err := c.ResourceSpecificationRelationship.Query().
+			Where(resourcespecificationrelationship.ID(id)).
+			CollectFields(ctx, "ResourceSpecificationRelationship").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case resourcetype.Table:
+		n, err := c.ResourceType.Query().
+			Where(resourcetype.ID(id)).
+			CollectFields(ctx, "ResourceType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case resourcetyperelationship.Table:
+		n, err := c.ResourceTypeRelationship.Query().
+			Where(resourcetyperelationship.ID(id)).
+			CollectFields(ctx, "ResourceTypeRelationship").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case rule.Table:
 		n, err := c.Rule.Query().
 			Where(rule.ID(id)).
 			CollectFields(ctx, "Rule").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case ruleaction.Table:
+		n, err := c.RuleAction.Query().
+			Where(ruleaction.ID(id)).
+			CollectFields(ctx, "RuleAction").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case ruleactiontemplate.Table:
+		n, err := c.RuleActionTemplate.Query().
+			Where(ruleactiontemplate.ID(id)).
+			CollectFields(ctx, "RuleActionTemplate").
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -9557,10 +10700,17 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+<<<<<<< HEAD
 	case upl.Table:
 		n, err := c.Upl.Query().
 			Where(upl.ID(id)).
 			CollectFields(ctx, "Upl").
+=======
+	case uplitem.Table:
+		n, err := c.UplItem.Query().
+			Where(uplitem.ID(id)).
+			CollectFields(ctx, "UplItem").
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 			Only(ctx)
 		if err != nil {
 			return nil, err

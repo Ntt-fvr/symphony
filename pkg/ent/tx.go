@@ -16,6 +16,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Action is the client for interacting with the Action builders.
+	Action *ActionClient
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
 	// AlarmFilter is the client for interacting with the AlarmFilter builders.
@@ -40,8 +42,13 @@ type Tx struct {
 	Comment *CommentClient
 	// Comparator is the client for interacting with the Comparator builders.
 	Comparator *ComparatorClient
+<<<<<<< HEAD
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
+=======
+	// Cost is the client for interacting with the Cost builders.
+	Cost *CostClient
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -74,6 +81,8 @@ type Tx struct {
 	EquipmentType *EquipmentTypeClient
 	// EventSeverity is the client for interacting with the EventSeverity builders.
 	EventSeverity *EventSeverityClient
+	// Execution is the client for interacting with the Execution builders.
+	Execution *ExecutionClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
 	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
@@ -152,10 +161,28 @@ type Tx struct {
 	RecommendationsCategory *RecommendationsCategoryClient
 	// RecommendationsSources is the client for interacting with the RecommendationsSources builders.
 	RecommendationsSources *RecommendationsSourcesClient
+	// ReconciliationRule is the client for interacting with the ReconciliationRule builders.
+	ReconciliationRule *ReconciliationRuleClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
+	// ResourcePropertyType is the client for interacting with the ResourcePropertyType builders.
+	ResourcePropertyType *ResourcePropertyTypeClient
+	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
+	ResourceSpecification *ResourceSpecificationClient
+	// ResourceSpecificationItems is the client for interacting with the ResourceSpecificationItems builders.
+	ResourceSpecificationItems *ResourceSpecificationItemsClient
+	// ResourceSpecificationRelationship is the client for interacting with the ResourceSpecificationRelationship builders.
+	ResourceSpecificationRelationship *ResourceSpecificationRelationshipClient
+	// ResourceType is the client for interacting with the ResourceType builders.
+	ResourceType *ResourceTypeClient
+	// ResourceTypeRelationship is the client for interacting with the ResourceTypeRelationship builders.
+	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
+	// RuleAction is the client for interacting with the RuleAction builders.
+	RuleAction *RuleActionClient
+	// RuleActionTemplate is the client for interacting with the RuleActionTemplate builders.
+	RuleActionTemplate *RuleActionTemplateClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
 	RuleLimit *RuleLimitClient
 	// RuleType is the client for interacting with the RuleType builders.
@@ -184,8 +211,13 @@ type Tx struct {
 	Tech *TechClient
 	// Threshold is the client for interacting with the Threshold builders.
 	Threshold *ThresholdClient
+<<<<<<< HEAD
 	// Upl is the client for interacting with the Upl builders.
 	Upl *UplClient
+=======
+	// UplItem is the client for interacting with the UplItem builders.
+	UplItem *UplItemClient
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -337,6 +369,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Action = NewActionClient(tx.config)
 	tx.Activity = NewActivityClient(tx.config)
 	tx.AlarmFilter = NewAlarmFilterClient(tx.config)
 	tx.AlarmStatus = NewAlarmStatusClient(tx.config)
@@ -349,7 +382,11 @@ func (tx *Tx) init() {
 	tx.CheckListItemDefinition = NewCheckListItemDefinitionClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Comparator = NewComparatorClient(tx.config)
+<<<<<<< HEAD
 	tx.Contract = NewContractClient(tx.config)
+=======
+	tx.Cost = NewCostClient(tx.config)
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	tx.Counter = NewCounterClient(tx.config)
 	tx.CounterFamily = NewCounterFamilyClient(tx.config)
 	tx.CounterFormula = NewCounterFormulaClient(tx.config)
@@ -366,6 +403,7 @@ func (tx *Tx) init() {
 	tx.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(tx.config)
 	tx.EquipmentType = NewEquipmentTypeClient(tx.config)
 	tx.EventSeverity = NewEventSeverityClient(tx.config)
+	tx.Execution = NewExecutionClient(tx.config)
 	tx.ExitPoint = NewExitPointClient(tx.config)
 	tx.ExportTask = NewExportTaskClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)
@@ -405,8 +443,17 @@ func (tx *Tx) init() {
 	tx.Recommendations = NewRecommendationsClient(tx.config)
 	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
 	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
+	tx.ReconciliationRule = NewReconciliationRuleClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
+	tx.ResourcePropertyType = NewResourcePropertyTypeClient(tx.config)
+	tx.ResourceSpecification = NewResourceSpecificationClient(tx.config)
+	tx.ResourceSpecificationItems = NewResourceSpecificationItemsClient(tx.config)
+	tx.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(tx.config)
+	tx.ResourceType = NewResourceTypeClient(tx.config)
+	tx.ResourceTypeRelationship = NewResourceTypeRelationshipClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
+	tx.RuleAction = NewRuleActionClient(tx.config)
+	tx.RuleActionTemplate = NewRuleActionTemplateClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)
 	tx.RuleType = NewRuleTypeClient(tx.config)
 	tx.Service = NewServiceClient(tx.config)
@@ -421,7 +468,11 @@ func (tx *Tx) init() {
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
 	tx.Tech = NewTechClient(tx.config)
 	tx.Threshold = NewThresholdClient(tx.config)
+<<<<<<< HEAD
 	tx.Upl = NewUplClient(tx.config)
+=======
+	tx.UplItem = NewUplItemClient(tx.config)
+>>>>>>> 01719376bc1ca364b0fc4c23da18c32cda1aca56
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)
 	tx.Vendor = NewVendorClient(tx.config)
@@ -439,7 +490,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Activity.QueryXXX(), the query will be executed
+// applies a query, for example: Action.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.
