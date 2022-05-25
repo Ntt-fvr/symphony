@@ -13,7 +13,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Grid from '@material-ui/core/Grid';
 import PropertyComboList from './PropertyComboList';
-import PropertyTypesTableDispatcher from '../../form/context/property_types/PropertyTypesTableDispatcher';
+import PropertyTypesTableDispatcher from '../../components/form/context/property_types/PropertyTypesTableDispatcher';
 import React, {useContext, useReducer} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import Strings from '@fbcnms/strings/Strings';
@@ -24,12 +24,12 @@ import {
   DependentPropertyTypesReducerInit,
   DependentPropertyTypesReducerTypes,
 } from './DependentPropertyTypesReducer';
-import {PropertyType} from '../../../common/PropertyType';
+import {PropertyType} from '../PropertyType';
 import {
   createPropertyTypeValuesJson,
   getPropertiesWithoutActualProperty,
 } from './PropertyComboHelpers';
-import {isTempId} from '../../../common/EntUtils';
+import {isTempId} from '../EntUtils';
 
 type Props = $ReadOnly<{|
   open: boolean,

@@ -12,14 +12,14 @@ import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@symphony/design-system/components/IconButton';
-import PropertyTypeSelect from '../../form/PropertyTypeSelect';
-import PropertyValueInput from '../../form/PropertyValueInput';
+import PropertyTypeSelect from '../../components/form/PropertyTypeSelect';
+import PropertyValueInput from '../../components/form/PropertyValueInput';
 import React from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {DeleteIcon} from '@symphony/design-system/icons';
-import {PropertyType} from '../../../common/PropertyType';
+import {PropertyType} from '../PropertyType';
 
 type Props = $ReadOnly<{|
   dependentProperty: PropertyType,

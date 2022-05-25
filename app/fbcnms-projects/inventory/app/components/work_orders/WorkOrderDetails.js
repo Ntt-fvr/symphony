@@ -75,7 +75,7 @@ import SelectAvailabilityAssignee, {
 } from './SelectAvailabilityAssignee';
 
 import LoadingIndicator from '../../common/LoadingIndicator';
-import PropertyTypeInput from './PropertyTypeInput';
+import PropertyTypeInput from '../../common/property_combo/PropertyTypeInput';
 import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useSnackbar} from 'notistack';
@@ -782,13 +782,19 @@ const WorkOrderDetails = ({
                           {properties.map((property, index) => (
                             <PropertyTypeInput
                               key={property.id}
-                              workOrder={workOrder}
+                              elementType={workOrder}
                               property={property}
                               mandatoryPropertiesOnCloseEnabled={
                                 mandatoryPropertiesOnCloseEnabled
                               }
+                              properties={properties}
                               classes={classes}
                               index={index}
+                              required={
+                                !!property.propertyType.isMandatory &&
+                                (workOrder.status === closedStatus.value ||
+                                  !mandatoryPropertiesOnCloseEnabled)
+                              }
                               _propertyChangedHandler={_propertyChangedHandler}
                             />
                           ))}
