@@ -556,6 +556,20 @@ type AddNotePayload {
   numUids: Int
 }
 
+input AddNumericPoolInput {
+  customLimit: Int
+  description: String
+  isDelete: Boolean!
+  limit: Int!
+  resource: [ResourceRef!]!
+  statusNumericPools: [StatusNumericPoolRef]
+}
+
+type AddNumericPoolPayload {
+  numUids: Int
+  numericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
+}
+
 input AddOrganizationInput {
   description: String!
   name: String!
@@ -708,6 +722,7 @@ input AddResourceInput {
   logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
   name: String!
+  numericPool: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
   physicalLinkInv: [ResourceRef]
@@ -990,6 +1005,17 @@ input AddServiceSpecificationRefInput {
 type AddServiceSpecificationRefPayload {
   numUids: Int
   serviceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef]
+}
+
+input AddStatusNumericPoolInput {
+  numericPool: NumericPoolRef
+  status: UsageSubStatus
+  value: [Int]
+}
+
+type AddStatusNumericPoolPayload {
+  numUids: Int
+  statusNumericPool(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool]
 }
 
 input AddSubscriberInput {
@@ -2826,6 +2852,12 @@ type DeleteNotePayload {
   numUids: Int
 }
 
+type DeleteNumericPoolPayload {
+  msg: String
+  numUids: Int
+  numericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
+}
+
 type DeleteParameterPayload {
   msg: String
   numUids: Int
@@ -2926,6 +2958,12 @@ type DeleteServiceSpecificationRefPayload {
   msg: String
   numUids: Int
   serviceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef]
+}
+
+type DeleteStatusNumericPoolPayload {
+  msg: String
+  numUids: Int
+  statusNumericPool(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool]
 }
 
 type DeleteSubscriberPayload {
@@ -5540,6 +5578,7 @@ type Mutation {
   addModificationRequest(input: [AddModificationRequestInput!]!): AddModificationRequestPayload @join__field(graph: DGRAPHSERVICE)
   addNetworkType(input: AddNetworkTypeInput!): NetworkType! @join__field(graph: SYMPHONY)
   addNote(input: [AddNoteInput!]!): AddNotePayload @join__field(graph: DGRAPHSERVICE)
+  addNumericPool(input: [AddNumericPoolInput!]!): AddNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   addOrganization(input: AddOrganizationInput!): Organization! @join__field(graph: SYMPHONY)
   addParameter(input: [AddParameterInput!]!): AddParameterPayload @join__field(graph: DGRAPHSERVICE)
   addParty(input: [AddPartyInput!]!, upsert: Boolean): AddPartyPayload @join__field(graph: DGRAPHSERVICE)
@@ -5588,6 +5627,7 @@ type Mutation {
     data: ServiceTypeCreateData!
   ): ServiceType! @join__field(graph: SYMPHONY)
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block! @join__field(graph: SYMPHONY)
+  addStatusNumericPool(input: [AddStatusNumericPoolInput!]!): AddStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block! @join__field(graph: SYMPHONY)
   addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   addTech(input: AddTechInput!): Tech! @join__field(graph: SYMPHONY)
@@ -5640,6 +5680,7 @@ type Mutation {
   ): File! @join__field(graph: SYMPHONY)
   deleteModificationRequest(filter: ModificationRequestFilter!): DeleteModificationRequestPayload @join__field(graph: DGRAPHSERVICE)
   deleteNote(filter: NoteFilter!): DeleteNotePayload @join__field(graph: DGRAPHSERVICE)
+  deleteNumericPool(filter: NumericPoolFilter!): DeleteNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   deleteParameter(filter: ParameterFilter!): DeleteParameterPayload @join__field(graph: DGRAPHSERVICE)
   deleteParty(filter: PartyFilter!): DeletePartyPayload @join__field(graph: DGRAPHSERVICE)
   deletePermissionsPolicy(id: ID!): Boolean! @join__field(graph: SYMPHONY)
@@ -5661,6 +5702,7 @@ type Mutation {
   deleteServiceRelationship(filter: ServiceRelationshipFilter!): DeleteServiceRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceSOM(filter: ServiceSOMFilter!): DeleteServiceSOMPayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceSpecificationRef(filter: ServiceSpecificationRefFilter!): DeleteServiceSpecificationRefPayload @join__field(graph: DGRAPHSERVICE)
+  deleteStatusNumericPool(filter: StatusNumericPoolFilter!): DeleteStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   deleteUsersGroup(id: ID!): Boolean! @join__field(graph: SYMPHONY)
   editAlarmFilter(input: EditAlarmFilterInput!): AlarmFilter! @join__field(graph: SYMPHONY)
@@ -5843,6 +5885,7 @@ type Mutation {
   updateFlowExecutionRef(input: UpdateFlowExecutionRefInput!): UpdateFlowExecutionRefPayload @join__field(graph: DGRAPHSERVICE)
   updateModificationRequest(input: UpdateModificationRequestInput!): UpdateModificationRequestPayload @join__field(graph: DGRAPHSERVICE)
   updateNote(input: UpdateNoteInput!): UpdateNotePayload @join__field(graph: DGRAPHSERVICE)
+  updateNumericPool(input: UpdateNumericPoolInput!): UpdateNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   updateParameter(input: UpdateParameterInput!): UpdateParameterPayload @join__field(graph: DGRAPHSERVICE)
   updateParty(input: UpdatePartyInput!): UpdatePartyPayload @join__field(graph: DGRAPHSERVICE)
   updatePlace(input: UpdatePlaceInput!): UpdatePlacePayload @join__field(graph: DGRAPHSERVICE)
@@ -5859,6 +5902,7 @@ type Mutation {
   updateServiceRelationship(input: UpdateServiceRelationshipInput!): UpdateServiceRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   updateServiceSOM(input: UpdateServiceSOMInput!): UpdateServiceSOMPayload @join__field(graph: DGRAPHSERVICE)
   updateServiceSpecificationRef(input: UpdateServiceSpecificationRefInput!): UpdateServiceSpecificationRefPayload @join__field(graph: DGRAPHSERVICE)
+  updateStatusNumericPool(input: UpdateStatusNumericPoolInput!): UpdateStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   updateSubscriber(input: UpdateSubscriberInput!): UpdateSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   updateUserGroups(input: UpdateUserGroupsInput!): User! @join__field(graph: SYMPHONY)
 }
@@ -6006,6 +6050,80 @@ input NoteRef {
   id: ID
   serviceorder: [ServiceOrderRef]
   text: String
+}
+
+type NumericPool {
+  customLimit: Int
+  description: String
+  id: ID!
+  isDelete: Boolean!
+  limit: Int!
+  resource(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
+  resourceAggregate(filter: ResourceFilter): ResourceAggregateResult
+  statusNumericPools(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool]
+  statusNumericPoolsAggregate(filter: StatusNumericPoolFilter): StatusNumericPoolAggregateResult
+}
+
+type NumericPoolAggregateResult {
+  count: Int
+  customLimitAvg: Float
+  customLimitMax: Int
+  customLimitMin: Int
+  customLimitSum: Int
+  descriptionMax: String
+  descriptionMin: String
+  limitAvg: Float
+  limitMax: Int
+  limitMin: Int
+  limitSum: Int
+}
+
+input NumericPoolFilter {
+  and: [NumericPoolFilter]
+  has: [NumericPoolHasFilter]
+  id: [ID!]
+  not: NumericPoolFilter
+  or: [NumericPoolFilter]
+}
+
+enum NumericPoolHasFilter {
+  customLimit
+  description
+  isDelete
+  limit
+  resource
+  statusNumericPools
+}
+
+input NumericPoolOrder {
+  asc: NumericPoolOrderable
+  desc: NumericPoolOrderable
+  then: NumericPoolOrder
+}
+
+enum NumericPoolOrderable {
+  customLimit
+  description
+  limit
+}
+
+input NumericPoolPatch {
+  customLimit: Int
+  description: String
+  isDelete: Boolean
+  limit: Int
+  resource: [ResourceRef!]
+  statusNumericPools: [StatusNumericPoolRef]
+}
+
+input NumericPoolRef {
+  customLimit: Int
+  description: String
+  id: ID
+  isDelete: Boolean
+  limit: Int
+  resource: [ResourceRef!]
+  statusNumericPools: [StatusNumericPoolRef]
 }
 
 enum OperationalSubStatus {
@@ -7093,6 +7211,7 @@ type Query {
   aggregateGeometry(filter: GeometryFilter): GeometryAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateModificationRequest(filter: ModificationRequestFilter): ModificationRequestAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateNote(filter: NoteFilter): NoteAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateNumericPool(filter: NumericPoolFilter): NumericPoolAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateParameter(filter: ParameterFilter): ParameterAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateParty(filter: PartyFilter): PartyAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregatePlace(filter: PlaceFilter): PlaceAggregateResult @join__field(graph: DGRAPHSERVICE)
@@ -7110,6 +7229,7 @@ type Query {
   aggregateServiceRelationship(filter: ServiceRelationshipFilter): ServiceRelationshipAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceSOM(filter: ServiceSOMFilter): ServiceSOMAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceSpecificationRef(filter: ServiceSpecificationRefFilter): ServiceSpecificationRefAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateStatusNumericPool(filter: StatusNumericPoolFilter): StatusNumericPoolAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateSubscriber(filter: SubscriberFilter): SubscriberAggregateResult @join__field(graph: DGRAPHSERVICE)
 
   """A list of AlarmFilter."""
@@ -7377,6 +7497,7 @@ type Query {
   getGeometry(x: String, y: String): Geometry @join__field(graph: DGRAPHSERVICE)
   getModificationRequest(id: ID!): ModificationRequest @join__field(graph: DGRAPHSERVICE)
   getNote(id: ID!): Note @join__field(graph: DGRAPHSERVICE)
+  getNumericPool(id: ID!): NumericPool @join__field(graph: DGRAPHSERVICE)
   getParameter(id: ID!): Parameter @join__field(graph: DGRAPHSERVICE)
   getParty(id: String!): Party @join__field(graph: DGRAPHSERVICE)
   getPlace(placeId: ID!): Place @join__field(graph: DGRAPHSERVICE)
@@ -7393,6 +7514,7 @@ type Query {
   getServiceRelationship(id: ID!): ServiceRelationship @join__field(graph: DGRAPHSERVICE)
   getServiceSOM(id: ID!): ServiceSOM @join__field(graph: DGRAPHSERVICE)
   getServiceSpecificationRef(id: String!): ServiceSpecificationRef @join__field(graph: DGRAPHSERVICE)
+  getStatusNumericPool(id: ID!): StatusNumericPool @join__field(graph: DGRAPHSERVICE)
   getSubscriber(id: ID!): Subscriber @join__field(graph: DGRAPHSERVICE)
 
   """A list of kpiCategories."""
@@ -7776,6 +7898,7 @@ type Query {
   queryGeometry(filter: GeometryFilter, first: Int, offset: Int, order: GeometryOrder): [Geometry] @join__field(graph: DGRAPHSERVICE)
   queryModificationRequest(filter: ModificationRequestFilter, first: Int, offset: Int, order: ModificationRequestOrder): [ModificationRequest] @join__field(graph: DGRAPHSERVICE)
   queryNote(filter: NoteFilter, first: Int, offset: Int, order: NoteOrder): [Note] @join__field(graph: DGRAPHSERVICE)
+  queryNumericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool] @join__field(graph: DGRAPHSERVICE)
   queryParameter(filter: ParameterFilter, first: Int, offset: Int, order: ParameterOrder): [Parameter] @join__field(graph: DGRAPHSERVICE)
   queryParty(filter: PartyFilter, first: Int, offset: Int, order: PartyOrder): [Party] @join__field(graph: DGRAPHSERVICE)
   queryPlace(filter: PlaceFilter, first: Int, offset: Int, order: PlaceOrder): [Place] @join__field(graph: DGRAPHSERVICE)
@@ -7793,6 +7916,7 @@ type Query {
   queryServiceRelationship(filter: ServiceRelationshipFilter, first: Int, offset: Int, order: ServiceRelationshipOrder): [ServiceRelationship] @join__field(graph: DGRAPHSERVICE)
   queryServiceSOM(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM] @join__field(graph: DGRAPHSERVICE)
   queryServiceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef] @join__field(graph: DGRAPHSERVICE)
+  queryStatusNumericPool(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool] @join__field(graph: DGRAPHSERVICE)
   querySubscriber(filter: SubscriberFilter, first: Int, offset: Int, order: SubscriberOrder): [Subscriber] @join__field(graph: DGRAPHSERVICE)
   reportFilters(entity: FilterEntity!): [ReportFilter!]! @join__field(graph: SYMPHONY)
 
@@ -8338,6 +8462,8 @@ type Resource implements ResourceInt {
   logicalLinkInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   name: String!
+  numericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
+  numericPoolAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
   operationalSubStatus: OperationalSubStatus
   physicalLink(filter: ResourceFilter): Resource
   physicalLinkInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
@@ -8373,6 +8499,7 @@ input ResourceFilter {
   name: StringHashFilter
   not: ResourceFilter
   or: [ResourceFilter]
+  resourceSpecification: Int64Filter
 }
 
 enum ResourceHasFilter {
@@ -8388,6 +8515,7 @@ enum ResourceHasFilter {
   logicalLink
   logicalLinkInv
   name
+  numericPool
   operationalSubStatus
   physicalLink
   physicalLinkInv
@@ -8459,6 +8587,7 @@ input ResourcePatch {
   locatedIn: Int64
   logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
+  numericPool: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
   physicalLinkInv: [ResourceRef]
@@ -8644,6 +8773,7 @@ input ResourceRef {
   logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
   name: String
+  numericPool: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
   physicalLinkInv: [ResourceRef]
@@ -10171,6 +10301,44 @@ input StartFlowInput {
   startDate: Time!
 }
 
+type StatusNumericPool {
+  id: ID!
+  numericPool(filter: NumericPoolFilter): NumericPool
+  status: UsageSubStatus
+  value: [Int]
+}
+
+type StatusNumericPoolAggregateResult {
+  count: Int
+}
+
+input StatusNumericPoolFilter {
+  and: [StatusNumericPoolFilter]
+  has: [StatusNumericPoolHasFilter]
+  id: [ID!]
+  not: StatusNumericPoolFilter
+  or: [StatusNumericPoolFilter]
+}
+
+enum StatusNumericPoolHasFilter {
+  numericPool
+  status
+  value
+}
+
+input StatusNumericPoolPatch {
+  numericPool: NumericPoolRef
+  status: UsageSubStatus
+  value: [Int]
+}
+
+input StatusNumericPoolRef {
+  id: ID
+  numericPool: NumericPoolRef
+  status: UsageSubStatus
+  value: [Int]
+}
+
 input StringExactFilter {
   between: StringRange
   eq: String
@@ -10861,6 +11029,17 @@ type UpdateNotePayload {
   numUids: Int
 }
 
+input UpdateNumericPoolInput {
+  filter: NumericPoolFilter!
+  remove: NumericPoolPatch
+  set: NumericPoolPatch
+}
+
+type UpdateNumericPoolPayload {
+  numUids: Int
+  numericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
+}
+
 input UpdateParameterInput {
   filter: ParameterFilter!
   remove: ParameterPatch
@@ -11037,6 +11216,17 @@ type UpdateServiceSpecificationRefPayload {
   serviceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef]
 }
 
+input UpdateStatusNumericPoolInput {
+  filter: StatusNumericPoolFilter!
+  remove: StatusNumericPoolPatch
+  set: StatusNumericPoolPatch
+}
+
+type UpdateStatusNumericPoolPayload {
+  numUids: Int
+  statusNumericPool(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool]
+}
+
 input UpdateSubscriberInput {
   filter: SubscriberFilter!
   remove: SubscriberPatch
@@ -11059,6 +11249,7 @@ enum UsageSubStatus {
   AVAILABLE
   NO_AVAILABLE
   RESERVED
+  TERMINATING
 }
 
 type User implements NamedNode & Node {
