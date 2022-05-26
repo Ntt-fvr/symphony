@@ -238,7 +238,12 @@ function BuilderTopBar() {
           onClick={save}>
           {isSaved() ? 'Saved' : Strings.common.saveButton}
         </Button>
-        <MenuTopBar />
+        <MenuTopBar
+          name={flowData.flowDraft.name}
+          description={flowData.flowDraft.description}
+          editText="Here you can change the name and description of your workflow"
+          duplicateText="Duplicating this workflow saves the same settings as the current workflow and will be available in the general list of workflows as a draft. Please assign a new name and description."
+        />
         <Tooltip tooltip={'publish last saved version'}>
           <Button
             onClick={publish}

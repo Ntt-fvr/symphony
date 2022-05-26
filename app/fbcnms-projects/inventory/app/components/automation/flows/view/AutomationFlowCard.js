@@ -123,11 +123,13 @@ const useStyles = makeStyles(() => ({
     borderBottom: `1px solid ${symphony.palette.primary}`,
     height: 'fit-content',
     color: symphony.palette.primary,
+    cursor: 'pointer',
   },
   failingInstancesCount: {
     borderBottom: `1px solid ${symphony.palette.R600}`,
     height: 'fit-content',
     color: symphony.palette.R600,
+    cursor: 'pointer',
   },
   noneInstance: {
     fontSize: '12px',
@@ -189,7 +191,13 @@ function AutomationFlowCard(props: Props) {
               ) : null}
             </div>
             <div className={classes.insideContainer}>
-              <CustomizedMenus icon={MoreVertIcon} />
+              <CustomizedMenus
+                icon={MoreVertIcon}
+                name={name}
+                description={description}
+                editText="Here you can change the name and description of your workflow"
+                duplicateText="Duplicating this workflow saves the same settings as the current workflow and will be available in the general list of workflows as a draft. Please assign a new name and description."
+              />
             </div>
           </div>
         </div>

@@ -8,8 +8,10 @@
  * @format
  */
 
+import ArchiveDeleteDialog from './dialogs/ArchiveDeleteDialog';
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import EditFlowDialog from './dialogs/EditFlowDialog';
 import IconButton from '@symphony/design-system/components/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -18,13 +20,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, {useState} from 'react';
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
+import SingleActionDialog from './dialogs/SingleActionDialog';
 import Text from '@symphony/design-system/components/Text';
 import Tooltip from '../../../inputs/Tooltip';
 import fbt from 'fbt';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {Divider} from '@material-ui/core';
 import {DuplicateFlowIcon, EditFlowIcon} from '@symphony/design-system/icons';
-import {HandleMenuDialog} from './HandleMenuDialog';
 import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
 
@@ -112,16 +114,26 @@ const StyledMenuItem = withStyles({
 
 type Props = $ReadOnly<{|
   icon?: any,
+  name?: string,
+  description?: string,
+  editText?: string,
+  duplicateText?: string,
 |}>;
 
-export default function CustomizedMenus(props: Props) {
-  const {icon} = props;
-
+export default function CustomizedMenus({
+  icon,
+  name,
+  description,
+  editText,
+  duplicateText,
+}: Props) {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [openMenuOpt, setOpenMenuOpt] = useState(false);
-  const [activeModal, setActiveModal] = useState(0);
+  const [modalConfig, setModalConfig] = useState({
+    activeModal: 0,
+    openModal: false,
+  });
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
@@ -131,11 +143,19 @@ export default function CustomizedMenus(props: Props) {
     setAnchorEl(null);
   };
 
-  const openModal = modalId => {
-    setActiveModal(modalId);
+  const handleOpenModal = modalId => {
     setAnchorEl(null);
-    setOpenMenuOpt(true);
+    setModalConfig({
+      activeModal: modalId,
+      openModal: true,
+    });
   };
+
+  const handleCLoseModal = () => {
+    setModalConfig({openModal: false});
+  };
+
+  const {activeModal, openModal} = modalConfig;
 
   return (
     <div className={classes.root}>
@@ -152,27 +172,27 @@ export default function CustomizedMenus(props: Props) {
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}>
-        <StyledMenuItem>
+        <StyledMenuItem onClick={() => handleOpenModal(3)}>
           <ListItemIcon>
             <EditFlowIcon />
           </ListItemIcon>
           <ListItemText primary="Edit flow" />
         </StyledMenuItem>
         <Divider />
-        <StyledMenuItem>
+        <StyledMenuItem onClick={() => handleOpenModal(4)}>
           <ListItemIcon>
             <DuplicateFlowIcon />
           </ListItemIcon>
           <ListItemText primary="Duplicate flow" />
         </StyledMenuItem>
         <Divider />
-        <StyledMenuItem onClick={() => openModal(1)}>
+        <StyledMenuItem onClick={() => handleOpenModal(1)}>
           <ListItemIcon>
             <ArchiveOutlinedIcon color={'secondary'} />
           </ListItemIcon>
           <ListItemText primary="Archive flow" />
         </StyledMenuItem>
-        <StyledMenuItem onClick={() => openModal(2)}>
+        <StyledMenuItem onClick={() => handleOpenModal(2)}>
           <ListItemIcon>
             <DeleteOutlineIcon color={'secondary'} />
           </ListItemIcon>
@@ -180,10 +200,10 @@ export default function CustomizedMenus(props: Props) {
         </StyledMenuItem>
       </StyledMenu>
       {activeModal === 1 && (
-        <HandleMenuDialog
+        <ArchiveDeleteDialog
           icon={<ArchiveOutlinedIcon />}
-          openModal={setOpenMenuOpt}
-          isOpen={openMenuOpt}
+          openModal={() => handleCLoseModal()}
+          isOpen={openModal}
           activeModal={activeModal}
           text={
             <Text variant="subtitle1">
@@ -199,10 +219,10 @@ export default function CustomizedMenus(props: Props) {
         />
       )}
       {activeModal === 2 && (
-        <HandleMenuDialog
+        <ArchiveDeleteDialog
           icon={<ReportProblemOutlinedIcon />}
-          openModal={setOpenMenuOpt}
-          isOpen={openMenuOpt}
+          openModal={() => handleCLoseModal()}
+          isOpen={openModal}
           activeModal={activeModal}
           text={
             <Text variant="subtitle1">
@@ -216,6 +236,34 @@ export default function CustomizedMenus(props: Props) {
           }
         />
       )}
+      {activeModal === 3 && (
+        <EditFlowDialog
+          isOpen={openModal}
+          openModal={() => handleCLoseModal()}
+          text={editText}
+          name={name}
+          description={description}
+        />
+      )}
+      {activeModal === 4 && (
+        <EditFlowDialog
+          isOpen={openModal}
+          openModal={() => handleCLoseModal()}
+          text={duplicateText}
+          name={name}
+          description={description}
+        />
+      )}
+      <SingleActionDialog
+        showCheck={false}
+        title="Cancel flow"
+        text='This action is irreversible, the flow will go into a "Cancelled" state and cannot be executed again.'
+      />
+      {/* <SingleActionDialog
+        showCheck={true}
+        title="Delete a complex block"
+        text="All blocks it contains will also be deleted. Are you sure you want to continue?."
+      /> */}
     </div>
   );
 }

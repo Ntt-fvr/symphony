@@ -69,10 +69,10 @@ type Props = $ReadOnly<{|
   text?: React.Element,
   isOpen: boolean,
   activeModal?: number,
-  openModal: any,
+  openModal: () => void,
 |}>;
 
-export const HandleMenuDialog = ({
+const ArchiveDeleteDialog = ({
   icon,
   text,
   isOpen,
@@ -100,7 +100,7 @@ export const HandleMenuDialog = ({
           <Button
             className={classes.btnOutlined}
             color="primary"
-            onClick={() => openModal(false)}>
+            onClick={() => openModal()}>
             Cancel
           </Button>
           <Button>Confirm</Button>
@@ -111,3 +111,5 @@ export const HandleMenuDialog = ({
     return null;
   }
 };
+
+export default ArchiveDeleteDialog;
