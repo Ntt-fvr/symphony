@@ -23,8 +23,8 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
+import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {makeStyles} from '@material-ui/styles';
-
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -185,7 +185,12 @@ const ResourcePropertiesCard = (props: Props) => {
             </Card>
           ) : null}
           {selectedTab === 'ports' ? <div>soy ports</div> : null}
-          {selectedTab === 'network' ? <div>soy network</div> : null}
+          {selectedTab === 'network' ? (
+            <ResourceNetworkCard
+              onAddResourceSlot={onAddResourceSlot}
+              dataListStepper={dataListStepper}
+            />
+          ) : null}
           {selectedTab === 'configuration' ? (
             <div>soy configuration</div>
           ) : null}

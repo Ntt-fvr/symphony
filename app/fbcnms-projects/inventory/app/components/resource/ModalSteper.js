@@ -8,12 +8,14 @@
  * @format
  */
 
+import AddButton from '../assurance/common/AddButton';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Grid from '@material-ui/core/Grid';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -28,7 +30,6 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import clsx from 'clsx';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
@@ -43,10 +44,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   backButton: {
+    height: '32px',
     marginRight: theme.spacing(1),
   },
   headerSteps: {
-    backgroundColor: '#F5F7FC',
+    backgroundColor: symphony.palette.D10,
+    '& .MuiStepLabel-label': {
+      color: symphony.palette.D400,
+    },
     '& .MuiStepLabel-completed': {
       color: theme.palette.primary.main,
       fontWeight: 'bold',
@@ -56,11 +61,6 @@ const useStyles = makeStyles(theme => ({
     top: 10,
     left: 'calc(-50% + 1px)',
     right: 'calc(50% + 1px)',
-  },
-  connectorActive: {
-    '& $connectorLine': {
-      borderColor: theme.palette.secondary.main,
-    },
   },
   connectorCompleted: {
     '& $connectorLine': {
@@ -97,14 +97,13 @@ const stepCustomIconStyles = makeStyles(theme => ({
     alignItems: 'center',
     zIndex: 1,
   },
-  active: {
-    color: '#eaeaf0',
-  },
-  circle: {
+
+  point: {
     width: 9,
     height: 9,
     borderRadius: '50%',
-    backgroundColor: 'currentColor',
+    backgroundColor: '#eaeaf0',
+    border: '1px solid #8895AD',
   },
   completed: {
     width: 9,
@@ -116,17 +115,14 @@ const stepCustomIconStyles = makeStyles(theme => ({
 
 function customStepIcon(props) {
   const classes = stepCustomIconStyles();
-  const {active, completed} = props;
+  const {completed} = props;
 
   return (
-    <div
-      className={clsx(classes.root, {
-        [classes.active]: active,
-      })}>
+    <div className={classes.root}>
       {completed ? (
         <div className={classes.completed} />
       ) : (
-        <div className={classes.circle} />
+        <div className={classes.point} />
       )}
     </div>
   );
@@ -134,14 +130,22 @@ function customStepIcon(props) {
 
 type Props = $ReadOnly<{|
   openModal: boolean,
-  onClose: () => void,
-  saveModal: (selectedResourceType: {}) => void,
   titleSteps: Array<string>,
   dataListStepper: any,
+  onClose: () => void,
+  saveModal: (selectedResourceType: {}) => void,
+  addButtonLink?: (selectedResourceType: {}) => void,
 |}>;
 
 const ModalSteper = (props: Props) => {
-  const {openModal, onClose, saveModal, titleSteps, dataListStepper} = props;
+  const {
+    openModal,
+    onClose,
+    saveModal,
+    titleSteps,
+    dataListStepper,
+    addButtonLink,
+  } = props;
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(1);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -152,7 +156,6 @@ const ModalSteper = (props: Props) => {
     <StepConnector
       className={classes.connectorStyle}
       classes={{
-        active: classes.connectorActive,
         completed: classes.connectorCompleted,
         line: classes.connectorLine,
       }}
@@ -184,6 +187,7 @@ const ModalSteper = (props: Props) => {
         .toLowerCase()
         .includes(searchData.toLocaleLowerCase()),
   );
+
   return (
     <div>
       <Dialog
@@ -210,6 +214,7 @@ const ModalSteper = (props: Props) => {
           <Typography variant="h6" align="center" style={{margin: '1rem 0'}}>
             Select a {activeStep === 1 && titleSteps[0]}
             {activeStep === 2 && titleSteps[1]}
+            {activeStep === 3 && titleSteps[2]}
           </Typography>
           <TextField
             className={classes.textField}
@@ -228,7 +233,7 @@ const ModalSteper = (props: Props) => {
               ),
             }}
           />
-          {titleSteps.length === 2 ? (
+          {titleSteps.length >= 2 ? (
             <>
               {activeStep === 1 &&
                 searchResourceType.map((item, index) => (
@@ -268,6 +273,25 @@ const ModalSteper = (props: Props) => {
                     </ListItem>
                   </List>
                 ))}
+              {activeStep === 3 &&
+                searchResourceSpecifications.map((item, index) => (
+                  <List component="nav">
+                    <ListItem
+                      button
+                      key={item.node.id}
+                      selected={selectedIndex === index}
+                      onClick={event =>
+                        handleListItemClick(event, index, item)
+                      }>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <RouterIcon fontSize="medium" color="primary" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={item.node.name} />
+                    </ListItem>
+                  </List>
+                ))}
             </>
           ) : (
             searchResourceSpecifications.map((item, index) => (
@@ -289,24 +313,37 @@ const ModalSteper = (props: Props) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={onClose}
-            className={classes.backButton}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={selectedIndex !== null ? false : true}
-            onClick={
-              activeStep === titleSteps.length
-                ? () => saveModal(getDataList)
-                : handleNext
-            }>
-            Next
-          </Button>
+          <Grid container>
+            <Grid item xs>
+              {activeStep === 3 && (
+                <AddButton
+                  disabled={selectedIndex !== null ? true : false}
+                  textButton="New Resource"
+                  onClick={() =>
+                    !addButtonLink ? undefined : addButtonLink(getDataList)
+                  }
+                />
+              )}
+            </Grid>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={onClose}
+              className={classes.backButton}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={selectedIndex !== null ? false : true}
+              onClick={
+                activeStep === titleSteps.length
+                  ? () => saveModal(getDataList)
+                  : handleNext
+              }>
+              Next
+            </Button>
+          </Grid>
         </DialogActions>
       </Dialog>
     </div>
