@@ -4,6 +4,8 @@ WORKDIR /usr/src/app
 
 COPY apollo/router/package.json .
 
+COPY apollo/supergraph.graphql .
+
 RUN npm install
 
 COPY apollo/router/router.js .

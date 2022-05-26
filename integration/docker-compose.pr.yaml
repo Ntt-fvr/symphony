@@ -80,8 +80,6 @@ services:
     image: apollo
     environment:
       - APOLLO_SCHEMA_CONFIG_EMBEDDED=true
-    volumes:
-      - .././apollo/supergraph.graphql:/etc/config/supergraph.graphql
     ports:
       - "4000:80"
     healthcheck: *healthcheck
