@@ -23,8 +23,13 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
-  cardContent: {
+  cardContentFilter: {
     padding: '.5rem',
+  },
+  cardHeader: {
+    '& .MuiCardHeader-title': {
+      fontSize: '20px',
+    },
   },
 }));
 
@@ -49,7 +54,7 @@ export const ResourceNetworkCard = (props: Props) => {
   return (
     <>
       <Card margins="none">
-        <Grid container className={classes.cardContent}>
+        <Grid container className={classes.cardContentFilter}>
           <Button
             style={{height: '38px', color: symphony.palette.D400}}
             variant="outlined"
@@ -75,6 +80,7 @@ export const ResourceNetworkCard = (props: Props) => {
       </Card>
       <Card>
         <CardHeader
+          className={classes.cardHeader}
           title="Logical Links"
           action={
             <Button
