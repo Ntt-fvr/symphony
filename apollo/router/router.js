@@ -5,7 +5,7 @@ const { readFileSync } = require('fs');
 
 const port = process.env.APOLLO_PORT || 80;
 
-const supergraph = "/etc/config/supergraph.graphql"
+const supergraph = "supergraph.graphql"
 const supergraphSdl = readFileSync(supergraph).toString();
 
 const gateway = new ApolloGateway({
@@ -14,22 +14,10 @@ const gateway = new ApolloGateway({
     return new RemoteGraphQLDataSource({
       url,
       willSendRequest({ request, context }) {
-        /*console.log("Symphony integration type");
-          request.http.headers = {
-            ...context.headers
-          }*/
-        // DELETE THIS TO PAP 
-        const result = request.query.includes("ServiceSOM");
-        
-        if(result){
-          console.log("Not symphony integration")
-        }else{
-          console.log("Symphony integration type");
-          //Add context headers needed by symphony graphql service
+        console.log("Symphony integration type");
           request.http.headers = {
             ...context.headers
           }
-        }
       }
     });
   }

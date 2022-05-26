@@ -1,17 +1,21 @@
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @remoteResponse(name: String) on FIELD_DEFINITION
 directive @lambdaOnMutate(
   add: Boolean
   update: Boolean
   delete: Boolean
 ) on OBJECT | INTERFACE
+directive @generate(
+  query: GenerateQueryParams
+  mutation: GenerateMutationParams
+  subscription: Boolean
+) on OBJECT | INTERFACE
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @lambda on FIELD_DEFINITION
 directive @dgraph(
   type: String
   pred: String
 ) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @id on FIELD_DEFINITION
+directive @remoteResponse(name: String) on FIELD_DEFINITION
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -19,15 +23,11 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @generate(
-  query: GenerateQueryParams
-  mutation: GenerateMutationParams
-  subscription: Boolean
-) on OBJECT | INTERFACE
-directive @id on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @lambda on FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -552,6 +552,25 @@ type AddNotePayload {
   numUids: Int
 }
 
+input AddNumericPoolInput {
+  description: String
+  limit: Int!
+  customLimit: Int
+  resource: [ResourceRef!]!
+  isDelete: Boolean!
+  statusNumericPools: [StatusNumericPoolRef]
+}
+
+type AddNumericPoolPayload {
+  numericPool(
+    filter: NumericPoolFilter
+    order: NumericPoolOrder
+    first: Int
+    offset: Int
+  ): [NumericPool]
+  numUids: Int
+}
+
 input AddParameterInput {
   parameterType: ConfigurationParameterTypeRef!
   previous: ParameterRef
@@ -659,6 +678,7 @@ input AddResourceInput {
   resourceSpecification: Int64!
   resourcePropertys: [ResourcePropertyRef]
   isDelete: Boolean!
+  numericPool: [NumericPoolRef]
 }
 
 type AddResourcePayload {
@@ -887,6 +907,21 @@ type AddServiceSpecificationRefPayload {
     first: Int
     offset: Int
   ): [ServiceSpecificationRef]
+  numUids: Int
+}
+
+input AddStatusNumericPoolInput {
+  numericPool: NumericPoolRef
+  status: UsageSubStatus
+  value: [Int]
+}
+
+type AddStatusNumericPoolPayload {
+  statusNumericPool(
+    filter: StatusNumericPoolFilter
+    first: Int
+    offset: Int
+  ): [StatusNumericPool]
   numUids: Int
 }
 
@@ -2076,6 +2111,17 @@ type DeleteNotePayload {
   numUids: Int
 }
 
+type DeleteNumericPoolPayload {
+  numericPool(
+    filter: NumericPoolFilter
+    order: NumericPoolOrder
+    first: Int
+    offset: Int
+  ): [NumericPool]
+  msg: String
+  numUids: Int
+}
+
 type DeleteParameterPayload {
   parameter(
     filter: ParameterFilter
@@ -2259,6 +2305,16 @@ type DeleteServiceSpecificationRefPayload {
     first: Int
     offset: Int
   ): [ServiceSpecificationRef]
+  msg: String
+  numUids: Int
+}
+
+type DeleteStatusNumericPoolPayload {
+  statusNumericPool(
+    filter: StatusNumericPoolFilter
+    first: Int
+    offset: Int
+  ): [StatusNumericPool]
   msg: String
   numUids: Int
 }
@@ -2713,6 +2769,18 @@ input MultiPolygonRef {
 }
 
 type Mutation {
+  addNumericPool(input: [AddNumericPoolInput!]!): AddNumericPoolPayload
+  updateNumericPool(input: UpdateNumericPoolInput!): UpdateNumericPoolPayload
+  deleteNumericPool(filter: NumericPoolFilter!): DeleteNumericPoolPayload
+  addStatusNumericPool(
+    input: [AddStatusNumericPoolInput!]!
+  ): AddStatusNumericPoolPayload
+  updateStatusNumericPool(
+    input: UpdateStatusNumericPoolInput!
+  ): UpdateStatusNumericPoolPayload
+  deleteStatusNumericPool(
+    filter: StatusNumericPoolFilter!
+  ): DeleteStatusNumericPoolPayload
   addResource(input: [AddResourceInput!]!, upsert: Boolean): AddResourcePayload
   updateResource(input: UpdateResourceInput!): UpdateResourcePayload
   deleteResource(filter: ResourceFilter!): DeleteResourcePayload
@@ -2996,6 +3064,91 @@ input NoteRef {
   date: String
   text: String
   serviceorder: [ServiceOrderRef]
+}
+
+type NumericPool {
+  id: ID!
+  description: String
+  limit: Int!
+  customLimit: Int
+  resource(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource!]!
+  isDelete: Boolean!
+  statusNumericPools(
+    filter: StatusNumericPoolFilter
+    first: Int
+    offset: Int
+  ): [StatusNumericPool]
+  resourceAggregate(filter: ResourceFilter): ResourceAggregateResult
+  statusNumericPoolsAggregate(
+    filter: StatusNumericPoolFilter
+  ): StatusNumericPoolAggregateResult
+}
+
+type NumericPoolAggregateResult {
+  count: Int
+  descriptionMin: String
+  descriptionMax: String
+  limitMin: Int
+  limitMax: Int
+  limitSum: Int
+  limitAvg: Float
+  customLimitMin: Int
+  customLimitMax: Int
+  customLimitSum: Int
+  customLimitAvg: Float
+}
+
+input NumericPoolFilter {
+  id: [ID!]
+  has: [NumericPoolHasFilter]
+  and: [NumericPoolFilter]
+  or: [NumericPoolFilter]
+  not: NumericPoolFilter
+}
+
+enum NumericPoolHasFilter {
+  description
+  limit
+  customLimit
+  resource
+  isDelete
+  statusNumericPools
+}
+
+input NumericPoolOrder {
+  asc: NumericPoolOrderable
+  desc: NumericPoolOrderable
+  then: NumericPoolOrder
+}
+
+enum NumericPoolOrderable {
+  description
+  limit
+  customLimit
+}
+
+input NumericPoolPatch {
+  description: String
+  limit: Int
+  customLimit: Int
+  resource: [ResourceRef!]
+  isDelete: Boolean
+  statusNumericPools: [StatusNumericPoolRef]
+}
+
+input NumericPoolRef {
+  id: ID
+  description: String
+  limit: Int
+  customLimit: Int
+  resource: [ResourceRef!]
+  isDelete: Boolean
+  statusNumericPools: [StatusNumericPoolRef]
 }
 
 enum OperationalSubStatus {
@@ -3393,6 +3546,23 @@ input PolygonRef {
 }
 
 type Query {
+  getNumericPool(id: ID!): NumericPool
+  queryNumericPool(
+    filter: NumericPoolFilter
+    order: NumericPoolOrder
+    first: Int
+    offset: Int
+  ): [NumericPool]
+  aggregateNumericPool(filter: NumericPoolFilter): NumericPoolAggregateResult
+  getStatusNumericPool(id: ID!): StatusNumericPool
+  queryStatusNumericPool(
+    filter: StatusNumericPoolFilter
+    first: Int
+    offset: Int
+  ): [StatusNumericPool]
+  aggregateStatusNumericPool(
+    filter: StatusNumericPoolFilter
+  ): StatusNumericPoolAggregateResult
   getResource(id: ID, name: String): Resource
   queryResource(
     filter: ResourceFilter
@@ -3816,6 +3986,12 @@ type Resource implements ResourceInt {
     offset: Int
   ): [ResourceProperty]
   isDelete: Boolean!
+  numericPool(
+    filter: NumericPoolFilter
+    order: NumericPoolOrder
+    first: Int
+    offset: Int
+  ): [NumericPool]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -3823,6 +3999,7 @@ type Resource implements ResourceInt {
   resourcePropertysAggregate(
     filter: ResourcePropertyFilter
   ): ResourcePropertyAggregateResult
+  numericPoolAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
 }
 
 type ResourceAggregateResult {
@@ -3844,6 +4021,7 @@ type ResourceAggregateResult {
 input ResourceFilter {
   id: [ID!]
   name: StringHashFilter
+  resourceSpecification: Int64Filter
   has: [ResourceHasFilter]
   and: [ResourceFilter]
   or: [ResourceFilter]
@@ -3871,6 +4049,7 @@ enum ResourceHasFilter {
   resourceSpecification
   resourcePropertys
   isDelete
+  numericPool
 }
 
 interface ResourceInt {
@@ -3942,6 +4121,7 @@ input ResourcePatch {
   resourceSpecification: Int64
   resourcePropertys: [ResourcePropertyRef]
   isDelete: Boolean
+  numericPool: [NumericPoolRef]
 }
 
 type ResourceProperty {
@@ -4087,6 +4267,7 @@ input ResourceRef {
   resourceSpecification: Int64
   resourcePropertys: [ResourcePropertyRef]
   isDelete: Boolean
+  numericPool: [NumericPoolRef]
 }
 
 type ResourceReference implements ResourceInt {
@@ -5019,6 +5200,44 @@ input ServiceSpecificationRefRef {
   services: [ServiceSOMRef]
 }
 
+type StatusNumericPool {
+  id: ID!
+  numericPool(filter: NumericPoolFilter): NumericPool
+  status: UsageSubStatus
+  value: [Int]
+}
+
+type StatusNumericPoolAggregateResult {
+  count: Int
+}
+
+input StatusNumericPoolFilter {
+  id: [ID!]
+  has: [StatusNumericPoolHasFilter]
+  and: [StatusNumericPoolFilter]
+  or: [StatusNumericPoolFilter]
+  not: StatusNumericPoolFilter
+}
+
+enum StatusNumericPoolHasFilter {
+  numericPool
+  status
+  value
+}
+
+input StatusNumericPoolPatch {
+  numericPool: NumericPoolRef
+  status: UsageSubStatus
+  value: [Int]
+}
+
+input StatusNumericPoolRef {
+  id: ID
+  numericPool: NumericPoolRef
+  status: UsageSubStatus
+  value: [Int]
+}
+
 input StringExactFilter {
   eq: String
   in: [String]
@@ -5345,6 +5564,22 @@ type UpdateNotePayload {
   numUids: Int
 }
 
+input UpdateNumericPoolInput {
+  filter: NumericPoolFilter!
+  set: NumericPoolPatch
+  remove: NumericPoolPatch
+}
+
+type UpdateNumericPoolPayload {
+  numericPool(
+    filter: NumericPoolFilter
+    order: NumericPoolOrder
+    first: Int
+    offset: Int
+  ): [NumericPool]
+  numUids: Int
+}
+
 input UpdateParameterInput {
   filter: ParameterFilter!
   set: ParameterPatch
@@ -5601,6 +5836,21 @@ type UpdateServiceSpecificationRefPayload {
   numUids: Int
 }
 
+input UpdateStatusNumericPoolInput {
+  filter: StatusNumericPoolFilter!
+  set: StatusNumericPoolPatch
+  remove: StatusNumericPoolPatch
+}
+
+type UpdateStatusNumericPoolPayload {
+  statusNumericPool(
+    filter: StatusNumericPoolFilter
+    first: Int
+    offset: Int
+  ): [StatusNumericPool]
+  numUids: Int
+}
+
 input UpdateSubscriberInput {
   filter: SubscriberFilter!
   set: SubscriberPatch
@@ -5622,6 +5872,7 @@ enum UsageSubStatus {
   RESERVED
   NO_AVAILABLE
   ASSIGNED
+  TERMINATING
 }
 
 enum VersionStatus {
