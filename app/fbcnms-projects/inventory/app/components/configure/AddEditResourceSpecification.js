@@ -31,6 +31,7 @@ import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
+import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
@@ -284,6 +285,11 @@ export const AddEditResourceSpecification = (props: Props) => {
               propertyTypes={propertyTypes}
             />
           </PropertyTypesTableDispatcher.Provider>
+        </ExpandingPanel>
+      </Card>
+      <Card margins="none">
+        <ExpandingPanel title="Configure Actions">
+          <TableConfigureAction />
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (
