@@ -19,91 +19,91 @@ export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type EditPermissionsPolicyInput = {|
-  id: string,
-  name?: ?string,
+  assuranceInput?: ?AssurancePolicyInput,
+  automationInput?: ?AutomationPolicyInput,
   description?: ?string,
+  groups?: ?$ReadOnlyArray<string>,
+  id: string,
+  inventoryInput?: ?InventoryPolicyInput,
   isGlobal?: ?boolean,
   isMulticontractor?: ?boolean,
-  inventoryInput?: ?InventoryPolicyInput,
+  name?: ?string,
   workforceInput?: ?WorkforcePolicyInput,
-  automationInput?: ?AutomationPolicyInput,
-  assuranceInput?: ?AssurancePolicyInput,
-  groups?: ?$ReadOnlyArray<string>,
 |};
-export type InventoryPolicyInput = {|
+export type AssurancePolicyInput = {|
   read?: ?BasicPermissionRuleInput,
-  location?: ?LocationCUDInput,
-  documentCategory?: ?DocumentCategoryCUDInput,
-  propertyCategory?: ?PropertyCategoryCUDInput,
-  equipment?: ?BasicCUDInput,
-  equipmentType?: ?BasicCUDInput,
-  locationType?: ?BasicCUDInput,
-  portType?: ?BasicCUDInput,
-  serviceType?: ?BasicCUDInput,
+  templates?: ?BasicCUDInput,
 |};
 export type BasicPermissionRuleInput = {|
   isAllowed: PermissionValue
 |};
-export type LocationCUDInput = {|
-  create?: ?BasicPermissionRuleInput,
-  update?: ?LocationPermissionRuleInput,
-  delete?: ?BasicPermissionRuleInput,
-|};
-export type LocationPermissionRuleInput = {|
-  isAllowed: PermissionValue,
-  locationTypeIds?: ?$ReadOnlyArray<string>,
-|};
-export type DocumentCategoryCUDInput = {|
-  locationTypeID?: ?number,
-  read?: ?DocumentCategoryPermissionRuleInput,
-  create?: ?DocumentCategoryPermissionRuleInput,
-  update?: ?DocumentCategoryPermissionRuleInput,
-  delete?: ?DocumentCategoryPermissionRuleInput,
-|};
-export type DocumentCategoryPermissionRuleInput = {|
-  isAllowed: PermissionValue,
-  documentCategoryIds?: ?$ReadOnlyArray<string>,
-|};
-export type PropertyCategoryCUDInput = {|
-  read?: ?PropertyCategoryPermissionRuleInput,
-  create?: ?PropertyCategoryPermissionRuleInput,
-  update?: ?PropertyCategoryPermissionRuleInput,
-  delete?: ?PropertyCategoryPermissionRuleInput,
-|};
-export type PropertyCategoryPermissionRuleInput = {|
-  isAllowed: PermissionValue,
-  propertyCategoryIds?: ?$ReadOnlyArray<string>,
-|};
 export type BasicCUDInput = {|
   create?: ?BasicPermissionRuleInput,
-  update?: ?BasicPermissionRuleInput,
   delete?: ?BasicPermissionRuleInput,
-|};
-export type WorkforcePolicyInput = {|
-  read?: ?WorkforcePermissionRuleInput,
-  data?: ?WorkforceCUDInput,
-  templates?: ?BasicCUDInput,
-|};
-export type WorkforcePermissionRuleInput = {|
-  isAllowed: PermissionValue,
-  projectTypeIds?: ?$ReadOnlyArray<string>,
-  workOrderTypeIds?: ?$ReadOnlyArray<string>,
-  organizationIds?: ?$ReadOnlyArray<string>,
-|};
-export type WorkforceCUDInput = {|
-  create?: ?BasicPermissionRuleInput,
   update?: ?BasicPermissionRuleInput,
-  delete?: ?BasicPermissionRuleInput,
-  assign?: ?BasicPermissionRuleInput,
-  transferOwnership?: ?BasicPermissionRuleInput,
 |};
 export type AutomationPolicyInput = {|
   read?: ?BasicPermissionRuleInput,
   templates?: ?BasicCUDInput,
 |};
-export type AssurancePolicyInput = {|
+export type InventoryPolicyInput = {|
+  documentCategory?: ?DocumentCategoryCUDInput,
+  equipment?: ?BasicCUDInput,
+  equipmentType?: ?BasicCUDInput,
+  location?: ?LocationCUDInput,
+  locationType?: ?BasicCUDInput,
+  portType?: ?BasicCUDInput,
+  propertyCategory?: ?PropertyCategoryCUDInput,
   read?: ?BasicPermissionRuleInput,
+  serviceType?: ?BasicCUDInput,
+|};
+export type DocumentCategoryCUDInput = {|
+  create?: ?DocumentCategoryPermissionRuleInput,
+  delete?: ?DocumentCategoryPermissionRuleInput,
+  locationTypeID?: ?number,
+  read?: ?DocumentCategoryPermissionRuleInput,
+  update?: ?DocumentCategoryPermissionRuleInput,
+|};
+export type DocumentCategoryPermissionRuleInput = {|
+  documentCategoryIds?: ?$ReadOnlyArray<string>,
+  isAllowed: PermissionValue,
+|};
+export type LocationCUDInput = {|
+  create?: ?BasicPermissionRuleInput,
+  delete?: ?BasicPermissionRuleInput,
+  update?: ?LocationPermissionRuleInput,
+|};
+export type LocationPermissionRuleInput = {|
+  isAllowed: PermissionValue,
+  locationTypeIds?: ?$ReadOnlyArray<string>,
+|};
+export type PropertyCategoryCUDInput = {|
+  create?: ?PropertyCategoryPermissionRuleInput,
+  delete?: ?PropertyCategoryPermissionRuleInput,
+  read?: ?PropertyCategoryPermissionRuleInput,
+  update?: ?PropertyCategoryPermissionRuleInput,
+|};
+export type PropertyCategoryPermissionRuleInput = {|
+  isAllowed: PermissionValue,
+  propertyCategoryIds?: ?$ReadOnlyArray<string>,
+|};
+export type WorkforcePolicyInput = {|
+  data?: ?WorkforceCUDInput,
+  read?: ?WorkforcePermissionRuleInput,
   templates?: ?BasicCUDInput,
+|};
+export type WorkforceCUDInput = {|
+  assign?: ?BasicPermissionRuleInput,
+  create?: ?BasicPermissionRuleInput,
+  delete?: ?BasicPermissionRuleInput,
+  transferOwnership?: ?BasicPermissionRuleInput,
+  update?: ?BasicPermissionRuleInput,
+|};
+export type WorkforcePermissionRuleInput = {|
+  isAllowed: PermissionValue,
+  organizationIds?: ?$ReadOnlyArray<string>,
+  projectTypeIds?: ?$ReadOnlyArray<string>,
+  workOrderTypeIds?: ?$ReadOnlyArray<string>,
 |};
 export type EditPermissionsPolicyMutationVariables = {|
   input: EditPermissionsPolicyInput

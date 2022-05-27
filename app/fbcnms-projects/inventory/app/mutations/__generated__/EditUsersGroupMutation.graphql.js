@@ -19,12 +19,12 @@ export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type EditUsersGroupInput = {|
-  id: string,
-  name?: ?string,
   description?: ?string,
-  status?: ?UsersGroupStatus,
+  id: string,
   members?: ?$ReadOnlyArray<string>,
+  name?: ?string,
   policies?: ?$ReadOnlyArray<string>,
+  status?: ?UsersGroupStatus,
 |};
 export type EditUsersGroupMutationVariables = {|
   input: EditUsersGroupInput

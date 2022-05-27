@@ -17,30 +17,30 @@ import type { ConcreteRequest } from 'relay-runtime';
 type FileAttachment_file$ref = any;
 export type ImageEntity = "CHECKLIST_ITEM" | "EQUIPMENT" | "LOCATION" | "SITE_SURVEY" | "USER" | "WORK_ORDER" | "%future added value";
 export type AddFloorPlanInput = {|
-  name: string,
-  locationID: string,
   image: AddImageInput,
-  referenceX: number,
-  referenceY: number,
   latitude: number,
+  locationID: string,
   longitude: number,
+  name: string,
   referencePoint1X: number,
   referencePoint1Y: number,
   referencePoint2X: number,
   referencePoint2Y: number,
+  referenceX: number,
+  referenceY: number,
   scaleInMeters: number,
 |};
 export type AddImageInput = {|
-  entityType: ImageEntity,
+  annotation?: ?string,
+  category?: ?string,
+  contentType: string,
+  documentCategoryId?: ?string,
   entityId: string,
-  imgKey: string,
+  entityType: ImageEntity,
   fileName: string,
   fileSize: number,
+  imgKey: string,
   modified: any,
-  contentType: string,
-  category?: ?string,
-  annotation?: ?string,
-  documentCategoryId?: ?string,
 |};
 export type AddFloorPlanMutationVariables = {|
   input: AddFloorPlanInput

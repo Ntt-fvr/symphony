@@ -19,31 +19,31 @@ export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type WorkOrderStatus = "BLOCKED" | "CANCELED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "SUSPENDED" | "%future added value";
 export type AddLinkInput = {|
-  sides: $ReadOnlyArray<LinkSide>,
-  workOrder?: ?string,
   properties?: ?$ReadOnlyArray<PropertyInput>,
   serviceIds?: ?$ReadOnlyArray<string>,
+  sides: $ReadOnlyArray<LinkSide>,
+  workOrder?: ?string,
+|};
+export type PropertyInput = {|
+  booleanValue?: ?boolean,
+  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
+  floatValue?: ?number,
+  id?: ?string,
+  intValue?: ?number,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  nodeIDValue?: ?string,
+  propertyTypeID: string,
+  propertyTypeValueID?: ?string,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
 |};
 export type LinkSide = {|
   equipment: string,
   port: string,
-|};
-export type PropertyInput = {|
-  id?: ?string,
-  propertyTypeID: string,
-  stringValue?: ?string,
-  intValue?: ?number,
-  booleanValue?: ?boolean,
-  floatValue?: ?number,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
-  nodeIDValue?: ?string,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
-  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
-  propertyTypeValueID?: ?string,
 |};
 export type AddLinkMutationVariables = {|
   input: AddLinkInput
