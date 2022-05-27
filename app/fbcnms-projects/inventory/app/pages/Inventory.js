@@ -98,6 +98,7 @@ type State = {
   selectedWorkOrderId: ?string,
   openLocationHierarchy: Array<string>,
   selectedResourceId: ?string,
+  selectedResourceType: {},
 };
 
 class Inventory extends React.Component<Props, State> {
@@ -117,6 +118,7 @@ class Inventory extends React.Component<Props, State> {
       selectedWorkOrderId: null,
       openLocationHierarchy: [],
       selectedResourceId: null,
+      selectedResourceType: {},
     };
   }
 
@@ -276,11 +278,12 @@ class Inventory extends React.Component<Props, State> {
                   onResourceSelected={selectedResourceId =>
                     this.navigateToResource(selectedResourceId)
                   }
-                  onAddResource={() =>
+                  onAddResource={selectedResourceType => {
                     this.setState({
+                      selectedResourceType,
                       card: ADD_RESOURCE_CARD,
-                    })
-                  }
+                    });
+                  }}
                   onAddEquipment={() => this.showDialog('equipment')}
                   onLocationMoved={this.onMoveLocation}
                   onLocationRemoved={this.onDeleteLocation}
@@ -289,11 +292,13 @@ class Inventory extends React.Component<Props, State> {
               {card.type == 'resource' && (
                 <ResourceCard
                   mode={card.mode}
-                  onAddResourceSlot={() =>
+                  selectedResourceType={this.state.selectedResourceType}
+                  onAddResource={selectedResourceType => {
                     this.setState({
+                      selectedResourceType,
                       card: ADD_RESOURCE_CARD,
-                    })
-                  }
+                    });
+                  }}
                   onEditResource={() =>
                     this.setState({
                       card: EDIT_RESOURCE_CARD,
