@@ -29,7 +29,7 @@ type Props = $ReadOnly<{|
   onWorkOrderSelected: (?string) => void,
   onResourceSelected: () => void,
   onAddEquipment: () => void,
-  onAddResource: () => void,
+  onAddResource: (selectedResourceType: {}) => void,
   onLocationMoved: (movedLocation: LocationMenu_location) => void,
   onLocationRemoved: (removedLocation: LocationMenu_location) => void,
 |}>;

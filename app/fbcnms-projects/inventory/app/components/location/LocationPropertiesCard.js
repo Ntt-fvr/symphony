@@ -46,7 +46,7 @@ type Props = {|
   onResourceSelected: () => void,
   onEdit: () => void,
   onAddEquipment: () => void,
-  onAddResource: () => void,
+  onAddResource: (selectedResourceType: {}) => void,
   onLocationMoved: (movedLocation: LocationMenu_location) => void,
   onLocationRemoved: (removedLocation: LocationMenu_location) => void,
 |} & WithStyles<typeof styles> &

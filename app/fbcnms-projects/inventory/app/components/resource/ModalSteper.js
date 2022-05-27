@@ -14,18 +14,22 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import React from 'react';
+import React, {useState} from 'react';
 import RouterIcon from '@material-ui/icons/Router';
+import SearchIcon from '@material-ui/icons/Search';
 import Step from '@material-ui/core/Step';
 import StepConnector from '@material-ui/core/StepConnector/StepConnector';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -33,6 +37,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     '& .MuiDialogTitle-root': {
       padding: '0',
+    },
+    '& .MuiDialog-paperScrollPaper': {
+      height: '75%',
     },
   },
   backButton: {
@@ -62,6 +69,24 @@ const useStyles = makeStyles(theme => ({
   },
   connectorLine: {
     transition: theme.transitions.create('border-color'),
+  },
+  textField: {
+    width: '100%',
+    '& .MuiOutlinedInput-root': {
+      color: symphony.palette.D300,
+      height: '30px',
+      '& .Mui-focused.MuiOutlinedInput-notchedOutline': {
+        border: '1px solid black',
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderRadius: '4px',
+        borderWidth: '1px',
+        borderColor: symphony.palette.D300,
+      },
+      '& .MuiOutlinedInput-notchedOutline:hover': {
+        borderColor: symphony.palette.D100,
+      },
+    },
   },
 }));
 
@@ -110,15 +135,18 @@ function customStepIcon(props) {
 type Props = $ReadOnly<{|
   openModal: boolean,
   onClose: () => void,
-  saveModal?: () => void,
+  saveModal: (selectedResourceType: {}) => void,
   titleSteps: Array<string>,
+  dataListStepper: any,
 |}>;
 
 const ModalSteper = (props: Props) => {
-  const {openModal, onClose, saveModal, titleSteps} = props;
+  const {openModal, onClose, saveModal, titleSteps, dataListStepper} = props;
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(1);
-  const [selectedIndex, setSelectedIndex] = React.useState(null);
+  const [activeStep, setActiveStep] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [getDataList, setGetDataList] = useState({});
+  const [searchData, setSearchData] = useState('');
 
   const connector = (
     <StepConnector
@@ -130,15 +158,32 @@ const ModalSteper = (props: Props) => {
       }}
     />
   );
+
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     setSelectedIndex(null);
   };
 
-  const handleListItemClick = (event, index) => {
+  const handleListItemClick = (event, index, item) => {
     setSelectedIndex(index);
+    setGetDataList(item.node);
   };
 
+  const searchResourceType = dataListStepper?.resourceTypes?.edges.filter(
+    item =>
+      item.node?.name
+        .toString()
+        .toLowerCase()
+        .includes(searchData.toLocaleLowerCase()),
+  );
+
+  const searchResourceSpecifications = dataListStepper?.resourceSpecifications?.edges.filter(
+    item =>
+      item.node?.name
+        .toString()
+        .toLowerCase()
+        .includes(searchData.toLocaleLowerCase()),
+  );
   return (
     <div>
       <Dialog
@@ -162,50 +207,86 @@ const ModalSteper = (props: Props) => {
           </Stepper>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="h6">
+          <Typography variant="h6" align="center" style={{margin: '1rem 0'}}>
             Select a {activeStep === 1 && titleSteps[0]}
             {activeStep === 2 && titleSteps[1]}
           </Typography>
-          <List component="nav">
-            {titleSteps.length === 1 ? (
-              <ListItem
-                button
-                selected={selectedIndex === 0}
-                onClick={event => handleListItemClick(event, 0)}>
-                <ListItemAvatar>
-                  <Avatar>
-                    <RouterIcon fontSize="medium" color="primary" />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="CLARK" />
-              </ListItem>
-            ) : (
-              <>
+          <TextField
+            className={classes.textField}
+            placeholder="Label"
+            color="primary"
+            type="text"
+            variant="outlined"
+            value={searchData}
+            autoComplete="off"
+            onChange={event => setSearchData(event.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          {titleSteps.length === 2 ? (
+            <>
+              {activeStep === 1 &&
+                searchResourceType.map((item, index) => (
+                  <List component="nav">
+                    <ListItem
+                      button
+                      key={item.node.id}
+                      selected={selectedIndex === index}
+                      onClick={event =>
+                        handleListItemClick(event, index, item)
+                      }>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <RouterIcon fontSize="medium" color="primary" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={item.node.name} />
+                    </ListItem>
+                  </List>
+                ))}
+              {activeStep === 2 &&
+                searchResourceSpecifications.map((item, index) => (
+                  <List component="nav">
+                    <ListItem
+                      button
+                      key={item.node.id}
+                      selected={selectedIndex === index}
+                      onClick={event =>
+                        handleListItemClick(event, index, item)
+                      }>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <RouterIcon fontSize="medium" color="primary" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={item.node.name} />
+                    </ListItem>
+                  </List>
+                ))}
+            </>
+          ) : (
+            searchResourceSpecifications.map((item, index) => (
+              <List component="nav">
                 <ListItem
                   button
-                  selected={selectedIndex === 0}
-                  onClick={event => handleListItemClick(event, 0)}>
+                  key={item.node.id}
+                  selected={selectedIndex === index}
+                  onClick={event => handleListItemClick(event, index, item)}>
                   <ListItemAvatar>
                     <Avatar>
                       <RouterIcon fontSize="medium" color="primary" />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary="OLZ" />
+                  <ListItemText primary={item.node.name} />
                 </ListItem>
-                <ListItem
-                  button
-                  selected={selectedIndex === 1}
-                  onClick={event => handleListItemClick(event, 1)}>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <RouterIcon fontSize="medium" color="primary" />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="XYP" />
-                </ListItem>
-              </>
-            )}
-          </List>
+              </List>
+            ))
+          )}
         </DialogContent>
         <DialogActions>
           <Button
@@ -219,7 +300,11 @@ const ModalSteper = (props: Props) => {
             variant="contained"
             color="primary"
             disabled={selectedIndex !== null ? false : true}
-            onClick={activeStep === titleSteps.length ? saveModal : handleNext}>
+            onClick={
+              activeStep === titleSteps.length
+                ? () => saveModal(getDataList)
+                : handleNext
+            }>
             Next
           </Button>
         </DialogActions>

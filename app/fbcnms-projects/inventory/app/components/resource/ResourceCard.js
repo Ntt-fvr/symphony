@@ -19,10 +19,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import ModalSteper from './ModalSteper';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import ResourcePropertiesCard from './ResourcePropertiesCard';
 import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -35,13 +37,58 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ResourceCardListQuery = graphql`
+  query ResourceCardQuery($filterBy: [ResourceSpecificationFilterInput!]) {
+    resourceTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    resourceSpecifications(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          resourceType {
+            id
+            name
+          }
+          resourcePropertyTypes {
+            id
+            name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isMandatory
+            isInstanceProperty
+            isDeleted
+            category
+          }
+        }
+      }
+    }
+  }
+`;
+
 type Props = $ReadOnly<{|
   mode?: string,
-  onAddResource?: () => void,
-  onAddResourceSlot: () => void,
+  onAddResource: (selectedResourceType: {}) => void,
   onEditResource: () => void,
   onResourceSelected: (selectedResourceId: string) => void,
   onCancel: () => void,
+  selectedResourceType: {},
 |}>;
 
 const ResourceCard = (props: Props) => {
@@ -50,23 +97,44 @@ const ResourceCard = (props: Props) => {
     onAddResource,
     onEditResource,
     onResourceSelected,
-    onAddResourceSlot,
-
+    selectedResourceType,
     onCancel,
   } = props;
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
+  const [resourceTypes, setResourceTypes] = useState({});
+
+  useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
+    fetchQuery(RelayEnvironment, ResourceCardListQuery, {}).then(data => {
+      setResourceTypes(data);
+    });
+  }, [setResourceTypes]);
 
   switch (mode) {
     case 'add':
-      return <AddEditResourceInLocation closeFormAddEdit={onCancel} />;
+      return (
+        <AddEditResourceInLocation
+          dataformModal={selectedResourceType}
+          closeFormAddEdit={onCancel}
+        />
+      );
     case 'edit':
-      return <AddEditResourceInLocation closeFormAddEdit={onCancel} />;
+      return (
+        <AddEditResourceInLocation
+          dataformModal={selectedResourceType}
+          closeFormAddEdit={onCancel}
+        />
+      );
     case 'show':
       return (
         <ResourcePropertiesCard
-          onAddResourceSlot={onAddResourceSlot}
+          onAddResourceSlot={onAddResource}
           onEditResource={onEditResource}
+          dataListStepper={resourceTypes}
         />
       );
     default:
@@ -132,6 +200,7 @@ const ResourceCard = (props: Props) => {
             <ModalSteper
               openModal={openDialog}
               onClose={() => setOpenDialog(false)}
+              dataListStepper={resourceTypes}
               saveModal={onAddResource}
               titleSteps={['Resource type', 'Resource specification']}
             />
