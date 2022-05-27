@@ -16,11 +16,11 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditFormulaInput = {|
   id: string,
-  textFormula: string,
+  kpiFk: string,
+  networkTypeFk: string,
   status: boolean,
   techFk: string,
-  networkTypeFk: string,
-  kpiFk: string,
+  textFormula: string,
 |};
 export type EditFormulaMutationVariables = {|
   input: EditFormulaInput

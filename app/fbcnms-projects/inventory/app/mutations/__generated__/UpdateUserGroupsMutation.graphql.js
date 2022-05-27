@@ -19,8 +19,8 @@ export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UpdateUserGroupsInput = {|
-  id: string,
   addGroupIds: $ReadOnlyArray<string>,
+  id: string,
   removeGroupIds: $ReadOnlyArray<string>,
 |};
 export type UpdateUserGroupsMutationVariables = {|
