@@ -15,8 +15,8 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddCounterFormulaListInput = {|
-  formulaFk: string,
   counterList: $ReadOnlyArray<?CounterListInput>,
+  formulaFk: string,
 |};
 export type CounterListInput = {|
   counterFk: string,

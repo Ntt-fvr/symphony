@@ -20,13 +20,13 @@ export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type EditUserInput = {|
-  id: string,
-  firstName?: ?string,
-  lastName?: ?string,
-  status?: ?UserStatus,
-  role?: ?UserRole,
   distanceUnit?: ?DistanceUnit,
+  firstName?: ?string,
+  id: string,
+  lastName?: ?string,
   organizationFk?: ?string,
+  role?: ?UserRole,
+  status?: ?UserStatus,
 |};
 export type EditUserOrganizationMutationVariables = {|
   input: EditUserInput

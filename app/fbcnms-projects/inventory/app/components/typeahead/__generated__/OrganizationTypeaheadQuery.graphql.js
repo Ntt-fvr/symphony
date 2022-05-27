@@ -18,11 +18,11 @@ export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_G
 export type OrganizationFilterType = "DESCRIPTION" | "ID" | "NAME" | "%future added value";
 export type OrganizationFilterInput = {|
   filterType: OrganizationFilterType,
-  operator: FilterOperator,
-  stringValue?: ?string,
   idSet?: ?$ReadOnlyArray<string>,
   maxDepth?: ?number,
+  operator: FilterOperator,
   stringSet?: ?$ReadOnlyArray<string>,
+  stringValue?: ?string,
 |};
 export type OrganizationTypeaheadQueryVariables = {|
   filters: $ReadOnlyArray<OrganizationFilterInput>,
