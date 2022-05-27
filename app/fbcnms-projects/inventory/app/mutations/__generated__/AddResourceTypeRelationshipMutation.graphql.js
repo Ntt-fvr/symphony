@@ -17,9 +17,9 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type ResourceRelationshipMultiplicityKind = "MANY_TO_MANY" | "MANY_TO_ONE" | "ONE_TO_MANY" | "ONE_TO_ONE" | "%future added value";
 export type ResourceRelationshipTypeKind = "BELONGS_TO" | "CROSS_CONNECTION" | "LOCATED_IN" | "LOGICAL_LINK" | "PHYSICAL_LINK" | "%future added value";
 export type AddResourceTypeRelationshipInput = {|
-  resourceRelationshipType: ResourceRelationshipTypeKind,
-  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind,
   locationType?: ?string,
+  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind,
+  resourceRelationshipType: ResourceRelationshipTypeKind,
   resourceTypeA: string,
   resourceTypeB?: ?string,
 |};
