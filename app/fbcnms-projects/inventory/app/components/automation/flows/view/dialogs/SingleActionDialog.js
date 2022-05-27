@@ -13,7 +13,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import DialogActions from '@material-ui/core/DialogActions';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Text from '@symphony/design-system/components/Text';
-import fbt from 'fbt';
 import {BLUE} from '@symphony/design-system/theme/symphony';
 import {Checkbox, Dialog, FormControlLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';

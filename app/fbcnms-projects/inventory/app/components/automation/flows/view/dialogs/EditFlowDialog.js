@@ -17,7 +17,7 @@ import fbt from 'fbt';
 import symphony, {BLUE} from '@symphony/design-system/theme/symphony';
 import {Dialog, FormControl, TextField} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
-import {useForm} from '../../../utils/useForm';
+import {useForm} from '../../utils/useForm';
 
 const useStyles = makeStyles(theme => ({
   root: {

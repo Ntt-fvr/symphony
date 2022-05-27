@@ -8,7 +8,7 @@
  * @format
  */
 
-import AddFlowDialog from '../view/AddFlowDialog';
+import AddFlowDialog from '../view/dialogs/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
 import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';

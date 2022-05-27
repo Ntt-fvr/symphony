@@ -8,10 +8,10 @@
  * @format
  */
 
-import ArchiveDeleteDialog from './dialogs/ArchiveDeleteDialog';
+import ArchiveDeleteDialog from '../../view/dialogs/ArchiveDeleteDialog';
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import EditFlowDialog from './dialogs/EditFlowDialog';
+import EditFlowDialog from '../../view/dialogs//EditFlowDialog';
 import IconButton from '@symphony/design-system/components/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -20,7 +20,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, {useState} from 'react';
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
-import SingleActionDialog from './dialogs/SingleActionDialog';
+import SingleActionDialog from '../../view/dialogs/SingleActionDialog';
 import Text from '@symphony/design-system/components/Text';
 import Tooltip from '../../../inputs/Tooltip';
 import fbt from 'fbt';
@@ -114,8 +114,8 @@ const StyledMenuItem = withStyles({
 
 type Props = $ReadOnly<{|
   icon?: any,
-  name?: string,
-  description?: string,
+  name?: ?string,
+  description?: ?string,
   editText?: string,
   duplicateText?: string,
 |}>;
@@ -241,8 +241,8 @@ export default function CustomizedMenus({
           isOpen={openModal}
           openModal={() => handleCLoseModal()}
           text={editText}
-          name={name}
-          description={description}
+          name={name ? name : ''}
+          description={description ? description : ''}
         />
       )}
       {activeModal === 4 && (
@@ -250,20 +250,10 @@ export default function CustomizedMenus({
           isOpen={openModal}
           openModal={() => handleCLoseModal()}
           text={duplicateText}
-          name={name}
-          description={description}
+          name={name ? name : ''}
+          description={description ? description : ''}
         />
       )}
-      <SingleActionDialog
-        showCheck={false}
-        title="Cancel flow"
-        text='This action is irreversible, the flow will go into a "Cancelled" state and cannot be executed again.'
-      />
-      {/* <SingleActionDialog
-        showCheck={true}
-        title="Delete a complex block"
-        text="All blocks it contains will also be deleted. Are you sure you want to continue?."
-      /> */}
     </div>
   );
 }
