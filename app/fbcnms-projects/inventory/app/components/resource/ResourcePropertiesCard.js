@@ -53,12 +53,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  onAddResourceSlot: () => void,
+  onAddResourceSlot: (selectedResourceType: {}) => void,
   onEditResource: () => void,
+  dataListStepper: any,
 |}>;
 
 const ResourcePropertiesCard = (props: Props) => {
-  const {onAddResourceSlot, onEditResource} = props;
+  const {onAddResourceSlot, onEditResource, dataListStepper} = props;
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
@@ -195,6 +196,7 @@ const ResourcePropertiesCard = (props: Props) => {
             onClose={() => setOpenDialog(false)}
             saveModal={onAddResourceSlot}
             titleSteps={['Resource specification']}
+            dataListStepper={dataListStepper}
           />
         )}
       </>

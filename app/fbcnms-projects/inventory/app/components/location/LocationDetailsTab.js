@@ -27,7 +27,7 @@ type Props = $ReadOnly<{|
   onWorkOrderSelected: (workOrderId: string) => void,
   onResourceSelected: () => void,
   onAddEquipment: () => void,
-  onAddResource: () => void,
+  onAddResource: (selectedResourceType: {}) => void,
 |}>;
 
 const useStyles = makeStyles(_theme => ({
