@@ -19,11 +19,11 @@ export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" 
 export type ResourceSpecificationFilterType = "NAME" | "RESOURCE_TYPE" | "%future added value";
 export type ResourceSpecificationFilterInput = {|
   filterType: ResourceSpecificationFilterType,
-  operator: FilterOperator,
-  stringValue?: ?string,
   idSet?: ?$ReadOnlyArray<string>,
   maxDepth?: ?number,
+  operator: FilterOperator,
   stringSet?: ?$ReadOnlyArray<string>,
+  stringValue?: ?string,
 |};
 export type ResourceCardQueryVariables = {|
   filterBy?: ?$ReadOnlyArray<ResourceSpecificationFilterInput>

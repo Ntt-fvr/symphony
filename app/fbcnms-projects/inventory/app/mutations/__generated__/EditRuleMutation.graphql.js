@@ -15,17 +15,17 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditRuleInput = {|
+  additionalInfo?: ?string,
+  endDateTime?: ?any,
+  eventSeverity: string,
+  eventTypeName?: ?string,
+  gracePeriod?: ?number,
   id: string,
   name: string,
-  gracePeriod?: ?number,
-  startDateTime?: ?any,
-  endDateTime?: ?any,
   ruleType: string,
-  eventTypeName?: ?string,
   specificProblem?: ?string,
-  additionalInfo?: ?string,
+  startDateTime?: ?any,
   status: boolean,
-  eventSeverity: string,
   threshold: string,
 |};
 export type EditRuleMutationVariables = {|

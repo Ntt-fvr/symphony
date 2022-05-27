@@ -15,10 +15,10 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddCounterInput = {|
-  name: string,
-  externalID: string,
-  networkManagerSystem: string,
   counterFamily: string,
+  externalID: string,
+  name: string,
+  networkManagerSystem: string,
   vendorFk: string,
 |};
 export type AddCounterMutationVariables = {|
