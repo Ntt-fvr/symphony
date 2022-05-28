@@ -57,7 +57,7 @@ export function reducerParameter(
       return editParameterType(state, action.id, pt => ({
         ...getInitialParameterType(pt.index ?? 0),
         id: action.id,
-        type: action.kind,
+        // type: action.kind,
         name: pt.name,
         nodeType: action.nodeType,
       }));
