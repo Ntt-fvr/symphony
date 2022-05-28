@@ -28,8 +28,8 @@ import type {ResourceSpecifications} from './EditResourceTypeItem';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
+import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
-import ExperimentalPropertyTypesTableParameters from '../form/ExperimentalPropertyTypesTableParameters';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
@@ -296,7 +296,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         <ExpandingPanel title="Configuration parameters">
           <ParameterTypesTableDispatcher.Provider
             value={parameterTypesDispacher}>
-            <ExperimentalPropertyTypesTableParameters
+            <ExperimentalParametersTypesTable
               supportDelete={true}
               parameterTypes={parameterTypes}
             />
