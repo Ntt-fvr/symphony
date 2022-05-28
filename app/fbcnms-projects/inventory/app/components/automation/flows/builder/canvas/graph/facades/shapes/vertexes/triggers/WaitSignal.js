@@ -12,8 +12,8 @@
 import * as jointJS from 'jointjs';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
+import {BIG_VERTEX_COMMON_DISPLAY, getInitObject} from '../BaseVertext';
 import {IVertexModel, PORTS_GROUPS} from '../BaseVertext';
-import {VERTEX_COMMON_DISPLAY, getInitObject} from '../BaseVertext';
 import {getTriggerType} from '../actions/utils';
 
 export const TRIGGER_TYPE_ID = 'wait-signal';
@@ -32,9 +32,9 @@ const IMAGE_PADDING = INNER_CENTER - IMAGE_CENTER;
 
 const defaultProperties = {
   attrs: {
-    ...VERTEX_COMMON_DISPLAY.attrs,
+    ...BIG_VERTEX_COMMON_DISPLAY.attrs,
     body: {
-      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
+      ...BIG_VERTEX_COMMON_DISPLAY.defaultAttrProps,
       strokeWidth: BORDER,
       fill: FILL_COLOR,
       r: RADIUS,
@@ -43,7 +43,7 @@ const defaultProperties = {
       refX2: PADDING,
     },
     image: {
-      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
+      ...BIG_VERTEX_COMMON_DISPLAY.defaultAttrProps,
       xlinkHref: '/inventory/static/svg/BlockWaitSignal.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
@@ -57,7 +57,7 @@ defaultProperties.attrs.label.text = `${fbt('Wait for signal', '')}`;
 
 const markup = {
   markup: [
-    ...VERTEX_COMMON_DISPLAY.markup,
+    ...BIG_VERTEX_COMMON_DISPLAY.markup,
     {
       tagName: 'circle',
       selector: 'body',

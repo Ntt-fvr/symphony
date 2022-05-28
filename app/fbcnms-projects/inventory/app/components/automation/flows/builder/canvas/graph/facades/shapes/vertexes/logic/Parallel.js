@@ -23,22 +23,63 @@ import {
 export const TYPE = 'ParallelBlock';
 
 const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
+const HORIZONTAL_PORT_LEFT_ALIN = -107;
+const HORIZONTAL_PORT_RIGHT_ALIN = -343;
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
 const BORDER = 4;
 const BORDER_RADIUS = 16;
-
+const BODY_COORDINATES_REFX2 = -106;
+const BODY_COORDINATES_REFY2 = 44;
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
-const INNER_CENTER = PADDING + INNER_SIZE / 2;
+const RADIUS = INNER_SIZE / 2;
+const INNER_CENTER = PADDING + RADIUS;
 
 const IMAGE_SIZE = 34;
 const IMAGE_CENTER = IMAGE_SIZE / 2;
 const IMAGE_PADDING = INNER_CENTER - IMAGE_CENTER;
+const IMAGE_COORDINATES_REFX2 = -112;
+const IMAGE_COORDINATES_REFY2 = 39;
+
+const COUPLED_FILL = 'rgb(184 194 211 / 60%)';
+const BORDER_RADIUS_COUPLED = BORDER_RADIUS - 11;
+const BORDER_COUPLED = 1;
+const COUPLED_SIZE_WIDTH = 450;
+const COUPLED_SIZE_HEIGHT = 300;
+const COUPLED_REFX2 = -75;
+const COUPLED_REFY2 = -75;
+const COUPLED_AREA_WIDTH = 300;
+const COUPLED_AREA_HEIGHT = 150;
+
+const LABEL_COORDINATES_REFX2 = -75;
+const LABEL_COORDINATES_REFY2 = 113;
+const LABEL_FONT_SIZE = 12;
+const LABEL_FONT_WEIGHT = 'bold';
+const LABEL_STROKE_WIDTH = 0;
+const LABEL_POINTER_EVENTS = 'none';
+
+const BACKGROUND_FILL = symphony.palette.white;
+const BACKGROUND_COORDINATES_REFX2 = -113;
+const BACKGROUND_COORDINATES_REFY2 = 110;
+const BACKGROUND_RADIUS = 7;
+const BACKGROUND_WIDTH = 77;
+const BACKGROUND_HEIGHT = 18;
 
 const defaultProperties = {
   attrs: {
     ...VERTEX_COMMON_DISPLAY.attrs,
+    coupled: {
+      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
+      strokeWidth: BORDER_COUPLED,
+      fill: COUPLED_FILL,
+      rx: BORDER_RADIUS_COUPLED,
+      ry: BORDER_RADIUS_COUPLED,
+      width: COUPLED_SIZE_WIDTH,
+      height: COUPLED_SIZE_HEIGHT,
+      refX2: COUPLED_REFX2,
+      refY2: COUPLED_REFY2,
+    },
     body: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
       strokeWidth: BORDER,
@@ -47,8 +88,8 @@ const defaultProperties = {
       ry: BORDER_RADIUS,
       width: INNER_SIZE,
       height: INNER_SIZE,
-      refX2: 9,
-      refY2: 4,
+      refX2: BODY_COORDINATES_REFX2,
+      refY2: BODY_COORDINATES_REFY2,
     },
     image: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
@@ -57,7 +98,30 @@ const defaultProperties = {
       height: IMAGE_SIZE,
       x: IMAGE_PADDING,
       y: IMAGE_PADDING,
-      refX2: PADDING,
+      refX2: IMAGE_COORDINATES_REFX2,
+      refY2: IMAGE_COORDINATES_REFY2,
+    },
+    label: {
+      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
+      text: 'manual action',
+      textAnchor: 'middle',
+      refX2: LABEL_COORDINATES_REFX2,
+      refY2: LABEL_COORDINATES_REFY2,
+      fontSize: LABEL_FONT_SIZE,
+      fontWeight: LABEL_FONT_WEIGHT,
+      fill: symphony.palette.secondary,
+      strokeWidth: LABEL_STROKE_WIDTH,
+      pointerEvents: LABEL_POINTER_EVENTS,
+    },
+    background: {
+      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
+      fill: BACKGROUND_FILL,
+      refX2: BACKGROUND_COORDINATES_REFX2,
+      refY2: BACKGROUND_COORDINATES_REFY2,
+      ry: BACKGROUND_RADIUS,
+      rx: BACKGROUND_RADIUS,
+      width: BACKGROUND_WIDTH,
+      height: BACKGROUND_HEIGHT,
     },
   },
 };
@@ -65,6 +129,10 @@ defaultProperties.attrs.label.text = `${fbt('Parallel', '')}`;
 
 const markup = {
   markup: [
+    {
+      tagName: 'rect',
+      selector: 'coupled',
+    },
     ...VERTEX_COMMON_DISPLAY.markup,
     {
       tagName: 'rect',
@@ -93,10 +161,13 @@ export default class Parallel
         {
           [PORTS_GROUPS.OUTPUT]: {count: 1},
         },
+        HORIZONTAL_PORT_LEFT_ALIN,
+        HORIZONTAL_PORT_RIGHT_ALIN,
         id ? id : undefined,
       ),
     );
-    this.resize(TOTAL_SIZE, TOTAL_SIZE);
+    this.resize(COUPLED_AREA_WIDTH, COUPLED_AREA_HEIGHT);
+    this.embedding = true;
   }
 }
 
