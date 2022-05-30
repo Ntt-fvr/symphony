@@ -35,13 +35,17 @@ import PropertyTypesTableDispatcher from '../form/context/property_types/Propert
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
+import {graphql} from 'relay-runtime';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useFormInput} from '../assurance/common/useFormInput';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 import {useValidationEdit} from '../assurance/common/useValidation';
+
+import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -89,6 +93,39 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ConfigurationParameters = graphql`
+  query AddEditResourceSpecificationQuery {
+    queryConfigurationParameterType {
+      resourceSpecification
+      name
+      id
+      booleanValue
+      category
+      externalId
+      floatValue
+      index
+      intValue
+      isDeleted
+      isEditable
+      isListable
+      isMandatory
+      isPrioritary
+      latitudeValue
+      longitudeValue
+      mappingIn
+      mappingOut
+      nodeType
+      rangeFromValue
+      rangeToValue
+      rawValue
+      resourceSpecification
+      stringValue
+      type
+      __typename
+    }
+  }
+`;
+
 type ResourceSpecification = {
   data: {
     name: string,
@@ -115,7 +152,16 @@ export const AddEditResourceSpecification = (props: Props) => {
   } = props;
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
+  const [configurationParameters, setConfigurationParametes] = useState(
+    useLazyLoadQuery<AddEditResourceSpecificationQuery>(
+      ConfigurationParameters,
+    ),
+  );
   const classes = useStyles();
+
+  const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
+    item => item?.resourceSpecification == dataForm?.id,
+  );
 
   const [
     resourceSpecification,
@@ -127,7 +173,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       .map(toMutablePropertyType),
   );
   const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer(
-    (dataForm?.resourcePropertyTypes ?? [])
+    (filterConfigurationParameter ?? [])
       .filter(Boolean)
       .map(toMutablePropertyType),
   );
@@ -249,7 +295,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         </Grid>
       </Grid>
       <Card margins="none">
-        <CardHeader className={classes.cardHeader}>Details</CardHeader>
+        <CardHeader className={classes.cardHeader}>Details Query</CardHeader>
         <Grid container>
           <Grid item xs={4}>
             <form className={classes.formField} autoComplete="off">
