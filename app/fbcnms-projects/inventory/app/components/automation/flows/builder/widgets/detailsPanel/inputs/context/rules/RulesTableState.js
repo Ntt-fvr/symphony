@@ -11,7 +11,7 @@
 import type {RuleType} from './RuleType';
 
 import {RulesTableDispatcherActionType} from './RulesTableDispatcherActionType';
-import {generateTempId} from '../../../../../common/EntUtils';
+import {generateTempId} from '../../../../../../../../../common/EntUtils';
 import {getInitialRulesState, rulesTableReducer} from './RulesTableReducer';
 import {useReducer} from 'react';
 

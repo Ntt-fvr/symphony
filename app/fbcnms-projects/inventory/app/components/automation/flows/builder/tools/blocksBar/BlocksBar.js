@@ -29,7 +29,7 @@ import WaitSignalBlockType from '../../canvas/graph/shapes/blocks/blockTypes/wai
 import {BackFlow} from '@symphony/design-system/icons';
 
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Sidebar from '../../../../inputs/Sidebar';
+import Sidebar from '../../widgets/detailsPanel/inputs/Sidebar';
 import fbt from 'fbt';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {
@@ -74,7 +74,7 @@ export default function BlocksBar(props: Props) {
   const flow = useGraph();
   const {history} = useRouter();
 
-  const [sidebarOpened, setSidebarOpened] = React.useState(false)
+  const [sidebarOpened, setSidebarOpened] = React.useState(false);
 
   const flowTypes = useMemo(
     () => [
@@ -150,7 +150,8 @@ export default function BlocksBar(props: Props) {
                 <ListItemIcon>
                   <BackFlow />
                 </ListItemIcon>
-                { !sidebarOpened && <ListItemText
+                {!sidebarOpened && (
+                  <ListItemText
                     primary={
                       <Grid item xs zeroMinWidth>
                         <Typography variant={'caption'} noWrap>
@@ -159,7 +160,7 @@ export default function BlocksBar(props: Props) {
                       </Grid>
                     }
                   />
-                }
+                )}
               </ListItem>
             </List>
             {ListBlocksCategory()}

@@ -43,7 +43,7 @@ const CodeEditor = (props: Props) => {
       <div className={classes.codeEditor}>
         <AceEditor
           mode={mode}
-          value={rule.value}
+          value={rule?.value || ''}
           theme="tomorrow"
           onChange={onChange}
           fontSize={14}

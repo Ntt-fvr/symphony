@@ -15,7 +15,7 @@ import MenuTopBar from './MenuTopBar';
 import React, {useCallback, useState} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
-import Tooltip from '../../../inputs/Tooltip';
+import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
 import fbt from 'fbt';
 import {BLUE, DARK, GREEN} from '@symphony/design-system/theme/symphony';
 import {
@@ -136,7 +136,6 @@ function BuilderTopBar() {
         });
       })
       .catch(error => {
-        console.log(error);
         enqueueSnackbar(
           `${fbt(
             'There was an error when trying to save the flow draft.',

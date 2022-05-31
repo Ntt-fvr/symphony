@@ -10,7 +10,7 @@
 import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
-import TextField from '../../../../../../inputs/TextField';
+import TextField from '../../inputs/TextField';
 import {useForm} from '../../../../../utils/useForm';
 
 type Props = $ReadOnly<{|
@@ -18,7 +18,6 @@ type Props = $ReadOnly<{|
 |}>;
 
 const BlockNameInput = ({block}: Props) => {
-  console.log('name', block);
   const [inputValues, handleInputChange] = useForm({
     name: block.name,
   });
