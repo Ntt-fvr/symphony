@@ -60,16 +60,16 @@ type Resource implements ResourceInt{
   usageSubStatus: UsageSubStatus
   belongsTo: Resource
   composedOf: [Resource] @hasInverse(field: belongsTo)
-  locatedIn: Int64
-  #contains: Int64 @hasInverse(field: locatedIn)
+  locatedIn: String @search(by: [hash])
+  #contains: String @search(by: [hash]) @hasInverse(field: locatedIn)
   physicalLink: Resource
   physicalLinkInv: [Resource] @hasInverse(field: physicalLink)
   logicalLink: Resource
   logicalLinkInv: [Resource] @hasInverse(field: logicalLink)
   crossConnection: Resource
   crossconnectionInv: [Resource] @hasInverse(field: crossConnection)
-  resourceSpecification: Int64! @search
-  resourcePropertys: [ResourceProperty]
+  resourceSpecification: String! @search(by: [hash])
+  resourceProperties: [ResourceProperty]
   isDelete: Boolean!
   numericPool: [NumericPool]
 }
@@ -84,8 +84,8 @@ type ResourceProperty{
   rangeFromValue: Float
   rangeToValue: Float
   rawValue: String
-  resource: Resource @hasInverse(field: resourcePropertys)
-  resourcePropertyType: Int64!
+  resource: Resource @hasInverse(field: resourceProperties)
+  resourcePropertyType: String! @search(by: [hash])
 }
 enum VersionStatus{
   CURRENT
@@ -152,7 +152,7 @@ type ConfigurationParameterType {
   mappingOut: String
   tags: [ConfigParamTag!]
   parameters: [Parameter!]
-  resourceSpecification: Int64!
+  resourceSpecification: String! @search(by: [hash])
 }
 type ConfigParamTag{
   id: ID!
@@ -236,8 +236,8 @@ type ChangeRequest{
   activities: [ChangeRequestActivity]
   type: ChangeRequestType
   source: ChangeRequestSource
-  requester: Int64!
-  aprobator: Int64!
+  requester: String! @search(by: [hash])
+  aprobator: String @search(by: [hash])
   status: ChangeRequestStatus!
 }
 enum ChangeRequestActivityField {
@@ -250,7 +250,7 @@ enum ChangeRequestActivityField {
 }
 type ChangeRequestActivity{
   id: ID!
-  author: Int64!
+  author: String! @search(by: [hash])
   isCreate: Boolean!
   activityType: ChangeRequestActivityField!
   # newRelatedNode: Node
@@ -669,4 +669,60 @@ type ServiceRef implements ServiceReference{
     href: String
     name: String
     supportingResource: [ResourceInt]
+}
+
+enum ActionTemplateType {
+  AUTOMATION_FLOW
+  CONFIGURATION_PARAMETER
+}
+type ActionTemplate{
+  id:ID!
+  name:String!
+  type:ActionTemplateType!
+  resourceSpecifications: String! @search(by: [hash])
+  actionTemplateItem:[ActionTemplate!]!
+}
+type ActionTemplateItem{
+  id:ID!
+  parameters:ConfigurationParameterType!
+  value:Parameter!
+}
+enum ActionSchedulerType {
+  MANUAL_EXECUTION
+  ONE_TIME_EXECUTION
+  PERIODICAL_EXECUTION
+}
+enum ActionSchedulerStatus {
+  ACTIVED
+  DEACTIVATED
+}
+type ActionScheduler{
+  id:ID!
+  name:String!
+  description:String!
+  type:ActionSchedulerType!
+  date: DateTime
+  cron: String
+  action:ActionExecution! @hasInverse(field: scheduler)
+  status: ActionSchedulerStatus! 
+}
+
+enum ActionExecutionItemStatus {
+  PENDING
+  SUCCESSFULL
+  FAILED
+}
+
+type ActionExecutionItem {
+  id:ID!
+  action: ActionExecution! @hasInverse(field: items)
+  resource:Resource!
+  status: ActionExecutionItemStatus
+}
+
+type ActionExecution {
+  id:ID!
+  scheduler:ActionScheduler
+  template: ActionTemplate
+  items: [ActionExecutionItem]
 }
