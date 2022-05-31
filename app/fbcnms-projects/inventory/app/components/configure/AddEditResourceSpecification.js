@@ -295,7 +295,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         </Grid>
       </Grid>
       <Card margins="none">
-        <CardHeader className={classes.cardHeader}>Details Query</CardHeader>
+        <CardHeader className={classes.cardHeader}>Details</CardHeader>
         <Grid container>
           <Grid item xs={4}>
             <form className={classes.formField} autoComplete="off">

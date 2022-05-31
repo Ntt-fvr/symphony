@@ -291,6 +291,7 @@ class LocationPropertiesCard extends React.Component<Props, State> {
                   {this.state.selectedTab === 'details' ? (
                     <LocationDetailsTab
                       location={location}
+                      locationId={locationId}
                       selectedWorkOrderId={this.props.selectedWorkOrderId}
                       onEquipmentSelected={this.props.onEquipmentSelected}
                       onWorkOrderSelected={this.props.onWorkOrderSelected}

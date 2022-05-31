@@ -10,6 +10,9 @@
 
 import React, {useState} from 'react';
 
+import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
+
+import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -78,11 +81,12 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
+
 type ResourceType = {
   data: {
+    id: string,
     name: string,
     externalID: string,
-    id: string,
     administrativeSubstate: string,
     lifesycleState: string,
     planningStatus: string,
@@ -95,10 +99,17 @@ type ResourceType = {
 type Props = $ReadOnly<{|
   closeFormAddEdit: () => void,
   dataformModal: any,
+  selectedLocationId: ?string,
+  isCompleted: void => void,
 |}>;
 
 const AddEditResourceInLocation = (props: Props) => {
-  const {closeFormAddEdit, dataformModal} = props;
+  const {
+    closeFormAddEdit,
+    dataformModal,
+    selectedLocationId,
+    isCompleted,
+  } = props;
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resourceType, setResourceType] = useState<ResourceType>({data: {}});
@@ -114,6 +125,27 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
+
+  function handleCreateForm() {
+    const variables: AddResourceMutationVariables = {
+      input: [
+        {
+          locatedIn: selectedLocationId,
+          name: resourceType.data.name,
+          resourceSpecification: dataformModal.id,
+          isDelete: true,
+        },
+      ],
+    };
+    AddResourceMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setResourceType({data: {}});
+        closeFormAddEdit();
+      },
+    });
+  }
+
   const selectListData = {
     lifesycleState: ['Planning', 'Installing', 'Operating', 'Retired'],
     planningStatus: ['Proposed', 'Feasibility Checked', 'Designed', 'Ordered'],
@@ -408,7 +440,7 @@ const AddEditResourceInLocation = (props: Props) => {
         <SaveDialogConfirm
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
-          // saveItem={() => handleEdit()}
+          saveItem={handleCreateForm}
           resource={''}
           typeAlert={'warning'}
           customMessage="are you sure you want to leave without saving changes?"
