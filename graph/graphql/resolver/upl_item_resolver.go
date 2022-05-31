@@ -10,7 +10,6 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -71,18 +70,18 @@ func (r mutationResolver) RemoveUplItem(ctx context.Context, id int) (int, error
 	return id, nil
 }
 
-func (r mutationResolver) UpdateUplItem(ctx context.Context, input *models.AddUplItemInput, uplID int) error {
+func (r mutationResolver) UpdateUplItem(ctx context.Context, input *models.AddUplItemInput, uplItemID int) error {
 
-	uplItems, _ := r.ClientFrom(ctx).UplItem.Query().
-		Where(uplitem.HasUplWith(upl.ID(uplID))).
-		All(ctx)
-	var uplitemID int
-	for _, uplItem := range uplItems {
-		uplitemID = uplItem.ID
-	}
+	// uplItems, _ := r.ClientFrom(ctx).UplItem.Query().
+	// 	Where(uplitem.HasUplWith(upl.ID(uplID))).
+	// 	All(ctx)
+	// var uplitemID int
+	// for _, uplItem := range uplItems {
+	// 	uplitemID = uplItem.ID
+	// }
 
 	query := r.ClientFrom(ctx).UplItem.
-		UpdateOneID(uplitemID).
+		UpdateOneID(uplItemID).
 		SetExternalid(input.ExternalID).
 		SetItem(input.Item).
 		SetPrice(input.Price)

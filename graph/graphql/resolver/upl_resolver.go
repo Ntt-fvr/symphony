@@ -78,7 +78,6 @@ func (r mutationResolver) RemoveUpl(ctx context.Context, id int) (int, error) {
 func (r mutationResolver) EditUpl(ctx context.Context, input models.EditUplInput) (*ent.Upl, error) {
 	client := r.ClientFrom(ctx)
 	et, err := client.Upl.Get(ctx, input.ID)
-	uplID := input.ID
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
@@ -98,14 +97,13 @@ func (r mutationResolver) EditUpl(ctx context.Context, input models.EditUplInput
 		}
 	}
 	for _, uplItems := range input.UplItems {
-		// if uplItems.UplID == nil {
-		// 	if err := r.AddUplItem(ctx, func(b *ent.UplItemCreate) {
-		// 		b.SetUplID(et.ID)
-		// 	}, uplItems); err != nil {
-		// 		return nil, err
-		// 	}
-		// } else
-		if err := r.UpdateUplItem(ctx, uplItems, uplID); err != nil {
+		if uplItems.ID == nil {
+			if err := r.AddUplItem(ctx, func(b *ent.UplItemCreate) {
+				b.SetUplID(et.ID)
+			}, uplItems); err != nil {
+				return nil, err
+			}
+		} else if err := r.UpdateUplItem(ctx, uplItems, *uplItems.ID); err != nil {
 			return nil, err
 		}
 	}

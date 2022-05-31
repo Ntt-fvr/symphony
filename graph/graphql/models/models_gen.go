@@ -557,6 +557,7 @@ type AddUplInput struct {
 }
 
 type AddUplItemInput struct {
+	ID         *int    `json:"id"`
 	ExternalID string  `json:"externalId"`
 	Item       string  `json:"item"`
 	Unit       float64 `json:"unit"`
@@ -1273,7 +1274,6 @@ type EditUplItemInput struct {
 	Item       string  `json:"item"`
 	Unit       float64 `json:"unit"`
 	Price      float64 `json:"price"`
-	UplID      int     `json:"uplID"`
 }
 
 type EditUserInput struct {

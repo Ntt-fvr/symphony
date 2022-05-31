@@ -10729,6 +10729,7 @@ type UplItem implements Node {
 }
 
 input AddUplItemInput {
+  id: ID
   externalId: String!
   item: String!
   unit: Float!
@@ -10742,7 +10743,6 @@ input EditUplItemInput {
   item: String!
   unit: Float!
   price: Float!
-  uplID: ID!
 }
 
 enum UplItemFilterType {
