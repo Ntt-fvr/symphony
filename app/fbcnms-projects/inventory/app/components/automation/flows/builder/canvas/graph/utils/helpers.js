@@ -284,3 +284,10 @@ function getHighestIndexerForBaseName(
     }, -1) + 1
   );
 }
+
+export function getValidateEmbedding(childView: mixed, parentView: mixed) {
+  const embedding: ?boolean = parentView.model.embedding;
+  if (embedding) {
+    return embedding;
+  }
+}

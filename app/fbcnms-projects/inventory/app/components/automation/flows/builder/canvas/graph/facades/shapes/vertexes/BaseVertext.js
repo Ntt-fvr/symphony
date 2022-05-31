@@ -32,18 +32,69 @@ export const VERTEX_COMMON_DISPLAY = {
       ...defaultAttrProps,
       text: 'manual action',
       textAnchor: 'middle',
-      refX: '50%',
-      refX2: 4,
-      refY: '100%',
-      refY2: 5,
+      refX2: 41,
+      refY2: 74,
       fontSize: 12,
+      fontWeight: 'bold',
       fill: symphony.palette.secondary,
       strokeWidth: 0,
       pointerEvents: 'none',
     },
+    background: {
+      ...defaultAttrProps,
+      fill: 'white',
+      refX2: 2,
+      refY2: 71,
+      ry: 7,
+      rx: 7,
+      width: 77,
+      height: 18,
+    },
   },
   defaultAttrProps,
   markup: [
+    {
+      tagName: 'rect',
+      selector: 'background',
+    },
+    {
+      tagName: 'text',
+      selector: 'label',
+    },
+  ],
+};
+
+export const BIG_VERTEX_COMMON_DISPLAY = {
+  attrs: {
+    label: {
+      ...defaultAttrProps,
+      text: 'manual action',
+      textAnchor: 'middle',
+      refX2: 41,
+      refY2: 74,
+      fontSize: 12,
+      fontWeight: 'bold',
+      fill: symphony.palette.secondary,
+      strokeWidth: 0,
+      pointerEvents: 'none',
+    },
+    background: {
+      ...defaultAttrProps,
+      fill: 'white',
+      refX2: -20,
+      refY2: 71,
+      ry: 7,
+      rx: 7,
+      width: 120,
+      height: 18,
+    },
+  },
+  defaultAttrProps,
+  markup: [
+    {
+      tagName: 'rect',
+      selector: 'background',
+    },
     {
       tagName: 'text',
       selector: 'label',
@@ -109,6 +160,7 @@ export interface IVertexModel extends IShape {
   +addPort: KeyValuePair => void;
   +getPorts: () => $ReadOnlyArray<Port>;
   +clone: (options?: ?KeyValuePair) => IVertexModel;
+  +embedding: ?boolean;
 }
 
 export type IVertexView = $ReadOnly<{|
@@ -127,9 +179,12 @@ type PortsGroupInitValue = $ReadOnly<{|
 
 function getDefaultPortMarkup(
   strokeColor: string,
-  horizontalAlign: number = 0,
+  horizontalAlign?: number,
+  defaultCoordinatesX?: number,
 ) {
-  return `<circle r="7" cx="${horizontalAlign}" stroke-width="4" stroke="${strokeColor}" fill="white" magnet="true"/>`;
+  return `<circle r="7" cx="${
+    horizontalAlign || defaultCoordinatesX || 0
+  }" cy="0" stroke-width="4" stroke="${strokeColor}" fill="white" magnet="true"/>`;
 }
 
 export const PORTS_GROUPS = {
@@ -158,11 +213,14 @@ export function getInitObject(
     input?: PortsGroupInitValue,
     output?: PortsGroupInitValue,
   },
+  horizontalPortLeftAlign?: number,
+  horizontalPortRightAlign?: number,
   id?: ?string,
 ): InitObjectType {
   const inputPorts = getPortsArray(ports?.input, PORTS_GROUPS.INPUT);
   const outputPorts = getPortsArray(ports?.output, PORTS_GROUPS.OUTPUT);
   const portsArray = inputPorts.concat(outputPorts);
+  const defaultCoordinatesX = 9;
 
   return {
     ports: {
@@ -170,12 +228,18 @@ export function getInitObject(
         input: {
           position: 'left',
           markup:
-            ports?.input?.markup ?? getDefaultPortMarkup(backgroundColor, 9),
+            ports?.input?.markup ??
+            getDefaultPortMarkup(
+              backgroundColor,
+              horizontalPortLeftAlign,
+              defaultCoordinatesX,
+            ),
         },
         output: {
           position: 'right',
           markup:
-            ports?.output?.markup ?? getDefaultPortMarkup(backgroundColor),
+            ports?.output?.markup ??
+            getDefaultPortMarkup(backgroundColor, horizontalPortRightAlign),
         },
       },
       items: portsArray,
