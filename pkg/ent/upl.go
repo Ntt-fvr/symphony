@@ -39,9 +39,11 @@ type Upl struct {
 type UplEdges struct {
 	// Contract holds the value of the contract edge.
 	Contract *Contract
+	// UplItems holds the value of the upl_items edge.
+	UplItems []*UplItem
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // ContractOrErr returns the Contract value or an error if the edge
@@ -56,6 +58,15 @@ func (e UplEdges) ContractOrErr() (*Contract, error) {
 		return e.Contract, nil
 	}
 	return nil, &NotLoadedError{edge: "contract"}
+}
+
+// UplItemsOrErr returns the UplItems value or an error if the edge
+// was not loaded in eager-loading.
+func (e UplEdges) UplItemsOrErr() ([]*UplItem, error) {
+	if e.loadedTypes[1] {
+		return e.UplItems, nil
+	}
+	return nil, &NotLoadedError{edge: "upl_items"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -123,6 +134,11 @@ func (u *Upl) assignValues(values ...interface{}) error {
 // QueryContract queries the contract edge of the Upl.
 func (u *Upl) QueryContract() *ContractQuery {
 	return (&UplClient{config: u.config}).QueryContract(u)
+}
+
+// QueryUplItems queries the upl_items edge of the Upl.
+func (u *Upl) QueryUplItems() *UplItemQuery {
+	return (&UplClient{config: u.config}).QueryUplItems(u)
 }
 
 // Update returns a builder for updating this Upl.

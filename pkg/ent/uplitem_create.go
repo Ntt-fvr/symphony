@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
+	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 )
 
@@ -94,6 +95,25 @@ func (uic *UplItemCreate) SetNillableUplItemID(id *int) *UplItemCreate {
 // SetUplItem sets the UplItem edge to Cost.
 func (uic *UplItemCreate) SetUplItem(c *Cost) *UplItemCreate {
 	return uic.SetUplItemID(c.ID)
+}
+
+// SetUplID sets the upl edge to Upl by id.
+func (uic *UplItemCreate) SetUplID(id int) *UplItemCreate {
+	uic.mutation.SetUplID(id)
+	return uic
+}
+
+// SetNillableUplID sets the upl edge to Upl by id if the given value is not nil.
+func (uic *UplItemCreate) SetNillableUplID(id *int) *UplItemCreate {
+	if id != nil {
+		uic = uic.SetUplID(*id)
+	}
+	return uic
+}
+
+// SetUpl sets the upl edge to Upl.
+func (uic *UplItemCreate) SetUpl(u *Upl) *UplItemCreate {
+	return uic.SetUplID(u.ID)
 }
 
 // Mutation returns the UplItemMutation object of the builder.
@@ -264,6 +284,25 @@ func (uic *UplItemCreate) createSpec() (*UplItem, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: cost.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uic.mutation.UplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   uplitem.UplTable,
+			Columns: []string{uplitem.UplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: upl.FieldID,
 				},
 			},
 		}

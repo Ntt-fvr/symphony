@@ -8767,7 +8767,7 @@ func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "Upl",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 1),
+		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -8812,6 +8812,16 @@ func (u *Upl) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[1] = &Edge{
+		Type: "UplItem",
+		Name: "upl_items",
+	}
+	node.Edges[1].IDs, err = u.QueryUplItems().
+		Select(uplitem.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -8820,7 +8830,7 @@ func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
 		ID:     ui.ID,
 		Type:   "UplItem",
 		Fields: make([]*Field, 6),
-		Edges:  make([]*Edge, 1),
+		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(ui.CreateTime); err != nil {
@@ -8877,6 +8887,16 @@ func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = ui.QueryUplItem().
 		Select(cost.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Upl",
+		Name: "upl",
+	}
+	node.Edges[1].IDs, err = ui.QueryUpl().
+		Select(upl.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 )
 
 // UplCreate is the builder for creating a Upl entity.
@@ -82,6 +83,21 @@ func (uc *UplCreate) SetNillableContractID(id *int) *UplCreate {
 // SetContract sets the contract edge to Contract.
 func (uc *UplCreate) SetContract(c *Contract) *UplCreate {
 	return uc.SetContractID(c.ID)
+}
+
+// AddUplItemIDs adds the upl_items edge to UplItem by ids.
+func (uc *UplCreate) AddUplItemIDs(ids ...int) *UplCreate {
+	uc.mutation.AddUplItemIDs(ids...)
+	return uc
+}
+
+// AddUplItems adds the upl_items edges to UplItem.
+func (uc *UplCreate) AddUplItems(u ...*UplItem) *UplCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddUplItemIDs(ids...)
 }
 
 // Mutation returns the UplMutation object of the builder.
@@ -240,6 +256,25 @@ func (uc *UplCreate) createSpec() (*Upl, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: contract.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UplItemsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   upl.UplItemsTable,
+			Columns: []string{upl.UplItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uplitem.FieldID,
 				},
 			},
 		}

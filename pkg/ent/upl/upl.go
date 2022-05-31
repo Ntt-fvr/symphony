@@ -28,6 +28,8 @@ const (
 
 	// EdgeContract holds the string denoting the contract edge name in mutations.
 	EdgeContract = "contract"
+	// EdgeUplItems holds the string denoting the upl_items edge name in mutations.
+	EdgeUplItems = "upl_items"
 
 	// Table holds the table name of the upl in the database.
 	Table = "upls"
@@ -38,6 +40,13 @@ const (
 	ContractInverseTable = "contracts"
 	// ContractColumn is the table column denoting the contract relation/edge.
 	ContractColumn = "contract_upl_contract"
+	// UplItemsTable is the table the holds the upl_items relation/edge.
+	UplItemsTable = "upl_items"
+	// UplItemsInverseTable is the table name for the UplItem entity.
+	// It exists in this package in order to avoid circular dependency with the "uplitem" package.
+	UplItemsInverseTable = "upl_items"
+	// UplItemsColumn is the table column denoting the upl_items relation/edge.
+	UplItemsColumn = "upl_upl_items"
 )
 
 // Columns holds all SQL columns for upl fields.

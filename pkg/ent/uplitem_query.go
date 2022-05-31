@@ -18,6 +18,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 )
 
@@ -31,6 +32,8 @@ type UplItemQuery struct {
 	predicates []predicate.UplItem
 	// eager-loading edges.
 	withUplItem *CostQuery
+	withUpl     *UplQuery
+	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +78,28 @@ func (uiq *UplItemQuery) QueryUplItem() *CostQuery {
 			sqlgraph.From(uplitem.Table, uplitem.FieldID, selector),
 			sqlgraph.To(cost.Table, cost.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, uplitem.UplItemTable, uplitem.UplItemColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uiq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUpl chains the current query on the upl edge.
+func (uiq *UplItemQuery) QueryUpl() *UplQuery {
+	query := &UplQuery{config: uiq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uiq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uiq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uplitem.Table, uplitem.FieldID, selector),
+			sqlgraph.To(upl.Table, upl.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, uplitem.UplTable, uplitem.UplColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uiq.driver.Dialect(), step)
 		return fromU, nil
@@ -259,6 +284,7 @@ func (uiq *UplItemQuery) Clone() *UplItemQuery {
 		unique:      append([]string{}, uiq.unique...),
 		predicates:  append([]predicate.UplItem{}, uiq.predicates...),
 		withUplItem: uiq.withUplItem.Clone(),
+		withUpl:     uiq.withUpl.Clone(),
 		// clone intermediate query.
 		sql:  uiq.sql.Clone(),
 		path: uiq.path,
@@ -273,6 +299,17 @@ func (uiq *UplItemQuery) WithUplItem(opts ...func(*CostQuery)) *UplItemQuery {
 		opt(query)
 	}
 	uiq.withUplItem = query
+	return uiq
+}
+
+//  WithUpl tells the query-builder to eager-loads the nodes that are connected to
+// the "upl" edge. The optional arguments used to configure the query builder of the edge.
+func (uiq *UplItemQuery) WithUpl(opts ...func(*UplQuery)) *UplItemQuery {
+	query := &UplQuery{config: uiq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uiq.withUpl = query
 	return uiq
 }
 
@@ -344,15 +381,26 @@ func (uiq *UplItemQuery) prepareQuery(ctx context.Context) error {
 func (uiq *UplItemQuery) sqlAll(ctx context.Context) ([]*UplItem, error) {
 	var (
 		nodes       = []*UplItem{}
+		withFKs     = uiq.withFKs
 		_spec       = uiq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uiq.withUplItem != nil,
+			uiq.withUpl != nil,
 		}
 	)
+	if uiq.withUpl != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, uplitem.ForeignKeys...)
+	}
 	_spec.ScanValues = func() []interface{} {
 		node := &UplItem{config: uiq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
+		if withFKs {
+			values = append(values, node.fkValues()...)
+		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -395,6 +443,31 @@ func (uiq *UplItemQuery) sqlAll(ctx context.Context) ([]*UplItem, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "upl_item_upl_item" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.UplItem = n
+		}
+	}
+
+	if query := uiq.withUpl; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*UplItem)
+		for i := range nodes {
+			if fk := nodes[i].upl_upl_items; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(upl.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "upl_upl_items" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Upl = n
+			}
 		}
 	}
 

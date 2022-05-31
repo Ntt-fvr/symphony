@@ -38,6 +38,9 @@ func (UplItem) Edges() []ent.Edge {
 		edge.To("UplItem", Cost.Type).
 			Unique().
 			Annotations(entgql.MapsTo("uplitem")),
+		edge.From("upl", Upl.Type).
+			Ref("upl_items").Unique().
+			Annotations(entgql.OrderField("UPL")),
 	}
 }
 

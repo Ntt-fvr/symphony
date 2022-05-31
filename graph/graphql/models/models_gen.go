@@ -551,8 +551,9 @@ type AddThresholdInput struct {
 }
 
 type AddUplInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	UplItems    []*AddUplItemInput `json:"uplItems"`
 }
 
 type AddUplItemInput struct {
@@ -560,6 +561,7 @@ type AddUplItemInput struct {
 	Item       string  `json:"item"`
 	Unit       float64 `json:"unit"`
 	Price      float64 `json:"price"`
+	UplID      *int    `json:"uplID"`
 }
 
 type AddUsersGroupInput struct {
@@ -1259,9 +1261,10 @@ type EditThresholdInput struct {
 }
 
 type EditUplInput struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	ID          int                `json:"id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	UplItems    []*AddUplItemInput `json:"uplItems"`
 }
 
 type EditUplItemInput struct {
@@ -1270,6 +1273,7 @@ type EditUplItemInput struct {
 	Item       string  `json:"item"`
 	Unit       float64 `json:"unit"`
 	Price      float64 `json:"price"`
+	UplID      int     `json:"uplID"`
 }
 
 type EditUserInput struct {

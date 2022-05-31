@@ -10,29 +10,47 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 	"github.com/pkg/errors"
-	"github.com/vektah/gqlparser/v2/gqlerror"
+	"go.uber.org/zap"
 )
 
 type uplItemResolver struct{}
 
-func (r mutationResolver) AddUplItem(ctx context.Context, input models.AddUplItemInput) (*ent.UplItem, error) {
-	client := r.ClientFrom(ctx)
-	typ, err := client.
-		UplItem.Create().
-		SetExternalid(input.ExternalID).
-		SetItem(input.Item).
-		SetUnit(input.Unit).
-		SetPrice(input.Price).
-		Save(ctx)
+func (uplItemResolver) UplID(ctx context.Context, uplItem *ent.UplItem) (*ent.Upl, error) {
+	variable, err := uplItem.Upl(ctx)
 	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
-		}
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
 	}
-	return typ, nil
+	return variable, nil
+}
+
+func (r mutationResolver) AddUplItem(
+	ctx context.Context, parentSetter func(ptc *ent.UplItemCreate), inputs ...*models.AddUplItemInput,
+) error {
+
+	var (
+		client   = r.ClientFrom(ctx).UplItem
+		builders = make([]*ent.UplItemCreate, len(inputs))
+	)
+
+	for i, input := range inputs {
+		builders[i] = client.Create().
+			SetExternalid(input.ExternalID).
+			SetUnit(input.Unit).
+			SetItem(input.Item).
+			SetPrice(input.Price)
+		parentSetter(builders[i])
+	}
+	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
+		r.logger.For(ctx).
+			Error("cannot create resource property types",
+				zap.Error(err),
+			)
+		return err
+	}
+	return nil
 }
 
 func (r mutationResolver) RemoveUplItem(ctx context.Context, id int) (int, error) {
@@ -53,30 +71,24 @@ func (r mutationResolver) RemoveUplItem(ctx context.Context, id int) (int, error
 	return id, nil
 }
 
-func (r mutationResolver) EditUplItem(ctx context.Context, input models.EditUplItemInput) (*ent.UplItem, error) {
-	client := r.ClientFrom(ctx)
-	et, err := client.UplItem.Get(ctx, input.ID)
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-		}
-		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
-	}
-	if input.ExternalID != et.Externalid || input.Item != et.Item ||
-		input.Unit != et.Unit || input.Price != et.Price {
-		if et, err = client.UplItem.
-			UpdateOne(et).
-			SetExternalid(input.ExternalID).
-			SetItem(input.Item).
-			SetUnit(input.Unit).
-			SetPrice(input.Price).
-			Save(ctx); err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
-			return nil, errors.Wrap(err, "has occurred error on process: %v")
-		}
+func (r mutationResolver) UpdateUplItem(ctx context.Context, input *models.AddUplItemInput, uplID int) error {
+
+	uplItems, _ := r.ClientFrom(ctx).UplItem.Query().
+		Where(uplitem.HasUplWith(upl.ID(uplID))).
+		All(ctx)
+	var uplitemID int
+	for _, uplItem := range uplItems {
+		uplitemID = uplItem.ID
 	}
 
-	return et, nil
+	query := r.ClientFrom(ctx).UplItem.
+		UpdateOneID(uplitemID).
+		SetExternalid(input.ExternalID).
+		SetItem(input.Item).
+		SetPrice(input.Price)
+
+	if err := query.Exec(ctx); err != nil {
+		return errors.Wrap(err, "updating property type")
+	}
+	return nil
 }

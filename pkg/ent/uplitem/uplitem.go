@@ -32,6 +32,8 @@ const (
 
 	// EdgeUplItem holds the string denoting the uplitem edge name in mutations.
 	EdgeUplItem = "UplItem"
+	// EdgeUpl holds the string denoting the upl edge name in mutations.
+	EdgeUpl = "upl"
 
 	// Table holds the table name of the uplitem in the database.
 	Table = "upl_items"
@@ -42,6 +44,13 @@ const (
 	UplItemInverseTable = "costs"
 	// UplItemColumn is the table column denoting the UplItem relation/edge.
 	UplItemColumn = "upl_item_upl_item"
+	// UplTable is the table the holds the upl relation/edge.
+	UplTable = "upl_items"
+	// UplInverseTable is the table name for the Upl entity.
+	// It exists in this package in order to avoid circular dependency with the "upl" package.
+	UplInverseTable = "upls"
+	// UplColumn is the table column denoting the upl relation/edge.
+	UplColumn = "upl_upl_items"
 )
 
 // Columns holds all SQL columns for uplitem fields.
@@ -55,10 +64,20 @@ var Columns = []string{
 	FieldPrice,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the UplItem type.
+var ForeignKeys = []string{
+	"upl_upl_items",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

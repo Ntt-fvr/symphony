@@ -3222,13 +3222,22 @@ var (
 		{Name: "item", Type: field.TypeString},
 		{Name: "unit", Type: field.TypeFloat64},
 		{Name: "price", Type: field.TypeFloat64},
+		{Name: "upl_upl_items", Type: field.TypeInt, Nullable: true},
 	}
 	// UplItemsTable holds the schema information for the "upl_items" table.
 	UplItemsTable = &schema.Table{
-		Name:        "upl_items",
-		Columns:     UplItemsColumns,
-		PrimaryKey:  []*schema.Column{UplItemsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "upl_items",
+		Columns:    UplItemsColumns,
+		PrimaryKey: []*schema.Column{UplItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "upl_items_upls_upl_items",
+				Columns: []*schema.Column{UplItemsColumns[7]},
+
+				RefColumns: []*schema.Column{UplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -4112,6 +4121,7 @@ func init() {
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	ThresholdsTable.ForeignKeys[0].RefTable = KpisTable
 	UplsTable.ForeignKeys[0].RefTable = ContractsTable
+	UplItemsTable.ForeignKeys[0].RefTable = UplsTable
 	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	WorkOrdersTable.ForeignKeys[0].RefTable = ContractsTable
 	WorkOrdersTable.ForeignKeys[1].RefTable = OrganizationsTable

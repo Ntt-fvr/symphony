@@ -527,6 +527,34 @@ func HasContractWith(preds ...predicate.Contract) predicate.Upl {
 	})
 }
 
+// HasUplItems applies the HasEdge predicate on the "upl_items" edge.
+func HasUplItems() predicate.Upl {
+	return predicate.Upl(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UplItemsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UplItemsTable, UplItemsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUplItemsWith applies the HasEdge predicate on the "upl_items" edge with a given conditions (other predicates).
+func HasUplItemsWith(preds ...predicate.UplItem) predicate.Upl {
+	return predicate.Upl(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UplItemsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UplItemsTable, UplItemsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Upl) predicate.Upl {
 	return predicate.Upl(func(s *sql.Selector) {

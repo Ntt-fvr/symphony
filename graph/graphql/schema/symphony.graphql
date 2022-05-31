@@ -2280,17 +2280,20 @@ type Upl implements Node {
   id: ID!
   name: String!
   description: String!
+  uplItems: [UplItem]!
 }
 
 input AddUplInput {  
   name: String!
   description: String!
+  uplItems: [AddUplItemInput]
 }
 
 input EditUplInput {
   id: ID!
   name: String!
   description: String!
+  uplItems: [AddUplItemInput]
 }
 enum UplFilterType {
   NAME
@@ -9226,8 +9229,6 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
-  addUplItem(input: AddUplItemInput!): UplItem!
-  editUplItem(input: EditUplItemInput!): UplItem!
   removeUplItem(id: ID!): ID!
   addCost(input: AddCostInput!): Cost!
   editCost(input: EditCostInput!): Cost!
@@ -10724,6 +10725,7 @@ type UplItem implements Node {
   item: String!
   unit: Float!
   price: Float!
+  uplID: Upl!
 }
 
 input AddUplItemInput {
@@ -10731,6 +10733,7 @@ input AddUplItemInput {
   item: String!
   unit: Float!
   price: Float!
+  uplID: ID
 }
 
 input EditUplItemInput {
@@ -10739,6 +10742,7 @@ input EditUplItemInput {
   item: String!
   unit: Float!
   price: Float!
+  uplID: ID!
 }
 
 enum UplItemFilterType {

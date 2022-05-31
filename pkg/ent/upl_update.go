@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 )
 
 // UplUpdate is the builder for updating Upl entities.
@@ -62,6 +63,21 @@ func (uu *UplUpdate) SetContract(c *Contract) *UplUpdate {
 	return uu.SetContractID(c.ID)
 }
 
+// AddUplItemIDs adds the upl_items edge to UplItem by ids.
+func (uu *UplUpdate) AddUplItemIDs(ids ...int) *UplUpdate {
+	uu.mutation.AddUplItemIDs(ids...)
+	return uu
+}
+
+// AddUplItems adds the upl_items edges to UplItem.
+func (uu *UplUpdate) AddUplItems(u ...*UplItem) *UplUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.AddUplItemIDs(ids...)
+}
+
 // Mutation returns the UplMutation object of the builder.
 func (uu *UplUpdate) Mutation() *UplMutation {
 	return uu.mutation
@@ -71,6 +87,27 @@ func (uu *UplUpdate) Mutation() *UplMutation {
 func (uu *UplUpdate) ClearContract() *UplUpdate {
 	uu.mutation.ClearContract()
 	return uu
+}
+
+// ClearUplItems clears all "upl_items" edges to type UplItem.
+func (uu *UplUpdate) ClearUplItems() *UplUpdate {
+	uu.mutation.ClearUplItems()
+	return uu
+}
+
+// RemoveUplItemIDs removes the upl_items edge to UplItem by ids.
+func (uu *UplUpdate) RemoveUplItemIDs(ids ...int) *UplUpdate {
+	uu.mutation.RemoveUplItemIDs(ids...)
+	return uu
+}
+
+// RemoveUplItems removes upl_items edges to UplItem.
+func (uu *UplUpdate) RemoveUplItems(u ...*UplItem) *UplUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.RemoveUplItemIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -228,6 +265,60 @@ func (uu *UplUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.UplItemsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   upl.UplItemsTable,
+			Columns: []string{upl.UplItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uplitem.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedUplItemsIDs(); len(nodes) > 0 && !uu.mutation.UplItemsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   upl.UplItemsTable,
+			Columns: []string{upl.UplItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uplitem.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UplItemsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   upl.UplItemsTable,
+			Columns: []string{upl.UplItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uplitem.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{upl.Label}
@@ -277,6 +368,21 @@ func (uuo *UplUpdateOne) SetContract(c *Contract) *UplUpdateOne {
 	return uuo.SetContractID(c.ID)
 }
 
+// AddUplItemIDs adds the upl_items edge to UplItem by ids.
+func (uuo *UplUpdateOne) AddUplItemIDs(ids ...int) *UplUpdateOne {
+	uuo.mutation.AddUplItemIDs(ids...)
+	return uuo
+}
+
+// AddUplItems adds the upl_items edges to UplItem.
+func (uuo *UplUpdateOne) AddUplItems(u ...*UplItem) *UplUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.AddUplItemIDs(ids...)
+}
+
 // Mutation returns the UplMutation object of the builder.
 func (uuo *UplUpdateOne) Mutation() *UplMutation {
 	return uuo.mutation
@@ -286,6 +392,27 @@ func (uuo *UplUpdateOne) Mutation() *UplMutation {
 func (uuo *UplUpdateOne) ClearContract() *UplUpdateOne {
 	uuo.mutation.ClearContract()
 	return uuo
+}
+
+// ClearUplItems clears all "upl_items" edges to type UplItem.
+func (uuo *UplUpdateOne) ClearUplItems() *UplUpdateOne {
+	uuo.mutation.ClearUplItems()
+	return uuo
+}
+
+// RemoveUplItemIDs removes the upl_items edge to UplItem by ids.
+func (uuo *UplUpdateOne) RemoveUplItemIDs(ids ...int) *UplUpdateOne {
+	uuo.mutation.RemoveUplItemIDs(ids...)
+	return uuo
+}
+
+// RemoveUplItems removes upl_items edges to UplItem.
+func (uuo *UplUpdateOne) RemoveUplItems(u ...*UplItem) *UplUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.RemoveUplItemIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -433,6 +560,60 @@ func (uuo *UplUpdateOne) sqlSave(ctx context.Context) (_node *Upl, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: contract.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.UplItemsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   upl.UplItemsTable,
+			Columns: []string{upl.UplItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uplitem.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedUplItemsIDs(); len(nodes) > 0 && !uuo.mutation.UplItemsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   upl.UplItemsTable,
+			Columns: []string{upl.UplItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uplitem.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UplItemsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   upl.UplItemsTable,
+			Columns: []string{upl.UplItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: uplitem.FieldID,
 				},
 			},
 		}

@@ -14365,6 +14365,22 @@ func (c *UplClient) QueryContract(u *Upl) *ContractQuery {
 	return query
 }
 
+// QueryUplItems queries the upl_items edge of a Upl.
+func (c *UplClient) QueryUplItems(u *Upl) *UplItemQuery {
+	query := &UplItemQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(upl.Table, upl.FieldID, id),
+			sqlgraph.To(uplitem.Table, uplitem.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, upl.UplItemsTable, upl.UplItemsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UplClient) Hooks() []Hook {
 	hooks := c.hooks.Upl
@@ -14463,6 +14479,22 @@ func (c *UplItemClient) QueryUplItem(ui *UplItem) *CostQuery {
 			sqlgraph.From(uplitem.Table, uplitem.FieldID, id),
 			sqlgraph.To(cost.Table, cost.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, uplitem.UplItemTable, uplitem.UplItemColumn),
+		)
+		fromV = sqlgraph.Neighbors(ui.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUpl queries the upl edge of a UplItem.
+func (c *UplItemClient) QueryUpl(ui *UplItem) *UplQuery {
+	query := &UplQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ui.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(uplitem.Table, uplitem.FieldID, id),
+			sqlgraph.To(upl.Table, upl.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, uplitem.UplTable, uplitem.UplColumn),
 		)
 		fromV = sqlgraph.Neighbors(ui.driver.Dialect(), step)
 		return fromV, nil

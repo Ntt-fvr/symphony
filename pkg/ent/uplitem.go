@@ -13,6 +13,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
+	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 )
 
@@ -35,16 +36,19 @@ type UplItem struct {
 	Price float64 `json:"price,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UplItemQuery when eager-loading is set.
-	Edges UplItemEdges `json:"edges"`
+	Edges         UplItemEdges `json:"edges"`
+	upl_upl_items *int
 }
 
 // UplItemEdges holds the relations/edges for other nodes in the graph.
 type UplItemEdges struct {
 	// UplItem holds the value of the UplItem edge.
 	UplItem *Cost
+	// Upl holds the value of the upl edge.
+	Upl *Upl
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UplItemOrErr returns the UplItem value or an error if the edge
@@ -61,6 +65,20 @@ func (e UplItemEdges) UplItemOrErr() (*Cost, error) {
 	return nil, &NotLoadedError{edge: "UplItem"}
 }
 
+// UplOrErr returns the Upl value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UplItemEdges) UplOrErr() (*Upl, error) {
+	if e.loadedTypes[1] {
+		if e.Upl == nil {
+			// The edge upl was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: upl.Label}
+		}
+		return e.Upl, nil
+	}
+	return nil, &NotLoadedError{edge: "upl"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*UplItem) scanValues() []interface{} {
 	return []interface{}{
@@ -71,6 +89,13 @@ func (*UplItem) scanValues() []interface{} {
 		&sql.NullString{},  // item
 		&sql.NullFloat64{}, // unit
 		&sql.NullFloat64{}, // price
+	}
+}
+
+// fkValues returns the types for scanning foreign-keys values from sql.Rows.
+func (*UplItem) fkValues() []interface{} {
+	return []interface{}{
+		&sql.NullInt64{}, // upl_upl_items
 	}
 }
 
@@ -116,12 +141,26 @@ func (ui *UplItem) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		ui.Price = value.Float64
 	}
+	values = values[6:]
+	if len(values) == len(uplitem.ForeignKeys) {
+		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field upl_upl_items", value)
+		} else if value.Valid {
+			ui.upl_upl_items = new(int)
+			*ui.upl_upl_items = int(value.Int64)
+		}
+	}
 	return nil
 }
 
 // QueryUplItem queries the UplItem edge of the UplItem.
 func (ui *UplItem) QueryUplItem() *CostQuery {
 	return (&UplItemClient{config: ui.config}).QueryUplItem(ui)
+}
+
+// QueryUpl queries the upl edge of the UplItem.
+func (ui *UplItem) QueryUpl() *UplQuery {
+	return (&UplItemClient{config: ui.config}).QueryUpl(ui)
 }
 
 // Update returns a builder for updating this UplItem.

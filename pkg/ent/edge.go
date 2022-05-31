@@ -2448,10 +2448,26 @@ func (u *Upl) Contract(ctx context.Context) (*Contract, error) {
 	return result, MaskNotFound(err)
 }
 
+func (u *Upl) UplItems(ctx context.Context) ([]*UplItem, error) {
+	result, err := u.Edges.UplItemsOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUplItems().All(ctx)
+	}
+	return result, err
+}
+
 func (ui *UplItem) UplItem(ctx context.Context) (*Cost, error) {
 	result, err := ui.Edges.UplItemOrErr()
 	if IsNotLoaded(err) {
 		result, err = ui.QueryUplItem().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (ui *UplItem) Upl(ctx context.Context) (*Upl, error) {
+	result, err := ui.Edges.UplOrErr()
+	if IsNotLoaded(err) {
+		result, err = ui.QueryUpl().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }

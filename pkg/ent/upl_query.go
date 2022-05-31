@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -18,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 )
 
 // UplQuery is the builder for querying Upl entities.
@@ -30,6 +32,7 @@ type UplQuery struct {
 	predicates []predicate.Upl
 	// eager-loading edges.
 	withContract *ContractQuery
+	withUplItems *UplItemQuery
 	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -75,6 +78,28 @@ func (uq *UplQuery) QueryContract() *ContractQuery {
 			sqlgraph.From(upl.Table, upl.FieldID, selector),
 			sqlgraph.To(contract.Table, contract.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, upl.ContractTable, upl.ContractColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUplItems chains the current query on the upl_items edge.
+func (uq *UplQuery) QueryUplItems() *UplItemQuery {
+	query := &UplItemQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(upl.Table, upl.FieldID, selector),
+			sqlgraph.To(uplitem.Table, uplitem.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, upl.UplItemsTable, upl.UplItemsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -259,6 +284,7 @@ func (uq *UplQuery) Clone() *UplQuery {
 		unique:       append([]string{}, uq.unique...),
 		predicates:   append([]predicate.Upl{}, uq.predicates...),
 		withContract: uq.withContract.Clone(),
+		withUplItems: uq.withUplItems.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -273,6 +299,17 @@ func (uq *UplQuery) WithContract(opts ...func(*ContractQuery)) *UplQuery {
 		opt(query)
 	}
 	uq.withContract = query
+	return uq
+}
+
+//  WithUplItems tells the query-builder to eager-loads the nodes that are connected to
+// the "upl_items" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UplQuery) WithUplItems(opts ...func(*UplItemQuery)) *UplQuery {
+	query := &UplItemQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUplItems = query
 	return uq
 }
 
@@ -346,8 +383,9 @@ func (uq *UplQuery) sqlAll(ctx context.Context) ([]*Upl, error) {
 		nodes       = []*Upl{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uq.withContract != nil,
+			uq.withUplItems != nil,
 		}
 	)
 	if uq.withContract != nil {
@@ -402,6 +440,35 @@ func (uq *UplQuery) sqlAll(ctx context.Context) ([]*Upl, error) {
 			for i := range nodes {
 				nodes[i].Edges.Contract = n
 			}
+		}
+	}
+
+	if query := uq.withUplItems; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Upl)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.UplItems = []*UplItem{}
+		}
+		query.withFKs = true
+		query.Where(predicate.UplItem(func(s *sql.Selector) {
+			s.Where(sql.InValues(upl.UplItemsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.upl_upl_items
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "upl_upl_items" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "upl_upl_items" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.UplItems = append(node.Edges.UplItems, n)
 		}
 	}
 

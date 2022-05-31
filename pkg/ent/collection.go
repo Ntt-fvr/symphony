@@ -1873,6 +1873,14 @@ func (u *UplQuery) CollectFields(ctx context.Context, satisfies ...string) *UplQ
 }
 
 func (u *UplQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *UplQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "uplitems":
+			u = u.WithUplItems(func(query *UplItemQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return u
 }
 

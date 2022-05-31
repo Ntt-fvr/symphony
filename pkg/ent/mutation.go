@@ -82513,19 +82513,22 @@ func (m *ThresholdMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type UplMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	create_time     *time.Time
-	update_time     *time.Time
-	name            *string
-	description     *string
-	clearedFields   map[string]struct{}
-	contract        *int
-	clearedcontract bool
-	done            bool
-	oldValue        func(context.Context) (*Upl, error)
-	predicates      []predicate.Upl
+	op               Op
+	typ              string
+	id               *int
+	create_time      *time.Time
+	update_time      *time.Time
+	name             *string
+	description      *string
+	clearedFields    map[string]struct{}
+	contract         *int
+	clearedcontract  bool
+	upl_items        map[int]struct{}
+	removedupl_items map[int]struct{}
+	clearedupl_items bool
+	done             bool
+	oldValue         func(context.Context) (*Upl, error)
+	predicates       []predicate.Upl
 }
 
 var _ ent.Mutation = (*UplMutation)(nil)
@@ -82794,6 +82797,59 @@ func (m *UplMutation) ResetContract() {
 	m.clearedcontract = false
 }
 
+// AddUplItemIDs adds the upl_items edge to UplItem by ids.
+func (m *UplMutation) AddUplItemIDs(ids ...int) {
+	if m.upl_items == nil {
+		m.upl_items = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.upl_items[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUplItems clears the upl_items edge to UplItem.
+func (m *UplMutation) ClearUplItems() {
+	m.clearedupl_items = true
+}
+
+// UplItemsCleared returns if the edge upl_items was cleared.
+func (m *UplMutation) UplItemsCleared() bool {
+	return m.clearedupl_items
+}
+
+// RemoveUplItemIDs removes the upl_items edge to UplItem by ids.
+func (m *UplMutation) RemoveUplItemIDs(ids ...int) {
+	if m.removedupl_items == nil {
+		m.removedupl_items = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedupl_items[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUplItems returns the removed ids of upl_items.
+func (m *UplMutation) RemovedUplItemsIDs() (ids []int) {
+	for id := range m.removedupl_items {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UplItemsIDs returns the upl_items ids in the mutation.
+func (m *UplMutation) UplItemsIDs() (ids []int) {
+	for id := range m.upl_items {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUplItems reset all changes of the "upl_items" edge.
+func (m *UplMutation) ResetUplItems() {
+	m.upl_items = nil
+	m.clearedupl_items = false
+	m.removedupl_items = nil
+}
+
 // Op returns the operation name.
 func (m *UplMutation) Op() Op {
 	return m.op
@@ -82960,9 +83016,12 @@ func (m *UplMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UplMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.contract != nil {
 		edges = append(edges, upl.EdgeContract)
+	}
+	if m.upl_items != nil {
+		edges = append(edges, upl.EdgeUplItems)
 	}
 	return edges
 }
@@ -82975,6 +83034,12 @@ func (m *UplMutation) AddedIDs(name string) []ent.Value {
 		if id := m.contract; id != nil {
 			return []ent.Value{*id}
 		}
+	case upl.EdgeUplItems:
+		ids := make([]ent.Value, 0, len(m.upl_items))
+		for id := range m.upl_items {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -82982,7 +83047,10 @@ func (m *UplMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UplMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removedupl_items != nil {
+		edges = append(edges, upl.EdgeUplItems)
+	}
 	return edges
 }
 
@@ -82990,6 +83058,12 @@ func (m *UplMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *UplMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case upl.EdgeUplItems:
+		ids := make([]ent.Value, 0, len(m.removedupl_items))
+		for id := range m.removedupl_items {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -82997,9 +83071,12 @@ func (m *UplMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UplMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedcontract {
 		edges = append(edges, upl.EdgeContract)
+	}
+	if m.clearedupl_items {
+		edges = append(edges, upl.EdgeUplItems)
 	}
 	return edges
 }
@@ -83010,6 +83087,8 @@ func (m *UplMutation) EdgeCleared(name string) bool {
 	switch name {
 	case upl.EdgeContract:
 		return m.clearedcontract
+	case upl.EdgeUplItems:
+		return m.clearedupl_items
 	}
 	return false
 }
@@ -83033,6 +83112,9 @@ func (m *UplMutation) ResetEdge(name string) error {
 	case upl.EdgeContract:
 		m.ResetContract()
 		return nil
+	case upl.EdgeUplItems:
+		m.ResetUplItems()
+		return nil
 	}
 	return fmt.Errorf("unknown Upl edge %s", name)
 }
@@ -83055,6 +83137,8 @@ type UplItemMutation struct {
 	clearedFields   map[string]struct{}
 	_UplItem        *int
 	cleared_UplItem bool
+	upl             *int
+	clearedupl      bool
 	done            bool
 	oldValue        func(context.Context) (*UplItem, error)
 	predicates      []predicate.UplItem
@@ -83440,6 +83524,45 @@ func (m *UplItemMutation) ResetUplItem() {
 	m.cleared_UplItem = false
 }
 
+// SetUplID sets the upl edge to Upl by id.
+func (m *UplItemMutation) SetUplID(id int) {
+	m.upl = &id
+}
+
+// ClearUpl clears the upl edge to Upl.
+func (m *UplItemMutation) ClearUpl() {
+	m.clearedupl = true
+}
+
+// UplCleared returns if the edge upl was cleared.
+func (m *UplItemMutation) UplCleared() bool {
+	return m.clearedupl
+}
+
+// UplID returns the upl id in the mutation.
+func (m *UplItemMutation) UplID() (id int, exists bool) {
+	if m.upl != nil {
+		return *m.upl, true
+	}
+	return
+}
+
+// UplIDs returns the upl ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// UplID instead. It exists only for internal usage by the builders.
+func (m *UplItemMutation) UplIDs() (ids []int) {
+	if id := m.upl; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUpl reset all changes of the "upl" edge.
+func (m *UplItemMutation) ResetUpl() {
+	m.upl = nil
+	m.clearedupl = false
+}
+
 // Op returns the operation name.
 func (m *UplItemMutation) Op() Op {
 	return m.op
@@ -83667,9 +83790,12 @@ func (m *UplItemMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UplItemMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m._UplItem != nil {
 		edges = append(edges, uplitem.EdgeUplItem)
+	}
+	if m.upl != nil {
+		edges = append(edges, uplitem.EdgeUpl)
 	}
 	return edges
 }
@@ -83682,6 +83808,10 @@ func (m *UplItemMutation) AddedIDs(name string) []ent.Value {
 		if id := m._UplItem; id != nil {
 			return []ent.Value{*id}
 		}
+	case uplitem.EdgeUpl:
+		if id := m.upl; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -83689,7 +83819,7 @@ func (m *UplItemMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UplItemMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -83704,9 +83834,12 @@ func (m *UplItemMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UplItemMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleared_UplItem {
 		edges = append(edges, uplitem.EdgeUplItem)
+	}
+	if m.clearedupl {
+		edges = append(edges, uplitem.EdgeUpl)
 	}
 	return edges
 }
@@ -83717,6 +83850,8 @@ func (m *UplItemMutation) EdgeCleared(name string) bool {
 	switch name {
 	case uplitem.EdgeUplItem:
 		return m.cleared_UplItem
+	case uplitem.EdgeUpl:
+		return m.clearedupl
 	}
 	return false
 }
@@ -83727,6 +83862,9 @@ func (m *UplItemMutation) ClearEdge(name string) error {
 	switch name {
 	case uplitem.EdgeUplItem:
 		m.ClearUplItem()
+		return nil
+	case uplitem.EdgeUpl:
+		m.ClearUpl()
 		return nil
 	}
 	return fmt.Errorf("unknown UplItem unique edge %s", name)
@@ -83739,6 +83877,9 @@ func (m *UplItemMutation) ResetEdge(name string) error {
 	switch name {
 	case uplitem.EdgeUplItem:
 		m.ResetUplItem()
+		return nil
+	case uplitem.EdgeUpl:
+		m.ResetUpl()
 		return nil
 	}
 	return fmt.Errorf("unknown UplItem edge %s", name)
