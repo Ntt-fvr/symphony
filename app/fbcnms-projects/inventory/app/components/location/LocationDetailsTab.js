@@ -22,6 +22,7 @@ import {makeStyles} from '@material-ui/styles';
 
 type Props = $ReadOnly<{|
   location: Location,
+  locationId: string,
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
   onWorkOrderSelected: (workOrderId: string) => void,
@@ -40,6 +41,7 @@ const LocationDetailsTab = (props: Props) => {
   const classes = useStyles();
   const {
     location,
+    locationId,
     selectedWorkOrderId,
     onEquipmentSelected,
     onWorkOrderSelected,
@@ -47,8 +49,6 @@ const LocationDetailsTab = (props: Props) => {
     onAddEquipment,
     onAddResource,
   } = props;
-
-  const propTypes = location.locationType.propertyTypes;
 
   return (
     <div>
@@ -66,6 +66,7 @@ const LocationDetailsTab = (props: Props) => {
         onAddEquipment={onAddEquipment}
       />
       <ResourceCard
+        selectedLocationId={locationId}
         onResourceSelected={onResourceSelected}
         onAddResource={onAddResource}
       />
