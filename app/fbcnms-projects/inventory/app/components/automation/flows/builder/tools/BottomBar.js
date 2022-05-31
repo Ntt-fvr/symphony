@@ -51,41 +51,46 @@ const useStyles = makeStyles(() => ({
     color: BLUE.B600 + ' !important',
     fill: BLUE.B600 + ' !important',
   },
+  borderRadiusZoomButton: {
+    '& div[class*="textVariant"]': {
+      borderRadius: 4,
+    },
+  },
 }));
 
 export default function BottomBar() {
   const classes = useStyles();
   const flow = useGraph();
-  const [isOnGrabMode, handleOnGrabMode] = usePaperGrab(false);
+  const [isOnGrabMode, handleOnGrabMode] = usePaperGrab();
 
   return (
     <ToolsBar className={classes.root}>
-      <Tooltip tooltip={'Zoom In'}>
-        <IconButton
-          skin={'inherit'}
-          onClick={() => flow.zoomIn()}
-          icon={RemoveIcon}
-        />
-      </Tooltip>
       <Tooltip tooltip={'Zoom Out'}>
         <IconButton
           className={classes.marginLeft}
-          skin={'inherit'}
+          skin={'regular'}
           onClick={() => flow.zoomOut()}
+          icon={RemoveIcon}
+        />
+      </Tooltip>
+      <Tooltip tooltip={'Zoom In'}>
+        <IconButton
+          skin={'regular'}
+          onClick={() => flow.zoomIn()}
           icon={AddIcon}
         />
       </Tooltip>
       <Tooltip tooltip={'Zoom Fit'}>
         <IconButton
-          skin={'inherit'}
-          onClick={() => flow.zoomIn()}
+          skin={'regular'}
+          onClick={() => flow.zoomFit()}
           icon={FilterCenterFocusIcon}
         />
       </Tooltip>
       <Tooltip tooltip={'Pan Toll'}>
         <IconButton
           className={isOnGrabMode ? classes.blue : null}
-          skin={'inherit'}
+          skin={'regular'}
           onClick={() =>
             isOnGrabMode ? handleOnGrabMode(true) : handleOnGrabMode(false)
           }
