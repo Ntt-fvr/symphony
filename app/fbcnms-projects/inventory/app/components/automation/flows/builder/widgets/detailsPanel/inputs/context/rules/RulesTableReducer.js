@@ -8,7 +8,10 @@
  * @format
  */
 
-import {reorder, sortByIndex} from '../../../../draggable/DraggableUtils';
+import {
+  reorder,
+  sortByIndex,
+} from '../../../../../../../../draggable/DraggableUtils';
 
 import type {RuleType} from './RuleType';
 

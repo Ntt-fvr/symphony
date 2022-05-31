@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Switch from '../../../../../../inputs/Switch';
+import Switch from '../../inputs/Switch';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 

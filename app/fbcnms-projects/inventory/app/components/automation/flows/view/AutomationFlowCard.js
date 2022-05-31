@@ -16,7 +16,7 @@ import Link from '@symphony/design-system/components/Link';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import StatusTag from './StatusTag';
 import Text from '@symphony/design-system/components/Text';
-import Tooltip from '../../inputs/Tooltip';
+import Tooltip from '../builder/widgets/detailsPanel/inputs/Tooltip';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';

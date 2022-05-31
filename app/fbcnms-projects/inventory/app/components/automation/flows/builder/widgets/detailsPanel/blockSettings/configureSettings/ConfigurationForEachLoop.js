@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Select from '../../../../../../inputs/Select';
+import Select from '../../inputs/Select';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 

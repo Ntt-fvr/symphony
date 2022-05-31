@@ -11,12 +11,12 @@
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
-import RulesList from '../../../../../../inputs/RulesList';
-import RulesTableDispatcher from '../../../../../../inputs/context/rules/RulesTableDispatcher';
+import RulesList from '../../inputs/RulesList';
+import RulesTableDispatcher from '../../inputs/context/rules/RulesTableDispatcher';
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
-import {useRulesReducer} from '../../../../../../inputs/context/rules/RulesTableState';
+import {useRulesReducer} from '../../inputs/context/rules/RulesTableState';
 
 const ConfigurationChoice = () => {
   const [rules, rulesDispatcher] = useRulesReducer([]);

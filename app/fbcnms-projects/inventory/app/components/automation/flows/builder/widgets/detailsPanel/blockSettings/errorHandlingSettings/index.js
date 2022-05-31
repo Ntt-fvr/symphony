@@ -8,9 +8,9 @@
  * @format
  */
 import React from 'react';
-import Select from '../../../../../../inputs/Select';
+import Select from '../../inputs/Select';
 import Switch from '@symphony/design-system/components/switch/Switch';
-import TextField from '../../../../../../inputs/TextField';
+import TextField from '../../inputs/TextField';
 import {Divider, FormControlLabel, Grid, Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import {useForm} from '../../../../../utils/useForm';

@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import TextField from '../../../../../../inputs/TextField';
+import TextField from '../../inputs/TextField';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 
