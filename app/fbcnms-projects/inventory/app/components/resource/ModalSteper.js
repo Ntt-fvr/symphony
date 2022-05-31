@@ -180,7 +180,7 @@ const ModalSteper = (props: Props) => {
         .includes(searchData.toLocaleLowerCase()),
   );
 
-  const searchResourceSpecifications = dataListStepper?.resourceSpecifications?.edges.filter(
+  const searchRSpecifications = dataListStepper?.resourceSpecifications?.edges.filter(
     item =>
       item.node?.name
         .toString()
@@ -240,7 +240,7 @@ const ModalSteper = (props: Props) => {
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node.id}
+                      key={item.node?.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -250,12 +250,12 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node.name} />
+                      <ListItemText primary={item.node?.name} />
                     </ListItem>
                   </List>
                 ))}
               {activeStep === 2 &&
-                searchResourceSpecifications.map((item, index) => (
+                searchRSpecifications.map((item, index) => (
                   <List component="nav">
                     <ListItem
                       button
@@ -274,7 +274,7 @@ const ModalSteper = (props: Props) => {
                   </List>
                 ))}
               {activeStep === 3 &&
-                searchResourceSpecifications.map((item, index) => (
+                searchRSpecifications.map((item, index) => (
                   <List component="nav">
                     <ListItem
                       button
@@ -294,7 +294,7 @@ const ModalSteper = (props: Props) => {
                 ))}
             </>
           ) : (
-            searchResourceSpecifications.map((item, index) => (
+            searchRSpecifications.map((item, index) => (
               <List component="nav">
                 <ListItem
                   button
