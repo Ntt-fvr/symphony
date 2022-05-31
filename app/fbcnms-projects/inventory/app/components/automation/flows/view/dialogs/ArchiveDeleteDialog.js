@@ -68,7 +68,7 @@ type Props = $ReadOnly<{|
   icon?: React.Element,
   text?: React.Element,
   isOpen: boolean,
-  activeModal?: number,
+  activeModal?: string,
   openModal: () => void,
 |}>;
 
@@ -88,7 +88,9 @@ const ArchiveDeleteDialog = ({
             <div className={classes.upContainer}>
               <span
                 className={
-                  activeModal === 1 ? classes.archiveIcon : classes.deleteIcon
+                  activeModal === 'archive'
+                    ? classes.archiveIcon
+                    : classes.deleteIcon
                 }>
                 {icon}
               </span>

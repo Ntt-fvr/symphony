@@ -131,7 +131,7 @@ export default function CustomizedMenus({
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [modalConfig, setModalConfig] = useState({
-    activeModal: 0,
+    activeModal: '',
     openModal: false,
   });
 
@@ -143,10 +143,10 @@ export default function CustomizedMenus({
     setAnchorEl(null);
   };
 
-  const handleOpenModal = modalId => {
+  const handleOpenModal = modal => {
     setAnchorEl(null);
     setModalConfig({
-      activeModal: modalId,
+      activeModal: modal,
       openModal: true,
     });
   };
@@ -172,34 +172,34 @@ export default function CustomizedMenus({
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}>
-        <StyledMenuItem onClick={() => handleOpenModal(3)}>
+        <StyledMenuItem onClick={() => handleOpenModal('edit')}>
           <ListItemIcon>
             <EditFlowIcon />
           </ListItemIcon>
           <ListItemText primary="Edit flow" />
         </StyledMenuItem>
         <Divider />
-        <StyledMenuItem onClick={() => handleOpenModal(4)}>
+        <StyledMenuItem onClick={() => handleOpenModal('duplicate')}>
           <ListItemIcon>
             <DuplicateFlowIcon />
           </ListItemIcon>
           <ListItemText primary="Duplicate flow" />
         </StyledMenuItem>
         <Divider />
-        <StyledMenuItem onClick={() => handleOpenModal(1)}>
+        <StyledMenuItem onClick={() => handleOpenModal('archive')}>
           <ListItemIcon>
             <ArchiveOutlinedIcon color={'secondary'} />
           </ListItemIcon>
           <ListItemText primary="Archive flow" />
         </StyledMenuItem>
-        <StyledMenuItem onClick={() => handleOpenModal(2)}>
+        <StyledMenuItem onClick={() => handleOpenModal('delete')}>
           <ListItemIcon>
             <DeleteOutlineIcon color={'secondary'} />
           </ListItemIcon>
           <ListItemText primary="Delete flow" />
         </StyledMenuItem>
       </StyledMenu>
-      {activeModal === 1 && (
+      {activeModal === 'archive' && (
         <ArchiveDeleteDialog
           icon={<ArchiveOutlinedIcon />}
           openModal={() => handleCLoseModal()}
@@ -208,7 +208,7 @@ export default function CustomizedMenus({
           text={
             <Text variant="subtitle1">
               <fbt desc="">
-                ¿Are you sure you want to archive the current flow?{' '}
+                Are you sure you want to archive the current flow?{' '}
                 <span style={{fontWeight: 'bold'}}>
                   The flows that were started will finish running, but new flows
                   can no longer be instantiated.
@@ -218,7 +218,7 @@ export default function CustomizedMenus({
           }
         />
       )}
-      {activeModal === 2 && (
+      {activeModal === 'delete' && (
         <ArchiveDeleteDialog
           icon={<ReportProblemOutlinedIcon />}
           openModal={() => handleCLoseModal()}
@@ -227,7 +227,7 @@ export default function CustomizedMenus({
           text={
             <Text variant="subtitle1">
               <fbt desc="">
-                ¿Are you sure you want to delete the current flow?{' '}
+                Are you sure you want to delete the current flow?{' '}
                 <span style={{fontWeight: 'bold'}}>
                   This option cannot be undone
                 </span>
@@ -236,7 +236,7 @@ export default function CustomizedMenus({
           }
         />
       )}
-      {activeModal === 3 && (
+      {activeModal === 'edit' && (
         <EditFlowDialog
           isOpen={openModal}
           openModal={() => handleCLoseModal()}
@@ -245,7 +245,7 @@ export default function CustomizedMenus({
           description={description ? description : ''}
         />
       )}
-      {activeModal === 4 && (
+      {activeModal === 'duplicate' && (
         <EditFlowDialog
           isOpen={openModal}
           openModal={() => handleCLoseModal()}

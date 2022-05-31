@@ -238,10 +238,8 @@ function BuilderTopBar() {
           {isSaved() ? 'Saved' : Strings.common.saveButton}
         </Button>
         <MenuTopBar
-          name={flowData.flowDraft !== null ? flowData.flowDraft.name : ''}
-          description={
-            flowData.flowDraft !== null ? flowData.flowDraft.description : ''
-          }
+          name={flowData.flowDraft?.name || ''}
+          description={flowData.flowDraft?.name || ''}
           editText="Here you can change the name and description of your workflow"
           duplicateText="Duplicating this workflow saves the same settings as the current workflow and will be available in the general list of workflows as a draft. Please assign a new name and description."
         />
