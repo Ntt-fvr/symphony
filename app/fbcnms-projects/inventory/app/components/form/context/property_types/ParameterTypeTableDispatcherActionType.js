@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {PropertyKind} from '../../../configure/__generated__/AddEditEquipmentTypeCard_editingEquipmentType.graphql';
+// import type {PropertyKind} from '../../../configure/__generated__/AddEditEquipmentTypeCard_editingEquipmentType.graphql';
 import type {PropertyType} from '../../../../common/PropertyType';
 
 export type ParameterTypeTableDispatcherActionType =
@@ -27,7 +27,7 @@ export type ParameterTypeTableDispatcherActionType =
   | {|
       type: 'UPDATE_PARAMETER_TYPE_KIND',
       id: string,
-      kind: PropertyKind,
+      // kind: PropertyKind,
       nodeType?: ?string,
     |}
   | {|

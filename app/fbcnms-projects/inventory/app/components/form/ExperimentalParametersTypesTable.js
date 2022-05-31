@@ -108,7 +108,7 @@ type Props = $ReadOnly<{|
   supportDelete?: boolean,
 |}>;
 
-const ExperimentalPropertyTypesTableParameters = (props: Props) => {
+const ExperimentalParametersTypesTable = (props: Props) => {
   const {supportMandatory = true, parameterTypes, supportDelete} = props;
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
@@ -272,4 +272,4 @@ const ExperimentalPropertyTypesTableParameters = (props: Props) => {
   );
 };
 
-export default ExperimentalPropertyTypesTableParameters;
+export default ExperimentalParametersTypesTable;
