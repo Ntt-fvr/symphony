@@ -1258,6 +1258,7 @@ type ComplexityRoot struct {
 		EditProject                              func(childComplexity int, input models.EditProjectInput) int
 		EditProjectType                          func(childComplexity int, input models.EditProjectTypeInput) int
 		EditPropertyCategories                   func(childComplexity int, propertyCategories []*models.EditPropertyCategoryInput) int
+		EditPropertyType                         func(childComplexity int, input models.EditPropertyTypeInput) int
 		EditPropertyTypeValue                    func(childComplexity int, input models.EditPropertyTypeValueInput) int
 		EditRecommendations                      func(childComplexity int, input models.EditRecommendationsInput) int
 		EditRecommendationsCategory              func(childComplexity int, input models.EditRecommendationsCategoryInput) int
@@ -2196,6 +2197,7 @@ type ComplexityRoot struct {
 		Images              func(childComplexity int) int
 		Index               func(childComplexity int) int
 		InstallDate         func(childComplexity int) int
+		IsNameEditable      func(childComplexity int) int
 		LinksToAdd          func(childComplexity int) int
 		LinksToRemove       func(childComplexity int) int
 		Location            func(childComplexity int) int
@@ -2656,6 +2658,7 @@ type MutationResolver interface {
 	AddPropertyTypeValue(ctx context.Context, input models1.AddPropertyTypeValueInput) (*ent.PropertyTypeValue, error)
 	EditPropertyTypeValue(ctx context.Context, input models.EditPropertyTypeValueInput) (*ent.PropertyTypeValue, error)
 	RemovePropertyTypeValue(ctx context.Context, id int) (int, error)
+	EditPropertyType(ctx context.Context, input models.EditPropertyTypeInput) (*ent.PropertyType, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -8419,6 +8422,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditPropertyCategories(childComplexity, args["propertyCategories"].([]*models.EditPropertyCategoryInput)), true
 
+	case "Mutation.editPropertyType":
+		if e.complexity.Mutation.EditPropertyType == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editPropertyType_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditPropertyType(childComplexity, args["input"].(models.EditPropertyTypeInput)), true
+
 	case "Mutation.editPropertyTypeValue":
 		if e.complexity.Mutation.EditPropertyTypeValue == nil {
 			break
@@ -13594,6 +13609,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkOrder.InstallDate(childComplexity), true
 
+	case "WorkOrder.isNameEditable":
+		if e.complexity.WorkOrder.IsNameEditable == nil {
+			break
+		}
+
+		return e.complexity.WorkOrder.IsNameEditable(childComplexity), true
+
 	case "WorkOrder.linksToAdd":
 		if e.complexity.WorkOrder.LinksToAdd == nil {
 			break
@@ -15046,6 +15068,7 @@ input AddWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input EditWorkOrderInput {
@@ -15067,6 +15090,7 @@ input EditWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input TechnicianCheckListItemInput {
@@ -15894,6 +15918,11 @@ input PropertyTypeInput
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
 
+input EditPropertyTypeInput {
+    id: ID!
+    isDeleted: Boolean!
+  }
+
 input EditIsListableInput {
   id: ID!
   isListable: Boolean!
@@ -16317,6 +16346,7 @@ type WorkOrder implements Node & NamedNode {
   organizationFk: Organization
   scheduledAt: Time
   Appointments:[Appointment]
+  isNameEditable: Boolean
 }
 
 """
@@ -21821,6 +21851,7 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType!
 }
 
 """
@@ -22675,6 +22706,7 @@ input AddKqiTargetInput {
   endTime: Time!
   status: Boolean!
   kqi: ID!
+  kqiComparator: AddKqiComparatorInput
 }
 
 input EditKqiTargetInput {
@@ -22711,7 +22743,7 @@ type KqiComparator implements Node {
 }
 
 input AddKqiComparatorInput {
-  kqiTargetFk: ID!
+  kqiTargetFk: ID
   comparatorFk: ID!
   number: Float!
   comparatorType: String!
@@ -25376,6 +25408,21 @@ func (ec *executionContext) field_Mutation_editPropertyTypeValue_args(ctx contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNEditPropertyTypeValueInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditPropertyTypeValueInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editPropertyType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditPropertyTypeInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditPropertyTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditPropertyTypeInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -60350,6 +60397,48 @@ func (ec *executionContext) _Mutation_removePropertyTypeValue(ctx context.Contex
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_editPropertyType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editPropertyType_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditPropertyType(rctx, args["input"].(models.EditPropertyTypeInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalNPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -80295,6 +80384,38 @@ func (ec *executionContext) _WorkOrder_Appointments(ctx context.Context, field g
 	return ec.marshalOAppointment2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkOrder_isNameEditable(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrder) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrder",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsNameEditable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkOrderConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -84622,7 +84743,7 @@ func (ec *executionContext) unmarshalInputAddKqiComparatorInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kqiTargetFk"))
-			it.KqiTargetFk, err = ec.unmarshalNID2int(ctx, v)
+			it.KqiTargetFk, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -84847,6 +84968,14 @@ func (ec *executionContext) unmarshalInputAddKqiTargetInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kqi"))
 			it.Kqi, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kqiComparator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kqiComparator"))
+			it.KqiComparator, err = ec.unmarshalOAddKqiComparatorInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKqiComparatorInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -86149,6 +86278,14 @@ func (ec *executionContext) unmarshalInputAddWorkOrderInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scheduledAt"))
 			it.ScheduledAt, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isNameEditable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isNameEditable"))
+			it.IsNameEditable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -89736,6 +89873,34 @@ func (ec *executionContext) unmarshalInputEditPropertyCategoryInput(ctx context.
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditPropertyTypeInput(ctx context.Context, obj interface{}) (models.EditPropertyTypeInput, error) {
+	var it models.EditPropertyTypeInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isDeleted":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDeleted"))
+			it.IsDeleted, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditPropertyTypeValueInput(ctx context.Context, obj interface{}) (models.EditPropertyTypeValueInput, error) {
 	var it models.EditPropertyTypeValueInput
 	var asMap = obj.(map[string]interface{})
@@ -90559,6 +90724,14 @@ func (ec *executionContext) unmarshalInputEditWorkOrderInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scheduledAt"))
 			it.ScheduledAt, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isNameEditable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isNameEditable"))
+			it.IsNameEditable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -105246,6 +105419,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "editPropertyType":
+			out.Values[i] = ec._Mutation_editPropertyType(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -111347,6 +111525,8 @@ func (ec *executionContext) _WorkOrder(ctx context.Context, sel ast.SelectionSet
 				res = ec._WorkOrder_Appointments(ctx, field, obj)
 				return res
 			})
+		case "isNameEditable":
+			out.Values[i] = ec._WorkOrder_isNameEditable(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -114462,6 +114642,11 @@ func (ec *executionContext) unmarshalNEditProjectInput2githubᚗcomᚋfacebookin
 
 func (ec *executionContext) unmarshalNEditProjectTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditProjectTypeInput(ctx context.Context, v interface{}) (models.EditProjectTypeInput, error) {
 	res, err := ec.unmarshalInputEditProjectTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditPropertyTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditPropertyTypeInput(ctx context.Context, v interface{}) (models.EditPropertyTypeInput, error) {
+	res, err := ec.unmarshalInputEditPropertyTypeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -121650,6 +121835,14 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAddKqiComparatorInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKqiComparatorInput(ctx context.Context, v interface{}) (*models.AddKqiComparatorInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddKqiComparatorInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

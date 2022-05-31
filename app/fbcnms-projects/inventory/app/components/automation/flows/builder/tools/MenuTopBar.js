@@ -8,16 +8,22 @@
  * @format
  */
 
+import ArchiveDeleteDialog from '../../view/dialogs/ArchiveDeleteDialog';
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import EditFlowDialog from '../../view/dialogs//EditFlowDialog';
 import IconButton from '@symphony/design-system/components/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import React from 'react';
-import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
+import React, {useState} from 'react';
+import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
+import SingleActionDialog from '../../view/dialogs/SingleActionDialog';
+import Text from '@symphony/design-system/components/Text';
+import Tooltip from '../../../inputs/Tooltip';
+import fbt from 'fbt';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {Divider} from '@material-ui/core';
 import {DuplicateFlowIcon, EditFlowIcon} from '@symphony/design-system/icons';
@@ -54,7 +60,7 @@ const StyledMenu = withStyles({
       'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF',
     boxShadow: '0px 4px 10px 2px rgba(0, 0, 0, 0.15)',
     borderRadius: 4,
-    padding: '5px 0px',
+    padding: '0px 0px',
     minWidth: 172,
     marginTop: 6,
     '& .MuiList-padding': {
@@ -106,10 +112,28 @@ const StyledMenuItem = withStyles({
   },
 })(MenuItem);
 
-export default function CustomizedMenus() {
+type Props = $ReadOnly<{|
+  icon?: any,
+  name?: ?string,
+  description?: ?string,
+  editText?: string,
+  duplicateText?: string,
+|}>;
+
+export default function CustomizedMenus({
+  icon,
+  name,
+  description,
+  editText,
+  duplicateText,
+}: Props) {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [modalConfig, setModalConfig] = useState({
+    activeModal: '',
+    openModal: false,
+  });
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
@@ -119,13 +143,27 @@ export default function CustomizedMenus() {
     setAnchorEl(null);
   };
 
+  const handleOpenModal = modal => {
+    setAnchorEl(null);
+    setModalConfig({
+      activeModal: modal,
+      openModal: true,
+    });
+  };
+
+  const handleCLoseModal = () => {
+    setModalConfig({openModal: false});
+  };
+
+  const {activeModal, openModal} = modalConfig;
+
   return (
     <div className={classes.root}>
       <Tooltip tooltip={'More Actions'}>
         <IconButton
           skin={'inherit'}
           onClick={handleClick}
-          icon={MoreHorizIcon}
+          icon={icon ? icon : MoreHorizIcon}
         />
       </Tooltip>
       <StyledMenu
@@ -134,33 +172,88 @@ export default function CustomizedMenus() {
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}>
-        <StyledMenuItem>
+        <StyledMenuItem onClick={() => handleOpenModal('edit')}>
           <ListItemIcon>
             <EditFlowIcon />
           </ListItemIcon>
           <ListItemText primary="Edit flow" />
         </StyledMenuItem>
         <Divider />
-        <StyledMenuItem>
+        <StyledMenuItem onClick={() => handleOpenModal('duplicate')}>
           <ListItemIcon>
             <DuplicateFlowIcon />
           </ListItemIcon>
           <ListItemText primary="Duplicate flow" />
         </StyledMenuItem>
         <Divider />
-        <StyledMenuItem>
+        <StyledMenuItem onClick={() => handleOpenModal('archive')}>
           <ListItemIcon>
             <ArchiveOutlinedIcon color={'secondary'} />
           </ListItemIcon>
           <ListItemText primary="Archive flow" />
         </StyledMenuItem>
-        <StyledMenuItem>
+        <StyledMenuItem onClick={() => handleOpenModal('delete')}>
           <ListItemIcon>
             <DeleteOutlineIcon color={'secondary'} />
           </ListItemIcon>
           <ListItemText primary="Delete flow" />
         </StyledMenuItem>
       </StyledMenu>
+      {activeModal === 'archive' && (
+        <ArchiveDeleteDialog
+          icon={<ArchiveOutlinedIcon />}
+          openModal={() => handleCLoseModal()}
+          isOpen={openModal}
+          activeModal={activeModal}
+          text={
+            <Text variant="subtitle1">
+              <fbt desc="">
+                Are you sure you want to archive the current flow?{' '}
+                <span style={{fontWeight: 'bold'}}>
+                  The flows that were started will finish running, but new flows
+                  can no longer be instantiated.
+                </span>
+              </fbt>
+            </Text>
+          }
+        />
+      )}
+      {activeModal === 'delete' && (
+        <ArchiveDeleteDialog
+          icon={<ReportProblemOutlinedIcon />}
+          openModal={() => handleCLoseModal()}
+          isOpen={openModal}
+          activeModal={activeModal}
+          text={
+            <Text variant="subtitle1">
+              <fbt desc="">
+                Are you sure you want to delete the current flow?{' '}
+                <span style={{fontWeight: 'bold'}}>
+                  This option cannot be undone
+                </span>
+              </fbt>
+            </Text>
+          }
+        />
+      )}
+      {activeModal === 'edit' && (
+        <EditFlowDialog
+          isOpen={openModal}
+          openModal={() => handleCLoseModal()}
+          text={editText}
+          name={name ? name : ''}
+          description={description ? description : ''}
+        />
+      )}
+      {activeModal === 'duplicate' && (
+        <EditFlowDialog
+          isOpen={openModal}
+          openModal={() => handleCLoseModal()}
+          text={duplicateText}
+          name={name ? name : ''}
+          description={description ? description : ''}
+        />
+      )}
     </div>
   );
 }
