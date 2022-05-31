@@ -879,6 +879,7 @@ input AddWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input EditWorkOrderInput {
@@ -900,6 +901,7 @@ input EditWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  isNameEditable: Boolean
 }
 
 input TechnicianCheckListItemInput {
@@ -1727,6 +1729,11 @@ input PropertyTypeInput
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
 
+input EditPropertyTypeInput {
+    id: ID!
+    isDeleted: Boolean!
+  }
+
 input EditIsListableInput {
   id: ID!
   isListable: Boolean!
@@ -2150,6 +2157,7 @@ type WorkOrder implements Node & NamedNode {
   organizationFk: Organization
   scheduledAt: Time
   Appointments:[Appointment]
+  isNameEditable: Boolean
 }
 
 """
@@ -7654,6 +7662,7 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType!
 }
 
 """
@@ -8508,6 +8517,7 @@ input AddKqiTargetInput {
   endTime: Time!
   status: Boolean!
   kqi: ID!
+  kqiComparator: AddKqiComparatorInput
 }
 
 input EditKqiTargetInput {
@@ -8544,7 +8554,7 @@ type KqiComparator implements Node {
 }
 
 input AddKqiComparatorInput {
-  kqiTargetFk: ID!
+  kqiTargetFk: ID
   comparatorFk: ID!
   number: Float!
   comparatorType: String!
