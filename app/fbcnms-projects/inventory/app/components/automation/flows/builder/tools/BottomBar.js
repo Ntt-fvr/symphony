@@ -14,7 +14,7 @@ import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ToolsBar from './ToolsBar';
-import Tooltip from '../../../inputs/Tooltip';
+import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
 import usePaperGrab from '../widgets/navigation/usePaperGrab';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {PanToolsIcon} from '@symphony/design-system/icons';

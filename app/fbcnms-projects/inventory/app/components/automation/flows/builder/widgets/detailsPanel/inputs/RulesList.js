@@ -10,14 +10,14 @@
 
 import type {RuleType} from './context/rules/RuleType';
 
-import DraggableTableRow from '../../draggable/DraggableTableRow';
-import DroppableTableBody from '../../draggable/DroppableTableBody';
+import DraggableTableRow from '../../../../../../draggable/DraggableTableRow';
+import DroppableTableBody from '../../../../../../draggable/DroppableTableBody';
 import React, {useContext} from 'react';
 import Rule from './Rule';
 import RulesTableDispatcher from './context/rules/RulesTableDispatcher';
 import {TableCell, TableRow} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import {sortByIndex} from '../../draggable/DraggableUtils';
+import {sortByIndex} from '../../../../../../draggable/DraggableUtils';
 
 const useStyles = makeStyles(() => ({
   container: {

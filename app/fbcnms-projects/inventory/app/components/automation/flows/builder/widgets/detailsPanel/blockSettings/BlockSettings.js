@@ -15,7 +15,7 @@ import ConfigureSettings from './configureSettings/index';
 import ErrorHandlingSettings from './errorHandlingSettings';
 import InputSettings from './inputSettings';
 import OutputSettings from './outputSettings';
-import Tabs from '../../../../../inputs/Tabs';
+import Tabs from '../inputs/Tabs';
 import {Box} from '@material-ui/core';
 type Props = $ReadOnly<{|
   block: IBlock,
@@ -23,7 +23,6 @@ type Props = $ReadOnly<{|
 
 export default function BlockSettings(props: Props) {
   const {block} = props;
-  console.log('Block', block);
 
   const tabs = [
     {

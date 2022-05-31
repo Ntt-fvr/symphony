@@ -8,7 +8,7 @@
  * @format
  */
 import React, {useEffect} from 'react';
-import Transform from '../../../../../../inputs/Transform';
+import Transform from '../../inputs/Transform';
 import {Divider, Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 

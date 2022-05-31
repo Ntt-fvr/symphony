@@ -9,8 +9,8 @@
  */
 
 import * as React from 'react';
-import Select from '../../../../../../inputs/Select';
-import TextField from '../../../../../../inputs/TextField';
+import Select from '../../inputs/Select';
+import TextField from '../../inputs/TextField';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 

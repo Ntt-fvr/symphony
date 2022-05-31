@@ -22,7 +22,7 @@ import React, {useState} from 'react';
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
 import SingleActionDialog from '../../view/dialogs/SingleActionDialog';
 import Text from '@symphony/design-system/components/Text';
-import Tooltip from '../../../inputs/Tooltip';
+import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
 import fbt from 'fbt';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {Divider} from '@material-ui/core';

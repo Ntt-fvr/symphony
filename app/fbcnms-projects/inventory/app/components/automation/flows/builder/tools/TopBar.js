@@ -15,7 +15,7 @@ import MenuTopBar from './MenuTopBar';
 import React, {useCallback, useState} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
-import Tooltip from '../../../inputs/Tooltip';
+import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
 import fbt from 'fbt';
 import {BLUE, DARK, GREEN} from '@symphony/design-system/theme/symphony';
 import {

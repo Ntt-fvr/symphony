@@ -9,9 +9,9 @@
  */
 
 import * as React from 'react';
-import Select from '../../../../../../inputs/Select';
-import Switch from '../../../../../../inputs/Switch';
-import TextField from '../../../../../../inputs/TextField';
+import Select from '../../inputs/Select';
+import Switch from '../../inputs/Switch';
+import TextField from '../../inputs/TextField';
 import {Grid} from '@material-ui/core';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
@@ -23,9 +23,7 @@ const ConfigurationTimer = () => {
     {name: 'Fixed Interval', id: 'fixed_interval'},
     {name: 'Specific date and time', id: 'date_time'},
   ];
-  const dateTimeValues = [
-    {name: 'test', id:'test'}
-  ]
+  const dateTimeValues = [{name: 'test', id: 'test'}];
   const [
     configurationsValues,
     handleInputChange,

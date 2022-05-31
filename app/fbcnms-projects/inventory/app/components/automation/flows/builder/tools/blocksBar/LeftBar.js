@@ -9,7 +9,7 @@
  */
 
 import React, {useState} from 'react';
-import Sidebar from '../../../../inputs/Sidebar';
+import Sidebar from '../../widgets/detailsPanel/inputs/Sidebar';
 import useSettingsPanel from '../../widgets/detailsPanel/useSettingsPanel';
 import {Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
