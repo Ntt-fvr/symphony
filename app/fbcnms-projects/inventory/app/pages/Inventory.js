@@ -236,7 +236,6 @@ class Inventory extends React.Component<Props, State> {
         selectedEquipmentPosition: null,
       });
     }
-
     return (
       <>
         <InventoryTopBar
@@ -305,6 +304,7 @@ class Inventory extends React.Component<Props, State> {
                 <ResourceCard
                   mode={card.mode}
                   selectedResourceType={this.state.selectedResourceType}
+                  selectedLocationId={this.state.selectedLocationId}
                   onAddResource={selectedResourceType => {
                     this.setState({
                       selectedResourceType,

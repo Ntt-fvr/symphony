@@ -8,37 +8,60 @@
  * @format
  */
 
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AddEditResourceInLocation from './AddEditResourceInLocation';
 import Button from '@symphony/design-system/components/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import Divider from '@material-ui/core/Divider';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import ModalSteper from './ModalSteper';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ResourcePropertiesCard from './ResourcePropertiesCard';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     marginBottom: '20px',
-    '& .MuiAccordionSummary-root': {
-      padding: '0 26px',
+    '& .MuiCardHeader-root': {
+      padding: 0,
     },
+  },
+  cardHeader: {
+    '& .MuiCardHeader-action': {
+      margin: 0,
+    },
+    '& .MuiCardHeader-title': {
+      fontSize: '20px',
+    },
+  },
+  tableTitle: {
+    fontSize: '1rem',
+    color: theme.palette.primary.main,
   },
 }));
 
 const ResourceCardListQuery = graphql`
   query ResourceCardQuery($filterBy: [ResourceSpecificationFilterInput!]) {
+    queryResource {
+      id
+      name
+      isDelete
+      resourceSpecification
+      locatedIn
+    }
     resourceTypes {
       edges {
         node {
@@ -56,26 +79,6 @@ const ResourceCardListQuery = graphql`
             id
             name
           }
-          resourcePropertyTypes {
-            id
-            name
-            type
-            nodeType
-            index
-            stringValue
-            intValue
-            booleanValue
-            floatValue
-            latitudeValue
-            longitudeValue
-            rangeFromValue
-            rangeToValue
-            isEditable
-            isMandatory
-            isInstanceProperty
-            isDeleted
-            category
-          }
         }
       }
     }
@@ -89,6 +92,7 @@ type Props = $ReadOnly<{|
   onResourceSelected: (selectedResourceId: string) => void,
   onCancel: () => void,
   selectedResourceType: {},
+  selectedLocationId: ?string,
 |}>;
 
 const ResourceCard = (props: Props) => {
@@ -99,10 +103,13 @@ const ResourceCard = (props: Props) => {
     onResourceSelected,
     selectedResourceType,
     onCancel,
+    selectedLocationId,
   } = props;
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     isCompleted();
@@ -114,11 +121,26 @@ const ResourceCard = (props: Props) => {
     });
   }, [setResourceTypes]);
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(Number(event.target.value));
+    setPage(0);
+  };
+
+  const filterDataById = resourceTypes?.queryResource?.filter(
+    item => item.locatedIn === Number(selectedLocationId),
+  );
+
   switch (mode) {
     case 'add':
       return (
         <AddEditResourceInLocation
           dataformModal={selectedResourceType}
+          selectedLocationId={selectedLocationId}
+          isCompleted={isCompleted}
           closeFormAddEdit={onCancel}
         />
       );
@@ -126,6 +148,8 @@ const ResourceCard = (props: Props) => {
       return (
         <AddEditResourceInLocation
           dataformModal={selectedResourceType}
+          selectedLocationId={selectedLocationId}
+          isCompleted={isCompleted}
           closeFormAddEdit={onCancel}
         />
       );
@@ -140,62 +164,75 @@ const ResourceCard = (props: Props) => {
     default:
       return (
         <div className={classes.root}>
-          <Accordion defaultExpanded>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header">
-              <Grid item xs>
-                <Typography variant="h6">Resources</Typography>
-              </Grid>
-              <Button
-                onClick={() => {
-                  onAddResource;
-                  setOpenDialog(true);
-                }}>
-                Add Resource
-              </Button>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Grid container spacing={3}>
-                <Grid item xs={3}>
-                  <Typography color="primary">Name</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography color="primary">Specification</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography color="primary">Type</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography color="primary">Delete</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Divider variant="middle" style={{margin: 0}} />
-                </Grid>
-                <Grid item xs={3}>
-                  <Button
-                    variant="text"
-                    onClick={() => onResourceSelected('123456')}>
-                    <Typography>OLT_1212323434</Typography>
-                  </Button>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography>OLT_Nokia_H20</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography>OLT</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <IconButton>
-                    <DeleteOutlinedIcon
-                      style={{color: symphony.palette.B600}}
-                    />
-                  </IconButton>
-                </Grid>
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
+          <Card>
+            <CardHeader
+              className={classes.cardHeader}
+              title="Resources"
+              action={
+                <Button
+                  onClick={() => {
+                    onAddResource;
+                    setOpenDialog(true);
+                  }}>
+                  Add Resource
+                </Button>
+              }
+            />
+            <CardContent>
+              <TableContainer>
+                <Table stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className={classes.tableTitle}>Name</TableCell>
+                      <TableCell className={classes.tableTitle}>
+                        Specification
+                      </TableCell>
+                      <TableCell className={classes.tableTitle}>Type</TableCell>
+                      <TableCell className={classes.tableTitle}>
+                        Delete
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {filterDataById
+                      ?.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage,
+                      )
+                      .map((item, index) => (
+                        <TableRow tabIndex={-1} key={index}>
+                          <TableCell>
+                            <Button
+                              variant="text"
+                              onClick={() => onResourceSelected(item.id)}>
+                              <Typography>{item.name}</Typography>
+                            </Button>
+                          </TableCell>
+                          <TableCell>specificationFalse</TableCell>
+                          <TableCell>TypeFalse</TableCell>
+                          <TableCell>
+                            <IconButton>
+                              <DeleteOutlinedIcon
+                                style={{color: symphony.palette.B600}}
+                              />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 15]}
+                component="div"
+                count={!filterDataById ? 0 : filterDataById?.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
+            </CardContent>
+          </Card>
           {openDialog && (
             <ModalSteper
               openModal={openDialog}
