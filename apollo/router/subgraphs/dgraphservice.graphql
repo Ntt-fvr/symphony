@@ -1,21 +1,30 @@
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @lambda on FIELD_DEFINITION
 directive @lambdaOnMutate(
   add: Boolean
   update: Boolean
   delete: Boolean
 ) on OBJECT | INTERFACE
+directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @default(
+  add: DgraphDefault
+  update: DgraphDefault
+) on FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @generate(
   query: GenerateQueryParams
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
-directive @lambda on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 directive @dgraph(
   type: String
   pred: String
 ) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @id on FIELD_DEFINITION
-directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -23,11 +32,6 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -243,6 +247,369 @@ enum _SupportingServiceOrdering {
   _id_desc
 }
 
+type ActionExecution {
+  id: ID!
+  scheduler(filter: ActionSchedulerFilter): ActionScheduler
+  template(filter: ActionTemplateFilter): ActionTemplate
+  items(
+    filter: ActionExecutionItemFilter
+    first: Int
+    offset: Int
+  ): [ActionExecutionItem]
+  itemsAggregate(
+    filter: ActionExecutionItemFilter
+  ): ActionExecutionItemAggregateResult
+}
+
+type ActionExecutionAggregateResult {
+  count: Int
+}
+
+input ActionExecutionFilter {
+  id: [ID!]
+  has: [ActionExecutionHasFilter]
+  and: [ActionExecutionFilter]
+  or: [ActionExecutionFilter]
+  not: ActionExecutionFilter
+}
+
+enum ActionExecutionHasFilter {
+  scheduler
+  template
+  items
+}
+
+type ActionExecutionItem {
+  id: ID!
+  action(filter: ActionExecutionFilter): ActionExecution!
+  resource(filter: ResourceFilter): Resource!
+  status: ActionExecutionItemStatus
+}
+
+type ActionExecutionItemAggregateResult {
+  count: Int
+}
+
+input ActionExecutionItemFilter {
+  id: [ID!]
+  has: [ActionExecutionItemHasFilter]
+  and: [ActionExecutionItemFilter]
+  or: [ActionExecutionItemFilter]
+  not: ActionExecutionItemFilter
+}
+
+enum ActionExecutionItemHasFilter {
+  action
+  resource
+  status
+}
+
+input ActionExecutionItemPatch {
+  action: ActionExecutionRef
+  resource: ResourceRef
+  status: ActionExecutionItemStatus
+}
+
+input ActionExecutionItemRef {
+  id: ID
+  action: ActionExecutionRef
+  resource: ResourceRef
+  status: ActionExecutionItemStatus
+}
+
+enum ActionExecutionItemStatus {
+  PENDING
+  SUCCESSFULL
+  FAILED
+}
+
+input ActionExecutionPatch {
+  scheduler: ActionSchedulerRef
+  template: ActionTemplateRef
+  items: [ActionExecutionItemRef]
+}
+
+input ActionExecutionRef {
+  id: ID
+  scheduler: ActionSchedulerRef
+  template: ActionTemplateRef
+  items: [ActionExecutionItemRef]
+}
+
+type ActionScheduler {
+  id: ID!
+  name: String!
+  description: String!
+  type: ActionSchedulerType!
+  date: DateTime
+  cron: String
+  action(filter: ActionExecutionFilter): ActionExecution!
+  status: ActionSchedulerStatus!
+}
+
+type ActionSchedulerAggregateResult {
+  count: Int
+  nameMin: String
+  nameMax: String
+  descriptionMin: String
+  descriptionMax: String
+  dateMin: DateTime
+  dateMax: DateTime
+  cronMin: String
+  cronMax: String
+}
+
+input ActionSchedulerFilter {
+  id: [ID!]
+  has: [ActionSchedulerHasFilter]
+  and: [ActionSchedulerFilter]
+  or: [ActionSchedulerFilter]
+  not: ActionSchedulerFilter
+}
+
+enum ActionSchedulerHasFilter {
+  name
+  description
+  type
+  date
+  cron
+  action
+  status
+}
+
+input ActionSchedulerOrder {
+  asc: ActionSchedulerOrderable
+  desc: ActionSchedulerOrderable
+  then: ActionSchedulerOrder
+}
+
+enum ActionSchedulerOrderable {
+  name
+  description
+  date
+  cron
+}
+
+input ActionSchedulerPatch {
+  name: String
+  description: String
+  type: ActionSchedulerType
+  date: DateTime
+  cron: String
+  action: ActionExecutionRef
+  status: ActionSchedulerStatus
+}
+
+input ActionSchedulerRef {
+  id: ID
+  name: String
+  description: String
+  type: ActionSchedulerType
+  date: DateTime
+  cron: String
+  action: ActionExecutionRef
+  status: ActionSchedulerStatus
+}
+
+enum ActionSchedulerStatus {
+  ACTIVED
+  DEACTIVATED
+}
+
+enum ActionSchedulerType {
+  MANUAL_EXECUTION
+  ONE_TIME_EXECUTION
+  PERIODICAL_EXECUTION
+}
+
+type ActionTemplate {
+  id: ID!
+  name: String!
+  type: ActionTemplateType!
+  resourceSpecifications: String!
+  actionTemplateItem(
+    filter: ActionTemplateFilter
+    order: ActionTemplateOrder
+    first: Int
+    offset: Int
+  ): [ActionTemplate!]!
+  actionTemplateItemAggregate(
+    filter: ActionTemplateFilter
+  ): ActionTemplateAggregateResult
+}
+
+type ActionTemplateAggregateResult {
+  count: Int
+  nameMin: String
+  nameMax: String
+  resourceSpecificationsMin: String
+  resourceSpecificationsMax: String
+}
+
+input ActionTemplateFilter {
+  id: [ID!]
+  resourceSpecifications: StringHashFilter
+  has: [ActionTemplateHasFilter]
+  and: [ActionTemplateFilter]
+  or: [ActionTemplateFilter]
+  not: ActionTemplateFilter
+}
+
+enum ActionTemplateHasFilter {
+  name
+  type
+  resourceSpecifications
+  actionTemplateItem
+}
+
+type ActionTemplateItem {
+  id: ID!
+  parameters(
+    filter: ConfigurationParameterTypeFilter
+  ): ConfigurationParameterType!
+  value(filter: ParameterFilter): Parameter!
+}
+
+type ActionTemplateItemAggregateResult {
+  count: Int
+}
+
+input ActionTemplateItemFilter {
+  id: [ID!]
+  has: [ActionTemplateItemHasFilter]
+  and: [ActionTemplateItemFilter]
+  or: [ActionTemplateItemFilter]
+  not: ActionTemplateItemFilter
+}
+
+enum ActionTemplateItemHasFilter {
+  parameters
+  value
+}
+
+input ActionTemplateItemPatch {
+  parameters: ConfigurationParameterTypeRef
+  value: ParameterRef
+}
+
+input ActionTemplateItemRef {
+  id: ID
+  parameters: ConfigurationParameterTypeRef
+  value: ParameterRef
+}
+
+input ActionTemplateOrder {
+  asc: ActionTemplateOrderable
+  desc: ActionTemplateOrderable
+  then: ActionTemplateOrder
+}
+
+enum ActionTemplateOrderable {
+  name
+  resourceSpecifications
+}
+
+input ActionTemplatePatch {
+  name: String
+  type: ActionTemplateType
+  resourceSpecifications: String
+  actionTemplateItem: [ActionTemplateRef!]
+}
+
+input ActionTemplateRef {
+  id: ID
+  name: String
+  type: ActionTemplateType
+  resourceSpecifications: String
+  actionTemplateItem: [ActionTemplateRef!]
+}
+
+enum ActionTemplateType {
+  AUTOMATION_FLOW
+  CONFIGURATION_PARAMETER
+}
+
+input AddActionExecutionInput {
+  scheduler: ActionSchedulerRef
+  template: ActionTemplateRef
+  items: [ActionExecutionItemRef]
+}
+
+input AddActionExecutionItemInput {
+  action: ActionExecutionRef!
+  resource: ResourceRef!
+  status: ActionExecutionItemStatus
+}
+
+type AddActionExecutionItemPayload {
+  actionExecutionItem(
+    filter: ActionExecutionItemFilter
+    first: Int
+    offset: Int
+  ): [ActionExecutionItem]
+  numUids: Int
+}
+
+type AddActionExecutionPayload {
+  actionExecution(
+    filter: ActionExecutionFilter
+    first: Int
+    offset: Int
+  ): [ActionExecution]
+  numUids: Int
+}
+
+input AddActionSchedulerInput {
+  name: String!
+  description: String!
+  type: ActionSchedulerType!
+  date: DateTime
+  cron: String
+  action: ActionExecutionRef!
+  status: ActionSchedulerStatus!
+}
+
+type AddActionSchedulerPayload {
+  actionScheduler(
+    filter: ActionSchedulerFilter
+    order: ActionSchedulerOrder
+    first: Int
+    offset: Int
+  ): [ActionScheduler]
+  numUids: Int
+}
+
+input AddActionTemplateInput {
+  name: String!
+  type: ActionTemplateType!
+  resourceSpecifications: String!
+  actionTemplateItem: [ActionTemplateRef!]!
+}
+
+input AddActionTemplateItemInput {
+  parameters: ConfigurationParameterTypeRef!
+  value: ParameterRef!
+}
+
+type AddActionTemplateItemPayload {
+  actionTemplateItem(
+    filter: ActionTemplateItemFilter
+    first: Int
+    offset: Int
+  ): [ActionTemplateItem]
+  numUids: Int
+}
+
+type AddActionTemplatePayload {
+  actionTemplate(
+    filter: ActionTemplateFilter
+    order: ActionTemplateOrder
+    first: Int
+    offset: Int
+  ): [ActionTemplate]
+  numUids: Int
+}
+
 input AddAppointmentRefInput {
   href: String
   description: String
@@ -303,7 +670,7 @@ type AddChangeItemPayload {
 }
 
 input AddChangeRequestActivityInput {
-  author: Int64!
+  author: String!
   isCreate: Boolean!
   activityType: ChangeRequestActivityField!
   oldValue: String
@@ -329,8 +696,8 @@ input AddChangeRequestInput {
   activities: [ChangeRequestActivityRef]
   type: ChangeRequestType
   source: ChangeRequestSource
-  requester: Int64!
-  aprobator: Int64!
+  requester: String!
+  aprobator: String
   status: ChangeRequestStatus!
 }
 
@@ -439,7 +806,7 @@ input AddConfigurationParameterTypeInput {
   mappingOut: String
   tags: [ConfigParamTagRef!]
   parameters: [ParameterRef!]
-  resourceSpecification: Int64!
+  resourceSpecification: String!
 }
 
 type AddConfigurationParameterTypePayload {
@@ -668,15 +1035,15 @@ input AddResourceInput {
   usageSubStatus: UsageSubStatus
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
-  locatedIn: Int64
+  locatedIn: String
   physicalLink: ResourceRef
   physicalLinkInv: [ResourceRef]
   logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
   crossConnection: ResourceRef
   crossconnectionInv: [ResourceRef]
-  resourceSpecification: Int64!
-  resourcePropertys: [ResourcePropertyRef]
+  resourceSpecification: String!
+  resourceProperties: [ResourcePropertyRef]
   isDelete: Boolean!
   numericPool: [NumericPoolRef]
 }
@@ -702,7 +1069,7 @@ input AddResourcePropertyInput {
   rangeToValue: Float
   rawValue: String
   resource: ResourceRef
-  resourcePropertyType: Int64!
+  resourcePropertyType: String!
 }
 
 type AddResourcePropertyPayload {
@@ -1226,8 +1593,8 @@ type ChangeRequest {
   ): [ChangeRequestActivity]
   type: ChangeRequestType
   source: ChangeRequestSource
-  requester: Int64!
-  aprobator: Int64!
+  requester: String!
+  aprobator: String
   status: ChangeRequestStatus!
   itemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
   activitiesAggregate(
@@ -1237,7 +1604,7 @@ type ChangeRequest {
 
 type ChangeRequestActivity {
   id: ID!
-  author: Int64!
+  author: String!
   isCreate: Boolean!
   activityType: ChangeRequestActivityField!
   oldValue: String
@@ -1248,10 +1615,8 @@ type ChangeRequestActivity {
 
 type ChangeRequestActivityAggregateResult {
   count: Int
-  authorMin: Int64
-  authorMax: Int64
-  authorSum: Int64
-  authorAvg: Float
+  authorMin: String
+  authorMax: String
   oldValueMin: String
   oldValueMax: String
   newValueMin: String
@@ -1271,6 +1636,7 @@ enum ChangeRequestActivityField {
 
 input ChangeRequestActivityFilter {
   id: [ID!]
+  author: StringHashFilter
   has: [ChangeRequestActivityHasFilter]
   and: [ChangeRequestActivityFilter]
   or: [ChangeRequestActivityFilter]
@@ -1301,7 +1667,7 @@ enum ChangeRequestActivityOrderable {
 }
 
 input ChangeRequestActivityPatch {
-  author: Int64
+  author: String
   isCreate: Boolean
   activityType: ChangeRequestActivityField
   oldValue: String
@@ -1312,7 +1678,7 @@ input ChangeRequestActivityPatch {
 
 input ChangeRequestActivityRef {
   id: ID
-  author: Int64
+  author: String
   isCreate: Boolean
   activityType: ChangeRequestActivityField
   oldValue: String
@@ -1325,18 +1691,16 @@ type ChangeRequestAggregateResult {
   count: Int
   descriptionMin: String
   descriptionMax: String
-  requesterMin: Int64
-  requesterMax: Int64
-  requesterSum: Int64
-  requesterAvg: Float
-  aprobatorMin: Int64
-  aprobatorMax: Int64
-  aprobatorSum: Int64
-  aprobatorAvg: Float
+  requesterMin: String
+  requesterMax: String
+  aprobatorMin: String
+  aprobatorMax: String
 }
 
 input ChangeRequestFilter {
   id: [ID!]
+  requester: StringHashFilter
+  aprobator: StringHashFilter
   has: [ChangeRequestHasFilter]
   and: [ChangeRequestFilter]
   or: [ChangeRequestFilter]
@@ -1374,8 +1738,8 @@ input ChangeRequestPatch {
   activities: [ChangeRequestActivityRef]
   type: ChangeRequestType
   source: ChangeRequestSource
-  requester: Int64
-  aprobator: Int64
+  requester: String
+  aprobator: String
   status: ChangeRequestStatus
 }
 
@@ -1387,8 +1751,8 @@ input ChangeRequestRef {
   activities: [ChangeRequestActivityRef]
   type: ChangeRequestType
   source: ChangeRequestSource
-  requester: Int64
-  aprobator: Int64
+  requester: String
+  aprobator: String
   status: ChangeRequestStatus
 }
 
@@ -1727,7 +2091,7 @@ type ConfigurationParameterType {
     first: Int
     offset: Int
   ): [Parameter!]
-  resourceSpecification: Int64!
+  resourceSpecification: String!
   tagsAggregate(filter: ConfigParamTagFilter): ConfigParamTagAggregateResult
   parametersAggregate(filter: ParameterFilter): ParameterAggregateResult
 }
@@ -1778,14 +2142,13 @@ type ConfigurationParameterTypeAggregateResult {
   mappingInMax: String
   mappingOutMin: String
   mappingOutMax: String
-  resourceSpecificationMin: Int64
-  resourceSpecificationMax: Int64
-  resourceSpecificationSum: Int64
-  resourceSpecificationAvg: Float
+  resourceSpecificationMin: String
+  resourceSpecificationMax: String
 }
 
 input ConfigurationParameterTypeFilter {
   id: [ID!]
+  resourceSpecification: StringHashFilter
   has: [ConfigurationParameterTypeHasFilter]
   and: [ConfigurationParameterTypeFilter]
   or: [ConfigurationParameterTypeFilter]
@@ -1870,7 +2233,7 @@ input ConfigurationParameterTypePatch {
   mappingOut: String
   tags: [ConfigParamTagRef!]
   parameters: [ParameterRef!]
-  resourceSpecification: Int64
+  resourceSpecification: String
 }
 
 input ConfigurationParameterTypeRef {
@@ -1899,7 +2262,7 @@ input ConfigurationParameterTypeRef {
   mappingOut: String
   tags: [ConfigParamTagRef!]
   parameters: [ParameterRef!]
-  resourceSpecification: Int64
+  resourceSpecification: String
 }
 
 input ContainsFilter {
@@ -1938,6 +2301,58 @@ input DateTimeFilter {
 input DateTimeRange {
   min: DateTime!
   max: DateTime!
+}
+
+type DeleteActionExecutionItemPayload {
+  actionExecutionItem(
+    filter: ActionExecutionItemFilter
+    first: Int
+    offset: Int
+  ): [ActionExecutionItem]
+  msg: String
+  numUids: Int
+}
+
+type DeleteActionExecutionPayload {
+  actionExecution(
+    filter: ActionExecutionFilter
+    first: Int
+    offset: Int
+  ): [ActionExecution]
+  msg: String
+  numUids: Int
+}
+
+type DeleteActionSchedulerPayload {
+  actionScheduler(
+    filter: ActionSchedulerFilter
+    order: ActionSchedulerOrder
+    first: Int
+    offset: Int
+  ): [ActionScheduler]
+  msg: String
+  numUids: Int
+}
+
+type DeleteActionTemplateItemPayload {
+  actionTemplateItem(
+    filter: ActionTemplateItemFilter
+    first: Int
+    offset: Int
+  ): [ActionTemplateItem]
+  msg: String
+  numUids: Int
+}
+
+type DeleteActionTemplatePayload {
+  actionTemplate(
+    filter: ActionTemplateFilter
+    order: ActionTemplateOrder
+    first: Int
+    offset: Int
+  ): [ActionTemplate]
+  msg: String
+  numUids: Int
 }
 
 type DeleteAppointmentRefPayload {
@@ -2330,6 +2745,10 @@ type DeleteSubscriberPayload {
   numUids: Int
 }
 
+input DgraphDefault {
+  value: String
+}
+
 enum DgraphIndex {
   int
   int64
@@ -2396,6 +2815,7 @@ enum ExternalReferenceOrderable {
 }
 
 input ExternalReferencePatch {
+  id: String
   href: String
   externalReferenceType: String
   name: String
@@ -2617,6 +3037,11 @@ input GeometryOrder {
 enum GeometryOrderable {
   x
   y
+}
+
+input GeometryPatch {
+  x: String
+  y: String
 }
 
 input GeometryRef {
@@ -2917,6 +3342,7 @@ type Mutation {
   updatePlace(input: UpdatePlaceInput!): UpdatePlacePayload
   deletePlace(filter: PlaceFilter!): DeletePlacePayload
   addGeometry(input: [AddGeometryInput!]!, upsert: Boolean): AddGeometryPayload
+  updateGeometry(input: UpdateGeometryInput!): UpdateGeometryPayload
   deleteGeometry(filter: GeometryFilter!): DeleteGeometryPayload
   addServiceSpecificationRef(
     input: [AddServiceSpecificationRefInput!]!
@@ -2980,6 +3406,7 @@ type Mutation {
   addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload
   updateSubscriber(input: UpdateSubscriberInput!): UpdateSubscriberPayload
   deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload
+  updateResourceInt(input: UpdateResourceIntInput!): UpdateResourceIntPayload
   deleteResourceInt(filter: ResourceIntFilter!): DeleteResourceIntPayload
   updateServiceReference(
     input: UpdateServiceReferenceInput!
@@ -2993,6 +3420,49 @@ type Mutation {
   ): AddServiceRefPayload
   updateServiceRef(input: UpdateServiceRefInput!): UpdateServiceRefPayload
   deleteServiceRef(filter: ServiceRefFilter!): DeleteServiceRefPayload
+  addActionTemplate(input: [AddActionTemplateInput!]!): AddActionTemplatePayload
+  updateActionTemplate(
+    input: UpdateActionTemplateInput!
+  ): UpdateActionTemplatePayload
+  deleteActionTemplate(
+    filter: ActionTemplateFilter!
+  ): DeleteActionTemplatePayload
+  addActionTemplateItem(
+    input: [AddActionTemplateItemInput!]!
+  ): AddActionTemplateItemPayload
+  updateActionTemplateItem(
+    input: UpdateActionTemplateItemInput!
+  ): UpdateActionTemplateItemPayload
+  deleteActionTemplateItem(
+    filter: ActionTemplateItemFilter!
+  ): DeleteActionTemplateItemPayload
+  addActionScheduler(
+    input: [AddActionSchedulerInput!]!
+  ): AddActionSchedulerPayload
+  updateActionScheduler(
+    input: UpdateActionSchedulerInput!
+  ): UpdateActionSchedulerPayload
+  deleteActionScheduler(
+    filter: ActionSchedulerFilter!
+  ): DeleteActionSchedulerPayload
+  addActionExecutionItem(
+    input: [AddActionExecutionItemInput!]!
+  ): AddActionExecutionItemPayload
+  updateActionExecutionItem(
+    input: UpdateActionExecutionItemInput!
+  ): UpdateActionExecutionItemPayload
+  deleteActionExecutionItem(
+    filter: ActionExecutionItemFilter!
+  ): DeleteActionExecutionItemPayload
+  addActionExecution(
+    input: [AddActionExecutionInput!]!
+  ): AddActionExecutionPayload
+  updateActionExecution(
+    input: UpdateActionExecutionInput!
+  ): UpdateActionExecutionPayload
+  deleteActionExecution(
+    filter: ActionExecutionFilter!
+  ): DeleteActionExecutionPayload
 }
 
 input NearFilter {
@@ -3367,6 +3837,7 @@ enum PartyOrderable {
 }
 
 input PartyPatch {
+  id: String
   href: String
   name: String
   role: String
@@ -3851,7 +4322,7 @@ type Query {
   aggregateSubscriber(filter: SubscriberFilter): SubscriberAggregateResult
   getResourceInt(name: String!): ResourceInt
     @deprecated(
-      reason: "@id argument for get query on interface is being deprecated, it will be removed in v21.11.0, please update your query to not use that argument"
+      reason: "@id argument for get query on interface is being deprecated. Only those @id fields which have interface argument set to true will be available in getQuery argument on interface post v21.11.0, please update your schema accordingly."
     )
   queryResourceInt(
     filter: ResourceIntFilter
@@ -3877,6 +4348,53 @@ type Query {
     offset: Int
   ): [ServiceRef]
   aggregateServiceRef(filter: ServiceRefFilter): ServiceRefAggregateResult
+  getActionTemplate(id: ID!): ActionTemplate
+  queryActionTemplate(
+    filter: ActionTemplateFilter
+    order: ActionTemplateOrder
+    first: Int
+    offset: Int
+  ): [ActionTemplate]
+  aggregateActionTemplate(
+    filter: ActionTemplateFilter
+  ): ActionTemplateAggregateResult
+  getActionTemplateItem(id: ID!): ActionTemplateItem
+  queryActionTemplateItem(
+    filter: ActionTemplateItemFilter
+    first: Int
+    offset: Int
+  ): [ActionTemplateItem]
+  aggregateActionTemplateItem(
+    filter: ActionTemplateItemFilter
+  ): ActionTemplateItemAggregateResult
+  getActionScheduler(id: ID!): ActionScheduler
+  queryActionScheduler(
+    filter: ActionSchedulerFilter
+    order: ActionSchedulerOrder
+    first: Int
+    offset: Int
+  ): [ActionScheduler]
+  aggregateActionScheduler(
+    filter: ActionSchedulerFilter
+  ): ActionSchedulerAggregateResult
+  getActionExecutionItem(id: ID!): ActionExecutionItem
+  queryActionExecutionItem(
+    filter: ActionExecutionItemFilter
+    first: Int
+    offset: Int
+  ): [ActionExecutionItem]
+  aggregateActionExecutionItem(
+    filter: ActionExecutionItemFilter
+  ): ActionExecutionItemAggregateResult
+  getActionExecution(id: ID!): ActionExecution
+  queryActionExecution(
+    filter: ActionExecutionFilter
+    first: Int
+    offset: Int
+  ): [ActionExecution]
+  aggregateActionExecution(
+    filter: ActionExecutionFilter
+  ): ActionExecutionAggregateResult
 }
 
 type RelatedEntity {
@@ -3927,6 +4445,7 @@ enum RelatedEntityOrderable {
 }
 
 input RelatedEntityPatch {
+  id: String
   href: String
   name: String
   role: String
@@ -3956,7 +4475,7 @@ type Resource implements ResourceInt {
     first: Int
     offset: Int
   ): [Resource]
-  locatedIn: Int64
+  locatedIn: String
   physicalLink(filter: ResourceFilter): Resource
   physicalLinkInv(
     filter: ResourceFilter
@@ -3978,8 +4497,8 @@ type Resource implements ResourceInt {
     first: Int
     offset: Int
   ): [Resource]
-  resourceSpecification: Int64!
-  resourcePropertys(
+  resourceSpecification: String!
+  resourceProperties(
     filter: ResourcePropertyFilter
     order: ResourcePropertyOrder
     first: Int
@@ -3996,7 +4515,7 @@ type Resource implements ResourceInt {
   physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   crossconnectionInvAggregate(filter: ResourceFilter): ResourceAggregateResult
-  resourcePropertysAggregate(
+  resourcePropertiesAggregate(
     filter: ResourcePropertyFilter
   ): ResourcePropertyAggregateResult
   numericPoolAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
@@ -4008,20 +4527,17 @@ type ResourceAggregateResult {
   nameMax: String
   externalIdMin: String
   externalIdMax: String
-  locatedInMin: Int64
-  locatedInMax: Int64
-  locatedInSum: Int64
-  locatedInAvg: Float
-  resourceSpecificationMin: Int64
-  resourceSpecificationMax: Int64
-  resourceSpecificationSum: Int64
-  resourceSpecificationAvg: Float
+  locatedInMin: String
+  locatedInMax: String
+  resourceSpecificationMin: String
+  resourceSpecificationMax: String
 }
 
 input ResourceFilter {
   id: [ID!]
   name: StringHashFilter
-  resourceSpecification: Int64Filter
+  locatedIn: StringHashFilter
+  resourceSpecification: StringHashFilter
   has: [ResourceHasFilter]
   and: [ResourceFilter]
   or: [ResourceFilter]
@@ -4047,7 +4563,7 @@ enum ResourceHasFilter {
   crossConnection
   crossconnectionInv
   resourceSpecification
-  resourcePropertys
+  resourceProperties
   isDelete
   numericPool
 }
@@ -4084,6 +4600,10 @@ enum ResourceIntOrderable {
   name
 }
 
+input ResourceIntPatch {
+  name: String
+}
+
 input ResourceIntRef {
   name: String!
 }
@@ -4102,6 +4622,7 @@ enum ResourceOrderable {
 }
 
 input ResourcePatch {
+  name: String
   available: Boolean
   externalId: String
   lifecycleStatus: LifecycleStatus
@@ -4111,15 +4632,15 @@ input ResourcePatch {
   usageSubStatus: UsageSubStatus
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
-  locatedIn: Int64
+  locatedIn: String
   physicalLink: ResourceRef
   physicalLinkInv: [ResourceRef]
   logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
   crossConnection: ResourceRef
   crossconnectionInv: [ResourceRef]
-  resourceSpecification: Int64
-  resourcePropertys: [ResourcePropertyRef]
+  resourceSpecification: String
+  resourceProperties: [ResourcePropertyRef]
   isDelete: Boolean
   numericPool: [NumericPoolRef]
 }
@@ -4136,7 +4657,7 @@ type ResourceProperty {
   rangeToValue: Float
   rawValue: String
   resource(filter: ResourceFilter): Resource
-  resourcePropertyType: Int64!
+  resourcePropertyType: String!
 }
 
 type ResourcePropertyAggregateResult {
@@ -4169,15 +4690,14 @@ type ResourcePropertyAggregateResult {
   rangeToValueAvg: Float
   rawValueMin: String
   rawValueMax: String
-  resourcePropertyTypeMin: Int64
-  resourcePropertyTypeMax: Int64
-  resourcePropertyTypeSum: Int64
-  resourcePropertyTypeAvg: Float
+  resourcePropertyTypeMin: String
+  resourcePropertyTypeMax: String
 }
 
 input ResourcePropertyFilter {
   id: [ID!]
   stringValue: StringTermFilter
+  resourcePropertyType: StringHashFilter
   has: [ResourcePropertyHasFilter]
   and: [ResourcePropertyFilter]
   or: [ResourcePropertyFilter]
@@ -4227,7 +4747,7 @@ input ResourcePropertyPatch {
   rangeToValue: Float
   rawValue: String
   resource: ResourceRef
-  resourcePropertyType: Int64
+  resourcePropertyType: String
 }
 
 input ResourcePropertyRef {
@@ -4242,7 +4762,7 @@ input ResourcePropertyRef {
   rangeToValue: Float
   rawValue: String
   resource: ResourceRef
-  resourcePropertyType: Int64
+  resourcePropertyType: String
 }
 
 input ResourceRef {
@@ -4257,15 +4777,15 @@ input ResourceRef {
   usageSubStatus: UsageSubStatus
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
-  locatedIn: Int64
+  locatedIn: String
   physicalLink: ResourceRef
   physicalLinkInv: [ResourceRef]
   logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
   crossConnection: ResourceRef
   crossconnectionInv: [ResourceRef]
-  resourceSpecification: Int64
-  resourcePropertys: [ResourcePropertyRef]
+  resourceSpecification: String
+  resourceProperties: [ResourcePropertyRef]
   isDelete: Boolean
   numericPool: [NumericPoolRef]
 }
@@ -4314,7 +4834,9 @@ enum ResourceReferenceOrderable {
 }
 
 input ResourceReferencePatch {
+  id: String
   href: String
+  name: String
 }
 
 input ResourceReferenceRef {
@@ -4709,6 +5231,7 @@ enum ServiceOrderRelationshipOrderable {
 }
 
 input ServiceOrderRelationshipPatch {
+  id: String
   href: String
   relationshipType: String
 }
@@ -4807,6 +5330,7 @@ enum ServiceRefOrderable {
 }
 
 input ServiceRefPatch {
+  id: String
   href: String
   name: String
   supportingResource: [ResourceIntRef]
@@ -5182,6 +5706,7 @@ enum ServiceSpecificationRefOrderable {
 }
 
 input ServiceSpecificationRefPatch {
+  id: String
   referredType: String
   type: String
   href: String
@@ -5327,6 +5852,83 @@ enum TypePlanningSubStatus {
   FEASIBILITY_CHECKED
   DESIGNED
   ORDERED
+}
+
+input UpdateActionExecutionInput {
+  filter: ActionExecutionFilter!
+  set: ActionExecutionPatch
+  remove: ActionExecutionPatch
+}
+
+input UpdateActionExecutionItemInput {
+  filter: ActionExecutionItemFilter!
+  set: ActionExecutionItemPatch
+  remove: ActionExecutionItemPatch
+}
+
+type UpdateActionExecutionItemPayload {
+  actionExecutionItem(
+    filter: ActionExecutionItemFilter
+    first: Int
+    offset: Int
+  ): [ActionExecutionItem]
+  numUids: Int
+}
+
+type UpdateActionExecutionPayload {
+  actionExecution(
+    filter: ActionExecutionFilter
+    first: Int
+    offset: Int
+  ): [ActionExecution]
+  numUids: Int
+}
+
+input UpdateActionSchedulerInput {
+  filter: ActionSchedulerFilter!
+  set: ActionSchedulerPatch
+  remove: ActionSchedulerPatch
+}
+
+type UpdateActionSchedulerPayload {
+  actionScheduler(
+    filter: ActionSchedulerFilter
+    order: ActionSchedulerOrder
+    first: Int
+    offset: Int
+  ): [ActionScheduler]
+  numUids: Int
+}
+
+input UpdateActionTemplateInput {
+  filter: ActionTemplateFilter!
+  set: ActionTemplatePatch
+  remove: ActionTemplatePatch
+}
+
+input UpdateActionTemplateItemInput {
+  filter: ActionTemplateItemFilter!
+  set: ActionTemplateItemPatch
+  remove: ActionTemplateItemPatch
+}
+
+type UpdateActionTemplateItemPayload {
+  actionTemplateItem(
+    filter: ActionTemplateItemFilter
+    first: Int
+    offset: Int
+  ): [ActionTemplateItem]
+  numUids: Int
+}
+
+type UpdateActionTemplatePayload {
+  actionTemplate(
+    filter: ActionTemplateFilter
+    order: ActionTemplateOrder
+    first: Int
+    offset: Int
+  ): [ActionTemplate]
+  numUids: Int
 }
 
 input UpdateAppointmentRefInput {
@@ -5537,6 +6139,22 @@ type UpdateFlowExecutionRefPayload {
   numUids: Int
 }
 
+input UpdateGeometryInput {
+  filter: GeometryFilter!
+  set: GeometryPatch
+  remove: GeometryPatch
+}
+
+type UpdateGeometryPayload {
+  geometry(
+    filter: GeometryFilter
+    order: GeometryOrder
+    first: Int
+    offset: Int
+  ): [Geometry]
+  numUids: Int
+}
+
 input UpdateModificationRequestInput {
   filter: ModificationRequestFilter!
   set: ModificationRequestPatch
@@ -5648,6 +6266,22 @@ input UpdateResourceInput {
   filter: ResourceFilter!
   set: ResourcePatch
   remove: ResourcePatch
+}
+
+input UpdateResourceIntInput {
+  filter: ResourceIntFilter!
+  set: ResourceIntPatch
+  remove: ResourceIntPatch
+}
+
+type UpdateResourceIntPayload {
+  resourceInt(
+    filter: ResourceIntFilter
+    order: ResourceIntOrder
+    first: Int
+    offset: Int
+  ): [ResourceInt]
+  numUids: Int
 }
 
 type UpdateResourcePayload {
