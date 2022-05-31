@@ -44,17 +44,16 @@ const useStyles = makeStyles(() => ({
   marginRight: {
     marginRight: '16px',
   },
-  marginLeft: {
+  buttonOut: {
+    borderRadius: '4px 0 0 4px !important',
+  },
+  buttonIn: {
     marginLeft: '2px !important',
+    borderRadius: '0px 4px 4px 0px !important',
   },
   blue: {
     color: BLUE.B600 + ' !important',
     fill: BLUE.B600 + ' !important',
-  },
-  borderRadiusZoomButton: {
-    '& div[class*="textVariant"]': {
-      borderRadius: 4,
-    },
   },
 }));
 
@@ -67,7 +66,7 @@ export default function BottomBar() {
     <ToolsBar className={classes.root}>
       <Tooltip tooltip={'Zoom Out'}>
         <IconButton
-          className={classes.marginLeft}
+          className={classes.buttonOut}
           skin={'regular'}
           onClick={() => flow.zoomOut()}
           icon={RemoveIcon}
@@ -75,6 +74,7 @@ export default function BottomBar() {
       </Tooltip>
       <Tooltip tooltip={'Zoom In'}>
         <IconButton
+          className={classes.buttonIn}
           skin={'regular'}
           onClick={() => flow.zoomIn()}
           icon={AddIcon}
