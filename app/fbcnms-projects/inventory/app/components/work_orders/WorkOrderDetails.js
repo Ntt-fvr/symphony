@@ -76,6 +76,7 @@ import SelectAvailabilityAssignee, {
 
 import LoadingIndicator from '../../common/LoadingIndicator';
 import PropertyTypeInput from '../../common/property_combo/PropertyTypeInput';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useSnackbar} from 'notistack';
@@ -172,6 +173,8 @@ const WorkOrderDetails = ({
     propsWorkOrder,
   );
   const [loading, setLoading] = useState<boolean>(false);
+
+  const featureFlagFilters = useFeatureFlag('scheduling_filter_dates');
 
   const locationTypeID = workOrder.location?.locationType.id;
 
@@ -763,22 +766,24 @@ const WorkOrderDetails = ({
                               />
                             </FormField>
                           </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Scheduled at">
-                              <TextInput
-                                type="datetime"
-                                className={classes.gridInput}
-                                value={
-                                  moment(workOrder.scheduledAt).isValid()
-                                    ? moment(workOrder.scheduledAt).format(
-                                        'YYYY-MM-DD HH:mm',
-                                      )
-                                    : 'No Scheduled'
-                                }
-                                disabled={true}
-                              />
-                            </FormField>
-                          </Grid>
+                          {featureFlagFilters && (
+                            <Grid item xs={12} sm={6} lg={4} xl={4}>
+                              <FormField label="Scheduled at">
+                                <TextInput
+                                  type="datetime"
+                                  className={classes.gridInput}
+                                  value={
+                                    moment(workOrder.scheduledAt).isValid()
+                                      ? moment(workOrder.scheduledAt).format(
+                                          'YYYY-MM-DD HH:mm',
+                                        )
+                                      : 'No Scheduled'
+                                  }
+                                  disabled={true}
+                                />
+                              </FormField>
+                            </Grid>
+                          )}
                           {properties.map((property, index) => (
                             <PropertyTypeInput
                               key={property.id}
