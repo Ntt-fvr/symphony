@@ -218,9 +218,8 @@ func (WorkOrder) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("assignedTo")).
 			Unique(),
 		edge.To("appointment", Appointment.Type),
-		edge.To("workorder", Cost.Type).
-			Annotations(entgql.MapsTo("workorder")).
-			Unique(),
+		edge.To("workorder_costs", Cost.Type).
+			Annotations(entgql.MapsTo("workordercosts")),
 	}
 }
 

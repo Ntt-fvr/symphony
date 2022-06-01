@@ -499,8 +499,8 @@ var (
 		{Name: "price", Type: field.TypeFloat64},
 		{Name: "quantity", Type: field.TypeInt},
 		{Name: "total", Type: field.TypeFloat64},
-		{Name: "upl_item_upl_item", Type: field.TypeInt, Unique: true, Nullable: true},
-		{Name: "work_order_workorder", Type: field.TypeInt, Unique: true, Nullable: true},
+		{Name: "upl_item_uplitem", Type: field.TypeInt, Nullable: true},
+		{Name: "work_order_workorder_costs", Type: field.TypeInt, Nullable: true},
 	}
 	// CostsTable holds the schema information for the "costs" table.
 	CostsTable = &schema.Table{
@@ -509,14 +509,14 @@ var (
 		PrimaryKey: []*schema.Column{CostsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "costs_upl_items_UplItem",
+				Symbol:  "costs_upl_items_uplitem",
 				Columns: []*schema.Column{CostsColumns[8]},
 
 				RefColumns: []*schema.Column{UplItemsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "costs_work_orders_workorder",
+				Symbol:  "costs_work_orders_workorder_costs",
 				Columns: []*schema.Column{CostsColumns[9]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},

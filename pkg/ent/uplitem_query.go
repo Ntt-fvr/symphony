@@ -31,7 +31,7 @@ type UplItemQuery struct {
 	unique     []string
 	predicates []predicate.UplItem
 	// eager-loading edges.
-	withUplItem *CostQuery
+	withUplitem *CostQuery
 	withUpl     *UplQuery
 	withFKs     bool
 	// intermediate query (i.e. traversal path).
@@ -63,8 +63,8 @@ func (uiq *UplItemQuery) Order(o ...OrderFunc) *UplItemQuery {
 	return uiq
 }
 
-// QueryUplItem chains the current query on the UplItem edge.
-func (uiq *UplItemQuery) QueryUplItem() *CostQuery {
+// QueryUplitem chains the current query on the uplitem edge.
+func (uiq *UplItemQuery) QueryUplitem() *CostQuery {
 	query := &CostQuery{config: uiq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uiq.prepareQuery(ctx); err != nil {
@@ -77,7 +77,7 @@ func (uiq *UplItemQuery) QueryUplItem() *CostQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uplitem.Table, uplitem.FieldID, selector),
 			sqlgraph.To(cost.Table, cost.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, uplitem.UplItemTable, uplitem.UplItemColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, uplitem.UplitemTable, uplitem.UplitemColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uiq.driver.Dialect(), step)
 		return fromU, nil
@@ -283,7 +283,7 @@ func (uiq *UplItemQuery) Clone() *UplItemQuery {
 		order:       append([]OrderFunc{}, uiq.order...),
 		unique:      append([]string{}, uiq.unique...),
 		predicates:  append([]predicate.UplItem{}, uiq.predicates...),
-		withUplItem: uiq.withUplItem.Clone(),
+		withUplitem: uiq.withUplitem.Clone(),
 		withUpl:     uiq.withUpl.Clone(),
 		// clone intermediate query.
 		sql:  uiq.sql.Clone(),
@@ -291,14 +291,14 @@ func (uiq *UplItemQuery) Clone() *UplItemQuery {
 	}
 }
 
-//  WithUplItem tells the query-builder to eager-loads the nodes that are connected to
-// the "UplItem" edge. The optional arguments used to configure the query builder of the edge.
-func (uiq *UplItemQuery) WithUplItem(opts ...func(*CostQuery)) *UplItemQuery {
+//  WithUplitem tells the query-builder to eager-loads the nodes that are connected to
+// the "uplitem" edge. The optional arguments used to configure the query builder of the edge.
+func (uiq *UplItemQuery) WithUplitem(opts ...func(*CostQuery)) *UplItemQuery {
 	query := &CostQuery{config: uiq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	uiq.withUplItem = query
+	uiq.withUplitem = query
 	return uiq
 }
 
@@ -384,7 +384,7 @@ func (uiq *UplItemQuery) sqlAll(ctx context.Context) ([]*UplItem, error) {
 		withFKs     = uiq.withFKs
 		_spec       = uiq.querySpec()
 		loadedTypes = [2]bool{
-			uiq.withUplItem != nil,
+			uiq.withUplitem != nil,
 			uiq.withUpl != nil,
 		}
 	)
@@ -418,31 +418,32 @@ func (uiq *UplItemQuery) sqlAll(ctx context.Context) ([]*UplItem, error) {
 		return nodes, nil
 	}
 
-	if query := uiq.withUplItem; query != nil {
+	if query := uiq.withUplitem; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*UplItem)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Uplitem = []*Cost{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Cost(func(s *sql.Selector) {
-			s.Where(sql.InValues(uplitem.UplItemColumn, fks...))
+			s.Where(sql.InValues(uplitem.UplitemColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.upl_item_upl_item
+			fk := n.upl_item_uplitem
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "upl_item_upl_item" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "upl_item_uplitem" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "upl_item_upl_item" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "upl_item_uplitem" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.UplItem = n
+			node.Edges.Uplitem = append(node.Edges.Uplitem, n)
 		}
 	}
 

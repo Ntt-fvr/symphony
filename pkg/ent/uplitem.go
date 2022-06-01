@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 )
@@ -42,8 +41,8 @@ type UplItem struct {
 
 // UplItemEdges holds the relations/edges for other nodes in the graph.
 type UplItemEdges struct {
-	// UplItem holds the value of the UplItem edge.
-	UplItem *Cost
+	// Uplitem holds the value of the uplitem edge.
+	Uplitem []*Cost
 	// Upl holds the value of the upl edge.
 	Upl *Upl
 	// loadedTypes holds the information for reporting if a
@@ -51,18 +50,13 @@ type UplItemEdges struct {
 	loadedTypes [2]bool
 }
 
-// UplItemOrErr returns the UplItem value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e UplItemEdges) UplItemOrErr() (*Cost, error) {
+// UplitemOrErr returns the Uplitem value or an error if the edge
+// was not loaded in eager-loading.
+func (e UplItemEdges) UplitemOrErr() ([]*Cost, error) {
 	if e.loadedTypes[0] {
-		if e.UplItem == nil {
-			// The edge UplItem was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: cost.Label}
-		}
-		return e.UplItem, nil
+		return e.Uplitem, nil
 	}
-	return nil, &NotLoadedError{edge: "UplItem"}
+	return nil, &NotLoadedError{edge: "uplitem"}
 }
 
 // UplOrErr returns the Upl value or an error if the edge
@@ -153,9 +147,9 @@ func (ui *UplItem) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryUplItem queries the UplItem edge of the UplItem.
-func (ui *UplItem) QueryUplItem() *CostQuery {
-	return (&UplItemClient{config: ui.config}).QueryUplItem(ui)
+// QueryUplitem queries the uplitem edge of the UplItem.
+func (ui *UplItem) QueryUplitem() *CostQuery {
+	return (&UplItemClient{config: ui.config}).QueryUplitem(ui)
 }
 
 // QueryUpl queries the upl edge of the UplItem.

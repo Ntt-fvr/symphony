@@ -38,9 +38,9 @@ type Cost struct {
 	Total float64 `json:"total,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CostQuery when eager-loading is set.
-	Edges                CostEdges `json:"edges"`
-	upl_item_upl_item    *int
-	work_order_workorder *int
+	Edges                      CostEdges `json:"edges"`
+	upl_item_uplitem           *int
+	work_order_workorder_costs *int
 }
 
 // CostEdges holds the relations/edges for other nodes in the graph.
@@ -99,8 +99,8 @@ func (*Cost) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Cost) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // upl_item_upl_item
-		&sql.NullInt64{}, // work_order_workorder
+		&sql.NullInt64{}, // upl_item_uplitem
+		&sql.NullInt64{}, // work_order_workorder_costs
 	}
 }
 
@@ -154,16 +154,16 @@ func (c *Cost) assignValues(values ...interface{}) error {
 	values = values[7:]
 	if len(values) == len(cost.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field upl_item_upl_item", value)
+			return fmt.Errorf("unexpected type %T for edge-field upl_item_uplitem", value)
 		} else if value.Valid {
-			c.upl_item_upl_item = new(int)
-			*c.upl_item_upl_item = int(value.Int64)
+			c.upl_item_uplitem = new(int)
+			*c.upl_item_uplitem = int(value.Int64)
 		}
 		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field work_order_workorder", value)
+			return fmt.Errorf("unexpected type %T for edge-field work_order_workorder_costs", value)
 		} else if value.Valid {
-			c.work_order_workorder = new(int)
-			*c.work_order_workorder = int(value.Int64)
+			c.work_order_workorder_costs = new(int)
+			*c.work_order_workorder_costs = int(value.Int64)
 		}
 	}
 	return nil

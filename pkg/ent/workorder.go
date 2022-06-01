@@ -13,7 +13,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/contract"
-	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -103,8 +102,8 @@ type WorkOrderEdges struct {
 	Assignee *User
 	// Appointment holds the value of the appointment edge.
 	Appointment []*Appointment
-	// Workorder holds the value of the workorder edge.
-	Workorder *Cost
+	// WorkorderCosts holds the value of the workorder_costs edge.
+	WorkorderCosts []*Cost
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [18]bool
@@ -303,18 +302,13 @@ func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
 	return nil, &NotLoadedError{edge: "appointment"}
 }
 
-// WorkorderOrErr returns the Workorder value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e WorkOrderEdges) WorkorderOrErr() (*Cost, error) {
+// WorkorderCostsOrErr returns the WorkorderCosts value or an error if the edge
+// was not loaded in eager-loading.
+func (e WorkOrderEdges) WorkorderCostsOrErr() ([]*Cost, error) {
 	if e.loadedTypes[17] {
-		if e.Workorder == nil {
-			// The edge workorder was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: cost.Label}
-		}
-		return e.Workorder, nil
+		return e.WorkorderCosts, nil
 	}
-	return nil, &NotLoadedError{edge: "workorder"}
+	return nil, &NotLoadedError{edge: "workorder_costs"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -573,9 +567,9 @@ func (wo *WorkOrder) QueryAppointment() *AppointmentQuery {
 	return (&WorkOrderClient{config: wo.config}).QueryAppointment(wo)
 }
 
-// QueryWorkorder queries the workorder edge of the WorkOrder.
-func (wo *WorkOrder) QueryWorkorder() *CostQuery {
-	return (&WorkOrderClient{config: wo.config}).QueryWorkorder(wo)
+// QueryWorkorderCosts queries the workorder_costs edge of the WorkOrder.
+func (wo *WorkOrder) QueryWorkorderCosts() *CostQuery {
+	return (&WorkOrderClient{config: wo.config}).QueryWorkorderCosts(wo)
 }
 
 // Update returns a builder for updating this WorkOrder.

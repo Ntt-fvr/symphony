@@ -83123,25 +83123,26 @@ func (m *UplMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type UplItemMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	create_time     *time.Time
-	update_time     *time.Time
-	externalid      *string
-	item            *string
-	unit            *float64
-	addunit         *float64
-	price           *float64
-	addprice        *float64
-	clearedFields   map[string]struct{}
-	_UplItem        *int
-	cleared_UplItem bool
-	upl             *int
-	clearedupl      bool
-	done            bool
-	oldValue        func(context.Context) (*UplItem, error)
-	predicates      []predicate.UplItem
+	op             Op
+	typ            string
+	id             *int
+	create_time    *time.Time
+	update_time    *time.Time
+	externalid     *string
+	item           *string
+	unit           *float64
+	addunit        *float64
+	price          *float64
+	addprice       *float64
+	clearedFields  map[string]struct{}
+	uplitem        map[int]struct{}
+	removeduplitem map[int]struct{}
+	cleareduplitem bool
+	upl            *int
+	clearedupl     bool
+	done           bool
+	oldValue       func(context.Context) (*UplItem, error)
+	predicates     []predicate.UplItem
 }
 
 var _ ent.Mutation = (*UplItemMutation)(nil)
@@ -83485,43 +83486,57 @@ func (m *UplItemMutation) ResetPrice() {
 	m.addprice = nil
 }
 
-// SetUplItemID sets the UplItem edge to Cost by id.
-func (m *UplItemMutation) SetUplItemID(id int) {
-	m._UplItem = &id
+// AddUplitemIDs adds the uplitem edge to Cost by ids.
+func (m *UplItemMutation) AddUplitemIDs(ids ...int) {
+	if m.uplitem == nil {
+		m.uplitem = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.uplitem[ids[i]] = struct{}{}
+	}
 }
 
-// ClearUplItem clears the UplItem edge to Cost.
-func (m *UplItemMutation) ClearUplItem() {
-	m.cleared_UplItem = true
+// ClearUplitem clears the uplitem edge to Cost.
+func (m *UplItemMutation) ClearUplitem() {
+	m.cleareduplitem = true
 }
 
-// UplItemCleared returns if the edge UplItem was cleared.
-func (m *UplItemMutation) UplItemCleared() bool {
-	return m.cleared_UplItem
+// UplitemCleared returns if the edge uplitem was cleared.
+func (m *UplItemMutation) UplitemCleared() bool {
+	return m.cleareduplitem
 }
 
-// UplItemID returns the UplItem id in the mutation.
-func (m *UplItemMutation) UplItemID() (id int, exists bool) {
-	if m._UplItem != nil {
-		return *m._UplItem, true
+// RemoveUplitemIDs removes the uplitem edge to Cost by ids.
+func (m *UplItemMutation) RemoveUplitemIDs(ids ...int) {
+	if m.removeduplitem == nil {
+		m.removeduplitem = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removeduplitem[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUplitem returns the removed ids of uplitem.
+func (m *UplItemMutation) RemovedUplitemIDs() (ids []int) {
+	for id := range m.removeduplitem {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// UplItemIDs returns the UplItem ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// UplItemID instead. It exists only for internal usage by the builders.
-func (m *UplItemMutation) UplItemIDs() (ids []int) {
-	if id := m._UplItem; id != nil {
-		ids = append(ids, *id)
+// UplitemIDs returns the uplitem ids in the mutation.
+func (m *UplItemMutation) UplitemIDs() (ids []int) {
+	for id := range m.uplitem {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetUplItem reset all changes of the "UplItem" edge.
-func (m *UplItemMutation) ResetUplItem() {
-	m._UplItem = nil
-	m.cleared_UplItem = false
+// ResetUplitem reset all changes of the "uplitem" edge.
+func (m *UplItemMutation) ResetUplitem() {
+	m.uplitem = nil
+	m.cleareduplitem = false
+	m.removeduplitem = nil
 }
 
 // SetUplID sets the upl edge to Upl by id.
@@ -83791,8 +83806,8 @@ func (m *UplItemMutation) ResetField(name string) error {
 // mutation.
 func (m *UplItemMutation) AddedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m._UplItem != nil {
-		edges = append(edges, uplitem.EdgeUplItem)
+	if m.uplitem != nil {
+		edges = append(edges, uplitem.EdgeUplitem)
 	}
 	if m.upl != nil {
 		edges = append(edges, uplitem.EdgeUpl)
@@ -83804,10 +83819,12 @@ func (m *UplItemMutation) AddedEdges() []string {
 // the given edge name.
 func (m *UplItemMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case uplitem.EdgeUplItem:
-		if id := m._UplItem; id != nil {
-			return []ent.Value{*id}
+	case uplitem.EdgeUplitem:
+		ids := make([]ent.Value, 0, len(m.uplitem))
+		for id := range m.uplitem {
+			ids = append(ids, id)
 		}
+		return ids
 	case uplitem.EdgeUpl:
 		if id := m.upl; id != nil {
 			return []ent.Value{*id}
@@ -83820,6 +83837,9 @@ func (m *UplItemMutation) AddedIDs(name string) []ent.Value {
 // mutation.
 func (m *UplItemMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
+	if m.removeduplitem != nil {
+		edges = append(edges, uplitem.EdgeUplitem)
+	}
 	return edges
 }
 
@@ -83827,6 +83847,12 @@ func (m *UplItemMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *UplItemMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case uplitem.EdgeUplitem:
+		ids := make([]ent.Value, 0, len(m.removeduplitem))
+		for id := range m.removeduplitem {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -83835,8 +83861,8 @@ func (m *UplItemMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *UplItemMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.cleared_UplItem {
-		edges = append(edges, uplitem.EdgeUplItem)
+	if m.cleareduplitem {
+		edges = append(edges, uplitem.EdgeUplitem)
 	}
 	if m.clearedupl {
 		edges = append(edges, uplitem.EdgeUpl)
@@ -83848,8 +83874,8 @@ func (m *UplItemMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *UplItemMutation) EdgeCleared(name string) bool {
 	switch name {
-	case uplitem.EdgeUplItem:
-		return m.cleared_UplItem
+	case uplitem.EdgeUplitem:
+		return m.cleareduplitem
 	case uplitem.EdgeUpl:
 		return m.clearedupl
 	}
@@ -83860,9 +83886,6 @@ func (m *UplItemMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *UplItemMutation) ClearEdge(name string) error {
 	switch name {
-	case uplitem.EdgeUplItem:
-		m.ClearUplItem()
-		return nil
 	case uplitem.EdgeUpl:
 		m.ClearUpl()
 		return nil
@@ -83875,8 +83898,8 @@ func (m *UplItemMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *UplItemMutation) ResetEdge(name string) error {
 	switch name {
-	case uplitem.EdgeUplItem:
-		m.ResetUplItem()
+	case uplitem.EdgeUplitem:
+		m.ResetUplitem()
 		return nil
 	case uplitem.EdgeUpl:
 		m.ResetUpl()
@@ -86981,8 +87004,9 @@ type WorkOrderMutation struct {
 	appointment                  map[int]struct{}
 	removedappointment           map[int]struct{}
 	clearedappointment           bool
-	workorder                    *int
-	clearedworkorder             bool
+	workorder_costs              map[int]struct{}
+	removedworkorder_costs       map[int]struct{}
+	clearedworkorder_costs       bool
 	done                         bool
 	oldValue                     func(context.Context) (*WorkOrder, error)
 	predicates                   []predicate.WorkOrder
@@ -88470,43 +88494,57 @@ func (m *WorkOrderMutation) ResetAppointment() {
 	m.removedappointment = nil
 }
 
-// SetWorkorderID sets the workorder edge to Cost by id.
-func (m *WorkOrderMutation) SetWorkorderID(id int) {
-	m.workorder = &id
+// AddWorkorderCostIDs adds the workorder_costs edge to Cost by ids.
+func (m *WorkOrderMutation) AddWorkorderCostIDs(ids ...int) {
+	if m.workorder_costs == nil {
+		m.workorder_costs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.workorder_costs[ids[i]] = struct{}{}
+	}
 }
 
-// ClearWorkorder clears the workorder edge to Cost.
-func (m *WorkOrderMutation) ClearWorkorder() {
-	m.clearedworkorder = true
+// ClearWorkorderCosts clears the workorder_costs edge to Cost.
+func (m *WorkOrderMutation) ClearWorkorderCosts() {
+	m.clearedworkorder_costs = true
 }
 
-// WorkorderCleared returns if the edge workorder was cleared.
-func (m *WorkOrderMutation) WorkorderCleared() bool {
-	return m.clearedworkorder
+// WorkorderCostsCleared returns if the edge workorder_costs was cleared.
+func (m *WorkOrderMutation) WorkorderCostsCleared() bool {
+	return m.clearedworkorder_costs
 }
 
-// WorkorderID returns the workorder id in the mutation.
-func (m *WorkOrderMutation) WorkorderID() (id int, exists bool) {
-	if m.workorder != nil {
-		return *m.workorder, true
+// RemoveWorkorderCostIDs removes the workorder_costs edge to Cost by ids.
+func (m *WorkOrderMutation) RemoveWorkorderCostIDs(ids ...int) {
+	if m.removedworkorder_costs == nil {
+		m.removedworkorder_costs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedworkorder_costs[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWorkorderCosts returns the removed ids of workorder_costs.
+func (m *WorkOrderMutation) RemovedWorkorderCostsIDs() (ids []int) {
+	for id := range m.removedworkorder_costs {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// WorkorderIDs returns the workorder ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// WorkorderID instead. It exists only for internal usage by the builders.
-func (m *WorkOrderMutation) WorkorderIDs() (ids []int) {
-	if id := m.workorder; id != nil {
-		ids = append(ids, *id)
+// WorkorderCostsIDs returns the workorder_costs ids in the mutation.
+func (m *WorkOrderMutation) WorkorderCostsIDs() (ids []int) {
+	for id := range m.workorder_costs {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetWorkorder reset all changes of the "workorder" edge.
-func (m *WorkOrderMutation) ResetWorkorder() {
-	m.workorder = nil
-	m.clearedworkorder = false
+// ResetWorkorderCosts reset all changes of the "workorder_costs" edge.
+func (m *WorkOrderMutation) ResetWorkorderCosts() {
+	m.workorder_costs = nil
+	m.clearedworkorder_costs = false
+	m.removedworkorder_costs = nil
 }
 
 // Op returns the operation name.
@@ -88952,8 +88990,8 @@ func (m *WorkOrderMutation) AddedEdges() []string {
 	if m.appointment != nil {
 		edges = append(edges, workorder.EdgeAppointment)
 	}
-	if m.workorder != nil {
-		edges = append(edges, workorder.EdgeWorkorder)
+	if m.workorder_costs != nil {
+		edges = append(edges, workorder.EdgeWorkorderCosts)
 	}
 	return edges
 }
@@ -89048,10 +89086,12 @@ func (m *WorkOrderMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case workorder.EdgeWorkorder:
-		if id := m.workorder; id != nil {
-			return []ent.Value{*id}
+	case workorder.EdgeWorkorderCosts:
+		ids := make([]ent.Value, 0, len(m.workorder_costs))
+		for id := range m.workorder_costs {
+			ids = append(ids, id)
 		}
+		return ids
 	}
 	return nil
 }
@@ -89086,6 +89126,9 @@ func (m *WorkOrderMutation) RemovedEdges() []string {
 	}
 	if m.removedappointment != nil {
 		edges = append(edges, workorder.EdgeAppointment)
+	}
+	if m.removedworkorder_costs != nil {
+		edges = append(edges, workorder.EdgeWorkorderCosts)
 	}
 	return edges
 }
@@ -89148,6 +89191,12 @@ func (m *WorkOrderMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case workorder.EdgeWorkorderCosts:
+		ids := make([]ent.Value, 0, len(m.removedworkorder_costs))
+		for id := range m.removedworkorder_costs {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -89207,8 +89256,8 @@ func (m *WorkOrderMutation) ClearedEdges() []string {
 	if m.clearedappointment {
 		edges = append(edges, workorder.EdgeAppointment)
 	}
-	if m.clearedworkorder {
-		edges = append(edges, workorder.EdgeWorkorder)
+	if m.clearedworkorder_costs {
+		edges = append(edges, workorder.EdgeWorkorderCosts)
 	}
 	return edges
 }
@@ -89251,8 +89300,8 @@ func (m *WorkOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedassignee
 	case workorder.EdgeAppointment:
 		return m.clearedappointment
-	case workorder.EdgeWorkorder:
-		return m.clearedworkorder
+	case workorder.EdgeWorkorderCosts:
+		return m.clearedworkorder_costs
 	}
 	return false
 }
@@ -89284,9 +89333,6 @@ func (m *WorkOrderMutation) ClearEdge(name string) error {
 		return nil
 	case workorder.EdgeAssignee:
 		m.ClearAssignee()
-		return nil
-	case workorder.EdgeWorkorder:
-		m.ClearWorkorder()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder unique edge %s", name)
@@ -89348,8 +89394,8 @@ func (m *WorkOrderMutation) ResetEdge(name string) error {
 	case workorder.EdgeAppointment:
 		m.ResetAppointment()
 		return nil
-	case workorder.EdgeWorkorder:
-		m.ResetWorkorder()
+	case workorder.EdgeWorkorderCosts:
+		m.ResetWorkorderCosts()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder edge %s", name)

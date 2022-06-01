@@ -63,7 +63,7 @@ type WorkOrderQuery struct {
 	withOwner               *UserQuery
 	withAssignee            *UserQuery
 	withAppointment         *AppointmentQuery
-	withWorkorder           *CostQuery
+	withWorkorderCosts      *CostQuery
 	withFKs                 bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -468,8 +468,8 @@ func (woq *WorkOrderQuery) QueryAppointment() *AppointmentQuery {
 	return query
 }
 
-// QueryWorkorder chains the current query on the workorder edge.
-func (woq *WorkOrderQuery) QueryWorkorder() *CostQuery {
+// QueryWorkorderCosts chains the current query on the workorder_costs edge.
+func (woq *WorkOrderQuery) QueryWorkorderCosts() *CostQuery {
 	query := &CostQuery{config: woq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := woq.prepareQuery(ctx); err != nil {
@@ -482,7 +482,7 @@ func (woq *WorkOrderQuery) QueryWorkorder() *CostQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(cost.Table, cost.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, workorder.WorkorderTable, workorder.WorkorderColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, workorder.WorkorderCostsTable, workorder.WorkorderCostsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
 		return fromU, nil
@@ -683,7 +683,7 @@ func (woq *WorkOrderQuery) Clone() *WorkOrderQuery {
 		withOwner:               woq.withOwner.Clone(),
 		withAssignee:            woq.withAssignee.Clone(),
 		withAppointment:         woq.withAppointment.Clone(),
-		withWorkorder:           woq.withWorkorder.Clone(),
+		withWorkorderCosts:      woq.withWorkorderCosts.Clone(),
 		// clone intermediate query.
 		sql:  woq.sql.Clone(),
 		path: woq.path,
@@ -877,14 +877,14 @@ func (woq *WorkOrderQuery) WithAppointment(opts ...func(*AppointmentQuery)) *Wor
 	return woq
 }
 
-//  WithWorkorder tells the query-builder to eager-loads the nodes that are connected to
-// the "workorder" edge. The optional arguments used to configure the query builder of the edge.
-func (woq *WorkOrderQuery) WithWorkorder(opts ...func(*CostQuery)) *WorkOrderQuery {
+//  WithWorkorderCosts tells the query-builder to eager-loads the nodes that are connected to
+// the "workorder_costs" edge. The optional arguments used to configure the query builder of the edge.
+func (woq *WorkOrderQuery) WithWorkorderCosts(opts ...func(*CostQuery)) *WorkOrderQuery {
 	query := &CostQuery{config: woq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	woq.withWorkorder = query
+	woq.withWorkorderCosts = query
 	return woq
 }
 
@@ -976,7 +976,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 			woq.withOwner != nil,
 			woq.withAssignee != nil,
 			woq.withAppointment != nil,
-			woq.withWorkorder != nil,
+			woq.withWorkorderCosts != nil,
 		}
 	)
 	if woq.withType != nil || woq.withTemplate != nil || woq.withOrganization != nil || woq.withContract != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil {
@@ -1470,31 +1470,32 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		}
 	}
 
-	if query := woq.withWorkorder; query != nil {
+	if query := woq.withWorkorderCosts; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*WorkOrder)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.WorkorderCosts = []*Cost{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Cost(func(s *sql.Selector) {
-			s.Where(sql.InValues(workorder.WorkorderColumn, fks...))
+			s.Where(sql.InValues(workorder.WorkorderCostsColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.work_order_workorder
+			fk := n.work_order_workorder_costs
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "work_order_workorder" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "work_order_workorder_costs" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "work_order_workorder" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "work_order_workorder_costs" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Workorder = n
+			node.Edges.WorkorderCosts = append(node.Edges.WorkorderCosts, n)
 		}
 	}
 

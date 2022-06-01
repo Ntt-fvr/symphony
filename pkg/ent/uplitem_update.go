@@ -70,23 +70,19 @@ func (uiu *UplItemUpdate) AddPrice(f float64) *UplItemUpdate {
 	return uiu
 }
 
-// SetUplItemID sets the UplItem edge to Cost by id.
-func (uiu *UplItemUpdate) SetUplItemID(id int) *UplItemUpdate {
-	uiu.mutation.SetUplItemID(id)
+// AddUplitemIDs adds the uplitem edge to Cost by ids.
+func (uiu *UplItemUpdate) AddUplitemIDs(ids ...int) *UplItemUpdate {
+	uiu.mutation.AddUplitemIDs(ids...)
 	return uiu
 }
 
-// SetNillableUplItemID sets the UplItem edge to Cost by id if the given value is not nil.
-func (uiu *UplItemUpdate) SetNillableUplItemID(id *int) *UplItemUpdate {
-	if id != nil {
-		uiu = uiu.SetUplItemID(*id)
+// AddUplitem adds the uplitem edges to Cost.
+func (uiu *UplItemUpdate) AddUplitem(c ...*Cost) *UplItemUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return uiu
-}
-
-// SetUplItem sets the UplItem edge to Cost.
-func (uiu *UplItemUpdate) SetUplItem(c *Cost) *UplItemUpdate {
-	return uiu.SetUplItemID(c.ID)
+	return uiu.AddUplitemIDs(ids...)
 }
 
 // SetUplID sets the upl edge to Upl by id.
@@ -113,10 +109,25 @@ func (uiu *UplItemUpdate) Mutation() *UplItemMutation {
 	return uiu.mutation
 }
 
-// ClearUplItem clears the "UplItem" edge to type Cost.
-func (uiu *UplItemUpdate) ClearUplItem() *UplItemUpdate {
-	uiu.mutation.ClearUplItem()
+// ClearUplitem clears all "uplitem" edges to type Cost.
+func (uiu *UplItemUpdate) ClearUplitem() *UplItemUpdate {
+	uiu.mutation.ClearUplitem()
 	return uiu
+}
+
+// RemoveUplitemIDs removes the uplitem edge to Cost by ids.
+func (uiu *UplItemUpdate) RemoveUplitemIDs(ids ...int) *UplItemUpdate {
+	uiu.mutation.RemoveUplitemIDs(ids...)
+	return uiu
+}
+
+// RemoveUplitem removes uplitem edges to Cost.
+func (uiu *UplItemUpdate) RemoveUplitem(c ...*Cost) *UplItemUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uiu.RemoveUplitemIDs(ids...)
 }
 
 // ClearUpl clears the "upl" edge to type Upl.
@@ -252,12 +263,12 @@ func (uiu *UplItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: uplitem.FieldPrice,
 		})
 	}
-	if uiu.mutation.UplItemCleared() {
+	if uiu.mutation.UplitemCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   uplitem.UplItemTable,
-			Columns: []string{uplitem.UplItemColumn},
+			Table:   uplitem.UplitemTable,
+			Columns: []string{uplitem.UplitemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -268,12 +279,31 @@ func (uiu *UplItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uiu.mutation.UplItemIDs(); len(nodes) > 0 {
+	if nodes := uiu.mutation.RemovedUplitemIDs(); len(nodes) > 0 && !uiu.mutation.UplitemCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   uplitem.UplItemTable,
-			Columns: []string{uplitem.UplItemColumn},
+			Table:   uplitem.UplitemTable,
+			Columns: []string{uplitem.UplitemColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uiu.mutation.UplitemIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   uplitem.UplitemTable,
+			Columns: []string{uplitem.UplitemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -378,23 +408,19 @@ func (uiuo *UplItemUpdateOne) AddPrice(f float64) *UplItemUpdateOne {
 	return uiuo
 }
 
-// SetUplItemID sets the UplItem edge to Cost by id.
-func (uiuo *UplItemUpdateOne) SetUplItemID(id int) *UplItemUpdateOne {
-	uiuo.mutation.SetUplItemID(id)
+// AddUplitemIDs adds the uplitem edge to Cost by ids.
+func (uiuo *UplItemUpdateOne) AddUplitemIDs(ids ...int) *UplItemUpdateOne {
+	uiuo.mutation.AddUplitemIDs(ids...)
 	return uiuo
 }
 
-// SetNillableUplItemID sets the UplItem edge to Cost by id if the given value is not nil.
-func (uiuo *UplItemUpdateOne) SetNillableUplItemID(id *int) *UplItemUpdateOne {
-	if id != nil {
-		uiuo = uiuo.SetUplItemID(*id)
+// AddUplitem adds the uplitem edges to Cost.
+func (uiuo *UplItemUpdateOne) AddUplitem(c ...*Cost) *UplItemUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return uiuo
-}
-
-// SetUplItem sets the UplItem edge to Cost.
-func (uiuo *UplItemUpdateOne) SetUplItem(c *Cost) *UplItemUpdateOne {
-	return uiuo.SetUplItemID(c.ID)
+	return uiuo.AddUplitemIDs(ids...)
 }
 
 // SetUplID sets the upl edge to Upl by id.
@@ -421,10 +447,25 @@ func (uiuo *UplItemUpdateOne) Mutation() *UplItemMutation {
 	return uiuo.mutation
 }
 
-// ClearUplItem clears the "UplItem" edge to type Cost.
-func (uiuo *UplItemUpdateOne) ClearUplItem() *UplItemUpdateOne {
-	uiuo.mutation.ClearUplItem()
+// ClearUplitem clears all "uplitem" edges to type Cost.
+func (uiuo *UplItemUpdateOne) ClearUplitem() *UplItemUpdateOne {
+	uiuo.mutation.ClearUplitem()
 	return uiuo
+}
+
+// RemoveUplitemIDs removes the uplitem edge to Cost by ids.
+func (uiuo *UplItemUpdateOne) RemoveUplitemIDs(ids ...int) *UplItemUpdateOne {
+	uiuo.mutation.RemoveUplitemIDs(ids...)
+	return uiuo
+}
+
+// RemoveUplitem removes uplitem edges to Cost.
+func (uiuo *UplItemUpdateOne) RemoveUplitem(c ...*Cost) *UplItemUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uiuo.RemoveUplitemIDs(ids...)
 }
 
 // ClearUpl clears the "upl" edge to type Upl.
@@ -558,12 +599,12 @@ func (uiuo *UplItemUpdateOne) sqlSave(ctx context.Context) (_node *UplItem, err 
 			Column: uplitem.FieldPrice,
 		})
 	}
-	if uiuo.mutation.UplItemCleared() {
+	if uiuo.mutation.UplitemCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   uplitem.UplItemTable,
-			Columns: []string{uplitem.UplItemColumn},
+			Table:   uplitem.UplitemTable,
+			Columns: []string{uplitem.UplitemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -574,12 +615,31 @@ func (uiuo *UplItemUpdateOne) sqlSave(ctx context.Context) (_node *UplItem, err 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uiuo.mutation.UplItemIDs(); len(nodes) > 0 {
+	if nodes := uiuo.mutation.RemovedUplitemIDs(); len(nodes) > 0 && !uiuo.mutation.UplitemCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   uplitem.UplItemTable,
-			Columns: []string{uplitem.UplItemColumn},
+			Table:   uplitem.UplitemTable,
+			Columns: []string{uplitem.UplitemColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uiuo.mutation.UplitemIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   uplitem.UplitemTable,
+			Columns: []string{uplitem.UplitemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

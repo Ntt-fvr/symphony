@@ -486,23 +486,19 @@ func (woc *WorkOrderCreate) AddAppointment(a ...*Appointment) *WorkOrderCreate {
 	return woc.AddAppointmentIDs(ids...)
 }
 
-// SetWorkorderID sets the workorder edge to Cost by id.
-func (woc *WorkOrderCreate) SetWorkorderID(id int) *WorkOrderCreate {
-	woc.mutation.SetWorkorderID(id)
+// AddWorkorderCostIDs adds the workorder_costs edge to Cost by ids.
+func (woc *WorkOrderCreate) AddWorkorderCostIDs(ids ...int) *WorkOrderCreate {
+	woc.mutation.AddWorkorderCostIDs(ids...)
 	return woc
 }
 
-// SetNillableWorkorderID sets the workorder edge to Cost by id if the given value is not nil.
-func (woc *WorkOrderCreate) SetNillableWorkorderID(id *int) *WorkOrderCreate {
-	if id != nil {
-		woc = woc.SetWorkorderID(*id)
+// AddWorkorderCosts adds the workorder_costs edges to Cost.
+func (woc *WorkOrderCreate) AddWorkorderCosts(c ...*Cost) *WorkOrderCreate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return woc
-}
-
-// SetWorkorder sets the workorder edge to Cost.
-func (woc *WorkOrderCreate) SetWorkorder(c *Cost) *WorkOrderCreate {
-	return woc.SetWorkorderID(c.ID)
+	return woc.AddWorkorderCostIDs(ids...)
 }
 
 // Mutation returns the WorkOrderMutation object of the builder.
@@ -1067,12 +1063,12 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := woc.mutation.WorkorderIDs(); len(nodes) > 0 {
+	if nodes := woc.mutation.WorkorderCostsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   workorder.WorkorderTable,
-			Columns: []string{workorder.WorkorderColumn},
+			Table:   workorder.WorkorderCostsTable,
+			Columns: []string{workorder.WorkorderCostsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

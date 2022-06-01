@@ -1896,7 +1896,7 @@ func (ui *UplItemQuery) collectField(ctx *graphql.OperationContext, field graphq
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "uplitem":
-			ui = ui.WithUplItem(func(query *CostQuery) {
+			ui = ui.WithUplitem(func(query *CostQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -2023,8 +2023,8 @@ func (wo *WorkOrderQuery) collectField(ctx *graphql.OperationContext, field grap
 			wo = wo.WithType(func(query *WorkOrderTypeQuery) {
 				query.collectField(ctx, field)
 			})
-		case "workorder":
-			wo = wo.WithWorkorder(func(query *CostQuery) {
+		case "workordercosts":
+			wo = wo.WithWorkorderCosts(func(query *CostQuery) {
 				query.collectField(ctx, field)
 			})
 		}

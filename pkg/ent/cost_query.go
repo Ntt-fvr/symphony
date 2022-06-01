@@ -76,7 +76,7 @@ func (cq *CostQuery) QueryUplitem() *UplItemQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(cost.Table, cost.FieldID, selector),
 			sqlgraph.To(uplitem.Table, uplitem.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, cost.UplitemTable, cost.UplitemColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, cost.UplitemTable, cost.UplitemColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -98,7 +98,7 @@ func (cq *CostQuery) QueryWorkorder() *WorkOrderQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(cost.Table, cost.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, cost.WorkorderTable, cost.WorkorderColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, cost.WorkorderTable, cost.WorkorderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -421,7 +421,7 @@ func (cq *CostQuery) sqlAll(ctx context.Context) ([]*Cost, error) {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Cost)
 		for i := range nodes {
-			if fk := nodes[i].upl_item_upl_item; fk != nil {
+			if fk := nodes[i].upl_item_uplitem; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -434,7 +434,7 @@ func (cq *CostQuery) sqlAll(ctx context.Context) ([]*Cost, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "upl_item_upl_item" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "upl_item_uplitem" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Uplitem = n
@@ -446,7 +446,7 @@ func (cq *CostQuery) sqlAll(ctx context.Context) ([]*Cost, error) {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Cost)
 		for i := range nodes {
-			if fk := nodes[i].work_order_workorder; fk != nil {
+			if fk := nodes[i].work_order_workorder_costs; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -459,7 +459,7 @@ func (cq *CostQuery) sqlAll(ctx context.Context) ([]*Cost, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "work_order_workorder" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "work_order_workorder_costs" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Workorder = n

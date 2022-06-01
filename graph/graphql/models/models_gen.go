@@ -142,13 +142,14 @@ type AddContractInput struct {
 }
 
 type AddCostInput struct {
+	ID        *int    `json:"id"`
 	Item      string  `json:"item"`
 	Uplitem   int     `json:"uplitem"`
 	Unit      float64 `json:"unit"`
 	Price     float64 `json:"price"`
 	Quantity  int     `json:"quantity"`
 	Total     float64 `json:"total"`
-	Workorder int     `json:"workorder"`
+	Workorder *int    `json:"workorder"`
 }
 
 type AddCounterFamilyInput struct {
@@ -594,6 +595,7 @@ type AddWorkOrderInput struct {
 	Duration            *float64                  `json:"duration"`
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
+	TotalActivityCost   []*AddCostInput           `json:"totalActivityCost"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -1319,6 +1321,7 @@ type EditWorkOrderInput struct {
 	Duration            *float64                  `json:"duration"`
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
+	TotalActivityCost   []*AddCostInput           `json:"totalActivityCost"`
 }
 
 type EditWorkOrderTypeInput struct {

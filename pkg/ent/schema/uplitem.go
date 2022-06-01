@@ -35,8 +35,7 @@ func (UplItem) Fields() []ent.Field {
 // Edges returns property type edges.
 func (UplItem) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("UplItem", Cost.Type).
-			Unique().
+		edge.To("uplitem", Cost.Type).
 			Annotations(entgql.MapsTo("uplitem")),
 		edge.From("upl", Upl.Type).
 			Ref("upl_items").Unique().

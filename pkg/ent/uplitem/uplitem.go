@@ -30,20 +30,20 @@ const (
 	// FieldPrice holds the string denoting the price field in the database.
 	FieldPrice = "price"
 
-	// EdgeUplItem holds the string denoting the uplitem edge name in mutations.
-	EdgeUplItem = "UplItem"
+	// EdgeUplitem holds the string denoting the uplitem edge name in mutations.
+	EdgeUplitem = "uplitem"
 	// EdgeUpl holds the string denoting the upl edge name in mutations.
 	EdgeUpl = "upl"
 
 	// Table holds the table name of the uplitem in the database.
 	Table = "upl_items"
-	// UplItemTable is the table the holds the UplItem relation/edge.
-	UplItemTable = "costs"
-	// UplItemInverseTable is the table name for the Cost entity.
+	// UplitemTable is the table the holds the uplitem relation/edge.
+	UplitemTable = "costs"
+	// UplitemInverseTable is the table name for the Cost entity.
 	// It exists in this package in order to avoid circular dependency with the "cost" package.
-	UplItemInverseTable = "costs"
-	// UplItemColumn is the table column denoting the UplItem relation/edge.
-	UplItemColumn = "upl_item_upl_item"
+	UplitemInverseTable = "costs"
+	// UplitemColumn is the table column denoting the uplitem relation/edge.
+	UplitemColumn = "upl_item_uplitem"
 	// UplTable is the table the holds the upl relation/edge.
 	UplTable = "upl_items"
 	// UplInverseTable is the table name for the Upl entity.

@@ -719,7 +719,7 @@ func HasUplitem() predicate.Cost {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UplitemTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, UplitemTable, UplitemColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UplitemTable, UplitemColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -731,7 +731,7 @@ func HasUplitemWith(preds ...predicate.UplItem) predicate.Cost {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UplitemInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, UplitemTable, UplitemColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UplitemTable, UplitemColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -747,7 +747,7 @@ func HasWorkorder() predicate.Cost {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(WorkorderTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, WorkorderTable, WorkorderColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, WorkorderTable, WorkorderColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -759,7 +759,7 @@ func HasWorkorderWith(preds ...predicate.WorkOrder) predicate.Cost {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(WorkorderInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, WorkorderTable, WorkorderColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, WorkorderTable, WorkorderColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

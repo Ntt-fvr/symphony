@@ -879,6 +879,7 @@ input AddWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  totalActivityCost: [AddCostInput]
 }
 
 input EditWorkOrderInput {
@@ -900,6 +901,7 @@ input EditWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
+  totalActivityCost: [AddCostInput]
 }
 
 input TechnicianCheckListItemInput {
@@ -2167,6 +2169,7 @@ type WorkOrder implements Node & NamedNode {
   organizationFk: Organization
   scheduledAt: Time
   Appointments:[Appointment]
+  totalActivityCost: [Cost]
 }
 
 """
@@ -9230,8 +9233,6 @@ type Mutation {
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
   removeUplItem(id: ID!): ID!
-  addCost(input: AddCostInput!): Cost!
-  editCost(input: EditCostInput!): Cost!
   removeCost(id: ID!): ID!
 }
 
@@ -10770,13 +10771,14 @@ type Cost implements Node {
 }
 
 input AddCostInput {
+  id: ID
   item: String!
   uplitem: ID!
   unit: Float!
   price: Float!
   quantity: Int!
   total: Float!
-  workorder: ID!
+  workorder: ID
 }
 
 input EditCostInput {

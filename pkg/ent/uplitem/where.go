@@ -665,25 +665,25 @@ func PriceLTE(v float64) predicate.UplItem {
 	})
 }
 
-// HasUplItem applies the HasEdge predicate on the "UplItem" edge.
-func HasUplItem() predicate.UplItem {
+// HasUplitem applies the HasEdge predicate on the "uplitem" edge.
+func HasUplitem() predicate.UplItem {
 	return predicate.UplItem(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UplItemTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, UplItemTable, UplItemColumn),
+			sqlgraph.To(UplitemTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UplitemTable, UplitemColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUplItemWith applies the HasEdge predicate on the "UplItem" edge with a given conditions (other predicates).
-func HasUplItemWith(preds ...predicate.Cost) predicate.UplItem {
+// HasUplitemWith applies the HasEdge predicate on the "uplitem" edge with a given conditions (other predicates).
+func HasUplitemWith(preds ...predicate.Cost) predicate.UplItem {
 	return predicate.UplItem(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UplItemInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, UplItemTable, UplItemColumn),
+			sqlgraph.To(UplitemInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UplitemTable, UplitemColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

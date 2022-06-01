@@ -8883,9 +8883,9 @@ func (ui *UplItem) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0] = &Edge{
 		Type: "Cost",
-		Name: "UplItem",
+		Name: "uplitem",
 	}
-	node.Edges[0].IDs, err = ui.QueryUplItem().
+	node.Edges[0].IDs, err = ui.QueryUplitem().
 		Select(cost.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -9517,9 +9517,9 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[17] = &Edge{
 		Type: "Cost",
-		Name: "workorder",
+		Name: "workorder_costs",
 	}
-	node.Edges[17].IDs, err = wo.QueryWorkorder().
+	node.Edges[17].IDs, err = wo.QueryWorkorderCosts().
 		Select(cost.FieldID).
 		Ints(ctx)
 	if err != nil {

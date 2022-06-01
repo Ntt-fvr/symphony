@@ -295,7 +295,7 @@ func (cu *CostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if cu.mutation.UplitemCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.UplitemTable,
 			Columns: []string{cost.UplitemColumn},
@@ -311,7 +311,7 @@ func (cu *CostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := cu.mutation.UplitemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.UplitemTable,
 			Columns: []string{cost.UplitemColumn},
@@ -330,7 +330,7 @@ func (cu *CostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if cu.mutation.WorkorderCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.WorkorderTable,
 			Columns: []string{cost.WorkorderColumn},
@@ -346,7 +346,7 @@ func (cu *CostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := cu.mutation.WorkorderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.WorkorderTable,
 			Columns: []string{cost.WorkorderColumn},
@@ -642,7 +642,7 @@ func (cuo *CostUpdateOne) sqlSave(ctx context.Context) (_node *Cost, err error) 
 	}
 	if cuo.mutation.UplitemCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.UplitemTable,
 			Columns: []string{cost.UplitemColumn},
@@ -658,7 +658,7 @@ func (cuo *CostUpdateOne) sqlSave(ctx context.Context) (_node *Cost, err error) 
 	}
 	if nodes := cuo.mutation.UplitemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.UplitemTable,
 			Columns: []string{cost.UplitemColumn},
@@ -677,7 +677,7 @@ func (cuo *CostUpdateOne) sqlSave(ctx context.Context) (_node *Cost, err error) 
 	}
 	if cuo.mutation.WorkorderCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.WorkorderTable,
 			Columns: []string{cost.WorkorderColumn},
@@ -693,7 +693,7 @@ func (cuo *CostUpdateOne) sqlSave(ctx context.Context) (_node *Cost, err error) 
 	}
 	if nodes := cuo.mutation.WorkorderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.WorkorderTable,
 			Columns: []string{cost.WorkorderColumn},

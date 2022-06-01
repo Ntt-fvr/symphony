@@ -12,7 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/pkg/errors"
-	"github.com/vektah/gqlparser/v2/gqlerror"
+	"go.uber.org/zap"
 )
 
 type costResolver struct{}
@@ -33,24 +33,33 @@ func (costResolver) UplItem(ctx context.Context, cost *ent.Cost) (*ent.UplItem, 
 	return variable, nil
 }
 
-func (r mutationResolver) AddCost(ctx context.Context, input models.AddCostInput) (*ent.Cost, error) {
-	client := r.ClientFrom(ctx)
-	fam, err := client.
-		Cost.Create().
-		SetItem(input.Item).
-		SetUnit(input.Unit).
-		SetPrice(input.Price).
-		SetQuantity(input.Quantity).
-		SetUplitemID(input.Uplitem).
-		SetWorkorderID(input.Workorder).
-		Save(ctx)
-	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-		}
-		return nil, fmt.Errorf("has occurred error on process: %w", err)
+func (r mutationResolver) AddCost(
+	ctx context.Context, parentSetter func(ptc *ent.CostCreate), inputs ...*models.AddCostInput,
+) error {
+
+	var (
+		client   = r.ClientFrom(ctx).Cost
+		builders = make([]*ent.CostCreate, len(inputs))
+	)
+
+	for i, input := range inputs {
+		builders[i] = client.Create().
+			SetItem(input.Item).
+			SetUnit(input.Unit).
+			SetPrice(input.Price).
+			SetQuantity(input.Quantity).
+			SetTotal(input.Total).
+			SetUplitemID(input.Uplitem)
+		parentSetter(builders[i])
 	}
-	return fam, nil
+	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
+		r.logger.For(ctx).
+			Error("cannot create cost",
+				zap.Error(err),
+			)
+		return err
+	}
+	return nil
 }
 
 func (r mutationResolver) RemoveCost(ctx context.Context, id int) (int, error) {
@@ -71,46 +80,18 @@ func (r mutationResolver) RemoveCost(ctx context.Context, id int) (int, error) {
 	return id, nil
 }
 
-func (r mutationResolver) EditCost(ctx context.Context, input models.EditCostInput) (*ent.Cost, error) {
-	client := r.ClientFrom(ctx)
-	et, err := client.Cost.Get(ctx, input.ID)
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-		}
-		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
-	}
-	var uplitemid int
-	var uplitem, err1 = et.Uplitem(ctx)
-	if err1 != nil {
-		return nil, errors.Wrap(err1, "has occurred error on process: %v")
-	} else if uplitem != nil {
-		uplitemid = uplitem.ID
-	}
-	var workorderid int
-	var workorder, err2 = et.Workorder(ctx)
-	if err2 != nil {
-		return nil, errors.Wrap(err1, "has occurred error on process: %v")
-	} else if uplitem != nil {
-		workorderid = workorder.ID
-	}
-	if input.Item != et.Item || input.Unit != et.Unit || input.Price != et.Price ||
-		input.Price != et.Price || input.Quantity != et.Quantity || input.Uplitem != uplitemid || input.Workorder != workorderid {
-		if et, err = client.Cost.
-			UpdateOne(et).
-			SetItem(input.Item).
-			SetUnit(input.Unit).
-			SetPrice(input.Price).
-			SetQuantity(input.Quantity).
-			SetUplitemID(input.Uplitem).
-			SetWorkorderID(input.Workorder).
-			Save(ctx); err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
-			return nil, errors.Wrap(err, "has occurred error on process: %v")
-		}
-	}
+func (r mutationResolver) UpdateCost(ctx context.Context, input *models.AddCostInput, costID int) error {
 
-	return et, nil
+	query := r.ClientFrom(ctx).Cost.
+		UpdateOneID(costID).
+		SetItem(input.Item).
+		SetUnit(input.Unit).
+		SetPrice(input.Price).
+		SetQuantity(input.Quantity).
+		SetUplitemID(input.Uplitem)
+
+	if err := query.Exec(ctx); err != nil {
+		return errors.Wrap(err, "updating cost")
+	}
+	return nil
 }

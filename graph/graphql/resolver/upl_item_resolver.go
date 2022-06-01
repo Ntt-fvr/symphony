@@ -44,7 +44,7 @@ func (r mutationResolver) AddUplItem(
 	}
 	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
 		r.logger.For(ctx).
-			Error("cannot create resource property types",
+			Error("cannot create upl item",
 				zap.Error(err),
 			)
 		return err
@@ -72,14 +72,6 @@ func (r mutationResolver) RemoveUplItem(ctx context.Context, id int) (int, error
 
 func (r mutationResolver) UpdateUplItem(ctx context.Context, input *models.AddUplItemInput, uplItemID int) error {
 
-	// uplItems, _ := r.ClientFrom(ctx).UplItem.Query().
-	// 	Where(uplitem.HasUplWith(upl.ID(uplID))).
-	// 	All(ctx)
-	// var uplitemID int
-	// for _, uplItem := range uplItems {
-	// 	uplitemID = uplItem.ID
-	// }
-
 	query := r.ClientFrom(ctx).UplItem.
 		UpdateOneID(uplItemID).
 		SetExternalid(input.ExternalID).
@@ -87,7 +79,7 @@ func (r mutationResolver) UpdateUplItem(ctx context.Context, input *models.AddUp
 		SetPrice(input.Price)
 
 	if err := query.Exec(ctx); err != nil {
-		return errors.Wrap(err, "updating property type")
+		return errors.Wrap(err, "updating upl item")
 	}
 	return nil
 }

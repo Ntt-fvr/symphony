@@ -2456,12 +2456,12 @@ func (u *Upl) UplItems(ctx context.Context) ([]*UplItem, error) {
 	return result, err
 }
 
-func (ui *UplItem) UplItem(ctx context.Context) (*Cost, error) {
-	result, err := ui.Edges.UplItemOrErr()
+func (ui *UplItem) Uplitem(ctx context.Context) ([]*Cost, error) {
+	result, err := ui.Edges.UplitemOrErr()
 	if IsNotLoaded(err) {
-		result, err = ui.QueryUplItem().Only(ctx)
+		result, err = ui.QueryUplitem().All(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (ui *UplItem) Upl(ctx context.Context) (*Upl, error) {
@@ -2736,12 +2736,12 @@ func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
 	return result, err
 }
 
-func (wo *WorkOrder) Workorder(ctx context.Context) (*Cost, error) {
-	result, err := wo.Edges.WorkorderOrErr()
+func (wo *WorkOrder) WorkorderCosts(ctx context.Context) ([]*Cost, error) {
+	result, err := wo.Edges.WorkorderCostsOrErr()
 	if IsNotLoaded(err) {
-		result, err = wo.QueryWorkorder().Only(ctx)
+		result, err = wo.QueryWorkorderCosts().All(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (wod *WorkOrderDefinition) Type(ctx context.Context) (*WorkOrderType, error) {

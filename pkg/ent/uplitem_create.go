@@ -78,23 +78,19 @@ func (uic *UplItemCreate) SetPrice(f float64) *UplItemCreate {
 	return uic
 }
 
-// SetUplItemID sets the UplItem edge to Cost by id.
-func (uic *UplItemCreate) SetUplItemID(id int) *UplItemCreate {
-	uic.mutation.SetUplItemID(id)
+// AddUplitemIDs adds the uplitem edge to Cost by ids.
+func (uic *UplItemCreate) AddUplitemIDs(ids ...int) *UplItemCreate {
+	uic.mutation.AddUplitemIDs(ids...)
 	return uic
 }
 
-// SetNillableUplItemID sets the UplItem edge to Cost by id if the given value is not nil.
-func (uic *UplItemCreate) SetNillableUplItemID(id *int) *UplItemCreate {
-	if id != nil {
-		uic = uic.SetUplItemID(*id)
+// AddUplitem adds the uplitem edges to Cost.
+func (uic *UplItemCreate) AddUplitem(c ...*Cost) *UplItemCreate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return uic
-}
-
-// SetUplItem sets the UplItem edge to Cost.
-func (uic *UplItemCreate) SetUplItem(c *Cost) *UplItemCreate {
-	return uic.SetUplItemID(c.ID)
+	return uic.AddUplitemIDs(ids...)
 }
 
 // SetUplID sets the upl edge to Upl by id.
@@ -273,12 +269,12 @@ func (uic *UplItemCreate) createSpec() (*UplItem, *sqlgraph.CreateSpec) {
 		})
 		_node.Price = value
 	}
-	if nodes := uic.mutation.UplItemIDs(); len(nodes) > 0 {
+	if nodes := uic.mutation.UplitemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   uplitem.UplItemTable,
-			Columns: []string{uplitem.UplItemColumn},
+			Table:   uplitem.UplitemTable,
+			Columns: []string{uplitem.UplitemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

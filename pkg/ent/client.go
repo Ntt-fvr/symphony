@@ -2803,7 +2803,7 @@ func (c *CostClient) QueryUplitem(co *Cost) *UplItemQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(cost.Table, cost.FieldID, id),
 			sqlgraph.To(uplitem.Table, uplitem.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, cost.UplitemTable, cost.UplitemColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, cost.UplitemTable, cost.UplitemColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -2819,7 +2819,7 @@ func (c *CostClient) QueryWorkorder(co *Cost) *WorkOrderQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(cost.Table, cost.FieldID, id),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, cost.WorkorderTable, cost.WorkorderColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, cost.WorkorderTable, cost.WorkorderColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -14470,15 +14470,15 @@ func (c *UplItemClient) GetX(ctx context.Context, id int) *UplItem {
 	return obj
 }
 
-// QueryUplItem queries the UplItem edge of a UplItem.
-func (c *UplItemClient) QueryUplItem(ui *UplItem) *CostQuery {
+// QueryUplitem queries the uplitem edge of a UplItem.
+func (c *UplItemClient) QueryUplitem(ui *UplItem) *CostQuery {
 	query := &CostQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := ui.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(uplitem.Table, uplitem.FieldID, id),
 			sqlgraph.To(cost.Table, cost.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, uplitem.UplItemTable, uplitem.UplItemColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, uplitem.UplitemTable, uplitem.UplitemColumn),
 		)
 		fromV = sqlgraph.Neighbors(ui.driver.Dialect(), step)
 		return fromV, nil
@@ -15386,15 +15386,15 @@ func (c *WorkOrderClient) QueryAppointment(wo *WorkOrder) *AppointmentQuery {
 	return query
 }
 
-// QueryWorkorder queries the workorder edge of a WorkOrder.
-func (c *WorkOrderClient) QueryWorkorder(wo *WorkOrder) *CostQuery {
+// QueryWorkorderCosts queries the workorder_costs edge of a WorkOrder.
+func (c *WorkOrderClient) QueryWorkorderCosts(wo *WorkOrder) *CostQuery {
 	query := &CostQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := wo.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(cost.Table, cost.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, workorder.WorkorderTable, workorder.WorkorderColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, workorder.WorkorderCostsTable, workorder.WorkorderCostsColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil

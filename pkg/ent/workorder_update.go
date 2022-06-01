@@ -522,23 +522,19 @@ func (wou *WorkOrderUpdate) AddAppointment(a ...*Appointment) *WorkOrderUpdate {
 	return wou.AddAppointmentIDs(ids...)
 }
 
-// SetWorkorderID sets the workorder edge to Cost by id.
-func (wou *WorkOrderUpdate) SetWorkorderID(id int) *WorkOrderUpdate {
-	wou.mutation.SetWorkorderID(id)
+// AddWorkorderCostIDs adds the workorder_costs edge to Cost by ids.
+func (wou *WorkOrderUpdate) AddWorkorderCostIDs(ids ...int) *WorkOrderUpdate {
+	wou.mutation.AddWorkorderCostIDs(ids...)
 	return wou
 }
 
-// SetNillableWorkorderID sets the workorder edge to Cost by id if the given value is not nil.
-func (wou *WorkOrderUpdate) SetNillableWorkorderID(id *int) *WorkOrderUpdate {
-	if id != nil {
-		wou = wou.SetWorkorderID(*id)
+// AddWorkorderCosts adds the workorder_costs edges to Cost.
+func (wou *WorkOrderUpdate) AddWorkorderCosts(c ...*Cost) *WorkOrderUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return wou
-}
-
-// SetWorkorder sets the workorder edge to Cost.
-func (wou *WorkOrderUpdate) SetWorkorder(c *Cost) *WorkOrderUpdate {
-	return wou.SetWorkorderID(c.ID)
+	return wou.AddWorkorderCostIDs(ids...)
 }
 
 // Mutation returns the WorkOrderMutation object of the builder.
@@ -783,10 +779,25 @@ func (wou *WorkOrderUpdate) RemoveAppointment(a ...*Appointment) *WorkOrderUpdat
 	return wou.RemoveAppointmentIDs(ids...)
 }
 
-// ClearWorkorder clears the "workorder" edge to type Cost.
-func (wou *WorkOrderUpdate) ClearWorkorder() *WorkOrderUpdate {
-	wou.mutation.ClearWorkorder()
+// ClearWorkorderCosts clears all "workorder_costs" edges to type Cost.
+func (wou *WorkOrderUpdate) ClearWorkorderCosts() *WorkOrderUpdate {
+	wou.mutation.ClearWorkorderCosts()
 	return wou
+}
+
+// RemoveWorkorderCostIDs removes the workorder_costs edge to Cost by ids.
+func (wou *WorkOrderUpdate) RemoveWorkorderCostIDs(ids ...int) *WorkOrderUpdate {
+	wou.mutation.RemoveWorkorderCostIDs(ids...)
+	return wou
+}
+
+// RemoveWorkorderCosts removes workorder_costs edges to Cost.
+func (wou *WorkOrderUpdate) RemoveWorkorderCosts(c ...*Cost) *WorkOrderUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return wou.RemoveWorkorderCostIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1802,12 +1813,12 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if wou.mutation.WorkorderCleared() {
+	if wou.mutation.WorkorderCostsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   workorder.WorkorderTable,
-			Columns: []string{workorder.WorkorderColumn},
+			Table:   workorder.WorkorderCostsTable,
+			Columns: []string{workorder.WorkorderCostsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1818,12 +1829,31 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := wou.mutation.WorkorderIDs(); len(nodes) > 0 {
+	if nodes := wou.mutation.RemovedWorkorderCostsIDs(); len(nodes) > 0 && !wou.mutation.WorkorderCostsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   workorder.WorkorderTable,
-			Columns: []string{workorder.WorkorderColumn},
+			Table:   workorder.WorkorderCostsTable,
+			Columns: []string{workorder.WorkorderCostsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.WorkorderCostsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.WorkorderCostsTable,
+			Columns: []string{workorder.WorkorderCostsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -2328,23 +2358,19 @@ func (wouo *WorkOrderUpdateOne) AddAppointment(a ...*Appointment) *WorkOrderUpda
 	return wouo.AddAppointmentIDs(ids...)
 }
 
-// SetWorkorderID sets the workorder edge to Cost by id.
-func (wouo *WorkOrderUpdateOne) SetWorkorderID(id int) *WorkOrderUpdateOne {
-	wouo.mutation.SetWorkorderID(id)
+// AddWorkorderCostIDs adds the workorder_costs edge to Cost by ids.
+func (wouo *WorkOrderUpdateOne) AddWorkorderCostIDs(ids ...int) *WorkOrderUpdateOne {
+	wouo.mutation.AddWorkorderCostIDs(ids...)
 	return wouo
 }
 
-// SetNillableWorkorderID sets the workorder edge to Cost by id if the given value is not nil.
-func (wouo *WorkOrderUpdateOne) SetNillableWorkorderID(id *int) *WorkOrderUpdateOne {
-	if id != nil {
-		wouo = wouo.SetWorkorderID(*id)
+// AddWorkorderCosts adds the workorder_costs edges to Cost.
+func (wouo *WorkOrderUpdateOne) AddWorkorderCosts(c ...*Cost) *WorkOrderUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return wouo
-}
-
-// SetWorkorder sets the workorder edge to Cost.
-func (wouo *WorkOrderUpdateOne) SetWorkorder(c *Cost) *WorkOrderUpdateOne {
-	return wouo.SetWorkorderID(c.ID)
+	return wouo.AddWorkorderCostIDs(ids...)
 }
 
 // Mutation returns the WorkOrderMutation object of the builder.
@@ -2589,10 +2615,25 @@ func (wouo *WorkOrderUpdateOne) RemoveAppointment(a ...*Appointment) *WorkOrderU
 	return wouo.RemoveAppointmentIDs(ids...)
 }
 
-// ClearWorkorder clears the "workorder" edge to type Cost.
-func (wouo *WorkOrderUpdateOne) ClearWorkorder() *WorkOrderUpdateOne {
-	wouo.mutation.ClearWorkorder()
+// ClearWorkorderCosts clears all "workorder_costs" edges to type Cost.
+func (wouo *WorkOrderUpdateOne) ClearWorkorderCosts() *WorkOrderUpdateOne {
+	wouo.mutation.ClearWorkorderCosts()
 	return wouo
+}
+
+// RemoveWorkorderCostIDs removes the workorder_costs edge to Cost by ids.
+func (wouo *WorkOrderUpdateOne) RemoveWorkorderCostIDs(ids ...int) *WorkOrderUpdateOne {
+	wouo.mutation.RemoveWorkorderCostIDs(ids...)
+	return wouo
+}
+
+// RemoveWorkorderCosts removes workorder_costs edges to Cost.
+func (wouo *WorkOrderUpdateOne) RemoveWorkorderCosts(c ...*Cost) *WorkOrderUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return wouo.RemoveWorkorderCostIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -3606,12 +3647,12 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if wouo.mutation.WorkorderCleared() {
+	if wouo.mutation.WorkorderCostsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   workorder.WorkorderTable,
-			Columns: []string{workorder.WorkorderColumn},
+			Table:   workorder.WorkorderCostsTable,
+			Columns: []string{workorder.WorkorderCostsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -3622,12 +3663,31 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := wouo.mutation.WorkorderIDs(); len(nodes) > 0 {
+	if nodes := wouo.mutation.RemovedWorkorderCostsIDs(); len(nodes) > 0 && !wouo.mutation.WorkorderCostsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   workorder.WorkorderTable,
-			Columns: []string{workorder.WorkorderColumn},
+			Table:   workorder.WorkorderCostsTable,
+			Columns: []string{workorder.WorkorderCostsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: cost.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.WorkorderCostsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.WorkorderCostsTable,
+			Columns: []string{workorder.WorkorderCostsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

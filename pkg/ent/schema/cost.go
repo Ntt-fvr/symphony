@@ -38,9 +38,10 @@ func (Cost) Fields() []ent.Field {
 func (Cost) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("uplitem", UplItem.Type).
-			Ref("UplItem").Unique(),
+			Ref("uplitem").Unique(),
 		edge.From("workorder", WorkOrder.Type).
-			Ref("workorder").Unique(),
+			Ref("workorder_costs").Unique().
+			Annotations(entgql.OrderField("WORKORDER")),
 	}
 }
 

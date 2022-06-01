@@ -292,7 +292,7 @@ func (cc *CostCreate) createSpec() (*Cost, *sqlgraph.CreateSpec) {
 	}
 	if nodes := cc.mutation.UplitemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.UplitemTable,
 			Columns: []string{cost.UplitemColumn},
@@ -311,7 +311,7 @@ func (cc *CostCreate) createSpec() (*Cost, *sqlgraph.CreateSpec) {
 	}
 	if nodes := cc.mutation.WorkorderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   cost.WorkorderTable,
 			Columns: []string{cost.WorkorderColumn},

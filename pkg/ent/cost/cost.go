@@ -45,14 +45,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "uplitem" package.
 	UplitemInverseTable = "upl_items"
 	// UplitemColumn is the table column denoting the uplitem relation/edge.
-	UplitemColumn = "upl_item_upl_item"
+	UplitemColumn = "upl_item_uplitem"
 	// WorkorderTable is the table the holds the workorder relation/edge.
 	WorkorderTable = "costs"
 	// WorkorderInverseTable is the table name for the WorkOrder entity.
 	// It exists in this package in order to avoid circular dependency with the "workorder" package.
 	WorkorderInverseTable = "work_orders"
 	// WorkorderColumn is the table column denoting the workorder relation/edge.
-	WorkorderColumn = "work_order_workorder"
+	WorkorderColumn = "work_order_workorder_costs"
 )
 
 // Columns holds all SQL columns for cost fields.
@@ -69,8 +69,8 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Cost type.
 var ForeignKeys = []string{
-	"upl_item_upl_item",
-	"work_order_workorder",
+	"upl_item_uplitem",
+	"work_order_workorder_costs",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
