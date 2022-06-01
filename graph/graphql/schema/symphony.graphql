@@ -2268,6 +2268,7 @@ input EditContractInput {
 
 enum ContractFilterType {
   NAME
+  ORGANIZATION
 }
 
 input ContractFilterInput {
@@ -2284,12 +2285,14 @@ type Upl implements Node {
   name: String!
   description: String!
   uplItems: [UplItem]!
+  contract: Contract!
 }
 
 input AddUplInput {  
   name: String!
   description: String!
   uplItems: [AddUplItemInput]
+  contract: ID!
 }
 
 input EditUplInput {
@@ -2297,9 +2300,11 @@ input EditUplInput {
   name: String!
   description: String!
   uplItems: [AddUplItemInput]
+  contract: ID!
 }
 enum UplFilterType {
   NAME
+  CONTRACT
 }
 
 input UplFilterInput {
@@ -10748,6 +10753,7 @@ input EditUplItemInput {
 
 enum UplItemFilterType {
   ITEM
+  UPL
 }
 
 input UplItemFilterInput {

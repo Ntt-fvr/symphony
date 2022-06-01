@@ -34,6 +34,7 @@ func (r mutationResolver) AddUpl(ctx context.Context, input models.AddUplInput) 
 		Upl.Create().
 		SetName(input.Name).
 		SetDescription(input.Description).
+		SetContractID(input.Contract).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -89,6 +90,7 @@ func (r mutationResolver) EditUpl(ctx context.Context, input models.EditUplInput
 			UpdateOne(et).
 			SetName(input.Name).
 			SetDescription(input.Description).
+			SetContractID(input.Contract).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has occurred error on process: %v", err)

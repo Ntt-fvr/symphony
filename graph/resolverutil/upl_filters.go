@@ -7,6 +7,7 @@ package resolverutil
 import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/upl"
 	"github.com/pkg/errors"
@@ -16,12 +17,22 @@ func handleUplFilter(q *ent.UplQuery, filter *models.UplFilterInput) (*ent.UplQu
 	switch filter.FilterType {
 	case models.UplFilterTypeName:
 		return uplNameFilter(q, filter)
+	case models.UplFilterTypeContract:
+		return uplContractFilter(q, filter)
 	}
+
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 func uplNameFilter(q *ent.UplQuery, filter *models.UplFilterInput) (*ent.UplQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(upl.NameContainsFold(*filter.StringValue)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func uplContractFilter(q *ent.UplQuery, filter *models.UplFilterInput) (*ent.UplQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(upl.HasContractWith(contract.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

@@ -555,6 +555,7 @@ type AddUplInput struct {
 	Name        string             `json:"name"`
 	Description string             `json:"description"`
 	UplItems    []*AddUplItemInput `json:"uplItems"`
+	Contract    int                `json:"contract"`
 }
 
 type AddUplItemInput struct {
@@ -1268,6 +1269,7 @@ type EditUplInput struct {
 	Name        string             `json:"name"`
 	Description string             `json:"description"`
 	UplItems    []*AddUplItemInput `json:"uplItems"`
+	Contract    int                `json:"contract"`
 }
 
 type EditUplItemInput struct {
@@ -2417,16 +2419,18 @@ func (e ComparatorFilterType) MarshalGQL(w io.Writer) {
 type ContractFilterType string
 
 const (
-	ContractFilterTypeName ContractFilterType = "NAME"
+	ContractFilterTypeName         ContractFilterType = "NAME"
+	ContractFilterTypeOrganization ContractFilterType = "ORGANIZATION"
 )
 
 var AllContractFilterType = []ContractFilterType{
 	ContractFilterTypeName,
+	ContractFilterTypeOrganization,
 }
 
 func (e ContractFilterType) IsValid() bool {
 	switch e {
-	case ContractFilterTypeName:
+	case ContractFilterTypeName, ContractFilterTypeOrganization:
 		return true
 	}
 	return false
@@ -4148,16 +4152,18 @@ func (e TopologyLinkType) MarshalGQL(w io.Writer) {
 type UplFilterType string
 
 const (
-	UplFilterTypeName UplFilterType = "NAME"
+	UplFilterTypeName     UplFilterType = "NAME"
+	UplFilterTypeContract UplFilterType = "CONTRACT"
 )
 
 var AllUplFilterType = []UplFilterType{
 	UplFilterTypeName,
+	UplFilterTypeContract,
 }
 
 func (e UplFilterType) IsValid() bool {
 	switch e {
-	case UplFilterTypeName:
+	case UplFilterTypeName, UplFilterTypeContract:
 		return true
 	}
 	return false
@@ -4188,15 +4194,17 @@ type UplItemFilterType string
 
 const (
 	UplItemFilterTypeItem UplItemFilterType = "ITEM"
+	UplItemFilterTypeUpl  UplItemFilterType = "UPL"
 )
 
 var AllUplItemFilterType = []UplItemFilterType{
 	UplItemFilterTypeItem,
+	UplItemFilterTypeUpl,
 }
 
 func (e UplItemFilterType) IsValid() bool {
 	switch e {
-	case UplItemFilterTypeItem:
+	case UplItemFilterTypeItem, UplItemFilterTypeUpl:
 		return true
 	}
 	return false
