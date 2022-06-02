@@ -133,7 +133,7 @@ const ResourceCard = (props: Props) => {
   };
 
   const filterDataById = resourceTypes?.queryResource?.filter(
-    item => item.locatedIn === Number(selectedLocationId),
+    item => item.locatedIn === selectedLocationId,
   );
 
   switch (mode) {
