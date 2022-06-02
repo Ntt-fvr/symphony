@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 )
 
 // Contract defines the property type schema.
@@ -46,6 +47,13 @@ func (Contract) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("upl")),
 		edge.To("work_order_contract", WorkOrder.Type).
 			Annotations(entgql.MapsTo("workorder")),
+	}
+}
+
+// Hooks returns contract hooks.
+func (Contract) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.ContractSetStatusByDate(),
 	}
 }
 

@@ -465,6 +465,9 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	contractHooks := schema.Contract{}.Hooks()
+
+	contract.Hooks[1] = contractHooks[0]
 	contractMixinFields0 := contractMixin[0].Fields()
 	contractFields := schema.Contract{}.Fields()
 	_ = contractFields
