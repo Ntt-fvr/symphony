@@ -342,7 +342,7 @@ const AddWorkOrderCard = (props: Props) => {
         workOrderTypeId,
         organizationFk: organizationFk?.id,
         assigneeId: assignedTo?.id,
-        ownerId: owner?.id,
+        ownerId: owner?.id || null,
         projectId: project?.id,
         status,
         priority,
