@@ -142,6 +142,7 @@ type AddContractInput struct {
 }
 
 type AddCostInput struct {
+	IsDeleted *bool   `json:"isDeleted"`
 	ID        *int    `json:"id"`
 	Item      string  `json:"item"`
 	Uplitem   int     `json:"uplitem"`

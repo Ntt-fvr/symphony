@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/cost"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
@@ -62,22 +63,28 @@ func (r mutationResolver) AddCost(
 	return nil
 }
 
-func (r mutationResolver) RemoveCost(ctx context.Context, id int) (int, error) {
+func (r mutationResolver) RemoveCost(ctx context.Context, WorkOrderID int) (int, error) {
 	client := r.ClientFrom(ctx)
-	t, err := client.Cost.Query().
-		Where(
-			cost.ID(id),
-		).
-		Only(ctx)
-	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %v", err)
-	}
-	//TODO: borrar o editar los edges relacionados
+	costs, _ := client.Cost.Query().
+		Where(cost.HasWorkorderWith(workorder.ID(WorkOrderID))).
+		All(ctx)
+	for _, CostActual := range costs {
+		t, err := client.Cost.Query().
+			Where(
+				cost.ID(CostActual.ID),
+			).
+			Only(ctx)
+		if err != nil {
+			return CostActual.ID, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+		}
+		//TODO: borrar o editar los edges relacionados
 
-	if err := client.Cost.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %v")
+		if err := client.Cost.DeleteOne(t).Exec(ctx); err != nil {
+			return CostActual.ID, errors.Wrap(err, "has ocurred error on proces: %v")
+		}
 	}
-	return id, nil
+
+	return WorkOrderID, nil
 }
 
 func (r mutationResolver) UpdateCost(ctx context.Context, input *models.AddCostInput, costID int) error {

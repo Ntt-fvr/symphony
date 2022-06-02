@@ -293,7 +293,9 @@ func (r mutationResolver) EditWorkOrder(
 		RemoveCheckListCategoryIDs(deletedCLIds...).
 		AddCheckListCategoryIDs(addedCLIds...)
 	for _, costs := range input.TotalActivityCost {
-		if costs.ID == nil {
+		if costs.IsDeleted != nil {
+			r.RemoveCost(ctx, wo.ID)
+		} else if costs.ID == nil {
 			if err := r.AddCost(ctx, func(b *ent.CostCreate) {
 				b.SetWorkorderID(wo.ID)
 			}, costs); err != nil {

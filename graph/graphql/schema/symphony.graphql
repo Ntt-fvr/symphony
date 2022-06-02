@@ -10777,6 +10777,7 @@ type Cost implements Node {
 }
 
 input AddCostInput {
+  isDeleted: Boolean
   id: ID
   item: String!
   uplitem: ID!
