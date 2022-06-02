@@ -15,7 +15,9 @@ import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import ErrorMessage from '@fbcnms/ui/components/ErrorMessage';
 import Grid from '@material-ui/core/Grid';
+import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import ModalSteper from './ModalSteper';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import React, {useState} from 'react';
@@ -24,7 +26,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {ResourceNetworkCard} from './ResourceNetworkCard';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -51,162 +55,229 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const ResourceCardListQuery = graphql`
+  query ResourcePropertiesCardQuery($filterResource: ResourceFilter) {
+    queryResource(filter: $filterResource) {
+      id
+      name
+      isDelete
+      resourceSpecification
+      locatedIn
+    }
+    resourceTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    resourceSpecifications {
+      edges {
+        node {
+          id
+          name
+          resourceType {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 type Props = $ReadOnly<{|
   onAddResourceSlot: (selectedResourceType: {}) => void,
   onEditResource: () => void,
   dataListStepper: any,
+  selectedResourceId: ?string,
 |}>;
 
 const ResourcePropertiesCard = (props: Props) => {
-  const {onAddResourceSlot, onEditResource, dataListStepper} = props;
+  const {
+    onAddResourceSlot,
+    onEditResource,
+    dataListStepper,
+    selectedResourceId,
+  } = props;
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
-    <div className={classes.root}>
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        style={{marginBottom: '16px'}}>
-        <Breadcrumbs
-          breadcrumbs={[
-            {
-              id: 'Location',
-              name: 'Location',
-            },
-            {
-              id: `OLT_1212323434`,
-              name: 'OLT_1212323434',
-            },
-          ]}
-          size="large"
-        />
-        <Button onClick={onEditResource}>Edit Resource</Button>
-      </Grid>
-      <Tabs
-        className={classes.tabsContainer}
-        value={selectedTab}
-        onChange={(_e, selectedTab) => {
-          ServerLogger.info(LogEvents.EQUIPMENT_CARD_TAB_CLICKED, {
-            tab: selectedTab,
-          });
-          setSelectedTab(selectedTab);
-        }}
-        indicatorColor="primary"
-        textColor="primary">
-        <Tab label="Details" value="details" />
-        <Tab label="Ports" value="ports" />
-        <Tab label="Network" value="network" />
-        <Tab label="Configuration" value="configuration" />
-        <Tab label="Services" value="services" />
-      </Tabs>
-      <>
-        <PerfectScrollbar>
-          {selectedTab === 'details' ? (
+    <InventoryQueryRenderer
+      query={ResourceCardListQuery}
+      variables={{
+        filterResource: {
+          id: selectedResourceId,
+        },
+      }}
+      render={resourceData => {
+        if (!resourceData) {
+          return (
             <Card>
-              <CardContent>
-                <Typography variant="body2">Resource Type</Typography>
-                <Typography variant="body2">Resource Specification</Typography>
-                <Typography variant="h6" style={{fontWeight: 'bold'}}>
-                  Properties
-                </Typography>
-                <Grid container>
-                  <Grid item xs={6}>
-                    <Typography variant="body2">ID</Typography>
-                    <Typography variant="body2">Model</Typography>
-                    <Typography variant="body2">Serving Area</Typography>
-                    <Typography variant="body2">Last Config Date</Typography>
-                    <Typography variant="body2">
-                      Administrative Substate
-                    </Typography>
-                    <Typography variant="body2">Serial</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2">Vendor</Typography>
-                    <Typography variant="body2">IP</Typography>
-                    <Typography variant="body2">Instalation date</Typography>
-                    <Typography variant="body2">Lifesycle state</Typography>
-                    <Typography variant="body2">
-                      Operational substate
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-              <CardActions>
-                <Grid container>
-                  <Grid item xs className={classes.gridContent}>
-                    Slot 1: <br /> Available
-                    <ActionButton
-                      action={'add'}
-                      onClick={() => {
-                        onAddResourceSlot;
-                        setOpenDialog(true);
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs className={classes.gridContent}>
-                    Slot 2: <br /> Available
-                    <ActionButton
-                      action={'add'}
-                      onClick={() => {
-                        onAddResourceSlot;
-                        setOpenDialog(true);
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs className={classes.gridContent}>
-                    Slot 3: <br /> Available
-                    <ActionButton
-                      action={'add'}
-                      onClick={() => {
-                        onAddResourceSlot;
-                        setOpenDialog(true);
-                      }}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs
-                    className={classes.gridContent}
-                    style={{marginRight: '0'}}>
-                    Slot 4: <br /> Available
-                    <ActionButton
-                      action={'add'}
-                      onClick={() => {
-                        onAddResourceSlot;
-                        setOpenDialog(true);
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-              </CardActions>
+              <ErrorMessage message="It appears this resource does not exist" />
             </Card>
-          ) : null}
-          {selectedTab === 'ports' ? <div>soy ports</div> : null}
-          {selectedTab === 'network' ? (
-            <ResourceNetworkCard
-              onAddResourceSlot={onAddResourceSlot}
-              dataListStepper={dataListStepper}
-            />
-          ) : null}
-          {selectedTab === 'configuration' ? (
-            <div>soy configuration</div>
-          ) : null}
-          {selectedTab === 'services' ? <div>soy services</div> : null}
-        </PerfectScrollbar>
-        {openDialog && (
-          <ModalSteper
-            openModal={openDialog}
-            onClose={() => setOpenDialog(false)}
-            saveModal={onAddResourceSlot}
-            titleSteps={['Resource specification']}
-            dataListStepper={dataListStepper}
-          />
-        )}
-      </>
-    </div>
+          );
+        }
+        return (
+          <div className={classes.root}>
+            {resourceData.queryResource.map(item => (
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                style={{marginBottom: '16px'}}>
+                <Breadcrumbs
+                  breadcrumbs={[
+                    {
+                      id: 'Location',
+                      name: 'Location',
+                    },
+                    {
+                      id: `OLT_1212323434`,
+                      name: item.name,
+                    },
+                  ]}
+                  size="large"
+                />
+                <Button onClick={onEditResource}>Edit Resource</Button>
+              </Grid>
+            ))}
+            <Tabs
+              className={classes.tabsContainer}
+              value={selectedTab}
+              onChange={(_e, selectedTab) => {
+                ServerLogger.info(LogEvents.EQUIPMENT_CARD_TAB_CLICKED, {
+                  tab: selectedTab,
+                });
+                setSelectedTab(selectedTab);
+              }}
+              indicatorColor="primary"
+              textColor="primary">
+              <Tab label="Details" value="details" />
+              <Tab label="Ports" value="ports" />
+              <Tab label="Network" value="network" />
+              <Tab label="Configuration" value="configuration" />
+              <Tab label="Services" value="services" />
+            </Tabs>
+            <>
+              <PerfectScrollbar>
+                {selectedTab === 'details' ? (
+                  <Card>
+                    <CardContent>
+                      <Typography variant="body2">Resource Type</Typography>
+                      <Typography variant="body2">
+                        Resource Specification
+                      </Typography>
+                      <Typography variant="h6" style={{fontWeight: 'bold'}}>
+                        Properties
+                      </Typography>
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <Typography variant="body2">ID</Typography>
+                          <Typography variant="body2">Model</Typography>
+                          <Typography variant="body2">Serving Area</Typography>
+                          <Typography variant="body2">
+                            Last Config Date
+                          </Typography>
+                          <Typography variant="body2">
+                            Administrative Substate
+                          </Typography>
+                          <Typography variant="body2">Serial</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body2">Vendor</Typography>
+                          <Typography variant="body2">IP</Typography>
+                          <Typography variant="body2">
+                            Instalation date
+                          </Typography>
+                          <Typography variant="body2">
+                            Lifesycle state
+                          </Typography>
+                          <Typography variant="body2">
+                            Operational substate
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                    <CardActions>
+                      <Grid container>
+                        <Grid item xs className={classes.gridContent}>
+                          Slot 1: <br /> Available
+                          <ActionButton
+                            action={'add'}
+                            onClick={() => {
+                              onAddResourceSlot;
+                              setOpenDialog(true);
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs className={classes.gridContent}>
+                          Slot 2: <br /> Available
+                          <ActionButton
+                            action={'add'}
+                            onClick={() => {
+                              onAddResourceSlot;
+                              setOpenDialog(true);
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs className={classes.gridContent}>
+                          Slot 3: <br /> Available
+                          <ActionButton
+                            action={'add'}
+                            onClick={() => {
+                              onAddResourceSlot;
+                              setOpenDialog(true);
+                            }}
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          xs
+                          className={classes.gridContent}
+                          style={{marginRight: '0'}}>
+                          Slot 4: <br /> Available
+                          <ActionButton
+                            action={'add'}
+                            onClick={() => {
+                              onAddResourceSlot;
+                              setOpenDialog(true);
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                    </CardActions>
+                  </Card>
+                ) : null}
+                {selectedTab === 'ports' ? <div>soy ports</div> : null}
+                {selectedTab === 'network' ? (
+                  <ResourceNetworkCard
+                    onAddResourceSlot={onAddResourceSlot}
+                    dataListStepper={dataListStepper}
+                  />
+                ) : null}
+                {selectedTab === 'configuration' ? (
+                  <div>soy configuration</div>
+                ) : null}
+                {selectedTab === 'services' ? <div>soy services</div> : null}
+              </PerfectScrollbar>
+              {openDialog && (
+                <ModalSteper
+                  openModal={openDialog}
+                  onClose={() => setOpenDialog(false)}
+                  saveModal={onAddResourceSlot}
+                  titleSteps={['Resource specification']}
+                  dataListStepper={dataListStepper}
+                />
+              )}
+            </>
+          </div>
+        );
+      }}
+    />
   );
 };
 

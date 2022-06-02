@@ -54,8 +54,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ResourceCardListQuery = graphql`
-  query ResourceCardQuery($filterBy: [ResourceSpecificationFilterInput!]) {
-    queryResource {
+  query ResourceCardQuery($filterResource: ResourceFilter) {
+    queryResource(filter: $filterResource) {
       id
       name
       isDelete
@@ -70,7 +70,7 @@ const ResourceCardListQuery = graphql`
         }
       }
     }
-    resourceSpecifications(filterBy: $filterBy) {
+    resourceSpecifications {
       edges {
         node {
           id
@@ -93,6 +93,7 @@ type Props = $ReadOnly<{|
   onCancel: () => void,
   selectedResourceType: {},
   selectedLocationId: ?string,
+  selectedResourceId: ?string,
 |}>;
 
 const ResourceCard = (props: Props) => {
@@ -104,6 +105,7 @@ const ResourceCard = (props: Props) => {
     selectedResourceType,
     onCancel,
     selectedLocationId,
+    selectedResourceId,
   } = props;
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
@@ -156,6 +158,7 @@ const ResourceCard = (props: Props) => {
     case 'show':
       return (
         <ResourcePropertiesCard
+          selectedResourceId={selectedResourceId}
           onAddResourceSlot={onAddResource}
           onEditResource={onEditResource}
           dataListStepper={resourceTypes}

@@ -41,10 +41,10 @@ export type Int64Range = {|
   max: any,
   min: any,
 |};
-export type ResourceCardQueryVariables = {|
+export type ResourcePropertiesCardQueryVariables = {|
   filterResource?: ?ResourceFilter
 |};
-export type ResourceCardQueryResponse = {|
+export type ResourcePropertiesCardQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
@@ -73,15 +73,15 @@ export type ResourceCardQueryResponse = {|
     |}>
   |},
 |};
-export type ResourceCardQuery = {|
-  variables: ResourceCardQueryVariables,
-  response: ResourceCardQueryResponse,
+export type ResourcePropertiesCardQuery = {|
+  variables: ResourcePropertiesCardQueryVariables,
+  response: ResourcePropertiesCardQueryResponse,
 |};
 */
 
 
 /*
-query ResourceCardQuery(
+query ResourcePropertiesCardQuery(
   $filterResource: ResourceFilter
 ) {
   queryResource(filter: $filterResource) {
@@ -264,7 +264,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ResourceCardQuery",
+    "name": "ResourcePropertiesCardQuery",
     "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -273,20 +273,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ResourceCardQuery",
+    "name": "ResourcePropertiesCardQuery",
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "96adf107c585706eaddbbd520581ccca",
+    "cacheID": "45e5d2110a2c81d9d0014f5ead7674c2",
     "id": null,
     "metadata": {},
-    "name": "ResourceCardQuery",
+    "name": "ResourcePropertiesCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    isDelete\n    resourceSpecification\n    locatedIn\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    isDelete\n    resourceSpecification\n    locatedIn\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '90b0e79c69ddf1d791cfd033a08fd125';
+(node/*: any*/).hash = 'b54a239478edc62df38cc566f0d947ac';
 
 module.exports = node;
