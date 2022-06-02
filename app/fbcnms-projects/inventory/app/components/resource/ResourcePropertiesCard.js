@@ -15,6 +15,7 @@ import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import CardPorts from './ResourceCardPorts';
 import Grid from '@material-ui/core/Grid';
 import ModalSteper from './ModalSteper';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -25,6 +26,7 @@ import Typography from '@material-ui/core/Typography';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {makeStyles} from '@material-ui/styles';
+
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -184,7 +186,7 @@ const ResourcePropertiesCard = (props: Props) => {
               </CardActions>
             </Card>
           ) : null}
-          {selectedTab === 'ports' ? <div>soy ports</div> : null}
+          {selectedTab === 'ports' ? <CardPorts /> : null}
           {selectedTab === 'network' ? (
             <ResourceNetworkCard
               onAddResourceSlot={onAddResourceSlot}
