@@ -14,6 +14,7 @@ import type {PropertyType} from '../../../../common/PropertyType';
 export type ParameterTypeTableDispatcherActionType =
   | {|
       type: 'ADD_PARAMETER_TYPE',
+      resourceSpecification: string,
     |}
   | {|
       type: 'REMOVE_PARAMETER_TYPE',
@@ -29,6 +30,7 @@ export type ParameterTypeTableDispatcherActionType =
       id: string,
       // kind: PropertyKind,
       nodeType?: ?string,
+      resourceSpecification: string,
     |}
   | {|
       type: 'UPDATE_PARAMETER_TYPE',

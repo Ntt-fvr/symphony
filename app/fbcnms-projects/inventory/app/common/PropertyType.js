@@ -45,6 +45,7 @@ export type PropertyType = {|
   parentPropertyType?: ?(PropertyType[]),
   dependencePropertyTypes?: ?(PropertyType[]),
   propertyTypeValues?: ?(PropertyTypeValues[]),
+  resourceSpecification?: ?string,
 |};
 
 export type PropertyTypeValues = {|
@@ -136,6 +137,7 @@ export const toMutablePropertyType = (
   dependencePropertyTypes: immutablePropertyType.dependencePropertyTypes,
   propertyTypeValues: immutablePropertyType.propertyTypeValues,
   parentPropertyType: immutablePropertyType.parentPropertyType,
+  resourceSpecification: immutablePropertyType.resourceSpecification,
 });
 
 export const convertPropertyTypeToMutationInput = (
@@ -147,6 +149,19 @@ export const convertPropertyTypeToMutationInput = (
       return {
         ...prop,
         id: isTempId(prop.id) ? undefined : prop.id,
+      };
+    });
+};
+export const convertParameterTypeToMutationInput = (
+  propertyTypes: Array<PropertyType>,
+): Array<PropertyTypeInput> => {
+  return propertyTypes
+    .filter(propType => !!propType.name)
+    .map(prop => {
+      return {
+        name: prop.name,
+        resourceSpecification: prop.resourceSpecification,
+        type: prop.type,
       };
     });
 };

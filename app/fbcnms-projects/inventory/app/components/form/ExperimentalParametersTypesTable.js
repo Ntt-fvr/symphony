@@ -112,7 +112,7 @@ const ExperimentalParametersTypesTable = (props: Props) => {
   const {supportMandatory = true, parameterTypes, supportDelete} = props;
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
-  const dispatch = useContext(ParameterTypesTableDispatcher);
+  const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
   const handleModal = () => {
     setOpenModal(preventState => !preventState);
@@ -262,7 +262,12 @@ const ExperimentalParametersTypesTable = (props: Props) => {
       <FormAction>
         <Button
           variant="text"
-          onClick={() => dispatch({type: 'ADD_PARAMETER_TYPE'})}
+          onClick={() =>
+            dispatch({
+              type: 'ADD_PARAMETER_TYPE',
+              resourceSpecification: '296352743431',
+            })
+          }
           leftIcon={PlusIcon}>
           <fbt desc="">Add Property</fbt>
         </Button>

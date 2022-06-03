@@ -17,7 +17,10 @@ import {useReducer} from 'react';
 
 export type ParameterTypesTableState = Array<PropertyType>;
 
-export const getInitialParameterType = (index: number): PropertyType => ({
+export const getInitialParameterType = (
+  index: number,
+  resourceSpecification: string = '',
+): PropertyType => ({
   id: generateTempId(),
   name: '',
   index: index,
@@ -33,11 +36,10 @@ export const getInitialParameterType = (index: number): PropertyType => ({
   rangeToValue: null,
   isEditable: true,
   isInstanceProperty: true,
+  resourceSpecification,
 });
 
-export const useParameterTypesReducer = (
-  initialParameterTypes: Array<PropertyType>,
-) => {
+export const useParameterTypesReducer = (initialParameterTypes: any) => {
   return useReducer<
     ParameterTypesTableState,
     ParameterTypeTableDispatcherActionType,

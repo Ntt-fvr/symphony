@@ -18,7 +18,7 @@ export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum
 export type AddEditResourceSpecificationQueryVariables = {||};
 export type AddEditResourceSpecificationQueryResponse = {|
   +queryConfigurationParameterType: ?$ReadOnlyArray<?{|
-    +resourceSpecification: any,
+    +resourceSpecification: string,
     +name: string,
     +id: string,
     +booleanValue: ?boolean,

@@ -21,10 +21,14 @@ import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
+import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
+import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
+
+import AddConfigurationParameterTypeMutation from '../../mutations/AddConfigurationParameterTypeMutation';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
@@ -34,8 +38,10 @@ import ParameterTypesTableDispatcher from '../form/context/property_types/Parame
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
+import {convertParameterTypeToMutationInput} from '../../common/PropertyType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {graphql} from 'relay-runtime';
+import {isTempId} from '../../common/EntUtils';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
@@ -44,8 +50,6 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 import {useValidationEdit} from '../assurance/common/useValidation';
-
-import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -152,7 +156,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   } = props;
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
-  const [configurationParameters, setConfigurationParametes] = useState(
+  const [configurationParameters, setConfigurationParameters] = useState(
     useLazyLoadQuery<AddEditResourceSpecificationQuery>(
       ConfigurationParameters,
     ),
@@ -172,11 +176,12 @@ export const AddEditResourceSpecification = (props: Props) => {
       .filter(Boolean)
       .map(toMutablePropertyType),
   );
-  const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer(
-    (filterConfigurationParameter ?? [])
+  const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer({
+    propertyTypes: (filterConfigurationParameter ?? [])
       .filter(Boolean)
       .map(toMutablePropertyType),
-  );
+    resourceSpecification: dataForm?.id,
+  });
 
   const nameEdit = useFormInput(dataForm.name);
 
@@ -254,6 +259,19 @@ export const AddEditResourceSpecification = (props: Props) => {
     EditResourceSpecificationMutation(variables, {
       onCompleted: () => {
         isCompleted();
+        closeForm();
+      },
+    });
+    const finalparameterType = convertParameterTypeToMutationInput(
+      parameterTypes,
+    );
+    const variablesCP: AddConfigurationParameterTypeMutationVariables = {
+      input: finalparameterType,
+    };
+    AddConfigurationParameterTypeMutation(variablesCP, {
+      onCompleted: () => {
+        isCompleted();
+        setConfigurationParameters({});
         closeForm();
       },
     });
@@ -341,7 +359,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
           <ParameterTypesTableDispatcher.Provider
-            value={parameterTypesDispacher}>
+            value={{dispatch: parameterTypesDispacher, parameterTypes}}>
             <ExperimentalParametersTypesTable
               supportDelete={true}
               parameterTypes={parameterTypes}

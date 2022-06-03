@@ -16,11 +16,10 @@ import {getInitialParameterType} from './ParameterTypesTableState';
 import {reorder} from '../../../draggable/DraggableUtils';
 import {sortByIndex} from '../../../draggable/DraggableUtils';
 
-export function getInitialState(
-  propertyTypes: Array<PropertyType>,
-): ParameterTypesTableState {
+export function getInitialState(parameterTypes: any): ParameterTypesTableState {
+  const {propertyTypes, resourceSpecification} = parameterTypes;
   return propertyTypes.length === 0
-    ? [getInitialParameterType(0)]
+    ? [getInitialParameterType(0, resourceSpecification)]
     : propertyTypes.slice().map(p => ({...p}));
 }
 
@@ -45,7 +44,10 @@ export function reducerParameter(
 ): ParameterTypesTableState {
   switch (action.type) {
     case 'ADD_PARAMETER_TYPE':
-      return [...state, getInitialParameterType(state.length)];
+      return [
+        ...state,
+        getInitialParameterType(state.length, action.resourceSpecification),
+      ];
     case 'REMOVE_PARAMETER_TYPE':
       return state.filter(prt => prt.id !== action.id);
     case 'UPDATE_PARAMETER_TYPE_NAME':
@@ -55,7 +57,7 @@ export function reducerParameter(
       }));
     case 'UPDATE_PARAMETER_TYPE_KIND':
       return editParameterType(state, action.id, pt => ({
-        ...getInitialParameterType(pt.index ?? 0),
+        ...getInitialParameterType(pt.index ?? 0, action.resourceSpecification),
         id: action.id,
         // type: action.kind,
         name: pt.name,

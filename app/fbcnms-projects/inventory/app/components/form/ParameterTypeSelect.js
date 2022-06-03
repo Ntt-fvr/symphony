@@ -83,6 +83,7 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
           id: propertyType.id,
           kind: value.kind,
           nodeType: value.nodeType,
+          resourceSpecification: '296352743431',
         });
       }}
     />
