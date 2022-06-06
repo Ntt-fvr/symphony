@@ -94,7 +94,6 @@ export function mapTrueFalseBlockForSave(block: IBlock): TrueFalseBlockInput {
 }
 
 export function mapGoToBlockForSave(block: IBlock): GoToBlockInput {
-  debugger;
   return {
     ...mapBlockForSave(block),
     params: [],

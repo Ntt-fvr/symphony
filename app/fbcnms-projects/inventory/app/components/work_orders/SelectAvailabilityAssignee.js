@@ -18,7 +18,6 @@ import moment from 'moment';
 import Button from '@symphony/design-system/components/Button';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import FormFieldWithPermissions from '../../common/FormFieldWithPermissions';
 import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import React, {useEffect, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
@@ -244,7 +243,7 @@ const SelectAvailabilityAssignee = (props: Props) => {
           />
         </FormField>
       )}
-      <FormFieldWithPermissions
+      <FormField
         className={classes.input}
         label="Owner"
         permissions={{
@@ -252,15 +251,13 @@ const SelectAvailabilityAssignee = (props: Props) => {
           action: 'transferOwnership',
           workOrderTypeId: propsWorkOrder?.workOrderType.id,
           ignorePermissions: isOwner,
-        }}
-        required={true}
-        validation={{id: 'owner', value: workOrder.owner?.id}}>
+        }}>
         <UserTypeahead
           selectedUser={workOrder.owner?.id ? workOrder.owner : null}
           onUserSelection={user => _setWorkOrderDetail('owner', user)}
           margin="dense"
         />
-      </FormFieldWithPermissions>
+      </FormField>
       <FormField
         label="Assignee"
         className={classes.input}

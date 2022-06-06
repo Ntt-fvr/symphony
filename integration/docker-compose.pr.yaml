@@ -22,11 +22,13 @@ services:
     restart: on-failure
 
   front:
+    env_file:
+      - conf/front.env
     build:
       context: ../app
       dockerfile: fbcnms-projects/platform-server/Dockerfile.prod
-    env_file:
-      - conf/front.env
+      args:
+        - recaptcha=6LdmeOEfAAAAAAIGFOyM23yMdwyxOhQZ2fVTMQrD
     depends_on:
       - mysql
     healthcheck:
