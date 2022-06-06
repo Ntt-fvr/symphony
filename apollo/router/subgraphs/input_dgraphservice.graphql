@@ -72,9 +72,10 @@ type Resource implements ResourceInt{
   resourceProperties: [ResourceProperty]
   isDelete: Boolean!
   numericPool: [NumericPool]
+  isEditable: Boolean @default(add: { value: true})
 }
 type ResourceProperty{
-  id: ID! 
+  id: ID!
   stringValue: String @search(by: [term])
   intValue: Int
   booleanValue: Boolean
@@ -129,7 +130,7 @@ enum ParameterKind{
 type ConfigurationParameterType {
   id: ID!
   externalId: String
-  name: String!
+  name: String! @id
   type: ParameterKind!
   nodeType: String
   index: Int
@@ -152,7 +153,7 @@ type ConfigurationParameterType {
   mappingOut: String
   tags: [ConfigParamTag!]
   parameters: [Parameter!]
-  resourceSpecification: String! @search(by: [hash])
+  resourceSpecification: String! @id @search(by: [hash])
 }
 type ConfigParamTag{
   id: ID!
