@@ -11,7 +11,7 @@
 import AddIcon from '@material-ui/icons/Add';
 import FilterCenterFocusIcon from '@material-ui/icons/FilterCenterFocus';
 import IconButton from '@symphony/design-system/components/IconButton';
-import React from 'react';
+import React, {useEffect} from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ToolsBar from './ToolsBar';
 import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
@@ -61,6 +61,11 @@ export default function BottomBar() {
   const classes = useStyles();
   const flow = useGraph();
   const [isOnGrabMode, handleOnGrabMode] = usePaperGrab();
+
+  useEffect(() => {
+    const canvas = document.getElementById('graphContainer');
+    canvas.addEventListener('wheel', flow.zoomScroll);
+  }, []);
 
   return (
     <ToolsBar className={classes.root}>

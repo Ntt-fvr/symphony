@@ -58,7 +58,6 @@ const ConfigureSettings = ({block}: Props) => {
   const classes = useStyles();
 
   const getConfigurationBlock = ({type}) => {
-    debugger;
     switch (type) {
       case TimerType:
         return <ConfigurationTimer block={block} />;
