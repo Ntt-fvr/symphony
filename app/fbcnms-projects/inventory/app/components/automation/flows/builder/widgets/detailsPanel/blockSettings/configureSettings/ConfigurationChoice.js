@@ -18,7 +18,8 @@ import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {useRulesReducer} from '../../inputs/context/rules/RulesTableState';
 
-const ConfigurationChoice = () => {
+const ConfigurationChoice = (props: Props) => {
+  const {block} = props;
   const [rules, rulesDispatcher] = useRulesReducer([]);
 
   return (
@@ -33,6 +34,12 @@ const ConfigurationChoice = () => {
             onClick={() => rulesDispatcher({type: 'ADD_PROPERTY_TYPE'})}
             leftIcon={PlusIcon}>
             <fbt desc="add rule">Add Rule</fbt>
+          </Button>
+          <Button
+            variant="text"
+            onClick={() => block.setConfiguration('holaaaaaaaa')}
+            leftIcon={PlusIcon}>
+            <fbt desc="save configuration">Save configuration</fbt>
           </Button>
         </FormAction>
       </Grid>
