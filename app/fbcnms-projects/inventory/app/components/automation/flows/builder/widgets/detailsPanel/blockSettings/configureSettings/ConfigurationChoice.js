@@ -18,7 +18,8 @@ import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {useRulesReducer} from '../../inputs/context/rules/RulesTableState';
 
-const ConfigurationChoice = () => {
+const ConfigurationChoice = (props: Props) => {
+  const {block} = props;
   const [rules, rulesDispatcher] = useRulesReducer([]);
 
   return (

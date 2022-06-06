@@ -22,6 +22,10 @@ import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
 import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
 import {V} from 'jointjs';
+import {
+  getInitialBlockSettings,
+  setBlockSettings,
+} from './blockTypes/BaseSettings';
 
 const DUPLICATION_SHIFT = {
   x: 84,
@@ -45,12 +49,14 @@ export interface IBlock {
   +view: IVertexView;
   +type: string;
   +name: string;
+  +settings: string;
   +isSelected: boolean;
   +getPorts: () => $ReadOnlyArray<VertexPort>;
   +getInputPort: () => ?VertexPort;
   +getOutputPorts: () => $ReadOnlyArray<VertexPort>;
   +getPortByID: (portID: string) => ?VertexPort;
   +setName: string => void;
+  +setSettings: string => void;
   +outConnectors: Array<IConnector>;
   +addConnector: (
     sourcePort: ?(string | number),
@@ -69,6 +75,7 @@ export default class BaseBlock implements IBlock {
   view: IVertexView;
   type: string;
   name: string;
+  settings: string;
   isSelected: boolean;
   id: string;
   outConnectors: Array<IConnector>;
@@ -88,11 +95,16 @@ export default class BaseBlock implements IBlock {
 
     this.type = model.attributes.type;
     this.id = model.id;
+    this.settings = getInitialBlockSettings(model.attributes.type);
   }
 
   setName(newName: string) {
     this.name = newName;
     this.model.attr('label/text', newName);
+  }
+
+  setSettings(settings: string) {
+    this.settings = setBlockSettings(this.type, settings);
   }
 
   select() {
