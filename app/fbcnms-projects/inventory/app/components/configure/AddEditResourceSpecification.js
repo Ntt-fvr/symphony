@@ -38,7 +38,7 @@ import ParameterTypesTableDispatcher from '../form/context/property_types/Parame
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
-import {convertParameterTypeToMutationInput} from '../../common/PropertyType';
+import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {graphql} from 'relay-runtime';
 import {isTempId} from '../../common/EntUtils';
@@ -176,6 +176,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       .filter(Boolean)
       .map(toMutablePropertyType),
   );
+
   const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer({
     propertyTypes: (filterConfigurationParameter ?? [])
       .filter(Boolean)

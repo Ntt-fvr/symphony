@@ -8,20 +8,21 @@
  * @format
  */
 
-import type {Property} from './Property';
-import type {PropertyFormField_property} from '../components/form/__generated__/PropertyFormField_property.graphql';
+// import type {PropertyFormField_property} from '../components/form/__generated__/PropertyFormField_property.graphql';
 import type {PropertyKind} from '../components/form/__generated__/PropertyTypeFormField_propertyType.graphql';
-import type {PropertyTypeInput} from '../components/configure/mutations/__generated__/EditProjectTypeMutation.graphql';
 
-import {isTempId} from './EntUtils';
+// import type {PropertyTypeInput} from '../components/configure/mutations/__generated__/EditProjectTypeMutation.graphql';
 
-export type PropertyType = {|
+// import {isTempId} from './EntUtils';
+
+export type ParameterType = {|
   id: string,
   type: PropertyKind,
   nodeType?: ?string,
   name: string,
   index?: ?number,
   category?: ?string,
+  externalId?: ?string,
   // one or more of the following potential value fields will have actual data,
   // depending on the property type selected for this property.
   // e.g. for 'email' the stringValue field will be populated
@@ -31,60 +32,78 @@ export type PropertyType = {|
   floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
+  mappingIn?: ?string,
+  mappingOut?: ?string,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
   isMandatory?: ?boolean,
+  isPrioritary?: boolean,
   isListable?: ?boolean,
   isDeleted?: ?boolean,
-  propertyCategory?: ?{|
-    id: string,
-    name: ?string,
-  |},
-  parentPropertyType?: ?(PropertyType[]),
-  dependencePropertyTypes?: ?(PropertyType[]),
-  propertyTypeValues?: ?(PropertyTypeValues[]),
+  parameters?: ?(parameter[]),
+  rawValue?: ?string,
+  tags?: ?(tagsType[]),
+  tagsAggregate?: ?tagsAggregate,
   resourceSpecification?: ?string,
 |};
 
-export type PropertyTypeValues = {|
-  id: string,
-  name: string,
-  parentPropertyTypeValue: ?(PropertyTypeValues[]),
-  propertyType?: PropertyType,
-  propertyTypeValues?: ?(PropertyTypeValues[]),
+export type parameter = {|
+  booleanValue?: ?boolean,
+  id?: ?string,
+  floatValue?: ?number,
+  latitudeValue?: ?number,
+  intValue?: ?number,
+  parameterType?: ?ParameterType,
+  nodeValue?: ?{id: string, name: string, ...},
+  longitudeValue?: ?number,
+  rangeFromValue?: ?number,
+  previous?: ?parameter,
+  stringValue?: ?string,
+  rangeToValue?: ?number,
 |};
 
-export const getPropertyDefaultValue = (propertyType: PropertyType) => {
+export type tagsType = {|
+  id?: ?string,
+  name?: ?string,
+  parameters?: ?(parameter[]),
+|};
+
+export type tagsAggregate = {|
+  count?: number,
+  nameMax?: string,
+  nameMin?: string,
+|};
+
+export const getParameterDefaultValue = (parameterType: ParameterType) => {
   {
-    switch (propertyType.type) {
+    switch (parameterType.type) {
       case 'date':
       case 'email':
       case 'enum':
       case 'string':
-        return propertyType.stringValue;
+        return parameterType.stringValue;
       case 'bool':
-        return propertyType.booleanValue != undefined
-          ? propertyType.booleanValue.toString()
+        return parameterType.booleanValue != undefined
+          ? parameterType.booleanValue.toString()
           : '';
       case 'int':
-        return propertyType.intValue;
+        return parameterType.intValue;
       case 'float':
-        return propertyType.floatValue;
+        return parameterType.floatValue;
       case 'range':
-        return propertyType.rangeFromValue !== null &&
-          propertyType.rangeToValue !== null
-          ? (propertyType.rangeFromValue ?? '') +
+        return parameterType.rangeFromValue !== null &&
+          parameterType.rangeToValue !== null
+          ? (parameterType.rangeFromValue ?? '') +
               ' - ' +
-              (propertyType.rangeToValue ?? '')
+              (parameterType.rangeToValue ?? '')
           : '';
       case 'gps_location':
-        return propertyType.latitudeValue !== null &&
-          propertyType.longitudeValue !== null
-          ? (propertyType.latitudeValue ?? '') +
+        return parameterType.latitudeValue !== null &&
+          parameterType.longitudeValue !== null
+          ? (parameterType.latitudeValue ?? '') +
               ', ' +
-              (propertyType.longitudeValue ?? '')
+              (parameterType.longitudeValue ?? '')
           : '';
       case 'node':
         return '';
@@ -93,11 +112,11 @@ export const getPropertyDefaultValue = (propertyType: PropertyType) => {
 };
 
 export const getInitialPropertyFromType = (
-  propType: PropertyType,
-): Property => {
+  propType: ParameterType,
+): parameter => {
   return {
     id: 'prop@tmp' + propType.id,
-    propertyType: propType,
+    parameterType: propType.parameterss,
     booleanValue: propType.booleanValue,
     stringValue: propType.type !== 'enum' ? propType.stringValue : '',
     intValue: propType.intValue,
@@ -106,15 +125,14 @@ export const getInitialPropertyFromType = (
     longitudeValue: propType.longitudeValue,
     rangeFromValue: propType.rangeFromValue,
     rangeToValue: propType.rangeToValue,
-    nodeValue: null,
+    previous: propType.previous,
+    nodeValue: propType.nodeType,
   };
 };
 
-export const toMutablePropertyType = (
-  immutablePropertyType: $ReadOnly<
-    $ElementType<PropertyFormField_property, 'propertyType'>,
-  >,
-): PropertyType => ({
+export const toMutableParameterType = (
+  immutablePropertyType: $ReadOnly<any>,
+): ParameterType => ({
   id: immutablePropertyType.id,
   type: immutablePropertyType.type,
   nodeType: immutablePropertyType.nodeType,
@@ -130,25 +148,22 @@ export const toMutablePropertyType = (
   rangeFromValue: immutablePropertyType.rangeFromValue,
   rangeToValue: immutablePropertyType.rangeToValue,
   isEditable: immutablePropertyType.isEditable,
-  isInstanceProperty: immutablePropertyType.isInstanceProperty,
   isMandatory: immutablePropertyType.isMandatory,
-  isListable: immutablePropertyType.isListable,
   isDeleted: immutablePropertyType.isDeleted,
-  dependencePropertyTypes: immutablePropertyType.dependencePropertyTypes,
-  propertyTypeValues: immutablePropertyType.propertyTypeValues,
-  parentPropertyType: immutablePropertyType.parentPropertyType,
+  parameters: immutablePropertyType.parentPropertyType,
   resourceSpecification: immutablePropertyType.resourceSpecification,
 });
 
-export const convertPropertyTypeToMutationInput = (
-  propertyTypes: Array<PropertyType>,
-): Array<PropertyTypeInput> => {
+export const convertParameterTypeToMutationInput = (
+  propertyTypes: Array<ParameterType>,
+): Array<any> => {
   return propertyTypes
     .filter(propType => !!propType.name)
     .map(prop => {
       return {
-        ...prop,
-        id: isTempId(prop.id) ? undefined : prop.id,
+        name: prop.name,
+        resourceSpecification: prop.resourceSpecification,
+        type: prop.type,
       };
     });
 };
