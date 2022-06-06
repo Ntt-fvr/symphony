@@ -54,13 +54,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ResourceCardListQuery = graphql`
-  query ResourceCardQuery($filterResource: ResourceFilter) {
-    queryResource(filter: $filterResource) {
+  query ResourceCardQuery {
+    queryResource {
       id
       name
-      isDelete
-      resourceSpecification
       locatedIn
+      resourceSpecification
+      isDelete
+      lifecycleStatus
+      typePlanningSubStatus
+      planningSubStatus
+      usageSubStatus
+      operationalSubStatus
     }
     resourceTypes {
       edges {
