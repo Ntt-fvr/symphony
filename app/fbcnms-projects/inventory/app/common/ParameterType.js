@@ -9,7 +9,7 @@
  */
 
 // import type {PropertyFormField_property} from '../components/form/__generated__/PropertyFormField_property.graphql';
-import type {PropertyKind} from '../components/form/__generated__/PropertyTypeFormField_propertyType.graphql';
+import type {ParameterKind} from '../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 
 // import type {PropertyTypeInput} from '../components/configure/mutations/__generated__/EditProjectTypeMutation.graphql';
 
@@ -17,7 +17,7 @@ import type {PropertyKind} from '../components/form/__generated__/PropertyTypeFo
 
 export type ParameterType = {|
   id: string,
-  type: PropertyKind,
+  type: ParameterKind,
   nodeType?: ?string,
   name: string,
   index?: ?number,
