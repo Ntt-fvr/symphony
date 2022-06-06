@@ -35,12 +35,6 @@ const ConfigurationChoice = (props: Props) => {
             leftIcon={PlusIcon}>
             <fbt desc="add rule">Add Rule</fbt>
           </Button>
-          <Button
-            variant="text"
-            onClick={() => block.setConfiguration('holaaaaaaaa')}
-            leftIcon={PlusIcon}>
-            <fbt desc="save configuration">Save configuration</fbt>
-          </Button>
         </FormAction>
       </Grid>
     </Grid>
