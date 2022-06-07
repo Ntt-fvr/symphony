@@ -87,7 +87,7 @@ const ResourceCardListQuery = graphql`
 
 type Props = $ReadOnly<{|
   onAddResourceSlot: (selectedResourceType: {}) => void,
-  onEditResource: () => void,
+  onEditResource: void => void,
   dataListStepper: any,
   selectedResourceId: ?string,
 |}>;
@@ -142,7 +142,9 @@ const ResourcePropertiesCard = (props: Props) => {
                     ]}
                     size="large"
                   />
-                  <Button onClick={onEditResource}>Edit Resource</Button>
+                  <Button onClick={() => onEditResource(item)}>
+                    Edit Resource
+                  </Button>
                 </Grid>
                 <Tabs
                   className={classes.tabsContainer}

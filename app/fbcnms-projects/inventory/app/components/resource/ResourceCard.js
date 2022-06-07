@@ -93,7 +93,7 @@ const ResourceCardListQuery = graphql`
 type Props = $ReadOnly<{|
   mode?: string,
   onAddResource: (selectedResourceType: {}) => void,
-  onEditResource: () => void,
+  onEditResource: void => void,
   onResourceSelected: (selectedResourceId: string) => void,
   onCancel: () => void,
   selectedResourceType: {},
@@ -115,6 +115,7 @@ const ResourceCard = (props: Props) => {
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
+  const [dataEdit, setDataEdit] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -141,6 +142,10 @@ const ResourceCard = (props: Props) => {
     item => item.locatedIn === selectedLocationId,
   );
 
+  const editResource = resources => {
+    onEditResource(setDataEdit(resources));
+  };
+
   switch (mode) {
     case 'add':
       return (
@@ -154,7 +159,7 @@ const ResourceCard = (props: Props) => {
     case 'edit':
       return (
         <AddEditResourceInLocation
-          dataformModal={selectedResourceType}
+          dataformModal={dataEdit}
           selectedLocationId={selectedLocationId}
           isCompleted={isCompleted}
           closeFormAddEdit={onCancel}
@@ -165,7 +170,7 @@ const ResourceCard = (props: Props) => {
         <ResourcePropertiesCard
           selectedResourceId={selectedResourceId}
           onAddResourceSlot={onAddResource}
-          onEditResource={onEditResource}
+          onEditResource={editResource}
           dataListStepper={resourceTypes}
         />
       );
