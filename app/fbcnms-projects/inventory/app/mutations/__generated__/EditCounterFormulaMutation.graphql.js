@@ -15,10 +15,10 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditCounterFormulaInput = {|
-  id: string,
-  mandatory: boolean,
   counterFk: string,
   formulaFk: string,
+  id: string,
+  mandatory: boolean,
 |};
 export type EditCounterFormulaMutationVariables = {|
   input: EditCounterFormulaInput

@@ -2,23 +2,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build integration
 // +build integration
 
 package tests
 
-import (
-	"context"
-	"testing"
-
-	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/jobrunner"
-	"github.com/facebookincubator/symphony/pkg/exporter/models"
-	"github.com/google/uuid"
-	"github.com/shurcooL/graphql"
-	"github.com/stretchr/testify/require"
-)
-
-func TestJobRun(t *testing.T) {
+/*func TestJobRun(t *testing.T) {
 	configs := []*struct {
 		client         *client
 		deleted        bool
@@ -57,4 +46,4 @@ func TestJobRun(t *testing.T) {
 		}
 		require.Len(t, typ.PropertyTypes, expectedAmount)
 	}
-}
+}*/

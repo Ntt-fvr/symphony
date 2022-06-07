@@ -43,8 +43,10 @@ type Props = {|
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
   onWorkOrderSelected: (workOrderId: string) => void,
+  onResourceSelected: () => void,
   onEdit: () => void,
   onAddEquipment: () => void,
+  onAddResource: (selectedResourceType: {}) => void,
   onLocationMoved: (movedLocation: LocationMenu_location) => void,
   onLocationRemoved: (removedLocation: LocationMenu_location) => void,
 |} & WithStyles<typeof styles> &
@@ -57,7 +59,6 @@ type State = {
 
 const styles = theme => ({
   root: {
-    height: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -179,6 +180,7 @@ class LocationPropertiesCard extends React.Component<Props, State> {
       onLocationMoved,
       onLocationRemoved,
       onAddEquipment,
+      onAddResource,
     } = this.props;
     if (!locationId) {
       return null;
@@ -194,7 +196,7 @@ class LocationPropertiesCard extends React.Component<Props, State> {
       <InventoryQueryRenderer
         query={locationsPropertiesCardQuery}
         variables={{
-          locationId: locationId
+          locationId: locationId,
         }}
         render={props => {
           const location = props.location;
@@ -289,10 +291,13 @@ class LocationPropertiesCard extends React.Component<Props, State> {
                   {this.state.selectedTab === 'details' ? (
                     <LocationDetailsTab
                       location={location}
+                      locationId={locationId}
                       selectedWorkOrderId={this.props.selectedWorkOrderId}
                       onEquipmentSelected={this.props.onEquipmentSelected}
                       onWorkOrderSelected={this.props.onWorkOrderSelected}
+                      onResourceSelected={this.props.onResourceSelected}
                       onAddEquipment={onAddEquipment}
+                      onAddResource={onAddResource}
                     />
                   ) : null}
                   {this.state.selectedTab === 'documents' ? (

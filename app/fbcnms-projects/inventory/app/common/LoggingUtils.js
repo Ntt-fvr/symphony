@@ -134,6 +134,11 @@ export const LogEvents = {
     'service_quality_monitoring_tab_navigation_clicked',
   FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED:
     'fault_management_tab_navigation_clicked',
+
+  //Action Execution
+  ACTION_EXECUTION_NAV_CLICKED: 'action_execution_nav_clicked ',
+  ACTION_EXECUTION_TAB_NAVIGATION_CLICKED:
+    'action_execution_tab_navigation_cliked',
 };
 
 export const ServerLogger = ServerLog('inventory');

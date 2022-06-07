@@ -225,7 +225,6 @@ func (r mutationResolver) EditWorkOrder(
 	}
 	mutation := client.WorkOrder.
 		UpdateOne(wo).
-		SetName(input.Name).
 		SetNillableDescription(input.Description).
 		SetNillableIndex(input.Index).
 		SetNillableStatus(input.Status).
@@ -233,8 +232,11 @@ func (r mutationResolver) EditWorkOrder(
 		SetNillableOrganizationID(input.OrganizationFk).
 		SetNillableDuration(input.Duration).
 		SetNillableDueDate(input.DueDate).
-		SetNillableScheduledAt(input.ScheduledAt)
-
+		SetNillableScheduledAt(input.ScheduledAt).
+		SetNillableIsNameEditable(input.IsNameEditable)
+	if wo.IsNameEditable {
+		mutation.SetName(input.Name)
+	}
 	if input.AssigneeID != nil {
 		mutation.SetAssigneeID(*input.AssigneeID)
 	} else {

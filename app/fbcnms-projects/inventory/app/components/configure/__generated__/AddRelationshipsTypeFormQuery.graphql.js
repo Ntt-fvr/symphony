@@ -20,13 +20,13 @@ export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SL
 export type ResourceTypeFilterType = "NAME" | "RESOURCE_TYPE_BASE_TYPE" | "RESOURCE_TYPE_CLASS" | "%future added value";
 export type ResourceTypeFilterInput = {|
   filterType: ResourceTypeFilterType,
-  operator: FilterOperator,
-  stringValue?: ?string,
-  typeClassValue?: ?ResourceTypeClassKind,
-  typeBaseTypeValue?: ?ResourceTypeBaseTypeKind,
   idSet?: ?$ReadOnlyArray<string>,
   maxDepth?: ?number,
+  operator: FilterOperator,
   stringSet?: ?$ReadOnlyArray<string>,
+  stringValue?: ?string,
+  typeBaseTypeValue?: ?ResourceTypeBaseTypeKind,
+  typeClassValue?: ?ResourceTypeClassKind,
 |};
 export type AddRelationshipsTypeFormQueryVariables = {|
   filterBy?: ?$ReadOnlyArray<ResourceTypeFilterInput>

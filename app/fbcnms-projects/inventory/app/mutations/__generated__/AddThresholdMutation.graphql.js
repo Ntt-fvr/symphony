@@ -15,10 +15,10 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddThresholdInput = {|
-  name: string,
   description: string,
-  status: boolean,
   kpi: string,
+  name: string,
+  status: boolean,
 |};
 export type AddThresholdMutationVariables = {|
   input: AddThresholdInput

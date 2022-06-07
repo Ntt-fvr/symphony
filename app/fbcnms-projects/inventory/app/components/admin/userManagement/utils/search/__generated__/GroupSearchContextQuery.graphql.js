@@ -22,9 +22,9 @@ export type UsersGroupFilterType = "GROUP_NAME" | "%future added value";
 export type UsersGroupStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
 export type UsersGroupFilterInput = {|
   filterType: UsersGroupFilterType,
+  maxDepth?: ?number,
   operator: FilterOperator,
   stringValue?: ?string,
-  maxDepth?: ?number,
 |};
 export type GroupSearchContextQueryVariables = {|
   filters: $ReadOnlyArray<UsersGroupFilterInput>

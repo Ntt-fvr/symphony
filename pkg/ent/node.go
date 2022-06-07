@@ -9237,7 +9237,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wo.ID,
 		Type:   "WorkOrder",
-		Fields: make([]*Field, 13),
+		Fields: make([]*Field, 14),
 		Edges:  make([]*Edge, 18),
 	}
 	var buf []byte
@@ -9343,6 +9343,14 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[12] = &Field{
 		Type:  "time.Time",
 		Name:  "due_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wo.IsNameEditable); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "bool",
+		Name:  "is_name_editable",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

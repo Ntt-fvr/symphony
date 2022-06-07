@@ -53,6 +53,8 @@ type WorkOrder struct {
 	ScheduledAt *time.Time `json:"scheduled_at,omitempty"`
 	// DueDate holds the value of the "due_date" field.
 	DueDate *time.Time `json:"due_date,omitempty"`
+	// IsNameEditable holds the value of the "is_name_editable" field.
+	IsNameEditable bool `json:"is_name_editable,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderQuery when eager-loading is set.
 	Edges                        WorkOrderEdges `json:"edges"`
@@ -328,6 +330,7 @@ func (*WorkOrder) scanValues() []interface{} {
 		&sql.NullFloat64{}, // duration
 		&sql.NullTime{},    // scheduled_at
 		&sql.NullTime{},    // due_date
+		&sql.NullBool{},    // is_name_editable
 	}
 }
 
@@ -428,7 +431,12 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 		wo.DueDate = new(time.Time)
 		*wo.DueDate = value.Time
 	}
-	values = values[13:]
+	if value, ok := values[13].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field is_name_editable", values[13])
+	} else if value.Valid {
+		wo.IsNameEditable = value.Bool
+	}
+	values = values[14:]
 	if len(values) == len(workorder.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field contract_work_order_contract", value)
@@ -633,6 +641,8 @@ func (wo *WorkOrder) String() string {
 		builder.WriteString(", due_date=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", is_name_editable=")
+	builder.WriteString(fmt.Sprintf("%v", wo.IsNameEditable))
 	builder.WriteByte(')')
 	return builder.String()
 }

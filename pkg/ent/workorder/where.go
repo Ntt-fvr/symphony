@@ -174,6 +174,13 @@ func DueDate(v time.Time) predicate.WorkOrder {
 	})
 }
 
+// IsNameEditable applies equality check predicate on the "is_name_editable" field. It's identical to IsNameEditableEQ.
+func IsNameEditable(v bool) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsNameEditable), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
@@ -1271,6 +1278,34 @@ func DueDateIsNil() predicate.WorkOrder {
 func DueDateNotNil() predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldDueDate)))
+	})
+}
+
+// IsNameEditableEQ applies the EQ predicate on the "is_name_editable" field.
+func IsNameEditableEQ(v bool) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsNameEditable), v))
+	})
+}
+
+// IsNameEditableNEQ applies the NEQ predicate on the "is_name_editable" field.
+func IsNameEditableNEQ(v bool) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIsNameEditable), v))
+	})
+}
+
+// IsNameEditableIsNil applies the IsNil predicate on the "is_name_editable" field.
+func IsNameEditableIsNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIsNameEditable)))
+	})
+}
+
+// IsNameEditableNotNil applies the NotNil predicate on the "is_name_editable" field.
+func IsNameEditableNotNil() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIsNameEditable)))
 	})
 }
 

@@ -46,6 +46,8 @@ const (
 	FieldScheduledAt = "scheduled_at"
 	// FieldDueDate holds the string denoting the due_date field in the database.
 	FieldDueDate = "due_date"
+	// FieldIsNameEditable holds the string denoting the is_name_editable field in the database.
+	FieldIsNameEditable = "is_name_editable"
 
 	// EdgeType holds the string denoting the type edge name in mutations.
 	EdgeType = "type"
@@ -230,6 +232,7 @@ var Columns = []string{
 	FieldDuration,
 	FieldScheduledAt,
 	FieldDueDate,
+	FieldIsNameEditable,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrder type.
@@ -276,6 +279,8 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultIsNameEditable holds the default value on creation for the is_name_editable field.
+	DefaultIsNameEditable bool
 )
 
 // Status defines the type for the status enum field.

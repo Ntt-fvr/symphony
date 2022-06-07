@@ -173,6 +173,13 @@ app.use(
   require('./graph/routes'),
 );
 app.use(
+  '/apollo',
+  passport.authenticate(['bearer', 'basic_local', 'session'], {session: false}),
+  access(USER),
+  insertFeatures,
+  require('./apollo/routes'),
+);
+app.use(
   '/store',
   passport.authenticate(['basic_local', 'session'], {session: false}),
   access(USER),

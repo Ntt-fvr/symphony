@@ -2923,6 +2923,10 @@ func init() {
 	workorderDescName := workorderFields[0].Descriptor()
 	// workorder.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	workorder.NameValidator = workorderDescName.Validators[0].(func(string) error)
+	// workorderDescIsNameEditable is the schema descriptor for is_name_editable field.
+	workorderDescIsNameEditable := workorderFields[11].Descriptor()
+	// workorder.DefaultIsNameEditable holds the default value on creation for the is_name_editable field.
+	workorder.DefaultIsNameEditable = workorderDescIsNameEditable.Default.(bool)
 	workorderdefinitionMixin := schema.WorkOrderDefinition{}.Mixin()
 	workorderdefinition.Policy = privacy.NewPolicies(schema.WorkOrderDefinition{})
 	workorderdefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
