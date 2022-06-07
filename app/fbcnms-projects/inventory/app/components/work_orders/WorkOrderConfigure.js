@@ -18,7 +18,6 @@ import WorkOrderTypes from '../configure/WorkOrderTypes';
 import fbt from 'fbt';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 import {makeStyles} from '@material-ui/styles';
-import ContractTypes from '../configure/ContractTypes';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,16 +55,6 @@ export default function WorkOrderConfigure() {
           children: <WorkOrderProjectTypes />,
         },
         routingPath: 'project_types',
-      },
-      {
-        menuItem: {
-          label: `${fbt('Contracts', '')}`,
-          tooltip: '',
-        },
-        component: {
-          children: <ContractTypes/>,
-        },
-        routingPath: 'contract_types',
       },
     ],
     [],

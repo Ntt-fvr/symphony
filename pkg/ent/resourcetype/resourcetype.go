@@ -31,8 +31,6 @@ const (
 	// FieldResourceTypeBaseType holds the string denoting the resourcetypebasetype field in the database.
 	FieldResourceTypeBaseType = "resource_type_base_type"
 
-	// EdgeReconciliationrule holds the string denoting the reconciliationrule edge name in mutations.
-	EdgeReconciliationrule = "reconciliationrule"
 	// EdgeResourceRelationshipA holds the string denoting the resource_relationship_a edge name in mutations.
 	EdgeResourceRelationshipA = "resource_relationship_a"
 	// EdgeResourceRelationshipB holds the string denoting the resource_relationship_b edge name in mutations.
@@ -42,13 +40,6 @@ const (
 
 	// Table holds the table name of the resourcetype in the database.
 	Table = "resource_types"
-	// ReconciliationruleTable is the table the holds the reconciliationrule relation/edge.
-	ReconciliationruleTable = "resource_types"
-	// ReconciliationruleInverseTable is the table name for the ReconciliationRule entity.
-	// It exists in this package in order to avoid circular dependency with the "reconciliationrule" package.
-	ReconciliationruleInverseTable = "reconciliation_rules"
-	// ReconciliationruleColumn is the table column denoting the reconciliationrule relation/edge.
-	ReconciliationruleColumn = "reconciliation_rule_reconciliation_rule_type"
 	// ResourceRelationshipATable is the table the holds the resource_relationship_a relation/edge.
 	ResourceRelationshipATable = "resource_type_relationships"
 	// ResourceRelationshipAInverseTable is the table name for the ResourceTypeRelationship entity.
@@ -82,20 +73,10 @@ var Columns = []string{
 	FieldResourceTypeBaseType,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the ResourceType type.
-var ForeignKeys = []string{
-	"reconciliation_rule_reconciliation_rule_type",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

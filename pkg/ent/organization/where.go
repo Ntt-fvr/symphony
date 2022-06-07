@@ -527,34 +527,6 @@ func HasUserFkWith(preds ...predicate.User) predicate.Organization {
 	})
 }
 
-// HasContractOrganization applies the HasEdge predicate on the "contract_organization" edge.
-func HasContractOrganization() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ContractOrganizationTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ContractOrganizationTable, ContractOrganizationColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasContractOrganizationWith applies the HasEdge predicate on the "contract_organization" edge with a given conditions (other predicates).
-func HasContractOrganizationWith(preds ...predicate.Contract) predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ContractOrganizationInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ContractOrganizationTable, ContractOrganizationColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasWorkOrderFk applies the HasEdge predicate on the "work_order_fk" edge.
 func HasWorkOrderFk() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

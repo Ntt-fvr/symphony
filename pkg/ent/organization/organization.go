@@ -28,8 +28,6 @@ const (
 
 	// EdgeUserFk holds the string denoting the user_fk edge name in mutations.
 	EdgeUserFk = "user_fk"
-	// EdgeContractOrganization holds the string denoting the contract_organization edge name in mutations.
-	EdgeContractOrganization = "contract_organization"
 	// EdgeWorkOrderFk holds the string denoting the work_order_fk edge name in mutations.
 	EdgeWorkOrderFk = "work_order_fk"
 	// EdgePolicies holds the string denoting the policies edge name in mutations.
@@ -44,13 +42,6 @@ const (
 	UserFkInverseTable = "users"
 	// UserFkColumn is the table column denoting the user_fk relation/edge.
 	UserFkColumn = "organization_user_fk"
-	// ContractOrganizationTable is the table the holds the contract_organization relation/edge.
-	ContractOrganizationTable = "contracts"
-	// ContractOrganizationInverseTable is the table name for the Contract entity.
-	// It exists in this package in order to avoid circular dependency with the "contract" package.
-	ContractOrganizationInverseTable = "contracts"
-	// ContractOrganizationColumn is the table column denoting the contract_organization relation/edge.
-	ContractOrganizationColumn = "organization_contract_organization"
 	// WorkOrderFkTable is the table the holds the work_order_fk relation/edge.
 	WorkOrderFkTable = "work_orders"
 	// WorkOrderFkInverseTable is the table name for the WorkOrder entity.

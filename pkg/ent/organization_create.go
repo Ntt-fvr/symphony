@@ -14,7 +14,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/contract"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -81,21 +80,6 @@ func (oc *OrganizationCreate) AddUserFk(u ...*User) *OrganizationCreate {
 		ids[i] = u[i].ID
 	}
 	return oc.AddUserFkIDs(ids...)
-}
-
-// AddContractOrganizationIDs adds the contract_organization edge to Contract by ids.
-func (oc *OrganizationCreate) AddContractOrganizationIDs(ids ...int) *OrganizationCreate {
-	oc.mutation.AddContractOrganizationIDs(ids...)
-	return oc
-}
-
-// AddContractOrganization adds the contract_organization edges to Contract.
-func (oc *OrganizationCreate) AddContractOrganization(c ...*Contract) *OrganizationCreate {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
-	}
-	return oc.AddContractOrganizationIDs(ids...)
 }
 
 // AddWorkOrderFkIDs adds the work_order_fk edge to WorkOrder by ids.
@@ -279,25 +263,6 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := oc.mutation.ContractOrganizationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   organization.ContractOrganizationTable,
-			Columns: []string{organization.ContractOrganizationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: contract.FieldID,
 				},
 			},
 		}

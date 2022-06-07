@@ -17,7 +17,6 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
-	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
@@ -41,7 +40,6 @@ type UserQuery struct {
 	withProfilePhoto       *FileQuery
 	withUserCreate         *RecommendationsQuery
 	withUserApproved       *RecommendationsQuery
-	withUser               *ExecutionQuery
 	withGroups             *UsersGroupQuery
 	withOrganization       *OrganizationQuery
 	withOwnedWorkOrders    *WorkOrderQuery
@@ -138,28 +136,6 @@ func (uq *UserQuery) QueryUserApproved() *RecommendationsQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(recommendations.Table, recommendations.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UserApprovedTable, user.UserApprovedColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryUser chains the current query on the User edge.
-func (uq *UserQuery) QueryUser() *ExecutionQuery {
-	query := &ExecutionQuery{config: uq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(execution.Table, execution.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserTable, user.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -500,7 +476,6 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withProfilePhoto:       uq.withProfilePhoto.Clone(),
 		withUserCreate:         uq.withUserCreate.Clone(),
 		withUserApproved:       uq.withUserApproved.Clone(),
-		withUser:               uq.withUser.Clone(),
 		withGroups:             uq.withGroups.Clone(),
 		withOrganization:       uq.withOrganization.Clone(),
 		withOwnedWorkOrders:    uq.withOwnedWorkOrders.Clone(),
@@ -544,17 +519,6 @@ func (uq *UserQuery) WithUserApproved(opts ...func(*RecommendationsQuery)) *User
 		opt(query)
 	}
 	uq.withUserApproved = query
-	return uq
-}
-
-//  WithUser tells the query-builder to eager-loads the nodes that are connected to
-// the "User" edge. The optional arguments used to configure the query builder of the edge.
-func (uq *UserQuery) WithUser(opts ...func(*ExecutionQuery)) *UserQuery {
-	query := &ExecutionQuery{config: uq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withUser = query
 	return uq
 }
 
@@ -705,11 +669,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		nodes       = []*User{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [11]bool{
+		loadedTypes = [10]bool{
 			uq.withProfilePhoto != nil,
 			uq.withUserCreate != nil,
 			uq.withUserApproved != nil,
-			uq.withUser != nil,
 			uq.withGroups != nil,
 			uq.withOrganization != nil,
 			uq.withOwnedWorkOrders != nil,
@@ -832,35 +795,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_user_approved" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.UserApproved = append(node.Edges.UserApproved, n)
-		}
-	}
-
-	if query := uq.withUser; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*User)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.User = []*Execution{}
-		}
-		query.withFKs = true
-		query.Where(predicate.Execution(func(s *sql.Selector) {
-			s.Where(sql.InValues(user.UserColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.user_user
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "user_user" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_user" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.User = append(node.Edges.User, n)
 		}
 	}
 

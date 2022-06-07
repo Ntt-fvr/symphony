@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 )
 
@@ -33,14 +32,11 @@ type ResourceType struct {
 	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"ResourceTypeBaseType,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceTypeQuery when eager-loading is set.
-	Edges                                        ResourceTypeEdges `json:"edges"`
-	reconciliation_rule_reconciliation_rule_type *int
+	Edges ResourceTypeEdges `json:"edges"`
 }
 
 // ResourceTypeEdges holds the relations/edges for other nodes in the graph.
 type ResourceTypeEdges struct {
-	// Reconciliationrule holds the value of the reconciliationrule edge.
-	Reconciliationrule *ReconciliationRule
 	// ResourceRelationshipA holds the value of the resource_relationship_a edge.
 	ResourceRelationshipA []*ResourceTypeRelationship
 	// ResourceRelationshipB holds the value of the resource_relationship_b edge.
@@ -49,27 +45,13 @@ type ResourceTypeEdges struct {
 	ResourceSpecification []*ResourceSpecification
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
-}
-
-// ReconciliationruleOrErr returns the Reconciliationrule value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ResourceTypeEdges) ReconciliationruleOrErr() (*ReconciliationRule, error) {
-	if e.loadedTypes[0] {
-		if e.Reconciliationrule == nil {
-			// The edge reconciliationrule was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: reconciliationrule.Label}
-		}
-		return e.Reconciliationrule, nil
-	}
-	return nil, &NotLoadedError{edge: "reconciliationrule"}
+	loadedTypes [3]bool
 }
 
 // ResourceRelationshipAOrErr returns the ResourceRelationshipA value or an error if the edge
 // was not loaded in eager-loading.
 func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceTypeRelationship, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[0] {
 		return e.ResourceRelationshipA, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_relationship_a"}
@@ -78,7 +60,7 @@ func (e ResourceTypeEdges) ResourceRelationshipAOrErr() ([]*ResourceTypeRelation
 // ResourceRelationshipBOrErr returns the ResourceRelationshipB value or an error if the edge
 // was not loaded in eager-loading.
 func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceTypeRelationship, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		return e.ResourceRelationshipB, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_relationship_b"}
@@ -87,7 +69,7 @@ func (e ResourceTypeEdges) ResourceRelationshipBOrErr() ([]*ResourceTypeRelation
 // ResourceSpecificationOrErr returns the ResourceSpecification value or an error if the edge
 // was not loaded in eager-loading.
 func (e ResourceTypeEdges) ResourceSpecificationOrErr() ([]*ResourceSpecification, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.ResourceSpecification, nil
 	}
 	return nil, &NotLoadedError{edge: "resource_specification"}
@@ -102,13 +84,6 @@ func (*ResourceType) scanValues() []interface{} {
 		&sql.NullString{}, // name
 		&sql.NullString{}, // ResourceTypeClass
 		&sql.NullString{}, // ResourceTypeBaseType
-	}
-}
-
-// fkValues returns the types for scanning foreign-keys values from sql.Rows.
-func (*ResourceType) fkValues() []interface{} {
-	return []interface{}{
-		&sql.NullInt64{}, // reconciliation_rule_reconciliation_rule_type
 	}
 }
 
@@ -149,21 +124,7 @@ func (rt *ResourceType) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rt.ResourceTypeBaseType = resourcetype.ResourceTypeBaseType(value.String)
 	}
-	values = values[5:]
-	if len(values) == len(resourcetype.ForeignKeys) {
-		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field reconciliation_rule_reconciliation_rule_type", value)
-		} else if value.Valid {
-			rt.reconciliation_rule_reconciliation_rule_type = new(int)
-			*rt.reconciliation_rule_reconciliation_rule_type = int(value.Int64)
-		}
-	}
 	return nil
-}
-
-// QueryReconciliationrule queries the reconciliationrule edge of the ResourceType.
-func (rt *ResourceType) QueryReconciliationrule() *ReconciliationRuleQuery {
-	return (&ResourceTypeClient{config: rt.config}).QueryReconciliationrule(rt)
 }
 
 // QueryResourceRelationshipA queries the resource_relationship_a edge of the ResourceType.
