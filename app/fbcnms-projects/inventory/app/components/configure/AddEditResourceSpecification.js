@@ -180,7 +180,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   );
 
   const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer({
-    propertyTypes: (filterConfigurationParameter ?? [])
+    parameterTypes: (filterConfigurationParameter ?? [])
       .filter(Boolean)
       .map(toMutablePropertyType),
     resourceSpecification: dataForm?.id,
@@ -239,15 +239,16 @@ export const AddEditResourceSpecification = (props: Props) => {
         ),
       },
     };
-    const finalparameterType = convertParameterTypeToMutationInput(
-      parameterTypes,
-    );
+
     const response: MutationCallbacks<AddConfigurationParameterTypeMutationResponse> = {
       onCompleted: response => {
         const variablesCP: AddConfigurationParameterTypeMutationVariables = {
-          input: finalparameterType,
+          input: convertParameterTypeToMutationInput(
+            parameterTypes,
+            response?.addResourceSpecification.id,
+          ),
         };
-        console.log('response-> ', response, variablesCP);
+
         AddConfigurationParameterTypeMutation(variablesCP, {
           onCompleted: () => {
             isCompleted();

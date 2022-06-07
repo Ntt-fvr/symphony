@@ -16,13 +16,11 @@ import {getInitialParameterType} from './ParameterTypesTableState';
 import {reorder} from '../../../draggable/DraggableUtils';
 import {sortByIndex} from '../../../draggable/DraggableUtils';
 
-export function getInitialState(
-  parameterTypes: Array<ParameterType>,
-): ParameterTypesTableState {
-  const {propertyTypes, resourceSpecification} = parameterTypes;
-  return propertyTypes.length === 0
+export function getInitialState(parameterTyp: any): ParameterTypesTableState {
+  const {parameterTypes, resourceSpecification} = parameterTyp;
+  return parameterTypes.length === 0
     ? [getInitialParameterType(0, resourceSpecification)]
-    : propertyTypes.slice().map(p => ({...p}));
+    : parameterTypes.slice().map(p => ({...p}));
 }
 
 function editParameterType<T: ParameterTypesTableState>(

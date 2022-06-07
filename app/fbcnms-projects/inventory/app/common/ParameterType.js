@@ -156,13 +156,14 @@ export const toMutableParameterType = (
 
 export const convertParameterTypeToMutationInput = (
   propertyTypes: Array<ParameterType>,
+  resourceSpecification: any,
 ): Array<any> => {
   return propertyTypes
     .filter(propType => !!propType.name)
     .map(prop => {
       return {
         name: prop.name,
-        resourceSpecification: prop.resourceSpecification,
+        resourceSpecification: resourceSpecification,
         type: prop.type,
       };
     });
