@@ -303,3 +303,7 @@ func (r resolver) PropertyCategory() generated.PropertyCategoryResolver {
 func (r resolver) ResourcePropertyType() generated.ResourcePropertyTypeResolver {
 	return resourcePropertyTypeResolver{}
 }
+
+func (r resolver) UplItem() generated.UplItemResolver {
+	return uplItemResolver{}
+}

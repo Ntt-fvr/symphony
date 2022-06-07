@@ -206,6 +206,11 @@ func (r mutationResolver) internalAddWorkOrder(
 	); err != nil {
 		return nil, errors.Wrap(err, "creating work order properties")
 	}
+	if err := r.AddCost(ctx, func(ptc *ent.CostCreate) {
+		ptc.SetWorkorderID(wo.ID)
+	}, input.TotalActivityCost...); err != nil {
+		return nil, err
+	}
 	return wo, nil
 }
 
@@ -289,6 +294,19 @@ func (r mutationResolver) EditWorkOrder(
 	mutation.
 		RemoveCheckListCategoryIDs(deletedCLIds...).
 		AddCheckListCategoryIDs(addedCLIds...)
+	for _, costs := range input.TotalActivityCost {
+		if costs.IsDeleted != nil {
+			r.RemoveCost(ctx, wo.ID)
+		} else if costs.ID == nil {
+			if err := r.AddCost(ctx, func(b *ent.CostCreate) {
+				b.SetWorkorderID(wo.ID)
+			}, costs); err != nil {
+				return nil, err
+			}
+		} else if err := r.UpdateCost(ctx, costs, *costs.ID); err != nil {
+			return nil, err
+		}
+	}
 	return mutation.Save(ctx)
 }
 
@@ -909,4 +927,12 @@ func (r mutationResolver) TechnicianWorkOrderCheckOut(ctx context.Context, input
 		Where(workorder.ID(input.WorkOrderID)).
 		WithCheckListCategories().
 		Only(ctx)
+}
+
+func (workOrderResolver) TotalActivityCost(ctx context.Context, workorder *ent.WorkOrder) ([]*ent.Cost, error) {
+	returned, err := workorder.WorkorderCosts(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	return returned, nil
 }

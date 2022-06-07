@@ -37,13 +37,15 @@ type Organization struct {
 type OrganizationEdges struct {
 	// UserFk holds the value of the user_fk edge.
 	UserFk []*User
+	// ContractOrganization holds the value of the contract_organization edge.
+	ContractOrganization []*Contract
 	// WorkOrderFk holds the value of the work_order_fk edge.
 	WorkOrderFk []*WorkOrder
 	// Policies holds the value of the policies edge.
 	Policies []*PermissionsPolicy
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // UserFkOrErr returns the UserFk value or an error if the edge
@@ -55,10 +57,19 @@ func (e OrganizationEdges) UserFkOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "user_fk"}
 }
 
+// ContractOrganizationOrErr returns the ContractOrganization value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) ContractOrganizationOrErr() ([]*Contract, error) {
+	if e.loadedTypes[1] {
+		return e.ContractOrganization, nil
+	}
+	return nil, &NotLoadedError{edge: "contract_organization"}
+}
+
 // WorkOrderFkOrErr returns the WorkOrderFk value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) WorkOrderFkOrErr() ([]*WorkOrder, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.WorkOrderFk, nil
 	}
 	return nil, &NotLoadedError{edge: "work_order_fk"}
@@ -67,7 +78,7 @@ func (e OrganizationEdges) WorkOrderFkOrErr() ([]*WorkOrder, error) {
 // PoliciesOrErr returns the Policies value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) PoliciesOrErr() ([]*PermissionsPolicy, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Policies, nil
 	}
 	return nil, &NotLoadedError{edge: "policies"}
@@ -122,6 +133,11 @@ func (o *Organization) assignValues(values ...interface{}) error {
 // QueryUserFk queries the user_fk edge of the Organization.
 func (o *Organization) QueryUserFk() *UserQuery {
 	return (&OrganizationClient{config: o.config}).QueryUserFk(o)
+}
+
+// QueryContractOrganization queries the contract_organization edge of the Organization.
+func (o *Organization) QueryContractOrganization() *ContractQuery {
+	return (&OrganizationClient{config: o.config}).QueryContractOrganization(o)
 }
 
 // QueryWorkOrderFk queries the work_order_fk edge of the Organization.

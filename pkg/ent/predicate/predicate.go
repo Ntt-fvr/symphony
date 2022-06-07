@@ -10,6 +10,9 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 )
 
+// Action is the predicate function for action builders.
+type Action func(*sql.Selector)
+
 // Activity is the predicate function for activity builders.
 type Activity func(*sql.Selector)
 
@@ -45,6 +48,12 @@ type Comment func(*sql.Selector)
 
 // Comparator is the predicate function for comparator builders.
 type Comparator func(*sql.Selector)
+
+// Contract is the predicate function for contract builders.
+type Contract func(*sql.Selector)
+
+// Cost is the predicate function for cost builders.
+type Cost func(*sql.Selector)
 
 // Counter is the predicate function for counter builders.
 type Counter func(*sql.Selector)
@@ -93,6 +102,9 @@ type EquipmentType func(*sql.Selector)
 
 // EventSeverity is the predicate function for eventseverity builders.
 type EventSeverity func(*sql.Selector)
+
+// Execution is the predicate function for execution builders.
+type Execution func(*sql.Selector)
 
 // ExitPoint is the predicate function for exitpoint builders.
 type ExitPoint func(*sql.Selector)
@@ -211,6 +223,9 @@ type RecommendationsCategory func(*sql.Selector)
 // RecommendationsSources is the predicate function for recommendationssources builders.
 type RecommendationsSources func(*sql.Selector)
 
+// ReconciliationRule is the predicate function for reconciliationrule builders.
+type ReconciliationRule func(*sql.Selector)
+
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
 
@@ -234,6 +249,12 @@ type ResourceTypeRelationship func(*sql.Selector)
 
 // Rule is the predicate function for rule builders.
 type Rule func(*sql.Selector)
+
+// RuleAction is the predicate function for ruleaction builders.
+type RuleAction func(*sql.Selector)
+
+// RuleActionTemplate is the predicate function for ruleactiontemplate builders.
+type RuleActionTemplate func(*sql.Selector)
 
 // RuleLimit is the predicate function for rulelimit builders.
 type RuleLimit func(*sql.Selector)
@@ -276,6 +297,12 @@ type Tech func(*sql.Selector)
 
 // Threshold is the predicate function for threshold builders.
 type Threshold func(*sql.Selector)
+
+// Upl is the predicate function for upl builders.
+type Upl func(*sql.Selector)
+
+// UplItem is the predicate function for uplitem builders.
+type UplItem func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

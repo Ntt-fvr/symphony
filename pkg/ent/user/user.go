@@ -45,6 +45,8 @@ const (
 	EdgeUserCreate = "User_create"
 	// EdgeUserApproved holds the string denoting the user_approved edge name in mutations.
 	EdgeUserApproved = "User_approved"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "User"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
@@ -83,6 +85,13 @@ const (
 	UserApprovedInverseTable = "recommendations"
 	// UserApprovedColumn is the table column denoting the User_approved relation/edge.
 	UserApprovedColumn = "user_user_approved"
+	// UserTable is the table the holds the User relation/edge.
+	UserTable = "executions"
+	// UserInverseTable is the table name for the Execution entity.
+	// It exists in this package in order to avoid circular dependency with the "execution" package.
+	UserInverseTable = "executions"
+	// UserColumn is the table column denoting the User relation/edge.
+	UserColumn = "user_user"
 	// GroupsTable is the table the holds the groups relation/edge. The primary key declared below.
 	GroupsTable = "users_group_members"
 	// GroupsInverseTable is the table name for the UsersGroup entity.

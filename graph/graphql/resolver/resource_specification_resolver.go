@@ -63,6 +63,7 @@ func (r mutationResolver) AddResourceSpecification(ctx context.Context, input mo
 		SetName(input.Name).
 		SetNillableQuantity(input.Quantity).
 		SetResourcetypeID(input.ResourceType).
+		SetReconciliationruleID(input.ReconciliationRule).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -152,6 +153,7 @@ func (r mutationResolver) EditResourceSpecification(ctx context.Context, input m
 			SetName(input.Name).
 			SetNillableQuantity(input.Quantity).
 			SetNillableResourcetypeID(input.ResourceType).
+			SetReconciliationruleID(*input.ReconciliationRule).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)

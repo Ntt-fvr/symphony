@@ -1768,6 +1768,10 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 		}
 	}
 
+	if _, err := r.RemoveCost(ctx, wo.ID); err != nil {
+		return id, fmt.Errorf("deleting upl item: %w", err)
+	}
+
 	if err := client.WorkOrder.DeleteOne(wo).Exec(ctx); err != nil {
 		return id, errors.Wrapf(err, "deleting work order wo=%q", id)
 	}

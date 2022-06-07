@@ -8,6 +8,22 @@ package ent
 
 import "context"
 
+func (a *Action) Execution(ctx context.Context) (*Execution, error) {
+	result, err := a.Edges.ExecutionOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryExecution().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *Action) Ruleaction(ctx context.Context) (*RuleAction, error) {
+	result, err := a.Edges.RuleactionOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryRuleaction().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (a *Activity) Author(ctx context.Context) (*User, error) {
 	result, err := a.Edges.AuthorOrErr()
 	if IsNotLoaded(err) {
@@ -270,6 +286,46 @@ func (c *Comparator) Comparatorkqitargetfk(ctx context.Context) ([]*KqiComparato
 		result, err = c.QueryComparatorkqitargetfk().All(ctx)
 	}
 	return result, err
+}
+
+func (c *Contract) Organization(ctx context.Context) (*Organization, error) {
+	result, err := c.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryOrganization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Contract) UplContract(ctx context.Context) ([]*Upl, error) {
+	result, err := c.Edges.UplContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryUplContract().All(ctx)
+	}
+	return result, err
+}
+
+func (c *Contract) WorkOrderContract(ctx context.Context) ([]*WorkOrder, error) {
+	result, err := c.Edges.WorkOrderContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryWorkOrderContract().All(ctx)
+	}
+	return result, err
+}
+
+func (c *Cost) Uplitem(ctx context.Context) (*UplItem, error) {
+	result, err := c.Edges.UplitemOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryUplitem().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Cost) Workorder(ctx context.Context) (*WorkOrder, error) {
+	result, err := c.Edges.WorkorderOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryWorkorder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
@@ -668,6 +724,22 @@ func (es *EventSeverity) Eventseverityrule(ctx context.Context) ([]*Rule, error)
 	result, err := es.Edges.EventseverityruleOrErr()
 	if IsNotLoaded(err) {
 		result, err = es.QueryEventseverityrule().All(ctx)
+	}
+	return result, err
+}
+
+func (e *Execution) User(ctx context.Context) (*User, error) {
+	result, err := e.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryUser().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (e *Execution) Execution(ctx context.Context) ([]*Action, error) {
+	result, err := e.Edges.ExecutionOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryExecution().All(ctx)
 	}
 	return result, err
 }
@@ -1280,6 +1352,14 @@ func (o *Organization) UserFk(ctx context.Context) ([]*User, error) {
 	return result, err
 }
 
+func (o *Organization) ContractOrganization(ctx context.Context) ([]*Contract, error) {
+	result, err := o.Edges.ContractOrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryContractOrganization().All(ctx)
+	}
+	return result, err
+}
+
 func (o *Organization) WorkOrderFk(ctx context.Context) ([]*WorkOrder, error) {
 	result, err := o.Edges.WorkOrderFkOrErr()
 	if IsNotLoaded(err) {
@@ -1792,6 +1872,30 @@ func (rs *RecommendationsSources) Recommendations(ctx context.Context) ([]*Recom
 	return result, err
 }
 
+func (rr *ReconciliationRule) ReconciliationRuleType(ctx context.Context) ([]*ResourceType, error) {
+	result, err := rr.Edges.ReconciliationRuleTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryReconciliationRuleType().All(ctx)
+	}
+	return result, err
+}
+
+func (rr *ReconciliationRule) ReconciliationRuleSpecification(ctx context.Context) ([]*ResourceSpecification, error) {
+	result, err := rr.Edges.ReconciliationRuleSpecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryReconciliationRuleSpecification().All(ctx)
+	}
+	return result, err
+}
+
+func (rr *ReconciliationRule) ReconciliationRuleRuleAction(ctx context.Context) ([]*RuleAction, error) {
+	result, err := rr.Edges.ReconciliationRuleRuleActionOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryReconciliationRuleRuleAction().All(ctx)
+	}
+	return result, err
+}
+
 func (rpt *ResourcePropertyType) ResourceSpecification(ctx context.Context) (*ResourceSpecification, error) {
 	result, err := rpt.Edges.ResourceSpecificationOrErr()
 	if IsNotLoaded(err) {
@@ -1812,6 +1916,14 @@ func (rs *ResourceSpecification) Resourcetype(ctx context.Context) (*ResourceTyp
 	result, err := rs.Edges.ResourcetypeOrErr()
 	if IsNotLoaded(err) {
 		result, err = rs.QueryResourcetype().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rs *ResourceSpecification) Reconciliationrule(ctx context.Context) (*ReconciliationRule, error) {
+	result, err := rs.Edges.ReconciliationruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryReconciliationrule().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -1870,6 +1982,14 @@ func (rsr *ResourceSpecificationRelationship) ResourceSr(ctx context.Context) ([
 		result, err = rsr.QueryResourceSr().All(ctx)
 	}
 	return result, err
+}
+
+func (rt *ResourceType) Reconciliationrule(ctx context.Context) (*ReconciliationRule, error) {
+	result, err := rt.Edges.ReconciliationruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryReconciliationrule().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (rt *ResourceType) ResourceRelationshipA(ctx context.Context) ([]*ResourceTypeRelationship, error) {
@@ -1948,6 +2068,38 @@ func (r *Rule) Rulelimitrule(ctx context.Context) ([]*RuleLimit, error) {
 	result, err := r.Edges.RulelimitruleOrErr()
 	if IsNotLoaded(err) {
 		result, err = r.QueryRulelimitrule().All(ctx)
+	}
+	return result, err
+}
+
+func (ra *RuleAction) Reconciliationrule(ctx context.Context) (*ReconciliationRule, error) {
+	result, err := ra.Edges.ReconciliationruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = ra.QueryReconciliationrule().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (ra *RuleAction) Ruleactiontemplate(ctx context.Context) (*RuleActionTemplate, error) {
+	result, err := ra.Edges.RuleactiontemplateOrErr()
+	if IsNotLoaded(err) {
+		result, err = ra.QueryRuleactiontemplate().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (ra *RuleAction) RuleAction(ctx context.Context) ([]*Action, error) {
+	result, err := ra.Edges.RuleActionOrErr()
+	if IsNotLoaded(err) {
+		result, err = ra.QueryRuleAction().All(ctx)
+	}
+	return result, err
+}
+
+func (rat *RuleActionTemplate) RuleActionTemplateRuleAction(ctx context.Context) ([]*RuleAction, error) {
+	result, err := rat.Edges.RuleActionTemplateRuleActionOrErr()
+	if IsNotLoaded(err) {
+		result, err = rat.QueryRuleActionTemplateRuleAction().All(ctx)
 	}
 	return result, err
 }
@@ -2288,6 +2440,38 @@ func (t *Threshold) Rulethreshold(ctx context.Context) ([]*Rule, error) {
 	return result, err
 }
 
+func (u *Upl) Contract(ctx context.Context) (*Contract, error) {
+	result, err := u.Edges.ContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryContract().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (u *Upl) UplItems(ctx context.Context) ([]*UplItem, error) {
+	result, err := u.Edges.UplItemsOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUplItems().All(ctx)
+	}
+	return result, err
+}
+
+func (ui *UplItem) Uplitem(ctx context.Context) ([]*Cost, error) {
+	result, err := ui.Edges.UplitemOrErr()
+	if IsNotLoaded(err) {
+		result, err = ui.QueryUplitem().All(ctx)
+	}
+	return result, err
+}
+
+func (ui *UplItem) Upl(ctx context.Context) (*Upl, error) {
+	result, err := ui.Edges.UplOrErr()
+	if IsNotLoaded(err) {
+		result, err = ui.QueryUpl().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (u *User) ProfilePhoto(ctx context.Context) (*File, error) {
 	result, err := u.Edges.ProfilePhotoOrErr()
 	if IsNotLoaded(err) {
@@ -2308,6 +2492,14 @@ func (u *User) UserApproved(ctx context.Context) ([]*Recommendations, error) {
 	result, err := u.Edges.UserApprovedOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QueryUserApproved().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) User(ctx context.Context) ([]*Execution, error) {
+	result, err := u.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUser().All(ctx)
 	}
 	return result, err
 }
@@ -2448,6 +2640,14 @@ func (wo *WorkOrder) Organization(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
+func (wo *WorkOrder) Contract(ctx context.Context) (*Contract, error) {
+	result, err := wo.Edges.ContractOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryContract().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (wo *WorkOrder) Files(ctx context.Context) ([]*File, error) {
 	result, err := wo.Edges.FilesOrErr()
 	if IsNotLoaded(err) {
@@ -2532,6 +2732,14 @@ func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
 	result, err := wo.Edges.AppointmentOrErr()
 	if IsNotLoaded(err) {
 		result, err = wo.QueryAppointment().All(ctx)
+	}
+	return result, err
+}
+
+func (wo *WorkOrder) WorkorderCosts(ctx context.Context) ([]*Cost, error) {
+	result, err := wo.Edges.WorkorderCostsOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryWorkorderCosts().All(ctx)
 	}
 	return result, err
 }

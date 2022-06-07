@@ -20,6 +20,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+	"github.com/facebookincubator/symphony/pkg/ent/contract"
+	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
@@ -49,6 +51,7 @@ type WorkOrderQuery struct {
 	withEquipment           *EquipmentQuery
 	withLinks               *LinkQuery
 	withOrganization        *OrganizationQuery
+	withContract            *ContractQuery
 	withFiles               *FileQuery
 	withHyperlinks          *HyperlinkQuery
 	withLocation            *LocationQuery
@@ -60,6 +63,7 @@ type WorkOrderQuery struct {
 	withOwner               *UserQuery
 	withAssignee            *UserQuery
 	withAppointment         *AppointmentQuery
+	withWorkorderCosts      *CostQuery
 	withFKs                 bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -193,6 +197,28 @@ func (woq *WorkOrderQuery) QueryOrganization() *OrganizationQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(organization.Table, organization.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, workorder.OrganizationTable, workorder.OrganizationColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryContract chains the current query on the contract edge.
+func (woq *WorkOrderQuery) QueryContract() *ContractQuery {
+	query := &ContractQuery{config: woq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := woq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, workorder.ContractTable, workorder.ContractColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
 		return fromU, nil
@@ -442,6 +468,28 @@ func (woq *WorkOrderQuery) QueryAppointment() *AppointmentQuery {
 	return query
 }
 
+// QueryWorkorderCosts chains the current query on the workorder_costs edge.
+func (woq *WorkOrderQuery) QueryWorkorderCosts() *CostQuery {
+	query := &CostQuery{config: woq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := woq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
+			sqlgraph.To(cost.Table, cost.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, workorder.WorkorderCostsTable, workorder.WorkorderCostsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first WorkOrder entity in the query. Returns *NotFoundError when no workorder was found.
 func (woq *WorkOrderQuery) First(ctx context.Context) (*WorkOrder, error) {
 	nodes, err := woq.Limit(1).All(ctx)
@@ -623,6 +671,7 @@ func (woq *WorkOrderQuery) Clone() *WorkOrderQuery {
 		withEquipment:           woq.withEquipment.Clone(),
 		withLinks:               woq.withLinks.Clone(),
 		withOrganization:        woq.withOrganization.Clone(),
+		withContract:            woq.withContract.Clone(),
 		withFiles:               woq.withFiles.Clone(),
 		withHyperlinks:          woq.withHyperlinks.Clone(),
 		withLocation:            woq.withLocation.Clone(),
@@ -634,6 +683,7 @@ func (woq *WorkOrderQuery) Clone() *WorkOrderQuery {
 		withOwner:               woq.withOwner.Clone(),
 		withAssignee:            woq.withAssignee.Clone(),
 		withAppointment:         woq.withAppointment.Clone(),
+		withWorkorderCosts:      woq.withWorkorderCosts.Clone(),
 		// clone intermediate query.
 		sql:  woq.sql.Clone(),
 		path: woq.path,
@@ -692,6 +742,17 @@ func (woq *WorkOrderQuery) WithOrganization(opts ...func(*OrganizationQuery)) *W
 		opt(query)
 	}
 	woq.withOrganization = query
+	return woq
+}
+
+//  WithContract tells the query-builder to eager-loads the nodes that are connected to
+// the "contract" edge. The optional arguments used to configure the query builder of the edge.
+func (woq *WorkOrderQuery) WithContract(opts ...func(*ContractQuery)) *WorkOrderQuery {
+	query := &ContractQuery{config: woq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	woq.withContract = query
 	return woq
 }
 
@@ -816,6 +877,17 @@ func (woq *WorkOrderQuery) WithAppointment(opts ...func(*AppointmentQuery)) *Wor
 	return woq
 }
 
+//  WithWorkorderCosts tells the query-builder to eager-loads the nodes that are connected to
+// the "workorder_costs" edge. The optional arguments used to configure the query builder of the edge.
+func (woq *WorkOrderQuery) WithWorkorderCosts(opts ...func(*CostQuery)) *WorkOrderQuery {
+	query := &CostQuery{config: woq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	woq.withWorkorderCosts = query
+	return woq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -886,12 +958,13 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		nodes       = []*WorkOrder{}
 		withFKs     = woq.withFKs
 		_spec       = woq.querySpec()
-		loadedTypes = [16]bool{
+		loadedTypes = [18]bool{
 			woq.withType != nil,
 			woq.withTemplate != nil,
 			woq.withEquipment != nil,
 			woq.withLinks != nil,
 			woq.withOrganization != nil,
+			woq.withContract != nil,
 			woq.withFiles != nil,
 			woq.withHyperlinks != nil,
 			woq.withLocation != nil,
@@ -903,9 +976,10 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 			woq.withOwner != nil,
 			woq.withAssignee != nil,
 			woq.withAppointment != nil,
+			woq.withWorkorderCosts != nil,
 		}
 	)
-	if woq.withType != nil || woq.withTemplate != nil || woq.withOrganization != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil {
+	if woq.withType != nil || woq.withTemplate != nil || woq.withOrganization != nil || woq.withContract != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -1064,6 +1138,31 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Organization = n
+			}
+		}
+	}
+
+	if query := woq.withContract; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*WorkOrder)
+		for i := range nodes {
+			if fk := nodes[i].contract_work_order_contract; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(contract.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "contract_work_order_contract" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Contract = n
 			}
 		}
 	}
@@ -1368,6 +1467,35 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "work_order_appointment" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Appointment = append(node.Edges.Appointment, n)
+		}
+	}
+
+	if query := woq.withWorkorderCosts; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*WorkOrder)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.WorkorderCosts = []*Cost{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Cost(func(s *sql.Selector) {
+			s.Where(sql.InValues(workorder.WorkorderCostsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.work_order_workorder_costs
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "work_order_workorder_costs" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "work_order_workorder_costs" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.WorkorderCosts = append(node.Edges.WorkorderCosts, n)
 		}
 	}
 

@@ -28,6 +28,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
+	Action                            []ent.Hook
 	Activity                          []ent.Hook
 	AlarmFilter                       []ent.Hook
 	AlarmStatus                       []ent.Hook
@@ -40,6 +41,8 @@ type hooks struct {
 	CheckListItemDefinition           []ent.Hook
 	Comment                           []ent.Hook
 	Comparator                        []ent.Hook
+	Contract                          []ent.Hook
+	Cost                              []ent.Hook
 	Counter                           []ent.Hook
 	CounterFamily                     []ent.Hook
 	CounterFormula                    []ent.Hook
@@ -56,6 +59,7 @@ type hooks struct {
 	EquipmentPositionDefinition       []ent.Hook
 	EquipmentType                     []ent.Hook
 	EventSeverity                     []ent.Hook
+	Execution                         []ent.Hook
 	ExitPoint                         []ent.Hook
 	ExportTask                        []ent.Hook
 	Feature                           []ent.Hook
@@ -95,6 +99,7 @@ type hooks struct {
 	Recommendations                   []ent.Hook
 	RecommendationsCategory           []ent.Hook
 	RecommendationsSources            []ent.Hook
+	ReconciliationRule                []ent.Hook
 	ReportFilter                      []ent.Hook
 	ResourcePropertyType              []ent.Hook
 	ResourceSpecification             []ent.Hook
@@ -103,6 +108,8 @@ type hooks struct {
 	ResourceType                      []ent.Hook
 	ResourceTypeRelationship          []ent.Hook
 	Rule                              []ent.Hook
+	RuleAction                        []ent.Hook
+	RuleActionTemplate                []ent.Hook
 	RuleLimit                         []ent.Hook
 	RuleType                          []ent.Hook
 	Service                           []ent.Hook
@@ -117,6 +124,8 @@ type hooks struct {
 	SurveyWiFiScan                    []ent.Hook
 	Tech                              []ent.Hook
 	Threshold                         []ent.Hook
+	Upl                               []ent.Hook
+	UplItem                           []ent.Hook
 	User                              []ent.Hook
 	UsersGroup                        []ent.Hook
 	Vendor                            []ent.Hook

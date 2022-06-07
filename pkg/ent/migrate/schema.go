@@ -12,6 +12,39 @@ import (
 )
 
 var (
+	// ActionsColumns holds the columns for the "actions" table.
+	ActionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "SUCCESFUL", "FAILED"}},
+		{Name: "user_action", Type: field.TypeEnum, Enums: []string{"CONFIRM", "IGNORE", "ALARM"}},
+		{Name: "log_execution", Type: field.TypeString, Unique: true},
+		{Name: "execution_execution", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_action_rule_action", Type: field.TypeInt, Nullable: true},
+	}
+	// ActionsTable holds the schema information for the "actions" table.
+	ActionsTable = &schema.Table{
+		Name:       "actions",
+		Columns:    ActionsColumns,
+		PrimaryKey: []*schema.Column{ActionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "actions_executions_execution",
+				Columns: []*schema.Column{ActionsColumns[6]},
+
+				RefColumns: []*schema.Column{ExecutionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "actions_rule_actions_rule_action",
+				Columns: []*schema.Column{ActionsColumns[7]},
+
+				RefColumns: []*schema.Column{RuleActionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// ActivitiesColumns holds the columns for the "activities" table.
 	ActivitiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -426,6 +459,70 @@ var (
 		Columns:     ComparatorsColumns,
 		PrimaryKey:  []*schema.Column{ComparatorsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// ContractsColumns holds the columns for the "contracts" table.
+	ContractsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "external_id", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "category", Type: field.TypeString},
+		{Name: "effective_date", Type: field.TypeTime},
+		{Name: "expiration_date", Type: field.TypeTime},
+		{Name: "description", Type: field.TypeString},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "EXPIRE", "PENDING"}},
+		{Name: "organization_contract_organization", Type: field.TypeInt, Nullable: true},
+	}
+	// ContractsTable holds the schema information for the "contracts" table.
+	ContractsTable = &schema.Table{
+		Name:       "contracts",
+		Columns:    ContractsColumns,
+		PrimaryKey: []*schema.Column{ContractsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "contracts_organizations_contract_organization",
+				Columns: []*schema.Column{ContractsColumns[10]},
+
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// CostsColumns holds the columns for the "costs" table.
+	CostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "item", Type: field.TypeString},
+		{Name: "unit", Type: field.TypeFloat64},
+		{Name: "price", Type: field.TypeFloat64},
+		{Name: "quantity", Type: field.TypeInt},
+		{Name: "total", Type: field.TypeFloat64},
+		{Name: "upl_item_uplitem", Type: field.TypeInt, Nullable: true},
+		{Name: "work_order_workorder_costs", Type: field.TypeInt, Nullable: true},
+	}
+	// CostsTable holds the schema information for the "costs" table.
+	CostsTable = &schema.Table{
+		Name:       "costs",
+		Columns:    CostsColumns,
+		PrimaryKey: []*schema.Column{CostsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "costs_upl_items_uplitem",
+				Columns: []*schema.Column{CostsColumns[8]},
+
+				RefColumns: []*schema.Column{UplItemsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "costs_work_orders_workorder_costs",
+				Columns: []*schema.Column{CostsColumns[9]},
+
+				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// CountersColumns holds the columns for the "counters" table.
 	CountersColumns = []*schema.Column{
@@ -851,6 +948,29 @@ var (
 		Columns:     EventSeveritiesColumns,
 		PrimaryKey:  []*schema.Column{EventSeveritiesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// ExecutionsColumns holds the columns for the "executions" table.
+	ExecutionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "manual_confirmation", Type: field.TypeTime},
+		{Name: "user_user", Type: field.TypeInt, Nullable: true},
+	}
+	// ExecutionsTable holds the schema information for the "executions" table.
+	ExecutionsTable = &schema.Table{
+		Name:       "executions",
+		Columns:    ExecutionsColumns,
+		PrimaryKey: []*schema.Column{ExecutionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "executions_users_User",
+				Columns: []*schema.Column{ExecutionsColumns[4]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// ExitPointsColumns holds the columns for the "exit_points" table.
 	ExitPointsColumns = []*schema.Column{
@@ -2272,6 +2392,20 @@ var (
 		PrimaryKey:  []*schema.Column{RecommendationsSourcesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ReconciliationRulesColumns holds the columns for the "reconciliation_rules" table.
+	ReconciliationRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// ReconciliationRulesTable holds the schema information for the "reconciliation_rules" table.
+	ReconciliationRulesTable = &schema.Table{
+		Name:        "reconciliation_rules",
+		Columns:     ReconciliationRulesColumns,
+		PrimaryKey:  []*schema.Column{ReconciliationRulesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// ReportFiltersColumns holds the columns for the "report_filters" table.
 	ReportFiltersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2358,6 +2492,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "quantity", Type: field.TypeInt, Nullable: true},
+		{Name: "reconciliation_rule_reconciliation_rule_specification", Type: field.TypeInt, Nullable: true},
 		{Name: "resource_type_resource_specification", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceSpecificationsTable holds the schema information for the "resource_specifications" table.
@@ -2367,8 +2502,15 @@ var (
 		PrimaryKey: []*schema.Column{ResourceSpecificationsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "resource_specifications_resource_types_resource_specification",
+				Symbol:  "resource_specifications_reconciliation_rules_reconciliation_rule_specification",
 				Columns: []*schema.Column{ResourceSpecificationsColumns[5]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_specifications_resource_types_resource_specification",
+				Columns: []*schema.Column{ResourceSpecificationsColumns[6]},
 
 				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2436,13 +2578,22 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "resource_type_class", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "SLOT", "RACK", "PORT", "CARD", "VLAN"}},
 		{Name: "resource_type_base_type", Type: field.TypeEnum, Enums: []string{"LOGICAL_RESOURCE", "PHYSICAL_RESOURCE", "VIRTUAL_RESOURCE"}},
+		{Name: "reconciliation_rule_reconciliation_rule_type", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceTypesTable holds the schema information for the "resource_types" table.
 	ResourceTypesTable = &schema.Table{
-		Name:        "resource_types",
-		Columns:     ResourceTypesColumns,
-		PrimaryKey:  []*schema.Column{ResourceTypesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "resource_types",
+		Columns:    ResourceTypesColumns,
+		PrimaryKey: []*schema.Column{ResourceTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "resource_types_reconciliation_rules_reconciliation_rule_type",
+				Columns: []*schema.Column{ResourceTypesColumns[6]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// ResourceTypeRelationshipsColumns holds the columns for the "resource_type_relationships" table.
 	ResourceTypeRelationshipsColumns = []*schema.Column{
@@ -2529,6 +2680,51 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// RuleActionsColumns holds the columns for the "rule_actions" table.
+	RuleActionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"NOAPLICA", "MANUAL", "AUTOMATICO"}},
+		{Name: "reconciliation_rule_reconciliation_rule_rule_action", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_action_template_rule_action_template_rule_action", Type: field.TypeInt, Nullable: true},
+	}
+	// RuleActionsTable holds the schema information for the "rule_actions" table.
+	RuleActionsTable = &schema.Table{
+		Name:       "rule_actions",
+		Columns:    RuleActionsColumns,
+		PrimaryKey: []*schema.Column{RuleActionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "rule_actions_reconciliation_rules_reconciliation_rule_rule_action",
+				Columns: []*schema.Column{RuleActionsColumns[4]},
+
+				RefColumns: []*schema.Column{ReconciliationRulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "rule_actions_rule_action_templates_rule_action_template_rule_action",
+				Columns: []*schema.Column{RuleActionsColumns[5]},
+
+				RefColumns: []*schema.Column{RuleActionTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// RuleActionTemplatesColumns holds the columns for the "rule_action_templates" table.
+	RuleActionTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "text", Type: field.TypeString, Unique: true},
+	}
+	// RuleActionTemplatesTable holds the schema information for the "rule_action_templates" table.
+	RuleActionTemplatesTable = &schema.Table{
+		Name:        "rule_action_templates",
+		Columns:     RuleActionTemplatesColumns,
+		PrimaryKey:  []*schema.Column{RuleActionTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// RuleLimitsColumns holds the columns for the "rule_limits" table.
 	RuleLimitsColumns = []*schema.Column{
@@ -2993,6 +3189,56 @@ var (
 			},
 		},
 	}
+	// UplsColumns holds the columns for the "upls" table.
+	UplsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
+		{Name: "contract_upl_contract", Type: field.TypeInt, Nullable: true},
+	}
+	// UplsTable holds the schema information for the "upls" table.
+	UplsTable = &schema.Table{
+		Name:       "upls",
+		Columns:    UplsColumns,
+		PrimaryKey: []*schema.Column{UplsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "upls_contracts_upl_contract",
+				Columns: []*schema.Column{UplsColumns[5]},
+
+				RefColumns: []*schema.Column{ContractsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// UplItemsColumns holds the columns for the "upl_items" table.
+	UplItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "externalid", Type: field.TypeString},
+		{Name: "item", Type: field.TypeString},
+		{Name: "unit", Type: field.TypeFloat64},
+		{Name: "price", Type: field.TypeFloat64},
+		{Name: "upl_upl_items", Type: field.TypeInt, Nullable: true},
+	}
+	// UplItemsTable holds the schema information for the "upl_items" table.
+	UplItemsTable = &schema.Table{
+		Name:       "upl_items",
+		Columns:    UplItemsColumns,
+		PrimaryKey: []*schema.Column{UplItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "upl_items_upls_upl_items",
+				Columns: []*schema.Column{UplItemsColumns[7]},
+
+				RefColumns: []*schema.Column{UplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3069,6 +3315,7 @@ var (
 		{Name: "scheduled_at", Type: field.TypeTime, Nullable: true},
 		{Name: "due_date", Type: field.TypeTime, Nullable: true},
 		{Name: "is_name_editable", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "contract_work_order_contract", Type: field.TypeInt, Nullable: true},
 		{Name: "organization_work_order_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "project_work_orders", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type", Type: field.TypeInt, Nullable: true},
@@ -3084,50 +3331,57 @@ var (
 		PrimaryKey: []*schema.Column{WorkOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "work_orders_organizations_work_order_fk",
+				Symbol:  "work_orders_contracts_work_order_contract",
 				Columns: []*schema.Column{WorkOrdersColumns[15]},
+
+				RefColumns: []*schema.Column{ContractsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "work_orders_organizations_work_order_fk",
+				Columns: []*schema.Column{WorkOrdersColumns[16]},
 
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_projects_work_orders",
-				Columns: []*schema.Column{WorkOrdersColumns[16]},
+				Columns: []*schema.Column{WorkOrdersColumns[17]},
 
 				RefColumns: []*schema.Column{ProjectsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_types_type",
-				Columns: []*schema.Column{WorkOrdersColumns[17]},
+				Columns: []*schema.Column{WorkOrdersColumns[18]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_templates_template",
-				Columns: []*schema.Column{WorkOrdersColumns[18]},
+				Columns: []*schema.Column{WorkOrdersColumns[19]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_locations_location",
-				Columns: []*schema.Column{WorkOrdersColumns[19]},
+				Columns: []*schema.Column{WorkOrdersColumns[20]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_owner",
-				Columns: []*schema.Column{WorkOrdersColumns[20]},
+				Columns: []*schema.Column{WorkOrdersColumns[21]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_assignee",
-				Columns: []*schema.Column{WorkOrdersColumns[21]},
+				Columns: []*schema.Column{WorkOrdersColumns[22]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -3586,6 +3840,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		ActionsTable,
 		ActivitiesTable,
 		AlarmFiltersTable,
 		AlarmStatusTable,
@@ -3598,6 +3853,8 @@ var (
 		CheckListItemDefinitionsTable,
 		CommentsTable,
 		ComparatorsTable,
+		ContractsTable,
+		CostsTable,
 		CountersTable,
 		CounterFamiliesTable,
 		CounterFormulasTable,
@@ -3614,6 +3871,7 @@ var (
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
 		EventSeveritiesTable,
+		ExecutionsTable,
 		ExitPointsTable,
 		ExportTasksTable,
 		FeaturesTable,
@@ -3653,6 +3911,7 @@ var (
 		RecommendationsTable,
 		RecommendationsCategoriesTable,
 		RecommendationsSourcesTable,
+		ReconciliationRulesTable,
 		ReportFiltersTable,
 		ResourcePropertyTypesTable,
 		ResourceSpecificationsTable,
@@ -3661,6 +3920,8 @@ var (
 		ResourceTypesTable,
 		ResourceTypeRelationshipsTable,
 		RulesTable,
+		RuleActionsTable,
+		RuleActionTemplatesTable,
 		RuleLimitsTable,
 		RuleTypesTable,
 		ServicesTable,
@@ -3675,6 +3936,8 @@ var (
 		SurveyWiFiScansTable,
 		TechesTable,
 		ThresholdsTable,
+		UplsTable,
+		UplItemsTable,
 		UsersTable,
 		UsersGroupsTable,
 		VendorsTable,
@@ -3699,6 +3962,8 @@ var (
 )
 
 func init() {
+	ActionsTable.ForeignKeys[0].RefTable = ExecutionsTable
+	ActionsTable.ForeignKeys[1].RefTable = RuleActionsTable
 	ActivitiesTable.ForeignKeys[0].RefTable = UsersTable
 	ActivitiesTable.ForeignKeys[1].RefTable = WorkOrdersTable
 	AlarmFiltersTable.ForeignKeys[0].RefTable = AlarmStatusTable
@@ -3719,6 +3984,9 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = UsersTable
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
+	ContractsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	CostsTable.ForeignKeys[0].RefTable = UplItemsTable
+	CostsTable.ForeignKeys[1].RefTable = WorkOrdersTable
 	CountersTable.ForeignKeys[0].RefTable = CounterFamiliesTable
 	CountersTable.ForeignKeys[1].RefTable = VendorsTable
 	CounterFormulasTable.ForeignKeys[0].RefTable = CountersTable
@@ -3738,6 +4006,7 @@ func init() {
 	EquipmentPositionsTable.ForeignKeys[1].RefTable = EquipmentPositionDefinitionsTable
 	EquipmentPositionDefinitionsTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTypesTable.ForeignKeys[0].RefTable = EquipmentCategoriesTable
+	ExecutionsTable.ForeignKeys[0].RefTable = UsersTable
 	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	FilesTable.ForeignKeys[1].RefTable = DocumentCategoriesTable
@@ -3817,16 +4086,20 @@ func init() {
 	RecommendationsTable.ForeignKeys[4].RefTable = VendorsTable
 	ResourcePropertyTypesTable.ForeignKeys[0].RefTable = PropertyCategoriesTable
 	ResourcePropertyTypesTable.ForeignKeys[1].RefTable = ResourceSpecificationsTable
-	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ResourceTypesTable
+	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
+	ResourceSpecificationsTable.ForeignKeys[1].RefTable = ResourceTypesTable
 	ResourceSpecificationItemsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
 	ResourceSpecificationItemsTable.ForeignKeys[1].RefTable = ResourceSpecificationRelationshipsTable
 	ResourceSpecificationRelationshipsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
+	ResourceTypesTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[0].RefTable = LocationTypesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[1].RefTable = ResourceTypesTable
 	ResourceTypeRelationshipsTable.ForeignKeys[2].RefTable = ResourceTypesTable
 	RulesTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
 	RulesTable.ForeignKeys[2].RefTable = ThresholdsTable
+	RuleActionsTable.ForeignKeys[0].RefTable = ReconciliationRulesTable
+	RuleActionsTable.ForeignKeys[1].RefTable = RuleActionTemplatesTable
 	RuleLimitsTable.ForeignKeys[0].RefTable = ComparatorsTable
 	RuleLimitsTable.ForeignKeys[1].RefTable = RulesTable
 	ServicesTable.ForeignKeys[0].RefTable = ServiceTypesTable
@@ -3848,14 +4121,17 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	ThresholdsTable.ForeignKeys[0].RefTable = KpisTable
+	UplsTable.ForeignKeys[0].RefTable = ContractsTable
+	UplItemsTable.ForeignKeys[0].RefTable = UplsTable
 	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
-	WorkOrdersTable.ForeignKeys[0].RefTable = OrganizationsTable
-	WorkOrdersTable.ForeignKeys[1].RefTable = ProjectsTable
-	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
-	WorkOrdersTable.ForeignKeys[3].RefTable = WorkOrderTemplatesTable
-	WorkOrdersTable.ForeignKeys[4].RefTable = LocationsTable
-	WorkOrdersTable.ForeignKeys[5].RefTable = UsersTable
+	WorkOrdersTable.ForeignKeys[0].RefTable = ContractsTable
+	WorkOrdersTable.ForeignKeys[1].RefTable = OrganizationsTable
+	WorkOrdersTable.ForeignKeys[2].RefTable = ProjectsTable
+	WorkOrdersTable.ForeignKeys[3].RefTable = WorkOrderTypesTable
+	WorkOrdersTable.ForeignKeys[4].RefTable = WorkOrderTemplatesTable
+	WorkOrdersTable.ForeignKeys[5].RefTable = LocationsTable
 	WorkOrdersTable.ForeignKeys[6].RefTable = UsersTable
+	WorkOrdersTable.ForeignKeys[7].RefTable = UsersTable
 	WorkOrderDefinitionsTable.ForeignKeys[0].RefTable = ProjectTemplatesTable
 	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
 	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable

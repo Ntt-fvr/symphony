@@ -59,6 +59,8 @@ const (
 	EdgeLinks = "links"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
+	// EdgeContract holds the string denoting the contract edge name in mutations.
+	EdgeContract = "contract"
 	// EdgeFiles holds the string denoting the files edge name in mutations.
 	EdgeFiles = "files"
 	// EdgeHyperlinks holds the string denoting the hyperlinks edge name in mutations.
@@ -81,6 +83,8 @@ const (
 	EdgeAssignee = "assignee"
 	// EdgeAppointment holds the string denoting the appointment edge name in mutations.
 	EdgeAppointment = "appointment"
+	// EdgeWorkorderCosts holds the string denoting the workorder_costs edge name in mutations.
+	EdgeWorkorderCosts = "workorder_costs"
 
 	// Table holds the table name of the workorder in the database.
 	Table = "work_orders"
@@ -119,6 +123,13 @@ const (
 	OrganizationInverseTable = "organizations"
 	// OrganizationColumn is the table column denoting the organization relation/edge.
 	OrganizationColumn = "organization_work_order_fk"
+	// ContractTable is the table the holds the contract relation/edge.
+	ContractTable = "work_orders"
+	// ContractInverseTable is the table name for the Contract entity.
+	// It exists in this package in order to avoid circular dependency with the "contract" package.
+	ContractInverseTable = "contracts"
+	// ContractColumn is the table column denoting the contract relation/edge.
+	ContractColumn = "contract_work_order_contract"
 	// FilesTable is the table the holds the files relation/edge.
 	FilesTable = "files"
 	// FilesInverseTable is the table name for the File entity.
@@ -196,6 +207,13 @@ const (
 	AppointmentInverseTable = "appointments"
 	// AppointmentColumn is the table column denoting the appointment relation/edge.
 	AppointmentColumn = "work_order_appointment"
+	// WorkorderCostsTable is the table the holds the workorder_costs relation/edge.
+	WorkorderCostsTable = "costs"
+	// WorkorderCostsInverseTable is the table name for the Cost entity.
+	// It exists in this package in order to avoid circular dependency with the "cost" package.
+	WorkorderCostsInverseTable = "costs"
+	// WorkorderCostsColumn is the table column denoting the workorder_costs relation/edge.
+	WorkorderCostsColumn = "work_order_workorder_costs"
 )
 
 // Columns holds all SQL columns for workorder fields.
@@ -219,6 +237,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrder type.
 var ForeignKeys = []string{
+	"contract_work_order_contract",
 	"organization_work_order_fk",
 	"project_work_orders",
 	"work_order_type",
