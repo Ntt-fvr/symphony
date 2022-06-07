@@ -32,7 +32,7 @@ const ConfigureTitleSubItem = (props: Props) => {
       <Text className={classes.title} variant="h6">
         {title}
       </Text>
-      <Text variant="h6" weight="500">
+      <Text variant="h6" weight="bold">
         {tag}
       </Text>
     </div>

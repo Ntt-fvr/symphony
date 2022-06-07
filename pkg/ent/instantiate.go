@@ -7,12 +7,6 @@
 package ent
 
 // Instantiate entity configuration.
-func (c *ActionClient) Instantiate(a *Action) *Action {
-	a.config = c.config
-	return a
-}
-
-// Instantiate entity configuration.
 func (c *ActivityClient) Instantiate(a *Activity) *Activity {
 	a.config = c.config
 	return a
@@ -80,18 +74,6 @@ func (c *CommentClient) Instantiate(co *Comment) *Comment {
 
 // Instantiate entity configuration.
 func (c *ComparatorClient) Instantiate(co *Comparator) *Comparator {
-	co.config = c.config
-	return co
-}
-
-// Instantiate entity configuration.
-func (c *ContractClient) Instantiate(co *Contract) *Contract {
-	co.config = c.config
-	return co
-}
-
-// Instantiate entity configuration.
-func (c *CostClient) Instantiate(co *Cost) *Cost {
 	co.config = c.config
 	return co
 }
@@ -190,12 +172,6 @@ func (c *EquipmentTypeClient) Instantiate(et *EquipmentType) *EquipmentType {
 func (c *EventSeverityClient) Instantiate(es *EventSeverity) *EventSeverity {
 	es.config = c.config
 	return es
-}
-
-// Instantiate entity configuration.
-func (c *ExecutionClient) Instantiate(e *Execution) *Execution {
-	e.config = c.config
-	return e
 }
 
 // Instantiate entity configuration.
@@ -433,12 +409,6 @@ func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *
 }
 
 // Instantiate entity configuration.
-func (c *ReconciliationRuleClient) Instantiate(rr *ReconciliationRule) *ReconciliationRule {
-	rr.config = c.config
-	return rr
-}
-
-// Instantiate entity configuration.
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf
@@ -484,18 +454,6 @@ func (c *ResourceTypeRelationshipClient) Instantiate(rtr *ResourceTypeRelationsh
 func (c *RuleClient) Instantiate(r *Rule) *Rule {
 	r.config = c.config
 	return r
-}
-
-// Instantiate entity configuration.
-func (c *RuleActionClient) Instantiate(ra *RuleAction) *RuleAction {
-	ra.config = c.config
-	return ra
-}
-
-// Instantiate entity configuration.
-func (c *RuleActionTemplateClient) Instantiate(rat *RuleActionTemplate) *RuleActionTemplate {
-	rat.config = c.config
-	return rat
 }
 
 // Instantiate entity configuration.
@@ -580,18 +538,6 @@ func (c *TechClient) Instantiate(t *Tech) *Tech {
 func (c *ThresholdClient) Instantiate(t *Threshold) *Threshold {
 	t.config = c.config
 	return t
-}
-
-// Instantiate entity configuration.
-func (c *UplClient) Instantiate(u *Upl) *Upl {
-	u.config = c.config
-	return u
-}
-
-// Instantiate entity configuration.
-func (c *UplItemClient) Instantiate(ui *UplItem) *UplItem {
-	ui.config = c.config
-	return ui
 }
 
 // Instantiate entity configuration.

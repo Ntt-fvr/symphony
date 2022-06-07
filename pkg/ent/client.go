@@ -13,7 +13,6 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 
-	"github.com/facebookincubator/symphony/pkg/ent/action"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
@@ -26,8 +25,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
-	"github.com/facebookincubator/symphony/pkg/ent/contract"
-	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
@@ -44,7 +41,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
-	"github.com/facebookincubator/symphony/pkg/ent/execution"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
@@ -84,7 +80,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
-	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
@@ -93,8 +88,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
-	"github.com/facebookincubator/symphony/pkg/ent/ruleaction"
-	"github.com/facebookincubator/symphony/pkg/ent/ruleactiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -109,8 +102,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
-	"github.com/facebookincubator/symphony/pkg/ent/upl"
-	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -130,8 +121,6 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Action is the client for interacting with the Action builders.
-	Action *ActionClient
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
 	// AlarmFilter is the client for interacting with the AlarmFilter builders.
@@ -156,10 +145,6 @@ type Client struct {
 	Comment *CommentClient
 	// Comparator is the client for interacting with the Comparator builders.
 	Comparator *ComparatorClient
-	// Contract is the client for interacting with the Contract builders.
-	Contract *ContractClient
-	// Cost is the client for interacting with the Cost builders.
-	Cost *CostClient
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -192,8 +177,6 @@ type Client struct {
 	EquipmentType *EquipmentTypeClient
 	// EventSeverity is the client for interacting with the EventSeverity builders.
 	EventSeverity *EventSeverityClient
-	// Execution is the client for interacting with the Execution builders.
-	Execution *ExecutionClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
 	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
@@ -272,8 +255,6 @@ type Client struct {
 	RecommendationsCategory *RecommendationsCategoryClient
 	// RecommendationsSources is the client for interacting with the RecommendationsSources builders.
 	RecommendationsSources *RecommendationsSourcesClient
-	// ReconciliationRule is the client for interacting with the ReconciliationRule builders.
-	ReconciliationRule *ReconciliationRuleClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
 	// ResourcePropertyType is the client for interacting with the ResourcePropertyType builders.
@@ -290,10 +271,6 @@ type Client struct {
 	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
-	// RuleAction is the client for interacting with the RuleAction builders.
-	RuleAction *RuleActionClient
-	// RuleActionTemplate is the client for interacting with the RuleActionTemplate builders.
-	RuleActionTemplate *RuleActionTemplateClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
 	RuleLimit *RuleLimitClient
 	// RuleType is the client for interacting with the RuleType builders.
@@ -322,10 +299,6 @@ type Client struct {
 	Tech *TechClient
 	// Threshold is the client for interacting with the Threshold builders.
 	Threshold *ThresholdClient
-	// Upl is the client for interacting with the Upl builders.
-	Upl *UplClient
-	// UplItem is the client for interacting with the UplItem builders.
-	UplItem *UplItemClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -357,7 +330,6 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Action = NewActionClient(c.config)
 	c.Activity = NewActivityClient(c.config)
 	c.AlarmFilter = NewAlarmFilterClient(c.config)
 	c.AlarmStatus = NewAlarmStatusClient(c.config)
@@ -370,8 +342,6 @@ func (c *Client) init() {
 	c.CheckListItemDefinition = NewCheckListItemDefinitionClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Comparator = NewComparatorClient(c.config)
-	c.Contract = NewContractClient(c.config)
-	c.Cost = NewCostClient(c.config)
 	c.Counter = NewCounterClient(c.config)
 	c.CounterFamily = NewCounterFamilyClient(c.config)
 	c.CounterFormula = NewCounterFormulaClient(c.config)
@@ -388,7 +358,6 @@ func (c *Client) init() {
 	c.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(c.config)
 	c.EquipmentType = NewEquipmentTypeClient(c.config)
 	c.EventSeverity = NewEventSeverityClient(c.config)
-	c.Execution = NewExecutionClient(c.config)
 	c.ExitPoint = NewExitPointClient(c.config)
 	c.ExportTask = NewExportTaskClient(c.config)
 	c.Feature = NewFeatureClient(c.config)
@@ -428,7 +397,6 @@ func (c *Client) init() {
 	c.Recommendations = NewRecommendationsClient(c.config)
 	c.RecommendationsCategory = NewRecommendationsCategoryClient(c.config)
 	c.RecommendationsSources = NewRecommendationsSourcesClient(c.config)
-	c.ReconciliationRule = NewReconciliationRuleClient(c.config)
 	c.ReportFilter = NewReportFilterClient(c.config)
 	c.ResourcePropertyType = NewResourcePropertyTypeClient(c.config)
 	c.ResourceSpecification = NewResourceSpecificationClient(c.config)
@@ -437,8 +405,6 @@ func (c *Client) init() {
 	c.ResourceType = NewResourceTypeClient(c.config)
 	c.ResourceTypeRelationship = NewResourceTypeRelationshipClient(c.config)
 	c.Rule = NewRuleClient(c.config)
-	c.RuleAction = NewRuleActionClient(c.config)
-	c.RuleActionTemplate = NewRuleActionTemplateClient(c.config)
 	c.RuleLimit = NewRuleLimitClient(c.config)
 	c.RuleType = NewRuleTypeClient(c.config)
 	c.Service = NewServiceClient(c.config)
@@ -453,8 +419,6 @@ func (c *Client) init() {
 	c.SurveyWiFiScan = NewSurveyWiFiScanClient(c.config)
 	c.Tech = NewTechClient(c.config)
 	c.Threshold = NewThresholdClient(c.config)
-	c.Upl = NewUplClient(c.config)
-	c.UplItem = NewUplItemClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UsersGroup = NewUsersGroupClient(c.config)
 	c.Vendor = NewVendorClient(c.config)
@@ -495,7 +459,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                               ctx,
 		config:                            cfg,
-		Action:                            NewActionClient(cfg),
 		Activity:                          NewActivityClient(cfg),
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),
@@ -508,8 +471,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
 		Comment:                           NewCommentClient(cfg),
 		Comparator:                        NewComparatorClient(cfg),
-		Contract:                          NewContractClient(cfg),
-		Cost:                              NewCostClient(cfg),
 		Counter:                           NewCounterClient(cfg),
 		CounterFamily:                     NewCounterFamilyClient(cfg),
 		CounterFormula:                    NewCounterFormulaClient(cfg),
@@ -526,7 +487,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EquipmentPositionDefinition:       NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:                     NewEquipmentTypeClient(cfg),
 		EventSeverity:                     NewEventSeverityClient(cfg),
-		Execution:                         NewExecutionClient(cfg),
 		ExitPoint:                         NewExitPointClient(cfg),
 		ExportTask:                        NewExportTaskClient(cfg),
 		Feature:                           NewFeatureClient(cfg),
@@ -566,7 +526,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Recommendations:                   NewRecommendationsClient(cfg),
 		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
-		ReconciliationRule:                NewReconciliationRuleClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
@@ -575,8 +534,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ResourceType:                      NewResourceTypeClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
-		RuleAction:                        NewRuleActionClient(cfg),
-		RuleActionTemplate:                NewRuleActionTemplateClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),
 		RuleType:                          NewRuleTypeClient(cfg),
 		Service:                           NewServiceClient(cfg),
@@ -591,8 +548,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
 		Tech:                              NewTechClient(cfg),
 		Threshold:                         NewThresholdClient(cfg),
-		Upl:                               NewUplClient(cfg),
-		UplItem:                           NewUplItemClient(cfg),
 		User:                              NewUserClient(cfg),
 		UsersGroup:                        NewUsersGroupClient(cfg),
 		Vendor:                            NewVendorClient(cfg),
@@ -616,7 +571,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := config{driver: &txDriver{tx: tx, drv: c.driver}, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
 		config:                            cfg,
-		Action:                            NewActionClient(cfg),
 		Activity:                          NewActivityClient(cfg),
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),
@@ -629,8 +583,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CheckListItemDefinition:           NewCheckListItemDefinitionClient(cfg),
 		Comment:                           NewCommentClient(cfg),
 		Comparator:                        NewComparatorClient(cfg),
-		Contract:                          NewContractClient(cfg),
-		Cost:                              NewCostClient(cfg),
 		Counter:                           NewCounterClient(cfg),
 		CounterFamily:                     NewCounterFamilyClient(cfg),
 		CounterFormula:                    NewCounterFormulaClient(cfg),
@@ -647,7 +599,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EquipmentPositionDefinition:       NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:                     NewEquipmentTypeClient(cfg),
 		EventSeverity:                     NewEventSeverityClient(cfg),
-		Execution:                         NewExecutionClient(cfg),
 		ExitPoint:                         NewExitPointClient(cfg),
 		ExportTask:                        NewExportTaskClient(cfg),
 		Feature:                           NewFeatureClient(cfg),
@@ -687,7 +638,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Recommendations:                   NewRecommendationsClient(cfg),
 		RecommendationsCategory:           NewRecommendationsCategoryClient(cfg),
 		RecommendationsSources:            NewRecommendationsSourcesClient(cfg),
-		ReconciliationRule:                NewReconciliationRuleClient(cfg),
 		ReportFilter:                      NewReportFilterClient(cfg),
 		ResourcePropertyType:              NewResourcePropertyTypeClient(cfg),
 		ResourceSpecification:             NewResourceSpecificationClient(cfg),
@@ -696,8 +646,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ResourceType:                      NewResourceTypeClient(cfg),
 		ResourceTypeRelationship:          NewResourceTypeRelationshipClient(cfg),
 		Rule:                              NewRuleClient(cfg),
-		RuleAction:                        NewRuleActionClient(cfg),
-		RuleActionTemplate:                NewRuleActionTemplateClient(cfg),
 		RuleLimit:                         NewRuleLimitClient(cfg),
 		RuleType:                          NewRuleTypeClient(cfg),
 		Service:                           NewServiceClient(cfg),
@@ -712,8 +660,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SurveyWiFiScan:                    NewSurveyWiFiScanClient(cfg),
 		Tech:                              NewTechClient(cfg),
 		Threshold:                         NewThresholdClient(cfg),
-		Upl:                               NewUplClient(cfg),
-		UplItem:                           NewUplItemClient(cfg),
 		User:                              NewUserClient(cfg),
 		UsersGroup:                        NewUsersGroupClient(cfg),
 		Vendor:                            NewVendorClient(cfg),
@@ -728,7 +674,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Action.
+//		Activity.
 //		Query().
 //		Count(ctx)
 //
@@ -750,7 +696,6 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Action.Use(hooks...)
 	c.Activity.Use(hooks...)
 	c.AlarmFilter.Use(hooks...)
 	c.AlarmStatus.Use(hooks...)
@@ -763,8 +708,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CheckListItemDefinition.Use(hooks...)
 	c.Comment.Use(hooks...)
 	c.Comparator.Use(hooks...)
-	c.Contract.Use(hooks...)
-	c.Cost.Use(hooks...)
 	c.Counter.Use(hooks...)
 	c.CounterFamily.Use(hooks...)
 	c.CounterFormula.Use(hooks...)
@@ -781,7 +724,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.EquipmentPositionDefinition.Use(hooks...)
 	c.EquipmentType.Use(hooks...)
 	c.EventSeverity.Use(hooks...)
-	c.Execution.Use(hooks...)
 	c.ExitPoint.Use(hooks...)
 	c.ExportTask.Use(hooks...)
 	c.Feature.Use(hooks...)
@@ -821,7 +763,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Recommendations.Use(hooks...)
 	c.RecommendationsCategory.Use(hooks...)
 	c.RecommendationsSources.Use(hooks...)
-	c.ReconciliationRule.Use(hooks...)
 	c.ReportFilter.Use(hooks...)
 	c.ResourcePropertyType.Use(hooks...)
 	c.ResourceSpecification.Use(hooks...)
@@ -830,8 +771,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ResourceType.Use(hooks...)
 	c.ResourceTypeRelationship.Use(hooks...)
 	c.Rule.Use(hooks...)
-	c.RuleAction.Use(hooks...)
-	c.RuleActionTemplate.Use(hooks...)
 	c.RuleLimit.Use(hooks...)
 	c.RuleType.Use(hooks...)
 	c.Service.Use(hooks...)
@@ -846,8 +785,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.SurveyWiFiScan.Use(hooks...)
 	c.Tech.Use(hooks...)
 	c.Threshold.Use(hooks...)
-	c.Upl.Use(hooks...)
-	c.UplItem.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UsersGroup.Use(hooks...)
 	c.Vendor.Use(hooks...)
@@ -856,127 +793,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.WorkOrderTemplate.Use(hooks...)
 	c.WorkOrderType.Use(hooks...)
 	c.WorkerType.Use(hooks...)
-}
-
-// ActionClient is a client for the Action schema.
-type ActionClient struct {
-	config
-}
-
-// NewActionClient returns a client for the Action from the given config.
-func NewActionClient(c config) *ActionClient {
-	return &ActionClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `action.Hooks(f(g(h())))`.
-func (c *ActionClient) Use(hooks ...Hook) {
-	c.hooks.Action = append(c.hooks.Action, hooks...)
-}
-
-// Create returns a create builder for Action.
-func (c *ActionClient) Create() *ActionCreate {
-	mutation := newActionMutation(c.config, OpCreate)
-	return &ActionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Action entities.
-func (c *ActionClient) CreateBulk(builders ...*ActionCreate) *ActionCreateBulk {
-	return &ActionCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Action.
-func (c *ActionClient) Update() *ActionUpdate {
-	mutation := newActionMutation(c.config, OpUpdate)
-	return &ActionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ActionClient) UpdateOne(a *Action) *ActionUpdateOne {
-	mutation := newActionMutation(c.config, OpUpdateOne, withAction(a))
-	return &ActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ActionClient) UpdateOneID(id int) *ActionUpdateOne {
-	mutation := newActionMutation(c.config, OpUpdateOne, withActionID(id))
-	return &ActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Action.
-func (c *ActionClient) Delete() *ActionDelete {
-	mutation := newActionMutation(c.config, OpDelete)
-	return &ActionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ActionClient) DeleteOne(a *Action) *ActionDeleteOne {
-	return c.DeleteOneID(a.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ActionClient) DeleteOneID(id int) *ActionDeleteOne {
-	builder := c.Delete().Where(action.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ActionDeleteOne{builder}
-}
-
-// Query returns a query builder for Action.
-func (c *ActionClient) Query() *ActionQuery {
-	return &ActionQuery{config: c.config}
-}
-
-// Get returns a Action entity by its id.
-func (c *ActionClient) Get(ctx context.Context, id int) (*Action, error) {
-	return c.Query().Where(action.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ActionClient) GetX(ctx context.Context, id int) *Action {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryExecution queries the execution edge of a Action.
-func (c *ActionClient) QueryExecution(a *Action) *ExecutionQuery {
-	query := &ExecutionQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := a.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(action.Table, action.FieldID, id),
-			sqlgraph.To(execution.Table, execution.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, action.ExecutionTable, action.ExecutionColumn),
-		)
-		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryRuleaction queries the ruleaction edge of a Action.
-func (c *ActionClient) QueryRuleaction(a *Action) *RuleActionQuery {
-	query := &RuleActionQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := a.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(action.Table, action.FieldID, id),
-			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, action.RuleactionTable, action.RuleactionColumn),
-		)
-		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ActionClient) Hooks() []Hook {
-	hooks := c.hooks.Action
-	return append(hooks[:len(hooks):len(hooks)], action.Hooks[:]...)
 }
 
 // ActivityClient is a client for the Activity schema.
@@ -2573,264 +2389,6 @@ func (c *ComparatorClient) QueryComparatorkqitargetfk(co *Comparator) *KqiCompar
 func (c *ComparatorClient) Hooks() []Hook {
 	hooks := c.hooks.Comparator
 	return append(hooks[:len(hooks):len(hooks)], comparator.Hooks[:]...)
-}
-
-// ContractClient is a client for the Contract schema.
-type ContractClient struct {
-	config
-}
-
-// NewContractClient returns a client for the Contract from the given config.
-func NewContractClient(c config) *ContractClient {
-	return &ContractClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `contract.Hooks(f(g(h())))`.
-func (c *ContractClient) Use(hooks ...Hook) {
-	c.hooks.Contract = append(c.hooks.Contract, hooks...)
-}
-
-// Create returns a create builder for Contract.
-func (c *ContractClient) Create() *ContractCreate {
-	mutation := newContractMutation(c.config, OpCreate)
-	return &ContractCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Contract entities.
-func (c *ContractClient) CreateBulk(builders ...*ContractCreate) *ContractCreateBulk {
-	return &ContractCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Contract.
-func (c *ContractClient) Update() *ContractUpdate {
-	mutation := newContractMutation(c.config, OpUpdate)
-	return &ContractUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ContractClient) UpdateOne(co *Contract) *ContractUpdateOne {
-	mutation := newContractMutation(c.config, OpUpdateOne, withContract(co))
-	return &ContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ContractClient) UpdateOneID(id int) *ContractUpdateOne {
-	mutation := newContractMutation(c.config, OpUpdateOne, withContractID(id))
-	return &ContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Contract.
-func (c *ContractClient) Delete() *ContractDelete {
-	mutation := newContractMutation(c.config, OpDelete)
-	return &ContractDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ContractClient) DeleteOne(co *Contract) *ContractDeleteOne {
-	return c.DeleteOneID(co.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ContractClient) DeleteOneID(id int) *ContractDeleteOne {
-	builder := c.Delete().Where(contract.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ContractDeleteOne{builder}
-}
-
-// Query returns a query builder for Contract.
-func (c *ContractClient) Query() *ContractQuery {
-	return &ContractQuery{config: c.config}
-}
-
-// Get returns a Contract entity by its id.
-func (c *ContractClient) Get(ctx context.Context, id int) (*Contract, error) {
-	return c.Query().Where(contract.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ContractClient) GetX(ctx context.Context, id int) *Contract {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryOrganization queries the organization edge of a Contract.
-func (c *ContractClient) QueryOrganization(co *Contract) *OrganizationQuery {
-	query := &OrganizationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(contract.Table, contract.FieldID, id),
-			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, contract.OrganizationTable, contract.OrganizationColumn),
-		)
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUplContract queries the upl_contract edge of a Contract.
-func (c *ContractClient) QueryUplContract(co *Contract) *UplQuery {
-	query := &UplQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(contract.Table, contract.FieldID, id),
-			sqlgraph.To(upl.Table, upl.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, contract.UplContractTable, contract.UplContractColumn),
-		)
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryWorkOrderContract queries the work_order_contract edge of a Contract.
-func (c *ContractClient) QueryWorkOrderContract(co *Contract) *WorkOrderQuery {
-	query := &WorkOrderQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(contract.Table, contract.FieldID, id),
-			sqlgraph.To(workorder.Table, workorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, contract.WorkOrderContractTable, contract.WorkOrderContractColumn),
-		)
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ContractClient) Hooks() []Hook {
-	hooks := c.hooks.Contract
-	return append(hooks[:len(hooks):len(hooks)], contract.Hooks[:]...)
-}
-
-// CostClient is a client for the Cost schema.
-type CostClient struct {
-	config
-}
-
-// NewCostClient returns a client for the Cost from the given config.
-func NewCostClient(c config) *CostClient {
-	return &CostClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `cost.Hooks(f(g(h())))`.
-func (c *CostClient) Use(hooks ...Hook) {
-	c.hooks.Cost = append(c.hooks.Cost, hooks...)
-}
-
-// Create returns a create builder for Cost.
-func (c *CostClient) Create() *CostCreate {
-	mutation := newCostMutation(c.config, OpCreate)
-	return &CostCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Cost entities.
-func (c *CostClient) CreateBulk(builders ...*CostCreate) *CostCreateBulk {
-	return &CostCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Cost.
-func (c *CostClient) Update() *CostUpdate {
-	mutation := newCostMutation(c.config, OpUpdate)
-	return &CostUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *CostClient) UpdateOne(co *Cost) *CostUpdateOne {
-	mutation := newCostMutation(c.config, OpUpdateOne, withCost(co))
-	return &CostUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *CostClient) UpdateOneID(id int) *CostUpdateOne {
-	mutation := newCostMutation(c.config, OpUpdateOne, withCostID(id))
-	return &CostUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Cost.
-func (c *CostClient) Delete() *CostDelete {
-	mutation := newCostMutation(c.config, OpDelete)
-	return &CostDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *CostClient) DeleteOne(co *Cost) *CostDeleteOne {
-	return c.DeleteOneID(co.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *CostClient) DeleteOneID(id int) *CostDeleteOne {
-	builder := c.Delete().Where(cost.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &CostDeleteOne{builder}
-}
-
-// Query returns a query builder for Cost.
-func (c *CostClient) Query() *CostQuery {
-	return &CostQuery{config: c.config}
-}
-
-// Get returns a Cost entity by its id.
-func (c *CostClient) Get(ctx context.Context, id int) (*Cost, error) {
-	return c.Query().Where(cost.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *CostClient) GetX(ctx context.Context, id int) *Cost {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryUplitem queries the uplitem edge of a Cost.
-func (c *CostClient) QueryUplitem(co *Cost) *UplItemQuery {
-	query := &UplItemQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(cost.Table, cost.FieldID, id),
-			sqlgraph.To(uplitem.Table, uplitem.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, cost.UplitemTable, cost.UplitemColumn),
-		)
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryWorkorder queries the workorder edge of a Cost.
-func (c *CostClient) QueryWorkorder(co *Cost) *WorkOrderQuery {
-	query := &WorkOrderQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(cost.Table, cost.FieldID, id),
-			sqlgraph.To(workorder.Table, workorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, cost.WorkorderTable, cost.WorkorderColumn),
-		)
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *CostClient) Hooks() []Hook {
-	hooks := c.hooks.Cost
-	return append(hooks[:len(hooks):len(hooks)], cost.Hooks[:]...)
 }
 
 // CounterClient is a client for the Counter schema.
@@ -5055,127 +4613,6 @@ func (c *EventSeverityClient) QueryEventseverityrule(es *EventSeverity) *RuleQue
 func (c *EventSeverityClient) Hooks() []Hook {
 	hooks := c.hooks.EventSeverity
 	return append(hooks[:len(hooks):len(hooks)], eventseverity.Hooks[:]...)
-}
-
-// ExecutionClient is a client for the Execution schema.
-type ExecutionClient struct {
-	config
-}
-
-// NewExecutionClient returns a client for the Execution from the given config.
-func NewExecutionClient(c config) *ExecutionClient {
-	return &ExecutionClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `execution.Hooks(f(g(h())))`.
-func (c *ExecutionClient) Use(hooks ...Hook) {
-	c.hooks.Execution = append(c.hooks.Execution, hooks...)
-}
-
-// Create returns a create builder for Execution.
-func (c *ExecutionClient) Create() *ExecutionCreate {
-	mutation := newExecutionMutation(c.config, OpCreate)
-	return &ExecutionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Execution entities.
-func (c *ExecutionClient) CreateBulk(builders ...*ExecutionCreate) *ExecutionCreateBulk {
-	return &ExecutionCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Execution.
-func (c *ExecutionClient) Update() *ExecutionUpdate {
-	mutation := newExecutionMutation(c.config, OpUpdate)
-	return &ExecutionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ExecutionClient) UpdateOne(e *Execution) *ExecutionUpdateOne {
-	mutation := newExecutionMutation(c.config, OpUpdateOne, withExecution(e))
-	return &ExecutionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ExecutionClient) UpdateOneID(id int) *ExecutionUpdateOne {
-	mutation := newExecutionMutation(c.config, OpUpdateOne, withExecutionID(id))
-	return &ExecutionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Execution.
-func (c *ExecutionClient) Delete() *ExecutionDelete {
-	mutation := newExecutionMutation(c.config, OpDelete)
-	return &ExecutionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ExecutionClient) DeleteOne(e *Execution) *ExecutionDeleteOne {
-	return c.DeleteOneID(e.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ExecutionClient) DeleteOneID(id int) *ExecutionDeleteOne {
-	builder := c.Delete().Where(execution.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ExecutionDeleteOne{builder}
-}
-
-// Query returns a query builder for Execution.
-func (c *ExecutionClient) Query() *ExecutionQuery {
-	return &ExecutionQuery{config: c.config}
-}
-
-// Get returns a Execution entity by its id.
-func (c *ExecutionClient) Get(ctx context.Context, id int) (*Execution, error) {
-	return c.Query().Where(execution.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ExecutionClient) GetX(ctx context.Context, id int) *Execution {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryUser queries the user edge of a Execution.
-func (c *ExecutionClient) QueryUser(e *Execution) *UserQuery {
-	query := &UserQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := e.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(execution.Table, execution.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, execution.UserTable, execution.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryExecution queries the execution edge of a Execution.
-func (c *ExecutionClient) QueryExecution(e *Execution) *ActionQuery {
-	query := &ActionQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := e.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(execution.Table, execution.FieldID, id),
-			sqlgraph.To(action.Table, action.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, execution.ExecutionTable, execution.ExecutionColumn),
-		)
-		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ExecutionClient) Hooks() []Hook {
-	hooks := c.hooks.Execution
-	return append(hooks[:len(hooks):len(hooks)], execution.Hooks[:]...)
 }
 
 // ExitPointClient is a client for the ExitPoint schema.
@@ -8791,22 +8228,6 @@ func (c *OrganizationClient) QueryUserFk(o *Organization) *UserQuery {
 	return query
 }
 
-// QueryContractOrganization queries the contract_organization edge of a Organization.
-func (c *OrganizationClient) QueryContractOrganization(o *Organization) *ContractQuery {
-	query := &ContractQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := o.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(organization.Table, organization.FieldID, id),
-			sqlgraph.To(contract.Table, contract.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, organization.ContractOrganizationTable, organization.ContractOrganizationColumn),
-		)
-		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryWorkOrderFk queries the work_order_fk edge of a Organization.
 func (c *OrganizationClient) QueryWorkOrderFk(o *Organization) *WorkOrderQuery {
 	query := &WorkOrderQuery{config: c.config}
@@ -10905,143 +10326,6 @@ func (c *RecommendationsSourcesClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], recommendationssources.Hooks[:]...)
 }
 
-// ReconciliationRuleClient is a client for the ReconciliationRule schema.
-type ReconciliationRuleClient struct {
-	config
-}
-
-// NewReconciliationRuleClient returns a client for the ReconciliationRule from the given config.
-func NewReconciliationRuleClient(c config) *ReconciliationRuleClient {
-	return &ReconciliationRuleClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `reconciliationrule.Hooks(f(g(h())))`.
-func (c *ReconciliationRuleClient) Use(hooks ...Hook) {
-	c.hooks.ReconciliationRule = append(c.hooks.ReconciliationRule, hooks...)
-}
-
-// Create returns a create builder for ReconciliationRule.
-func (c *ReconciliationRuleClient) Create() *ReconciliationRuleCreate {
-	mutation := newReconciliationRuleMutation(c.config, OpCreate)
-	return &ReconciliationRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ReconciliationRule entities.
-func (c *ReconciliationRuleClient) CreateBulk(builders ...*ReconciliationRuleCreate) *ReconciliationRuleCreateBulk {
-	return &ReconciliationRuleCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ReconciliationRule.
-func (c *ReconciliationRuleClient) Update() *ReconciliationRuleUpdate {
-	mutation := newReconciliationRuleMutation(c.config, OpUpdate)
-	return &ReconciliationRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ReconciliationRuleClient) UpdateOne(rr *ReconciliationRule) *ReconciliationRuleUpdateOne {
-	mutation := newReconciliationRuleMutation(c.config, OpUpdateOne, withReconciliationRule(rr))
-	return &ReconciliationRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ReconciliationRuleClient) UpdateOneID(id int) *ReconciliationRuleUpdateOne {
-	mutation := newReconciliationRuleMutation(c.config, OpUpdateOne, withReconciliationRuleID(id))
-	return &ReconciliationRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ReconciliationRule.
-func (c *ReconciliationRuleClient) Delete() *ReconciliationRuleDelete {
-	mutation := newReconciliationRuleMutation(c.config, OpDelete)
-	return &ReconciliationRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ReconciliationRuleClient) DeleteOne(rr *ReconciliationRule) *ReconciliationRuleDeleteOne {
-	return c.DeleteOneID(rr.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ReconciliationRuleClient) DeleteOneID(id int) *ReconciliationRuleDeleteOne {
-	builder := c.Delete().Where(reconciliationrule.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ReconciliationRuleDeleteOne{builder}
-}
-
-// Query returns a query builder for ReconciliationRule.
-func (c *ReconciliationRuleClient) Query() *ReconciliationRuleQuery {
-	return &ReconciliationRuleQuery{config: c.config}
-}
-
-// Get returns a ReconciliationRule entity by its id.
-func (c *ReconciliationRuleClient) Get(ctx context.Context, id int) (*ReconciliationRule, error) {
-	return c.Query().Where(reconciliationrule.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ReconciliationRuleClient) GetX(ctx context.Context, id int) *ReconciliationRule {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryReconciliationRuleType queries the reconciliation_rule_type edge of a ReconciliationRule.
-func (c *ReconciliationRuleClient) QueryReconciliationRuleType(rr *ReconciliationRule) *ResourceTypeQuery {
-	query := &ResourceTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, id),
-			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleTypeTable, reconciliationrule.ReconciliationRuleTypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryReconciliationRuleSpecification queries the reconciliation_rule_specification edge of a ReconciliationRule.
-func (c *ReconciliationRuleClient) QueryReconciliationRuleSpecification(rr *ReconciliationRule) *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, id),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleSpecificationTable, reconciliationrule.ReconciliationRuleSpecificationColumn),
-		)
-		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryReconciliationRuleRuleAction queries the reconciliation_rule_rule_action edge of a ReconciliationRule.
-func (c *ReconciliationRuleClient) QueryReconciliationRuleRuleAction(rr *ReconciliationRule) *RuleActionQuery {
-	query := &RuleActionQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(reconciliationrule.Table, reconciliationrule.FieldID, id),
-			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, reconciliationrule.ReconciliationRuleRuleActionTable, reconciliationrule.ReconciliationRuleRuleActionColumn),
-		)
-		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ReconciliationRuleClient) Hooks() []Hook {
-	hooks := c.hooks.ReconciliationRule
-	return append(hooks[:len(hooks):len(hooks)], reconciliationrule.Hooks[:]...)
-}
-
 // ReportFilterClient is a client for the ReportFilter schema.
 type ReportFilterClient struct {
 	config
@@ -11344,22 +10628,6 @@ func (c *ResourceSpecificationClient) QueryResourcetype(rs *ResourceSpecificatio
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
 			sqlgraph.To(resourcetype.Table, resourcetype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.ResourcetypeTable, resourcespecification.ResourcetypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryReconciliationrule queries the reconciliationrule edge of a ResourceSpecification.
-func (c *ResourceSpecificationClient) QueryReconciliationrule(rs *ResourceSpecification) *ReconciliationRuleQuery {
-	query := &ReconciliationRuleQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rs.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
-			sqlgraph.To(reconciliationrule.Table, reconciliationrule.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.ReconciliationruleTable, resourcespecification.ReconciliationruleColumn),
 		)
 		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
 		return fromV, nil
@@ -11746,22 +11014,6 @@ func (c *ResourceTypeClient) GetX(ctx context.Context, id int) *ResourceType {
 	return obj
 }
 
-// QueryReconciliationrule queries the reconciliationrule edge of a ResourceType.
-func (c *ResourceTypeClient) QueryReconciliationrule(rt *ResourceType) *ReconciliationRuleQuery {
-	query := &ReconciliationRuleQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(resourcetype.Table, resourcetype.FieldID, id),
-			sqlgraph.To(reconciliationrule.Table, reconciliationrule.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, resourcetype.ReconciliationruleTable, resourcetype.ReconciliationruleColumn),
-		)
-		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryResourceRelationshipA queries the resource_relationship_a edge of a ResourceType.
 func (c *ResourceTypeClient) QueryResourceRelationshipA(rt *ResourceType) *ResourceTypeRelationshipQuery {
 	query := &ResourceTypeRelationshipQuery{config: c.config}
@@ -12104,248 +11356,6 @@ func (c *RuleClient) QueryRulelimitrule(r *Rule) *RuleLimitQuery {
 func (c *RuleClient) Hooks() []Hook {
 	hooks := c.hooks.Rule
 	return append(hooks[:len(hooks):len(hooks)], rule.Hooks[:]...)
-}
-
-// RuleActionClient is a client for the RuleAction schema.
-type RuleActionClient struct {
-	config
-}
-
-// NewRuleActionClient returns a client for the RuleAction from the given config.
-func NewRuleActionClient(c config) *RuleActionClient {
-	return &RuleActionClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `ruleaction.Hooks(f(g(h())))`.
-func (c *RuleActionClient) Use(hooks ...Hook) {
-	c.hooks.RuleAction = append(c.hooks.RuleAction, hooks...)
-}
-
-// Create returns a create builder for RuleAction.
-func (c *RuleActionClient) Create() *RuleActionCreate {
-	mutation := newRuleActionMutation(c.config, OpCreate)
-	return &RuleActionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of RuleAction entities.
-func (c *RuleActionClient) CreateBulk(builders ...*RuleActionCreate) *RuleActionCreateBulk {
-	return &RuleActionCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for RuleAction.
-func (c *RuleActionClient) Update() *RuleActionUpdate {
-	mutation := newRuleActionMutation(c.config, OpUpdate)
-	return &RuleActionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *RuleActionClient) UpdateOne(ra *RuleAction) *RuleActionUpdateOne {
-	mutation := newRuleActionMutation(c.config, OpUpdateOne, withRuleAction(ra))
-	return &RuleActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *RuleActionClient) UpdateOneID(id int) *RuleActionUpdateOne {
-	mutation := newRuleActionMutation(c.config, OpUpdateOne, withRuleActionID(id))
-	return &RuleActionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for RuleAction.
-func (c *RuleActionClient) Delete() *RuleActionDelete {
-	mutation := newRuleActionMutation(c.config, OpDelete)
-	return &RuleActionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *RuleActionClient) DeleteOne(ra *RuleAction) *RuleActionDeleteOne {
-	return c.DeleteOneID(ra.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *RuleActionClient) DeleteOneID(id int) *RuleActionDeleteOne {
-	builder := c.Delete().Where(ruleaction.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &RuleActionDeleteOne{builder}
-}
-
-// Query returns a query builder for RuleAction.
-func (c *RuleActionClient) Query() *RuleActionQuery {
-	return &RuleActionQuery{config: c.config}
-}
-
-// Get returns a RuleAction entity by its id.
-func (c *RuleActionClient) Get(ctx context.Context, id int) (*RuleAction, error) {
-	return c.Query().Where(ruleaction.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *RuleActionClient) GetX(ctx context.Context, id int) *RuleAction {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryReconciliationrule queries the reconciliationrule edge of a RuleAction.
-func (c *RuleActionClient) QueryReconciliationrule(ra *RuleAction) *ReconciliationRuleQuery {
-	query := &ReconciliationRuleQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := ra.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, id),
-			sqlgraph.To(reconciliationrule.Table, reconciliationrule.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ruleaction.ReconciliationruleTable, ruleaction.ReconciliationruleColumn),
-		)
-		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryRuleactiontemplate queries the ruleactiontemplate edge of a RuleAction.
-func (c *RuleActionClient) QueryRuleactiontemplate(ra *RuleAction) *RuleActionTemplateQuery {
-	query := &RuleActionTemplateQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := ra.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, id),
-			sqlgraph.To(ruleactiontemplate.Table, ruleactiontemplate.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ruleaction.RuleactiontemplateTable, ruleaction.RuleactiontemplateColumn),
-		)
-		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryRuleAction queries the rule_action edge of a RuleAction.
-func (c *RuleActionClient) QueryRuleAction(ra *RuleAction) *ActionQuery {
-	query := &ActionQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := ra.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(ruleaction.Table, ruleaction.FieldID, id),
-			sqlgraph.To(action.Table, action.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ruleaction.RuleActionTable, ruleaction.RuleActionColumn),
-		)
-		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *RuleActionClient) Hooks() []Hook {
-	hooks := c.hooks.RuleAction
-	return append(hooks[:len(hooks):len(hooks)], ruleaction.Hooks[:]...)
-}
-
-// RuleActionTemplateClient is a client for the RuleActionTemplate schema.
-type RuleActionTemplateClient struct {
-	config
-}
-
-// NewRuleActionTemplateClient returns a client for the RuleActionTemplate from the given config.
-func NewRuleActionTemplateClient(c config) *RuleActionTemplateClient {
-	return &RuleActionTemplateClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `ruleactiontemplate.Hooks(f(g(h())))`.
-func (c *RuleActionTemplateClient) Use(hooks ...Hook) {
-	c.hooks.RuleActionTemplate = append(c.hooks.RuleActionTemplate, hooks...)
-}
-
-// Create returns a create builder for RuleActionTemplate.
-func (c *RuleActionTemplateClient) Create() *RuleActionTemplateCreate {
-	mutation := newRuleActionTemplateMutation(c.config, OpCreate)
-	return &RuleActionTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of RuleActionTemplate entities.
-func (c *RuleActionTemplateClient) CreateBulk(builders ...*RuleActionTemplateCreate) *RuleActionTemplateCreateBulk {
-	return &RuleActionTemplateCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for RuleActionTemplate.
-func (c *RuleActionTemplateClient) Update() *RuleActionTemplateUpdate {
-	mutation := newRuleActionTemplateMutation(c.config, OpUpdate)
-	return &RuleActionTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *RuleActionTemplateClient) UpdateOne(rat *RuleActionTemplate) *RuleActionTemplateUpdateOne {
-	mutation := newRuleActionTemplateMutation(c.config, OpUpdateOne, withRuleActionTemplate(rat))
-	return &RuleActionTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *RuleActionTemplateClient) UpdateOneID(id int) *RuleActionTemplateUpdateOne {
-	mutation := newRuleActionTemplateMutation(c.config, OpUpdateOne, withRuleActionTemplateID(id))
-	return &RuleActionTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for RuleActionTemplate.
-func (c *RuleActionTemplateClient) Delete() *RuleActionTemplateDelete {
-	mutation := newRuleActionTemplateMutation(c.config, OpDelete)
-	return &RuleActionTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *RuleActionTemplateClient) DeleteOne(rat *RuleActionTemplate) *RuleActionTemplateDeleteOne {
-	return c.DeleteOneID(rat.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *RuleActionTemplateClient) DeleteOneID(id int) *RuleActionTemplateDeleteOne {
-	builder := c.Delete().Where(ruleactiontemplate.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &RuleActionTemplateDeleteOne{builder}
-}
-
-// Query returns a query builder for RuleActionTemplate.
-func (c *RuleActionTemplateClient) Query() *RuleActionTemplateQuery {
-	return &RuleActionTemplateQuery{config: c.config}
-}
-
-// Get returns a RuleActionTemplate entity by its id.
-func (c *RuleActionTemplateClient) Get(ctx context.Context, id int) (*RuleActionTemplate, error) {
-	return c.Query().Where(ruleactiontemplate.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *RuleActionTemplateClient) GetX(ctx context.Context, id int) *RuleActionTemplate {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryRuleActionTemplateRuleAction queries the rule_action_template_rule_action edge of a RuleActionTemplate.
-func (c *RuleActionTemplateClient) QueryRuleActionTemplateRuleAction(rat *RuleActionTemplate) *RuleActionQuery {
-	query := &RuleActionQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := rat.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(ruleactiontemplate.Table, ruleactiontemplate.FieldID, id),
-			sqlgraph.To(ruleaction.Table, ruleaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ruleactiontemplate.RuleActionTemplateRuleActionTable, ruleactiontemplate.RuleActionTemplateRuleActionColumn),
-		)
-		fromV = sqlgraph.Neighbors(rat.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *RuleActionTemplateClient) Hooks() []Hook {
-	hooks := c.hooks.RuleActionTemplate
-	return append(hooks[:len(hooks):len(hooks)], ruleactiontemplate.Hooks[:]...)
 }
 
 // RuleLimitClient is a client for the RuleLimit schema.
@@ -14266,248 +13276,6 @@ func (c *ThresholdClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], threshold.Hooks[:]...)
 }
 
-// UplClient is a client for the Upl schema.
-type UplClient struct {
-	config
-}
-
-// NewUplClient returns a client for the Upl from the given config.
-func NewUplClient(c config) *UplClient {
-	return &UplClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `upl.Hooks(f(g(h())))`.
-func (c *UplClient) Use(hooks ...Hook) {
-	c.hooks.Upl = append(c.hooks.Upl, hooks...)
-}
-
-// Create returns a create builder for Upl.
-func (c *UplClient) Create() *UplCreate {
-	mutation := newUplMutation(c.config, OpCreate)
-	return &UplCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Upl entities.
-func (c *UplClient) CreateBulk(builders ...*UplCreate) *UplCreateBulk {
-	return &UplCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Upl.
-func (c *UplClient) Update() *UplUpdate {
-	mutation := newUplMutation(c.config, OpUpdate)
-	return &UplUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *UplClient) UpdateOne(u *Upl) *UplUpdateOne {
-	mutation := newUplMutation(c.config, OpUpdateOne, withUpl(u))
-	return &UplUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *UplClient) UpdateOneID(id int) *UplUpdateOne {
-	mutation := newUplMutation(c.config, OpUpdateOne, withUplID(id))
-	return &UplUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Upl.
-func (c *UplClient) Delete() *UplDelete {
-	mutation := newUplMutation(c.config, OpDelete)
-	return &UplDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *UplClient) DeleteOne(u *Upl) *UplDeleteOne {
-	return c.DeleteOneID(u.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *UplClient) DeleteOneID(id int) *UplDeleteOne {
-	builder := c.Delete().Where(upl.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &UplDeleteOne{builder}
-}
-
-// Query returns a query builder for Upl.
-func (c *UplClient) Query() *UplQuery {
-	return &UplQuery{config: c.config}
-}
-
-// Get returns a Upl entity by its id.
-func (c *UplClient) Get(ctx context.Context, id int) (*Upl, error) {
-	return c.Query().Where(upl.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *UplClient) GetX(ctx context.Context, id int) *Upl {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryContract queries the contract edge of a Upl.
-func (c *UplClient) QueryContract(u *Upl) *ContractQuery {
-	query := &ContractQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(upl.Table, upl.FieldID, id),
-			sqlgraph.To(contract.Table, contract.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, upl.ContractTable, upl.ContractColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUplItems queries the upl_items edge of a Upl.
-func (c *UplClient) QueryUplItems(u *Upl) *UplItemQuery {
-	query := &UplItemQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(upl.Table, upl.FieldID, id),
-			sqlgraph.To(uplitem.Table, uplitem.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, upl.UplItemsTable, upl.UplItemsColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *UplClient) Hooks() []Hook {
-	hooks := c.hooks.Upl
-	return append(hooks[:len(hooks):len(hooks)], upl.Hooks[:]...)
-}
-
-// UplItemClient is a client for the UplItem schema.
-type UplItemClient struct {
-	config
-}
-
-// NewUplItemClient returns a client for the UplItem from the given config.
-func NewUplItemClient(c config) *UplItemClient {
-	return &UplItemClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `uplitem.Hooks(f(g(h())))`.
-func (c *UplItemClient) Use(hooks ...Hook) {
-	c.hooks.UplItem = append(c.hooks.UplItem, hooks...)
-}
-
-// Create returns a create builder for UplItem.
-func (c *UplItemClient) Create() *UplItemCreate {
-	mutation := newUplItemMutation(c.config, OpCreate)
-	return &UplItemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of UplItem entities.
-func (c *UplItemClient) CreateBulk(builders ...*UplItemCreate) *UplItemCreateBulk {
-	return &UplItemCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for UplItem.
-func (c *UplItemClient) Update() *UplItemUpdate {
-	mutation := newUplItemMutation(c.config, OpUpdate)
-	return &UplItemUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *UplItemClient) UpdateOne(ui *UplItem) *UplItemUpdateOne {
-	mutation := newUplItemMutation(c.config, OpUpdateOne, withUplItem(ui))
-	return &UplItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *UplItemClient) UpdateOneID(id int) *UplItemUpdateOne {
-	mutation := newUplItemMutation(c.config, OpUpdateOne, withUplItemID(id))
-	return &UplItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for UplItem.
-func (c *UplItemClient) Delete() *UplItemDelete {
-	mutation := newUplItemMutation(c.config, OpDelete)
-	return &UplItemDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *UplItemClient) DeleteOne(ui *UplItem) *UplItemDeleteOne {
-	return c.DeleteOneID(ui.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *UplItemClient) DeleteOneID(id int) *UplItemDeleteOne {
-	builder := c.Delete().Where(uplitem.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &UplItemDeleteOne{builder}
-}
-
-// Query returns a query builder for UplItem.
-func (c *UplItemClient) Query() *UplItemQuery {
-	return &UplItemQuery{config: c.config}
-}
-
-// Get returns a UplItem entity by its id.
-func (c *UplItemClient) Get(ctx context.Context, id int) (*UplItem, error) {
-	return c.Query().Where(uplitem.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *UplItemClient) GetX(ctx context.Context, id int) *UplItem {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryUplitem queries the uplitem edge of a UplItem.
-func (c *UplItemClient) QueryUplitem(ui *UplItem) *CostQuery {
-	query := &CostQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := ui.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(uplitem.Table, uplitem.FieldID, id),
-			sqlgraph.To(cost.Table, cost.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, uplitem.UplitemTable, uplitem.UplitemColumn),
-		)
-		fromV = sqlgraph.Neighbors(ui.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUpl queries the upl edge of a UplItem.
-func (c *UplItemClient) QueryUpl(ui *UplItem) *UplQuery {
-	query := &UplQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := ui.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(uplitem.Table, uplitem.FieldID, id),
-			sqlgraph.To(upl.Table, upl.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, uplitem.UplTable, uplitem.UplColumn),
-		)
-		fromV = sqlgraph.Neighbors(ui.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *UplItemClient) Hooks() []Hook {
-	hooks := c.hooks.UplItem
-	return append(hooks[:len(hooks):len(hooks)], uplitem.Hooks[:]...)
-}
-
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -14632,22 +13400,6 @@ func (c *UserClient) QueryUserApproved(u *User) *RecommendationsQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(recommendations.Table, recommendations.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UserApprovedTable, user.UserApprovedColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUser queries the User edge of a User.
-func (c *UserClient) QueryUser(u *User) *ExecutionQuery {
-	query := &ExecutionQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(execution.Table, execution.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserTable, user.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -15194,22 +13946,6 @@ func (c *WorkOrderClient) QueryOrganization(wo *WorkOrder) *OrganizationQuery {
 	return query
 }
 
-// QueryContract queries the contract edge of a WorkOrder.
-func (c *WorkOrderClient) QueryContract(wo *WorkOrder) *ContractQuery {
-	query := &ContractQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := wo.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, id),
-			sqlgraph.To(contract.Table, contract.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, workorder.ContractTable, workorder.ContractColumn),
-		)
-		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryFiles queries the files edge of a WorkOrder.
 func (c *WorkOrderClient) QueryFiles(wo *WorkOrder) *FileQuery {
 	query := &FileQuery{config: c.config}
@@ -15379,22 +14115,6 @@ func (c *WorkOrderClient) QueryAppointment(wo *WorkOrder) *AppointmentQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(appointment.Table, appointment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.AppointmentTable, workorder.AppointmentColumn),
-		)
-		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryWorkorderCosts queries the workorder_costs edge of a WorkOrder.
-func (c *WorkOrderClient) QueryWorkorderCosts(wo *WorkOrder) *CostQuery {
-	query := &CostQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := wo.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, id),
-			sqlgraph.To(cost.Table, cost.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, workorder.WorkorderCostsTable, workorder.WorkorderCostsColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil

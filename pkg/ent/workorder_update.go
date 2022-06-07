@@ -19,8 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
-	"github.com/facebookincubator/symphony/pkg/ent/contract"
-	"github.com/facebookincubator/symphony/pkg/ent/cost"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
@@ -350,25 +348,6 @@ func (wou *WorkOrderUpdate) SetOrganization(o *Organization) *WorkOrderUpdate {
 	return wou.SetOrganizationID(o.ID)
 }
 
-// SetContractID sets the contract edge to Contract by id.
-func (wou *WorkOrderUpdate) SetContractID(id int) *WorkOrderUpdate {
-	wou.mutation.SetContractID(id)
-	return wou
-}
-
-// SetNillableContractID sets the contract edge to Contract by id if the given value is not nil.
-func (wou *WorkOrderUpdate) SetNillableContractID(id *int) *WorkOrderUpdate {
-	if id != nil {
-		wou = wou.SetContractID(*id)
-	}
-	return wou
-}
-
-// SetContract sets the contract edge to Contract.
-func (wou *WorkOrderUpdate) SetContract(c *Contract) *WorkOrderUpdate {
-	return wou.SetContractID(c.ID)
-}
-
 // AddFileIDs adds the files edge to File by ids.
 func (wou *WorkOrderUpdate) AddFileIDs(ids ...int) *WorkOrderUpdate {
 	wou.mutation.AddFileIDs(ids...)
@@ -542,21 +521,6 @@ func (wou *WorkOrderUpdate) AddAppointment(a ...*Appointment) *WorkOrderUpdate {
 	return wou.AddAppointmentIDs(ids...)
 }
 
-// AddWorkorderCostIDs adds the workorder_costs edge to Cost by ids.
-func (wou *WorkOrderUpdate) AddWorkorderCostIDs(ids ...int) *WorkOrderUpdate {
-	wou.mutation.AddWorkorderCostIDs(ids...)
-	return wou
-}
-
-// AddWorkorderCosts adds the workorder_costs edges to Cost.
-func (wou *WorkOrderUpdate) AddWorkorderCosts(c ...*Cost) *WorkOrderUpdate {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
-	}
-	return wou.AddWorkorderCostIDs(ids...)
-}
-
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wou *WorkOrderUpdate) Mutation() *WorkOrderMutation {
 	return wou.mutation
@@ -619,12 +583,6 @@ func (wou *WorkOrderUpdate) RemoveLinks(l ...*Link) *WorkOrderUpdate {
 // ClearOrganization clears the "organization" edge to type Organization.
 func (wou *WorkOrderUpdate) ClearOrganization() *WorkOrderUpdate {
 	wou.mutation.ClearOrganization()
-	return wou
-}
-
-// ClearContract clears the "contract" edge to type Contract.
-func (wou *WorkOrderUpdate) ClearContract() *WorkOrderUpdate {
-	wou.mutation.ClearContract()
 	return wou
 }
 
@@ -797,27 +755,6 @@ func (wou *WorkOrderUpdate) RemoveAppointment(a ...*Appointment) *WorkOrderUpdat
 		ids[i] = a[i].ID
 	}
 	return wou.RemoveAppointmentIDs(ids...)
-}
-
-// ClearWorkorderCosts clears all "workorder_costs" edges to type Cost.
-func (wou *WorkOrderUpdate) ClearWorkorderCosts() *WorkOrderUpdate {
-	wou.mutation.ClearWorkorderCosts()
-	return wou
-}
-
-// RemoveWorkorderCostIDs removes the workorder_costs edge to Cost by ids.
-func (wou *WorkOrderUpdate) RemoveWorkorderCostIDs(ids ...int) *WorkOrderUpdate {
-	wou.mutation.RemoveWorkorderCostIDs(ids...)
-	return wou
-}
-
-// RemoveWorkorderCosts removes workorder_costs edges to Cost.
-func (wou *WorkOrderUpdate) RemoveWorkorderCosts(c ...*Cost) *WorkOrderUpdate {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
-	}
-	return wou.RemoveWorkorderCostIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1285,41 +1222,6 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: organization.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if wou.mutation.ContractCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   workorder.ContractTable,
-			Columns: []string{workorder.ContractColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: contract.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := wou.mutation.ContractIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   workorder.ContractTable,
-			Columns: []string{workorder.ContractColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: contract.FieldID,
 				},
 			},
 		}
@@ -1846,60 +1748,6 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if wou.mutation.WorkorderCostsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   workorder.WorkorderCostsTable,
-			Columns: []string{workorder.WorkorderCostsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: cost.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := wou.mutation.RemovedWorkorderCostsIDs(); len(nodes) > 0 && !wou.mutation.WorkorderCostsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   workorder.WorkorderCostsTable,
-			Columns: []string{workorder.WorkorderCostsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: cost.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := wou.mutation.WorkorderCostsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   workorder.WorkorderCostsTable,
-			Columns: []string{workorder.WorkorderCostsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: cost.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorder.Label}
@@ -2219,25 +2067,6 @@ func (wouo *WorkOrderUpdateOne) SetOrganization(o *Organization) *WorkOrderUpdat
 	return wouo.SetOrganizationID(o.ID)
 }
 
-// SetContractID sets the contract edge to Contract by id.
-func (wouo *WorkOrderUpdateOne) SetContractID(id int) *WorkOrderUpdateOne {
-	wouo.mutation.SetContractID(id)
-	return wouo
-}
-
-// SetNillableContractID sets the contract edge to Contract by id if the given value is not nil.
-func (wouo *WorkOrderUpdateOne) SetNillableContractID(id *int) *WorkOrderUpdateOne {
-	if id != nil {
-		wouo = wouo.SetContractID(*id)
-	}
-	return wouo
-}
-
-// SetContract sets the contract edge to Contract.
-func (wouo *WorkOrderUpdateOne) SetContract(c *Contract) *WorkOrderUpdateOne {
-	return wouo.SetContractID(c.ID)
-}
-
 // AddFileIDs adds the files edge to File by ids.
 func (wouo *WorkOrderUpdateOne) AddFileIDs(ids ...int) *WorkOrderUpdateOne {
 	wouo.mutation.AddFileIDs(ids...)
@@ -2411,21 +2240,6 @@ func (wouo *WorkOrderUpdateOne) AddAppointment(a ...*Appointment) *WorkOrderUpda
 	return wouo.AddAppointmentIDs(ids...)
 }
 
-// AddWorkorderCostIDs adds the workorder_costs edge to Cost by ids.
-func (wouo *WorkOrderUpdateOne) AddWorkorderCostIDs(ids ...int) *WorkOrderUpdateOne {
-	wouo.mutation.AddWorkorderCostIDs(ids...)
-	return wouo
-}
-
-// AddWorkorderCosts adds the workorder_costs edges to Cost.
-func (wouo *WorkOrderUpdateOne) AddWorkorderCosts(c ...*Cost) *WorkOrderUpdateOne {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
-	}
-	return wouo.AddWorkorderCostIDs(ids...)
-}
-
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wouo *WorkOrderUpdateOne) Mutation() *WorkOrderMutation {
 	return wouo.mutation
@@ -2488,12 +2302,6 @@ func (wouo *WorkOrderUpdateOne) RemoveLinks(l ...*Link) *WorkOrderUpdateOne {
 // ClearOrganization clears the "organization" edge to type Organization.
 func (wouo *WorkOrderUpdateOne) ClearOrganization() *WorkOrderUpdateOne {
 	wouo.mutation.ClearOrganization()
-	return wouo
-}
-
-// ClearContract clears the "contract" edge to type Contract.
-func (wouo *WorkOrderUpdateOne) ClearContract() *WorkOrderUpdateOne {
-	wouo.mutation.ClearContract()
 	return wouo
 }
 
@@ -2666,27 +2474,6 @@ func (wouo *WorkOrderUpdateOne) RemoveAppointment(a ...*Appointment) *WorkOrderU
 		ids[i] = a[i].ID
 	}
 	return wouo.RemoveAppointmentIDs(ids...)
-}
-
-// ClearWorkorderCosts clears all "workorder_costs" edges to type Cost.
-func (wouo *WorkOrderUpdateOne) ClearWorkorderCosts() *WorkOrderUpdateOne {
-	wouo.mutation.ClearWorkorderCosts()
-	return wouo
-}
-
-// RemoveWorkorderCostIDs removes the workorder_costs edge to Cost by ids.
-func (wouo *WorkOrderUpdateOne) RemoveWorkorderCostIDs(ids ...int) *WorkOrderUpdateOne {
-	wouo.mutation.RemoveWorkorderCostIDs(ids...)
-	return wouo
-}
-
-// RemoveWorkorderCosts removes workorder_costs edges to Cost.
-func (wouo *WorkOrderUpdateOne) RemoveWorkorderCosts(c ...*Cost) *WorkOrderUpdateOne {
-	ids := make([]int, len(c))
-	for i := range c {
-		ids[i] = c[i].ID
-	}
-	return wouo.RemoveWorkorderCostIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -3152,41 +2939,6 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: organization.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if wouo.mutation.ContractCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   workorder.ContractTable,
-			Columns: []string{workorder.ContractColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: contract.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := wouo.mutation.ContractIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   workorder.ContractTable,
-			Columns: []string{workorder.ContractColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: contract.FieldID,
 				},
 			},
 		}
@@ -3705,60 +3457,6 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if wouo.mutation.WorkorderCostsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   workorder.WorkorderCostsTable,
-			Columns: []string{workorder.WorkorderCostsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: cost.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := wouo.mutation.RemovedWorkorderCostsIDs(); len(nodes) > 0 && !wouo.mutation.WorkorderCostsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   workorder.WorkorderCostsTable,
-			Columns: []string{workorder.WorkorderCostsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: cost.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := wouo.mutation.WorkorderCostsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   workorder.WorkorderCostsTable,
-			Columns: []string{workorder.WorkorderCostsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: cost.FieldID,
 				},
 			},
 		}

@@ -879,7 +879,6 @@ input AddWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
-  totalActivityCost: [AddCostInput]
   isNameEditable: Boolean
 }
 
@@ -902,7 +901,6 @@ input EditWorkOrderInput {
   duration: Float
   dueDate: Time
   scheduledAt: Time
-  totalActivityCost: [AddCostInput]
   isNameEditable: Boolean
 }
 
@@ -2171,7 +2169,6 @@ type WorkOrder implements Node & NamedNode {
   organizationFk: Organization
   scheduledAt: Time
   Appointments:[Appointment]
-  totalActivityCost: [Cost]
   isNameEditable: Boolean
 }
 
@@ -2220,98 +2217,6 @@ enum OrganizationFilterType {
 
 input OrganizationFilterInput {
   filterType: OrganizationFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-enum ContractStatus
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/contract.Status"
-  ) {
-  ACTIVE
-  EXPIRE
-  PENDING
-}
-
-type Contract implements Node {
-  id: ID!
-  externalID: String!
-  name: String!
-  category: String!
-  effective_date: Time!
-  expiration_date: Time!
-  description: String!
-  organization: Organization!
-  status: ContractStatus!  
-}
-
-input AddContractInput {  
-  externalID: String!
-  name: String!
-  category: String!
-  effective_date: Time!
-  expiration_date: Time!
-  description: String!
-  organization: ID!
-  status: ContractStatus! 
-}
-
-input EditContractInput {
-  id: ID!
-  externalID: String!
-  name: String!
-  category: String!
-  expiration_date: Time!
-  organization: ID!
-  description: String! 
-}
-
-enum ContractFilterType {
-  NAME
-  ORGANIZATION
-}
-
-input ContractFilterInput {
-  filterType: ContractFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-type Upl implements Node {
-  id: ID!
-  name: String!
-  description: String!
-  uplItems: [UplItem]!
-  contract: Contract!
-}
-
-input AddUplInput {  
-  name: String!
-  description: String!
-  uplItems: [AddUplItemInput]
-  contract: ID!
-}
-
-input EditUplInput {
-  id: ID!
-  name: String!
-  description: String!
-  uplItems: [AddUplItemInput]
-  contract: ID!
-}
-enum UplFilterType {
-  NAME
-  CONTRACT
-}
-
-input UplFilterInput {
-  filterType: UplFilterType!
   operator: FilterOperator!
   stringValue: String
   idSet: [ID!]
@@ -3462,555 +3367,6 @@ type CounterFamilyEdge {
 }
 
 """
-Properties by which execution connections can be ordered.
-"""
-enum ExecutionOrderField {
-  """
-  Order executions by time.
-  """
-  MANUELCONFIRMATION
-
-  """
-  Order executions by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order executions by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for executions connections.
-"""
-input ExecutionOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order executions by.
-  """
-  field: ExecutionOrderField
-}
-
-"""
-A connection to a list of executions.
-"""
-type ExecutionConnection {
-  """
-  Total executions of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of executions edges.
-  """
-  edges: [ExecutionEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A executions edge in a connection.
-"""
-type ExecutionEdge {
-  """
-  The executions at the end of the edge.
-  """
-  node: Execution
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which uplitem connections can be ordered.
-"""
-enum UplItemOrderField {
-  """
-  Order uplitems by string.
-  """
-  ITEM
-
-  """
-  Order uplitems by creation string.
-  """
-  CREATED_AT
-
-  """
-  Order uplitems by update string.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for uplitems connections.
-"""
-input UplItemOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order uplitems by.
-  """
-  field: UplItemOrderField
-}
-
-"""
-A connection to a list of uplitems.
-"""
-type UplItemConnection {
-  """
-  Total uplitems of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of uplitems edges.
-  """
-  edges: [UplItemEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A uplitems edge in a connection.
-"""
-type UplItemEdge {
-  """
-  The uplitems at the end of the edge.
-  """
-  node: UplItem
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which cost connections can be ordered.
-"""
-enum CostOrderField {
-  """
-  Order costs by string.
-  """
-  ITEM
-
-  """
-  Order costs by creation string.
-  """
-  CREATED_AT
-
-  """
-  Order costs by update string.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for uplitems connections.
-"""
-input CostOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order costs by.
-  """
-  field: CostOrderField
-}
-
-"""
-A connection to a list of costs.
-"""
-type CostConnection {
-  """
-  Total costs of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of costs edges.
-  """
-  edges: [CostEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A costs edge in a connection.
-"""
-type CostEdge {
-  """
-  The costs at the end of the edge.
-  """
-  node: Cost
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which Action connections can be ordered.
-"""
-enum ActionOrderField {
-  """
-  Order Action by Status.
-  """
-  STATUS
-  
-  """
-  Order Action by UserAction.
-  """
-  USER_ACTION
-
-  """
-  Order Action by LogExecution.
-  """
-  LOGEXECUTION
-
-  """
-  Order Action by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order Action by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for Action connections.
-"""
-input ActionOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order Action by.
-  """
-  field: ActionOrderField
-}
-
-"""
-A connection to a list of Action.
-"""
-type ActionConnection {
-  """
-  Total Action of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of Action edges.
-  """
-  edges: [ActionEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A Action edge in a connection.
-"""
-type ActionEdge {
-  """
-  The Action at the end of the edge.
-  """
-  node: Action
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ruleactiontemplates connections can be ordered.
-"""
-enum RuleActionTemplateOrderField {
-  """
-  Order ruleactiontemplates by time.
-  """
-  TEXT
-
-  """
-  Order ruleactiontemplates by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ruleactiontemplates by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ruleactiontemplates connections.
-"""
-input RuleActionTemplateOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ruleactiontemplates by.
-  """
-  field: RuleActionTemplateOrderField
-}
-
-"""
-A connection to a list of ruleactiontemplates.
-"""
-type RuleActionTemplateConnection {
-  """
-  Total ruleactiontemplates of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ruleactiontemplates edges.
-  """
-  edges: [RuleActionTemplateEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ruleactiontemplates edge in a connection.
-"""
-type RuleActionTemplateEdge {
-  """
-  The ruleactiontemplates at the end of the edge.
-  """
-  node: RuleActionTemplate
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ruleactions connections can be ordered.
-"""
-enum RuleActionOrderField {
-  """
-  Order ruleactions by time.
-  """
-  OPERATION
-
-  """
-  Order ruleactions by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ruleactions by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ruleactions connections.
-"""
-input RuleActionOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ruleactions by.
-  """
-  field: RuleActionOrderField
-}
-
-"""
-A connection to a list of ruleactions.
-"""
-type RuleActionConnection {
-  """
-  Total ruleactions of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ruleactions edges.
-  """
-  edges: [RuleActionEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ruleactions edge in a connection.
-"""
-type RuleActionEdge {
-  """
-  The ruleactions at the end of the edge.
-  """
-  node: RuleAction
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which Contract connections can be ordered.
-"""
-enum ContractOrderField {
-  """
-  Order Contract by name.
-  """
-  NAME
-
-  """
-  Order Contract by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order Contract by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for Contract connections.
-"""
-input ContractOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order Contract by.
-  """
-  field: ContractOrderField
-}
-
-"""
-A connection to a list of Contract.
-"""
-type ContractConnection {
-  """
-  Total Contract of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of Contract edges.
-  """
-  edges: [ContractEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A Contract edge in a connection.
-"""
-type ContractEdge {
-  """
-  The Contract at the end of the edge.
-  """
-  node: Contract
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-
-"""
-Properties by which Upl connections can be ordered.
-"""
-enum UplOrderField {
-  """
-  Order Upl by name.
-  """
-  NAME
-
-  """
-  Order Upl by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order Upl by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for Upl connections.
-"""
-input UplOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order Upl by.
-  """
-  field: UplOrderField
-}
-
-"""
-A connection to a list of Upl.
-"""
-type UplConnection {
-  """
-  Total Upl of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of Upl edges.
-  """
-  edges: [UplEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A Upl edge in a connection.
-"""
-type UplEdge {
-  """
-  The Upl at the end of the edge.
-  """
-  node: Upl
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-
-"""
-Properties by which Recommendations connections can be ordered.
 Properties by which ruleTypes connections can be ordered.
 """
 enum RuleTypeOrderField {
@@ -5291,74 +4647,6 @@ type ResourceTypeEdge {
   """
   cursor: Cursor!
 }
-
-"""
-Properties by which ReconciliationRule connections can be ordered.
-"""
-enum ReconciliationRuleOrderField {
-  """
-  Order ReconciliationRule by name.
-  """
-  NAME
-
-  """
-  Order ReconciliationRule by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ReconciliationRule by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ReconciliationRule connections.
-"""
-input ReconciliationRuleOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ReconciliationRule by.
-  """
-  field: ReconciliationRuleOrderField
-}
-
-"""
-A connection to a list of ReconciliationRule.
-"""
-type ReconciliationRuleConnection {
-  """
-  Total ReconciliationRule of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ReconciliationRule edges.
-  """
-  edges: [ReconciliationRuleEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ReconciliationRule edge in a connection.
-"""
-type ReconciliationRuleEdge {
-  """
-  The ReconciliationRule at the end of the edge.
-  """
-  node: ReconciliationRule
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
 
 """
 Properties by which ResourceTypeRelationship connections can be ordered.
@@ -7709,215 +6997,6 @@ type Query {
     """
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
-
-  """
-  A list of executions.
-  """
-  executions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned executions.
-    """
-    orderBy: ExecutionOrder
-
-    """
-    Filtering options for the returned executions.
-    """
-    filterBy: [ExecutionFilterInput!]
-  ): ExecutionConnection!
-
-  """
-  A list of uplitems.
-  """
-  uplItems(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned uplitems.
-    """
-    orderBy: UplItemOrder
-
-    """
-    Filtering options for the returned uplitems.
-    """
-    filterBy: [UplItemFilterInput!]
-  ): UplItemConnection!
-
-  """
-  A list of costs.
-  """
-  costs(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned costs.
-    """
-    orderBy: CostOrder
-
-    """
-    Filtering options for the returned costs.
-    """
-    filterBy: [CostFilterInput!]
-  ): CostConnection!
-
-"""
-  A list of actions.
-  """
-  actions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned actions.
-    """
-    orderBy: ActionOrder
-    
-    #Filtering options for the returned actions.
-    
-    filterBy: [ActionFilterInput!]
-  ): ActionConnection!
-
-  """
-  A list of ruleActionTemplates.
-  """
-  ruleActionTemplates(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned ruleActionTemplates.
-    """
-    orderBy: RuleActionTemplateOrder
-
-    """
-    Filtering options for the returned ruleActionTemplates.
-    """
-    filterBy: [RuleActionTemplateFilterInput!]
-  ): RuleActionTemplateConnection!
-
-  """
-  A list of ruleActions.
-  """
-  ruleActions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned ruleActions.
-    """
-    orderBy: RuleActionOrder
-
-    """
-    Filtering options for the returned ruleActions.
-    """
-    filterBy: [RuleActionFilterInput!]
-  ): RuleActionConnection!
   
   """
   A list of ruleTypes.
@@ -8305,76 +7384,6 @@ type Query {
   ): OrganizationConnection!
 
   """
-  A list of contract.
-  """
-  contracts(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned contract.
-    """
-    orderBy: ContractOrder
-
-    """
-    Filtering options for the returned contract.
-    """
-    filterBy: [ContractFilterInput!]
-  ): ContractConnection!
-
-  """
-  A list of upl.
-  """
-  upls(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned upl.
-    """
-    orderBy: UplOrder
-
-    """
-    Filtering options for the returned upl.
-    """
-    filterBy: [UplFilterInput!]
-  ): UplConnection!
-
-  """
   A list of Recommendations.
   """
   Recommendations(
@@ -8618,7 +7627,7 @@ type Query {
     """
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
-
+ 
   appointments(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -8846,41 +7855,6 @@ type Query {
     
     filterBy: [ResourceTypeFilterInput!]
   ): ResourceTypeConnection!
-
-    """
-  A list of reconciliationRules.
-  """
-  reconciliationRules(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned reconciliationRules.
-    """
-    orderBy: ReconciliationRuleOrder
-
-    
-    #Filtering options for the returned reconciliationRules.
-    
-    filterBy: [ReconciliationRuleFilterInput!]
-  ): ReconciliationRuleConnection!
 }
 
 
@@ -9108,18 +8082,6 @@ type Mutation {
   addCounterFamily(input: AddCounterFamilyInput!):CounterFamily!
   editCounterFamily(input: EditCounterFamilyInput!): CounterFamily!
   removeCounterFamily(id: ID!): ID!
-  addExecution(input: AddExecutionInput!):Execution!
-  editExecution(input: EditExecutionInput!): Execution!
-  removeExecution(id: ID!): ID!
-  addAction(input: AddActionInput!):Action!
-  editAction(input: EditActionInput!): Action!
-  removeAction(id: ID!): ID!
-  addRuleActionTemplate(input: AddRuleActionTemplateInput!):RuleActionTemplate!
-  EditRuleActionTemplate(input: EditRuleActionTemplateInput!): RuleActionTemplate!
-  removeRuleActionTemplate(id: ID!): ID!
-  addRuleAction(input: AddRuleActionInput!):RuleAction!
-  EditRuleAction(input: EditRuleActionInput!): RuleAction!
-  removeRuleAction(id: ID!): ID!
   addVendor(input: AddVendorInput!):Vendor!
   editVendor(input: EditVendorInput!): Vendor!
   removeVendor(id: ID!): ID!
@@ -9172,12 +8134,6 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
-  addContract(input: AddContractInput!):Contract!
-  editContract(input: EditContractInput!): Contract!
-  removeContract(id: ID!): ID!
-  addUpl(input: AddUplInput!):Upl!
-  editUpl(input: EditUplInput!): Upl!
-  removeUpl(id: ID!): ID!
   addResourceType(input: AddResourceTypeInput!):ResourceType!
   editResourceType(input: EditResourceTypeInput!): ResourceType!
   removeResourceType(id: ID!): ID!
@@ -9188,9 +8144,6 @@ type Mutation {
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
   addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship!
-  addReconciliationRule(input: AddReconciliationRuleInput!):ReconciliationRule!
-  editReconciliationRule(input: EditReconciliationRuleInput!): ReconciliationRule!
-  removeReconciliationRule(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -9240,8 +8193,6 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
-  removeUplItem(id: ID!): ID!
-  removeCost(id: ID!): ID!
 }
 
 """
@@ -9340,164 +8291,6 @@ input CounterFamilyFilterInput {
   stringSet: [String!]
 }
 
-type Execution implements Node {
-  id: ID!
-  manualConfirmation: Time!
-  user: User!
-  
-}
-
-input AddExecutionInput {
-  manualConfirmation: Time!
-  user: ID!
-  
-}
-
-input EditExecutionInput {
-  id: ID!
-  manualConfirmation: Time!
-  user: ID!
-
-}
-
-enum ExecutionFilterType {
-  MANUELCONFIRMATION
-}
-
-input ExecutionFilterInput {
-  filterType: ExecutionFilterType!
-  operator: FilterOperator!
-  timeValue: Time
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-enum StatusKind
-  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/action.Status"
-  ) {
-  PENDING
-	SUCCESFUL
-	FAILED
-}
-
-enum UserActionKind
-  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/action.UserAction"
-  ) {
-  CONFIRM
-	IGNORE
-	ALARM
-}
-
-type Action implements Node {
-  id: ID!
-  ruleAction: RuleAction!
-  execution: Execution!
-  status: StatusKind!
-  userAction: UserActionKind!
-  logExecution: String!
-}
-
-input AddActionInput {  
-  ruleAction: ID!
-  execution: ID!
-  status: StatusKind!
-  userAction: UserActionKind!
-  logExecution: String!
-}
-
-input EditActionInput {
-  id: ID!
-  ruleAction: ID
-  execution: ID
-  status: StatusKind
-  userAction: UserActionKind
-  logExecution: String
-}
-
-enum ActionFilterType {
-  STATUS
-  USER_ACTION
-  LOGEXECUTION
-}
-
-input ActionFilterInput {
-  filterType: ActionFilterType!
-  operator: FilterOperator!
-  statusValue: StatusKind
-  userActionValue: UserActionKind
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-type RuleActionTemplate implements Node {
-  id: ID!
-  text: String!
-}
-
-input AddRuleActionTemplateInput {
-  text: String!
-}
-
-input EditRuleActionTemplateInput {
-  id: ID!
-  text: String!
-}
-
-enum RuleActionTemplateFilterType {
-  TEXT
-}
-
-input RuleActionTemplateFilterInput {
-  filterType: RuleActionTemplateFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-enum Operation
-  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/ruleaction.Operation"
-  ) {
-	NOAPLICA
-	MANUAL
-	AUTOMATICO
-}
-type RuleAction implements Node {
-  id: ID!
-  reconciliationRule: ReconciliationRule
-  ruleActionTemplate: RuleActionTemplate
-  operation: Operation!
-}
-input AddRuleActionInput {  
-  reconciliationRule: ID!
-  ruleActionTemplate: ID!
-  operation: Operation!
-}
-input EditRuleActionInput {
-  id: ID!
-  reconciliationRule: ID!
-  ruleActionTemplate: ID!
-  operation: Operation!
-}
-enum RuleActionFilterType {
-  OPERATION
-}
-input RuleActionFilterInput {
-  filterType: RuleActionFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  operationValue: Operation
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
 
 type Vendor implements Node {
   id: ID!
@@ -10473,14 +9266,12 @@ enum ResourceTypeBaseTypeKind
 type ResourceType implements Node {
   id: ID!
   name: String!
-  reconciliationRule: ReconciliationRule
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
 
 input AddResourceTypeInput {  
   name: String!
-  reconciliationRule: ID!
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -10488,7 +9279,6 @@ input AddResourceTypeInput {
 input EditResourceTypeInput {
   id: ID!
   name: String!
-  reconciliationRule: ID
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -10497,7 +9287,6 @@ enum ResourceTypeFilterType {
   NAME
   RESOURCE_TYPE_CLASS
   RESOURCE_TYPE_BASE_TYPE
-  RECONCILIATION_RULE
 }
 
 input ResourceTypeFilterInput {
@@ -10506,33 +9295,6 @@ input ResourceTypeFilterInput {
   stringValue: String
   typeClassValue: ResourceTypeClassKind
   typeBaseTypeValue: ResourceTypeBaseTypeKind
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-type ReconciliationRule implements Node {
-  id: ID!
-  name: String!
-}
-
-input AddReconciliationRuleInput {  
-  name: String!
-}
-
-input EditReconciliationRuleInput {
-  id: ID!
-  name: String!
-}
-
-enum ReconciliationRuleFilterType {
-  NAME
-}
-
-input ReconciliationRuleFilterInput {
-  filterType: ReconciliationRuleFilterType!
-  operator: FilterOperator!
-  stringValue: String
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
@@ -10729,94 +9491,6 @@ input EditParameterCatalogInput {
   disabled: Boolean
 }
 
-type UplItem implements Node {
-  id: ID!
-  externalId: String!
-  item: String!
-  unit: Float!
-  price: Float!
-  uplID: Upl!
-}
-
-input AddUplItemInput {
-  id: ID
-  externalId: String!
-  item: String!
-  unit: Float!
-  price: Float!
-  uplID: ID
-}
-
-input EditUplItemInput {
-  id: ID!
-  externalId: String!
-  item: String!
-  unit: Float!
-  price: Float!
-}
-
-enum UplItemFilterType {
-  ITEM
-  UPL
-}
-
-input UplItemFilterInput {
-  filterType: UplItemFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-type Cost implements Node {
-  id: ID!
-  item: String!
-  unit: Float!
-  price: Float!
-  quantity: Int!
-  total: Float!
-  uplitem: UplItem!
-  workorder: WorkOrder!
-}
-
-input AddCostInput {
-  isDeleted: Boolean
-  id: ID
-  item: String!
-  uplitem: ID!
-  unit: Float!
-  price: Float!
-  quantity: Int!
-  total: Float!
-  workorder: ID
-}
-
-input EditCostInput {
-  id: ID!
-  item: String!
-  uplitem: ID!
-  unit: Float!
-  price: Float!
-  quantity: Int!
-  total: Float!
-  workorder: ID!
-}
-
-enum CostFilterType {
-  ITEM
-}
-
-input CostFilterInput {
-  filterType: CostFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-
 """
 Appointment Status
 """
@@ -10833,14 +9507,12 @@ type ResourceSpecification implements Node {
   name: String!  
   quantity: Int
   resourceType: ResourceType
-  reconciliationRule: ReconciliationRule
   resourcePropertyTypes: [ResourcePropertyType]!  
 }
 input AddResourceSpecificationInput {  
   name: String!
   quantity: Int
   resourceType: ID!
-  reconciliationRule: ID!
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 input EditResourceSpecificationInput {
@@ -10848,14 +9520,12 @@ input EditResourceSpecificationInput {
   name: String!
   quantity: Int
   resourceType: ID 
-  reconciliationRule: ID
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 enum ResourceSpecificationFilterType {
   ID
   NAME  
   RESOURCE_TYPE
-  RECONCILIATION_RULE
 }
 
 input ResourceSpecificationFilterInput {

@@ -32,8 +32,6 @@ func (ResourceSpecification) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("resourcetype", ResourceType.Type).
 			Ref("resource_specification").Unique().Annotations(entgql.OrderField("RESOURCE_TYPE")),
-		edge.From("reconciliationrule", ReconciliationRule.Type).
-			Ref("reconciliation_rule_specification").Unique().Annotations(entgql.OrderField("RECONCILIATION_RULE")),
 		edge.To("resource_property_type", ResourcePropertyType.Type).
 			Annotations(entgql.MapsTo("resourcepropertytype")),
 		edge.To("resource_specification", ResourceSpecificationRelationship.Type).

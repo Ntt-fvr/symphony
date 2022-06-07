@@ -14,7 +14,6 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
@@ -87,25 +86,6 @@ func (rsu *ResourceSpecificationUpdate) SetResourcetype(r *ResourceType) *Resour
 	return rsu.SetResourcetypeID(r.ID)
 }
 
-// SetReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id.
-func (rsu *ResourceSpecificationUpdate) SetReconciliationruleID(id int) *ResourceSpecificationUpdate {
-	rsu.mutation.SetReconciliationruleID(id)
-	return rsu
-}
-
-// SetNillableReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id if the given value is not nil.
-func (rsu *ResourceSpecificationUpdate) SetNillableReconciliationruleID(id *int) *ResourceSpecificationUpdate {
-	if id != nil {
-		rsu = rsu.SetReconciliationruleID(*id)
-	}
-	return rsu
-}
-
-// SetReconciliationrule sets the reconciliationrule edge to ReconciliationRule.
-func (rsu *ResourceSpecificationUpdate) SetReconciliationrule(r *ReconciliationRule) *ResourceSpecificationUpdate {
-	return rsu.SetReconciliationruleID(r.ID)
-}
-
 // AddResourcePropertyTypeIDs adds the resource_property_type edge to ResourcePropertyType by ids.
 func (rsu *ResourceSpecificationUpdate) AddResourcePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdate {
 	rsu.mutation.AddResourcePropertyTypeIDs(ids...)
@@ -159,12 +139,6 @@ func (rsu *ResourceSpecificationUpdate) Mutation() *ResourceSpecificationMutatio
 // ClearResourcetype clears the "resourcetype" edge to type ResourceType.
 func (rsu *ResourceSpecificationUpdate) ClearResourcetype() *ResourceSpecificationUpdate {
 	rsu.mutation.ClearResourcetype()
-	return rsu
-}
-
-// ClearReconciliationrule clears the "reconciliationrule" edge to type ReconciliationRule.
-func (rsu *ResourceSpecificationUpdate) ClearReconciliationrule() *ResourceSpecificationUpdate {
-	rsu.mutation.ClearReconciliationrule()
 	return rsu
 }
 
@@ -386,41 +360,6 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rsu.mutation.ReconciliationruleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcespecification.ReconciliationruleTable,
-			Columns: []string{resourcespecification.ReconciliationruleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: reconciliationrule.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rsu.mutation.ReconciliationruleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcespecification.ReconciliationruleTable,
-			Columns: []string{resourcespecification.ReconciliationruleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: reconciliationrule.FieldID,
 				},
 			},
 		}
@@ -661,25 +600,6 @@ func (rsuo *ResourceSpecificationUpdateOne) SetResourcetype(r *ResourceType) *Re
 	return rsuo.SetResourcetypeID(r.ID)
 }
 
-// SetReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id.
-func (rsuo *ResourceSpecificationUpdateOne) SetReconciliationruleID(id int) *ResourceSpecificationUpdateOne {
-	rsuo.mutation.SetReconciliationruleID(id)
-	return rsuo
-}
-
-// SetNillableReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id if the given value is not nil.
-func (rsuo *ResourceSpecificationUpdateOne) SetNillableReconciliationruleID(id *int) *ResourceSpecificationUpdateOne {
-	if id != nil {
-		rsuo = rsuo.SetReconciliationruleID(*id)
-	}
-	return rsuo
-}
-
-// SetReconciliationrule sets the reconciliationrule edge to ReconciliationRule.
-func (rsuo *ResourceSpecificationUpdateOne) SetReconciliationrule(r *ReconciliationRule) *ResourceSpecificationUpdateOne {
-	return rsuo.SetReconciliationruleID(r.ID)
-}
-
 // AddResourcePropertyTypeIDs adds the resource_property_type edge to ResourcePropertyType by ids.
 func (rsuo *ResourceSpecificationUpdateOne) AddResourcePropertyTypeIDs(ids ...int) *ResourceSpecificationUpdateOne {
 	rsuo.mutation.AddResourcePropertyTypeIDs(ids...)
@@ -733,12 +653,6 @@ func (rsuo *ResourceSpecificationUpdateOne) Mutation() *ResourceSpecificationMut
 // ClearResourcetype clears the "resourcetype" edge to type ResourceType.
 func (rsuo *ResourceSpecificationUpdateOne) ClearResourcetype() *ResourceSpecificationUpdateOne {
 	rsuo.mutation.ClearResourcetype()
-	return rsuo
-}
-
-// ClearReconciliationrule clears the "reconciliationrule" edge to type ReconciliationRule.
-func (rsuo *ResourceSpecificationUpdateOne) ClearReconciliationrule() *ResourceSpecificationUpdateOne {
-	rsuo.mutation.ClearReconciliationrule()
 	return rsuo
 }
 
@@ -958,41 +872,6 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcetype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if rsuo.mutation.ReconciliationruleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcespecification.ReconciliationruleTable,
-			Columns: []string{resourcespecification.ReconciliationruleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: reconciliationrule.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rsuo.mutation.ReconciliationruleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcespecification.ReconciliationruleTable,
-			Columns: []string{resourcespecification.ReconciliationruleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: reconciliationrule.FieldID,
 				},
 			},
 		}

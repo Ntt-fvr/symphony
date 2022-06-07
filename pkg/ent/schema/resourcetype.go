@@ -43,8 +43,6 @@ func (ResourceType) Fields() []ent.Field {
 // Edges returns property type edges.
 func (ResourceType) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("reconciliationrule", ReconciliationRule.Type).
-			Ref("reconciliation_rule_type").Unique().Annotations(entgql.OrderField("RECONCILIATION_RULE")),
 		edge.To("resource_relationship_a", ResourceTypeRelationship.Type).
 			Annotations(entgql.MapsTo("resourcerelationshipa")),
 		edge.To("resource_relationship_b", ResourceTypeRelationship.Type).

@@ -502,127 +502,6 @@ func (r queryResolver) CounterFamilies(
 			),
 		)
 }
-
-func (r queryResolver) Executions(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ExecutionOrder,
-	filterBy []*models.ExecutionFilterInput,
-) (*ent.ExecutionConnection, error) {
-	return r.ClientFrom(ctx).
-		Execution.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithExecutionOrder(orderBy),
-			ent.WithExecutionFilter(
-				func(query *ent.ExecutionQuery) (*ent.ExecutionQuery, error) {
-					return resolverutil.ExecutionFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) Actions(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ActionOrder,
-	filterBy []*models.ActionFilterInput,
-) (*ent.ActionConnection, error) {
-	return r.ClientFrom(ctx).
-		Action.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithActionOrder(orderBy),
-			ent.WithActionFilter(
-				func(query *ent.ActionQuery) (*ent.ActionQuery, error) {
-					return resolverutil.ActionFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) RuleActionTemplates(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.RuleActionTemplateOrder,
-	filterBy []*models.RuleActionTemplateFilterInput,
-) (*ent.RuleActionTemplateConnection, error) {
-	return r.ClientFrom(ctx).
-		RuleActionTemplate.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithRuleActionTemplateOrder(orderBy),
-			ent.WithRuleActionTemplateFilter(
-				func(query *ent.RuleActionTemplateQuery) (*ent.RuleActionTemplateQuery, error) {
-					return resolverutil.RuleActionTemplateFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) RuleActions(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.RuleActionOrder,
-	filterBy []*models.RuleActionFilterInput,
-) (*ent.RuleActionConnection, error) {
-	return r.ClientFrom(ctx).
-		RuleAction.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithRuleActionOrder(orderBy),
-			ent.WithRuleActionFilter(
-				func(query *ent.RuleActionQuery) (*ent.RuleActionQuery, error) {
-					return resolverutil.RuleActionFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) UplItems(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.UplItemOrder,
-	filterBy []*models.UplItemFilterInput,
-) (*ent.UplItemConnection, error) {
-	return r.ClientFrom(ctx).
-		UplItem.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithUplItemOrder(orderBy),
-			ent.WithUplItemFilter(
-				func(query *ent.UplItemQuery) (*ent.UplItemQuery, error) {
-					return resolverutil.UplItemFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) Costs(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.CostOrder,
-	filterBy []*models.CostFilterInput,
-) (*ent.CostConnection, error) {
-	return r.ClientFrom(ctx).
-		Cost.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithCostOrder(orderBy),
-			ent.WithCostFilter(
-				func(query *ent.CostQuery) (*ent.CostQuery, error) {
-					return resolverutil.CostFilter(query, filterBy)
-				},
-			),
-		)
-}
-
 func (r queryResolver) RuleTypes(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
@@ -720,44 +599,6 @@ func (r queryResolver) Organizations(
 			),
 		)
 }
-func (r queryResolver) Contracts(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ContractOrder,
-	filterBy []*models.ContractFilterInput,
-) (*ent.ContractConnection, error) {
-	return r.ClientFrom(ctx).
-		Contract.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithContractOrder(orderBy),
-			ent.WithContractFilter(
-				func(query *ent.ContractQuery) (*ent.ContractQuery, error) {
-					return resolverutil.ContractFilter(query, filterBy)
-				},
-			),
-		)
-}
-func (r queryResolver) Upls(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.UplOrder,
-	filterBy []*models.UplFilterInput,
-) (*ent.UplConnection, error) {
-	return r.ClientFrom(ctx).
-		Upl.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithUplOrder(orderBy),
-			ent.WithUplFilter(
-				func(query *ent.UplQuery) (*ent.UplQuery, error) {
-					return resolverutil.UplFilter(query, filterBy)
-				},
-			),
-		)
-}
 func (r queryResolver) Formulas(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
@@ -831,26 +672,6 @@ func (r queryResolver) ResourceTypes(
 			ent.WithResourceTypeFilter(
 				func(query *ent.ResourceTypeQuery) (*ent.ResourceTypeQuery, error) {
 					return resolverutil.ResourceTypeFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) ReconciliationRules(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ReconciliationRuleOrder,
-	filterBy []*models.ReconciliationRuleFilterInput,
-) (*ent.ReconciliationRuleConnection, error) {
-	return r.ClientFrom(ctx).
-		ReconciliationRule.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithReconciliationRuleOrder(orderBy),
-			ent.WithReconciliationRuleFilter(
-				func(query *ent.ReconciliationRuleQuery) (*ent.ReconciliationRuleQuery, error) {
-					return resolverutil.ReconciliationRuleFilter(query, filterBy)
 				},
 			),
 		)

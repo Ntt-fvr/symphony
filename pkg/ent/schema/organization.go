@@ -32,8 +32,6 @@ func (Organization) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("user_fk", User.Type).
 			Annotations(entgql.MapsTo("user")),
-		edge.To("contract_organization", Contract.Type).
-			Annotations(entgql.MapsTo("contract")),
 		edge.To("work_order_fk", WorkOrder.Type).
 			Annotations(entgql.MapsTo("workorder")),
 		edge.To("policies", PermissionsPolicy.Type),

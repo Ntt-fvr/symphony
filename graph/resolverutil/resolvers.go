@@ -250,46 +250,6 @@ func CounterFamilyFilter(query *ent.CounterFamilyQuery, filters []*models.Counte
 	return query, nil
 }
 
-func ExecutionFilter(query *ent.ExecutionQuery, filters []*models.ExecutionFilterInput) (*ent.ExecutionQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleExecutionFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func ActionFilter(query *ent.ActionQuery, filters []*models.ActionFilterInput) (*ent.ActionQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleActionFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func RuleActionTemplateFilter(query *ent.RuleActionTemplateQuery, filters []*models.RuleActionTemplateFilterInput) (*ent.RuleActionTemplateQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleRuleActionTemplateFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func RuleActionFilter(query *ent.RuleActionQuery, filters []*models.RuleActionFilterInput) (*ent.RuleActionQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleRuleActionFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
 func RuleTypeFilter(query *ent.RuleTypeQuery, filters []*models.RuleTypeFilterInput) (*ent.RuleTypeQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -353,26 +313,6 @@ func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.Organiza
 	var err error
 	for _, f := range filters {
 		if query, err = handleOrganizationFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func ContractFilter(query *ent.ContractQuery, filters []*models.ContractFilterInput) (*ent.ContractQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleContractFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func UplFilter(query *ent.UplQuery, filters []*models.UplFilterInput) (*ent.UplQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleUplFilter(query, f); err != nil {
 			return nil, err
 		}
 	}
@@ -558,36 +498,6 @@ func ResourceSpecificationItemsFilter(query *ent.ResourceSpecificationItemsQuery
 	var err error
 	for _, f := range filters {
 		if query, err = handleResourceSpecificationItemsFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func ReconciliationRuleFilter(query *ent.ReconciliationRuleQuery, filters []*models.ReconciliationRuleFilterInput) (*ent.ReconciliationRuleQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleReconciliationRuleFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func CostFilter(query *ent.CostQuery, filters []*models.CostFilterInput) (*ent.CostQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleCostFilter(query, f); err != nil {
-			return nil, err
-		}
-	}
-	return query, nil
-}
-
-func UplItemFilter(query *ent.UplItemQuery, filters []*models.UplItemFilterInput) (*ent.UplItemQuery, error) {
-	var err error
-	for _, f := range filters {
-		if query, err = handleUplItemFilter(query, f); err != nil {
 			return nil, err
 		}
 	}

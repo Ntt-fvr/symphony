@@ -14,7 +14,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/reconciliationrule"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
@@ -71,25 +70,6 @@ func (rtc *ResourceTypeCreate) SetResourceTypeClass(value resourcetype.ResourceT
 func (rtc *ResourceTypeCreate) SetResourceTypeBaseType(rtbt resourcetype.ResourceTypeBaseType) *ResourceTypeCreate {
 	rtc.mutation.SetResourceTypeBaseType(rtbt)
 	return rtc
-}
-
-// SetReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id.
-func (rtc *ResourceTypeCreate) SetReconciliationruleID(id int) *ResourceTypeCreate {
-	rtc.mutation.SetReconciliationruleID(id)
-	return rtc
-}
-
-// SetNillableReconciliationruleID sets the reconciliationrule edge to ReconciliationRule by id if the given value is not nil.
-func (rtc *ResourceTypeCreate) SetNillableReconciliationruleID(id *int) *ResourceTypeCreate {
-	if id != nil {
-		rtc = rtc.SetReconciliationruleID(*id)
-	}
-	return rtc
-}
-
-// SetReconciliationrule sets the reconciliationrule edge to ReconciliationRule.
-func (rtc *ResourceTypeCreate) SetReconciliationrule(r *ReconciliationRule) *ResourceTypeCreate {
-	return rtc.SetReconciliationruleID(r.ID)
 }
 
 // AddResourceRelationshipAIDs adds the resource_relationship_a edge to ResourceTypeRelationship by ids.
@@ -297,25 +277,6 @@ func (rtc *ResourceTypeCreate) createSpec() (*ResourceType, *sqlgraph.CreateSpec
 			Column: resourcetype.FieldResourceTypeBaseType,
 		})
 		_node.ResourceTypeBaseType = value
-	}
-	if nodes := rtc.mutation.ReconciliationruleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   resourcetype.ReconciliationruleTable,
-			Columns: []string{resourcetype.ReconciliationruleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: reconciliationrule.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := rtc.mutation.ResourceRelationshipAIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
