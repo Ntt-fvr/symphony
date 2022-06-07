@@ -21,12 +21,13 @@ import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
+import type {AddConfigurationParameterTypeMutationResponse} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
+import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
-
-import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 
 import AddConfigurationParameterTypeMutation from '../../mutations/AddConfigurationParameterTypeMutation';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
@@ -238,13 +239,34 @@ export const AddEditResourceSpecification = (props: Props) => {
         ),
       },
     };
-    AddResourceSpecificationMutation(variables, {
+    const finalparameterType = convertParameterTypeToMutationInput(
+      parameterTypes,
+    );
+    const response: MutationCallbacks<AddConfigurationParameterTypeMutationResponse> = {
+      onCompleted: response => {
+        const variablesCP: AddConfigurationParameterTypeMutationVariables = {
+          input: finalparameterType,
+        };
+        console.log('response-> ', response, variablesCP);
+        AddConfigurationParameterTypeMutation(variablesCP, {
+          onCompleted: () => {
+            isCompleted();
+            setConfigurationParameters({});
+            closeForm();
+          },
+        });
+      },
+    };
+    AddResourceSpecificationMutation(variables, response);
+    /*
+    {
       onCompleted: () => {
         isCompleted();
         setResourceSpecification({data: {}});
         closeForm();
       },
-    });
+    }
+    */
   }
 
   function handleClickEdit() {

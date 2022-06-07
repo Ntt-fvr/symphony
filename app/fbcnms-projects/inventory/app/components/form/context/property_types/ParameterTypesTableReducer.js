@@ -8,15 +8,17 @@
  * @format
  */
 
+import type {ParameterType} from '../../../../common/ParameterType';
 import type {ParameterTypeTableDispatcherActionType} from './ParameterTypeTableDispatcherActionType';
 import type {ParameterTypesTableState} from './ParameterTypesTableState';
-import type {PropertyType} from '../../../../common/PropertyType';
 
 import {getInitialParameterType} from './ParameterTypesTableState';
 import {reorder} from '../../../draggable/DraggableUtils';
 import {sortByIndex} from '../../../draggable/DraggableUtils';
 
-export function getInitialState(parameterTypes: any): ParameterTypesTableState {
+export function getInitialState(
+  parameterTypes: Array<ParameterType>,
+): ParameterTypesTableState {
   const {propertyTypes, resourceSpecification} = parameterTypes;
   return propertyTypes.length === 0
     ? [getInitialParameterType(0, resourceSpecification)]
@@ -26,15 +28,15 @@ export function getInitialState(parameterTypes: any): ParameterTypesTableState {
 function editParameterType<T: ParameterTypesTableState>(
   state: T,
   updatedPropertyTypeId: string,
-  updatingCallback: PropertyType => PropertyType,
+  updatingCallback: ParameterType => ParameterType,
 ): T {
-  const propertyTypeIndex = state.findIndex(
+  const parameterTypeIndex = state.findIndex(
     p => p.id === updatedPropertyTypeId,
   );
   return [
-    ...state.slice(0, propertyTypeIndex),
-    updatingCallback(state[propertyTypeIndex]),
-    ...state.slice(propertyTypeIndex + 1),
+    ...state.slice(0, parameterTypeIndex),
+    updatingCallback(state[parameterTypeIndex]),
+    ...state.slice(parameterTypeIndex + 1),
   ];
 }
 
@@ -73,7 +75,7 @@ export function reducerParameter(
         .filter(pt => !pt.isDeleted)
         .sort(sortByIndex);
       return [
-        ...reorder<PropertyType>(
+        ...reorder<ParameterType>(
           sortedNotDeletedState,
           action.sourceIndex,
           action.destinationIndex,
