@@ -8,6 +8,7 @@
  * @format
  */
 
+import type {ParameterTypeInfo} from '../common/ParameterType';
 import type {PropertyTypeInfo} from './form/PropertyTypeTable';
 
 import fbt from 'fbt';
@@ -79,7 +80,7 @@ export const PropertyTypeLabels: {[string]: PropertyTypeInfo} = {
     kind: 'node',
   },
 };
-export const ParameterTypeLabels: {[string]: PropertyTypeInfo} = {
+export const ParameterTypeLabels: {[string]: ParameterTypeInfo} = {
   date: {
     label: fbt('Date', ''),
     kind: 'date',

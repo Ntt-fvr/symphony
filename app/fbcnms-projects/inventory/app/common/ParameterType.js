@@ -62,6 +62,11 @@ export type parameter = {|
   stringValue?: ?string,
   rangeToValue?: ?number,
 |};
+export type ParameterTypeInfo = $ReadOnly<{|
+  kind: ParameterKind,
+  label: string,
+  featureFlag?: any,
+|}>;
 
 export type tagsType = {|
   id?: ?string,
@@ -126,7 +131,7 @@ export const getInitialPropertyFromType = (
     rangeFromValue: propType.rangeFromValue,
     rangeToValue: propType.rangeToValue,
     previous: propType.previous,
-    nodeValue: propType.nodeType,
+    nodeValue: null,
   };
 };
 

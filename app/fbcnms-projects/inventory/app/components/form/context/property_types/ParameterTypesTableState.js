@@ -50,7 +50,9 @@ export const getInitialParameterType = (
   type: 'string',
 });
 
-export const useParameterTypesReducer = (initialParameterTypes: any) => {
+export const useParameterTypesReducer = (
+  initialParameterTypes: Array<ParameterType>,
+) => {
   return useReducer<
     ParameterTypesTableState,
     ParameterTypeTableDispatcherActionType,

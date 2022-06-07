@@ -192,7 +192,7 @@ const ExperimentalParametersTypesTable = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <form className={classes.formField} autoComplete="off">
-                  <ParameterTypeSelect propertyType={parameter} />
+                  <ParameterTypeSelect parameterType={parameter} />
                 </form>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">

@@ -167,8 +167,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
     item => item?.resourceSpecification == dataForm?.id,
   );
-  console.log(configurationParameters);
-  console.log(filterConfigurationParameter);
+
   const [
     resourceSpecification,
     setResourceSpecification,
@@ -259,15 +258,6 @@ export const AddEditResourceSpecification = (props: Props) => {
       },
     };
     AddResourceSpecificationMutation(variables, response);
-    /*
-    {
-      onCompleted: () => {
-        isCompleted();
-        setResourceSpecification({data: {}});
-        closeForm();
-      },
-    }
-    */
   }
 
   function handleClickEdit() {

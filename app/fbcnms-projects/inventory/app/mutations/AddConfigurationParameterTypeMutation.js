@@ -25,9 +25,30 @@ const mutation = graphql`
   ) {
     addConfigurationParameterType(input: $input) {
       configurationParameterType {
+        booleanValue
+        category
+        externalId
+        floatValue
         id
+        index
+        intValue
+        isDeleted
+        isEditable
+        isListable
+        isMandatory
+        isPrioritary
+        latitudeValue
+        longitudeValue
+        mappingIn
+        mappingOut
         name
+        nodeType
+        rangeFromValue
+        rangeToValue
+        rawValue
         resourceSpecification
+        stringValue
+        type
       }
     }
   }
