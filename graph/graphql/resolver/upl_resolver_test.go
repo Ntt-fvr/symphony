@@ -11,6 +11,8 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/upl"
+	"github.com/facebookincubator/symphony/pkg/ent/uplitem"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -98,8 +100,8 @@ func TestAddUpl(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = mr.AddUpl(ctx, models.AddUplInput{
-		Name:        "organization_test_1",
-		Description: "organization_description1",
+		Name:        "organization_test_2",
+		Description: "organization_description2",
 		Contract:    contract.ID,
 		UplItems: []*models.AddUplItemInput{
 			{
@@ -189,6 +191,29 @@ func TestEditUpl(t *testing.T) {
 	})
 	require.Error(t, err)
 
+	client := r.client
+
+	uplItem, _ := client.UplItem.Query().
+		Where(uplitem.HasUplWith(upl.ID(upl1.ID))).
+		FirstID(ctx)
+
+	_, err = mr.EditUpl(ctx, models.EditUplInput{
+		ID:          upl1.ID,
+		Name:        "organization_test_5",
+		Description: "organization_description1",
+		Contract:    contractID,
+		UplItems: []*models.AddUplItemInput{
+			{
+				ID:         &uplItem,
+				ExternalID: "123456234",
+				Item:       "item_test_Edited_1",
+				Unit:       4,
+				Price:      5,
+			},
+		},
+	})
+	require.NoError(t, err)
+
 	idError := 123
 
 	_, err = mr.EditUpl(ctx, models.EditUplInput{
@@ -219,10 +244,24 @@ func TestRemoveUpl(t *testing.T) {
 
 	_, upl1, upl2 := CreateUpls(ctx, t, mr)
 
+	client := r.client
+
+	uplItem1, _ := client.UplItem.Query().
+		Where(uplitem.HasUplWith(upl.ID(upl1.ID))).
+		FirstID(ctx)
+
+	uplItem2, _ := client.UplItem.Query().
+		Where(uplitem.HasUplWith(upl.ID(upl2.ID))).
+		FirstID(ctx)
+
 	_, err := mr.RemoveUpl(ctx, upl1.ID)
+	require.NoError(t, err)
+	_, err = mr.RemoveUplItem(ctx, uplItem2)
 	require.NoError(t, err)
 	_, err = mr.RemoveUpl(ctx, upl2.ID)
 	require.NoError(t, err)
 	_, err = mr.RemoveUpl(ctx, upl1.ID)
+	require.Error(t, err)
+	_, err = mr.RemoveUplItem(ctx, uplItem1)
 	require.Error(t, err)
 }
