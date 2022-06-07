@@ -10852,6 +10852,7 @@ input EditResourceSpecificationInput {
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 enum ResourceSpecificationFilterType {
+  ID
   NAME  
   RESOURCE_TYPE
   RECONCILIATION_RULE

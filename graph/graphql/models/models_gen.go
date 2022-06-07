@@ -3599,12 +3599,14 @@ func (e ReconciliationRuleFilterType) MarshalGQL(w io.Writer) {
 type ResourceSpecificationFilterType string
 
 const (
+  ResourceSpecificationFilterTypeID                 ResourceSpecificationFilterType = "ID"
 	ResourceSpecificationFilterTypeName               ResourceSpecificationFilterType = "NAME"
 	ResourceSpecificationFilterTypeResourceType       ResourceSpecificationFilterType = "RESOURCE_TYPE"
 	ResourceSpecificationFilterTypeReconciliationRule ResourceSpecificationFilterType = "RECONCILIATION_RULE"
 )
 
 var AllResourceSpecificationFilterType = []ResourceSpecificationFilterType{
+	ResourceSpecificationFilterTypeID,
 	ResourceSpecificationFilterTypeName,
 	ResourceSpecificationFilterTypeResourceType,
 	ResourceSpecificationFilterTypeReconciliationRule,
@@ -3612,7 +3614,8 @@ var AllResourceSpecificationFilterType = []ResourceSpecificationFilterType{
 
 func (e ResourceSpecificationFilterType) IsValid() bool {
 	switch e {
-	case ResourceSpecificationFilterTypeName, ResourceSpecificationFilterTypeResourceType, ResourceSpecificationFilterTypeReconciliationRule:
+	case ResourceSpecificationFilterTypeID, ResourceSpecificationFilterTypeName, ResourceSpecificationFilterTypeResourceType, ResourceSpecificationFilterTypeReconciliationRule:
+
 		return true
 	}
 	return false
