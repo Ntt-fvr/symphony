@@ -24621,6 +24621,7 @@ input EditResourceSpecificationInput {
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
 }
 enum ResourceSpecificationFilterType {
+  ID
   NAME  
   RESOURCE_TYPE
 }
