@@ -8143,7 +8143,7 @@ type Mutation {
   addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
-  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship!
+  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipItemsListInput!): ResourceSpecificationRelationship!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -8183,7 +8183,7 @@ type Mutation {
   editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
   removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
-  addResourceSpecificationRelationShipList(input: AddResourceSpecificationRelationShipListInput!):[ResourceSpecificationRelationship!]!
+  addResourceSpecificationRelationshipList(input: AddResourceSpecificationRelationshipListInput!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   removeResourceSpecificationRelationship(id: ID!): ID!
@@ -9329,13 +9329,13 @@ type ResourceTypeRelationship implements Node {
   resourceTypeA: ResourceType!
   resourceTypeB: ResourceType
 }
-input ResourceSpecificationRelationShipListInput {
-  name: String!
-}
+#input ResourceSpecificationRelationshipListInput {
+#  name: String!
+#}
 
-input AddResourceSpecificationRelationShipListInput {
+input AddResourceSpecificationRelationshipListInput {
   resourceSpecification: ID!
-  nameList: [ResourceSpecificationRelationShipListInput]!
+  nameList: [String]!
 }
 
 input AddResourceTypeRelationshipInput {
@@ -9537,14 +9537,14 @@ input ResourceSpecificationFilterInput {
   stringSet: [String!]  
 }
 
-input ResourceSpecificationRelationshipItemsInput {
-  id_destino: ID
-}
+#input ResourceSpecificationRelationshipItemsInput {
+#  destinyID: ID
+#}
 
-input AddResourceSpecificationRelationshipList {
+input AddResourceSpecificationRelationshipItemsListInput {
   name: String!
   resourceSpecification: ID!
-  resourceSpecificationRelationshipItems: [ResourceSpecificationRelationshipItemsInput]
+  resourceSpecificationRelationshipItems: [ID]
 }
 
 type ResourceSpecificationRelationship implements Node {

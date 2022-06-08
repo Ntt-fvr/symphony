@@ -1193,9 +1193,9 @@ type ComplexityRoot struct {
 		AddReportFilter                               func(childComplexity int, input models.ReportFilterInput) int
 		AddResourceSpecification                      func(childComplexity int, input models.AddResourceSpecificationInput) int
 		AddResourceSpecificationItems                 func(childComplexity int, input models.AddResourceSpecificationItemsInput) int
-		AddResourceSpecificationRelationShipList      func(childComplexity int, input models.AddResourceSpecificationRelationShipListInput) int
 		AddResourceSpecificationRelationship          func(childComplexity int, input models.AddResourceSpecificationRelationshipInput) int
-		AddResourceSpecificationRelationshipItemsList func(childComplexity int, input models.AddResourceSpecificationRelationshipList) int
+		AddResourceSpecificationRelationshipItemsList func(childComplexity int, input models.AddResourceSpecificationRelationshipItemsListInput) int
+		AddResourceSpecificationRelationshipList      func(childComplexity int, input models.AddResourceSpecificationRelationshipListInput) int
 		AddResourceType                               func(childComplexity int, input models.AddResourceTypeInput) int
 		AddResourceTypeRelationship                   func(childComplexity int, input models.AddResourceTypeRelationshipInput) int
 		AddRule                                       func(childComplexity int, input models.AddRuleInput) int
@@ -2769,7 +2769,7 @@ type MutationResolver interface {
 	AddResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error)
 	EditResourceSpecification(ctx context.Context, input models.EditResourceSpecificationInput) (*ent.ResourceSpecification, error)
 	RemoveResourceSpecification(ctx context.Context, id int) (int, error)
-	AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipList) (*ent.ResourceSpecificationRelationship, error)
+	AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipItemsListInput) (*ent.ResourceSpecificationRelationship, error)
 	AddKqi(ctx context.Context, input models.AddKqiInput) (*ent.Kqi, error)
 	EditKqi(ctx context.Context, input models.EditKqiInput) (*ent.Kqi, error)
 	RemoveKqi(ctx context.Context, id int) (int, error)
@@ -2809,7 +2809,7 @@ type MutationResolver interface {
 	EditParametersCatalog(ctx context.Context, parametersCatalog []*models.EditParameterCatalogInput) ([]*ent.ParameterCatalog, error)
 	RemoveParameterCatalog(ctx context.Context, entityType enum.ParameterCatalogEntity, id int) (int, error)
 	EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error)
-	AddResourceSpecificationRelationShipList(ctx context.Context, input models.AddResourceSpecificationRelationShipListInput) ([]*ent.ResourceSpecificationRelationship, error)
+	AddResourceSpecificationRelationshipList(ctx context.Context, input models.AddResourceSpecificationRelationshipListInput) ([]*ent.ResourceSpecificationRelationship, error)
 	AddResourceSpecificationRelationship(ctx context.Context, input models.AddResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error)
 	EditResourceSpecificationRelationship(ctx context.Context, input models.EditResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error)
 	RemoveResourceSpecificationRelationship(ctx context.Context, id int) (int, error)
@@ -7744,18 +7744,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddResourceSpecificationItems(childComplexity, args["input"].(models.AddResourceSpecificationItemsInput)), true
 
-	case "Mutation.addResourceSpecificationRelationShipList":
-		if e.complexity.Mutation.AddResourceSpecificationRelationShipList == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_addResourceSpecificationRelationShipList_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AddResourceSpecificationRelationShipList(childComplexity, args["input"].(models.AddResourceSpecificationRelationShipListInput)), true
-
 	case "Mutation.addResourceSpecificationRelationship":
 		if e.complexity.Mutation.AddResourceSpecificationRelationship == nil {
 			break
@@ -7778,7 +7766,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddResourceSpecificationRelationshipItemsList(childComplexity, args["input"].(models.AddResourceSpecificationRelationshipList)), true
+		return e.complexity.Mutation.AddResourceSpecificationRelationshipItemsList(childComplexity, args["input"].(models.AddResourceSpecificationRelationshipItemsListInput)), true
+
+	case "Mutation.addResourceSpecificationRelationshipList":
+		if e.complexity.Mutation.AddResourceSpecificationRelationshipList == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addResourceSpecificationRelationshipList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddResourceSpecificationRelationshipList(childComplexity, args["input"].(models.AddResourceSpecificationRelationshipListInput)), true
 
 	case "Mutation.addResourceType":
 		if e.complexity.Mutation.AddResourceType == nil {
@@ -23241,7 +23241,7 @@ type Mutation {
   addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
-  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship!
+  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipItemsListInput!): ResourceSpecificationRelationship!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -23281,7 +23281,7 @@ type Mutation {
   editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
   removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
-  addResourceSpecificationRelationShipList(input: AddResourceSpecificationRelationShipListInput!):[ResourceSpecificationRelationship!]!
+  addResourceSpecificationRelationshipList(input: AddResourceSpecificationRelationshipListInput!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   removeResourceSpecificationRelationship(id: ID!): ID!
@@ -24427,13 +24427,13 @@ type ResourceTypeRelationship implements Node {
   resourceTypeA: ResourceType!
   resourceTypeB: ResourceType
 }
-input ResourceSpecificationRelationShipListInput {
-  name: String!
-}
+#input ResourceSpecificationRelationshipListInput {
+#  name: String!
+#}
 
-input AddResourceSpecificationRelationShipListInput {
+input AddResourceSpecificationRelationshipListInput {
   resourceSpecification: ID!
-  nameList: [ResourceSpecificationRelationShipListInput]!
+  nameList: [String]!
 }
 
 input AddResourceTypeRelationshipInput {
@@ -24635,14 +24635,14 @@ input ResourceSpecificationFilterInput {
   stringSet: [String!]  
 }
 
-input ResourceSpecificationRelationshipItemsInput {
-  id_destino: ID
-}
+#input ResourceSpecificationRelationshipItemsInput {
+#  destinyID: ID
+#}
 
-input AddResourceSpecificationRelationshipList {
+input AddResourceSpecificationRelationshipItemsListInput {
   name: String!
   resourceSpecification: ID!
-  resourceSpecificationRelationshipItems: [ResourceSpecificationRelationshipItemsInput]
+  resourceSpecificationRelationshipItems: [ID]
 }
 
 type ResourceSpecificationRelationship implements Node {
@@ -25951,13 +25951,13 @@ func (ec *executionContext) field_Mutation_addResourceSpecificationItems_args(ct
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_addResourceSpecificationRelationShipList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_addResourceSpecificationRelationshipItemsList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.AddResourceSpecificationRelationShipListInput
+	var arg0 models.AddResourceSpecificationRelationshipItemsListInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddResourceSpecificationRelationShipListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationShipListInput(ctx, tmp)
+		arg0, err = ec.unmarshalNAddResourceSpecificationRelationshipItemsListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipItemsListInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -25966,13 +25966,13 @@ func (ec *executionContext) field_Mutation_addResourceSpecificationRelationShipL
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_addResourceSpecificationRelationshipItemsList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_addResourceSpecificationRelationshipList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.AddResourceSpecificationRelationshipList
+	var arg0 models.AddResourceSpecificationRelationshipListInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddResourceSpecificationRelationshipList2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipList(ctx, tmp)
+		arg0, err = ec.unmarshalNAddResourceSpecificationRelationshipListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -61492,7 +61492,7 @@ func (ec *executionContext) _Mutation_addResourceSpecificationRelationshipItemsL
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddResourceSpecificationRelationshipItemsList(rctx, args["input"].(models.AddResourceSpecificationRelationshipList))
+		return ec.resolvers.Mutation().AddResourceSpecificationRelationshipItemsList(rctx, args["input"].(models.AddResourceSpecificationRelationshipItemsListInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -63141,7 +63141,7 @@ func (ec *executionContext) _Mutation_editIsListable(ctx context.Context, field 
 	return ec.marshalNPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_addResourceSpecificationRelationShipList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_addResourceSpecificationRelationshipList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -63158,7 +63158,7 @@ func (ec *executionContext) _Mutation_addResourceSpecificationRelationShipList(c
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addResourceSpecificationRelationShipList_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_addResourceSpecificationRelationshipList_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -63166,7 +63166,7 @@ func (ec *executionContext) _Mutation_addResourceSpecificationRelationShipList(c
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddResourceSpecificationRelationShipList(rctx, args["input"].(models.AddResourceSpecificationRelationShipListInput))
+		return ec.resolvers.Mutation().AddResourceSpecificationRelationshipList(rctx, args["input"].(models.AddResourceSpecificationRelationshipListInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -91723,34 +91723,6 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationItemsInput(ctx
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationShipListInput(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationShipListInput, error) {
-	var it models.AddResourceSpecificationRelationShipListInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "resourceSpecification":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
-			it.ResourceSpecification, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "nameList":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameList"))
-			it.NameList, err = ec.unmarshalNResourceSpecificationRelationShipListInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationShipListInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipInput(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationshipInput, error) {
 	var it models.AddResourceSpecificationRelationshipInput
 	var asMap = obj.(map[string]interface{})
@@ -91779,8 +91751,8 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipIn
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipList(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationshipList, error) {
-	var it models.AddResourceSpecificationRelationshipList
+func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipItemsListInput(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationshipItemsListInput, error) {
+	var it models.AddResourceSpecificationRelationshipItemsListInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -91805,7 +91777,35 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipLi
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationRelationshipItems"))
-			it.ResourceSpecificationRelationshipItems, err = ec.unmarshalOResourceSpecificationRelationshipItemsInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationshipItemsInput(ctx, v)
+			it.ResourceSpecificationRelationshipItems, err = ec.unmarshalOID2ᚕᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipListInput(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationshipListInput, error) {
+	var it models.AddResourceSpecificationRelationshipListInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "resourceSpecification":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
+			it.ResourceSpecification, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameList":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameList"))
+			it.NameList, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -100853,26 +100853,6 @@ func (ec *executionContext) unmarshalInputResourceSpecificationOrder(ctx context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputResourceSpecificationRelationShipListInput(ctx context.Context, obj interface{}) (models.ResourceSpecificationRelationShipListInput, error) {
-	var it models.ResourceSpecificationRelationShipListInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputResourceSpecificationRelationshipFilterInput(ctx context.Context, obj interface{}) (models.ResourceSpecificationRelationshipFilterInput, error) {
 	var it models.ResourceSpecificationRelationshipFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -100928,26 +100908,6 @@ func (ec *executionContext) unmarshalInputResourceSpecificationRelationshipFilte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
 			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputResourceSpecificationRelationshipItemsInput(ctx context.Context, obj interface{}) (models.ResourceSpecificationRelationshipItemsInput, error) {
-	var it models.ResourceSpecificationRelationshipItemsInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id_destino":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id_destino"))
-			it.IDDestino, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -112280,8 +112240,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "addResourceSpecificationRelationShipList":
-			out.Values[i] = ec._Mutation_addResourceSpecificationRelationShipList(ctx, field)
+		case "addResourceSpecificationRelationshipList":
+			out.Values[i] = ec._Mutation_addResourceSpecificationRelationshipList(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -120467,18 +120427,18 @@ func (ec *executionContext) unmarshalNAddResourceSpecificationItemsInput2github�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddResourceSpecificationRelationShipListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationShipListInput(ctx context.Context, v interface{}) (models.AddResourceSpecificationRelationShipListInput, error) {
-	res, err := ec.unmarshalInputAddResourceSpecificationRelationShipListInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipInput(ctx context.Context, v interface{}) (models.AddResourceSpecificationRelationshipInput, error) {
 	res, err := ec.unmarshalInputAddResourceSpecificationRelationshipInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipList2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipList(ctx context.Context, v interface{}) (models.AddResourceSpecificationRelationshipList, error) {
-	res, err := ec.unmarshalInputAddResourceSpecificationRelationshipList(ctx, v)
+func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipItemsListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipItemsListInput(ctx context.Context, v interface{}) (models.AddResourceSpecificationRelationshipItemsListInput, error) {
+	res, err := ec.unmarshalInputAddResourceSpecificationRelationshipItemsListInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInput(ctx context.Context, v interface{}) (models.AddResourceSpecificationRelationshipListInput, error) {
+	res, err := ec.unmarshalInputAddResourceSpecificationRelationshipListInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -127195,27 +127155,6 @@ func (ec *executionContext) marshalNResourceSpecificationItemsFilterType2github�
 	return v
 }
 
-func (ec *executionContext) unmarshalNResourceSpecificationRelationShipListInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationShipListInput(ctx context.Context, v interface{}) ([]*models.ResourceSpecificationRelationShipListInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.ResourceSpecificationRelationShipListInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOResourceSpecificationRelationShipListInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationShipListInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) marshalNResourceSpecificationRelationship2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx context.Context, sel ast.SelectionSet, v ent.ResourceSpecificationRelationship) graphql.Marshaler {
 	return ec._ResourceSpecificationRelationship(ctx, sel, &v)
 }
@@ -128078,6 +128017,36 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
@@ -132283,6 +132252,42 @@ func (ec *executionContext) marshalOID2ᚕintᚄ(ctx context.Context, sel ast.Se
 	return ret
 }
 
+func (ec *executionContext) unmarshalOID2ᚕᚖint(ctx context.Context, v interface{}) ([]*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*int, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOID2ᚖint(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOID2ᚕᚖint(ctx context.Context, sel ast.SelectionSet, v []*int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOID2ᚖint(ctx, sel, v[i])
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOID2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -134272,14 +134277,6 @@ func (ec *executionContext) marshalOResourceSpecificationOrderField2ᚖgithubᚗ
 	return v
 }
 
-func (ec *executionContext) unmarshalOResourceSpecificationRelationShipListInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationShipListInput(ctx context.Context, v interface{}) (*models.ResourceSpecificationRelationShipListInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputResourceSpecificationRelationShipListInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalOResourceSpecificationRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceSpecificationRelationship) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -134309,38 +134306,6 @@ func (ec *executionContext) unmarshalOResourceSpecificationRelationshipFilterInp
 		}
 	}
 	return res, nil
-}
-
-func (ec *executionContext) unmarshalOResourceSpecificationRelationshipItemsInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationshipItemsInput(ctx context.Context, v interface{}) ([]*models.ResourceSpecificationRelationshipItemsInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.ResourceSpecificationRelationshipItemsInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOResourceSpecificationRelationshipItemsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationshipItemsInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOResourceSpecificationRelationshipItemsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐResourceSpecificationRelationshipItemsInput(ctx context.Context, v interface{}) (*models.ResourceSpecificationRelationshipItemsInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputResourceSpecificationRelationshipItemsInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOResourceSpecificationRelationshipOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationshipOrder(ctx context.Context, v interface{}) (*ent.ResourceSpecificationRelationshipOrder, error) {

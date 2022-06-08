@@ -33,12 +33,12 @@ func (r resourceSpecificationRelationshipResolver) ResourceSpecificationItems(ct
 	return variable, nil
 }
 
-func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.Context, input models.AddResourceSpecificationRelationShipListInput) ([]*ent.ResourceSpecificationRelationship, error) {
+func (r mutationResolver) AddResourceSpecificationRelationshipList(ctx context.Context, input models.AddResourceSpecificationRelationshipListInput) ([]*ent.ResourceSpecificationRelationship, error) {
 	var resourceSpecification []*ent.ResourceSpecificationRelationship
 	for _, resource_specification := range input.NameList {
 		client := r.ClientFrom(ctx)
 		typ, err := client.ResourceSpecificationRelationship.Create().
-			SetName(resource_specification.Name).
+			SetName(*resource_specification).
 			SetResourcespecificationID(input.ResourceSpecification).
 			Save(ctx)
 		if err != nil {
@@ -53,7 +53,7 @@ func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.C
 	return resourceSpecification, nil
 }
 
-func (r mutationResolver) AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipList) (*ent.ResourceSpecificationRelationship, error) {
+func (r mutationResolver) AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipItemsListInput) (*ent.ResourceSpecificationRelationship, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.ResourceSpecificationRelationship.
 		Create().
@@ -70,7 +70,7 @@ func (r mutationResolver) AddResourceSpecificationRelationshipItemsList(ctx cont
 		for _, item := range input.ResourceSpecificationRelationshipItems {
 			inputItem := models.AddResourceSpecificationItemsInput{
 				ResourceSpecificationRelationship: typ.ID,
-				ResourceSpecification:             item.IDDestino,
+				ResourceSpecification:             item,
 			}
 			_, err := r.AddResourceSpecificationItems(ctx, inputItem)
 			if err != nil {
