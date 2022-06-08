@@ -419,12 +419,6 @@ type AddResourceSpecificationRelationshipInput struct {
 	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
 }
 
-type AddResourceSpecificationRelationshipListInput struct {
-	Name                      string `json:"name"`
-	ResourceSpecification     int    `json:"resourceSpecification"`
-	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
-}
-
 type AddResourceTypeInput struct {
 	Name                 string                            `json:"name"`
 	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`

@@ -33,7 +33,7 @@ func (r resourceSpecificationRelationshipResolver) ResourceSpecificationItems(ct
 	return variable, nil
 }
 
-func (r mutationResolver) AddResourceSpecificationRelationshipList(ctx context.Context, input []*models.AddResourceSpecificationRelationshipListInput) ([]*ent.ResourceSpecificationRelationship, error) {
+func (r mutationResolver) AddResourceSpecificationRelationshipList(ctx context.Context, input []*models.AddResourceSpecificationRelationshipInput) ([]*ent.ResourceSpecificationRelationship, error) {
 	var resourceSpecification []*ent.ResourceSpecificationRelationship
 	for _, resource_specification_relationship := range input {
 		client := r.ClientFrom(ctx)
