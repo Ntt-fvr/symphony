@@ -32,15 +32,16 @@ type Props = $ReadOnly<{|
   mode: string,
   onChange: () => void,
   rule: RuleType,
+  title?: string,
 |}>;
 
 const CodeEditor = (props: Props) => {
-  const {mode, onChange, rule} = props;
+  const {mode, onChange, rule, title} = props;
   const classes = useStyles();
 
   return (
     <div>
-      <span className={classes.span}> Rule </span>
+      <span className={classes.span}>{title || 'Rule'}</span>
       <div className={classes.codeEditor}>
         <AceEditor
           mode={mode}
@@ -66,4 +67,5 @@ const CodeEditor = (props: Props) => {
     </div>
   );
 };
+
 export default CodeEditor;

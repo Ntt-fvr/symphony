@@ -12,9 +12,22 @@ import * as React from 'react';
 import Select from '../../inputs/Select';
 import Switch from '../../inputs/Switch';
 import TextField from '../../inputs/TextField';
+import CodeEditor from '../../inputs/CodeEditor';
 import {Grid} from '@material-ui/core';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(() => ({
+  grid: {
+    marginTop: '-11px',
+    marginBottom: '10px',
+  },
+  gridCodeEditor: {
+    marginTop: '-31px',
+    marginBottom: '10px',
+  },
+}));
 
 const FIXED_INTERVAL = 'fixed_interval';
 
@@ -42,6 +55,8 @@ const ConfigurationTimer = () => {
     pointingDateTime: '',
   });
 
+  const classes = useStyles();
+
   const {
     behavior,
     expressionLanguage,
@@ -65,7 +80,7 @@ const ConfigurationTimer = () => {
 
   return (
     <>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.grid}>
         <Select
           label={'Behavior'}
           name={'behavior'}
@@ -74,24 +89,51 @@ const ConfigurationTimer = () => {
           items={behaviors}
         />
       </Grid>
-      <Grid item xs={12}>
-        <Switch
-          label={'Expression Language'}
-          name={'expressionLanguage'}
-          value={expressionLanguage}
-          handleInputChange={handleInputChange}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label={'Seconds'}
-          type={'number'}
-          name={'secondsNumber'}
-          value={secondsNumber}
-          handleInputChange={handleInputChange}
-        />
-      </Grid>
-      <Grid item xs={12}>
+      {behavior && behavior !== FIXED_INTERVAL && (
+        <Grid item xs={12} className={classes.grid}>
+          <Switch
+            label={'Expression Language'}
+            name={'expressionLanguage'}
+            value={expressionLanguage}
+            handleInputChange={handleInputChange}
+          />
+        </Grid>
+      )}
+
+      {behavior &&
+        behavior !== FIXED_INTERVAL &&
+        (expressionLanguage ? (
+          <Grid item xs={12} className={classes.gridCodeEditor}>
+            <CodeEditor
+              mode="javascript"
+              value={''}
+              title={'Expression Language'}
+            />
+          </Grid>
+        ) : (
+          <Grid item xs={12} className={classes.grid}>
+            <TextField
+              label={'Seconds'}
+              type={'number'}
+              name={'secondsNumber'}
+              value={secondsNumber}
+              handleInputChange={handleInputChange}
+            />
+          </Grid>
+        ))}
+
+      {behavior === FIXED_INTERVAL && (
+        <Grid item xs={12} className={classes.grid}>
+          <TextField
+            label={'Seconds'}
+            type={'number'}
+            name={'secondsNumber'}
+            value={secondsNumber}
+            handleInputChange={handleInputChange}
+          />
+        </Grid>
+      )}
+      <Grid item xs={12} className={classes.grid}>
         <Select
           label={'Date and Time'}
           name={'dateTimerExpression'}
@@ -100,31 +142,15 @@ const ConfigurationTimer = () => {
           items={dateTimeValues}
         />
       </Grid>
-      {expressionLanguage ? (
-        behavior === FIXED_INTERVAL ? (
-          <>
-            <Grid item xs={12}>
-              <TextField
-                label={'Seconds'}
-                type={'number'}
-                name={'secondsNumber'}
-                value={secondsNumber}
-                handleInputChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              {secondsExpression} 'expression component FIXED'
-            </Grid>
-          </>
-        ) : (
-          <Grid item xs={12}>
-            {dateTimerExpression} 'expression component DATE'
-          </Grid>
-        )
-      ) : (
-        ''
-      )}
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.gridCodeEditor}>
+        <CodeEditor
+          mode="javascript"
+          value={''}
+          title={'Expression Language'}
+        />
+      </Grid>
+
+      <Grid item xs={12} className={classes.grid}>
         <Switch
           label={'Link to change timer signal'}
           name={'timerSignal'}
@@ -134,12 +160,22 @@ const ConfigurationTimer = () => {
       </Grid>
       {timerSignal ? (
         behavior === FIXED_INTERVAL ? (
-          <Grid item xs={12}>
-            {pointingFixedInterval} 'pointingFixedInterval '
+          <Grid item xs={12} className={classes.grid}>
+            <TextField
+              label={'Seconds'}
+              type={'number'}
+              name={'secondsNumber'}
+              value={secondsNumber}
+              handleInputChange={handleInputChange}
+            />
           </Grid>
         ) : (
-          <Grid item xs={12}>
-            {pointingDateTime} 'pointingDateTime expression'
+          <Grid item xs={12} className={classes.gridCodeEditor}>
+            <CodeEditor
+              mode="javascript"
+              value={''}
+              title={'Expression Language'}
+            />
           </Grid>
         )
       ) : (
