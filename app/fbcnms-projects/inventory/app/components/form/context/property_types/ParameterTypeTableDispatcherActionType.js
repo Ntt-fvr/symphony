@@ -8,7 +8,6 @@
  * @format
  */
 
-// import type {PropertyKind} from '../../../configure/__generated__/AddEditEquipmentTypeCard_editingEquipmentType.graphql';
 import type {ParameterKind} from '../../../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {PropertyType} from '../../../../common/PropertyType';
 

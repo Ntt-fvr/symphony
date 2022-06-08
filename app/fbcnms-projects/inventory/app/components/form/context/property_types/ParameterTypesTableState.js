@@ -42,7 +42,6 @@ export const getInitialParameterType = (
   resourceSpecification,
   stringValue: null,
   tags: null,
-  // tagsAggregate: null,
   type: 'string',
 });
 

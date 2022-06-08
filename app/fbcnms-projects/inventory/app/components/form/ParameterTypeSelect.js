@@ -8,7 +8,6 @@
  * @format
  */
 
-// import type {PropertyType} from '../../common/PropertyType';
 import type {ParameterType} from '../../common/ParameterType';
 
 import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
