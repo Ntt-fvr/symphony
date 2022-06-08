@@ -101,7 +101,6 @@ const useStyles = makeStyles(() => ({
 const ConfigurationParameters = graphql`
   query AddEditResourceSpecificationQuery {
     queryConfigurationParameterType {
-      resourceSpecification
       name
       id
       booleanValue
@@ -115,13 +114,9 @@ const ConfigurationParameters = graphql`
       isListable
       isMandatory
       isPrioritary
-      latitudeValue
-      longitudeValue
       mappingIn
       mappingOut
       nodeType
-      rangeFromValue
-      rangeToValue
       rawValue
       resourceSpecification
       stringValue
@@ -162,6 +157,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       ConfigurationParameters,
     ),
   );
+
   const classes = useStyles();
 
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
@@ -247,7 +243,8 @@ export const AddEditResourceSpecification = (props: Props) => {
             response?.addResourceSpecification.id,
           ),
         };
-
+        console.log('RES ', response);
+        console.log('VAR ', variablesCP);
         AddConfigurationParameterTypeMutation(variablesCP, {
           onCompleted: () => {
             isCompleted();

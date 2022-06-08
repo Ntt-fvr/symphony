@@ -37,14 +37,10 @@ const mutation = graphql`
         isListable
         isMandatory
         isPrioritary
-        latitudeValue
-        longitudeValue
         mappingIn
         mappingOut
         name
         nodeType
-        rangeFromValue
-        rangeToValue
         rawValue
         resourceSpecification
         stringValue

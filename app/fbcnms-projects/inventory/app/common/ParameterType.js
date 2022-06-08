@@ -13,7 +13,7 @@ import type {ParameterKind} from '../mutations/__generated__/AddConfigurationPar
 
 // import type {PropertyTypeInput} from '../components/configure/mutations/__generated__/EditProjectTypeMutation.graphql';
 
-// import {isTempId} from './EntUtils';
+import {isTempId} from './EntUtils';
 
 export type ParameterType = {|
   id: string,
@@ -21,6 +21,7 @@ export type ParameterType = {|
   nodeType?: ?string,
   name: string,
   index?: ?number,
+  floatValue?: ?number,
   category?: ?string,
   externalId?: ?string,
   // one or more of the following potential value fields will have actual data,
@@ -29,13 +30,8 @@ export type ParameterType = {|
   booleanValue?: ?boolean,
   stringValue?: ?string,
   intValue?: ?number,
-  floatValue?: ?number,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
   mappingIn?: ?string,
   mappingOut?: ?string,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
   isEditable?: ?boolean,
   isMandatory?: ?boolean,
   isPrioritary?: boolean,
@@ -44,7 +40,7 @@ export type ParameterType = {|
   parameters?: ?(parameter[]),
   rawValue?: ?string,
   tags?: ?(tagsType[]),
-  tagsAggregate?: ?tagsAggregate,
+  // tagsAggregate?: ?tagsAggregate,
   resourceSpecification?: ?string,
 |};
 
@@ -116,47 +112,38 @@ export const getParameterDefaultValue = (parameterType: ParameterType) => {
   }
 };
 
-export const getInitialPropertyFromType = (
+export const getInitialParameterFromType = (
   propType: ParameterType,
 ): parameter => {
   return {
     id: 'prop@tmp' + propType.id,
-    parameterType: propType.parameterss,
+    parameterType: propType.parameters,
     booleanValue: propType.booleanValue,
     stringValue: propType.type !== 'enum' ? propType.stringValue : '',
     intValue: propType.intValue,
     floatValue: propType.floatValue,
-    latitudeValue: propType.latitudeValue,
-    longitudeValue: propType.longitudeValue,
-    rangeFromValue: propType.rangeFromValue,
-    rangeToValue: propType.rangeToValue,
-    previous: propType.previous,
     nodeValue: null,
   };
 };
 
 export const toMutableParameterType = (
-  immutablePropertyType: $ReadOnly<any>,
+  immutableParameterType: $ReadOnly<any>,
 ): ParameterType => ({
-  id: immutablePropertyType.id,
-  type: immutablePropertyType.type,
-  nodeType: immutablePropertyType.nodeType,
-  name: immutablePropertyType.name,
-  index: immutablePropertyType.index,
-  category: immutablePropertyType.category,
-  booleanValue: immutablePropertyType.booleanValue,
-  stringValue: immutablePropertyType.stringValue,
-  intValue: immutablePropertyType.intValue,
-  floatValue: immutablePropertyType.floatValue,
-  latitudeValue: immutablePropertyType.latitudeValue,
-  longitudeValue: immutablePropertyType.longitudeValue,
-  rangeFromValue: immutablePropertyType.rangeFromValue,
-  rangeToValue: immutablePropertyType.rangeToValue,
-  isEditable: immutablePropertyType.isEditable,
-  isMandatory: immutablePropertyType.isMandatory,
-  isDeleted: immutablePropertyType.isDeleted,
-  parameters: immutablePropertyType.parentPropertyType,
-  resourceSpecification: immutablePropertyType.resourceSpecification,
+  id: immutableParameterType.id,
+  type: immutableParameterType.type,
+  nodeType: immutableParameterType.nodeType,
+  name: immutableParameterType.name,
+  index: immutableParameterType.index,
+  category: immutableParameterType.category,
+  booleanValue: immutableParameterType.booleanValue,
+  stringValue: immutableParameterType.stringValue,
+  intValue: immutableParameterType.intValue,
+  floatValue: immutableParameterType.floatValue,
+  isEditable: immutableParameterType.isEditable,
+  isMandatory: immutableParameterType.isMandatory,
+  isDeleted: immutableParameterType.isDeleted,
+  parameters: immutableParameterType.parentPropertyType,
+  resourceSpecification: immutableParameterType.resourceSpecification,
 });
 
 export const convertParameterTypeToMutationInput = (
@@ -167,9 +154,11 @@ export const convertParameterTypeToMutationInput = (
     .filter(propType => !!propType.name)
     .map(prop => {
       return {
-        name: prop.name,
+        // name: prop.name,
+        // type: prop.type,
+        ...prop,
         resourceSpecification: resourceSpecification,
-        type: prop.type,
+        id: isTempId(prop.id) ? undefined : prop.id,
       };
     });
 };

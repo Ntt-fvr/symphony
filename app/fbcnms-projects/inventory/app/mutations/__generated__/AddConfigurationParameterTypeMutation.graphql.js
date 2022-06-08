@@ -175,14 +175,10 @@ export type AddConfigurationParameterTypeMutationResponse = {|
       +isListable: ?boolean,
       +isMandatory: ?boolean,
       +isPrioritary: ?boolean,
-      +latitudeValue: ?number,
-      +longitudeValue: ?number,
       +mappingIn: ?string,
       +mappingOut: ?string,
       +name: string,
       +nodeType: ?string,
-      +rangeFromValue: ?number,
-      +rangeToValue: ?number,
       +rawValue: ?string,
       +resourceSpecification: string,
       +stringValue: ?string,
@@ -215,14 +211,10 @@ mutation AddConfigurationParameterTypeMutation(
       isListable
       isMandatory
       isPrioritary
-      latitudeValue
-      longitudeValue
       mappingIn
       mappingOut
       name
       nodeType
-      rangeFromValue
-      rangeToValue
       rawValue
       resourceSpecification
       stringValue
@@ -351,20 +343,6 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "latitudeValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "longitudeValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
             "name": "mappingIn",
             "storageKey": null
           },
@@ -387,20 +365,6 @@ v1 = [
             "args": null,
             "kind": "ScalarField",
             "name": "nodeType",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "rangeFromValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "rangeToValue",
             "storageKey": null
           },
           {
@@ -456,16 +420,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b97bdafd3772ee901023c9cfa66db264",
+    "cacheID": "a9815c86c61afe970f1c43fab3fe143b",
     "id": null,
     "metadata": {},
     "name": "AddConfigurationParameterTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation AddConfigurationParameterTypeMutation(\n  $input: [AddConfigurationParameterTypeInput!]!\n) {\n  addConfigurationParameterType(input: $input) {\n    configurationParameterType {\n      booleanValue\n      category\n      externalId\n      floatValue\n      id\n      index\n      intValue\n      isDeleted\n      isEditable\n      isListable\n      isMandatory\n      isPrioritary\n      latitudeValue\n      longitudeValue\n      mappingIn\n      mappingOut\n      name\n      nodeType\n      rangeFromValue\n      rangeToValue\n      rawValue\n      resourceSpecification\n      stringValue\n      type\n    }\n  }\n}\n"
+    "text": "mutation AddConfigurationParameterTypeMutation(\n  $input: [AddConfigurationParameterTypeInput!]!\n) {\n  addConfigurationParameterType(input: $input) {\n    configurationParameterType {\n      booleanValue\n      category\n      externalId\n      floatValue\n      id\n      index\n      intValue\n      isDeleted\n      isEditable\n      isListable\n      isMandatory\n      isPrioritary\n      mappingIn\n      mappingOut\n      name\n      nodeType\n      rawValue\n      resourceSpecification\n      stringValue\n      type\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '93151441d1c6d51be21e0a8219f6c1a2';
+(node/*: any*/).hash = '2160194474728cc588e317a74bd7f109';
 
 module.exports = node;

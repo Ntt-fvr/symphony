@@ -18,7 +18,6 @@ export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum
 export type AddEditResourceSpecificationQueryVariables = {||};
 export type AddEditResourceSpecificationQueryResponse = {|
   +queryConfigurationParameterType: ?$ReadOnlyArray<?{|
-    +resourceSpecification: string,
     +name: string,
     +id: string,
     +booleanValue: ?boolean,
@@ -32,14 +31,11 @@ export type AddEditResourceSpecificationQueryResponse = {|
     +isListable: ?boolean,
     +isMandatory: ?boolean,
     +isPrioritary: ?boolean,
-    +latitudeValue: ?number,
-    +longitudeValue: ?number,
     +mappingIn: ?string,
     +mappingOut: ?string,
     +nodeType: ?string,
-    +rangeFromValue: ?number,
-    +rangeToValue: ?number,
     +rawValue: ?string,
+    +resourceSpecification: string,
     +stringValue: ?string,
     +type: ParameterKind,
     +__typename: string,
@@ -55,7 +51,6 @@ export type AddEditResourceSpecificationQuery = {|
 /*
 query AddEditResourceSpecificationQuery {
   queryConfigurationParameterType {
-    resourceSpecification
     name
     id
     booleanValue
@@ -69,14 +64,11 @@ query AddEditResourceSpecificationQuery {
     isListable
     isMandatory
     isPrioritary
-    latitudeValue
-    longitudeValue
     mappingIn
     mappingOut
     nodeType
-    rangeFromValue
-    rangeToValue
     rawValue
+    resourceSpecification
     stringValue
     type
     __typename
@@ -94,13 +86,6 @@ var v0 = [
     "name": "queryConfigurationParameterType",
     "plural": true,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "resourceSpecification",
-        "storageKey": null
-      },
       {
         "alias": null,
         "args": null,
@@ -196,20 +181,6 @@ var v0 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "latitudeValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "longitudeValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
         "name": "mappingIn",
         "storageKey": null
       },
@@ -231,21 +202,14 @@ var v0 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "rangeFromValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "rangeToValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
         "name": "rawValue",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "resourceSpecification",
         "storageKey": null
       },
       {
@@ -291,16 +255,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "a67ed785c3c05e09548721c84c1a31e6",
+    "cacheID": "e096f00f1b51ad2925bcdc05029a660e",
     "id": null,
     "metadata": {},
     "name": "AddEditResourceSpecificationQuery",
     "operationKind": "query",
-    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    resourceSpecification\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    latitudeValue\n    longitudeValue\n    mappingIn\n    mappingOut\n    nodeType\n    rangeFromValue\n    rangeToValue\n    rawValue\n    stringValue\n    type\n    __typename\n  }\n}\n"
+    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    mappingIn\n    mappingOut\n    nodeType\n    rawValue\n    resourceSpecification\n    stringValue\n    type\n    __typename\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '20bab10756ea41e3ea24d56db9a32c21';
+(node/*: any*/).hash = '5fea99cdfd17b02960b5d47fdeef6223';
 
 module.exports = node;
