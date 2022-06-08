@@ -243,8 +243,7 @@ export const AddEditResourceSpecification = (props: Props) => {
             response?.addResourceSpecification.id,
           ),
         };
-        console.log('RES ', response);
-        console.log('VAR ', variablesCP);
+
         AddConfigurationParameterTypeMutation(variablesCP, {
           onCompleted: () => {
             isCompleted();
@@ -274,11 +273,8 @@ export const AddEditResourceSpecification = (props: Props) => {
         closeForm();
       },
     });
-    const finalparameterType = convertParameterTypeToMutationInput(
-      parameterTypes,
-    );
     const variablesCP: AddConfigurationParameterTypeMutationVariables = {
-      input: finalparameterType,
+      input: convertParameterTypeToMutationInput(parameterTypes, dataForm?.id),
     };
     AddConfigurationParameterTypeMutation(variablesCP, {
       onCompleted: () => {
