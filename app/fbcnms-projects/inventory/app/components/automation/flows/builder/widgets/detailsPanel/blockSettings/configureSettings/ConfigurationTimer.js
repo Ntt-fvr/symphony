@@ -23,7 +23,10 @@ const ConfigurationTimer = () => {
     {name: 'Fixed Interval', id: 'fixed_interval'},
     {name: 'Specific date and time', id: 'date_time'},
   ];
-  const dateTimeValues = [{name: 'test', id: 'test'}];
+  const dateTimeValues = [
+    {name: 'Date', id: 'date'},
+    {name: 'Time and Timezone?', id: 'time_and_timezone'},
+  ];
   const [
     configurationsValues,
     handleInputChange,
@@ -34,7 +37,7 @@ const ConfigurationTimer = () => {
     timerSignal: false,
     secondsNumber: 0,
     secondsExpression: '',
-    dateTimerExpression: '',
+    dateTimerExpression: 'date',
     pointingFixedInterval: '',
     pointingDateTime: '',
   });

@@ -22,7 +22,28 @@ import {sortByIndex} from '../../../../../../draggable/DraggableUtils';
 const useStyles = makeStyles(() => ({
   container: {
     maxWidth: '1366px',
+    minWidth: '330px',
     overflowX: 'auto',
+    display: 'flex',
+    justifCcontent: 'center',
+  },
+  draggableTableRow: {
+    height: 'auto',
+    minHeight: 60,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  tableCellDraggableTableRow: {
+    border: 0,
+    marginRight: '-11px',
+  },
+  tableCell: {
+    padding: 0,
+    display: 'flex',
+    justifyContent: 'flex-start',
+    marginLeft: 24,
+    borderTop: '0.5px solid #D2DAE7',
+    width: '103%',
   },
 }));
 
@@ -51,7 +72,11 @@ const RulesList = (props: Props) => {
           .filter(rule => !rule.isDeleted && !rule.isDefault)
           .sort(sortByIndex)
           .map(rule => (
-            <DraggableTableRow id={rule.id} index={rule.index}>
+            <DraggableTableRow
+              id={rule.id}
+              index={rule.index}
+              draggableCellClassName={classes.tableCellDraggableTableRow}
+              className={classes.draggableTableRow}>
               <Rule rule={rule} label={'Name rule'} />
             </DraggableTableRow>
           ))}
@@ -59,7 +84,7 @@ const RulesList = (props: Props) => {
           .filter(rule => !!rule.isDefault)
           .map(rule => (
             <TableRow component="div" id={rule.id} key={rule.id}>
-              <TableCell colSpan={2}>
+              <TableCell colSpan={2} className={classes.tableCell}>
                 <Rule rule={rule} label={'Default Rule'} />
               </TableCell>
             </TableRow>

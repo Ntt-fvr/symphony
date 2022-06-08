@@ -10,6 +10,7 @@
 
 import * as React from 'react';
 import Switch from '../../inputs/Switch';
+import Select from '../../inputs/Select';
 import TextField from '../../inputs/TextField';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
@@ -22,6 +23,11 @@ const ConfigurationWaitForSignal = () => {
   });
 
   const {signalModule, blockUntilReception, signalType} = configurationsValues;
+
+  const signalTypes = [
+    {name: 'WOCreation', id: 'wo_creation'},
+    {name: 'InvUpdate', id: 'in_update'},
+  ];
 
   return (
     <>
@@ -43,12 +49,12 @@ const ConfigurationWaitForSignal = () => {
         />
       </Grid>
       <Grid item xs={12}>
-        <TextField
+        <Select
           label={'Signal Type'}
-          type={'text'}
           name={'signalType'}
           value={signalType}
-          handleInputChange={handleInputChange}
+          onChange={handleInputChange}
+          items={signalTypes}
         />
       </Grid>
     </>

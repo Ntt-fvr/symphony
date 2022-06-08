@@ -19,7 +19,8 @@ import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   codeEditor: {
-    border: `1px ${theme.palette.grey[200]} solid`,
+    border: `1px ${theme.palette.grey[400]} solid`,
+    borderRadius: 4,
   },
   span: {
     fontSize: theme.typography.pxToRem(11),

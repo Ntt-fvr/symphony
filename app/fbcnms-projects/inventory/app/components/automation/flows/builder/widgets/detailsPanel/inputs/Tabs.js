@@ -52,6 +52,7 @@ const useStyles = makeStyles(theme => ({
       position: 'fixed',
       backgroundColor: theme.palette.common.white + '!important',
       width: '100%',
+      zIndex: 2,
     },
     '& .MuiTab-textColorPrimary': {
       color: theme.palette.secondary.dark,
