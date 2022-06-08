@@ -414,19 +414,15 @@ type AddResourceSpecificationItemsInput struct {
 }
 
 type AddResourceSpecificationRelationshipInput struct {
-	Name                  string `json:"name"`
-	ResourceSpecification int    `json:"resourceSpecification"`
-}
-
-type AddResourceSpecificationRelationshipItemsListInput struct {
-	Name                                   string `json:"name"`
-	ResourceSpecification                  int    `json:"resourceSpecification"`
-	ResourceSpecificationRelationshipItems []*int `json:"resourceSpecificationRelationshipItems"`
+	Name                      string `json:"name"`
+	ResourceSpecification     int    `json:"resourceSpecification"`
+	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
 }
 
 type AddResourceSpecificationRelationshipListInput struct {
-	ResourceSpecification int       `json:"resourceSpecification"`
-	NameList              []*string `json:"nameList"`
+	Name                      string `json:"name"`
+	ResourceSpecification     int    `json:"resourceSpecification"`
+	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
 }
 
 type AddResourceTypeInput struct {

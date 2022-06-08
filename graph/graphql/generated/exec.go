@@ -1142,225 +1142,224 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddActionBlock                                func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
-		AddAlarmFilter                                func(childComplexity int, input models.AddAlarmFilterInput) int
-		AddAlarmStatus                                func(childComplexity int, input models.AddAlarmStatusInput) int
-		AddAppointment                                func(childComplexity int, input models.AddAppointmentInput) int
-		AddBlockInstance                              func(childComplexity int, flowInstanceID int, input models.AddBlockInstanceInput) int
-		AddBulkServiceLinksAndPorts                   func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
-		AddCellScans                                  func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
-		AddComment                                    func(childComplexity int, input models.CommentInput) int
-		AddComparator                                 func(childComplexity int, input models.AddComparatorInput) int
-		AddConnector                                  func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
-		AddCounter                                    func(childComplexity int, input models.AddCounterInput) int
-		AddCounterFamily                              func(childComplexity int, input models.AddCounterFamilyInput) int
-		AddCounterFormula                             func(childComplexity int, input models.AddCounterFormulaInput) int
-		AddCounterFormulaList                         func(childComplexity int, input models.AddCounterFormulaListInput) int
-		AddCustomer                                   func(childComplexity int, input models.AddCustomerInput) int
-		AddDecisionBlock                              func(childComplexity int, flowDraftID int, input models.DecisionBlockInput) int
-		AddDomain                                     func(childComplexity int, input models.AddDomainInput) int
-		AddEndBlock                                   func(childComplexity int, flowDraftID int, input models.EndBlockInput) int
-		AddEquipment                                  func(childComplexity int, input models.AddEquipmentInput) int
-		AddEquipmentPortType                          func(childComplexity int, input models.AddEquipmentPortTypeInput) int
-		AddEquipmentType                              func(childComplexity int, input models.AddEquipmentTypeInput) int
-		AddEventSeverity                              func(childComplexity int, input models.AddEventSeverityInput) int
-		AddFloorPlan                                  func(childComplexity int, input models.AddFloorPlanInput) int
-		AddFlowDraft                                  func(childComplexity int, input models.AddFlowDraftInput) int
-		AddFormula                                    func(childComplexity int, input models.AddFormulaInput) int
-		AddGotoBlock                                  func(childComplexity int, flowDraftID int, input models.GotoBlockInput) int
-		AddHyperlink                                  func(childComplexity int, input models.AddHyperlinkInput) int
-		AddImage                                      func(childComplexity int, input models.AddImageInput) int
-		AddKpi                                        func(childComplexity int, input models.AddKpiInput) int
-		AddKpiCategory                                func(childComplexity int, input models.AddKpiCategoryInput) int
-		AddKqi                                        func(childComplexity int, input models.AddKqiInput) int
-		AddKqiCategory                                func(childComplexity int, input models.AddKqiCategoryInput) int
-		AddKqiComparator                              func(childComplexity int, input models.AddKqiComparatorInput) int
-		AddKqiPerspective                             func(childComplexity int, input models.AddKqiPerspectiveInput) int
-		AddKqiSource                                  func(childComplexity int, input models.AddKqiSourceInput) int
-		AddKqiTarget                                  func(childComplexity int, input models.AddKqiTargetInput) int
-		AddKqiTemporalFrequency                       func(childComplexity int, input models.AddKqiTemporalFrequencyInput) int
-		AddLink                                       func(childComplexity int, input models.AddLinkInput) int
-		AddLocation                                   func(childComplexity int, input models.AddLocationInput) int
-		AddLocationType                               func(childComplexity int, input models.AddLocationTypeInput) int
-		AddNetworkType                                func(childComplexity int, input models.AddNetworkTypeInput) int
-		AddOrganization                               func(childComplexity int, input models.AddOrganizationInput) int
-		AddPermissionsPolicy                          func(childComplexity int, input models.AddPermissionsPolicyInput) int
-		AddPropertyTypeValue                          func(childComplexity int, input models1.AddPropertyTypeValueInput) int
-		AddRecommendations                            func(childComplexity int, input models.AddRecommendationsInput) int
-		AddRecommendationsCategory                    func(childComplexity int, input models.AddRecommendationsCategoryInput) int
-		AddRecommendationsList                        func(childComplexity int, input models.AddRecommendationsListInput) int
-		AddRecommendationsSources                     func(childComplexity int, input models.AddRecommendationsSourcesInput) int
-		AddReportFilter                               func(childComplexity int, input models.ReportFilterInput) int
-		AddResourceSpecification                      func(childComplexity int, input models.AddResourceSpecificationInput) int
-		AddResourceSpecificationItems                 func(childComplexity int, input models.AddResourceSpecificationItemsInput) int
-		AddResourceSpecificationRelationship          func(childComplexity int, input models.AddResourceSpecificationRelationshipInput) int
-		AddResourceSpecificationRelationshipItemsList func(childComplexity int, input models.AddResourceSpecificationRelationshipItemsListInput) int
-		AddResourceSpecificationRelationshipList      func(childComplexity int, input models.AddResourceSpecificationRelationshipListInput) int
-		AddResourceType                               func(childComplexity int, input models.AddResourceTypeInput) int
-		AddResourceTypeRelationship                   func(childComplexity int, input models.AddResourceTypeRelationshipInput) int
-		AddRule                                       func(childComplexity int, input models.AddRuleInput) int
-		AddRuleLimit                                  func(childComplexity int, input models.AddRuleLimitInput) int
-		AddRuleType                                   func(childComplexity int, input models.AddRuleTypeInput) int
-		AddService                                    func(childComplexity int, data models.ServiceCreateData) int
-		AddServiceEndpoint                            func(childComplexity int, input models.AddServiceEndpointInput) int
-		AddServiceLink                                func(childComplexity int, id int, linkID int) int
-		AddServicePort                                func(childComplexity int, id int, portID int) int
-		AddServiceType                                func(childComplexity int, data models.ServiceTypeCreateData) int
-		AddStartBlock                                 func(childComplexity int, flowDraftID int, input models.StartBlockInput) int
-		AddSubflowBlock                               func(childComplexity int, flowDraftID int, input models.SubflowBlockInput) int
-		AddTech                                       func(childComplexity int, input models.AddTechInput) int
-		AddThreshold                                  func(childComplexity int, input models.AddThresholdInput) int
-		AddTriggerBlock                               func(childComplexity int, flowDraftID int, input models.TriggerBlockInput) int
-		AddTrueFalseBlock                             func(childComplexity int, flowDraftID int, input models.TrueFalseBlockInput) int
-		AddUsersGroup                                 func(childComplexity int, input models.AddUsersGroupInput) int
-		AddVendor                                     func(childComplexity int, input models.AddVendorInput) int
-		AddWiFiScans                                  func(childComplexity int, data []*models.SurveyWiFiScanData, locationID int) int
-		AddWorkOrder                                  func(childComplexity int, input models.AddWorkOrderInput) int
-		AddWorkOrderType                              func(childComplexity int, input models.AddWorkOrderTypeInput) int
-		AddWorkerType                                 func(childComplexity int, input models.AddWorkerTypeInput) int
-		CreateProject                                 func(childComplexity int, input models.AddProjectInput) int
-		CreateProjectType                             func(childComplexity int, input models.AddProjectTypeInput) int
-		CreateSurvey                                  func(childComplexity int, data models.SurveyCreateData) int
-		DeleteBlock                                   func(childComplexity int, id int) int
-		DeleteConnector                               func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
-		DeleteFloorPlan                               func(childComplexity int, id int) int
-		DeleteFlowDraft                               func(childComplexity int, id int) int
-		DeleteHyperlink                               func(childComplexity int, id int) int
-		DeleteImage                                   func(childComplexity int, entityType models.ImageEntity, entityID int, id int) int
-		DeletePermissionsPolicy                       func(childComplexity int, id int) int
-		DeleteProject                                 func(childComplexity int, id int) int
-		DeleteProjectType                             func(childComplexity int, id int) int
-		DeleteReportFilter                            func(childComplexity int, id int) int
-		DeleteUsersGroup                              func(childComplexity int, id int) int
-		EditAlarmFilter                               func(childComplexity int, input models.EditAlarmFilterInput) int
-		EditAlarmStatus                               func(childComplexity int, input models.EditAlarmStatusInput) int
-		EditAppointment                               func(childComplexity int, input models.EditAppointmentInput) int
-		EditBlock                                     func(childComplexity int, input models.EditBlockInput) int
-		EditBlockInstance                             func(childComplexity int, input models.EditBlockInstanceInput) int
-		EditComparator                                func(childComplexity int, input models.EditComparatorInput) int
-		EditCounter                                   func(childComplexity int, input models.EditCounterInput) int
-		EditCounterFamily                             func(childComplexity int, input models.EditCounterFamilyInput) int
-		EditCounterFormula                            func(childComplexity int, input models.EditCounterFormulaInput) int
-		EditDomain                                    func(childComplexity int, input models.EditDomainInput) int
-		EditEquipment                                 func(childComplexity int, input models.EditEquipmentInput) int
-		EditEquipmentPort                             func(childComplexity int, input models.EditEquipmentPortInput) int
-		EditEquipmentPortType                         func(childComplexity int, input models.EditEquipmentPortTypeInput) int
-		EditEquipmentType                             func(childComplexity int, input models.EditEquipmentTypeInput) int
-		EditEventSeverity                             func(childComplexity int, input models.EditEventSeverityInput) int
-		EditFlowInstance                              func(childComplexity int, input *models.EditFlowInstanceInput) int
-		EditFormula                                   func(childComplexity int, input models.EditFormulaInput) int
-		EditIsListable                                func(childComplexity int, input models.EditIsListableInput) int
-		EditKpi                                       func(childComplexity int, input models.EditKpiInput) int
-		EditKpiCategory                               func(childComplexity int, input models.EditKpiCategoryInput) int
-		EditKqi                                       func(childComplexity int, input models.EditKqiInput) int
-		EditKqiCategory                               func(childComplexity int, input models.EditKqiCategoryInput) int
-		EditKqiComparator                             func(childComplexity int, input models.EditKqiComparatorInput) int
-		EditKqiPerspective                            func(childComplexity int, input models.EditKqiPerspectiveInput) int
-		EditKqiSource                                 func(childComplexity int, input models.EditKqiSourceInput) int
-		EditKqiTarget                                 func(childComplexity int, input models.EditKqiTargetInput) int
-		EditKqiTemporalFrequency                      func(childComplexity int, input models.EditKqiTemporalFrequencyInput) int
-		EditLink                                      func(childComplexity int, input models.EditLinkInput) int
-		EditLocation                                  func(childComplexity int, input models.EditLocationInput) int
-		EditLocationType                              func(childComplexity int, input models.EditLocationTypeInput) int
-		EditLocationTypeSurveyTemplateCategories      func(childComplexity int, id int, surveyTemplateCategories []*models.SurveyTemplateCategoryInput) int
-		EditLocationTypesIndex                        func(childComplexity int, locationTypesIndex []*models.LocationTypeIndex) int
-		EditNetworkType                               func(childComplexity int, input models.EditNetworkTypeInput) int
-		EditOrganization                              func(childComplexity int, input models.EditOrganizationInput) int
-		EditParametersCatalog                         func(childComplexity int, parametersCatalog []*models.EditParameterCatalogInput) int
-		EditPermissionsPolicy                         func(childComplexity int, input models.EditPermissionsPolicyInput) int
-		EditProject                                   func(childComplexity int, input models.EditProjectInput) int
-		EditProjectType                               func(childComplexity int, input models.EditProjectTypeInput) int
-		EditPropertyCategories                        func(childComplexity int, propertyCategories []*models.EditPropertyCategoryInput) int
-		EditPropertyTypeValue                         func(childComplexity int, input models.EditPropertyTypeValueInput) int
-		EditRecommendations                           func(childComplexity int, input models.EditRecommendationsInput) int
-		EditRecommendationsCategory                   func(childComplexity int, input models.EditRecommendationsCategoryInput) int
-		EditRecommendationsSources                    func(childComplexity int, input models.EditRecommendationsSourcesInput) int
-		EditReportFilter                              func(childComplexity int, input models.EditReportFilterInput) int
-		EditResourceSpecification                     func(childComplexity int, input models.EditResourceSpecificationInput) int
-		EditResourceSpecificationItems                func(childComplexity int, input models.EditResourceSpecificationItemsInput) int
-		EditResourceSpecificationRelationship         func(childComplexity int, input models.EditResourceSpecificationRelationshipInput) int
-		EditResourceType                              func(childComplexity int, input models.EditResourceTypeInput) int
-		EditResourceTypeRelationship                  func(childComplexity int, input models.EditResourceTypeRelationshipInput) int
-		EditRule                                      func(childComplexity int, input models.EditRuleInput) int
-		EditRuleLimit                                 func(childComplexity int, input models.EditRuleLimitInput) int
-		EditRuleType                                  func(childComplexity int, input models.EditRuleTypeInput) int
-		EditService                                   func(childComplexity int, data models.ServiceEditData) int
-		EditServiceType                               func(childComplexity int, data models.ServiceTypeEditData) int
-		EditTech                                      func(childComplexity int, input models.EditTechInput) int
-		EditThreshold                                 func(childComplexity int, input models.EditThresholdInput) int
-		EditUser                                      func(childComplexity int, input models.EditUserInput) int
-		EditUsersGroup                                func(childComplexity int, input models.EditUsersGroupInput) int
-		EditVendor                                    func(childComplexity int, input models.EditVendorInput) int
-		EditWorkOrder                                 func(childComplexity int, input models.EditWorkOrderInput) int
-		EditWorkOrderType                             func(childComplexity int, input models.EditWorkOrderTypeInput) int
-		EditWorkerType                                func(childComplexity int, input models.EditWorkerTypeInput) int
-		ExecuteWorkOrder                              func(childComplexity int, id int) int
-		ImportFlowDraft                               func(childComplexity int, input models.ImportFlowDraftInput) int
-		MarkSiteSurveyNeeded                          func(childComplexity int, locationID int, needed bool) int
-		MoveEquipmentToPosition                       func(childComplexity int, parentEquipmentID *int, positionDefinitionID *int, equipmentID int) int
-		MoveLocation                                  func(childComplexity int, locationID int, parentLocationID *int) int
-		PublishFlow                                   func(childComplexity int, input models.PublishFlowInput) int
-		RemoveAlarmFilter                             func(childComplexity int, id int) int
-		RemoveAlarmStatus                             func(childComplexity int, id int) int
-		RemoveAppointment                             func(childComplexity int, id int) int
-		RemoveComparator                              func(childComplexity int, id int) int
-		RemoveCounter                                 func(childComplexity int, id int) int
-		RemoveCounterFamily                           func(childComplexity int, id int) int
-		RemoveCounterFormula                          func(childComplexity int, id int) int
-		RemoveCustomer                                func(childComplexity int, id int) int
-		RemoveDocumentCategory                        func(childComplexity int, id int) int
-		RemoveDomain                                  func(childComplexity int, id int) int
-		RemoveEquipment                               func(childComplexity int, id int, workOrderID *int) int
-		RemoveEquipmentFromPosition                   func(childComplexity int, positionID int, workOrderID *int) int
-		RemoveEquipmentPortType                       func(childComplexity int, id int) int
-		RemoveEquipmentType                           func(childComplexity int, id int) int
-		RemoveEventSeverity                           func(childComplexity int, id int) int
-		RemoveFormula                                 func(childComplexity int, id int) int
-		RemoveKpi                                     func(childComplexity int, id int) int
-		RemoveKpiCategory                             func(childComplexity int, id int) int
-		RemoveKqi                                     func(childComplexity int, id int) int
-		RemoveKqiCategory                             func(childComplexity int, id int) int
-		RemoveKqiComparator                           func(childComplexity int, id int) int
-		RemoveKqiPerspective                          func(childComplexity int, id int) int
-		RemoveKqiSource                               func(childComplexity int, id int) int
-		RemoveKqiTarget                               func(childComplexity int, id int) int
-		RemoveKqiTemporalFrequency                    func(childComplexity int, id int) int
-		RemoveLink                                    func(childComplexity int, id int, workOrderID *int) int
-		RemoveLocation                                func(childComplexity int, id int) int
-		RemoveLocationType                            func(childComplexity int, id int) int
-		RemoveNetworkType                             func(childComplexity int, id int) int
-		RemoveOrganization                            func(childComplexity int, id int) int
-		RemoveParameterCatalog                        func(childComplexity int, entityType enum.ParameterCatalogEntity, id int) int
-		RemovePropertyCategory                        func(childComplexity int, id int) int
-		RemovePropertyTypeValue                       func(childComplexity int, id int) int
-		RemoveRecommendations                         func(childComplexity int, id int) int
-		RemoveRecommendationsCategory                 func(childComplexity int, id int) int
-		RemoveRecommendationsSources                  func(childComplexity int, id int) int
-		RemoveResourceSpecification                   func(childComplexity int, id int) int
-		RemoveResourceSpecificationItems              func(childComplexity int, id int) int
-		RemoveResourceSpecificationRelationship       func(childComplexity int, id int) int
-		RemoveResourceType                            func(childComplexity int, id int) int
-		RemoveResourceTypeRelationship                func(childComplexity int, id int) int
-		RemoveRule                                    func(childComplexity int, id int) int
-		RemoveRuleLimit                               func(childComplexity int, id int) int
-		RemoveRuleType                                func(childComplexity int, id int) int
-		RemoveService                                 func(childComplexity int, id int) int
-		RemoveServiceEndpoint                         func(childComplexity int, serviceEndpointID int) int
-		RemoveServiceLink                             func(childComplexity int, id int, linkID int) int
-		RemoveServicePort                             func(childComplexity int, id int, portID int) int
-		RemoveServiceType                             func(childComplexity int, id int) int
-		RemoveSiteSurvey                              func(childComplexity int, id int) int
-		RemoveTech                                    func(childComplexity int, id int) int
-		RemoveThreshold                               func(childComplexity int, id int) int
-		RemoveVendor                                  func(childComplexity int, id int) int
-		RemoveWorkOrder                               func(childComplexity int, id int) int
-		RemoveWorkOrderType                           func(childComplexity int, id int) int
-		RemoveWorkerType                              func(childComplexity int, id int) int
-		StartFlow                                     func(childComplexity int, input models.StartFlowInput) int
-		TechnicianWorkOrderCheckIn                    func(childComplexity int, workOrderID int, input *models.TechnicianWorkOrderCheckInInput) int
-		TechnicianWorkOrderCheckOut                   func(childComplexity int, input models.TechnicianWorkOrderCheckOutInput) int
-		TechnicianWorkOrderUploadData                 func(childComplexity int, input models.TechnicianWorkOrderUploadInput) int
-		UpdateUserGroups                              func(childComplexity int, input models.UpdateUserGroupsInput) int
+		AddActionBlock                           func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
+		AddAlarmFilter                           func(childComplexity int, input models.AddAlarmFilterInput) int
+		AddAlarmStatus                           func(childComplexity int, input models.AddAlarmStatusInput) int
+		AddAppointment                           func(childComplexity int, input models.AddAppointmentInput) int
+		AddBlockInstance                         func(childComplexity int, flowInstanceID int, input models.AddBlockInstanceInput) int
+		AddBulkServiceLinksAndPorts              func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
+		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
+		AddComment                               func(childComplexity int, input models.CommentInput) int
+		AddComparator                            func(childComplexity int, input models.AddComparatorInput) int
+		AddConnector                             func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
+		AddCounter                               func(childComplexity int, input models.AddCounterInput) int
+		AddCounterFamily                         func(childComplexity int, input models.AddCounterFamilyInput) int
+		AddCounterFormula                        func(childComplexity int, input models.AddCounterFormulaInput) int
+		AddCounterFormulaList                    func(childComplexity int, input models.AddCounterFormulaListInput) int
+		AddCustomer                              func(childComplexity int, input models.AddCustomerInput) int
+		AddDecisionBlock                         func(childComplexity int, flowDraftID int, input models.DecisionBlockInput) int
+		AddDomain                                func(childComplexity int, input models.AddDomainInput) int
+		AddEndBlock                              func(childComplexity int, flowDraftID int, input models.EndBlockInput) int
+		AddEquipment                             func(childComplexity int, input models.AddEquipmentInput) int
+		AddEquipmentPortType                     func(childComplexity int, input models.AddEquipmentPortTypeInput) int
+		AddEquipmentType                         func(childComplexity int, input models.AddEquipmentTypeInput) int
+		AddEventSeverity                         func(childComplexity int, input models.AddEventSeverityInput) int
+		AddFloorPlan                             func(childComplexity int, input models.AddFloorPlanInput) int
+		AddFlowDraft                             func(childComplexity int, input models.AddFlowDraftInput) int
+		AddFormula                               func(childComplexity int, input models.AddFormulaInput) int
+		AddGotoBlock                             func(childComplexity int, flowDraftID int, input models.GotoBlockInput) int
+		AddHyperlink                             func(childComplexity int, input models.AddHyperlinkInput) int
+		AddImage                                 func(childComplexity int, input models.AddImageInput) int
+		AddKpi                                   func(childComplexity int, input models.AddKpiInput) int
+		AddKpiCategory                           func(childComplexity int, input models.AddKpiCategoryInput) int
+		AddKqi                                   func(childComplexity int, input models.AddKqiInput) int
+		AddKqiCategory                           func(childComplexity int, input models.AddKqiCategoryInput) int
+		AddKqiComparator                         func(childComplexity int, input models.AddKqiComparatorInput) int
+		AddKqiPerspective                        func(childComplexity int, input models.AddKqiPerspectiveInput) int
+		AddKqiSource                             func(childComplexity int, input models.AddKqiSourceInput) int
+		AddKqiTarget                             func(childComplexity int, input models.AddKqiTargetInput) int
+		AddKqiTemporalFrequency                  func(childComplexity int, input models.AddKqiTemporalFrequencyInput) int
+		AddLink                                  func(childComplexity int, input models.AddLinkInput) int
+		AddLocation                              func(childComplexity int, input models.AddLocationInput) int
+		AddLocationType                          func(childComplexity int, input models.AddLocationTypeInput) int
+		AddNetworkType                           func(childComplexity int, input models.AddNetworkTypeInput) int
+		AddOrganization                          func(childComplexity int, input models.AddOrganizationInput) int
+		AddPermissionsPolicy                     func(childComplexity int, input models.AddPermissionsPolicyInput) int
+		AddPropertyTypeValue                     func(childComplexity int, input models1.AddPropertyTypeValueInput) int
+		AddRecommendations                       func(childComplexity int, input models.AddRecommendationsInput) int
+		AddRecommendationsCategory               func(childComplexity int, input models.AddRecommendationsCategoryInput) int
+		AddRecommendationsList                   func(childComplexity int, input models.AddRecommendationsListInput) int
+		AddRecommendationsSources                func(childComplexity int, input models.AddRecommendationsSourcesInput) int
+		AddReportFilter                          func(childComplexity int, input models.ReportFilterInput) int
+		AddResourceSpecification                 func(childComplexity int, input models.AddResourceSpecificationInput) int
+		AddResourceSpecificationItems            func(childComplexity int, input models.AddResourceSpecificationItemsInput) int
+		AddResourceSpecificationRelationship     func(childComplexity int, input models.AddResourceSpecificationRelationshipInput) int
+		AddResourceSpecificationRelationshipList func(childComplexity int, input []*models.AddResourceSpecificationRelationshipListInput) int
+		AddResourceType                          func(childComplexity int, input models.AddResourceTypeInput) int
+		AddResourceTypeRelationship              func(childComplexity int, input models.AddResourceTypeRelationshipInput) int
+		AddRule                                  func(childComplexity int, input models.AddRuleInput) int
+		AddRuleLimit                             func(childComplexity int, input models.AddRuleLimitInput) int
+		AddRuleType                              func(childComplexity int, input models.AddRuleTypeInput) int
+		AddService                               func(childComplexity int, data models.ServiceCreateData) int
+		AddServiceEndpoint                       func(childComplexity int, input models.AddServiceEndpointInput) int
+		AddServiceLink                           func(childComplexity int, id int, linkID int) int
+		AddServicePort                           func(childComplexity int, id int, portID int) int
+		AddServiceType                           func(childComplexity int, data models.ServiceTypeCreateData) int
+		AddStartBlock                            func(childComplexity int, flowDraftID int, input models.StartBlockInput) int
+		AddSubflowBlock                          func(childComplexity int, flowDraftID int, input models.SubflowBlockInput) int
+		AddTech                                  func(childComplexity int, input models.AddTechInput) int
+		AddThreshold                             func(childComplexity int, input models.AddThresholdInput) int
+		AddTriggerBlock                          func(childComplexity int, flowDraftID int, input models.TriggerBlockInput) int
+		AddTrueFalseBlock                        func(childComplexity int, flowDraftID int, input models.TrueFalseBlockInput) int
+		AddUsersGroup                            func(childComplexity int, input models.AddUsersGroupInput) int
+		AddVendor                                func(childComplexity int, input models.AddVendorInput) int
+		AddWiFiScans                             func(childComplexity int, data []*models.SurveyWiFiScanData, locationID int) int
+		AddWorkOrder                             func(childComplexity int, input models.AddWorkOrderInput) int
+		AddWorkOrderType                         func(childComplexity int, input models.AddWorkOrderTypeInput) int
+		AddWorkerType                            func(childComplexity int, input models.AddWorkerTypeInput) int
+		CreateProject                            func(childComplexity int, input models.AddProjectInput) int
+		CreateProjectType                        func(childComplexity int, input models.AddProjectTypeInput) int
+		CreateSurvey                             func(childComplexity int, data models.SurveyCreateData) int
+		DeleteBlock                              func(childComplexity int, id int) int
+		DeleteConnector                          func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
+		DeleteFloorPlan                          func(childComplexity int, id int) int
+		DeleteFlowDraft                          func(childComplexity int, id int) int
+		DeleteHyperlink                          func(childComplexity int, id int) int
+		DeleteImage                              func(childComplexity int, entityType models.ImageEntity, entityID int, id int) int
+		DeletePermissionsPolicy                  func(childComplexity int, id int) int
+		DeleteProject                            func(childComplexity int, id int) int
+		DeleteProjectType                        func(childComplexity int, id int) int
+		DeleteReportFilter                       func(childComplexity int, id int) int
+		DeleteUsersGroup                         func(childComplexity int, id int) int
+		EditAlarmFilter                          func(childComplexity int, input models.EditAlarmFilterInput) int
+		EditAlarmStatus                          func(childComplexity int, input models.EditAlarmStatusInput) int
+		EditAppointment                          func(childComplexity int, input models.EditAppointmentInput) int
+		EditBlock                                func(childComplexity int, input models.EditBlockInput) int
+		EditBlockInstance                        func(childComplexity int, input models.EditBlockInstanceInput) int
+		EditComparator                           func(childComplexity int, input models.EditComparatorInput) int
+		EditCounter                              func(childComplexity int, input models.EditCounterInput) int
+		EditCounterFamily                        func(childComplexity int, input models.EditCounterFamilyInput) int
+		EditCounterFormula                       func(childComplexity int, input models.EditCounterFormulaInput) int
+		EditDomain                               func(childComplexity int, input models.EditDomainInput) int
+		EditEquipment                            func(childComplexity int, input models.EditEquipmentInput) int
+		EditEquipmentPort                        func(childComplexity int, input models.EditEquipmentPortInput) int
+		EditEquipmentPortType                    func(childComplexity int, input models.EditEquipmentPortTypeInput) int
+		EditEquipmentType                        func(childComplexity int, input models.EditEquipmentTypeInput) int
+		EditEventSeverity                        func(childComplexity int, input models.EditEventSeverityInput) int
+		EditFlowInstance                         func(childComplexity int, input *models.EditFlowInstanceInput) int
+		EditFormula                              func(childComplexity int, input models.EditFormulaInput) int
+		EditIsListable                           func(childComplexity int, input models.EditIsListableInput) int
+		EditKpi                                  func(childComplexity int, input models.EditKpiInput) int
+		EditKpiCategory                          func(childComplexity int, input models.EditKpiCategoryInput) int
+		EditKqi                                  func(childComplexity int, input models.EditKqiInput) int
+		EditKqiCategory                          func(childComplexity int, input models.EditKqiCategoryInput) int
+		EditKqiComparator                        func(childComplexity int, input models.EditKqiComparatorInput) int
+		EditKqiPerspective                       func(childComplexity int, input models.EditKqiPerspectiveInput) int
+		EditKqiSource                            func(childComplexity int, input models.EditKqiSourceInput) int
+		EditKqiTarget                            func(childComplexity int, input models.EditKqiTargetInput) int
+		EditKqiTemporalFrequency                 func(childComplexity int, input models.EditKqiTemporalFrequencyInput) int
+		EditLink                                 func(childComplexity int, input models.EditLinkInput) int
+		EditLocation                             func(childComplexity int, input models.EditLocationInput) int
+		EditLocationType                         func(childComplexity int, input models.EditLocationTypeInput) int
+		EditLocationTypeSurveyTemplateCategories func(childComplexity int, id int, surveyTemplateCategories []*models.SurveyTemplateCategoryInput) int
+		EditLocationTypesIndex                   func(childComplexity int, locationTypesIndex []*models.LocationTypeIndex) int
+		EditNetworkType                          func(childComplexity int, input models.EditNetworkTypeInput) int
+		EditOrganization                         func(childComplexity int, input models.EditOrganizationInput) int
+		EditParametersCatalog                    func(childComplexity int, parametersCatalog []*models.EditParameterCatalogInput) int
+		EditPermissionsPolicy                    func(childComplexity int, input models.EditPermissionsPolicyInput) int
+		EditProject                              func(childComplexity int, input models.EditProjectInput) int
+		EditProjectType                          func(childComplexity int, input models.EditProjectTypeInput) int
+		EditPropertyCategories                   func(childComplexity int, propertyCategories []*models.EditPropertyCategoryInput) int
+		EditPropertyTypeValue                    func(childComplexity int, input models.EditPropertyTypeValueInput) int
+		EditRecommendations                      func(childComplexity int, input models.EditRecommendationsInput) int
+		EditRecommendationsCategory              func(childComplexity int, input models.EditRecommendationsCategoryInput) int
+		EditRecommendationsSources               func(childComplexity int, input models.EditRecommendationsSourcesInput) int
+		EditReportFilter                         func(childComplexity int, input models.EditReportFilterInput) int
+		EditResourceSpecification                func(childComplexity int, input models.EditResourceSpecificationInput) int
+		EditResourceSpecificationItems           func(childComplexity int, input models.EditResourceSpecificationItemsInput) int
+		EditResourceSpecificationRelationship    func(childComplexity int, input models.EditResourceSpecificationRelationshipInput) int
+		EditResourceType                         func(childComplexity int, input models.EditResourceTypeInput) int
+		EditResourceTypeRelationship             func(childComplexity int, input models.EditResourceTypeRelationshipInput) int
+		EditRule                                 func(childComplexity int, input models.EditRuleInput) int
+		EditRuleLimit                            func(childComplexity int, input models.EditRuleLimitInput) int
+		EditRuleType                             func(childComplexity int, input models.EditRuleTypeInput) int
+		EditService                              func(childComplexity int, data models.ServiceEditData) int
+		EditServiceType                          func(childComplexity int, data models.ServiceTypeEditData) int
+		EditTech                                 func(childComplexity int, input models.EditTechInput) int
+		EditThreshold                            func(childComplexity int, input models.EditThresholdInput) int
+		EditUser                                 func(childComplexity int, input models.EditUserInput) int
+		EditUsersGroup                           func(childComplexity int, input models.EditUsersGroupInput) int
+		EditVendor                               func(childComplexity int, input models.EditVendorInput) int
+		EditWorkOrder                            func(childComplexity int, input models.EditWorkOrderInput) int
+		EditWorkOrderType                        func(childComplexity int, input models.EditWorkOrderTypeInput) int
+		EditWorkerType                           func(childComplexity int, input models.EditWorkerTypeInput) int
+		ExecuteWorkOrder                         func(childComplexity int, id int) int
+		ImportFlowDraft                          func(childComplexity int, input models.ImportFlowDraftInput) int
+		MarkSiteSurveyNeeded                     func(childComplexity int, locationID int, needed bool) int
+		MoveEquipmentToPosition                  func(childComplexity int, parentEquipmentID *int, positionDefinitionID *int, equipmentID int) int
+		MoveLocation                             func(childComplexity int, locationID int, parentLocationID *int) int
+		PublishFlow                              func(childComplexity int, input models.PublishFlowInput) int
+		RemoveAlarmFilter                        func(childComplexity int, id int) int
+		RemoveAlarmStatus                        func(childComplexity int, id int) int
+		RemoveAppointment                        func(childComplexity int, id int) int
+		RemoveComparator                         func(childComplexity int, id int) int
+		RemoveCounter                            func(childComplexity int, id int) int
+		RemoveCounterFamily                      func(childComplexity int, id int) int
+		RemoveCounterFormula                     func(childComplexity int, id int) int
+		RemoveCustomer                           func(childComplexity int, id int) int
+		RemoveDocumentCategory                   func(childComplexity int, id int) int
+		RemoveDomain                             func(childComplexity int, id int) int
+		RemoveEquipment                          func(childComplexity int, id int, workOrderID *int) int
+		RemoveEquipmentFromPosition              func(childComplexity int, positionID int, workOrderID *int) int
+		RemoveEquipmentPortType                  func(childComplexity int, id int) int
+		RemoveEquipmentType                      func(childComplexity int, id int) int
+		RemoveEventSeverity                      func(childComplexity int, id int) int
+		RemoveFormula                            func(childComplexity int, id int) int
+		RemoveKpi                                func(childComplexity int, id int) int
+		RemoveKpiCategory                        func(childComplexity int, id int) int
+		RemoveKqi                                func(childComplexity int, id int) int
+		RemoveKqiCategory                        func(childComplexity int, id int) int
+		RemoveKqiComparator                      func(childComplexity int, id int) int
+		RemoveKqiPerspective                     func(childComplexity int, id int) int
+		RemoveKqiSource                          func(childComplexity int, id int) int
+		RemoveKqiTarget                          func(childComplexity int, id int) int
+		RemoveKqiTemporalFrequency               func(childComplexity int, id int) int
+		RemoveLink                               func(childComplexity int, id int, workOrderID *int) int
+		RemoveLocation                           func(childComplexity int, id int) int
+		RemoveLocationType                       func(childComplexity int, id int) int
+		RemoveNetworkType                        func(childComplexity int, id int) int
+		RemoveOrganization                       func(childComplexity int, id int) int
+		RemoveParameterCatalog                   func(childComplexity int, entityType enum.ParameterCatalogEntity, id int) int
+		RemovePropertyCategory                   func(childComplexity int, id int) int
+		RemovePropertyTypeValue                  func(childComplexity int, id int) int
+		RemoveRecommendations                    func(childComplexity int, id int) int
+		RemoveRecommendationsCategory            func(childComplexity int, id int) int
+		RemoveRecommendationsSources             func(childComplexity int, id int) int
+		RemoveResourceSpecification              func(childComplexity int, id int) int
+		RemoveResourceSpecificationItems         func(childComplexity int, id int) int
+		RemoveResourceSpecificationRelationship  func(childComplexity int, id int) int
+		RemoveResourceType                       func(childComplexity int, id int) int
+		RemoveResourceTypeRelationship           func(childComplexity int, id int) int
+		RemoveRule                               func(childComplexity int, id int) int
+		RemoveRuleLimit                          func(childComplexity int, id int) int
+		RemoveRuleType                           func(childComplexity int, id int) int
+		RemoveService                            func(childComplexity int, id int) int
+		RemoveServiceEndpoint                    func(childComplexity int, serviceEndpointID int) int
+		RemoveServiceLink                        func(childComplexity int, id int, linkID int) int
+		RemoveServicePort                        func(childComplexity int, id int, portID int) int
+		RemoveServiceType                        func(childComplexity int, id int) int
+		RemoveSiteSurvey                         func(childComplexity int, id int) int
+		RemoveTech                               func(childComplexity int, id int) int
+		RemoveThreshold                          func(childComplexity int, id int) int
+		RemoveVendor                             func(childComplexity int, id int) int
+		RemoveWorkOrder                          func(childComplexity int, id int) int
+		RemoveWorkOrderType                      func(childComplexity int, id int) int
+		RemoveWorkerType                         func(childComplexity int, id int) int
+		StartFlow                                func(childComplexity int, input models.StartFlowInput) int
+		TechnicianWorkOrderCheckIn               func(childComplexity int, workOrderID int, input *models.TechnicianWorkOrderCheckInInput) int
+		TechnicianWorkOrderCheckOut              func(childComplexity int, input models.TechnicianWorkOrderCheckOutInput) int
+		TechnicianWorkOrderUploadData            func(childComplexity int, input models.TechnicianWorkOrderUploadInput) int
+		UpdateUserGroups                         func(childComplexity int, input models.UpdateUserGroupsInput) int
 	}
 
 	NetworkTopology struct {
@@ -1803,11 +1802,12 @@ type ComplexityRoot struct {
 	}
 
 	ResourceSpecification struct {
-		ID                    func(childComplexity int) int
-		Name                  func(childComplexity int) int
-		Quantity              func(childComplexity int) int
-		ResourcePropertyTypes func(childComplexity int) int
-		Resourcetype          func(childComplexity int) int
+		ID                                func(childComplexity int) int
+		Name                              func(childComplexity int) int
+		Quantity                          func(childComplexity int) int
+		ResourcePropertyTypes             func(childComplexity int) int
+		ResourceSpecificationRelationship func(childComplexity int) int
+		Resourcetype                      func(childComplexity int) int
 	}
 
 	ResourceSpecificationConnection struct {
@@ -1856,10 +1856,11 @@ type ComplexityRoot struct {
 	}
 
 	ResourceType struct {
-		ID                   func(childComplexity int) int
-		Name                 func(childComplexity int) int
-		ResourceTypeBaseType func(childComplexity int) int
-		ResourceTypeClass    func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		ResourceSpecification func(childComplexity int) int
+		ResourceTypeBaseType  func(childComplexity int) int
+		ResourceTypeClass     func(childComplexity int) int
 	}
 
 	ResourceTypeConnection struct {
@@ -2769,7 +2770,6 @@ type MutationResolver interface {
 	AddResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error)
 	EditResourceSpecification(ctx context.Context, input models.EditResourceSpecificationInput) (*ent.ResourceSpecification, error)
 	RemoveResourceSpecification(ctx context.Context, id int) (int, error)
-	AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipItemsListInput) (*ent.ResourceSpecificationRelationship, error)
 	AddKqi(ctx context.Context, input models.AddKqiInput) (*ent.Kqi, error)
 	EditKqi(ctx context.Context, input models.EditKqiInput) (*ent.Kqi, error)
 	RemoveKqi(ctx context.Context, id int) (int, error)
@@ -2809,7 +2809,7 @@ type MutationResolver interface {
 	EditParametersCatalog(ctx context.Context, parametersCatalog []*models.EditParameterCatalogInput) ([]*ent.ParameterCatalog, error)
 	RemoveParameterCatalog(ctx context.Context, entityType enum.ParameterCatalogEntity, id int) (int, error)
 	EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error)
-	AddResourceSpecificationRelationshipList(ctx context.Context, input models.AddResourceSpecificationRelationshipListInput) ([]*ent.ResourceSpecificationRelationship, error)
+	AddResourceSpecificationRelationshipList(ctx context.Context, input []*models.AddResourceSpecificationRelationshipListInput) ([]*ent.ResourceSpecificationRelationship, error)
 	AddResourceSpecificationRelationship(ctx context.Context, input models.AddResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error)
 	EditResourceSpecificationRelationship(ctx context.Context, input models.EditResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error)
 	RemoveResourceSpecificationRelationship(ctx context.Context, id int) (int, error)
@@ -2933,6 +2933,7 @@ type ResourcePropertyTypeResolver interface {
 }
 type ResourceSpecificationResolver interface {
 	ResourcePropertyTypes(ctx context.Context, obj *ent.ResourceSpecification) ([]*ent.ResourcePropertyType, error)
+	ResourceSpecificationRelationship(ctx context.Context, obj *ent.ResourceSpecification) ([]*ent.ResourceSpecificationRelationship, error)
 }
 type ResourceSpecificationItemsResolver interface {
 	ResourceSpecification(ctx context.Context, obj *ent.ResourceSpecificationItems) (*ent.ResourceSpecification, error)
@@ -7756,18 +7757,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddResourceSpecificationRelationship(childComplexity, args["input"].(models.AddResourceSpecificationRelationshipInput)), true
 
-	case "Mutation.addResourceSpecificationRelationshipItemsList":
-		if e.complexity.Mutation.AddResourceSpecificationRelationshipItemsList == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_addResourceSpecificationRelationshipItemsList_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AddResourceSpecificationRelationshipItemsList(childComplexity, args["input"].(models.AddResourceSpecificationRelationshipItemsListInput)), true
-
 	case "Mutation.addResourceSpecificationRelationshipList":
 		if e.complexity.Mutation.AddResourceSpecificationRelationshipList == nil {
 			break
@@ -7778,7 +7767,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddResourceSpecificationRelationshipList(childComplexity, args["input"].(models.AddResourceSpecificationRelationshipListInput)), true
+		return e.complexity.Mutation.AddResourceSpecificationRelationshipList(childComplexity, args["input"].([]*models.AddResourceSpecificationRelationshipListInput)), true
 
 	case "Mutation.addResourceType":
 		if e.complexity.Mutation.AddResourceType == nil {
@@ -12198,6 +12187,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceSpecification.ResourcePropertyTypes(childComplexity), true
 
+	case "ResourceSpecification.resourceSpecificationRelationship":
+		if e.complexity.ResourceSpecification.ResourceSpecificationRelationship == nil {
+			break
+		}
+
+		return e.complexity.ResourceSpecification.ResourceSpecificationRelationship(childComplexity), true
+
 	case "ResourceSpecification.resourceType":
 		if e.complexity.ResourceSpecification.Resourcetype == nil {
 			break
@@ -12365,6 +12361,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResourceType.Name(childComplexity), true
+
+	case "ResourceType.resourceSpecification":
+		if e.complexity.ResourceType.ResourceSpecification == nil {
+			break
+		}
+
+		return e.complexity.ResourceType.ResourceSpecification(childComplexity), true
 
 	case "ResourceType.resourceTypeBaseType":
 		if e.complexity.ResourceType.ResourceTypeBaseType == nil {
@@ -23241,7 +23244,6 @@ type Mutation {
   addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
   removeResourceSpecification(id: ID!): ID!
-  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipItemsListInput!): ResourceSpecificationRelationship!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -23281,7 +23283,7 @@ type Mutation {
   editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
   removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
-  addResourceSpecificationRelationshipList(input: AddResourceSpecificationRelationshipListInput!):[ResourceSpecificationRelationship!]!
+  addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipListInput!]!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
   removeResourceSpecificationRelationship(id: ID!): ID!
@@ -24366,6 +24368,7 @@ type ResourceType implements Node {
   name: String!
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
+  resourceSpecification: [ResourceSpecification]
 }
 
 input AddResourceTypeInput {  
@@ -24426,14 +24429,6 @@ type ResourceTypeRelationship implements Node {
   locationType: LocationType
   resourceTypeA: ResourceType!
   resourceTypeB: ResourceType
-}
-#input ResourceSpecificationRelationshipListInput {
-#  name: String!
-#}
-
-input AddResourceSpecificationRelationshipListInput {
-  resourceSpecification: ID!
-  nameList: [String]!
 }
 
 input AddResourceTypeRelationshipInput {
@@ -24606,6 +24601,7 @@ type ResourceSpecification implements Node {
   quantity: Int
   resourceType: ResourceType
   resourcePropertyTypes: [ResourcePropertyType]!  
+  resourceSpecificationRelationship: [ResourceSpecificationRelationship]
 }
 input AddResourceSpecificationInput {  
   name: String!
@@ -24635,25 +24631,22 @@ input ResourceSpecificationFilterInput {
   stringSet: [String!]  
 }
 
-#input ResourceSpecificationRelationshipItemsInput {
-#  destinyID: ID
-#}
-
-input AddResourceSpecificationRelationshipItemsListInput {
-  name: String!
-  resourceSpecification: ID!
-  resourceSpecificationRelationshipItems: [ID]
-}
-
 type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
   resourceSpecification: ResourceSpecification!
 }
 
+input AddResourceSpecificationRelationshipListInput {
+  name: String!
+  resourceSpecification: ID!
+  resourceSpecificationList: [ID]
+}
+
 input AddResourceSpecificationRelationshipInput {  
   name: String!
   resourceSpecification: ID!
+  resourceSpecificationList: [ID]
 }
 
 input EditResourceSpecificationRelationshipInput {
@@ -25951,28 +25944,13 @@ func (ec *executionContext) field_Mutation_addResourceSpecificationItems_args(ct
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_addResourceSpecificationRelationshipItemsList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.AddResourceSpecificationRelationshipItemsListInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddResourceSpecificationRelationshipItemsListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipItemsListInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_addResourceSpecificationRelationshipList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.AddResourceSpecificationRelationshipListInput
+	var arg0 []*models.AddResourceSpecificationRelationshipListInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddResourceSpecificationRelationshipListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInput(ctx, tmp)
+		arg0, err = ec.unmarshalNAddResourceSpecificationRelationshipListInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -61467,48 +61445,6 @@ func (ec *executionContext) _Mutation_removeResourceSpecification(ctx context.Co
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_addResourceSpecificationRelationshipItemsList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addResourceSpecificationRelationshipItemsList_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddResourceSpecificationRelationshipItemsList(rctx, args["input"].(models.AddResourceSpecificationRelationshipItemsListInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.ResourceSpecificationRelationship)
-	fc.Result = res
-	return ec.marshalNResourceSpecificationRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_addKqi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -63166,7 +63102,7 @@ func (ec *executionContext) _Mutation_addResourceSpecificationRelationshipList(c
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddResourceSpecificationRelationshipList(rctx, args["input"].(models.AddResourceSpecificationRelationshipListInput))
+		return ec.resolvers.Mutation().AddResourceSpecificationRelationshipList(rctx, args["input"].([]*models.AddResourceSpecificationRelationshipListInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -74315,6 +74251,38 @@ func (ec *executionContext) _ResourceSpecification_resourcePropertyTypes(ctx con
 	return ec.marshalNResourcePropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourcePropertyType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ResourceSpecification_resourceSpecificationRelationship(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourceSpecification",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ResourceSpecification().ResourceSpecificationRelationship(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.ResourceSpecificationRelationship)
+	fc.Result = res
+	return ec.marshalOResourceSpecificationRelationship2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ResourceSpecificationConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -75176,6 +75144,38 @@ func (ec *executionContext) _ResourceType_resourceTypeClass(ctx context.Context,
 	res := resTmp.(resourcetype.ResourceTypeClass)
 	fc.Result = res
 	return ec.marshalNResourceTypeClassKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋresourcetypeᚐResourceTypeClass(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourceType_resourceSpecification(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourceType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceSpecification(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.ResourceSpecification)
+	fc.Result = res
+	return ec.marshalOResourceSpecification2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceTypeConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceTypeConnection) (ret graphql.Marshaler) {
@@ -91745,14 +91745,22 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipIn
 			if err != nil {
 				return it, err
 			}
+		case "resourceSpecificationList":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationList"))
+			it.ResourceSpecificationList, err = ec.unmarshalOID2ᚕᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipItemsListInput(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationshipItemsListInput, error) {
-	var it models.AddResourceSpecificationRelationshipItemsListInput
+func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipListInput(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationshipListInput, error) {
+	var it models.AddResourceSpecificationRelationshipListInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -91773,39 +91781,11 @@ func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipIt
 			if err != nil {
 				return it, err
 			}
-		case "resourceSpecificationRelationshipItems":
+		case "resourceSpecificationList":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationRelationshipItems"))
-			it.ResourceSpecificationRelationshipItems, err = ec.unmarshalOID2ᚕᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputAddResourceSpecificationRelationshipListInput(ctx context.Context, obj interface{}) (models.AddResourceSpecificationRelationshipListInput, error) {
-	var it models.AddResourceSpecificationRelationshipListInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "resourceSpecification":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
-			it.ResourceSpecification, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "nameList":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameList"))
-			it.NameList, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationList"))
+			it.ResourceSpecificationList, err = ec.unmarshalOID2ᚕᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -112046,11 +112026,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "addResourceSpecificationRelationshipItemsList":
-			out.Values[i] = ec._Mutation_addResourceSpecificationRelationshipItemsList(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "addKqi":
 			out.Values[i] = ec._Mutation_addKqi(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -115581,6 +115556,17 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 				}
 				return res
 			})
+		case "resourceSpecificationRelationship":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourceSpecification_resourceSpecificationRelationship(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -115902,23 +115888,34 @@ func (ec *executionContext) _ResourceType(ctx context.Context, sel ast.Selection
 		case "id":
 			out.Values[i] = ec._ResourceType_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._ResourceType_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "resourceTypeBaseType":
 			out.Values[i] = ec._ResourceType_resourceTypeBaseType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "resourceTypeClass":
 			out.Values[i] = ec._ResourceType_resourceTypeClass(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "resourceSpecification":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourceType_resourceSpecification(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -120432,14 +120429,30 @@ func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipInput2
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipItemsListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipItemsListInput(ctx context.Context, v interface{}) (models.AddResourceSpecificationRelationshipItemsListInput, error) {
-	res, err := ec.unmarshalInputAddResourceSpecificationRelationshipItemsListInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
+func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipListInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInputᚄ(ctx context.Context, v interface{}) ([]*models.AddResourceSpecificationRelationshipListInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.AddResourceSpecificationRelationshipListInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAddResourceSpecificationRelationshipListInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
-func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInput(ctx context.Context, v interface{}) (models.AddResourceSpecificationRelationshipListInput, error) {
+func (ec *executionContext) unmarshalNAddResourceSpecificationRelationshipListInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceSpecificationRelationshipListInput(ctx context.Context, v interface{}) (*models.AddResourceSpecificationRelationshipListInput, error) {
 	res, err := ec.unmarshalInputAddResourceSpecificationRelationshipListInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNAddResourceTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddResourceTypeInput(ctx context.Context, v interface{}) (models.AddResourceTypeInput, error) {
@@ -128019,36 +128032,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
-	}
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalNString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -134191,6 +134174,46 @@ func (ec *executionContext) marshalOResourceRelationshipTypeKind2ᚖgithubᚗcom
 	return v
 }
 
+func (ec *executionContext) marshalOResourceSpecification2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx context.Context, sel ast.SelectionSet, v []*ent.ResourceSpecification) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOResourceSpecification2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalOResourceSpecification2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceSpecification) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -134275,6 +134298,46 @@ func (ec *executionContext) marshalOResourceSpecificationOrderField2ᚖgithubᚗ
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOResourceSpecificationRelationship2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx context.Context, sel ast.SelectionSet, v []*ent.ResourceSpecificationRelationship) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOResourceSpecificationRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOResourceSpecificationRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceSpecificationRelationship) graphql.Marshaler {
