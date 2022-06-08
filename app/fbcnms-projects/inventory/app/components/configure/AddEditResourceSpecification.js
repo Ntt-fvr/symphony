@@ -42,7 +42,6 @@ import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {graphql} from 'relay-runtime';
-import {isTempId} from '../../common/EntUtils';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';

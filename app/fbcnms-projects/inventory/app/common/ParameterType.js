@@ -8,10 +8,7 @@
  * @format
  */
 
-// import type {PropertyFormField_property} from '../components/form/__generated__/PropertyFormField_property.graphql';
 import type {ParameterKind} from '../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
-
-// import type {PropertyTypeInput} from '../components/configure/mutations/__generated__/EditProjectTypeMutation.graphql';
 
 import {isTempId} from './EntUtils';
 
@@ -40,7 +37,6 @@ export type ParameterType = {|
   parameters?: ?(parameter[]),
   rawValue?: ?string,
   tags?: ?(tagsType[]),
-  // tagsAggregate?: ?tagsAggregate,
   resourceSpecification?: ?string,
 |};
 
@@ -154,8 +150,6 @@ export const convertParameterTypeToMutationInput = (
     .filter(propType => !!propType.name)
     .map(prop => {
       return {
-        // name: prop.name,
-        // type: prop.type,
         ...prop,
         resourceSpecification: resourceSpecification,
         id: isTempId(prop.id) ? undefined : prop.id,
