@@ -19,7 +19,8 @@ import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   codeEditor: {
-    border: `1px ${theme.palette.grey[200]} solid`,
+    border: `1px ${theme.palette.grey[400]} solid`,
+    borderRadius: 4,
   },
   span: {
     fontSize: theme.typography.pxToRem(11),
@@ -31,15 +32,16 @@ type Props = $ReadOnly<{|
   mode: string,
   onChange: () => void,
   rule: RuleType,
+  title?: string,
 |}>;
 
 const CodeEditor = (props: Props) => {
-  const {mode, onChange, rule} = props;
+  const {mode, onChange, rule, title} = props;
   const classes = useStyles();
 
   return (
     <div>
-      <span className={classes.span}> Rule </span>
+      <span className={classes.span}>{title || 'Rule'}</span>
       <div className={classes.codeEditor}>
         <AceEditor
           mode={mode}
@@ -65,4 +67,5 @@ const CodeEditor = (props: Props) => {
     </div>
   );
 };
+
 export default CodeEditor;

@@ -48,6 +48,9 @@ const useStyles = makeStyles(() => ({
       paddingRight: 24,
     },
   },
+  marginInput: {
+    marginBottom: '10px',
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -58,7 +61,6 @@ const ConfigureSettings = ({block}: Props) => {
   const classes = useStyles();
 
   const getConfigurationBlock = ({type}) => {
-    debugger;
     switch (type) {
       case TimerType:
         return <ConfigurationTimer block={block} />;
@@ -87,7 +89,7 @@ const ConfigureSettings = ({block}: Props) => {
 
   return (
     <Grid container spacing={4} className={classes.root}>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.marginInput}>
         <BlockNameInput block={block} />
       </Grid>
       {getConfigurationBlock(block)}

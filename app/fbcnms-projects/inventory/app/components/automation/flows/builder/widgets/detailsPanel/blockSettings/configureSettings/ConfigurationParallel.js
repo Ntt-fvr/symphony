@@ -10,8 +10,21 @@
 
 import * as React from 'react';
 import Switch from '../../inputs/Switch';
+import CodeEditor from '../../inputs/CodeEditor';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(() => ({
+  grid: {
+    marginTop: '-11px',
+    marginBottom: '10px',
+  },
+  gridCodeEditor: {
+    marginTop: '-31px',
+    marginBottom: '10px',
+  },
+}));
 
 const ConfigurationParallel = () => {
   const [configurationsValues, handleInputChange] = useForm({
@@ -19,10 +32,11 @@ const ConfigurationParallel = () => {
   });
 
   const {conditioned} = configurationsValues;
+  const classes = useStyles();
 
   return (
     <>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.grid}>
         <Switch
           label={'Conditioned'}
           name={'conditioned'}
@@ -30,6 +44,14 @@ const ConfigurationParallel = () => {
           handleInputChange={handleInputChange}
         />
       </Grid>
+      {conditioned && (
+        <Grid item xs={12} className={classes.gridCodeEditor}>
+          <CodeEditor
+            mode="json"
+            title={'Expression Language'}
+          />
+        </Grid>
+      )}
     </>
   );
 };
