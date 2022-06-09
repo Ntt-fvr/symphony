@@ -180,6 +180,12 @@ export const AddEditResourceSpecification = (props: Props) => {
     resourceSpecification: dataForm?.id,
   });
 
+  const PREFIX_ID_EXISTING = '0X';
+
+  const newParameter = parameterTypes.filter(
+    item => !item.id.startsWith(PREFIX_ID_EXISTING),
+  );
+
   const nameEdit = useFormInput(dataForm.name);
 
   const namesFilter = filterData?.map(item => item.name);
@@ -273,7 +279,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       },
     });
     const variablesCP: AddConfigurationParameterTypeMutationVariables = {
-      input: convertParameterTypeToMutationInput(parameterTypes, dataForm?.id),
+      input: convertParameterTypeToMutationInput(newParameter, dataForm?.id),
     };
     AddConfigurationParameterTypeMutation(variablesCP, {
       onCompleted: () => {
