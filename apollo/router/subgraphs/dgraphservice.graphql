@@ -1,30 +1,29 @@
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @remoteResponse(name: String) on FIELD_DEFINITION
-directive @lambda on FIELD_DEFINITION
-directive @lambdaOnMutate(
-  add: Boolean
-  update: Boolean
-  delete: Boolean
-) on OBJECT | INTERFACE
-directive @id(interface: Boolean) on FIELD_DEFINITION
-directive @default(
-  add: DgraphDefault
-  update: DgraphDefault
-) on FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @generate(
   query: GenerateQueryParams
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 directive @dgraph(
   type: String
   pred: String
 ) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
 directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
+directive @default(
+  add: DgraphDefault
+  update: DgraphDefault
+) on FIELD_DEFINITION
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -32,6 +31,7 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
+directive @lambda on FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -428,14 +428,13 @@ type ActionTemplate {
   type: ActionTemplateType!
   resourceSpecifications: String!
   actionTemplateItem(
-    filter: ActionTemplateFilter
-    order: ActionTemplateOrder
+    filter: ActionTemplateItemFilter
     first: Int
     offset: Int
-  ): [ActionTemplate!]!
+  ): [ActionTemplateItem!]!
   actionTemplateItemAggregate(
-    filter: ActionTemplateFilter
-  ): ActionTemplateAggregateResult
+    filter: ActionTemplateItemFilter
+  ): ActionTemplateItemAggregateResult
 }
 
 type ActionTemplateAggregateResult {
@@ -468,6 +467,7 @@ type ActionTemplateItem {
     filter: ConfigurationParameterTypeFilter
   ): ConfigurationParameterType!
   value(filter: ParameterFilter): Parameter!
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
 }
 
 type ActionTemplateItemAggregateResult {
@@ -485,17 +485,20 @@ input ActionTemplateItemFilter {
 enum ActionTemplateItemHasFilter {
   parameters
   value
+  actionTemplate
 }
 
 input ActionTemplateItemPatch {
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
+  actionTemplate: ActionTemplateRef
 }
 
 input ActionTemplateItemRef {
   id: ID
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
+  actionTemplate: ActionTemplateRef
 }
 
 input ActionTemplateOrder {
@@ -513,7 +516,7 @@ input ActionTemplatePatch {
   name: String
   type: ActionTemplateType
   resourceSpecifications: String
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
 }
 
 input ActionTemplateRef {
@@ -521,7 +524,7 @@ input ActionTemplateRef {
   name: String
   type: ActionTemplateType
   resourceSpecifications: String
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
 }
 
 enum ActionTemplateType {
@@ -583,12 +586,13 @@ input AddActionTemplateInput {
   name: String!
   type: ActionTemplateType!
   resourceSpecifications: String!
-  actionTemplateItem: [ActionTemplateRef!]!
+  actionTemplateItem: [ActionTemplateItemRef!]!
 }
 
 input AddActionTemplateItemInput {
   parameters: ConfigurationParameterTypeRef!
   value: ParameterRef!
+  actionTemplate: ActionTemplateRef!
 }
 
 type AddActionTemplateItemPayload {
@@ -1046,6 +1050,7 @@ input AddResourceInput {
   resourceProperties: [ResourcePropertyRef]
   isDelete: Boolean!
   numericPool: [NumericPoolRef]
+  isEditable: Boolean
 }
 
 type AddResourcePayload {
@@ -2148,6 +2153,7 @@ type ConfigurationParameterTypeAggregateResult {
 
 input ConfigurationParameterTypeFilter {
   id: [ID!]
+  name: StringHashFilter
   resourceSpecification: StringHashFilter
   has: [ConfigurationParameterTypeHasFilter]
   and: [ConfigurationParameterTypeFilter]
@@ -3226,6 +3232,7 @@ type Mutation {
   deleteParameter(filter: ParameterFilter!): DeleteParameterPayload
   addConfigurationParameterType(
     input: [AddConfigurationParameterTypeInput!]!
+    upsert: Boolean
   ): AddConfigurationParameterTypePayload
   updateConfigurationParameterType(
     input: UpdateConfigurationParameterTypeInput!
@@ -4068,7 +4075,11 @@ type Query {
     offset: Int
   ): [Parameter]
   aggregateParameter(filter: ParameterFilter): ParameterAggregateResult
-  getConfigurationParameterType(id: ID!): ConfigurationParameterType
+  getConfigurationParameterType(
+    id: ID
+    name: String
+    resourceSpecification: String
+  ): ConfigurationParameterType
   queryConfigurationParameterType(
     filter: ConfigurationParameterTypeFilter
     order: ConfigurationParameterTypeOrder
@@ -4511,6 +4522,7 @@ type Resource implements ResourceInt {
     first: Int
     offset: Int
   ): [NumericPool]
+  isEditable: Boolean
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -4566,6 +4578,7 @@ enum ResourceHasFilter {
   resourceProperties
   isDelete
   numericPool
+  isEditable
 }
 
 interface ResourceInt {
@@ -4643,6 +4656,7 @@ input ResourcePatch {
   resourceProperties: [ResourcePropertyRef]
   isDelete: Boolean
   numericPool: [NumericPoolRef]
+  isEditable: Boolean
 }
 
 type ResourceProperty {
@@ -4788,6 +4802,7 @@ input ResourceRef {
   resourceProperties: [ResourcePropertyRef]
   isDelete: Boolean
   numericPool: [NumericPoolRef]
+  isEditable: Boolean
 }
 
 type ResourceReference implements ResourceInt {
@@ -6527,4 +6542,3 @@ enum WeekDay {
 input WithinFilter {
   polygon: PolygonRef!
 }
-
