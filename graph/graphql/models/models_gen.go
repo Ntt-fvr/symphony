@@ -413,20 +413,10 @@ type AddResourceSpecificationItemsInput struct {
 	ResourceSpecification             *int `json:"resourceSpecification"`
 }
 
-type AddResourceSpecificationRelationShipListInput struct {
-	ResourceSpecification int                                           `json:"resourceSpecification"`
-	NameList              []*ResourceSpecificationRelationShipListInput `json:"nameList"`
-}
-
 type AddResourceSpecificationRelationshipInput struct {
-	Name                  string `json:"name"`
-	ResourceSpecification int    `json:"resourceSpecification"`
-}
-
-type AddResourceSpecificationRelationshipList struct {
-	Name                                   string                                         `json:"name"`
-	ResourceSpecification                  int                                            `json:"resourceSpecification"`
-	ResourceSpecificationRelationshipItems []*ResourceSpecificationRelationshipItemsInput `json:"resourceSpecificationRelationshipItems"`
+	Name                      string `json:"name"`
+	ResourceSpecification     int    `json:"resourceSpecification"`
+	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
 }
 
 type AddResourceTypeInput struct {
@@ -1559,10 +1549,6 @@ type ResourceSpecificationItemsFilterInput struct {
 	MaxDepth   *int                                 `json:"maxDepth"`
 }
 
-type ResourceSpecificationRelationShipListInput struct {
-	Name string `json:"name"`
-}
-
 type ResourceSpecificationRelationshipFilterInput struct {
 	FilterType  ResourceSpecificationRelationshipFilterType `json:"filterType"`
 	Operator    enum.FilterOperator                         `json:"operator"`
@@ -1570,10 +1556,6 @@ type ResourceSpecificationRelationshipFilterInput struct {
 	IDSet       []int                                       `json:"idSet"`
 	MaxDepth    *int                                        `json:"maxDepth"`
 	StringSet   []string                                    `json:"stringSet"`
-}
-
-type ResourceSpecificationRelationshipItemsInput struct {
-	IDDestino *int `json:"id_destino"`
 }
 
 type ResourceTypeFilterInput struct {
