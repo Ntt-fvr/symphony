@@ -202,8 +202,8 @@ enum ActionSchedulerType {
 }
 
 type ActionTemplate {
-  actionTemplateItem(filter: ActionTemplateFilter, first: Int, offset: Int, order: ActionTemplateOrder): [ActionTemplate!]!
-  actionTemplateItemAggregate(filter: ActionTemplateFilter): ActionTemplateAggregateResult
+  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
+  actionTemplateItemAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   id: ID!
   name: String!
   resourceSpecifications: String!
@@ -235,6 +235,7 @@ enum ActionTemplateHasFilter {
 }
 
 type ActionTemplateItem {
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
   id: ID!
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
   value(filter: ParameterFilter): Parameter!
@@ -253,16 +254,19 @@ input ActionTemplateItemFilter {
 }
 
 enum ActionTemplateItemHasFilter {
+  actionTemplate
   parameters
   value
 }
 
 input ActionTemplateItemPatch {
+  actionTemplate: ActionTemplateRef
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
 }
 
 input ActionTemplateItemRef {
+  actionTemplate: ActionTemplateRef
   id: ID
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
@@ -280,14 +284,14 @@ enum ActionTemplateOrderable {
 }
 
 input ActionTemplatePatch {
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
 }
 
 input ActionTemplateRef {
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
   id: ID
   name: String
   resourceSpecifications: String
@@ -382,13 +386,14 @@ type AddActionSchedulerPayload {
 }
 
 input AddActionTemplateInput {
-  actionTemplateItem: [ActionTemplateRef!]!
+  actionTemplateItem: [ActionTemplateItemRef!]!
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
 }
 
 input AddActionTemplateItemInput {
+  actionTemplate: ActionTemplateRef!
   parameters: ConfigurationParameterTypeRef!
   value: ParameterRef!
 }
@@ -1043,6 +1048,7 @@ input AddResourceInput {
   crossconnectionInv: [ResourceRef]
   externalId: String
   isDelete: Boolean!
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink: ResourceRef
@@ -2715,6 +2721,7 @@ input ConfigurationParameterTypeFilter {
   and: [ConfigurationParameterTypeFilter]
   has: [ConfigurationParameterTypeHasFilter]
   id: [ID!]
+  name: StringHashFilter
   not: ConfigurationParameterTypeFilter
   or: [ConfigurationParameterTypeFilter]
   resourceSpecification: StringHashFilter
@@ -5906,7 +5913,7 @@ type Mutation {
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -7880,7 +7887,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID, name: String, resourceSpecification: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
   getFlowExecutionRef(id: ID!): FlowExecutionRef @join__field(graph: DGRAPHSERVICE)
@@ -8852,6 +8859,7 @@ type Resource implements ResourceInt {
   externalId: String
   id: ID!
   isDelete: Boolean!
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink(filter: ResourceFilter): Resource
@@ -8903,6 +8911,7 @@ enum ResourceHasFilter {
   crossconnectionInv
   externalId
   isDelete
+  isEditable
   lifecycleStatus
   locatedIn
   logicalLink
@@ -8980,6 +8989,7 @@ input ResourcePatch {
   crossconnectionInv: [ResourceRef]
   externalId: String
   isDelete: Boolean
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink: ResourceRef
@@ -9165,6 +9175,7 @@ input ResourceRef {
   externalId: String
   id: ID
   isDelete: Boolean
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink: ResourceRef
