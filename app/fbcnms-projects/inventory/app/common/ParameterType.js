@@ -21,9 +21,6 @@ export type ParameterType = {|
   floatValue?: ?number,
   category?: ?string,
   externalId?: ?string,
-  // one or more of the following potential value fields will have actual data,
-  // depending on the property type selected for this property.
-  // e.g. for 'email' the stringValue field will be populated
   booleanValue?: ?boolean,
   stringValue?: ?string,
   intValue?: ?number,
@@ -38,6 +35,10 @@ export type ParameterType = {|
   rawValue?: ?string,
   tags?: ?(tagsType[]),
   resourceSpecification?: ?string,
+
+  // one or more of the following potential value fields will have actual data,
+  // depending on the property type selected for this property.
+  // e.g. for 'email' the stringValue field will be populated
 |};
 
 export type parameter = {|
@@ -130,23 +131,30 @@ export const toMutableParameterType = (
   nodeType: immutableParameterType.nodeType,
   name: immutableParameterType.name,
   index: immutableParameterType.index,
+  floatValue: immutableParameterType.floatValue,
   category: immutableParameterType.category,
+  externalId: immutableParameterType.externalId,
   booleanValue: immutableParameterType.booleanValue,
   stringValue: immutableParameterType.stringValue,
+  mappingIn: immutableParameterType.mappingIn,
+  mappingOut: immutableParameterType.mappingOut,
   intValue: immutableParameterType.intValue,
-  floatValue: immutableParameterType.floatValue,
   isEditable: immutableParameterType.isEditable,
   isMandatory: immutableParameterType.isMandatory,
+  isPrioritary: immutableParameterType.isPrioritary,
+  isListable: immutableParameterType.isListable,
   isDeleted: immutableParameterType.isDeleted,
-  parameters: immutableParameterType.parentPropertyType,
+  // parameters: immutableParameterType.parentPropertyType,
+  rawValue: immutableParameterType.rawValue,
+  tags: immutableParameterType.tags,
   resourceSpecification: immutableParameterType.resourceSpecification,
 });
 
 export const convertParameterTypeToMutationInput = (
-  propertyTypes: Array<ParameterType>,
+  parameterTypes: any,
   resourceSpecification: any,
 ): Array<any> => {
-  return propertyTypes
+  return parameterTypes
     .filter(propType => !!propType.name)
     .map(prop => {
       return {

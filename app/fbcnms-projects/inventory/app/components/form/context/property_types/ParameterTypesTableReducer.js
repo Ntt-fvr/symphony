@@ -25,11 +25,11 @@ export function getInitialState(parameterTyp: any): ParameterTypesTableState {
 
 function editParameterType<T: ParameterTypesTableState>(
   state: T,
-  updatedPropertyTypeId: string,
+  updatedParameterTypeId: string,
   updatingCallback: ParameterType => ParameterType,
 ): T {
   const parameterTypeIndex = state.findIndex(
-    p => p.id === updatedPropertyTypeId,
+    p => p.id === updatedParameterTypeId,
   );
   return [
     ...state.slice(0, parameterTypeIndex),

@@ -370,6 +370,7 @@ export const AddEditResourceSpecification = (props: Props) => {
             <ExperimentalParametersTypesTable
               supportDelete={true}
               parameterTypes={parameterTypes}
+              idRs={dataForm?.id}
             />
           </ParameterTypesTableDispatcher.Provider>
         </ExpandingPanel>

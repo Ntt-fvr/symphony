@@ -45,7 +45,6 @@ export type PropertyType = {|
   parentPropertyType?: ?(PropertyType[]),
   dependencePropertyTypes?: ?(PropertyType[]),
   propertyTypeValues?: ?(PropertyTypeValues[]),
-  resourceSpecification?: ?string,
 |};
 
 export type PropertyTypeValues = {|
@@ -137,7 +136,6 @@ export const toMutablePropertyType = (
   dependencePropertyTypes: immutablePropertyType.dependencePropertyTypes,
   propertyTypeValues: immutablePropertyType.propertyTypeValues,
   parentPropertyType: immutablePropertyType.parentPropertyType,
-  resourceSpecification: immutablePropertyType.resourceSpecification,
 });
 
 export const convertPropertyTypeToMutationInput = (

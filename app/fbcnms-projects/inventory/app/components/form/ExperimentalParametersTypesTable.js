@@ -106,10 +106,11 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   parameterTypes: Array<any>,
   supportDelete?: boolean,
+  idRs?: number,
 |}>;
 
 const ExperimentalParametersTypesTable = (props: Props) => {
-  const {supportMandatory = true, parameterTypes, supportDelete} = props;
+  const {idRs, supportMandatory = true, parameterTypes, supportDelete} = props;
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
   const {dispatch} = useContext(ParameterTypesTableDispatcher);
@@ -265,7 +266,7 @@ const ExperimentalParametersTypesTable = (props: Props) => {
           onClick={() =>
             dispatch({
               type: 'ADD_PARAMETER_TYPE',
-              resourceSpecification: '296352743431',
+              resourceSpecification: idRs,
             })
           }
           leftIcon={PlusIcon}>
