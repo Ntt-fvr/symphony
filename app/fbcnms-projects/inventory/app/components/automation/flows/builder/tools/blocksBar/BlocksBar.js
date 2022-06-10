@@ -116,12 +116,13 @@ export default function BlocksBar(props: Props) {
   const listBlocksCategory = [
     {header: fbt('Flow', ''), blockTypes: flowTypes},
     {header: fbt('General', ''), blockTypes: general},
-    {header: fbt('Workforce', ''), blockTypes: workforceTypes},
-    {header: fbt('Inventory', ''), blockTypes: inventoryTypes},
-    {header: fbt('Configuration mgmt', ''), blockTypes: null},
-    {header: fbt('Pm', ''), blockTypes: null},
-    {header: fbt('FM', ''), blockTypes: null},
-    {header: fbt('SOM', ''), blockTypes: null},
+    // Comment to hide indesign blocks
+    // {header: fbt('Workforce', ''), blockTypes: workforceTypes},
+    // {header: fbt('Inventory', ''), blockTypes: inventoryTypes},
+    // {header: fbt('Configuration mgmt', ''), blockTypes: null},
+    // {header: fbt('Pm', ''), blockTypes: null},
+    // {header: fbt('FM', ''), blockTypes: null},
+    // {header: fbt('SOM', ''), blockTypes: null},
   ];
 
   const ListBlocksCategory = () => {

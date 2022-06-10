@@ -26,6 +26,18 @@ import {
   getInitialBlockSettings,
   setBlockSettings,
 } from './blockTypes/BaseSettings';
+import {
+  initialErrorSettings,
+  setErrorSettings,
+} from './blockTypes/ErrorSettings';
+import {
+  initialInputSettings,
+  setInputSettings,
+} from './blockTypes/InputSettings';
+import {
+  initialOutputSettings,
+  setOutputSettings,
+} from './blockTypes/OutputSettings';
 
 const DUPLICATION_SHIFT = {
   x: 84,
@@ -50,6 +62,9 @@ export interface IBlock {
   +type: string;
   +name: string;
   +settings: string;
+  +inputSettings: string;
+  +outputSettings: string;
+  +errorSettings: string;
   +isSelected: boolean;
   +getPorts: () => $ReadOnlyArray<VertexPort>;
   +getInputPort: () => ?VertexPort;
@@ -57,6 +72,9 @@ export interface IBlock {
   +getPortByID: (portID: string) => ?VertexPort;
   +setName: string => void;
   +setSettings: string => void;
+  +setInputSettings: string => void;
+  +setOutputSettings: string => void;
+  +setErrorSettings: string => void;
   +outConnectors: Array<IConnector>;
   +addConnector: (
     sourcePort: ?(string | number),
@@ -76,6 +94,9 @@ export default class BaseBlock implements IBlock {
   type: string;
   name: string;
   settings: string;
+  inputSettings: string;
+  outputSettings: string;
+  errorSettings: string;
   isSelected: boolean;
   id: string;
   outConnectors: Array<IConnector>;
@@ -96,6 +117,9 @@ export default class BaseBlock implements IBlock {
     this.type = model.attributes.type;
     this.id = model.id;
     this.settings = getInitialBlockSettings(model.attributes.type);
+    this.inputSettings = initialInputSettings;
+    this.outputSettings = initialOutputSettings;
+    this.errorSettings = initialErrorSettings;
   }
 
   setName(newName: string) {
@@ -105,6 +129,18 @@ export default class BaseBlock implements IBlock {
 
   setSettings(settings: string) {
     this.settings = setBlockSettings(this.type, settings);
+  }
+
+  setInputSettings(inputSettings: string) {
+    this.inputSettings = setInputSettings(inputSettings);
+  }
+
+  setOutputSettings(outputSettings: string) {
+    this.outputSettings = setOutputSettings(outputSettings);
+  }
+
+  setErrorSettings(errorSettings: string) {
+    this.errorSettings = setErrorSettings(errorSettings);
   }
 
   select() {
