@@ -10,8 +10,20 @@
 
 import * as React from 'react';
 import TextField from '../../inputs/TextField';
+import CodeEditor from '../../inputs/CodeEditor';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(() => ({
+  grid: {
+    marginTop: '-11px',
+    marginBottom: '10px',
+  },
+  gridCodeEditor: {
+    marginTop: '-31px',
+  },
+}));
 
 const ConfigurationTriggeredStart = () => {
   const [configurationsValues, handleInputChange] = useForm({
@@ -21,10 +33,11 @@ const ConfigurationTriggeredStart = () => {
   });
 
   const {signalModule, signalType} = configurationsValues;
+  const classes = useStyles();
 
   return (
     <>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.grid}>
         <TextField
           label={'Signal Module'}
           type={'text'}
@@ -33,7 +46,7 @@ const ConfigurationTriggeredStart = () => {
           handleInputChange={handleInputChange}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.grid}>
         <TextField
           label={'Signal Type'}
           type={'text'}
@@ -41,6 +54,9 @@ const ConfigurationTriggeredStart = () => {
           value={signalType}
           handleInputChange={handleInputChange}
         />
+      </Grid>
+      <Grid item xs={12} className={classes.gridCodeEditor}>
+        <CodeEditor mode="javascript" title={'Custom Filter'} />
       </Grid>
     </>
   );

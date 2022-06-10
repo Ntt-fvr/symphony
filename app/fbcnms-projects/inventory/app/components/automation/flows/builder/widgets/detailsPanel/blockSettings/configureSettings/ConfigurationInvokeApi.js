@@ -11,8 +11,20 @@
 import * as React from 'react';
 import Select from '../../inputs/Select';
 import TextField from '../../inputs/TextField';
+import CodeEditor from '../../inputs/CodeEditor';
 import {Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(() => ({
+  grid: {
+    marginTop: '-11px',
+    marginBottom: '10px',
+  },
+  gridCodeEditor: {
+    marginTop: '-31px',
+  },
+}));
 
 const ConfigurationInvokeApi = () => {
   const urlMethods = [
@@ -25,13 +37,24 @@ const ConfigurationInvokeApi = () => {
   const [configurationsValues, handleInputChange] = useForm({
     urlMethod: '',
     connectionTimeout: 0,
+    urlAddress: '',
+    headers: '',
+    body: '',
   });
 
-  const {urlMethod, connectionTimeout} = configurationsValues;
+  const {
+    urlMethod,
+    connectionTimeout,
+    urlAddress,
+    headers,
+    body,
+  } = configurationsValues;
+
+  const classes = useStyles();
 
   return (
     <>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.grid}>
         <Select
           label={'URL Method'}
           name={'urlMethod'}
@@ -40,7 +63,10 @@ const ConfigurationInvokeApi = () => {
           items={urlMethods}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className={classes.gridCodeEditor}>
+        <CodeEditor mode="xml" title={'URL'} />
+      </Grid>
+      <Grid item xs={12} className={classes.grid}>
         <TextField
           label={'Connection Timeout'}
           type={'number'}
@@ -48,6 +74,12 @@ const ConfigurationInvokeApi = () => {
           value={connectionTimeout}
           handleInputChange={handleInputChange}
         />
+      </Grid>
+      <Grid item xs={12} className={classes.gridCodeEditor}>
+        <CodeEditor mode="json" title={'Headers'} />
+      </Grid>
+      <Grid item xs={12} className={classes.gridCodeEditor}>
+        <CodeEditor mode="json" title={'Body'} />
       </Grid>
     </>
   );

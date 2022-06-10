@@ -51,7 +51,7 @@ export default function useSettingsPanel(): SettingsPanelType {
     title: (
       <Grid item xs zeroMinWidth>
         <Typography variant={'h6'} noWrap>
-          {'Block Settings'}
+          {selection.selectedElements[0]?.name || 'Block Settings'}
         </Typography>
       </Grid>
     ),

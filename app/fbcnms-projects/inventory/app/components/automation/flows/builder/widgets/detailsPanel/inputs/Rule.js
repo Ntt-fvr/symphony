@@ -29,8 +29,21 @@ const useStyles = makeStyles(() => ({
     borderBottom: '0px',
     padding: '4px',
   },
+  accordionSummary: {
+    padding: '12px 0',
+  },
   accordionDetails: {
-    padding: '0px 16px',
+    margin: 0,
+    marginTop: -18,
+    marginBottom: 24,
+    padding: 0,
+    display: 'block',
+  },
+  accordion: {
+    borderTop: '0.5px solid #D2DAE7',
+    '&::before': {
+      display: 'none',
+    },
   },
 }));
 
@@ -54,8 +67,9 @@ const Rule = (props: Props) => {
   };
 
   return (
-    <Accordion expanded={expand}>
+    <Accordion expanded={expand} elevation={0} className={classes.accordion}>
       <AccordionSummary
+        className={classes.accordionSummary}
         expandIcon={getExpandIcon()}
         aria-controls="panel1a-content"
         IconButtonProps={{
