@@ -15,6 +15,8 @@ import (
 
 func handleResourceSpecificationFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
 	switch filter.FilterType {
+	case models.ResourceSpecificationFilterTypeID:
+		return resourceSpecificationIDFilter(q, filter)
 	case models.ResourceSpecificationFilterTypeName:
 		return resourceSpecificationNameFilter(q, filter)
 	case models.ResourceSpecificationFilterTypeResourceType:
@@ -23,6 +25,13 @@ func handleResourceSpecificationFilter(q *ent.ResourceSpecificationQuery, filter
 		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 	}
 
+}
+
+func resourceSpecificationIDFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(resourcespecification.IDIn(filter.IDSet...)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func resourceSpecificationNameFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
