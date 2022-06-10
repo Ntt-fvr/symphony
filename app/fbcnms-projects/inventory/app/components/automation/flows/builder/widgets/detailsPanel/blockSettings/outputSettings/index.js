@@ -7,12 +7,18 @@
  * @flow
  * @format
  */
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import React, {useEffect} from 'react';
 import Transform from '../../inputs/Transform';
 import {Divider, Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 
-export default function OutputSettings() {
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+export default function OutputSettings({block}: Props) {
   const strategies = [
     {name: 'Replace', id: 'replace'},
     {name: 'Merge', id: 'merge'},
@@ -31,17 +37,25 @@ export default function OutputSettings() {
     stateJson: null,
     stateStrategy: '',
     addOriginal: false,
+    addOriginalJson: null,
     additionMethod: '',
   });
 
   const {
     outputTransform,
     outputStrategy,
+    outputJson,
     stateTransform,
     stateStrategy,
+    stateJson,
     addOriginal,
+    addOriginalJson,
     additionMethod,
   } = outputValues;
+
+  useEffect(() => {
+    block.setOutputSettings(outputValues);
+  }, [outputValues]);
 
   useEffect(() => {
     if (outputTransform === false)
@@ -73,6 +87,8 @@ export default function OutputSettings() {
           inputTransformLabel={'Transform Output'}
           inputStrategyValue={outputStrategy}
           inputStrategyName="outputStrategy"
+          inputJsonValue={outputJson}
+          inputJsonName="outputJson"
           inputStrategyLabel="Strategy"
           strategies={strategies}
           handleInputChange={handleInputChange}
@@ -89,6 +105,8 @@ export default function OutputSettings() {
           inputStrategyValue={stateStrategy}
           inputStrategyName="stateStrategy"
           inputStrategyLabel="Strategy"
+          inputJsonValue={stateJson}
+          inputJsonName="stateJson"
           strategies={strategies}
           handleInputChange={handleInputChange}
         />
@@ -104,6 +122,8 @@ export default function OutputSettings() {
           inputStrategyValue={additionMethod}
           inputStrategyName="additionMethod"
           inputStrategyLabel="Addition Method"
+          inputJsonValue={addOriginalJson}
+          inputJsonName="addOriginalJson"
           strategies={additionMethods}
           handleInputChange={handleInputChange}
         />

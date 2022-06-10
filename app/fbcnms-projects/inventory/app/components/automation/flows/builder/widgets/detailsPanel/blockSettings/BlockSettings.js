@@ -22,7 +22,7 @@ type Props = $ReadOnly<{|
 
 export default function BlockSettings(props: Props) {
   const {block} = props;
-  const allowedTabs = useMemo(() => getAllowedTabs(block.type), [block]);
+  const allowedTabs = useMemo(() => getAllowedTabs(block.type, block), [block]);
   const tabs = [
     {
       label: 'Configurations',

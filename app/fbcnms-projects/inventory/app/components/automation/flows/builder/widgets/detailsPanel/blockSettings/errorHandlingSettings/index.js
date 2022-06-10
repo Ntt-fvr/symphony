@@ -7,7 +7,9 @@
  * @flow
  * @format
  */
-import React from 'react';
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
+import React, {useEffect} from 'react';
 import Select from '../../inputs/Select';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import TextField from '../../inputs/TextField';
@@ -31,7 +33,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function ErrorHandlingSettings() {
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+export default function ErrorHandlingSettings({block}: Props) {
+  const {errorSettings} = block;
   const classes = useStyles();
   const unitsPolicy = [
     {name: 'Seconds', id: 'seconds'},
@@ -39,13 +46,17 @@ export default function ErrorHandlingSettings() {
     {name: 'Hours', id: 'hours'},
   ];
   const [inputValues, handleInputChange] = useForm({
-    retryPolicy: false,
-    retryInterval: null,
-    units: '',
-    maxAttemps: null,
-    backOffRate: null,
-    errorCatching: false,
+    retryPolicy: errorSettings?.retryPolicy || false,
+    retryInterval: errorSettings?.retryInterval || null,
+    units: errorSettings?.units || '',
+    maxAttemps: errorSettings?.maxAttemps || null,
+    backOffRate: errorSettings?.backOffRate || null,
+    errorCatching: errorSettings?.errorCatching || false,
   });
+
+  useEffect(() => {
+    block.setErrorSettings(inputValues);
+  }, [inputValues]);
 
   const {
     retryPolicy,

@@ -8,6 +8,8 @@
  * @format
  */
 
+import type {IBlock} from '../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import ErrorHandlingSettings from './errorHandlingSettings';
 import InputSettings from './inputSettings';
 import OutputSettings from './outputSettings';
@@ -63,34 +65,36 @@ const blocksTabs: Array<BlockTabs> = [
   {type: WaitSignalType, allowedTabs: []},
 ];
 
-const getTabById = (id: string, index: number) => {
+const getTabById = (id: string, index: number, block: IBlock) => {
   switch (id) {
     case INPUT_TYPE:
       return {
         label: 'Input',
         index,
-        view: <InputSettings />,
+        view: <InputSettings block={block} />,
       };
     case OUTPUT_TYPE:
       return {
         label: 'Output',
         index,
-        view: <OutputSettings />,
+        view: <OutputSettings block={block} />,
       };
     case ERROR_TYPE:
       return {
         label: 'Error Handling',
         index,
-        view: <ErrorHandlingSettings />,
+        view: <ErrorHandlingSettings block={block} />,
       };
     default:
       return null;
   }
 };
 
-export const getAllowedTabs = type => {
+export const getAllowedTabs = (type: string, block: IBlock) => {
   const allowedTabs = blocksTabs.find(blockTab => blockTab.type === type)
     .allowedTabs;
 
-  return allowedTabs.map((allowedTab, i) => getTabById(allowedTab, i + 1));
+  return allowedTabs.map((allowedTab, i) =>
+    getTabById(allowedTab, i + 1, block),
+  );
 };

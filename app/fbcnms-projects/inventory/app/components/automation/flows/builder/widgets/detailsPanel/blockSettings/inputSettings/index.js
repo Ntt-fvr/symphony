@@ -7,32 +7,46 @@
  * @flow
  * @format
  */
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import React, {useEffect} from 'react';
 import Transform from '../../inputs/Transform';
 import {Divider, Grid} from '@material-ui/core';
 import {useForm} from '../../../../../utils/useForm';
 
-export default function InputSettings() {
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+export default function InputSettings({block}: Props) {
   const strategies = [
     {name: 'Replace', id: 'replace'},
     {name: 'Merge', id: 'merge'},
   ];
 
+  const {inputSettings} = block;
+
   const [inputValues, handleInputChange] = useForm({
-    inputTransform: false,
-    inputJson: null,
-    inputStrategy: '',
-    stateTransform: false,
-    stateJson: null,
-    stateStrategy: '',
+    inputTransform: inputSettings?.inputTransform || false,
+    inputJson: inputSettings?.inputJson || null,
+    inputStrategy: inputSettings?.inputStrategy || '',
+    stateTransform: inputSettings?.stateTransform || false,
+    stateJson: inputSettings?.stateJson || null,
+    stateStrategy: inputSettings?.stateStrategy || '',
   });
 
   const {
     inputTransform,
     inputStrategy,
+    inputJson,
     stateTransform,
     stateStrategy,
+    stateJson,
   } = inputValues;
+
+  useEffect(() => {
+    block.setInputSettings(inputValues);
+  }, [inputValues]);
 
   useEffect(() => {
     if (inputTransform === false)
@@ -58,6 +72,8 @@ export default function InputSettings() {
           inputStrategyValue={inputStrategy}
           inputStrategyName="inputStrategy"
           inputStrategyLabel="Strategy"
+          inputJsonValue={inputJson}
+          inputJsonName="inputJson"
           strategies={strategies}
           handleInputChange={handleInputChange}
         />
@@ -73,6 +89,8 @@ export default function InputSettings() {
           inputStrategyValue={stateStrategy}
           inputStrategyName="stateStrategy"
           inputStrategyLabel="Strategy"
+          inputJsonValue={stateJson}
+          inputJsonName="stateJson"
           strategies={strategies}
           handleInputChange={handleInputChange}
         />

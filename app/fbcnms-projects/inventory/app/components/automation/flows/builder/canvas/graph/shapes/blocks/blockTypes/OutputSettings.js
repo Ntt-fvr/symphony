@@ -14,7 +14,5 @@ export const initialOutputSettings = {
 };
 
 export const setOutputSettings = newOutputSettings => {
-  return {
-    newOutputSettings,
-  };
+  return newOutputSettings;
 };

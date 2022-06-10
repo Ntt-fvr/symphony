@@ -14,7 +14,5 @@ export const initialInputSettings = {
 };
 
 export const setInputSettings = newInputSettings => {
-  return {
-    newInputSettings,
-  };
+  return newInputSettings;
 };

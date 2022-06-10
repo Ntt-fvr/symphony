@@ -14,7 +14,5 @@ export const initialErrorSettings = {
 };
 
 export const setErrorSettings = newErrorSettings => {
-  return {
-    newErrorSettings,
-  };
+  return newErrorSettings;
 };
