@@ -7,23 +7,22 @@
  * @flow
  * @format
  */
+import type {PropertyType} from '../../common/PropertyType';
+import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
+import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
+import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
+
 import AddResourceTypeForm from './AddResourceTypeForm';
 import ConfigureTitle from './../assurance/common/ConfigureTitle';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
+import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
 import ResourceTypeItem from './ResourceTypeItem';
 import TitleTextCardsResource from './TitleTextCardsResource';
 import fbt from 'fbt';
 import {EditResourceTypeItem} from './EditResourceTypeItem';
-import {fetchQuery, graphql} from 'relay-runtime';
-
-// MUTATIONS //
-import type {PropertyType} from '../../common/PropertyType';
-import type {RemoveResourceTypeMutationVariables} from '../../mutations/__generated__/RemoveResourceTypeMutation.graphql';
-
-import RemoveResourceTypeMutation from '../../mutations/RemoveResourceTypeMutation';
-
 import {Grid, List} from '@material-ui/core';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -79,41 +78,18 @@ const ResourceTypesQuery = graphql`
   }
 `;
 
-const objectSelectors = {
-  data: {
-    resourceTypeClass: [
-      {
-        name: 'EQUIPMENT',
-      },
-      {
-        name: 'SLOT',
-      },
-      {
-        name: 'RACK',
-      },
-      {
-        name: 'PORT',
-      },
-      {
-        name: 'CARD',
-      },
-      {
-        name: 'VLAN',
-      },
-    ],
+const dataSelectorsForm = {
+  resourceTypeClass: ['CARD', 'EQUIPMENT', 'PORT', 'RACK', 'SLOT', 'VLAN'],
+  resourceTypeBaseType: [
+    'LOGICAL_RESOURCE',
+    'PHYSICAL_RESOURCE',
+    'VIRTUAL_RESOURCE',
+  ],
+};
 
-    resourceTypeBaseType: [
-      {
-        name: 'LOGICAL_RESOURCE',
-      },
-      {
-        name: 'PHYSICAL_RESOURCE',
-      },
-      {
-        name: 'VIRTUAL_RESOURCE',
-      },
-    ],
-  },
+export type DataSelectorsForm = {
+  resourceTypeClass: Array<ResourceTypeClassKind>,
+  resourceTypeBaseType: Array<ResourceTypeBaseTypeKind>,
 };
 
 type Resources = {
@@ -126,14 +102,9 @@ type Resources = {
       },
       resourceTypeBaseType: string,
       resourceTypeClass: string,
-      propertyTypes: Array<PropertyType>,
+      resourcePropertyTypes: Array<PropertyType>,
     },
   },
-};
-
-export type DataSelector = {
-  resourceTypeBaseType: string,
-  resourceTypeClass: string,
 };
 
 const ResourceTypes = () => {
@@ -173,7 +144,7 @@ const ResourceTypes = () => {
     return (
       <EditResourceTypeItem
         isCompleted={isCompleted}
-        dataSelector={objectSelectors.data}
+        dataSelectorsForm={dataSelectorsForm}
         formValues={dataEdit.item.node}
         resources={resourceTypes.resourceTypes?.edges.map(item => item.node)}
         resourceSpecifications={resourceTypes.resourceSpecifications?.edges.map(
@@ -215,7 +186,7 @@ const ResourceTypes = () => {
         <AddResourceTypeForm
           isCompleted={isCompleted}
           resourceNames={resourceTypes.resourceTypes?.edges}
-          dataSelector={objectSelectors.data}
+          dataSelectorsForm={dataSelectorsForm}
         />
       </Grid>
     </Grid>
