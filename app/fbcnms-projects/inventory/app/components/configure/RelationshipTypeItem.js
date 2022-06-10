@@ -13,7 +13,13 @@ import type {ResourceSpecifications} from './EditResourceTypeItem';
 
 import React from 'react';
 import RelationshipFormValidation from './RelationshipFormValidation';
+import TableContextForm from '../TableContext';
+import TableTypesDispatcher from '../context/TableTypesDispatcher';
 import {graphql} from 'relay-runtime';
+import {
+  toMutableTableType,
+  useTableTypesReducer,
+} from '../context/TableTypeState';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const ResourceSpecificationRelationshipsQuery = graphql`
@@ -94,9 +100,22 @@ export default function RelationshipTypeItem(props: Props) {
     ...getDataRelationShipsA,
     ...getDataRelationShipsB,
   ];
+  const dataFormTable = [
+    {
+      id: '',
+      name: '',
+    },
+  ];
+  const [tableTypes, tableTypesDispatcher] = useTableTypesReducer(
+    (dataFormTable ?? []).filter(Boolean).map(toMutableTableType),
+  );
 
   return (
     <>
+      <TableTypesDispatcher.Provider
+        value={{dispatch: tableTypesDispatcher, tableTypes}}>
+        <TableContextForm tableTypes={tableTypes} />
+      </TableTypesDispatcher.Provider>
       {getdataAllRelationShips.includes('CARD') && (
         <RelationshipFormValidation nameForm="Cards" />
       )}
