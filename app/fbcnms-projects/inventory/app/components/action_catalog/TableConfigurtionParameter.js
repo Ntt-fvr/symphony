@@ -25,6 +25,8 @@ import inventoryTheme from '../../common/theme';
 import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+import {fetchQuery,graphql} from 'relay-runtime';
+import RelayEnvironment from '../../common/RelayEnvironment';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -47,27 +49,40 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{||}>;
-const configParams = [{value: 'one'}, {value: 'two'}, {value: 'three'}];
+
+const paramsQuery = graphql`
+  query TableConfigurtionParameterQuery{
+    queryConfigurationParameterType{
+      id
+      name
+    }
+  }
+`
+type Props = $ReadOnly<{|id:string|}>;
 
 const TableConfigurtionParameter = (props: Props) => {
-  const {} = props;
+  const {id} = props;
   const classes = useStyles();
-  const [actionTypes, setActionTypes] = useState([{id: 0}]);
+  const [actionItems, setActionTypes] = useState([{id: 0}]);
+  const [configParams, setConfigParams] = useState([]);
 
   useEffect(() => {
     isCompleted();
   }, []);
 
   const isCompleted = useCallback(() => {
-    setActionTypes([{id: 0}]);
+    fetchQuery(RelayEnvironment, paramsQuery, {}).then(data => {
+      setConfigParams(data?.queryConfigurationParameterType);
+    });
+    setActionTypes([{id:0}]);
   }, [setActionTypes]);
+
   const addParam = id => {
-    setActionTypes([...actionTypes, {id: id}]);
+    setActionTypes([...actionItems, {id: id}]);
   };
 
   const deleteParam = id => {
-    const params = actionTypes;
+    const params = actionItems;
     setActionTypes(params.filter(prt => prt.id !== id));
   };
 
@@ -88,7 +103,7 @@ const TableConfigurtionParameter = (props: Props) => {
           </TableRow>
         </TableHead>
 
-        {actionTypes?.map(item => (
+        {actionItems?.map(item => (
           <TableRow component="div" key={item.id}>
             <TableCell component="div" scope="row">
               <FormField>
@@ -101,8 +116,8 @@ const TableConfigurtionParameter = (props: Props) => {
                   name="family"
                   variant="outlined">
                   {configParams?.map(param => (
-                    <MenuItem key={param.value} value={param.value}>
-                      {param.value}
+                    <MenuItem key={param.id} value={param.id}>
+                      {param.name}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -141,7 +156,7 @@ const TableConfigurtionParameter = (props: Props) => {
           leftIcon={PlusIcon}
           onClick={e => {
             e.preventDefault();
-            addParam(actionTypes.length);
+            addParam(actionItems.length);
           }}>
           <fbt desc="">Add Parameter</fbt>
         </Button>

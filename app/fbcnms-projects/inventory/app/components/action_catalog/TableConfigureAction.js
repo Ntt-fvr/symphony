@@ -62,13 +62,16 @@ const TableConfigureAction = (props: Props) => {
         <TableHead component="div">
           <TableRow component="div">
             <TableCell style={{width: '40%'}} component="div">
-              <fbt desc="">Name</fbt>
+              <fbt desc="">Action Name</fbt>
             </TableCell>
-            <TableCell style={{width: '5%'}} component="div">
-              <fbt desc="">Delete</fbt>
+            <TableCell style={{width: '40%'}} component="div">
+              <fbt desc="">Action Type</fbt>
             </TableCell>
             <TableCell style={{width: '5%'}} component="div">
               <fbt desc="">Edit</fbt>
+            </TableCell>
+            <TableCell style={{width: '5%'}} component="div">
+              <fbt desc="">Delete</fbt>
             </TableCell>
             <TableCell style={{width: '50%'}} />
           </TableRow>
@@ -87,15 +90,17 @@ const TableConfigureAction = (props: Props) => {
                 />
               </FormField>
             </TableCell>
-
-            <TableCell component="div">
-              <FormAction>
-                <IconButton aria-label="delete">
-                  <DeleteOutlinedIcon color="primary" />
-                </IconButton>
-              </FormAction>
+            <TableCell component="div" scope="row">
+              <FormField>
+                <TextInput
+                  autoFocus={true}
+                  placeholder="Type"
+                  autoComplete="off"
+                  className={classes.input}
+                  disabled={isEdit}
+                />
+              </FormField>
             </TableCell>
-
             <TableCell component="div">
               <FormAction>
                 <IconButton aria-label="Edit">
@@ -103,7 +108,15 @@ const TableConfigureAction = (props: Props) => {
                 </IconButton>
               </FormAction>
             </TableCell>
-
+            
+            <TableCell component="div">
+              <FormAction>
+                <IconButton aria-label="delete">
+                  <DeleteOutlinedIcon color="primary" />
+                </IconButton>
+              </FormAction>
+            </TableCell>
+            
             <TableCell component="div" scope="row" />
           </TableRow>
         ))}

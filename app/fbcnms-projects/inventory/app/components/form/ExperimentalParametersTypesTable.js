@@ -112,7 +112,7 @@ const ExperimentalParametersTypesTable = (props: Props) => {
   const {supportMandatory = true, parameterTypes, supportDelete} = props;
   const [openModal, setOpenModal] = useState(false);
   const classes = useStyles();
-  const dispatch = useContext(ParameterTypesTableDispatcher);
+  const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
   const handleModal = () => {
     setOpenModal(preventState => !preventState);

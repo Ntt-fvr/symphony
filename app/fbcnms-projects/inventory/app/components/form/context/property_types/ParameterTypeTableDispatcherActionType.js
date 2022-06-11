@@ -27,7 +27,7 @@ export type ParameterTypeTableDispatcherActionType =
   | {|
       type: 'UPDATE_PARAMETER_TYPE_KIND',
       id: string,
-      // kind: PropertyKind,
+      kind: PropertyKind,
       nodeType?: ?string,
     |}
   | {|

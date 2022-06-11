@@ -8,8 +8,11 @@
  * @format
  */
 
+import type {OptionProps} from '@symphony/design-system/components/Select/SelectMenu';
+import type {PropertyKind} from '../../mutations/__generated__/AddEquipmentPortTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
 
+import AppContext from '@fbcnms/ui/context/AppContext';
 import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
 import React, {useContext, useMemo} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
@@ -25,20 +28,35 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
 }));
+
+type PropertyTypeOption = {|
+  kind: PropertyKind,
+  nodeType: ?string,
+|};
+
 type Props = $ReadOnly<{|
   propertyType: PropertyType,
   onPropertyTypeChange?: (propertyType: PropertyType) => void,
+  disabled?: true,
 |}>;
 
-const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
+const ParameterTypeSelect = ({propertyType, onPropertyTypeChange,
+  disabled,}: Props) => {
   const classes = useStyles();
-  const dispatch = useContext(ParameterTypesTableDispatcher);
+  const context = useContext(AppContext);
+  const {dispatch} = useContext(ParameterTypesTableDispatcher);
   const getOptionKey = (type: string) =>
     `${ParameterTypeLabels[type].kind}_${type}`;
 
   const options = useMemo(
     () =>
-      Object.keys(ParameterTypeLabels).map((type: string) => ({
+      Object.keys(ParameterTypeLabels)
+      .filter(
+        (type: string) =>
+          !ParameterTypeLabels[type].featureFlag ||
+          context.isFeatureEnabled(ParameterTypeLabels[type].featureFlag),
+      )
+      .map((type: string) => ({
         key: getOptionKey(type),
         value: {
           kind: ParameterTypeLabels[type].kind,
@@ -53,7 +71,7 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
   const selectedValueIndex = useMemo(
     () =>
       options.findIndex(
-        op =>
+        (op: OptionProps<PropertyTypeOption>) =>
           op.key ===
           getOptionKey(
             propertyType.nodeType != null && propertyType.nodeType != ''
@@ -71,6 +89,7 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
       selectedValue={
         selectedValueIndex > -1 ? options[selectedValueIndex].value : null
       }
+      disabled={disabled}
       onChange={value => {
         onPropertyTypeChange &&
           onPropertyTypeChange({

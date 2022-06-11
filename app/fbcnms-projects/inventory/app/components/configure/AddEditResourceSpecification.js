@@ -44,6 +44,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 import {useValidationEdit} from '../assurance/common/useValidation';
+import type {MutationCallbacks} from './MutationCallbacks.js';
 
 import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 
@@ -123,6 +124,12 @@ const ConfigurationParameters = graphql`
       type
       __typename
     }
+    queryActionTemplate{
+      id
+      name
+      type
+      resourceSpecifications
+    }
   }
 `;
 
@@ -160,6 +167,10 @@ export const AddEditResourceSpecification = (props: Props) => {
   const classes = useStyles();
 
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
+    item => item?.resourceSpecification == dataForm?.id,
+  );
+
+  const filterActionTemplate = configurationParameters?.queryActionTemplate?.filter(
     item => item?.resourceSpecification == dataForm?.id,
   );
 
@@ -219,7 +230,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         [target.name]: target.value,
       },
     });
-  }
+  } 
 
   function handleClick() {
     const variables: AddResourceSpecificationMutationVariables = {
@@ -231,6 +242,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         ),
       },
     };
+
     AddResourceSpecificationMutation(variables, {
       onCompleted: () => {
         isCompleted();
@@ -341,15 +353,17 @@ export const AddEditResourceSpecification = (props: Props) => {
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
           <ParameterTypesTableDispatcher.Provider
-            value={parameterTypesDispacher}>
+            value={{dispatch:parameterTypesDispacher,parameterTypes}}>
             <ExperimentalParametersTypesTable
               supportDelete={true}
               parameterTypes={parameterTypes}
             />
           </ParameterTypesTableDispatcher.Provider>
         </ExpandingPanel>
+        </Card>
+      <Card margins="none">
         <ExpandingPanel title="Configure Actions">
-          <TableConfigureAction />
+          <TableConfigureAction actionTypes={filterActionTemplate} />
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (
