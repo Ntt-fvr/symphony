@@ -26,6 +26,8 @@ import {EditIcon} from '@symphony/design-system/icons';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
+import {useContext} from 'react';
+import ActionTypesTableDispatcher from './context/ActionTypesTableDispactcher';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -43,14 +45,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{||}>;
-const actionTypes = [{}];
+type Props = $ReadOnly<{|actionTypes:[{}],resourceSpecification:string|}>;
 
 const TableConfigureAction = (props: Props) => {
-  const {} = props;
+  const {actionTypes} = props;
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
   const classes = useStyles();
+  const {dispatch} = useContext(ActionTypesTableDispatcher);
 
   const handleModalAddAction = () => {
     setIsDialogSelectDate(preventState => !preventState);
@@ -85,6 +87,7 @@ const TableConfigureAction = (props: Props) => {
                   autoFocus={true}
                   placeholder="Name"
                   autoComplete="off"
+                  value={item?.name}
                   className={classes.input}
                   disabled={isEdit}
                 />
@@ -96,6 +99,7 @@ const TableConfigureAction = (props: Props) => {
                   autoFocus={true}
                   placeholder="Type"
                   autoComplete="off"
+                  value={item?.type}
                   className={classes.input}
                   disabled={isEdit}
                 />

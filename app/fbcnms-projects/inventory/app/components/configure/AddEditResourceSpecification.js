@@ -32,6 +32,7 @@ import ExperimentalParametersTypesTable from '../form/ExperimentalParametersType
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import ActionTypesTableDispatcher from '../action_catalog/context/ActionTypesTableDispactcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
@@ -43,6 +44,7 @@ import {useFormInput} from '../assurance/common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
+import {useActionTypesReducer} from '../action_catalog/context/ActionTypesTableState';
 import {useValidationEdit} from '../assurance/common/useValidation';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 
@@ -187,6 +189,10 @@ export const AddEditResourceSpecification = (props: Props) => {
     (filterConfigurationParameter ?? [])
       .filter(Boolean)
       .map(toMutablePropertyType),
+  );
+  const [actionTypes, actionTypesTableDispatcher] = useActionTypesReducer(
+    (filterActionTemplate ?? [])
+      .filter(Boolean),
   );
 
   const nameEdit = useFormInput(dataForm.name);
@@ -363,7 +369,9 @@ export const AddEditResourceSpecification = (props: Props) => {
         </Card>
       <Card margins="none">
         <ExpandingPanel title="Configure Actions">
-          <TableConfigureAction actionTypes={filterActionTemplate} />
+          <ActionTypesTableDispatcher.Provider value={{dispatch:actionTypesTableDispatcher,actionTypes}}>
+          <TableConfigureAction actionTypes={actionTypes} resourceSpecification={dataForm?.id} />
+          </ActionTypesTableDispatcher.Provider>
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (
