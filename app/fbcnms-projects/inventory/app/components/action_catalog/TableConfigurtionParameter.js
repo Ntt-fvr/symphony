@@ -51,17 +51,17 @@ const useStyles = makeStyles(() => ({
 
 
 const paramsQuery = graphql`
-  query TableConfigurtionParameterQuery{
-    queryConfigurationParameterType{
+  query TableConfigurtionParameterQuery($filter:ConfigurationParameterTypeFilter){
+    queryConfigurationParameterType(filter:$filter){
       id
       name
     }
   }
 `
-type Props = $ReadOnly<{|id:string|}>;
+type Props = $ReadOnly<{|id:string,resourceSpecification:string|}>;
 
 const TableConfigurtionParameter = (props: Props) => {
-  const {id} = props;
+  const {id,resourceSpecification} = props;
   const classes = useStyles();
   const [actionItems, setActionTypes] = useState([{id: 0}]);
   const [configParams, setConfigParams] = useState([]);
@@ -71,7 +71,13 @@ const TableConfigurtionParameter = (props: Props) => {
   }, []);
 
   const isCompleted = useCallback(() => {
-    fetchQuery(RelayEnvironment, paramsQuery, {}).then(data => {
+    fetchQuery(RelayEnvironment, paramsQuery, {
+      "filter":{
+        "resourceSpecification":{
+          "eq": resourceSpecification??""
+        }
+      }
+    }).then(data => {
       setConfigParams(data?.queryConfigurationParameterType);
     });
     setActionTypes([{id:0}]);

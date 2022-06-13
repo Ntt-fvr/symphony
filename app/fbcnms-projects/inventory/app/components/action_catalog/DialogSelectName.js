@@ -64,10 +64,11 @@ type Props = $ReadOnly<{|
   open?: boolean,
   onClose: () => void,
   isDialogSelectDate: boolean,
+  resourceSpecification:string,
 |}>;
 
 const DialogSelectName = (props: Props) => {
-  const {onClose, isDialogSelectDate} = props;
+  const {onClose, isDialogSelectDate,resourceSpecification} = props;
   const [isDialogConfirmChange, setIsDialogConfirmChange] = useState(
     isDialogSelectDate,
   );
@@ -168,6 +169,7 @@ const DialogSelectName = (props: Props) => {
             handleBackStep={handleBack}
             activeStep={activeStep}
             onClose={onClose}
+            resourceSpecification={resourceSpecification}
             setIsDialogConfirmChange={setIsDialogConfirmChange}
           />
         )}

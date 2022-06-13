@@ -48,7 +48,7 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|actionTypes:[{}],resourceSpecification:string|}>;
 
 const TableConfigureAction = (props: Props) => {
-  const {actionTypes} = props;
+  const {actionTypes,resourceSpecification} = props;
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
   const classes = useStyles();
@@ -137,6 +137,7 @@ const TableConfigureAction = (props: Props) => {
         <DialogSelectName
           isDialogSelectDate={isDialogSelectDate}
           onClose={handleModalAddAction}
+          resourceSpecification={resourceSpecification}
         />
       )}
     </div>

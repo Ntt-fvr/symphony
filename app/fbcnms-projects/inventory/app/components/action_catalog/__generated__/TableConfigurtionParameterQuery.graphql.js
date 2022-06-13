@@ -14,7 +14,22 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type TableConfigurtionParameterQueryVariables = {||};
+export type ConfigurationParameterTypeHasFilter = "booleanValue" | "category" | "externalId" | "floatValue" | "index" | "intValue" | "isDeleted" | "isEditable" | "isListable" | "isMandatory" | "isPrioritary" | "latitudeValue" | "longitudeValue" | "mappingIn" | "mappingOut" | "name" | "nodeType" | "parameters" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resourceSpecification" | "stringValue" | "tags" | "type" | "%future added value";
+export type ConfigurationParameterTypeFilter = {|
+  and?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
+  has?: ?$ReadOnlyArray<?ConfigurationParameterTypeHasFilter>,
+  id?: ?$ReadOnlyArray<string>,
+  not?: ?ConfigurationParameterTypeFilter,
+  or?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
+  resourceSpecification?: ?StringHashFilter,
+|};
+export type StringHashFilter = {|
+  eq?: ?string,
+  in?: ?$ReadOnlyArray<?string>,
+|};
+export type TableConfigurtionParameterQueryVariables = {|
+  filter?: ?ConfigurationParameterTypeFilter
+|};
 export type TableConfigurtionParameterQueryResponse = {|
   +queryConfigurationParameterType: ?$ReadOnlyArray<?{|
     +id: string,
@@ -29,8 +44,10 @@ export type TableConfigurtionParameterQuery = {|
 
 
 /*
-query TableConfigurtionParameterQuery {
-  queryConfigurationParameterType {
+query TableConfigurtionParameterQuery(
+  $filter: ConfigurationParameterTypeFilter
+) {
+  queryConfigurationParameterType(filter: $filter) {
     id
     name
   }
@@ -40,8 +57,21 @@ query TableConfigurtionParameterQuery {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "filter"
+  }
+],
+v1 = [
+  {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filter"
+      }
+    ],
     "concreteType": "ConfigurationParameterType",
     "kind": "LinkedField",
     "name": "queryConfigurationParameterType",
@@ -67,32 +97,32 @@ var v0 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "TableConfigurtionParameterQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "TableConfigurtionParameterQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b59c0beb69d65601272b5970dc11850b",
+    "cacheID": "f8e311727d5494ddc086d3716eca1cb5",
     "id": null,
     "metadata": {},
     "name": "TableConfigurtionParameterQuery",
     "operationKind": "query",
-    "text": "query TableConfigurtionParameterQuery {\n  queryConfigurationParameterType {\n    id\n    name\n  }\n}\n"
+    "text": "query TableConfigurtionParameterQuery(\n  $filter: ConfigurationParameterTypeFilter\n) {\n  queryConfigurationParameterType(filter: $filter) {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7aad38e3a599e759a63f8ece8fe8a548';
+(node/*: any*/).hash = '05a3c1f8405d72feb3daafb82620d466';
 
 module.exports = node;

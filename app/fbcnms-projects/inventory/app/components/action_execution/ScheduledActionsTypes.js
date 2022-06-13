@@ -230,21 +230,6 @@ const ScheduledActionsTypes = () => {
                 />
               ),
             },
-            {
-              key: 'enableExecution',
-              title: `${fbt('Status', '')}`,
-              render: row =>
-                (
-                  <Switch
-                    onChange={e => {
-                      handleChange(e.target.checked, row.id);
-                    }}
-                    color="primary"
-                    name="Status"
-                    inputProps={{'aria-label': 'primary checkbox'}}
-                  />
-                ) ?? '',
-            },
           ]}
           paginationSettings={{
             loadNext: onCompleted => {

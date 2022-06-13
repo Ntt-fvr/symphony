@@ -44,10 +44,11 @@ type Props = $ReadOnly<{|
   setIsDialogConfirmChange: any,
   activeStep: any,
   handleBackStep: any,
+  resourceSpecification:string,
 |}>;
 
 const DialogConfigurationParameter = (props: Props) => {
-  const {onClose, setIsDialogConfirmChange, activeStep, handleBackStep} = props;
+  const {onClose, setIsDialogConfirmChange, activeStep, handleBackStep,resourceSpecification} = props;
 
   const classes = useStyles();
   const handleBack = () => {
@@ -66,7 +67,7 @@ const DialogConfigurationParameter = (props: Props) => {
         </Grid>
       </Card>
       <Grid style={{margin: '20px 30px 20px 30px'}} item xs={12}>
-        <TableConfigurtionParameter />
+        <TableConfigurtionParameter resourceSpecification={resourceSpecification} />
       </Grid>
       <DialogActions className={classes.dialogActions}>
         <Button
