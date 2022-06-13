@@ -23,6 +23,7 @@ import LocationsMap from './map/LocationsMap';
 import MainNavListItems from './MainNavListItems';
 import PerformanceCatalog from './assurance/PerformanceCatalog';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
+import RoutesChange from './configuration_management/RoutesChange';
 import ServicesMain from './services/ServicesMain';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {Redirect, Route, Switch} from 'react-router-dom';
@@ -71,6 +72,10 @@ function Index() {
       <AppContent>
         <Switch>
           <Route path={relativeUrl('/configure')} component={Configure} />
+          <Route
+            path={relativeUrl('/configuration_management')}
+            component={RoutesChange}
+          />
           <Route
             path={relativeUrl('/assurance')}
             component={PerformanceCatalog}

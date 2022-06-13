@@ -30,6 +30,11 @@ function startApollo(){
     gateway,
     context: ({ req: { headers } }) => {
       return { headers };
+    }, 
+    csrfPrevention:true,
+    cors: {
+      origin:  "https://studio.apollographql.com", 
+      credentials: true
     },
   });
   server.listen({ port: port }).then(({ url }) => {

@@ -19,7 +19,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import moment from 'moment';
+import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -35,36 +35,38 @@ const useStyles = makeStyles(() => ({
     },
   },
   dialogActions: {
-    padding: '6px 0',
+    padding: '0 24px',
     marginBottom: '30px',
     bottom: 0,
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     zIndex: 2,
-    '&.MuiDialogActions-spacing > :not(:first-child)': {
-      marginLeft: '20px',
-    },
   },
   option: {
     width: '111px',
     height: '36px',
   },
+  textarea: {
+    minHeight: '60px',
+    '& textarea': {
+      height: '100%',
+      overflow: 'auto',
+      lineHeight: '1.5',
+    },
+  },
 }));
 
 type Props = $ReadOnly<{|
-  onClick?: () => void,
+  onClick: () => void,
   name?: string,
   open?: boolean,
-  execDetails: {},
-  execType: string,
   onClose: () => void,
-  dataRow: any,
 |}>;
 
-const DialogExecuteNow = (props: Props) => {
-  const {onClose, dataRow} = props;
+const DialogStatus = (props: Props) => {
+  const {onClose, name, onClick} = props;
 
   const classes = useStyles();
   return (
@@ -78,14 +80,17 @@ const DialogExecuteNow = (props: Props) => {
         <Grid
           style={{
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
             marginBottom: '30px',
           }}>
+          <Text useEllipsis={true} weight={'bold'} variant={'h6'}>
+            {name}
+          </Text>
           <IconButton
             style={{
               position: 'relative',
               top: '0px',
-              right: '-7px',
+              right: '0px',
             }}
             onClick={onClose}
             size={'small'}>
@@ -98,64 +103,38 @@ const DialogExecuteNow = (props: Props) => {
               <Grid item xs={1}>
                 <InfoOutlinedIcon color={'primary'} />
               </Grid>
-              <Grid container item xs={11}>
-                <CardHeader>Are you sure to run the action now?</CardHeader>
+              <Grid item xs={11}>
+                <CardHeader>Information</CardHeader>
                 <Text>
-                  This will perform the action inmediately on the selected
-                  resource and cannot be undone
-                </Text>
-                <Grid
-                  style={{marginTop: '20px'}}
-                  container
-                  direction="column"
-                  item
-                  xs={2}>
-                  <Text useEllipsis={true} weight="bold">
-                    Action:
-                  </Text>
-                  {props.execType == 'start' ? (
-                    <Text useEllipsis={true} weight="bold">
-                      Date:
-                    </Text>
-                  ) : (
-                    ''
-                  )}
-                  {props.execType == 'start' ? (
-                    <Text useEllipsis={true} weight="bold">
-                      Hour:
-                    </Text>
-                  ) : (
-                    ''
-                  )}
-                  <Text useEllipsis={true} weight="bold">
-                    Resource:
-                  </Text>
-                </Grid>
-                <Grid
-                  style={{marginTop: '20px'}}
-                  container
-                  direction="column"
-                  item
-                  xs={2}>
-                  <Text>{dataRow.actionTempleate}</Text>
-                  {props.execType == 'start' ? (
-                    <Text>
-                      {moment(props.execDetails.date).format('MM/DD/YYYY')}
-                    </Text>
-                  ) : (
-                    ''
-                  )}
-                  {props.execType == 'start' ? (
-                    <Text>{moment(props.execDetails.hour).format('LT')}</Text>
-                  ) : (
-                    ''
-                  )}
-                  <Text>{dataRow.resourceSpecification}</Text>
-                </Grid>
+                  You are creating a new Change request in status Submited. This
+                  will launch a flow for its execution. Are you sure?
+                </Text>{' '}
               </Grid>
             </Grid>
           </Card>
         </Grid>
+        <Grid>
+          <Text
+            style={{
+              margin: '40px 0 25px 0px',
+            }}
+            useEllipsis={true}>
+            Add a description or a justification for this new change request
+            (Optional)
+          </Text>
+        </Grid>
+        <TextField
+          required
+          fullWidth
+          multiline
+          rows={2}
+          label="Description"
+          variant="outlined"
+          name="text_out"
+          className={classes.textarea}
+          inputProps={{maxLength: 200}}
+        />
+        <Grid />
       </Card>
       <DialogActions className={classes.dialogActions}>
         <Button
@@ -166,15 +145,15 @@ const DialogExecuteNow = (props: Props) => {
           Cancel
         </Button>
         <Button
-          onClick={onClose}
+          onClick={onClick}
           className={classes.option}
           variant="contained"
           color="primary">
-          Execute Now
+          Save
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default DialogExecuteNow;
+export default DialogStatus;
