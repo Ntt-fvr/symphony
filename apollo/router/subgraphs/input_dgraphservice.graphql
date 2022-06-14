@@ -153,9 +153,8 @@ type ConfigurationParameterType {
   mappingOut: String
   tags: [ConfigParamTag!]
   parameters: [Parameter!]
-  resourceSpecification: String! @search(by: [hash])
+  resourceSpecification: String! @id @search(by: [hash])
 }
-
 type ConfigParamTag{
   id: ID!
   name: String!
@@ -656,7 +655,7 @@ enum _RelationDirections {
 type Subscriber {
         id: ID!
         callback: String
-        topic: String@search(by: [hash])
+        topic: String @search(by: [hash])
 }
 # interface para Resource y ResourceReference
 interface ResourceInt{
@@ -682,12 +681,13 @@ type ActionTemplate{
   name:String!
   type:ActionTemplateType!
   resourceSpecifications: String! @search(by: [hash])
-  actionTemplateItem:[ActionTemplate!]!
+  actionTemplateItem:[ActionTemplateItem!]!
 }
 type ActionTemplateItem{
   id:ID!
   parameters:ConfigurationParameterType!
   value:Parameter!
+  actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItem)
 }
 enum ActionSchedulerType {
   MANUAL_EXECUTION
