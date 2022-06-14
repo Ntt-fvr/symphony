@@ -18,7 +18,5 @@ export const initialTriggerWorkforceSettings: TriggerWorkforceSettings = {
 };
 
 export const setTriggerWorkforceSettings: TriggerWorkforceSettings = newTriggerWorkforceSettings => {
-  return {
-    newTriggerWorkforceSettings,
-  };
+  return newTriggerWorkforceSettings;
 };

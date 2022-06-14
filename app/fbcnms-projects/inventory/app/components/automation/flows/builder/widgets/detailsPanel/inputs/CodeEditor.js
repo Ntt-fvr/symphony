@@ -41,11 +41,11 @@ const CodeEditor = (props: Props) => {
   const {mode, onChange, rule, title, value, name} = props;
   const classes = useStyles();
 
-  const changeEditorValue = value => {
+  const changeEditorValue = newValue => {
     onChange({
       target: {
-        name: name,
-        value: value,
+        name,
+        value: newValue,
       },
     });
   };

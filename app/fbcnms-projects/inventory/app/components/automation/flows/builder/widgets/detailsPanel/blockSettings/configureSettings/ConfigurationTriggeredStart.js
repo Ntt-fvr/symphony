@@ -8,12 +8,15 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
-import TextField from '../../inputs/TextField';
 import CodeEditor from '../../inputs/CodeEditor';
+import TextField from '../../inputs/TextField';
 import {Grid} from '@material-ui/core';
-import {useForm} from '../../../../../utils/useForm';
 import {makeStyles} from '@material-ui/core/styles';
+import {useEffect} from 'react';
+import {useForm} from '../../../../../utils/useForm';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -25,14 +28,24 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ConfigurationTriggeredStart = () => {
-  const [configurationsValues, handleInputChange] = useForm({
-    signalModule: '',
-    blockUntilReception: false,
-    signalType: '',
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+const ConfigurationTriggeredStart = ({block}: Props) => {
+  const {settings} = block;
+  const [triggeredStartSettingsValues, handleInputChange] = useForm({
+    signalModule: settings?.signalModule || '',
+    signalType: settings?.signalType || '',
+    customFilter: settings?.customFilter || '',
   });
 
-  const {signalModule, signalType} = configurationsValues;
+  const {signalModule, signalType, customFilter} = triggeredStartSettingsValues;
+
+  useEffect(() => {
+    block.setSettings(triggeredStartSettingsValues);
+  }, [triggeredStartSettingsValues]);
+
   const classes = useStyles();
 
   return (
@@ -56,7 +69,13 @@ const ConfigurationTriggeredStart = () => {
         />
       </Grid>
       <Grid item xs={12} className={classes.gridCodeEditor}>
-        <CodeEditor mode="javascript" title={'Custom Filter'} />
+        <CodeEditor
+          mode="json"
+          title={'Custom Filter'}
+          value={customFilter}
+          name={'customFilter'}
+          onChange={handleInputChange}
+        />
       </Grid>
     </>
   );

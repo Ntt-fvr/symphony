@@ -18,7 +18,5 @@ export const initialGoToSettings: GoToSettings = {
 };
 
 export const setGoToSettings: GoToSettings = newGoToSettings => {
-  return {
-    newGoToSettings,
-  };
+  return newGoToSettings;
 };

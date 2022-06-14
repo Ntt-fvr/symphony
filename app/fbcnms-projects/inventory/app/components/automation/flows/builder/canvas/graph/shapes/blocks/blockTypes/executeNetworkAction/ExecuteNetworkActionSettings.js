@@ -18,7 +18,5 @@ export const initialExecuteNetworkActionSettings: ExecuteNetworkActionSettings =
 };
 
 export const setExecuteNetworkActionSettings: ExecuteNetworkActionSettings = newExecuteNetworkActionSettings => {
-  return {
-    newExecuteNetworkActionSettings,
-  };
+  return newExecuteNetworkActionSettings;
 };

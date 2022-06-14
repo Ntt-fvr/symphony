@@ -33,10 +33,24 @@ import {
 import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {Events} from '../builder/canvas/graph/facades/Helpers.js';
+import {
+  ACTION_TYPE_ID as ExecuteFlowActionTypeID,
+  TYPE as ExecuteFlowType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
+import {TYPE as ForEachLoopType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
 import {TYPE as GoToType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
+import {
+  ACTION_TYPE_ID as InvokeApiActionTypeID,
+  TYPE as InvokeApiType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
+import {
+  ACTION_TYPE_ID as NetworkActionActionTypeID,
+  TYPE as NetworkActionBlockType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
+import {TYPE as ParallelType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Parallel';
 import {
   TYPE as TimerBlockType,
   TRIGGER_TYPE_ID as TimerTriggerTypeID,
@@ -58,6 +72,10 @@ import {
   ACTION_TYPE_ID as UpdateWorkforceActionTypeID,
   TYPE as UpdateWorkforceBlockType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
+import {
+  TYPE as WaitSignalBlockType,
+  TRIGGER_TYPE_ID as WaitSignalTriggerTypeID,
+} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
 import {
   getActionType,
   getTriggerType,
@@ -300,6 +318,12 @@ function FlowDataContextProviderComponent(props: Props) {
       const trueFalseBlocks = flow
         .getBlocksByType(TrueFalseType)
         .map(mapTrueFalseBlockForSave);
+      const parallelBlocks = flow
+        .getBlocksByType(ParallelType)
+        .map(mapTrueFalseBlockForSave);
+      const forEachBlocks = flow
+        .getBlocksByType(ForEachLoopType)
+        .map(mapTrueFalseBlockForSave);
 
       // Action Blocks
       const updateInventoryBlocks = flow
@@ -317,11 +341,25 @@ function FlowDataContextProviderComponent(props: Props) {
         .map(block =>
           mapActionBlocksForSave(block, CreateWorkorderActionTypeID),
         );
+      const executeFlowBlocks = flow
+        .getBlocksByType(ExecuteFlowType)
+        .map(block => mapActionBlocksForSave(block, ExecuteFlowActionTypeID));
+
+      const invokeApiBlocks = flow
+        .getBlocksByType(InvokeApiType)
+        .map(block => mapActionBlocksForSave(block, InvokeApiActionTypeID));
+
+      const networkActionBlocks = flow
+        .getBlocksByType(NetworkActionBlockType)
+        .map(block => mapActionBlocksForSave(block, NetworkActionActionTypeID));
 
       const actionBlocks = [
         ...createWorkOrderBlocks,
         ...updateInventoryBlocks,
         ...updateWorkforceBlocks,
+        ...executeFlowBlocks,
+        ...invokeApiBlocks,
+        ...networkActionBlocks,
       ];
 
       // TriggerBlocks
@@ -341,10 +379,15 @@ function FlowDataContextProviderComponent(props: Props) {
         .getBlocksByType(TimerBlockType)
         .map(block => mapTriggerBlocksForSave(block, TimerTriggerTypeID));
 
+      const waitForSignalBlocks = flow
+        .getBlocksByType(WaitSignalBlockType)
+        .map(block => mapTriggerBlocksForSave(block, WaitSignalTriggerTypeID));
+
       const triggerBlocks = [
         ...triggerWorkforceBlocks,
         ...triggerStartBlocks,
         ...timerBlocks,
+        ...waitForSignalBlocks,
       ];
       const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
@@ -374,6 +417,14 @@ function FlowDataContextProviderComponent(props: Props) {
 
       if (trueFalseBlocks.length > 0) {
         flowData.trueFalseBlocks = trueFalseBlocks;
+      }
+
+      if (parallelBlocks.length > 0) {
+        flowData.parallelBlocks = parallelBlocks;
+      }
+
+      if (forEachBlocks.length > 0) {
+        flowData.forEachBlocks = forEachBlocks;
       }
 
       if (connectors.length > 0) {

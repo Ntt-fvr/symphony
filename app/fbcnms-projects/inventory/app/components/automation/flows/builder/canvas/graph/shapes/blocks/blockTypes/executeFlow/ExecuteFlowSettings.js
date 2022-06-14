@@ -18,7 +18,5 @@ export const initialExecuteFlowSettings: ExecuteFlowSettings = {
 };
 
 export const setExecuteFlowSettings: ExecuteFlowSettings = newExecuteFlowSettings => {
-  return {
-    newExecuteFlowSettings,
-  };
+  return newExecuteFlowSettings;
 };
