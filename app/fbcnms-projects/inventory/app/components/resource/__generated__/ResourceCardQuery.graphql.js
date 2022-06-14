@@ -32,8 +32,8 @@ export type ResourceCardQueryResponse = {|
     +id: string,
     +name: string,
     +isDelete: boolean,
-    +resourceSpecification: any,
-    +locatedIn: ?any,
+    +resourceSpecification: string,
+    +locatedIn: ?string,
   |}>,
   +resourceTypes: {|
     +edges: $ReadOnlyArray<{|

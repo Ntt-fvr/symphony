@@ -8,6 +8,10 @@
  * @format
  */
 
+import type {RemoveConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/RemoveConfigurationParameterTypeMutation.graphql';
+
+import RemoveConfigurationParameterTypeMutation from '../../mutations/RemoveConfigurationParameterTypeMutation';
+
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
@@ -106,18 +110,31 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   parameterTypes: Array<any>,
   supportDelete?: boolean,
+  idRs?: number,
 |}>;
 
 const ExperimentalParametersTypesTable = (props: Props) => {
-  const {supportMandatory = true, parameterTypes, supportDelete} = props;
+  const {idRs, supportMandatory = true, parameterTypes, supportDelete} = props;
   const [openModal, setOpenModal] = useState(false);
+  const [item, setItem] = useState({});
   const classes = useStyles();
-  const dispatch = useContext(ParameterTypesTableDispatcher);
+  const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
-  const handleModal = () => {
-    setOpenModal(preventState => !preventState);
+  const handleRemove = parameterId => {
+    const variables: RemoveConfigurationParameterTypeMutationVariables = {
+      filter: {
+        id: parameterId,
+      },
+    };
+    RemoveConfigurationParameterTypeMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
   };
 
+  const handleModal = parameter => {
+    setOpenModal(preventState => !preventState);
+    setItem(parameter);
+  };
   return (
     <div className={classes.container}>
       <Table component="div" className={classes.root}>
@@ -192,7 +209,7 @@ const ExperimentalParametersTypesTable = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <form className={classes.formField} autoComplete="off">
-                  <ParameterTypeSelect propertyType={parameter} />
+                  <ParameterTypeSelect parameterType={parameter} />
                 </form>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
@@ -218,20 +235,20 @@ const ExperimentalParametersTypesTable = (props: Props) => {
                 <FormAction>
                   <SubjectIcon
                     className={classes.mapping}
-                    onClick={handleModal}
+                    onClick={() => handleModal(parameter)}
                   />
                 </FormAction>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">
                 <FormField>
                   <Checkbox
-                    checked={!!parameter.isMandatory}
+                    checked={!!parameter.isPrioritary}
                     onChange={checkedNewValue =>
                       dispatch({
                         type: 'UPDATE_PARAMETER_TYPE',
                         value: {
                           ...parameter,
-                          isMandatory: checkedNewValue === 'checked',
+                          isPrioritary: checkedNewValue === 'checked',
                         },
                       })
                     }
@@ -244,12 +261,13 @@ const ExperimentalParametersTypesTable = (props: Props) => {
                   <IconButton aria-label="delete">
                     <DeleteOutlinedIcon
                       color="primary"
-                      onClick={() =>
+                      onClick={() => {
                         dispatch({
                           type: 'REMOVE_PARAMETER_TYPE',
                           id: parameter.id,
-                        })
-                      }
+                        });
+                        handleRemove(parameter.id);
+                      }}
                       disabled={!supportDelete && !isTempId(parameter.id)}
                     />
                   </IconButton>
@@ -262,12 +280,23 @@ const ExperimentalParametersTypesTable = (props: Props) => {
       <FormAction>
         <Button
           variant="text"
-          onClick={() => dispatch({type: 'ADD_PARAMETER_TYPE'})}
+          onClick={() =>
+            dispatch({
+              type: 'ADD_PARAMETER_TYPE',
+              resourceSpecification: idRs,
+            })
+          }
           leftIcon={PlusIcon}>
           <fbt desc="">Add Property</fbt>
         </Button>
       </FormAction>
-      {openModal && <DialogMapping name={'Mapping'} onClose={handleModal} />}
+      {openModal && (
+        <DialogMapping
+          title={'Mapping'}
+          parameter={item}
+          onClose={handleModal}
+        />
+      )}
     </div>
   );
 };

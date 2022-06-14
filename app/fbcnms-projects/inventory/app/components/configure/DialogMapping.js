@@ -15,10 +15,14 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import React from 'react';
+import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
+import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
+import inventoryTheme from '../../common/theme';
 import {makeStyles} from '@material-ui/styles';
+import {useContext} from 'react';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -46,17 +50,25 @@ const useStyles = makeStyles(() => ({
       lineHeight: '1.5',
     },
   },
+  input: {
+    ...inventoryTheme.textField,
+    marginTop: '0px',
+    marginBottom: '0px',
+    width: '100%',
+  },
 }));
 
 type Props = $ReadOnly<{|
-  deleteItem: () => void,
-  name?: string,
+  deleteItem?: () => void,
+  title?: string,
   open?: boolean,
+  parameter: any,
   onClose: () => void,
 |}>;
 
 const DialogConfirmDelete = (props: Props) => {
-  const {onClose, deleteItem, name} = props;
+  const {onClose, deleteItem, title, parameter} = props;
+  const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
   const classes = useStyles();
   return (
@@ -74,7 +86,7 @@ const DialogConfirmDelete = (props: Props) => {
             marginBottom: '30px',
           }}>
           <Text useEllipsis={true} weight={'bold'} variant={'h6'}>
-            {name}
+            {title}
           </Text>
           <IconButton
             style={{
@@ -101,7 +113,7 @@ const DialogConfirmDelete = (props: Props) => {
             }}
             useEllipsis={true}
             color={'primary'}>
-            arfcndu
+            {parameter?.name}
           </Text>
         </Grid>
         <Text
@@ -126,16 +138,28 @@ const DialogConfirmDelete = (props: Props) => {
           style={{
             marginBottom: '25px',
           }}>
-          <TextField
-            required
-            fullWidth
-            multiline
-            rows={2}
-            label="Text"
-            variant="outlined"
-            name="text_in"
-            className={classes.textarea}
-            inputProps={{maxLength: 200}}
+          <TextInput
+            autoFocus={true}
+            type="multiline"
+            rows={4}
+            placeholder="Text"
+            autoComplete="off"
+            value={parameter?.mappingIn}
+            className={classes.input}
+            onChange={({target}) =>
+              dispatch({
+                type: 'UPDATE_PARAMETER_TYPE_TEXT_IN',
+                id: parameter.id,
+                mappingIn: target.value,
+              })
+            }
+            onBlur={() =>
+              dispatch({
+                type: 'UPDATE_PARAMETER_TYPE_TEXT_IN',
+                id: parameter.id,
+                mappingIn: parameter.mappingIn.trim(),
+              })
+            }
           />
         </Grid>
         <Grid>
@@ -148,16 +172,28 @@ const DialogConfirmDelete = (props: Props) => {
             Out
           </Text>
         </Grid>
-        <TextField
-          required
-          fullWidth
-          multiline
-          rows={2}
-          label="Text"
-          variant="outlined"
-          name="text_out"
-          className={classes.textarea}
-          inputProps={{maxLength: 200}}
+        <TextInput
+          autoFocus={true}
+          type="multiline"
+          rows={4}
+          placeholder="Text"
+          autoComplete="off"
+          value={parameter?.mappingOut}
+          className={classes.input}
+          onChange={({target}) =>
+            dispatch({
+              type: 'UPDATE_PARAMETER_TYPE_TEXT_OUT',
+              id: parameter.id,
+              mappingOut: target.value,
+            })
+          }
+          onBlur={() =>
+            dispatch({
+              type: 'UPDATE_PARAMETER_TYPE_TEXT_OUT',
+              id: parameter.id,
+              mappingOut: parameter.mappingOut.trim(),
+            })
+          }
         />
         <Grid />
       </Card>
