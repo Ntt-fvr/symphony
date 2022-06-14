@@ -9,17 +9,16 @@
  */
 
 import Button from '@symphony/design-system/components/Button';
-import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonsChangeRequest from './common/ButtonsChangeRequest';
 import ConfigureTitle from './common/ConfigureTitle';
 import PowerSearchBar from '../power_search/PowerSearchBar';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {ChangeRequestByBulk} from './ChangeRequestByBulk';
 import {ChangeRequestDetails} from './ChangeRequestDetails';
-import {CircleIndicator} from '../resource_instance/CircleIndicator';
 import {Grid} from '@material-ui/core';
+import {ResourcesSearchConfig_2} from './ResourcesSearchConfig';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -43,74 +42,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const tableColumns = [
-  {
-    key: 'creation date',
-    title: 'Creation date',
-    render: row => row.creationDate ?? '',
-    tooltip: row => row.creationDate ?? '',
-  },
-  {
-    key: 'last modification date',
-    title: `${fbt('Last modification date', '')}`,
-    render: row => row.lastModificationDate ?? '',
-    tooltip: row => row.lastModificationDate ?? '',
-  },
-  {
-    key: 'resource type',
-    title: `${fbt('Resource type', '')}`,
-    render: row => row.resourceType ?? '',
-    tooltip: row => row.resourceType ?? '',
-  },
-  {
-    key: 'change source',
-    title: `${fbt('Change source', '')}`,
-    render: row => row.changeSource ?? '',
-    tooltip: row => row.changeSource ?? '',
-  },
-  {
-    key: 'affected resources',
-    title: `${fbt('Affected resources', '')}`,
-    render: row => <CircleIndicator>{row.affectedResources}</CircleIndicator>,
-    tooltip: row => row.affectedResources ?? '',
-  },
-  {
-    key: 'status',
-    title: `${fbt('Status', '')}`,
-    render: row => (
-      <ButtonAlarmStatus skin={row.status}>{row.status}</ButtonAlarmStatus>
-    ),
-    tooltip: row => row.status ?? '',
-  },
-];
-
-const data = [
-  {
-    id: '686876767',
-    key: '01',
-    creationDate: '01/03/22',
-    lastModificationDate: '01/03/22',
-    resourceType: 'RNCellDU01',
-    changeSource: 'Manual',
-    affectedResources: '1',
-    status: 'Succesful',
-  },
-  {
-    id: '686876768',
-    key: '02',
-    creationDate: '01/04/22',
-    lastModificationDate: '01/05/22',
-    resourceType: 'RNCellDU02',
-    changeSource: 'Manual',
-    affectedResources: '6',
-    status: 'Scheduled',
-  },
-];
+const tableColumns = [];
+const data = [];
 const PROJECTS_PAGE_SIZE = 1;
 
 export type Props = $ReadOnly<{||}>;
 
-const ChangeRequestTypes = () => {
+const ChangeRequestView = () => {
   const [filters, setFilters] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
   const [dataRow, setDataRow] = useState({});
@@ -119,6 +57,7 @@ const ChangeRequestTypes = () => {
   const showInfo = data => {
     setDataRow(data);
   };
+
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
@@ -201,4 +140,4 @@ const ChangeRequestTypes = () => {
   );
 };
 
-export {ChangeRequestTypes};
+export {ChangeRequestView};
