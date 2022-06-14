@@ -42,6 +42,8 @@ import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {graphql} from 'relay-runtime';
+import {isTempId} from '../../common/EntUtils';
+import {toMutableParameterType} from '../../common/ParameterType';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
@@ -176,15 +178,11 @@ export const AddEditResourceSpecification = (props: Props) => {
   const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer({
     parameterTypes: (filterConfigurationParameter ?? [])
       .filter(Boolean)
-      .map(toMutablePropertyType),
+      .map(toMutableParameterType),
     resourceSpecification: dataForm?.id,
   });
 
-  const PREFIX_ID_EXISTING = '0X';
-
-  const newParameter = parameterTypes.filter(
-    item => !item.id.startsWith(PREFIX_ID_EXISTING),
-  );
+  const newParameter = parameterTypes?.filter(item => isTempId(item?.id));
 
   const nameEdit = useFormInput(dataForm.name);
 

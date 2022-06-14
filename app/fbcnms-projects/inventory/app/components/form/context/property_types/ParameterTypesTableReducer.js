@@ -37,6 +37,15 @@ function editParameterType<T: ParameterTypesTableState>(
     ...state.slice(parameterTypeIndex + 1),
   ];
 }
+function removeParameterType<T: ParameterTypesTableState>(
+  state: T,
+  deletedParameterTypeId: string,
+): T {
+  const newState = state.filter(
+    parameterType => deletedParameterTypeId !== parameterType.id,
+  );
+  return [...newState];
+}
 
 export function reducerParameter(
   state: ParameterTypesTableState,
@@ -48,12 +57,27 @@ export function reducerParameter(
         ...state,
         getInitialParameterType(state.length, action.resourceSpecification),
       ];
+    case 'DELETE_PARAMETER_TYPE':
+      return editParameterType(state, action.id, pt => ({
+        ...pt,
+        isDeleted: true,
+      }));
     case 'REMOVE_PARAMETER_TYPE':
-      return state.filter(prt => prt.id !== action.id);
+      return removeParameterType(state, action.id);
     case 'UPDATE_PARAMETER_TYPE_NAME':
       return editParameterType(state, action.id, pt => ({
         ...pt,
         name: action.name,
+      }));
+    case 'UPDATE_PARAMETER_TYPE_TEXT_IN':
+      return editParameterType(state, action.id, pt => ({
+        ...pt,
+        mappingIn: action.mappingIn,
+      }));
+    case 'UPDATE_PARAMETER_TYPE_TEXT_OUT':
+      return editParameterType(state, action.id, pt => ({
+        ...pt,
+        mappingOut: action.mappingOut,
       }));
     case 'UPDATE_PARAMETER_TYPE_KIND':
       return editParameterType(state, action.id, pt => ({
