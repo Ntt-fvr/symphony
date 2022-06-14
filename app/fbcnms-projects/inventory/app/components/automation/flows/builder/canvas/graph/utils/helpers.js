@@ -27,6 +27,8 @@ import jss from 'jss';
 import symphony from '@symphony/design-system/theme/symphony';
 import {Events} from '../facades/Helpers';
 import {PORTS_GROUPS} from '../facades/shapes/vertexes/BaseVertext';
+import {findAreaContainer} from './linkValidator';
+import {validatorContainerConection} from './linkValidator';
 
 const connectorDefaultColor = symphony.palette.secondary;
 export const {classes} = jss
@@ -117,21 +119,17 @@ function isLinkValid(flow: ?FlowWrapper, newLink: ILinkModel) {
   }
   const portSource = getLinkEndpointPort(flow, newLink.attributes.source);
   const portTarget = getLinkEndpointPort(flow, newLink.attributes.target);
-
   if (portSource == null || portTarget == null) {
     return false;
   }
-
   if (portSource.group === portTarget.group) {
     return false;
   }
-
   if (portSource.group === PORTS_GROUPS.INPUT) {
     const originalSource = newLink.attributes.source;
     newLink.source(newLink.attributes.target);
     newLink.target(originalSource);
   }
-
   return true;
 }
 
@@ -164,7 +162,6 @@ export function buildPaperConnectionValidation(
     }
 
     const blockInputPort = block.getInputPort();
-
     return portId === blockInputPort?.id;
   };
 
@@ -191,12 +188,36 @@ export function buildPaperConnectionValidation(
       if (sourceBlockId === targetBlockId) {
         return false;
       }
-
       const sourcePortId = magnetS.getAttribute('port');
       const sourceBlock = flowWrapper.current?.blocks.get(sourceBlockId);
-
       const targetPortId = magnetT.getAttribute('port');
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
+
+      const {
+        containerBlock,
+        targetBlockValid,
+        sourceBlockValid,
+      } = findAreaContainer(flowWrapper, sourceBlock, targetBlock);
+
+      if (
+        (isOutputPort(sourceBlock, sourcePortId) &&
+          isInputPort(targetBlock, targetPortId)) ||
+        (isInputPort(sourceBlock, sourcePortId) &&
+          isOutputPort(targetBlock, targetPortId))
+      ) {
+        if (containerBlock) {
+          const validationConection = validatorContainerConection(
+            targetBlockValid,
+            sourceBlockValid,
+            targetBlock,
+            sourceBlock,
+            isInputPort,
+            targetPortId,
+            sourcePortId,
+          );
+          return validationConection;
+        }
+      }
 
       return (
         (isOutputPort(sourceBlock, sourcePortId) &&
