@@ -18,7 +18,5 @@ export const initialUpdateInventorySettings: UpdateInventorySettings = {
 };
 
 export const setUpdateInventorySettings: UpdateInventorySettings = newUpdateInventorySettings => {
-  return {
-    newUpdateInventorySettings,
-  };
+  return newUpdateInventorySettings;
 };

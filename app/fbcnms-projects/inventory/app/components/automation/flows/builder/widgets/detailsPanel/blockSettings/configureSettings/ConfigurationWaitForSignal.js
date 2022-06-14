@@ -8,14 +8,17 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
-import Switch from '../../inputs/Switch';
-import Select from '../../inputs/Select';
-import TextField from '../../inputs/TextField';
 import CodeEditor from '../../inputs/CodeEditor';
+import Select from '../../inputs/Select';
+import Switch from '../../inputs/Switch';
+import TextField from '../../inputs/TextField';
 import {Grid} from '@material-ui/core';
-import {useForm} from '../../../../../utils/useForm';
 import {makeStyles} from '@material-ui/core/styles';
+import {useEffect} from 'react';
+import {useForm} from '../../../../../utils/useForm';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -27,19 +30,33 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ConfigurationWaitForSignal = () => {
-  const [configurationsValues, handleInputChange] = useForm({
-    signalModule: '',
-    blockUntilReception: false,
-    signalType: '',
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+const ConfigurationWaitForSignal = ({block}: Props) => {
+  const {settings} = block;
+  const [waitForSignalSettingsValues, handleInputChange] = useForm({
+    signalModule: settings?.signalModule || '',
+    blockUntilReception: settings?.blockUntilReception || false,
+    signalType: settings?.signalType || '',
+    customFilter: settings?.customFilter || '',
   });
 
-  const {signalModule, blockUntilReception, signalType} = configurationsValues;
+  const {
+    signalModule,
+    blockUntilReception,
+    signalType,
+    customFilter,
+  } = waitForSignalSettingsValues;
 
   const signalTypes = [
     {name: 'WOCreation', id: 'wo_creation'},
     {name: 'InvUpdate', id: 'in_update'},
   ];
+  useEffect(() => {
+    block.setSettings(waitForSignalSettingsValues);
+  }, [waitForSignalSettingsValues]);
 
   const classes = useStyles();
 
@@ -75,6 +92,9 @@ const ConfigurationWaitForSignal = () => {
         <CodeEditor
           mode="json"
           title={'Custom Filter'}
+          value={customFilter}
+          name={'customFilter'}
+          onChange={handleInputChange}
         />
       </Grid>
     </>

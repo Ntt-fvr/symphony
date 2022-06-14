@@ -18,7 +18,5 @@ export const initialCreateWorkorderSettings: CreateWorkorderSettings = {
 };
 
 export const setCreateWorkorderSettings: CreateWorkorderSettings = newCreateWorkorderSettings => {
-  return {
-    newCreateWorkorderSettings,
-  };
+  return newCreateWorkorderSettings;
 };

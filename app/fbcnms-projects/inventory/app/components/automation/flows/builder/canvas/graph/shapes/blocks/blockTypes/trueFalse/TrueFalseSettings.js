@@ -18,7 +18,5 @@ export const initialTrueFalseSettings: TrueFalseSettings = {
 };
 
 export const setTrueFalseSettings: TrueFalseSettings = newTrueFalseSettings => {
-  return {
-    newTrueFalseSettings,
-  };
+  return newTrueFalseSettings;
 };

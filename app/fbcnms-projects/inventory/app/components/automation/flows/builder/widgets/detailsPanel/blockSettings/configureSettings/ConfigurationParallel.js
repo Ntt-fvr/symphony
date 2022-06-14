@@ -8,12 +8,15 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
-import Switch from '../../inputs/Switch';
 import CodeEditor from '../../inputs/CodeEditor';
+import Switch from '../../inputs/Switch';
 import {Grid} from '@material-ui/core';
-import {useForm} from '../../../../../utils/useForm';
 import {makeStyles} from '@material-ui/core/styles';
+import {useEffect} from 'react';
+import {useForm} from '../../../../../utils/useForm';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -26,13 +29,23 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ConfigurationParallel = () => {
-  const [configurationsValues, handleInputChange] = useForm({
-    conditioned: false,
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+const ConfigurationParallel = ({block}: Props) => {
+  const {settings} = block;
+  const [parallelSettingsValues, handleInputChange] = useForm({
+    conditioned: settings?.conditioned || false,
+    condition: settings?.condition || '',
   });
 
-  const {conditioned} = configurationsValues;
+  const {conditioned, condition} = parallelSettingsValues;
   const classes = useStyles();
+
+  useEffect(() => {
+    block.setSettings(parallelSettingsValues);
+  }, [parallelSettingsValues]);
 
   return (
     <>
@@ -48,7 +61,10 @@ const ConfigurationParallel = () => {
         <Grid item xs={12} className={classes.gridCodeEditor}>
           <CodeEditor
             mode="json"
-            title={'Expression Language'}
+            title={'Condition'}
+            value={condition}
+            name={'condition'}
+            onChange={handleInputChange}
           />
         </Grid>
       )}

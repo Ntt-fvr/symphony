@@ -18,7 +18,5 @@ export const initialUpdateWorkforceSettings: UpdateWorkforceSettings = {
 };
 
 export const setUpdateWorkforceSettings: UpdateWorkforceSettings = newUpdateWorkforceSettings => {
-  return {
-    newUpdateWorkforceSettings,
-  };
+  return newUpdateWorkforceSettings;
 };

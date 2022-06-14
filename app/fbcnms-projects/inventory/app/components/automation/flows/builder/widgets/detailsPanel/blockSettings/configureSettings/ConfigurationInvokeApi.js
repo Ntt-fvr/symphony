@@ -8,13 +8,16 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
+import CodeEditor from '../../inputs/CodeEditor';
 import Select from '../../inputs/Select';
 import TextField from '../../inputs/TextField';
-import CodeEditor from '../../inputs/CodeEditor';
 import {Grid} from '@material-ui/core';
-import {useForm} from '../../../../../utils/useForm';
 import {makeStyles} from '@material-ui/core/styles';
+import {useEffect} from 'react';
+import {useForm} from '../../../../../utils/useForm';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -25,8 +28,12 @@ const useStyles = makeStyles(() => ({
     marginTop: '-31px',
   },
 }));
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
 
-const ConfigurationInvokeApi = () => {
+const ConfigurationInvokeApi = ({block}: Props) => {
+  const {settings} = block;
   const urlMethods = [
     {name: 'GET', id: 'get'},
     {name: 'POST', id: 'post'},
@@ -34,12 +41,12 @@ const ConfigurationInvokeApi = () => {
     {name: 'DELETE', id: 'delete'},
   ];
 
-  const [configurationsValues, handleInputChange] = useForm({
-    urlMethod: '',
-    connectionTimeout: 0,
-    urlAddress: '',
-    headers: '',
-    body: '',
+  const [invokeApiSettingsValues, handleInputChange] = useForm({
+    urlMethod: settings?.urlMethod || '',
+    connectionTimeout: settings?.connectionTimeout || 0,
+    urlAddress: settings?.urlAddress || '',
+    headers: settings?.headers || '',
+    body: settings?.body || '',
   });
 
   const {
@@ -48,7 +55,11 @@ const ConfigurationInvokeApi = () => {
     urlAddress,
     headers,
     body,
-  } = configurationsValues;
+  } = invokeApiSettingsValues;
+
+  useEffect(() => {
+    block.setSettings(invokeApiSettingsValues);
+  }, [invokeApiSettingsValues]);
 
   const classes = useStyles();
 
@@ -64,7 +75,13 @@ const ConfigurationInvokeApi = () => {
         />
       </Grid>
       <Grid item xs={12} className={classes.gridCodeEditor}>
-        <CodeEditor mode="xml" title={'URL'} />
+        <CodeEditor
+          value={urlAddress}
+          name={'urlAddress'}
+          onChange={handleInputChange}
+          mode="xml"
+          title={'URL'}
+        />
       </Grid>
       <Grid item xs={12} className={classes.grid}>
         <TextField
@@ -76,10 +93,22 @@ const ConfigurationInvokeApi = () => {
         />
       </Grid>
       <Grid item xs={12} className={classes.gridCodeEditor}>
-        <CodeEditor mode="json" title={'Headers'} />
+        <CodeEditor
+          value={headers}
+          name={'headers'}
+          onChange={handleInputChange}
+          mode="json"
+          title={'Headers'}
+        />
       </Grid>
       <Grid item xs={12} className={classes.gridCodeEditor}>
-        <CodeEditor mode="json" title={'Body'} />
+        <CodeEditor
+          mode="json"
+          title={'Body Content'}
+          value={body}
+          name={'body'}
+          onChange={handleInputChange}
+        />
       </Grid>
     </>
   );

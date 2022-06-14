@@ -43,26 +43,26 @@ type BlockTabs = $ReadOnly<{|
 
 const blocksTabs: Array<BlockTabs> = [
   // Actions
-  {type: CreateWorkorderType, allowedTabs: []},
-  {type: ExecuteFlowType, allowedTabs: []},
-  {type: ExecuteNetworkActionType, allowedTabs: []},
-  {type: InvokeRestApiType, allowedTabs: []},
-  {type: UpdateInventoryType, allowedTabs: []},
-  {type: UpdateWorkforceType, allowedTabs: []},
+  {type: CreateWorkorderType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
+  {type: ExecuteFlowType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
+  {type: ExecuteNetworkActionType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
+  {type: InvokeRestApiType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
+  {type: UpdateInventoryType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
+  {type: UpdateWorkforceType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
   // Administrative
   {type: ManualStartType, allowedTabs: []},
-  {type: EndType, allowedTabs: [INPUT_TYPE, ERROR_TYPE]},
+  {type: EndType, allowedTabs: []},
   // Logic
-  {type: DecisionType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE]},
+  {type: DecisionType, allowedTabs: [ERROR_TYPE]},
   {type: ForEachLoopType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE, ERROR_TYPE]},
-  {type: GoToType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
-  {type: ParallelType, allowedTabs: []},
+  {type: GoToType, allowedTabs: [ERROR_TYPE]},
+  {type: ParallelType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE, ERROR_TYPE]},
   {type: TrueFalseType, allowedTabs: []},
   // Triggers
-  {type: TimerType, allowedTabs: []},
-  {type: TriggerStartType, allowedTabs: []},
-  {type: TriggerWorkforceType, allowedTabs: []},
-  {type: WaitSignalType, allowedTabs: []},
+  {type: TimerType, allowedTabs: [ERROR_TYPE]},
+  {type: TriggerStartType, allowedTabs: [ERROR_TYPE]},
+  {type: TriggerWorkforceType, allowedTabs: [ERROR_TYPE]},
+  {type: WaitSignalType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
 ];
 
 const getTabById = (id: string, index: number, block: IBlock) => {

@@ -18,7 +18,5 @@ export const initialTimerSettings: TimerSettings = {
 };
 
 export const setTimerSettings: TimerSettings = newTimerSettings => {
-  return {
-    newTimerSettings,
-  };
+  return newTimerSettings;
 };
