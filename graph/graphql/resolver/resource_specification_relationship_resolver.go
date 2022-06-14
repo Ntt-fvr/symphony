@@ -33,13 +33,13 @@ func (r resourceSpecificationRelationshipResolver) ResourceSpecificationItems(ct
 	return variable, nil
 }
 
-func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.Context, input models.AddResourceSpecificationRelationShipListInput) ([]*ent.ResourceSpecificationRelationship, error) {
+func (r mutationResolver) AddResourceSpecificationRelationshipList(ctx context.Context, input []*models.AddResourceSpecificationRelationshipInput) ([]*ent.ResourceSpecificationRelationship, error) {
 	var resourceSpecification []*ent.ResourceSpecificationRelationship
-	for _, resource_specification := range input.NameList {
+	for _, resource_specification_relationship := range input {
 		client := r.ClientFrom(ctx)
 		typ, err := client.ResourceSpecificationRelationship.Create().
-			SetName(resource_specification.Name).
-			SetResourcespecificationID(input.ResourceSpecification).
+			SetName(resource_specification_relationship.Name).
+			SetResourcespecificationID(resource_specification_relationship.ResourceSpecification).
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {
@@ -47,38 +47,22 @@ func (r mutationResolver) AddResourceSpecificationRelationShipList(ctx context.C
 			}
 			return nil, fmt.Errorf("has occurred error on process: %w", err)
 		}
+		if len(resource_specification_relationship.ResourceSpecificationList) > 0 {
+			for _, RSL := range resource_specification_relationship.ResourceSpecificationList {
+				inputItem := models.AddResourceSpecificationItemsInput{
+					ResourceSpecificationRelationship: typ.ID,
+					ResourceSpecification:             RSL,
+				}
+				_, err := r.AddResourceSpecificationItems(ctx, inputItem)
+				if err != nil {
+					return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+				}
+			}
+		}
 		resourceSpecification = append(resourceSpecification, typ)
 	}
 
 	return resourceSpecification, nil
-}
-
-func (r mutationResolver) AddResourceSpecificationRelationshipItemsList(ctx context.Context, input models.AddResourceSpecificationRelationshipList) (*ent.ResourceSpecificationRelationship, error) {
-	client := r.ClientFrom(ctx)
-	typ, err := client.ResourceSpecificationRelationship.
-		Create().
-		SetName(input.Name).
-		SetNillableResourcespecificationID(&input.ResourceSpecification).
-		Save(ctx)
-	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
-		}
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
-	}
-	if len(input.ResourceSpecificationRelationshipItems) > 0 {
-		for _, item := range input.ResourceSpecificationRelationshipItems {
-			inputItem := models.AddResourceSpecificationItemsInput{
-				ResourceSpecificationRelationship: typ.ID,
-				ResourceSpecification:             item.IDDestino,
-			}
-			_, err := r.AddResourceSpecificationItems(ctx, inputItem)
-			if err != nil {
-				return nil, fmt.Errorf("has ocurred error on proces: %v", err)
-			}
-		}
-	}
-	return typ, nil
 }
 
 func (r mutationResolver) AddResourceSpecificationRelationship(ctx context.Context, input models.AddResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error) {
@@ -93,6 +77,18 @@ func (r mutationResolver) AddResourceSpecificationRelationship(ctx context.Conte
 			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
 		}
 		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	if len(input.ResourceSpecificationList) > 0 {
+		for _, RSL := range input.ResourceSpecificationList {
+			inputItem := models.AddResourceSpecificationItemsInput{
+				ResourceSpecificationRelationship: typ.ID,
+				ResourceSpecification:             RSL,
+			}
+			_, err := r.AddResourceSpecificationItems(ctx, inputItem)
+			if err != nil {
+				return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+			}
+		}
 	}
 	return typ, nil
 }
