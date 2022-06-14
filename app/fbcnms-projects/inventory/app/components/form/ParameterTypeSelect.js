@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {PropertyType} from '../../common/PropertyType';
+import type {ParameterType} from '../../common/ParameterType';
 
 import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
 import React, {useContext, useMemo} from 'react';
@@ -26,13 +26,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 type Props = $ReadOnly<{|
-  propertyType: PropertyType,
-  onPropertyTypeChange?: (propertyType: PropertyType) => void,
+  parameterType: ParameterType,
+  onParameterTypeChange?: (propertyType: ParameterType) => void,
 |}>;
 
-const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
+const ParameterTypeSelect = ({parameterType, onParameterTypeChange}: Props) => {
   const classes = useStyles();
-  const dispatch = useContext(ParameterTypesTableDispatcher);
+  const {dispatch} = useContext(ParameterTypesTableDispatcher);
   const getOptionKey = (type: string) =>
     `${ParameterTypeLabels[type].kind}_${type}`;
 
@@ -56,12 +56,12 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
         op =>
           op.key ===
           getOptionKey(
-            propertyType.nodeType != null && propertyType.nodeType != ''
-              ? propertyType.nodeType
-              : propertyType.type,
+            parameterType.nodeType != null && parameterType.nodeType != ''
+              ? parameterType.nodeType
+              : parameterType.type,
           ),
       ),
-    [options, propertyType],
+    [options, parameterType],
   );
 
   return (
@@ -72,15 +72,15 @@ const ParameterTypeSelect = ({propertyType, onPropertyTypeChange}: Props) => {
         selectedValueIndex > -1 ? options[selectedValueIndex].value : null
       }
       onChange={value => {
-        onPropertyTypeChange &&
-          onPropertyTypeChange({
-            ...propertyType,
+        onParameterTypeChange &&
+          onParameterTypeChange({
+            ...parameterType,
             type: value.kind,
             nodeType: value.nodeType,
           });
         dispatch({
           type: 'UPDATE_PARAMETER_TYPE_KIND',
-          id: propertyType.id,
+          id: parameterType.id,
           kind: value.kind,
           nodeType: value.nodeType,
         });

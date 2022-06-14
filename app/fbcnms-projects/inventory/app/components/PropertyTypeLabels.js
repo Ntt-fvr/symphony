@@ -8,6 +8,7 @@
  * @format
  */
 
+import type {ParameterTypeInfo} from '../common/ParameterType';
 import type {PropertyTypeInfo} from './form/PropertyTypeTable';
 
 import fbt from 'fbt';
@@ -79,15 +80,7 @@ export const PropertyTypeLabels: {[string]: PropertyTypeInfo} = {
     kind: 'node',
   },
 };
-export const ParameterTypeLabels: {[string]: PropertyTypeInfo} = {
-  date: {
-    label: fbt('Date', ''),
-    kind: 'date',
-  },
-  datetime_local: {
-    label: fbt('Date & Time', ''),
-    kind: 'datetime_local',
-  },
+export const ParameterTypeLabels: {[string]: ParameterTypeInfo} = {
   int: {
     label: fbt('Number', ''),
     kind: 'int',
@@ -99,22 +92,6 @@ export const ParameterTypeLabels: {[string]: PropertyTypeInfo} = {
   string: {
     label: fbt('Text', ''),
     kind: 'string',
-  },
-  email: {
-    label: fbt('Email', ''),
-    kind: 'email',
-  },
-  gps_location: {
-    label: fbt('Coordinates', ''),
-    kind: 'gps_location',
-  },
-  bool: {
-    label: fbt('True or False', ''),
-    kind: 'bool',
-  },
-  range: {
-    label: fbt('Range', ''),
-    kind: 'range',
   },
   enum: {
     label: fbt('Multiple choice', ''),

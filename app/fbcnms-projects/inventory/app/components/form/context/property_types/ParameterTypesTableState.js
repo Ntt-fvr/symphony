@@ -8,39 +8,49 @@
  * @format
  */
 
+import type {ParameterType} from '../../../../common/ParameterType';
 import type {ParameterTypeTableDispatcherActionType} from './ParameterTypeTableDispatcherActionType';
-import type {PropertyType} from '../../../../common/PropertyType';
 
 import {generateTempId} from '../../../../common/EntUtils';
 import {getInitialState, reducerParameter} from './ParameterTypesTableReducer';
 import {useReducer} from 'react';
 
-export type ParameterTypesTableState = Array<PropertyType>;
+export type ParameterTypesTableState = Array<ParameterType>;
 
-export const getInitialParameterType = (index: number): PropertyType => ({
-  id: generateTempId(),
-  name: '',
-  index: index,
-  type: 'string',
-  nodeType: null,
+export const getInitialParameterType = (
+  index: number,
+  resourceSpecification: string = '',
+): ParameterType => ({
   booleanValue: false,
-  stringValue: null,
-  intValue: null,
+  category: null,
+  externalId: null,
   floatValue: null,
-  latitudeValue: null,
-  longitudeValue: null,
-  rangeFromValue: null,
-  rangeToValue: null,
+  id: generateTempId(),
+  index: index,
+  intValue: null,
+  isDeleted: null,
   isEditable: true,
-  isInstanceProperty: true,
+  isListable: null,
+  isMandatory: null,
+  isPrioritary: false,
+  mappingIn: null,
+  mappingOut: null,
+  name: '',
+  nodeType: null,
+  parameters: null,
+  rawValue: null,
+  resourceSpecification,
+  stringValue: null,
+  tags: null,
+  type: 'string',
 });
 
 export const useParameterTypesReducer = (
-  initialParameterTypes: Array<PropertyType>,
+  initialParameterTypes: Array<ParameterType>,
 ) => {
   return useReducer<
     ParameterTypesTableState,
     ParameterTypeTableDispatcherActionType,
-    Array<PropertyType>,
+    Array<ParameterType>,
   >(reducerParameter, initialParameterTypes, getInitialState);
 };
