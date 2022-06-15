@@ -108,6 +108,7 @@ type ResolverRoot interface {
 	ResourcePropertyType() ResourcePropertyTypeResolver
 	ResourceSpecification() ResourceSpecificationResolver
 	ResourceSpecificationItems() ResourceSpecificationItemsResolver
+	ResourceSpecificationRelationship() ResourceSpecificationRelationshipResolver
 	Rule() RuleResolver
 	RuleType() RuleTypeResolver
 	Service() ServiceResolver
@@ -1806,6 +1807,7 @@ type ComplexityRoot struct {
 		Name                              func(childComplexity int) int
 		Quantity                          func(childComplexity int) int
 		ResourcePropertyTypes             func(childComplexity int) int
+		ResourceSpecificationItems        func(childComplexity int) int
 		ResourceSpecificationRelationship func(childComplexity int) int
 		Resourcetype                      func(childComplexity int) int
 	}
@@ -1839,9 +1841,10 @@ type ComplexityRoot struct {
 	}
 
 	ResourceSpecificationRelationship struct {
-		ID                    func(childComplexity int) int
-		Name                  func(childComplexity int) int
-		Resourcespecification func(childComplexity int) int
+		ID                         func(childComplexity int) int
+		Name                       func(childComplexity int) int
+		ResourceSpecificationItems func(childComplexity int) int
+		Resourcespecification      func(childComplexity int) int
 	}
 
 	ResourceSpecificationRelationshipConnection struct {
@@ -2937,6 +2940,9 @@ type ResourceSpecificationResolver interface {
 }
 type ResourceSpecificationItemsResolver interface {
 	ResourceSpecification(ctx context.Context, obj *ent.ResourceSpecificationItems) (*ent.ResourceSpecification, error)
+}
+type ResourceSpecificationRelationshipResolver interface {
+	ResourceSpecificationItems(ctx context.Context, obj *ent.ResourceSpecificationRelationship) ([]*ent.ResourceSpecificationItems, error)
 }
 type RuleResolver interface {
 	RuleLimit(ctx context.Context, obj *ent.Rule) ([]*ent.RuleLimit, error)
@@ -12187,6 +12193,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceSpecification.ResourcePropertyTypes(childComplexity), true
 
+	case "ResourceSpecification.resourceSpecificationItems":
+		if e.complexity.ResourceSpecification.ResourceSpecificationItems == nil {
+			break
+		}
+
+		return e.complexity.ResourceSpecification.ResourceSpecificationItems(childComplexity), true
+
 	case "ResourceSpecification.resourceSpecificationRelationship":
 		if e.complexity.ResourceSpecification.ResourceSpecificationRelationship == nil {
 			break
@@ -12305,6 +12318,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResourceSpecificationRelationship.Name(childComplexity), true
+
+	case "ResourceSpecificationRelationship.resourceSpecificationItems":
+		if e.complexity.ResourceSpecificationRelationship.ResourceSpecificationItems == nil {
+			break
+		}
+
+		return e.complexity.ResourceSpecificationRelationship.ResourceSpecificationItems(childComplexity), true
 
 	case "ResourceSpecificationRelationship.resourceSpecification":
 		if e.complexity.ResourceSpecificationRelationship.Resourcespecification == nil {
@@ -24602,6 +24622,7 @@ type ResourceSpecification implements Node {
   resourceType: ResourceType
   resourcePropertyTypes: [ResourcePropertyType]!  
   resourceSpecificationRelationship: [ResourceSpecificationRelationship]
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 input AddResourceSpecificationInput {  
   name: String!
@@ -24635,6 +24656,7 @@ type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
   resourceSpecification: ResourceSpecification!
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 
 input AddResourceSpecificationRelationshipInput {  
@@ -74277,6 +74299,38 @@ func (ec *executionContext) _ResourceSpecification_resourceSpecificationRelation
 	return ec.marshalOResourceSpecificationRelationship2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ResourceSpecification_resourceSpecificationItems(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecification) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourceSpecification",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceSpecificationItems(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.ResourceSpecificationItems)
+	fc.Result = res
+	return ec.marshalOResourceSpecificationItems2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationItems(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ResourceSpecificationConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -74826,6 +74880,38 @@ func (ec *executionContext) _ResourceSpecificationRelationship_resourceSpecifica
 	res := resTmp.(*ent.ResourceSpecification)
 	fc.Result = res
 	return ec.marshalNResourceSpecification2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecification(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ResourceSpecificationRelationship_resourceSpecificationItems(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationRelationship) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ResourceSpecificationRelationship",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ResourceSpecificationRelationship().ResourceSpecificationItems(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.ResourceSpecificationItems)
+	fc.Result = res
+	return ec.marshalOResourceSpecificationItems2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationItems(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceSpecificationRelationshipConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceSpecificationRelationshipConnection) (ret graphql.Marshaler) {
@@ -115525,6 +115611,17 @@ func (ec *executionContext) _ResourceSpecification(ctx context.Context, sel ast.
 				res = ec._ResourceSpecification_resourceSpecificationRelationship(ctx, field, obj)
 				return res
 			})
+		case "resourceSpecificationItems":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourceSpecification_resourceSpecificationItems(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -115753,6 +115850,17 @@ func (ec *executionContext) _ResourceSpecificationRelationship(ctx context.Conte
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
+				return res
+			})
+		case "resourceSpecificationItems":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourceSpecificationRelationship_resourceSpecificationItems(ctx, field, obj)
 				return res
 			})
 		default:
@@ -134201,6 +134309,46 @@ func (ec *executionContext) unmarshalOResourceSpecificationFilterInput2ᚕᚖgit
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) marshalOResourceSpecificationItems2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationItems(ctx context.Context, sel ast.SelectionSet, v []*ent.ResourceSpecificationItems) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOResourceSpecificationItems2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationItems(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOResourceSpecificationItems2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationItems(ctx context.Context, sel ast.SelectionSet, v *ent.ResourceSpecificationItems) graphql.Marshaler {
