@@ -18,7 +18,5 @@ export const initialWaitSignalSettings: WaitSignalSettings = {
 };
 
 export const setWaitSignalSettings: WaitSignalSettings = newWaitSignalSettings => {
-  return {
-    newWaitSignalSettings,
-  };
+  return newWaitSignalSettings;
 };

@@ -18,7 +18,5 @@ export const initialInvokeRestApiSettings: InvokeRestApiSettings = {
 };
 
 export const setInvokeRestApiSettings: InvokeRestApiSettings = newInvokeRestApiSettings => {
-  return {
-    newInvokeRestApiSettings,
-  };
+  return newInvokeRestApiSettings;
 };

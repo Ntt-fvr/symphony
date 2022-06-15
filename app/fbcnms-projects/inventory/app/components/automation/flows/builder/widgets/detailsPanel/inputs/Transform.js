@@ -7,6 +7,7 @@
  * @flow
  * @format
  */
+
 import CodeEditor from './CodeEditor';
 import React from 'react';
 import Select from './Select';
@@ -29,16 +30,33 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Transform = ({
-  inputTransformValue,
-  inputTransformName,
-  inputTransformLabel,
-  inputStrategyValue,
-  inputStrategyName,
-  inputStrategyLabel,
-  strategies,
-  handleInputChange,
-}) => {
+type Props = $ReadOnly<{|
+  // TODO Revisar tipado
+  inputTransformValue: string,
+  inputTransformName: string,
+  inputTransformLabel: string,
+  inputStrategyValue: string,
+  inputStrategyName: string,
+  inputStrategyLabel: string,
+  inputJsonValue: string,
+  strategies: string,
+  inputJsonName: string,
+  handleInputChange: () => void,
+|}>;
+
+const Transform = (props: Props) => {
+  const {
+    inputTransformValue,
+    inputTransformName,
+    inputTransformLabel,
+    inputStrategyValue,
+    inputStrategyName,
+    inputStrategyLabel,
+    inputJsonValue,
+    inputJsonName,
+    strategies,
+    handleInputChange,
+  } = props;
   const classes = useStyles();
 
   return (
@@ -79,7 +97,12 @@ const Transform = ({
           </Grid>
 
           <Grid item xs={12}>
-            <CodeEditor mode="json" />
+            <CodeEditor
+              mode="json"
+              value={inputJsonValue}
+              name={inputJsonName}
+              onChange={handleInputChange}
+            />
           </Grid>
         </>
       )}

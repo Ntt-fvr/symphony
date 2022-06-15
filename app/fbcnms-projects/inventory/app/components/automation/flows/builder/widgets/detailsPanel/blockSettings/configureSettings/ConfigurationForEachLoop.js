@@ -8,12 +8,15 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
-import Select from '../../inputs/Select';
 import CodeEditor from '../../inputs/CodeEditor';
+import Select from '../../inputs/Select';
 import {Grid} from '@material-ui/core';
-import {useForm} from '../../../../../utils/useForm';
 import {makeStyles} from '@material-ui/core/styles';
+import {useEffect} from 'react';
+import {useForm} from '../../../../../utils/useForm';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -25,7 +28,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ConfigurationForEachLoop = () => {
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+const ConfigurationForEachLoop = ({block}: Props) => {
+  const {settings} = block;
   const typeValues = [
     {name: 'Sequential', id: 'sequential'},
     {name: 'Parallel', id: 'parallel'},
@@ -33,18 +41,26 @@ const ConfigurationForEachLoop = () => {
 
   const classes = useStyles();
 
-  const [configurationsValues, handleInputChange] = useForm({
-    types: '',
+  const [forEachLoopSettingsValues, handleInputChange] = useForm({
+    types: settings?.types || '',
+    itemsArray: settings?.itemsArray || '',
   });
 
-  const {types} = configurationsValues;
+  const {types, itemsArray} = forEachLoopSettingsValues;
+
+  useEffect(() => {
+    block.setSettings(forEachLoopSettingsValues);
+  }, [forEachLoopSettingsValues]);
 
   return (
     <>
       <Grid item xs={12} className={classes.gridCodeEditor}>
         <CodeEditor
-          mode="javascript"
+          mode="json"
           title={'Items Array'}
+          value={itemsArray}
+          name={'itemsArray'}
+          onChange={handleInputChange}
         />
       </Grid>
       <Grid item xs={12} className={classes.grid}>

@@ -18,7 +18,5 @@ export const initialEndSettings: EndSettings = {
 };
 
 export const setEndSettings: EndSettings = newEndSettings => {
-  return {
-    newEndSettings,
-  };
+  return newEndSettings;
 };

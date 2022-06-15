@@ -8,22 +8,34 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
 import Select from '../../inputs/Select';
 import {Grid} from '@material-ui/core';
+import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
 
-const ConfigurationExecuteFlow = () => {
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+const ConfigurationExecuteFlow = ({block}: Props) => {
+  const {settings} = block;
   const flows = [
     {name: 'Flow 1', id: 'flow1'},
     {name: 'Flow 1', id: 'flow2'},
   ];
 
-  const [configurationsValues, handleInputChange] = useForm({
-    flow: '',
+  const [executeFlowSettingsValues, handleInputChange] = useForm({
+    flow: settings?.flow || '',
   });
 
-  const {flow} = configurationsValues;
+  const {flow} = executeFlowSettingsValues;
+
+  useEffect(() => {
+    block.setSettings(executeFlowSettingsValues);
+  }, [executeFlowSettingsValues]);
 
   return (
     <Grid item xs={12}>

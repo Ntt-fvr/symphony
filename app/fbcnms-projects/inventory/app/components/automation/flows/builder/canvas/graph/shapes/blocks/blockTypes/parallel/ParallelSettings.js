@@ -18,7 +18,5 @@ export const initialParallelSettings: ParallelSettings = {
 };
 
 export const setParallelSettings: ParallelSettings = newParallelSettings => {
-  return {
-    newParallelSettings,
-  };
+  return newParallelSettings;
 };

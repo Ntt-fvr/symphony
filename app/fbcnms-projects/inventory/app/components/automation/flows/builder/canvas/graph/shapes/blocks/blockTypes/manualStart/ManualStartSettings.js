@@ -18,7 +18,5 @@ export const initialManualStartSettings: ManualStartSettings = {
 };
 
 export const setManualStartSettings: ManualStartSettings = newManualStartSettings => {
-  return {
-    newManualStartSettings,
-  };
+  return newManualStartSettings;
 };

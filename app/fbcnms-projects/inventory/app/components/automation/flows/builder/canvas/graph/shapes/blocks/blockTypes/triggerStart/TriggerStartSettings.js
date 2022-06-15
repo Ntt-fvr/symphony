@@ -18,7 +18,5 @@ export const initialTriggerStartSettings: TriggerStartSettings = {
 };
 
 export const setTriggerStartSettings: TriggerStartSettings = newTriggerStartSettings => {
-  return {
-    newTriggerStartSettings,
-  };
+  return newTriggerStartSettings;
 };

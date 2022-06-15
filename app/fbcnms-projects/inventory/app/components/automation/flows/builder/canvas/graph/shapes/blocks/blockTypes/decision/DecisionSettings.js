@@ -18,7 +18,5 @@ export const initialDecisionSettings: DecisionSettings = {
 };
 
 export const setDecisionSettings: DecisionSettings = newDecisionSettings => {
-  return {
-    newDecisionSettings,
-  };
+  return newDecisionSettings;
 };

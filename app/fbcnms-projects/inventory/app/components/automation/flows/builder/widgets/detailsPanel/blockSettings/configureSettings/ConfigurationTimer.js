@@ -8,15 +8,17 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
+import CodeEditor from '../../inputs/CodeEditor';
 import Select from '../../inputs/Select';
 import Switch from '../../inputs/Switch';
 import TextField from '../../inputs/TextField';
-import CodeEditor from '../../inputs/CodeEditor';
 import {Grid} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
-import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -31,7 +33,12 @@ const useStyles = makeStyles(() => ({
 
 const FIXED_INTERVAL = 'fixed_interval';
 
-const ConfigurationTimer = () => {
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
+
+const ConfigurationTimer = ({block}: Props) => {
+  const {settings} = block;
   const behaviors = [
     {name: 'Fixed Interval', id: 'fixed_interval'},
     {name: 'Specific date and time', id: 'date_time'},
@@ -40,11 +47,7 @@ const ConfigurationTimer = () => {
     {name: 'Date', id: 'date'},
     {name: 'Time and Timezone?', id: 'time_and_timezone'},
   ];
-  const [
-    configurationsValues,
-    handleInputChange,
-    handleAllInputChange,
-  ] = useForm({
+  const [settingsValues, handleInputChange, handleAllInputChange] = useForm({
     behavior: 'fixed_interval',
     expressionLanguage: false,
     timerSignal: false,
@@ -57,6 +60,10 @@ const ConfigurationTimer = () => {
 
   const classes = useStyles();
 
+  useEffect(() => {
+    block.setSettings(settingsValues);
+  }, [settingsValues]);
+
   const {
     behavior,
     expressionLanguage,
@@ -66,10 +73,10 @@ const ConfigurationTimer = () => {
     timerSignal,
     pointingFixedInterval,
     pointingDateTime,
-  } = configurationsValues;
+  } = settingsValues;
 
   useEffect(() => {
-    const copy = Object.assign({}, configurationsValues);
+    const copy = Object.assign({}, settingsValues);
     copy['secondsNumber'] = 0;
     copy['secondsExpression'] = '';
     copy['dateTimerExpression'] = '';

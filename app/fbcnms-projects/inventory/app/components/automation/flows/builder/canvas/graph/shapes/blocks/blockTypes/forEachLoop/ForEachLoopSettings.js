@@ -18,7 +18,5 @@ export const initialForEachLoopSettings: ForEachLoopSettings = {
 };
 
 export const setForEachLoopSettings: ForEachLoopSettings = newForEachLoopSettings => {
-  return {
-    newForEachLoopSettings,
-  };
+  return newForEachLoopSettings;
 };

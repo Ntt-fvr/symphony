@@ -9,14 +9,10 @@
  */
 'use strict';
 
-type GoToSettings = $ReadOnly<{|
-  goToSettings: string,
-|}>;
-
-export const initialGoToSettings: GoToSettings = {
-  goToSettings: 'GoToSettings',
+export const initialInputSettings = {
+  initialInputSettings: 'initialInputSettings',
 };
 
-export const setGoToSettings: GoToSettings = newGoToSettings => {
-  return newGoToSettings;
+export const setInputSettings = newInputSettings => {
+  return newInputSettings;
 };
