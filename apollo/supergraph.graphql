@@ -1,4 +1,3 @@
-
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -34,15 +33,21 @@ input ActionBlockInput {
 }
 
 type ActionExecution {
+  endTime: DateTime
   id: ID!
   items(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
   itemsAggregate(filter: ActionExecutionItemFilter): ActionExecutionItemAggregateResult
   scheduler(filter: ActionSchedulerFilter): ActionScheduler
+  starTime: DateTime!
   template(filter: ActionTemplateFilter): ActionTemplate
 }
 
 type ActionExecutionAggregateResult {
   count: Int
+  endTimeMax: DateTime
+  endTimeMin: DateTime
+  starTimeMax: DateTime
+  starTimeMin: DateTime
 }
 
 input ActionExecutionFilter {
@@ -54,15 +59,18 @@ input ActionExecutionFilter {
 }
 
 enum ActionExecutionHasFilter {
+  endTime
   items
   scheduler
+  starTime
   template
 }
 
 type ActionExecutionItem {
   action(filter: ActionExecutionFilter): ActionExecution!
   id: ID!
-  resource(filter: ResourceFilter): Resource!
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionExecutionItemStatus
 }
 
@@ -80,20 +88,20 @@ input ActionExecutionItemFilter {
 
 enum ActionExecutionItemHasFilter {
   action
-  resource
+  resources
   status
 }
 
 input ActionExecutionItemPatch {
   action: ActionExecutionRef
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
 input ActionExecutionItemRef {
   action: ActionExecutionRef
   id: ID
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
@@ -103,26 +111,45 @@ enum ActionExecutionItemStatus {
   SUCCESSFULL
 }
 
+input ActionExecutionOrder {
+  asc: ActionExecutionOrderable
+  desc: ActionExecutionOrderable
+  then: ActionExecutionOrder
+}
+
+enum ActionExecutionOrderable {
+  endTime
+  starTime
+}
+
 input ActionExecutionPatch {
+  endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
+  starTime: DateTime
   template: ActionTemplateRef
 }
 
 input ActionExecutionRef {
+  endTime: DateTime
   id: ID
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
+  starTime: DateTime
   template: ActionTemplateRef
 }
 
 type ActionScheduler {
-  action(filter: ActionExecutionFilter): ActionExecution!
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
+  actions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
+  actionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
   cron: String
   date: DateTime
   description: String!
   id: ID!
   name: String!
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
 }
@@ -148,11 +175,13 @@ input ActionSchedulerFilter {
 }
 
 enum ActionSchedulerHasFilter {
-  action
+  actionTemplate
+  actions
   cron
   date
   description
   name
+  resources
   status
   type
 }
@@ -171,22 +200,26 @@ enum ActionSchedulerOrderable {
 }
 
 input ActionSchedulerPatch {
-  action: ActionExecutionRef
+  actionTemplate: ActionTemplateRef
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String
   name: String
+  resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
 }
 
 input ActionSchedulerRef {
-  action: ActionExecutionRef
+  actionTemplate: ActionTemplateRef
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String
   id: ID
   name: String
+  resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
 }
@@ -350,14 +383,16 @@ input ActivityFilterInput {
 }
 
 input AddActionExecutionInput {
+  endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
+  starTime: DateTime!
   template: ActionTemplateRef
 }
 
 input AddActionExecutionItemInput {
   action: ActionExecutionRef!
-  resource: ResourceRef!
+  resources: [ResourceRef]!
   status: ActionExecutionItemStatus
 }
 
@@ -367,16 +402,18 @@ type AddActionExecutionItemPayload {
 }
 
 type AddActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   numUids: Int
 }
 
 input AddActionSchedulerInput {
-  action: ActionExecutionRef!
+  actionTemplate: ActionTemplateRef!
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String!
   name: String!
+  resources: [ResourceRef!]!
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
 }
@@ -1042,6 +1079,7 @@ type AddRelatedEntityPayload {
 }
 
 input AddResourceInput {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
@@ -1158,6 +1196,7 @@ input AddResourceSpecificationInput {
   quantity: Int
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
   resourceType: ID!
+  vendor: ID
 }
 
 input AddResourceSpecificationItemsInput {
@@ -1165,20 +1204,10 @@ input AddResourceSpecificationItemsInput {
   resourceSpecificationRelationship: ID!
 }
 
-input AddResourceSpecificationRelationShipListInput {
-  nameList: [ResourceSpecificationRelationShipListInput]!
-  resourceSpecification: ID!
-}
-
 input AddResourceSpecificationRelationshipInput {
   name: String!
   resourceSpecification: ID!
-}
-
-input AddResourceSpecificationRelationshipList {
-  name: String!
-  resourceSpecification: ID!
-  resourceSpecificationRelationshipItems: [ResourceSpecificationRelationshipItemsInput]
+  resourceSpecificationList: [ID]
 }
 
 input AddResourceTypeInput {
@@ -3123,7 +3152,7 @@ type DeleteActionExecutionItemPayload {
 }
 
 type DeleteActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   msg: String
   numUids: Int
 }
@@ -3837,6 +3866,7 @@ input EditResourceSpecificationInput {
   quantity: Int
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
   resourceType: ID
+  vendor: ID
 }
 
 input EditResourceSpecificationItemsInput {
@@ -6003,9 +6033,8 @@ type Mutation {
   addResourceReference(input: [AddResourceReferenceInput!]!, upsert: Boolean): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   addResourceSpecification(input: AddResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems! @join__field(graph: SYMPHONY)
-  addResourceSpecificationRelationShipList(input: AddResourceSpecificationRelationShipListInput!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
-  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
+  addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   addResourceType(input: AddResourceTypeInput!): ResourceType! @join__field(graph: SYMPHONY)
   addResourceTypeRelationship(input: AddResourceTypeRelationshipInput!): ResourceTypeRelationship! @join__field(graph: SYMPHONY)
   addRule(input: AddRuleInput!): Rule! @join__field(graph: SYMPHONY)
@@ -8312,7 +8341,7 @@ type Query {
     orderBy: PropertyTypeValueOrder
   ): PropertyTypeValueConnection! @join__field(graph: SYMPHONY)
   pythonPackages: [PythonPackage!]! @join__field(graph: SYMPHONY)
-  queryActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution] @join__field(graph: DGRAPHSERVICE)
+  queryActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution] @join__field(graph: DGRAPHSERVICE)
   queryActionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem] @join__field(graph: DGRAPHSERVICE)
   queryActionScheduler(filter: ActionSchedulerFilter, first: Int, offset: Int, order: ActionSchedulerOrder): [ActionScheduler] @join__field(graph: DGRAPHSERVICE)
   queryActionTemplate(filter: ActionTemplateFilter, first: Int, offset: Int, order: ActionTemplateOrder): [ActionTemplate] @join__field(graph: DGRAPHSERVICE)
@@ -8882,6 +8911,7 @@ input ReportFilterInput {
 }
 
 type Resource {
+  actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
@@ -8937,6 +8967,7 @@ input ResourceFilter {
 }
 
 enum ResourceHasFilter {
+  actionScheduler
   available
   belongsTo
   composedOf
@@ -9105,6 +9136,7 @@ enum ResourceOrderable {
 }
 
 input ResourcePatch {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
@@ -9290,6 +9322,7 @@ type ResourcePropertyType implements Node {
 }
 
 input ResourceRef {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
@@ -9389,7 +9422,10 @@ type ResourceSpecification implements Node {
   name: String!
   quantity: Int
   resourcePropertyTypes: [ResourcePropertyType]!
+  resourceSpecificationItems: [ResourceSpecificationItems]
+  resourceSpecificationRelationship: [ResourceSpecificationRelationship]
   resourceType: ResourceType
+  vendor: Vendor
 }
 
 """A connection to a list of ResourceSpecification."""
@@ -9423,6 +9459,7 @@ input ResourceSpecificationFilterInput {
 }
 
 enum ResourceSpecificationFilterType {
+  ID
   NAME
   RESOURCE_TYPE
 }
@@ -9490,14 +9527,11 @@ enum ResourceSpecificationOrderField {
   UPDATED_AT
 }
 
-input ResourceSpecificationRelationShipListInput {
-  name: String!
-}
-
 type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
   resourceSpecification: ResourceSpecification!
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 
 """A connection to a list of ResourceSpecificationRelationships."""
@@ -9535,10 +9569,6 @@ enum ResourceSpecificationRelationshipFilterType {
   RESOURCE_SPECIFICATION
 }
 
-input ResourceSpecificationRelationshipItemsInput {
-  id_destino: ID
-}
-
 """Ordering options for ResourceSpecificationRelationships connections."""
 input ResourceSpecificationRelationshipOrder {
   """The ordering direction."""
@@ -9565,6 +9595,7 @@ enum ResourceSpecificationRelationshipOrderField {
 type ResourceType implements Node {
   id: ID!
   name: String!
+  resourceSpecification: [ResourceSpecification]
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -11437,7 +11468,7 @@ type UpdateActionExecutionItemPayload {
 }
 
 type UpdateActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   numUids: Int
 }
 
@@ -12087,6 +12118,7 @@ input VariableValueInput {
 type Vendor implements Node {
   id: ID!
   name: String!
+  resourceSpecification: [ResourceSpecification!]
   vendorRecommendations: [Recommendations!]
 }
 
@@ -12666,6 +12698,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
   SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }

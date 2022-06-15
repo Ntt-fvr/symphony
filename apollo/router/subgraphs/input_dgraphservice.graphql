@@ -77,6 +77,7 @@ type Resource {
   isDelete: Boolean!
   numericPool: [NumericPool]
   isEditable: Boolean @default(add: { value: true})
+  actionScheduler: ActionScheduler
 }
 type ResourceProperty{
   id: ID!
@@ -732,8 +733,10 @@ type ActionScheduler{
   type:ActionSchedulerType!
   date: DateTime
   cron: String
-  action:ActionExecution! @hasInverse(field: scheduler)
+  actions:[ActionExecution!] @hasInverse(field: scheduler)
   status: ActionSchedulerStatus! 
+  resources: [Resource!]!
+  actionTemplate: ActionTemplate!
 }
 
 enum ActionExecutionItemStatus {
@@ -745,7 +748,7 @@ enum ActionExecutionItemStatus {
 type ActionExecutionItem {
   id:ID!
   action: ActionExecution! @hasInverse(field: items)
-  resource:Resource!
+  resources: [Resource]!
   status: ActionExecutionItemStatus
 }
 
@@ -754,4 +757,6 @@ type ActionExecution {
   scheduler:ActionScheduler
   template: ActionTemplate
   items: [ActionExecutionItem]
+  starTime: DateTime!
+  endTime: DateTime
 }
