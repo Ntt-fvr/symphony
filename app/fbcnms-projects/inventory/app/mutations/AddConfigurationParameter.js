@@ -7,37 +7,43 @@
  * @flow
  * @format
  */
+import type {
+  AddConfigurationParameterMutation,
+  AddConfigurationParameterMutationResponse,
+  AddConfigurationParameterMutationVariables,
+} from './__generated__/AddConfigurationParameterMutation.graphql';
+import type {MutationCallbacks} from './MutationCallbacks.js';
 
- import type {MutationCallbacks} from './MutationCallbacks.js';
- import type {SelectorStoreUpdater} from 'relay-runtime';
- 
- import RelayEnvironment from '../common/RelayEnvironment.js';
- import {commitMutation, graphql} from 'react-relay';
- 
- const mutation = graphql`
-   mutation AddConfigurationParameterMutation($input: [AddConfigurationParameterTypeInput!]!) {
-     addConfigurationParameterType(input: $input) {
-      configurationParameterType{
+import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
+
+const mutation = graphql`
+  mutation AddConfigurationParameterMutation(
+    $input: [AddConfigurationParameterTypeInput!]!
+  ) {
+    addConfigurationParameterType(input: $input) {
+      configurationParameterType {
         id
         externalId
         name
       }
-     }
-   }
- `;
- 
- export default (
-   variables: {},
-   callbacks?: MutationCallbacks<{}>,
-   updater?: SelectorStoreUpdater,
- ) => {
-   const {onCompleted, onError} = callbacks ? callbacks : {};
-   commitMutation<{}>(RelayEnvironment, {
-     mutation,
-     variables,
-     updater,
-     onCompleted,
-     onError,
-   });
- };
- 
+    }
+  }
+`;
+
+export default (
+  variables: AddConfigurationParameterMutationVariables,
+  callbacks?: MutationCallbacks<AddConfigurationParameterMutationResponse>,
+  updater?: SelectorStoreUpdater,
+) => {
+  const {onCompleted, onError} = callbacks ? callbacks : {};
+  commitMutation<AddConfigurationParameterMutation>(RelayEnvironment, {
+    mutation,
+    variables,
+    updater,
+    onCompleted,
+    onError,
+  });
+};

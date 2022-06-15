@@ -8,6 +8,9 @@
  * @format
  */
 
+import ActionTypesTableDispactcher from './context/ActionTypesTableDispactcher';
+import AddActionTemplateItemMutation from '../../mutations/AddActionTemplateItem';
+import AddActionTemplateMutation from '../../mutations/AddActionTemplate';
 import Button from '@material-ui/core/Button';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Dialog from '@material-ui/core/Dialog';
@@ -18,7 +21,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
-import React, {useCallback, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import inventoryTheme from '../../common/theme';
@@ -64,23 +67,20 @@ type Props = $ReadOnly<{|
   open?: boolean,
   onClose: () => void,
   isDialogSelectDate: boolean,
-  resourceSpecification:string,
+  resourceSpecification: string,
 |}>;
 
 const DialogSelectName = (props: Props) => {
-  const {onClose, isDialogSelectDate,resourceSpecification} = props;
+  const {onClose, isDialogSelectDate, resourceSpecification} = props;
   const [isDialogConfirmChange, setIsDialogConfirmChange] = useState(
     isDialogSelectDate,
   );
+  const [name, setName] = useState('');
+  const [type, setType] = useState('');
+  const {dispatch} = useContext(ActionTypesTableDispactcher);
 
   const [activeStep, setActiveStep] = useState(0);
-  const [writeName, setWritename] = useState('');
   const [checkedHidden, setCheckedHidden] = useState(false);
-  const handleSelectDate = useCallback(clickedDate => {
-    const writeName = clickedDate?.id;
-    setWritename(writeName);
-    setActiveStep(1);
-  }, []);
   const handleConfirmDate = () => {
     setActiveStep(2);
   };
@@ -91,11 +91,42 @@ const DialogSelectName = (props: Props) => {
   const handleClickOpenConfirmChange = () => {
     setIsDialogConfirmChange(prev => !prev);
   };
-  const handleChecked = () => {
+  const handleChecked = e => {
+    setType(e.target.value);
     setCheckedHidden(prevStateChecked => !prevStateChecked);
   };
-  const nameType = e => {
-    setWritename(e.target.value);
+  const handleName = e => {
+    setName(e.target.value);
+  };
+
+  const saveAction = items => {
+    const itemVariables = {
+      input: items.map(i => {
+        return {parameters: i.parameters, value: i.value};
+      }),
+    };
+    const response = {
+      onCompleted: responsedata => {
+        const templateVariables = {
+          input: {
+            name: name,
+            type: type,
+            resourceSpecifications: resourceSpecification,
+            actionTemplateItem:
+              responsedata.addActionTemplateItem.actionTemplateItem,
+          },
+        };
+        AddActionTemplateMutation(templateVariables, {
+          onCompleted: templateResponse => {
+            dispatch({
+              type: 'ADD_ACTION_TYPE',
+              value: templateResponse.addActionTemplate.actionTemplate,
+            });
+          },
+        });
+      },
+    };
+    AddActionTemplateItemMutation(itemVariables, response);
   };
 
   const classes = useStyles();
@@ -123,7 +154,8 @@ const DialogSelectName = (props: Props) => {
                     variant="outlined"
                     name="name"
                     size="small"
-                    onChange={nameType}
+                    value={name}
+                    onChange={handleName}
                   />
                 </FormField>
               </Grid>
@@ -135,6 +167,7 @@ const DialogSelectName = (props: Props) => {
                   style={{paddingBottom: '20px'}}
                   checked={checkedHidden}
                   onClick={handleChecked}
+                  value="CONFIGURATION_PARAMETER"
                   control={<Radio color="primary" />}
                   label="Configuration parameter"
                 />
@@ -170,6 +203,9 @@ const DialogSelectName = (props: Props) => {
             activeStep={activeStep}
             onClose={onClose}
             resourceSpecification={resourceSpecification}
+            handleSave={items => {
+              saveAction(items);
+            }}
             setIsDialogConfirmChange={setIsDialogConfirmChange}
           />
         )}

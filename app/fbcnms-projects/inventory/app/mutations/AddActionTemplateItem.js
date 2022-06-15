@@ -7,35 +7,41 @@
  * @flow
  * @format
  */
+import type {
+  AddActionTemplateItemMutation,
+  AddActionTemplateItemMutationResponse,
+  AddActionTemplateItemMutationVariables,
+} from './__generated__/AddActionTemplateItemMutation.graphql';
+import type {MutationCallbacks} from './MutationCallbacks.js';
 
- import type {MutationCallbacks} from './MutationCallbacks.js';
- import type {SelectorStoreUpdater} from 'relay-runtime';
- 
- import RelayEnvironment from '../common/RelayEnvironment.js';
- import {commitMutation, graphql} from 'react-relay';
- 
- const mutation = graphql`
-   mutation AddActionTemplateItemMutation($input: [AddActionTemplateItemInput!]!) {
-     addActionTemplateItem(input: $input) {
-       actionTemplateItem {
+import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
+
+const mutation = graphql`
+  mutation AddActionTemplateItemMutation(
+    $input: [AddActionTemplateItemInput!]!
+  ) {
+    addActionTemplateItem(input: $input) {
+      actionTemplateItem {
         id
-       }
-     }
-   }
- `;
- 
- export default (
-   variables: {},
-   callbacks?: MutationCallbacks<{}>,
-   updater?: SelectorStoreUpdater,
- ) => {
-   const {onCompleted, onError} = callbacks ? callbacks : {};
-   commitMutation<{}>(RelayEnvironment, {
-     mutation,
-     variables,
-     updater,
-     onCompleted,
-     onError,
-   });
- };
- 
+      }
+    }
+  }
+`;
+
+export default (
+  variables: AddActionTemplateItemMutationVariables,
+  callbacks?: MutationCallbacks<AddActionTemplateItemMutationResponse>,
+  updater?: SelectorStoreUpdater,
+) => {
+  const {onCompleted, onError} = callbacks ? callbacks : {};
+  commitMutation<AddActionTemplateItemMutation>(RelayEnvironment, {
+    mutation,
+    variables,
+    updater,
+    onCompleted,
+    onError,
+  });
+};

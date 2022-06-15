@@ -23,12 +23,11 @@ export type ActionTypeTableDispatcherActionType =
     |}
   | {|
       type: 'UPDATE_ACTION_TYPE',
-      id:string,
+      id: string,
       value: string,
     |}
   | {|
       type: 'UPDATE_ACTION_TYPE_ITEMS',
-      id:string,
+      id: string,
       actionTemplateItem: [],
     |};
-    

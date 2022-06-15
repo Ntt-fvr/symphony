@@ -8,16 +8,15 @@
  * @format
  */
 
- import type {ActionTypeTableDispatcherActionType} from './ActionTypeTableDispatcherActionType';
+import type {ActionTypeTableDispatcherActionType} from './ActionTypeTableDispatcherActionType';
 
- import React from 'react';
- import emptyFunction from '@fbcnms/util/emptyFunction';
- 
- type Dispatch<A> = A => void;
- 
- type ActionTypesTableDispatcher = Dispatch<ActionTypeTableDispatcherActionType>;
- 
- export default (React.createContext<ActionTypesTableDispatcher>(
-   emptyFunction,
- ): React$Context<ActionTypesTableDispatcher>);
- 
+import React from 'react';
+import emptyFunction from '@fbcnms/util/emptyFunction';
+
+type Dispatch<A> = A => void;
+
+type ActionTypesTableDispatcher = Dispatch<ActionTypeTableDispatcherActionType>;
+
+export default (React.createContext<ActionTypesTableDispatcher>(
+  emptyFunction,
+): React$Context<ActionTypesTableDispatcher>);

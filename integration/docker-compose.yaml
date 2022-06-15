@@ -272,8 +272,8 @@ services:
       - 8080:8080
       - 9080:9080
     restart: on-failure
-    command: dgraph alpha --my=alpha:7080 --zero=zero:5080 --security whitelist=172.17.0.0:172.30.0.0,192.168.1.1
-  ratel:
+    command: dgraph alpha --my=alpha:7080 --zero=zero:5080 --security whitelist=165.225.123.59:172.30.0.0,192.168.1.1
+  ratel: 
     image: dgraph/ratel:latest
     networks:
       - public

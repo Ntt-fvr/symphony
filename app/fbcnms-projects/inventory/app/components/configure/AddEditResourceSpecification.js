@@ -25,6 +25,8 @@ import type {AddResourceSpecificationMutationVariables} from '../../mutations/__
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
+import ActionTypesTableDispatcher from '../action_catalog/context/ActionTypesTableDispactcher';
+import AddConfigurationParameterMutation from '../../mutations/AddConfigurationParameter';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
@@ -32,21 +34,19 @@ import ExperimentalParametersTypesTable from '../form/ExperimentalParametersType
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
-import ActionTypesTableDispatcher from '../action_catalog/context/ActionTypesTableDispactcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {graphql} from 'relay-runtime';
 import {toMutablePropertyType} from '../../common/PropertyType';
+import {useActionTypesReducer} from '../action_catalog/context/ActionTypesTableState';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useFormInput} from '../assurance/common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
-import {useActionTypesReducer} from '../action_catalog/context/ActionTypesTableState';
 import {useValidationEdit} from '../assurance/common/useValidation';
-import type {MutationCallbacks} from './MutationCallbacks.js';
 
 import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 
@@ -126,7 +126,7 @@ const ConfigurationParameters = graphql`
       type
       __typename
     }
-    queryActionTemplate{
+    queryActionTemplate {
       id
       name
       type
@@ -173,7 +173,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   );
 
   const filterActionTemplate = configurationParameters?.queryActionTemplate?.filter(
-    item => item?.resourceSpecification == dataForm?.id,
+    item => item?.resourceSpecifications == dataForm?.id,
   );
 
   const [
@@ -191,8 +191,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       .map(toMutablePropertyType),
   );
   const [actionTypes, actionTypesTableDispatcher] = useActionTypesReducer(
-    (filterActionTemplate ?? [])
-      .filter(Boolean),
+    (filterActionTemplate ?? []).filter(Boolean),
   );
 
   const nameEdit = useFormInput(dataForm.name);
@@ -236,7 +235,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         [target.name]: target.value,
       },
     });
-  } 
+  }
 
   function handleClick() {
     const variables: AddResourceSpecificationMutationVariables = {
@@ -249,13 +248,33 @@ export const AddEditResourceSpecification = (props: Props) => {
       },
     };
 
-    AddResourceSpecificationMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        setResourceSpecification({data: {}});
-        closeForm();
+    const response = {
+      onCompleted: response => {
+        const configParamVariables = {
+          input: convertPropertyTypeToMutationInput(parameterTypes).map(
+            item => {
+              return {
+                resourceSpecification: response.addResourceSpecification.id,
+                name: item.name,
+                type: item.type,
+                stringValue: item.stringValue,
+              };
+            },
+          ),
+        };
+
+        AddConfigurationParameterMutation(configParamVariables, {
+          onCompleted: () => {
+            isCompleted();
+            setResourceSpecification({data: {}});
+            setConfigurationParametes({data: {}});
+            closeForm();
+          },
+        });
       },
-    });
+    };
+
+    AddResourceSpecificationMutation(variables, response);
   }
 
   function handleClickEdit() {
@@ -359,18 +378,22 @@ export const AddEditResourceSpecification = (props: Props) => {
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
           <ParameterTypesTableDispatcher.Provider
-            value={{dispatch:parameterTypesDispacher,parameterTypes}}>
+            value={{dispatch: parameterTypesDispacher, parameterTypes}}>
             <ExperimentalParametersTypesTable
               supportDelete={true}
               parameterTypes={parameterTypes}
             />
           </ParameterTypesTableDispatcher.Provider>
         </ExpandingPanel>
-        </Card>
+      </Card>
       <Card margins="none">
         <ExpandingPanel title="Configure Actions">
-          <ActionTypesTableDispatcher.Provider value={{dispatch:actionTypesTableDispatcher,actionTypes}}>
-          <TableConfigureAction actionTypes={actionTypes} resourceSpecification={dataForm?.id} />
+          <ActionTypesTableDispatcher.Provider
+            value={{dispatch: actionTypesTableDispatcher, actionTypes}}>
+            <TableConfigureAction
+              actionTypes={actionTypes}
+              resourceSpecification={dataForm?.id}
+            />
           </ActionTypesTableDispatcher.Provider>
         </ExpandingPanel>
       </Card>

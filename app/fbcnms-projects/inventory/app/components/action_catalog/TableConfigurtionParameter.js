@@ -14,6 +14,7 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
 import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -24,9 +25,8 @@ import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {fetchQuery,graphql} from 'relay-runtime';
-import RelayEnvironment from '../../common/RelayEnvironment';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -49,21 +49,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-
 const paramsQuery = graphql`
-  query TableConfigurtionParameterQuery($filter:ConfigurationParameterTypeFilter){
-    queryConfigurationParameterType(filter:$filter){
+  query TableConfigurtionParameterQuery(
+    $filter: ConfigurationParameterTypeFilter
+  ) {
+    queryConfigurationParameterType(filter: $filter) {
       id
       name
     }
   }
-`
-type Props = $ReadOnly<{|id:string,resourceSpecification:string|}>;
+`;
+type Props = $ReadOnly<{|resourceSpecification: string|}>;
 
 const TableConfigurtionParameter = (props: Props) => {
-  const {id,resourceSpecification} = props;
+  const {resourceSpecification, actionItems, setActionItems} = props;
   const classes = useStyles();
-  const [actionItems, setActionTypes] = useState([{id: 0}]);
   const [configParams, setConfigParams] = useState([]);
 
   useEffect(() => {
@@ -72,24 +72,34 @@ const TableConfigurtionParameter = (props: Props) => {
 
   const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, paramsQuery, {
-      "filter":{
-        "resourceSpecification":{
-          "eq": resourceSpecification??""
-        }
-      }
+      filter: {
+        resourceSpecification: {
+          eq: resourceSpecification ?? '',
+        },
+      },
     }).then(data => {
       setConfigParams(data?.queryConfigurationParameterType);
     });
-    setActionTypes([{id:0}]);
-  }, [setActionTypes]);
+    setActionItems([{id: 0}]);
+  }, [setActionItems, resourceSpecification]);
 
   const addParam = id => {
-    setActionTypes([...actionItems, {id: id}]);
+    setActionItems([...actionItems, {id: id}]);
+  };
+
+  const updateParam = (id, editParam) => {
+    const paramIndex = actionItems.findIndex(item => item.id === id);
+    const newParams = [
+      ...actionItems.slice(0, paramIndex),
+      editParam(actionItems[paramIndex]),
+      ...actionItems.slice(paramIndex + 1),
+    ];
+    setActionItems(newParams);
   };
 
   const deleteParam = id => {
     const params = actionItems;
-    setActionTypes(params.filter(prt => prt.id !== id));
+    setActionItems(params.filter(prt => prt.id !== id));
   };
 
   return (
@@ -110,7 +120,7 @@ const TableConfigurtionParameter = (props: Props) => {
         </TableHead>
 
         {actionItems?.map(item => (
-          <TableRow component="div" key={item.id}>
+          <TableRow component="div" key={item?.id}>
             <TableCell component="div" scope="row">
               <FormField>
                 <TextField
@@ -120,7 +130,16 @@ const TableConfigurtionParameter = (props: Props) => {
                   className={classes.selectField}
                   placeholder="Select Parameter"
                   name="family"
-                  variant="outlined">
+                  variant="outlined"
+                  onChange={e => {
+                    e.preventDefault();
+                    updateParam(item?.id, pt => ({
+                      ...pt,
+                      parameters: {
+                        id: e.target.value,
+                      },
+                    }));
+                  }}>
                   {configParams?.map(param => (
                     <MenuItem key={param.id} value={param.id}>
                       {param.name}
@@ -137,6 +156,15 @@ const TableConfigurtionParameter = (props: Props) => {
                   placeholder="Value"
                   autoComplete="off"
                   className={classes.input}
+                  onChange={e => {
+                    e.preventDefault();
+                    updateParam(item?.id, pt => ({
+                      ...pt,
+                      value: {
+                        stringValue: e.target.value,
+                      },
+                    }));
+                  }}
                 />
               </FormField>
             </TableCell>

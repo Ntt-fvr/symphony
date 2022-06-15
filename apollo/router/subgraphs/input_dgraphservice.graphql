@@ -682,7 +682,7 @@ type ActionTemplate{
   name:String!
   type:ActionTemplateType!
   resourceSpecifications: String! @search(by: [hash])
-  actionTemplateItem:[ActionTemplate!]!
+  actionTemplateItem:[ActionTemplateItem!]!
 }
 type ActionTemplateItem{
   id:ID!

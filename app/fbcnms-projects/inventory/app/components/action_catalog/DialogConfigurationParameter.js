@@ -12,7 +12,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
-import React from 'react';
+import React, {useState} from 'react';
 import TableConfigurtionParameter from './TableConfigurtionParameter';
 import Text from '@symphony/design-system/components/Text';
 import {StepperName} from './StepperName';
@@ -44,11 +44,20 @@ type Props = $ReadOnly<{|
   setIsDialogConfirmChange: any,
   activeStep: any,
   handleBackStep: any,
-  resourceSpecification:string,
+  resourceSpecification: string,
+  handleSave: () => void,
 |}>;
 
 const DialogConfigurationParameter = (props: Props) => {
-  const {onClose, setIsDialogConfirmChange, activeStep, handleBackStep,resourceSpecification} = props;
+  const {
+    onClose,
+    setIsDialogConfirmChange,
+    activeStep,
+    handleBackStep,
+    resourceSpecification,
+    handleSave,
+  } = props;
+  const [actionItems, setActionItems] = useState([{id: 0}]);
 
   const classes = useStyles();
   const handleBack = () => {
@@ -67,7 +76,11 @@ const DialogConfigurationParameter = (props: Props) => {
         </Grid>
       </Card>
       <Grid style={{margin: '20px 30px 20px 30px'}} item xs={12}>
-        <TableConfigurtionParameter resourceSpecification={resourceSpecification} />
+        <TableConfigurtionParameter
+          resourceSpecification={resourceSpecification}
+          actionItems={actionItems}
+          setActionItems={setActionItems}
+        />
       </Grid>
       <DialogActions className={classes.dialogActions}>
         <Button
@@ -91,6 +104,7 @@ const DialogConfigurationParameter = (props: Props) => {
         </Button>
         <Button
           onClick={() => {
+            handleSave(actionItems);
             onClose();
           }}
           style={{height: '36px'}}

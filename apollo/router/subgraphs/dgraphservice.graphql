@@ -428,8 +428,7 @@ type ActionTemplate {
   type: ActionTemplateType!
   resourceSpecifications: String!
   actionTemplateItem(
-    filter: ActionTemplateFilter
-    order: ActionTemplateOrder
+    filter: ActionTemplateItemFilter
     first: Int
     offset: Int
   ): [ActionTemplate!]!
@@ -513,7 +512,7 @@ input ActionTemplatePatch {
   name: String
   type: ActionTemplateType
   resourceSpecifications: String
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
 }
 
 input ActionTemplateRef {
@@ -521,7 +520,7 @@ input ActionTemplateRef {
   name: String
   type: ActionTemplateType
   resourceSpecifications: String
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
 }
 
 enum ActionTemplateType {
@@ -583,7 +582,7 @@ input AddActionTemplateInput {
   name: String!
   type: ActionTemplateType!
   resourceSpecifications: String!
-  actionTemplateItem: [ActionTemplateRef!]!
+  actionTemplateItem: [ActionTemplateItemRef!]!
 }
 
 input AddActionTemplateItemInput {

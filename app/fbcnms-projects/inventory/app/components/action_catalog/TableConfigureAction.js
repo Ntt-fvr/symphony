@@ -26,8 +26,6 @@ import {EditIcon} from '@symphony/design-system/icons';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
-import {useContext} from 'react';
-import ActionTypesTableDispatcher from './context/ActionTypesTableDispactcher';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -45,14 +43,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{|actionTypes:[{}],resourceSpecification:string|}>;
+type Props = $ReadOnly<{|actionTypes: [{}], resourceSpecification: string|}>;
 
 const TableConfigureAction = (props: Props) => {
-  const {actionTypes,resourceSpecification} = props;
+  const {actionTypes, resourceSpecification} = props;
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
-  const [isEdit, setIsEdit] = useState(true);
   const classes = useStyles();
-  const {dispatch} = useContext(ActionTypesTableDispatcher);
 
   const handleModalAddAction = () => {
     setIsDialogSelectDate(preventState => !preventState);
@@ -89,7 +85,7 @@ const TableConfigureAction = (props: Props) => {
                   autoComplete="off"
                   value={item?.name}
                   className={classes.input}
-                  disabled={isEdit}
+                  disabled={true}
                 />
               </FormField>
             </TableCell>
@@ -101,7 +97,7 @@ const TableConfigureAction = (props: Props) => {
                   autoComplete="off"
                   value={item?.type}
                   className={classes.input}
-                  disabled={isEdit}
+                  disabled={true}
                 />
               </FormField>
             </TableCell>
@@ -112,7 +108,7 @@ const TableConfigureAction = (props: Props) => {
                 </IconButton>
               </FormAction>
             </TableCell>
-            
+
             <TableCell component="div">
               <FormAction>
                 <IconButton aria-label="delete">
@@ -120,7 +116,7 @@ const TableConfigureAction = (props: Props) => {
                 </IconButton>
               </FormAction>
             </TableCell>
-            
+
             <TableCell component="div" scope="row" />
           </TableRow>
         ))}

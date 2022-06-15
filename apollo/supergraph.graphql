@@ -202,7 +202,7 @@ enum ActionSchedulerType {
 }
 
 type ActionTemplate {
-  actionTemplateItem(filter: ActionTemplateFilter, first: Int, offset: Int, order: ActionTemplateOrder): [ActionTemplate!]!
+  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
   actionTemplateItemAggregate(filter: ActionTemplateFilter): ActionTemplateAggregateResult
   id: ID!
   name: String!
@@ -280,14 +280,14 @@ enum ActionTemplateOrderable {
 }
 
 input ActionTemplatePatch {
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
 }
 
 input ActionTemplateRef {
-  actionTemplateItem: [ActionTemplateRef!]
+  actionTemplateItem: [ActionTemplateItemRef!]
   id: ID
   name: String
   resourceSpecifications: String
@@ -382,7 +382,7 @@ type AddActionSchedulerPayload {
 }
 
 input AddActionTemplateInput {
-  actionTemplateItem: [ActionTemplateRef!]!
+  actionTemplateItem: [ActionTemplateItemRef!]!
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
