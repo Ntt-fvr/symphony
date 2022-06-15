@@ -9501,6 +9501,7 @@ type ResourceSpecification implements Node {
   resourceType: ResourceType
   resourcePropertyTypes: [ResourcePropertyType]!  
   resourceSpecificationRelationship: [ResourceSpecificationRelationship]
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 input AddResourceSpecificationInput {  
   name: String!
@@ -9534,6 +9535,7 @@ type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
   resourceSpecification: ResourceSpecification!
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 
 input AddResourceSpecificationRelationshipInput {  
