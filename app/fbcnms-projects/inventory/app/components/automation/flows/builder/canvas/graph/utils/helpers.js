@@ -23,12 +23,14 @@ import type {
   VertexPort,
 } from '../facades/shapes/vertexes/BaseVertext';
 
+import {TYPE as ForEachLoopType} from '../facades/shapes/vertexes/logic/ForEachLoop';
+import {TYPE as ParallelType} from '../facades/shapes/vertexes/logic/Parallel';
+
 import jss from 'jss';
 import symphony from '@symphony/design-system/theme/symphony';
 import {Events} from '../facades/Helpers';
 import {PORTS_GROUPS} from '../facades/shapes/vertexes/BaseVertext';
-import {findAreaContainer} from './linkValidator';
-import {validatorContainerConection} from './linkValidator';
+import {validatorConectionBlock} from './linkValidator';
 
 const connectorDefaultColor = symphony.palette.secondary;
 export const {classes} = jss
@@ -189,15 +191,18 @@ export function buildPaperConnectionValidation(
         return false;
       }
       const sourcePortId = magnetS.getAttribute('port');
+
       const sourceBlock = flowWrapper.current?.blocks.get(sourceBlockId);
+
       const targetPortId = magnetT.getAttribute('port');
+
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
 
-      const {
-        containerBlock,
-        targetBlockValid,
-        sourceBlockValid,
-      } = findAreaContainer(flowWrapper, sourceBlock, targetBlock);
+      const containerBlock = flowWrapper.current?.paper.model.attributes.cells.models.filter(
+        block =>
+          block.attributes.type === ParallelType ||
+          block.attributes.type === ForEachLoopType,
+      );
 
       if (
         (isOutputPort(sourceBlock, sourcePortId) &&
@@ -205,13 +210,12 @@ export function buildPaperConnectionValidation(
         (isInputPort(sourceBlock, sourcePortId) &&
           isOutputPort(targetBlock, targetPortId))
       ) {
-        if (containerBlock) {
-          const validationConection = validatorContainerConection(
-            targetBlockValid,
-            sourceBlockValid,
+        if (containerBlock.length > 0) {
+          const validationConection = validatorConectionBlock(
+            containerBlock,
             targetBlock,
             sourceBlock,
-            isInputPort,
+            (isInputPort: () => boolean),
             targetPortId,
             sourcePortId,
           );

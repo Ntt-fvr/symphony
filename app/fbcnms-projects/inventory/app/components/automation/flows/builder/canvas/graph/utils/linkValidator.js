@@ -7,109 +7,110 @@
  * @flow
  * @format
  */
-import {TYPE as ForEachLoopType} from '../facades/shapes/vertexes/logic/ForEachLoop';
-import {TYPE as ParallelType} from '../facades/shapes/vertexes/logic/Parallel';
-
-import type {FlowWrapperReference} from '../graphAPIContext/GraphContext';
-
-import type {IBlock} from '../shapes/blocks/BaseBlock';
-
-const RESIZE: number = 100;
-
-export function validatorContainerConection(
-  targetBlockValid: boolean,
-  sourceBlockValid: boolean,
+export function validatorConectionBlock(
+  containerBlock,
   targetBlock,
   sourceBlock,
   isInputPort: () => boolean,
   targetPortId,
   sourcePortId,
 ) {
-  if (!targetBlockValid && !sourceBlockValid) {
+  const brotherBlock = containerBlock.map(container =>
+    container.attributes.embeds?.length > 1 &&
+    container.attributes.embeds.find(item => item === targetBlock.id) &&
+    container.attributes.embeds.find(item => item === sourceBlock.id)
+      ? true
+      : false,
+  );
+
+  const validationConection: boolean = brotherBlock.find(item => item === true)
+    ? true
+    : false;
+
+  if (validationConection) {
     return true;
   }
 
-  if (targetBlockValid && sourceBlockValid) {
-    if (
-      ((targetBlock.model.attributes.type === ParallelType ||
-        targetBlock.model.attributes.type === ForEachLoopType) &&
-        isInputPort(targetBlock, targetPortId)) ||
-      ((sourceBlock.model.attributes.type === ParallelType ||
-        sourceBlock.model.attributes.type === ForEachLoopType) &&
-        isInputPort(sourceBlock, sourcePortId))
-    ) {
-      return false;
-    }
+  if (!validationConection) {
+    const validatorContainerSource = containerBlock.filter(
+      container => container.id === sourceBlock.id,
+    );
+    const validatorContainerTarget = containerBlock.filter(
+      container => container.id === targetBlock.id,
+    );
 
     if (
-      sourceBlock.model.attributes.type !== ParallelType ||
-      sourceBlock.model.attributes.type !== ForEachLoopType
+      validatorContainerSource.length === 0 &&
+      validatorContainerTarget.length === 0
     ) {
-      return true;
-    } else {
-      return sourceBlock.model.attributes.type === ParallelType ||
-        sourceBlock.model.attributes.type === ForEachLoopType
+      const externalBlockConnectionValidator = isChildren(
+        containerBlock,
+        targetBlock,
+        sourceBlock,
+      );
+
+      return !externalBlockConnectionValidator;
+    }
+
+    const validatorContainer =
+      validatorContainerSource.length > 0
+        ? validatorContainerSource
+        : validatorContainerTarget;
+
+    const validatorBlockTarge =
+      validatorContainer.length > 0 &&
+      validatorContainer[0].changed.embeds?.find(
+        item => item === targetBlock.id,
+      ) &&
+      true;
+
+    const validatorBlockSource =
+      validatorContainer.length > 0 &&
+      validatorContainer[0].changed.embeds?.find(
+        item => item === sourceBlock.id,
+      ) &&
+      true;
+
+    const blockToContainerLinkValidator = validatorBlockTarge
+      ? (validatorBlockTarge && isInputPort(targetBlock, targetPortId)) === true
         ? true
-        : false;
-    }
-  }
-
-  if (targetBlockValid || sourceBlockValid) {
-    return ((targetBlock.model.attributes.type === ParallelType ||
-      targetBlock.model.attributes.type === ForEachLoopType) &&
-      isInputPort(targetBlock, targetPortId)) ||
-      ((sourceBlock.model.attributes.type === ParallelType ||
-        sourceBlock.model.attributes.type === ForEachLoopType) &&
-        isInputPort(sourceBlock, sourcePortId))
+        : false
+      : (validatorBlockSource && isInputPort(sourceBlock, sourcePortId)) ===
+        true
       ? true
       : false;
+
+    if (blockToContainerLinkValidator) {
+      return true;
+    } else {
+      if (
+        validatorBlockTarge === undefined &&
+        validatorBlockSource === undefined
+      ) {
+        const containerToBlockLinkValidator = isChildren(
+          containerBlock,
+          targetBlock,
+          sourceBlock,
+        );
+
+        return !containerToBlockLinkValidator;
+      }
+    }
+    return false;
   }
 }
 
-export function findAreaContainer(
-  flowWrapper: FlowWrapperReference,
-  sourceBlock: IBlock,
-  targetBlock: IBlock,
-) {
-  const containerBlock: IBlock = flowWrapper.current?.paper.model.attributes.cells.models.find(
-    block =>
-      block.attributes.type === ForEachLoopType ||
-      block.attributes.type === ParallelType,
-  );
+function isChildren(containerBlock, targetBlock, sourceBlock) {
+  const validator =
+    containerBlock.filter(container =>
+      container.attributes.embeds?.find(item => item === targetBlock.id),
+    ).length > 0
+      ? true
+      : containerBlock.filter(container =>
+          container.attributes.embeds?.find(item => item === sourceBlock.id),
+        ).length > 0
+      ? true
+      : false;
 
-  const containerBlockPosition: {
-    x: number,
-    y: number,
-    endX: number,
-    endY: number,
-  } = {
-    x: containerBlock?.attributes.position.x - RESIZE,
-    y: containerBlock?.attributes.position.y - RESIZE,
-    endX:
-      containerBlock?.attributes.position.x +
-      containerBlock?.attributes.size.width,
-    endY:
-      containerBlock?.attributes.position.y +
-      containerBlock?.attributes.size.height,
-  };
-
-  const sourceBlockValid: boolean =
-    containerBlockPosition &&
-    sourceBlock.model.attributes.position.x >= containerBlockPosition.x &&
-    sourceBlock.model.attributes.position.x <= containerBlockPosition.endX &&
-    sourceBlock.model.attributes.position.y >= containerBlockPosition.y &&
-    sourceBlock.model.attributes.position.y <= containerBlockPosition.endY;
-
-  const targetBlockValid: boolean =
-    containerBlockPosition &&
-    targetBlock.model.attributes.position.x >= containerBlockPosition.x &&
-    targetBlock.model.attributes.position.x <= containerBlockPosition.endX &&
-    targetBlock.model.attributes.position.y >= containerBlockPosition.y &&
-    targetBlock.model.attributes.position.y <= containerBlockPosition.endY;
-
-  return {
-    containerBlock,
-    targetBlockValid,
-    sourceBlockValid,
-  };
+  return validator;
 }
