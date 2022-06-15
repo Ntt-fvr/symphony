@@ -8,109 +8,64 @@
  * @format
  */
 export function validatorConectionBlock(
-  containerBlock,
+  coupledsBlocksList,
   targetBlock,
   sourceBlock,
   isInputPort: () => boolean,
   targetPortId,
   sourcePortId,
 ) {
-  const brotherBlock = containerBlock.map(container =>
-    container.attributes.embeds?.length > 1 &&
-    container.attributes.embeds.find(item => item === targetBlock.id) &&
-    container.attributes.embeds.find(item => item === sourceBlock.id)
-      ? true
-      : false,
+  const isBrothersBlocks = coupledsBlocksList.find(
+    coupled =>
+      coupled.attributes.embeds?.length > 1 &&
+      coupled.attributes.embeds.find(item => item === targetBlock.id) &&
+      coupled.attributes.embeds.find(item => item === sourceBlock.id),
   );
 
-  const validationConection: boolean = brotherBlock.find(item => item === true)
-    ? true
-    : false;
-
-  if (validationConection) {
+  if (isBrothersBlocks) {
     return true;
   }
 
-  if (!validationConection) {
-    const validatorContainerSource = containerBlock.filter(
-      container => container.id === sourceBlock.id,
+  if (!isBrothersBlocks) {
+    const validatorCoupledSource = coupledsBlocksList.filter(
+      coupled => coupled.id === sourceBlock.id,
     );
-    const validatorContainerTarget = containerBlock.filter(
-      container => container.id === targetBlock.id,
+    const validatorCoupledTarget = coupledsBlocksList.filter(
+      coupled => coupled.id === targetBlock.id,
     );
 
-    if (
-      validatorContainerSource.length === 0 &&
-      validatorContainerTarget.length === 0
-    ) {
-      const externalBlockConnectionValidator = isChildren(
-        containerBlock,
-        targetBlock,
-        sourceBlock,
-      );
+    const validatorCoupled =
+      validatorCoupledSource.length > 0
+        ? validatorCoupledSource
+        : validatorCoupledTarget;
 
-      return !externalBlockConnectionValidator;
-    }
+    const validatorCoupledBlockTarget =
+      validatorCoupled.length > 0 &&
+      validatorCoupled[0].changed.embeds?.find(item => item === targetBlock.id);
 
-    const validatorContainer =
-      validatorContainerSource.length > 0
-        ? validatorContainerSource
-        : validatorContainerTarget;
+    const validatorCoupledBlockSource =
+      validatorCoupled.length > 0 &&
+      validatorCoupled[0].changed.embeds?.find(item => item === sourceBlock.id);
 
-    const validatorBlockTarge =
-      validatorContainer.length > 0 &&
-      validatorContainer[0].changed.embeds?.find(
-        item => item === targetBlock.id,
-      ) &&
-      true;
+    //allow to connect block children and coupled
+    const blockToCoupledLinkValidator =
+      (validatorCoupledBlockTarget && isInputPort(targetBlock, targetPortId)) ||
+      (validatorCoupledBlockSource && isInputPort(sourceBlock, sourcePortId));
 
-    const validatorBlockSource =
-      validatorContainer.length > 0 &&
-      validatorContainer[0].changed.embeds?.find(
-        item => item === sourceBlock.id,
-      ) &&
-      true;
-
-    const blockToContainerLinkValidator = validatorBlockTarge
-      ? (validatorBlockTarge && isInputPort(targetBlock, targetPortId)) === true
-        ? true
-        : false
-      : (validatorBlockSource && isInputPort(sourceBlock, sourcePortId)) ===
-        true
-      ? true
-      : false;
-
-    if (blockToContainerLinkValidator) {
+    if (blockToCoupledLinkValidator) {
       return true;
     } else {
-      if (
-        validatorBlockTarge === undefined &&
-        validatorBlockSource === undefined
-      ) {
-        const containerToBlockLinkValidator = isChildren(
-          containerBlock,
-          targetBlock,
-          sourceBlock,
-        );
+      //allows to connect external blocks and external blocks to coupleds
+      const conectionNotToHaveChildren = coupledsBlocksList.find(
+        coupled =>
+          coupled.attributes.embeds?.find(item => item === targetBlock.id) ||
+          coupled.attributes.embeds?.find(item => item === sourceBlock.id),
+      );
 
-        return !containerToBlockLinkValidator;
+      if (!validatorCoupledBlockTarget && !validatorCoupledBlockSource) {
+        return !conectionNotToHaveChildren;
       }
     }
     return false;
   }
-}
-
-function isChildren(containerBlock, targetBlock, sourceBlock) {
-  const validator =
-    containerBlock.filter(container =>
-      container.attributes.embeds?.find(item => item === targetBlock.id),
-    ).length > 0
-      ? true
-      : containerBlock.filter(container =>
-          container.attributes.embeds?.find(item => item === sourceBlock.id),
-        ).length > 0
-      ? true
-      : false;
-
-  return validator;
 }

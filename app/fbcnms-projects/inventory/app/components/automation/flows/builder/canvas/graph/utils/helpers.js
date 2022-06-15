@@ -198,7 +198,7 @@ export function buildPaperConnectionValidation(
 
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
 
-      const containerBlock = flowWrapper.current?.paper.model.attributes.cells.models.filter(
+      const coupledsBlocksList = flowWrapper.current?.paper.model.attributes.cells.models.filter(
         block =>
           block.attributes.type === ParallelType ||
           block.attributes.type === ForEachLoopType,
@@ -210,9 +210,9 @@ export function buildPaperConnectionValidation(
         (isInputPort(sourceBlock, sourcePortId) &&
           isOutputPort(targetBlock, targetPortId))
       ) {
-        if (containerBlock.length > 0) {
+        if (coupledsBlocksList.length > 0) {
           const validationConection = validatorConectionBlock(
-            containerBlock,
+            coupledsBlocksList,
             targetBlock,
             sourceBlock,
             (isInputPort: () => boolean),
@@ -239,6 +239,23 @@ export function buildPaperInteractivityCheck(
 ) {
   return () => {
     return !flowWrapper.current?.paperIsLocked;
+  };
+}
+
+export function buildValidateUnembedding(flowWrapper: FlowWrapperReference) {
+  return (childView: IVertexView) => {
+    const cell = childView;
+    if (cell) {
+      console.log(cell);
+
+      return false;
+    }
+    if (!cell) {
+      console.log(cell);
+
+      return false;
+    }
+    console.log(cell);
   };
 }
 
