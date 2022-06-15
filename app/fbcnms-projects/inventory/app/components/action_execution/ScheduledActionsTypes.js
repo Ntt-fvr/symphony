@@ -217,6 +217,21 @@ const ScheduledActionsTypes = () => {
         <Table
           data={data}
           columns={[
+            {
+              key: 'enableExecution',
+              title: `${fbt('Status', '')}`,
+              render: row =>
+                (
+                  <Switch
+                    onChange={e => {
+                      handleChange(e.target.checked, row.id);
+                    }}
+                    color="primary"
+                    name="Status"
+                    inputProps={{'aria-label': 'primary checkbox'}}
+                  />
+                ) ?? '',
+            },
             ...tableColumns,
             {
               key: 'executeNow',
