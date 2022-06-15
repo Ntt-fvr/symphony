@@ -1,25 +1,8 @@
-directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
   update: DgraphDefault
 ) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @dgraph(
-  type: String
-  pred: String
-) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @remoteResponse(name: String) on FIELD_DEFINITION
-directive @lambda on FIELD_DEFINITION
-directive @lambdaOnMutate(
-  add: Boolean
-  update: Boolean
-  delete: Boolean
-) on OBJECT | INTERFACE
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -27,11 +10,28 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @generate(
   query: GenerateQueryParams
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
+directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @lambda on FIELD_DEFINITION
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @remoteResponse(name: String) on FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -227,6 +227,8 @@ type ActionExecution {
     first: Int
     offset: Int
   ): [ActionExecutionItem]
+  starTime: DateTime!
+  endTime: DateTime
   itemsAggregate(
     filter: ActionExecutionItemFilter
   ): ActionExecutionItemAggregateResult
@@ -234,6 +236,10 @@ type ActionExecution {
 
 type ActionExecutionAggregateResult {
   count: Int
+  starTimeMin: DateTime
+  starTimeMax: DateTime
+  endTimeMin: DateTime
+  endTimeMax: DateTime
 }
 
 input ActionExecutionFilter {
@@ -248,13 +254,21 @@ enum ActionExecutionHasFilter {
   scheduler
   template
   items
+  starTime
+  endTime
 }
 
 type ActionExecutionItem {
   id: ID!
   action(filter: ActionExecutionFilter): ActionExecution!
-  resource(filter: ResourceFilter): Resource!
+  resources(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]!
   status: ActionExecutionItemStatus
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
 }
 
 type ActionExecutionItemAggregateResult {
@@ -271,20 +285,20 @@ input ActionExecutionItemFilter {
 
 enum ActionExecutionItemHasFilter {
   action
-  resource
+  resources
   status
 }
 
 input ActionExecutionItemPatch {
   action: ActionExecutionRef
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
 input ActionExecutionItemRef {
   id: ID
   action: ActionExecutionRef
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
@@ -294,10 +308,23 @@ enum ActionExecutionItemStatus {
   FAILED
 }
 
+input ActionExecutionOrder {
+  asc: ActionExecutionOrderable
+  desc: ActionExecutionOrderable
+  then: ActionExecutionOrder
+}
+
+enum ActionExecutionOrderable {
+  starTime
+  endTime
+}
+
 input ActionExecutionPatch {
   scheduler: ActionSchedulerRef
   template: ActionTemplateRef
   items: [ActionExecutionItemRef]
+  starTime: DateTime
+  endTime: DateTime
 }
 
 input ActionExecutionRef {
@@ -305,6 +332,8 @@ input ActionExecutionRef {
   scheduler: ActionSchedulerRef
   template: ActionTemplateRef
   items: [ActionExecutionItemRef]
+  starTime: DateTime
+  endTime: DateTime
 }
 
 type ActionScheduler {
@@ -314,8 +343,24 @@ type ActionScheduler {
   type: ActionSchedulerType!
   date: DateTime
   cron: String
-  action(filter: ActionExecutionFilter): ActionExecution!
+  actions(
+    filter: ActionExecutionFilter
+    order: ActionExecutionOrder
+    first: Int
+    offset: Int
+  ): [ActionExecution!]
   status: ActionSchedulerStatus!
+  resources(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource!]!
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
+  actionsAggregate(
+    filter: ActionExecutionFilter
+  ): ActionExecutionAggregateResult
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
 }
 
 type ActionSchedulerAggregateResult {
@@ -344,8 +389,10 @@ enum ActionSchedulerHasFilter {
   type
   date
   cron
-  action
+  actions
   status
+  resources
+  actionTemplate
 }
 
 input ActionSchedulerOrder {
@@ -367,8 +414,10 @@ input ActionSchedulerPatch {
   type: ActionSchedulerType
   date: DateTime
   cron: String
-  action: ActionExecutionRef
+  actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
+  resources: [ResourceRef!]
+  actionTemplate: ActionTemplateRef
 }
 
 input ActionSchedulerRef {
@@ -378,8 +427,10 @@ input ActionSchedulerRef {
   type: ActionSchedulerType
   date: DateTime
   cron: String
-  action: ActionExecutionRef
+  actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
+  resources: [ResourceRef!]
+  actionTemplate: ActionTemplateRef
 }
 
 enum ActionSchedulerStatus {
@@ -507,11 +558,13 @@ input AddActionExecutionInput {
   scheduler: ActionSchedulerRef
   template: ActionTemplateRef
   items: [ActionExecutionItemRef]
+  starTime: DateTime!
+  endTime: DateTime
 }
 
 input AddActionExecutionItemInput {
   action: ActionExecutionRef!
-  resource: ResourceRef!
+  resources: [ResourceRef]!
   status: ActionExecutionItemStatus
 }
 
@@ -527,6 +580,7 @@ type AddActionExecutionItemPayload {
 type AddActionExecutionPayload {
   actionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -539,8 +593,10 @@ input AddActionSchedulerInput {
   type: ActionSchedulerType!
   date: DateTime
   cron: String
-  action: ActionExecutionRef!
+  actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus!
+  resources: [ResourceRef!]!
+  actionTemplate: ActionTemplateRef!
 }
 
 type AddActionSchedulerPayload {
@@ -1022,6 +1078,7 @@ input AddResourceInput {
   isDelete: Boolean!
   numericPool: [NumericPoolRef]
   isEditable: Boolean
+  actionScheduler: ActionSchedulerRef
 }
 
 input AddResourceOrderIMInput {
@@ -2333,6 +2390,7 @@ type DeleteActionExecutionItemPayload {
 type DeleteActionExecutionPayload {
   actionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -4427,6 +4485,7 @@ type Query {
   getActionExecution(id: ID!): ActionExecution
   queryActionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -4550,6 +4609,7 @@ type Resource {
     offset: Int
   ): [NumericPool]
   isEditable: Boolean
+  actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -4606,6 +4666,7 @@ enum ResourceHasFilter {
   isDelete
   numericPool
   isEditable
+  actionScheduler
 }
 
 input ResourceOrder {
@@ -4781,6 +4842,7 @@ input ResourcePatch {
   isDelete: Boolean
   numericPool: [NumericPoolRef]
   isEditable: Boolean
+  actionScheduler: ActionSchedulerRef
 }
 
 type ResourceProperty {
@@ -4927,6 +4989,7 @@ input ResourceRef {
   isDelete: Boolean
   numericPool: [NumericPoolRef]
   isEditable: Boolean
+  actionScheduler: ActionSchedulerRef
 }
 
 type ResourceReference {
@@ -6030,6 +6093,7 @@ type UpdateActionExecutionItemPayload {
 type UpdateActionExecutionPayload {
   actionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -6684,4 +6748,3 @@ enum WeekDay {
 input WithinFilter {
   polygon: PolygonRef!
 }
-
