@@ -189,6 +189,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   });
 
   const filterEdit = parameterTypes.filter(item => item.name !== item.oldName);
+  // const filterEdit2 = parameterTypes.filter(item => item.isEdit);//las que estan en true
   const editOneToOne = filterEdit.map(item => item);
 
   const newParameter = parameterTypes?.filter(item => isTempId(item?.id));
@@ -420,10 +421,12 @@ export const AddEditResourceSpecification = (props: Props) => {
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
           <ParameterTypesTableDispatcher.Provider
-            value={{dispatch: parameterTypesDispacher, parameterTypes}}>
+            value={{
+              dispatch: parameterTypesDispacher,
+              parameterTypes,
+            }}>
             <ExperimentalParametersTypesTable
               supportDelete={true}
-              parameterTypes={parameterTypes}
               idRs={dataForm?.id}
             />
           </ParameterTypesTableDispatcher.Provider>
