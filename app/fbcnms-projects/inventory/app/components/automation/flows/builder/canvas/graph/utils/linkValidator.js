@@ -8,14 +8,14 @@
  * @format
  */
 export function validatorConectionBlock(
-  coupledsBlocksList,
+  coupledBlocksList,
   targetBlock,
   sourceBlock,
   isInputPort: () => boolean,
   targetPortId,
   sourcePortId,
 ) {
-  const isBrothersBlocks = coupledsBlocksList.find(
+  const isBrothersBlocks = coupledBlocksList.find(
     coupled =>
       coupled.attributes.embeds?.length > 1 &&
       coupled.attributes.embeds.find(item => item === targetBlock.id) &&
@@ -26,10 +26,10 @@ export function validatorConectionBlock(
   if (isBrothersBlocks) {
     return true;
   } else {
-    const validatorCoupledSource = coupledsBlocksList.filter(
+    const validatorCoupledSource = coupledBlocksList.filter(
       coupled => coupled.id === sourceBlock.id,
     );
-    const validatorCoupledTarget = coupledsBlocksList.filter(
+    const validatorCoupledTarget = coupledBlocksList.filter(
       coupled => coupled.id === targetBlock.id,
     );
 
@@ -55,7 +55,7 @@ export function validatorConectionBlock(
       return true;
     } else {
       //allows to connect external blocks and external blocks to coupleds
-      const conectionNotToHaveChildren = coupledsBlocksList.find(
+      const conectionNotToHaveChildren = coupledBlocksList.find(
         coupled =>
           coupled.attributes.embeds?.find(item => item === targetBlock.id) ||
           coupled.attributes.embeds?.find(item => item === sourceBlock.id),

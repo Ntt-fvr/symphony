@@ -198,7 +198,7 @@ export function buildPaperConnectionValidation(
 
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
 
-      const coupledsBlocksList = flowWrapper.current?.paper.model.attributes.cells.models.filter(
+      const coupledBlocksList = flowWrapper.current?.paper.model.attributes.cells.models.filter(
         block =>
           block.attributes.type === ParallelType ||
           block.attributes.type === ForEachLoopType,
@@ -210,9 +210,9 @@ export function buildPaperConnectionValidation(
         (isInputPort(sourceBlock, sourcePortId) &&
           isOutputPort(targetBlock, targetPortId))
       ) {
-        if (coupledsBlocksList.length > 0) {
+        if (coupledBlocksList.length > 0) {
           const validationConection = validatorConectionBlock(
-            coupledsBlocksList,
+            coupledBlocksList,
             targetBlock,
             sourceBlock,
             (isInputPort: () => boolean),
