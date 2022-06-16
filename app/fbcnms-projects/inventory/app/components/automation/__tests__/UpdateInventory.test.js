@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import UpdateInventoryPresentation from '../updateInventory/UpdateInventoryPresentation';
-import UpdateInventoryBlockType from '../updateInventory/UpdateInventoryBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import UpdateInventoryBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/updateInventory/UpdateInventoryBlockType';
+import UpdateInventoryPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/updateInventory/UpdateInventoryPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /UpdateInventory/: ', () => {
-  it('Render components <UpdateInventoryPresentation/>', () => {
+describe(' Suite Test Components /UpdateInventory/: ', () => {
+  it('AUT-FE-05035 Render component <UpdateInventoryPresentation/>', () => {
     render(<UpdateInventoryPresentation />);
     const text = screen.getByText(/update inventory/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class UpdateInventoryBlockType', () => {
+  it('AUT-FE-05036 Instance class UpdateInventoryBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new UpdateInventoryBlockType(flow)], [

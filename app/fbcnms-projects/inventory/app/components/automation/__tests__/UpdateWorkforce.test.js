@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import UpdateWorkforcePresentation from '../updateWorkforce/UpdateWorkforcePresentation';
-import UpdateWorkforceBlockType from '../updateWorkforce/UpdateWorkforceBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import UpdateWorkforceBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/updateWorkforce/UpdateWorkforceBlockType';
+import UpdateWorkforcePresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/updateWorkforce/UpdateWorkforcePresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /updateWorkforce/: ', () => {
-  it('Render components <UpdateWorkforcePresentation/>', () => {
+describe('Suite Test Components /updateWorkforce/: ', () => {
+  it('AUT-FE-05037 Render component <UpdateWorkforcePresentation/>', () => {
     render(<UpdateWorkforcePresentation />);
     const text = screen.getByText(/update workforce/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class UpdateWorkforceBlockType', () => {
+  it('AUT-FE-05038 Instance class UpdateWorkforceBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new UpdateWorkforceBlockType(flow)], [

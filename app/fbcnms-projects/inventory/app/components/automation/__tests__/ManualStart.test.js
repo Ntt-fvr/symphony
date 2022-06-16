@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import ManualStartPresentation from '../manualStart/ManualStartPresentation';
-import ManualStartBlockType from '../manualStart/ManualStartBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import ManualStartBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
+import ManualStartPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /ManualStart/: ', () => {
-  it('Render components <ManualStartPresentation/>', () => {
+describe('Suite Test Components /ManualStart/: ', () => {
+  it('AUT-FE-05023 Render component <ManualStartPresentation/>', () => {
     render(<ManualStartPresentation />);
     const text = screen.getByText(/start/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class ManualStartBlockType', () => {
+  it('AUT-FE-05024 Instance class ManualStartBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new ManualStartBlockType(flow)], [flow]);

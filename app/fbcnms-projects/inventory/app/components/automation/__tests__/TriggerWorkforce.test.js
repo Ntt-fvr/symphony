@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import TriggerWorkforceIconPresentation from '../triggerWorkforce/TriggerWorkforcePresentation';
-import TriggerWorkforceBlockType from '../triggerWorkforce/TriggerWorkforceBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import TriggerWorkforceBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/triggerWorkforce/TriggerWorkforceBlockType';
+import TriggerWorkforceIconPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/triggerWorkforce/TriggerWorkforcePresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /TriggerWorkForce/: ', () => {
-  it('Render components <TriggerWorkforceIconPresentation/>', () => {
+describe('Suite Test Components /TriggerWorkForce/: ', () => {
+  it('AUT-FE-05031 Render component <TriggerWorkforceIconPresentation/>', () => {
     render(<TriggerWorkforceIconPresentation />);
     const text = screen.getByText(/work order/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class TriggerWorkforceBlockType', () => {
+  it('AUT-FE-05032 Instance class TriggerWorkforceBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new TriggerWorkforceBlockType(flow)], [
