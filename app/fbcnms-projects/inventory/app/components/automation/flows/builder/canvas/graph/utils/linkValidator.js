@@ -22,11 +22,10 @@ export function validatorConectionBlock(
       coupled.attributes.embeds.find(item => item === sourceBlock.id),
   );
 
+  // Allow connection because the blocks are brothers
   if (isBrothersBlocks) {
     return true;
-  }
-
-  if (!isBrothersBlocks) {
+  } else {
     const validatorCoupledSource = coupledsBlocksList.filter(
       coupled => coupled.id === sourceBlock.id,
     );

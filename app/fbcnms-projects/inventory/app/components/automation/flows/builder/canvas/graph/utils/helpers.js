@@ -242,23 +242,6 @@ export function buildPaperInteractivityCheck(
   };
 }
 
-export function buildValidateUnembedding(flowWrapper: FlowWrapperReference) {
-  return (childView: IVertexView) => {
-    const cell = childView;
-    if (cell) {
-      console.log(cell);
-
-      return false;
-    }
-    if (!cell) {
-      console.log(cell);
-
-      return false;
-    }
-    console.log(cell);
-  };
-}
-
 const BLOCK_INDEXER_REGEX = /\s\((\d+)\)$/;
 const BLOCK_NAME_REGEX: RegExp = new RegExp(
   `^(.+)${BLOCK_INDEXER_REGEX.source}`,
