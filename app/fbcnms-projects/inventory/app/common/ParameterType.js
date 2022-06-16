@@ -126,6 +126,7 @@ export const getInitialParameterFromType = (
 export const toMutableParameterType = (
   immutableParameterType: $ReadOnly<any>,
 ): ParameterType => ({
+  oldName: immutableParameterType.name,
   id: immutableParameterType.id,
   type: immutableParameterType.type,
   nodeType: immutableParameterType.nodeType,

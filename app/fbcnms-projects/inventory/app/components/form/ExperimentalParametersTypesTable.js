@@ -135,6 +135,7 @@ const ExperimentalParametersTypesTable = (props: Props) => {
     setOpenModal(preventState => !preventState);
     setItem(parameter);
   };
+
   return (
     <div className={classes.container}>
       <Table component="div" className={classes.root}>

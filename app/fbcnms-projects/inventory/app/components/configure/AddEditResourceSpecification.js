@@ -13,11 +13,11 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Grid from '@material-ui/core/Grid';
-
 import React, {useMemo, useState} from 'react';
 import RelationshipTypeItem from './RelationshipTypeItem';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import _ from 'lodash';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
@@ -25,12 +25,14 @@ import type {AddConfigurationParameterTypeMutationResponse} from '../../mutation
 import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
+import type {EditConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/EditConfigurationParameterTypeMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
 import AddConfigurationParameterTypeMutation from '../../mutations/AddConfigurationParameterTypeMutation';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
+import EditConfigurationParameterTypeMutation from '../../mutations/EditConfigurationParameterTypeMutation';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
@@ -121,8 +123,11 @@ const ConfigurationParameters = graphql`
       rawValue
       resourceSpecification
       stringValue
+      tags {
+        id
+        name
+      }
       type
-      __typename
     }
   }
 `;
@@ -169,6 +174,7 @@ export const AddEditResourceSpecification = (props: Props) => {
     resourceSpecification,
     setResourceSpecification,
   ] = useState<ResourceSpecification>({data: {}});
+
   const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
     (dataForm?.resourcePropertyTypes ?? [])
       .filter(Boolean)
@@ -181,6 +187,9 @@ export const AddEditResourceSpecification = (props: Props) => {
       .map(toMutableParameterType),
     resourceSpecification: dataForm?.id,
   });
+
+  const filterEdit = parameterTypes.filter(item => item.name !== item.oldName);
+  const editOneToOne = filterEdit.map(item => item);
 
   const newParameter = parameterTypes?.filter(item => isTempId(item?.id));
 
@@ -285,6 +294,47 @@ export const AddEditResourceSpecification = (props: Props) => {
         setConfigurationParameters({});
         closeForm();
       },
+    });
+
+    editOneToOne.forEach(pt => {
+      const ptfilter = editOneToOne.find(Pt => Pt.id === pt.id);
+      const variablesEditCP: EditConfigurationParameterTypeMutationVariables = {
+        input: {
+          filter: {
+            id: pt.id,
+          },
+          set: {
+            type: ptfilter.type,
+            nodeType: ptfilter.nodeType,
+            name: ptfilter.name,
+            index: ptfilter.index,
+            floatValue: ptfilter.floatValue,
+            category: ptfilter.category,
+            externalId: ptfilter.externalId,
+            booleanValue: ptfilter.booleanValue,
+            stringValue: ptfilter.stringValue,
+            mappingIn: ptfilter.mappingIn,
+            mappingOut: ptfilter.mappingOut,
+            intValue: ptfilter.intValue,
+            isEditable: ptfilter.isEditable,
+            isMandatory: ptfilter.isMandatory,
+            isPrioritary: ptfilter.isPrioritary,
+            isListable: ptfilter.isListable,
+            isDeleted: ptfilter.isDeleted,
+            rawValue: ptfilter.rawValue,
+            tags: ptfilter.tags,
+            resourceSpecification: ptfilter.resourceSpecification,
+          },
+        },
+      };
+
+      EditConfigurationParameterTypeMutation(variablesEditCP, {
+        onCompleted: () => {
+          isCompleted();
+          setConfigurationParameters({});
+          closeForm();
+        },
+      });
     });
   }
 
