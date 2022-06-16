@@ -13,6 +13,7 @@ export type PropertyType = {|
   name: string,
   index?: ?number,
   isDeleted?: ?boolean,
+  options?: string,
 |};
 
 import type {TableDispatcherActionType} from './TableDispatcherActionType';
@@ -71,6 +72,7 @@ export function reducer(
       return editPropertyType(state, action.id, pt => ({
         ...pt,
         name: action.name,
+        options: action.options,
       }));
     default:
       return state;

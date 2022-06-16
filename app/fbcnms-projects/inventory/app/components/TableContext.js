@@ -10,138 +10,237 @@
 
 import type {TableType} from './context/TableTypeState';
 
-import * as React from 'react';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
+import Chip from '@material-ui/core/Chip';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import React, {useState} from 'react';
+import Select from '@material-ui/core/Select';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableTypesDispatcher from './context/TableTypesDispatcher';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import fbt from 'fbt';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import inventoryTheme from '../common/theme';
+import {Grid, MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from './draggable/DraggableUtils';
 import {useContext} from 'react';
 
 const useStyles = makeStyles(() => ({
-  container: {
-    overflowX: 'auto',
-  },
   root: {
-    marginBottom: '12px',
-    maxWidth: '100%',
+    marginBottom: '20px',
   },
-  input: {
-    ...inventoryTheme.textField,
-    marginTop: '0px',
-    marginBottom: '0px',
-    width: '100%',
+  formField: {
+    ...inventoryTheme.formField,
   },
-  gridRight: {
-    '& div': {
-      padding: '0',
+  containerAccordion: {
+    ...inventoryTheme.containerAccordion,
+  },
+  selectCard: {
+    '& .MuiOutlinedInput-input': {
+      display: 'flex',
+      alignItems: 'center',
+      padding: 0,
+      marginLeft: '10px',
+      height: '34px',
     },
   },
-  checkbox: {
-    textAlign: 'center',
-    '& div': {
-      justifyContent: 'center',
-    },
-  },
-  selectMenu: {
-    height: '14px',
-  },
-  actionsBar: {
-    width: '20px',
+  chip: {
+    marginRight: 10,
+    backgroundColor: '#EDF3FE',
+    borderRadius: 4,
+    height: 23,
   },
 }));
 
 type Props = $ReadOnly<{|
   tableTypes: Array<TableType>,
+  nameCard: string,
+  selectMultiple?: boolean,
   // supportDelete?: boolean,
 |}>;
 
 const TableContextForm = ({
   tableTypes,
+  nameCard,
+  selectMultiple,
 }: // supportDelete,
 Props) => {
   const classes = useStyles();
   const {dispatch} = useContext(TableTypesDispatcher);
 
+  const options = [
+    {id: '1', name: 'one'},
+    {id: '2', name: 'two'},
+    {id: '3', name: 'three'},
+    {id: '4', name: 'four'},
+    {id: '5', name: 'five'},
+    {id: '6', name: 'six'},
+  ];
+
+  const [selectChip, setSelectChip] = useState([]);
+
   return (
-    <div className={classes.container}>
-      <Table component="div" className={classes.root}>
-        <TableHead component="div">
-          <TableRow component="div">
-            <TableCell component="div">Name</TableCell>
-            <TableCell className={classes.checkbox} component="div">
-              Delete
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        {tableTypes
-          .filter(pt => !pt.isDeleted)
-          .sort(sortByIndex)
-          .map((property, i) => (
-            <TableRow component="div">
-              <TableCell component="div" scope="row">
-                <FormField>
-                  <TextInput
-                    autoFocus={true}
-                    placeholder="Name"
-                    autoComplete="off"
-                    className={classes.input}
-                    value={property.name}
-                    onChange={({target}) =>
-                      dispatch({
-                        type: 'UPDATE_PROPERTY_TYPE_NAME',
-                        id: property.id,
-                        name: target.value,
-                      })
-                    }
-                    onBlur={() =>
-                      dispatch({
-                        type: 'UPDATE_PROPERTY_TYPE_NAME',
-                        id: property.id,
-                        name: property.name.trim(),
-                      })
-                    }
-                  />
-                </FormField>
-              </TableCell>
-              <TableCell className={classes.checkbox} component="div">
-                <FormAction>
-                  <IconButton>
-                    <DeleteOutlinedIcon
-                      color="primary"
-                      onClick={() =>
-                        dispatch({
-                          type: 'DELETE_PROPERTY_TYPE',
-                          id: property.id,
-                        })
-                      }
-                    />
-                  </IconButton>
-                </FormAction>
-              </TableCell>
-            </TableRow>
-          ))}
-      </Table>
-      <FormAction>
-        <Button
-          variant="text"
-          onClick={() => dispatch({type: 'ADD_PROPERTY_TYPE'})}
-          leftIcon={PlusIcon}>
-          <fbt desc="">Add Property</fbt>
-        </Button>
-      </FormAction>
+    <div className={classes.root}>
+      <Accordion className={classes.containerAccordion}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header">
+          <Typography>{nameCard} Definitions</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid item container xs>
+            <Table component="div" className={classes.root}>
+              <TableHead component="div">
+                <TableRow component="div">
+                  <TableCell component="div">Name</TableCell>
+                  {selectMultiple ? null : (
+                    <TableCell component="div">
+                      {nameCard} Specification
+                    </TableCell>
+                  )}
+                  <TableCell component="div">Delete</TableCell>
+                </TableRow>
+              </TableHead>
+              {tableTypes
+                .filter(pt => !pt.isDeleted)
+                .sort(sortByIndex)
+                .map((item, i) => (
+                  <TableRow component="div">
+                    {selectMultiple ? (
+                      <TableCell component="div" scope="row">
+                        <Select
+                          multiple
+                          fullWidth
+                          defaultValue=""
+                          value={selectChip}
+                          onChange={({target}) => {
+                            setSelectChip(target.value);
+                            dispatch({
+                              type: 'UPDATE_PROPERTY_TYPE_NAME',
+                              ...item,
+                              name: target.value,
+                            });
+                          }}
+                          input={
+                            <OutlinedInput className={classes.selectCard} />
+                          }
+                          renderValue={selected => (
+                            <>
+                              {selected.map(value => (
+                                <Chip
+                                  key={value}
+                                  label={value}
+                                  onDelete={'handleDelete'}
+                                  className={classes.chip}
+                                />
+                              ))}
+                            </>
+                          )}>
+                          {options.map((item, index) => (
+                            <MenuItem key={index} value={item.name}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </TableCell>
+                    ) : (
+                      <>
+                        <TableCell component="div" scope="row">
+                          <FormField>
+                            <TextField
+                              className={classes.formField}
+                              label={`Select ${nameCard} Specifications `}
+                              variant="outlined"
+                              autoComplete="off"
+                              defaultValue=""
+                              fullWidth
+                              value={item.name}
+                              onChange={({target}) =>
+                                dispatch({
+                                  type: 'UPDATE_PROPERTY_TYPE_NAME',
+                                  id: item.id,
+                                  name: target.value,
+                                })
+                              }
+                              onBlur={() =>
+                                dispatch({
+                                  type: 'UPDATE_PROPERTY_TYPE_NAME',
+                                  id: item.id,
+                                  name: item.name.trim(),
+                                })
+                              }
+                            />
+                          </FormField>
+                        </TableCell>
+                        <TableCell>
+                          <FormField>
+                            <TextField
+                              className={classes.formField}
+                              required
+                              select
+                              label={'Select  Specifications'}
+                              variant="outlined"
+                              fullWidth
+                              defaultValue=""
+                              onChange={({target}) => {
+                                dispatch({
+                                  type: 'UPDATE_PROPERTY_TYPE_NAME',
+                                  ...item,
+                                  options: target.value,
+                                });
+                              }}>
+                              {options.map((item, index) => (
+                                <MenuItem key={index} value={item.name}>
+                                  {item.name}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                          </FormField>
+                        </TableCell>
+                      </>
+                    )}
+                    <TableCell component="div">
+                      <FormAction>
+                        <IconButton>
+                          <DeleteOutlinedIcon
+                            color="primary"
+                            onClick={() =>
+                              dispatch({
+                                type: 'DELETE_PROPERTY_TYPE',
+                                id: item.id,
+                              })
+                            }
+                          />
+                        </IconButton>
+                      </FormAction>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </Table>
+            <FormAction>
+              <Button
+                variant="text"
+                onClick={() => dispatch({type: 'ADD_PROPERTY_TYPE'})}
+                leftIcon={PlusIcon}>
+                Add Relationship
+              </Button>
+            </FormAction>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
     </div>
   );
 };

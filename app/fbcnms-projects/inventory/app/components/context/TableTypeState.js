@@ -13,6 +13,7 @@ export type TableType = {|
   name: string,
   index?: ?number,
   isDeleted?: ?boolean,
+  options?: string,
 |};
 
 import type {TableDispatcherActionType} from './TableDispatcherActionType';
@@ -27,6 +28,7 @@ export const getInitialTableType = (index: number): TableType => ({
   id: generateTempId(),
   name: '',
   index: index,
+  options: '',
 });
 
 export const useTableTypesReducer = (initialTableType: Array<TableType>) => {
@@ -44,6 +46,7 @@ export const toMutableTableType = (
   name: immutableTableType.name,
   index: immutableTableType.index,
   isDeleted: immutableTableType.isDeleted,
+  options: immutableTableType.options,
 });
 
 export const convertTableTypeToMutationInput = (

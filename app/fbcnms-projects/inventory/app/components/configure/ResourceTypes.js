@@ -51,6 +51,7 @@ const ResourceTypesQuery = graphql`
           name
           resourceType {
             id
+            resourceTypeClass
           }
           resourcePropertyTypes {
             id
@@ -78,15 +79,6 @@ const ResourceTypesQuery = graphql`
   }
 `;
 
-const dataSelectorsForm = {
-  resourceTypeClass: ['CARD', 'EQUIPMENT', 'PORT', 'RACK', 'SLOT', 'VLAN'],
-  resourceTypeBaseType: [
-    'LOGICAL_RESOURCE',
-    'PHYSICAL_RESOURCE',
-    'VIRTUAL_RESOURCE',
-  ],
-};
-
 export type DataSelectorsForm = {
   resourceTypeClass: Array<ResourceTypeClassKind>,
   resourceTypeBaseType: Array<ResourceTypeBaseTypeKind>,
@@ -99,12 +91,22 @@ type Resources = {
       name: string,
       resourceType: {
         id: string,
+        resourceTypeClass: string,
       },
       resourceTypeBaseType: string,
       resourceTypeClass: string,
       resourcePropertyTypes: Array<PropertyType>,
     },
   },
+};
+
+const dataSelectorsForm = {
+  resourceTypeClass: ['CARD', 'EQUIPMENT', 'PORT', 'RACK', 'SLOT', 'VLAN'],
+  resourceTypeBaseType: [
+    'LOGICAL_RESOURCE',
+    'PHYSICAL_RESOURCE',
+    'VIRTUAL_RESOURCE',
+  ],
 };
 
 const ResourceTypes = () => {

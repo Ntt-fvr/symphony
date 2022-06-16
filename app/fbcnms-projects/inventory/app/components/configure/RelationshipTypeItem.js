@@ -15,12 +15,22 @@ import React from 'react';
 import RelationshipFormValidation from './RelationshipFormValidation';
 import TableContextForm from '../TableContext';
 import TableTypesDispatcher from '../context/TableTypesDispatcher';
+import Text from '@symphony/design-system/components/Text';
+import {Grid} from '@material-ui/core';
+import {difference} from 'lodash';
 import {graphql} from 'relay-runtime';
+import {makeStyles} from '@material-ui/styles';
 import {
   toMutableTableType,
   useTableTypesReducer,
 } from '../context/TableTypeState';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const useStyles = makeStyles(() => ({
+  relationship: {
+    margin: '32px 0',
+  },
+}));
 
 const ResourceSpecificationRelationshipsQuery = graphql`
   query RelationshipTypeItemQuery(
@@ -70,6 +80,7 @@ type Props = $ReadOnly<{|
 
 export default function RelationshipTypeItem(props: Props) {
   const {dataForm} = props;
+  const classes = useStyles();
 
   const response = useLazyLoadQuery<RelationshipTypeItemQuery>(
     ResourceSpecificationRelationshipsQuery,
@@ -90,43 +101,78 @@ export default function RelationshipTypeItem(props: Props) {
       ],
     },
   );
-  const getDataRelationShipsA = response.resourceTypeRelationships.edges.map(
-    item => item.node?.resourceTypeA?.resourceTypeClass,
-  );
-  const getDataRelationShipsB = response.resourceTypeRelationships.edges.map(
-    item => item.node?.resourceTypeB?.resourceTypeClass,
-  );
+
   const getdataAllRelationShips = [
-    ...getDataRelationShipsA,
-    ...getDataRelationShipsB,
+    ...difference(
+      response.resourceTypeRelationships.edges.map(
+        item => item.node?.resourceTypeA?.resourceTypeClass,
+      ),
+      [dataForm.resourceType?.resourceTypeClass],
+    ),
+    ...difference(
+      response.resourceTypeRelationships.edges.map(
+        item => item.node?.resourceTypeB?.resourceTypeClass,
+      ),
+      [dataForm.resourceType?.resourceTypeClass],
+    ),
   ];
+
   const dataFormTable = [
     {
       id: '',
       name: '',
+      options: '',
     },
   ];
-  const [tableTypes, tableTypesDispatcher] = useTableTypesReducer(
-    (dataFormTable ?? []).filter(Boolean).map(toMutableTableType),
+  const dimanycMapTable = (dataFormTable ?? [])
+    .filter(Boolean)
+    .map(toMutableTableType);
+
+  const [tableTypesSlots, tableTypesDispatcherSlots] = useTableTypesReducer(
+    dimanycMapTable,
+  );
+  const [tableTypesPorts, tableTypesDispatcherPorts] = useTableTypesReducer(
+    dimanycMapTable,
+  );
+  const [tableTypesCards, tableTypesDispatcherCards] = useTableTypesReducer(
+    dimanycMapTable,
   );
 
   return (
     <>
-      <TableTypesDispatcher.Provider
-        value={{dispatch: tableTypesDispatcher, tableTypes}}>
-        <TableContextForm tableTypes={tableTypes} />
-      </TableTypesDispatcher.Provider>
-      {getdataAllRelationShips.includes('CARD') && (
-        <RelationshipFormValidation nameForm="Cards" />
-      )}
-      {getdataAllRelationShips.includes('PORT') && (
-        <RelationshipFormValidation nameForm="Ports" />
-      )}
-      {getdataAllRelationShips.includes('SLOT') && (
-        <RelationshipFormValidation nameForm="Slots" />
-      )}
-      {getdataAllRelationShips.includes('VLAN') && (
-        <RelationshipFormValidation nameForm="Vlan" />
+      {!dataForm.resourceType?.resourceTypeClass ? null : (
+        <>
+          <Grid className={classes.relationship} item xs={12}>
+            <Text weight={'bold'} variant={'h6'}>
+              Relationship types definition
+            </Text>
+          </Grid>
+          {getdataAllRelationShips.includes('CARD') && (
+            <TableTypesDispatcher.Provider
+              value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
+              <TableContextForm
+                nameCard="Cards"
+                selectMultiple
+                tableTypes={tableTypesCards}
+              />
+            </TableTypesDispatcher.Provider>
+          )}
+          {getdataAllRelationShips.includes('PORT') && (
+            <TableTypesDispatcher.Provider
+              value={{dispatch: tableTypesDispatcherPorts, tableTypesPorts}}>
+              <TableContextForm nameCard="Ports" tableTypes={tableTypesPorts} />
+            </TableTypesDispatcher.Provider>
+          )}
+          {getdataAllRelationShips.includes('SLOT') && (
+            <TableTypesDispatcher.Provider
+              value={{dispatch: tableTypesDispatcherSlots, tableTypesSlots}}>
+              <TableContextForm nameCard="Slots" tableTypes={tableTypesSlots} />
+            </TableTypesDispatcher.Provider>
+          )}
+          {getdataAllRelationShips.includes('VLAN') && (
+            <RelationshipFormValidation nameForm="Vlan" />
+          )}
+        </>
       )}
     </>
   );

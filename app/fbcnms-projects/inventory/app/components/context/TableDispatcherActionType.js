@@ -24,4 +24,5 @@ export type TableDispatcherActionType =
       type: 'UPDATE_PROPERTY_TYPE_NAME',
       id: string,
       name: string,
+      options: string,
     |};

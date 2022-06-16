@@ -27,8 +27,9 @@ export type AddResourceInput = {|
   crossconnectionInv?: ?$ReadOnlyArray<?ResourceRef>,
   externalId?: ?string,
   isDelete: boolean,
+  isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
-  locatedIn?: ?any,
+  locatedIn?: ?string,
   logicalLink?: ?ResourceRef,
   logicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
   name: string,
@@ -37,8 +38,8 @@ export type AddResourceInput = {|
   physicalLink?: ?ResourceRef,
   physicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
   planningSubStatus?: ?PlanningSubStatus,
-  resourcePropertys?: ?$ReadOnlyArray<?ResourcePropertyRef>,
-  resourceSpecification: any,
+  resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
+  resourceSpecification: string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
   usageSubStatus?: ?UsageSubStatus,
 |};
@@ -51,8 +52,9 @@ export type ResourceRef = {|
   externalId?: ?string,
   id?: ?string,
   isDelete?: ?boolean,
+  isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
-  locatedIn?: ?any,
+  locatedIn?: ?string,
   logicalLink?: ?ResourceRef,
   logicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
   name?: ?string,
@@ -61,8 +63,8 @@ export type ResourceRef = {|
   physicalLink?: ?ResourceRef,
   physicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
   planningSubStatus?: ?PlanningSubStatus,
-  resourcePropertys?: ?$ReadOnlyArray<?ResourcePropertyRef>,
-  resourceSpecification?: ?any,
+  resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
+  resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
   usageSubStatus?: ?UsageSubStatus,
 |};
@@ -92,7 +94,7 @@ export type ResourcePropertyRef = {|
   rangeToValue?: ?number,
   rawValue?: ?string,
   resource?: ?ResourceRef,
-  resourcePropertyType?: ?any,
+  resourcePropertyType?: ?string,
   stringValue?: ?string,
 |};
 export type AddResourceMutationVariables = {|
@@ -102,9 +104,9 @@ export type AddResourceMutationResponse = {|
   +addResource: ?{|
     +numUids: ?number,
     +resource: ?$ReadOnlyArray<?{|
-      +locatedIn: ?any,
+      +locatedIn: ?string,
       +name: string,
-      +resourceSpecification: any,
+      +resourceSpecification: string,
       +isDelete: boolean,
     |}>,
   |}

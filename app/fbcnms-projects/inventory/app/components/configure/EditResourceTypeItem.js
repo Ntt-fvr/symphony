@@ -99,6 +99,7 @@ export type ResourceSpecifications = {
   name: string,
   resourceType: {
     id: string,
+    resourceTypeClass: string,
   },
   resourcePropertyTypes: Array<PropertyType>,
 };
@@ -109,6 +110,7 @@ type Props = $ReadOnly<{|
     name: string,
     resourceType: {
       id: string,
+      resourceTypeClass: string,
     },
     resourceTypeBaseType: string,
     resourceTypeClass: string,

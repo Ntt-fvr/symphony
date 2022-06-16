@@ -16,7 +16,7 @@ import Grid from '@material-ui/core/Grid';
 
 import React, {useMemo, useState} from 'react';
 import RelationshipTypeItem from './RelationshipTypeItem';
-import Text from '@symphony/design-system/components/Text';
+
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
@@ -29,9 +29,11 @@ import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecifi
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
+import MenuItem from '@material-ui/core/MenuItem';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
+import inventoryTheme from '../../common/theme';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
@@ -45,37 +47,9 @@ const useStyles = makeStyles(() => ({
     padding: '24px 25px 34px 34px',
     margin: '0',
   },
-  relationship: {
-    margin: '32px 0',
-  },
   formField: {
-    margin: '0 22px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
-    },
-    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
-    },
-    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
-    },
-    '& .MuiFormControl-root': {
-      marginBottom: '41px',
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
-      },
-    },
-    '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
-      fontSize: '14px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    '& label': {
-      fontSize: '14px',
-      lineHeight: '8px',
-    },
+    margin: '0 22px 41px 22px',
+    ...inventoryTheme.formField,
   },
   header: {
     marginBottom: '1rem',
@@ -274,6 +248,18 @@ export const AddEditResourceSpecification = (props: Props) => {
               )}
             </form>
           </Grid>
+          <Grid item xs={4}>
+            <form className={classes.formField} autoComplete="off">
+              <TextField
+                required
+                select
+                label="Vendor"
+                variant="outlined"
+                fullWidth>
+                <MenuItem>Nokia</MenuItem>
+              </TextField>
+            </form>
+          </Grid>
         </Grid>
       </Card>
       <Card margins="none">
@@ -330,11 +316,6 @@ export const AddEditResourceSpecification = (props: Props) => {
           }
         />
       )}
-      <Grid className={classes.relationship} item xs={12}>
-        <Text weight={'bold'} variant={'h6'}>
-          Relationship types definition
-        </Text>
-      </Grid>
       <RelationshipTypeItem dataForm={formValues} />
     </div>
   );
