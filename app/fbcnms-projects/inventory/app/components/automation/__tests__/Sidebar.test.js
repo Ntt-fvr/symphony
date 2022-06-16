@@ -1,10 +1,19 @@
-import React, {useMemo} from 'react';
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ * @format
+ */
 import '@testing-library/jest-dom';
-import {render, screen, fireEvent} from '@testing-library/react';
+import React from 'react';
+import {fireEvent, render, screen} from '@testing-library/react';
 
-import Sidebar from '../Sidebar';
+import Sidebar from '../flows/builder/widgets/detailsPanel/inputs/Sidebar';
 
-describe('Test Component <Sidebar/>', () => {
+describe('Suite Test Component <Sidebar/>', () => {
   const props = {
     drawerWidth: '',
     smallWidth: '',
@@ -12,16 +21,16 @@ describe('Test Component <Sidebar/>', () => {
     title: 'textTitle',
     openDefault: true,
     children: 'children',
-    collapsed: boolen => {},
+    collapsed: () => {},
   };
 
-  it('Render <Sidebar/>', () => {
+  it('AUT-FE-05002 Render <Sidebar/>', () => {
     render(<Sidebar {...props} />);
     const textChildren = screen.getByText('children');
     expect(textChildren).toBeInTheDocument();
   });
 
-  it('onClick Button <Sidebar/>', () => {
+  it('AUT-FE-05003 onClick Button <Sidebar/>', () => {
     let textTitle;
 
     render(<Sidebar {...props} />);

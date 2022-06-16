@@ -1,10 +1,20 @@
-import React, {useMemo} from 'react';
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ * @format
+ */
+
 import '@testing-library/jest-dom';
+import React from 'react';
 import {render, screen} from '@testing-library/react';
 
-import InputSelect from '../Select';
+import InputSelect from '../flows/builder/widgets/detailsPanel/inputs/Select';
 
-describe('Test Component <Select/>', () => {
+describe('Suite Test Component <Select/>', () => {
   const props = {
     value: null,
     name: 'textName',
@@ -22,7 +32,7 @@ describe('Test Component <Select/>', () => {
     ],
   };
 
-  it('Render <InputSelect/>', () => {
+  it('AUT-FE-05001 Render <InputSelect/>', () => {
     render(<InputSelect {...props} />);
     const propsName = screen.getAllByText('textLabel');
     expect(propsName[0]).toBeInTheDocument();

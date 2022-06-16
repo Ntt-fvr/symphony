@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import ParallelPresentation from '../parallel/ParallelPresentation';
-import ParallelBlockType from '../parallel/ParallelBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import ParallelBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/parallel/ParallelBlockType';
+import ParallelPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/parallel/ParallelPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe('Test Components /Parallel/: ', () => {
-  it('Render components <ParallelPresentation/>', () => {
+describe('Suite Test Components /Parallel/: ', () => {
+  it('AUT-FE-05025 Render component <ParallelPresentation/>', () => {
     render(<ParallelPresentation />);
     const text = screen.getByText(/parallel/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class ParallelBlockType', () => {
+  it('AUT-FE-05026 Instance class ParallelBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new ParallelBlockType(flow)], [flow]);

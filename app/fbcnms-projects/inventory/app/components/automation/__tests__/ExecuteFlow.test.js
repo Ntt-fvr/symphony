@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import ExecuteFlowPresentation from '../executeFlow/ExecuteFlowPresentation';
-import ExecuteFlowBlockType from '../executeFlow/ExecuteFlowBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import ExecuteFlowBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowBlockType';
+import ExecuteFlowPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /ExecuteFlow/: ', () => {
-  it('Render components <ExecuteFlowPresentation/>', () => {
+describe('Suite Test Components /ExecuteFlow/: ', () => {
+  it('AUT-FE-05013  Render component <ExecuteFlowPresentation/>', () => {
     render(<ExecuteFlowPresentation />);
     const text = screen.getByText(/execute flow/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class ExecuteFlowBlockType', () => {
+  it('AUT-FE-05014 Instance class ExecuteFlowBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new ExecuteFlowBlockType(flow)], [flow]);

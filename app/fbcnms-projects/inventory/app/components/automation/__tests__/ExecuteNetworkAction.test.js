@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import ExecuteNetworkActionPresentation from '../executeNetworkAction/ExecuteNetworkActionPresentation';
-import ExecuteNetworkActionBlockType from '../executeNetworkAction/ExecuteNetworkActionBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import ExecuteNetworkActionBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/executeNetworkAction/ExecuteNetworkActionBlockType';
+import ExecuteNetworkActionPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/executeNetworkAction/ExecuteNetworkActionPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /ExecuteNetworkAction/: ', () => {
-  it('Render components <ExecuteNetworkActionPresentation/>', () => {
+describe('Suite Test Components /ExecuteNetworkAction/: ', () => {
+  it('AUT-FE-05015 Render component <ExecuteNetworkActionPresentation/>', () => {
     render(<ExecuteNetworkActionPresentation />);
     const text = screen.getByText(/execute network action/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class ExecuteNetworkActionBlockType', () => {
+  it('AUT-FE-05016 Instance class ExecuteNetworkActionBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(

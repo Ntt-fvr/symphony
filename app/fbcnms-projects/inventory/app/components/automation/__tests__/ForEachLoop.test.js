@@ -8,23 +8,23 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import ForEachLoopPresentation from '../forEachLoop/ForEachLoopPresentation';
-import ForEachLoopBlockType from '../forEachLoop/ForEachLoopBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import ForEachLoopBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopBlockType';
+import ForEachLoopPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /ForEachLoop/: ', () => {
-  it('Render components <ForEachLoopPresentation/>', () => {
+describe('Suite Test Components /ForEachLoop/: ', () => {
+  it('AUT-FE-05017 Render component <ForEachLoopPresentation/>', () => {
     render(<ForEachLoopPresentation />);
 
     const text = screen.getByText(/for each/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class ForEachLoopBlockType', () => {
+  it('AUT-FE-05018 Instance class ForEachLoopBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new ForEachLoopBlockType(flow)], [flow]);

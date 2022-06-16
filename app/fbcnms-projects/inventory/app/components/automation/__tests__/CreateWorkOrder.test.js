@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import CreateWorkorderPresentation from '../createWorkorder/CreateWorkorderPresentation';
-import CreateWorkorderBlockType from '../createWorkorder/CreateWorkorderBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import CreateWorkorderBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
+import CreateWorkorderPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /CreacteWorkOrder/: ', () => {
-  it('Render components <CreateWorkorderPresentation/>', () => {
+describe('Suite Test Components /CreateWorkOrder/: ', () => {
+  it('AUT-FE-05007 Render component <CreateWorkorderPresentation/>', () => {
     render(<CreateWorkorderPresentation />);
     const text = screen.getByText(/work order/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class CreateWorkorderBlockType', () => {
+  it('AUT-FE-05008 Instance class CreateWorkorderBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new CreateWorkorderBlockType(flow)], [

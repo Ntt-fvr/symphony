@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import TriggerStartIconPresentation from '../triggerStart/TriggerStartPresentation';
-import TriggerStartBlockType from '../triggerStart/TriggerStartBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import TriggerStartBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartBlockType';
+import TriggerStartIconPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /TriggerStart/: ', () => {
-  it('Render components <TriggerStartIconPresentation/>', () => {
+describe('Suite Test Components /TriggerStart/: ', () => {
+  it('AUT-FE-05029 Render components <TriggerStartIconPresentation/>', () => {
     render(<TriggerStartIconPresentation />);
     const text = screen.getByText(/triggered/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class TriggerStartBlockType', () => {
+  it('AUT-FE-05030 Instance class TriggerStartBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new TriggerStartBlockType(flow)], [

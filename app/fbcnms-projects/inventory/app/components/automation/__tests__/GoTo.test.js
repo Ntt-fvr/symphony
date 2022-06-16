@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import GoToPresentation from '../goTo/GoToPresentation';
-import GoToBlockType from '../goTo/GoToBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import GoToBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToBlockType';
+import GoToPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /GoTo/: ', () => {
-  it('Render components <GoToPresentation/>', () => {
+describe('Suite Test Components /GoTo/: ', () => {
+  it('AUT-FE-05019 Render component <GoToPresentation/>', () => {
     render(<GoToPresentation />);
     const text = screen.getByText(/go to/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class GoToBlockType', () => {
+  it('AUT-FE-05020 Instance class GoToBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new GoToBlockType(flow)], [flow]);

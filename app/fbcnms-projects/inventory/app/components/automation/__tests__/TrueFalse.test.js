@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import TrueFalsePresentation from '../trueFalse/TrueFalsePresentation';
-import TrueFalseBlockType from '../trueFalse/TrueFalseBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import TrueFalseBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseBlockType';
+import TrueFalsePresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalsePresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /TrueFalse/: ', () => {
-  it('Render components <TrueFalsePresentation/>', () => {
+describe(' Suite Test Components /TrueFalse/: ', () => {
+  it('AUT-FE-05033 Render component <TrueFalsePresentation/>', () => {
     render(<TrueFalsePresentation />);
     const text = screen.getByText(/true/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class TrueFalseBlockType', () => {
+  it('AUT-FE-05034 Instance class TrueFalseBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new TrueFalseBlockType(flow)], [flow]);

@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import TriggerStartIconPresentation from '../timer/TimerPresentation';
-import TimerBlockType from '../timer/TimerBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import TimerBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/timer/TimerBlockType';
+import TriggerStartIconPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/timer/TimerPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /Timer/: ', () => {
-  it('Render components <TriggerStartIconPresentation/>', () => {
+describe('Suite Test Components /Timer/: ', () => {
+  it('AUT-FE-05027 Render component <TriggerStartIconPresentation/>', () => {
     render(<TriggerStartIconPresentation />);
     const text = screen.getByText(/timer/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class TimerBlockType', () => {
+  it('AUT-FE-05028 Instance class TimerBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new TimerBlockType(flow)], [flow]);

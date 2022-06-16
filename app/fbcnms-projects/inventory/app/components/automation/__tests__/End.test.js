@@ -8,23 +8,23 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import DecisionPresentation from '../end/EndPresentation';
-import EndBlockType from '../end/EndBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import DecisionPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndPresentation';
+import EndBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /End/: ', () => {
-  it('Render components <EndPresentation/>', () => {
+describe('Suite Test Components /End/: ', () => {
+  it('AUT-FE-05011 Render component <EndPresentation/>', () => {
     render(<DecisionPresentation />);
 
     const text = screen.getByText(/end/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class EndBlockType', () => {
+  it('AUT-FE-05012 Instance class EndBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new EndBlockType(flow)], [flow]);

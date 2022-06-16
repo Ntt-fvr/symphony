@@ -8,22 +8,22 @@
  * @format
  */
 
+import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
-import '@testing-library/jest-dom';
 
-import InvokeRestApiPresentation from '../invokeRestApi/InvokeRestApiPresentation';
-import InvokeRestApiBlockType from '../invokeRestApi/InvokeRestApiBlockType';
-import {useGraph} from '../../../../graphAPIContext/GraphContext';
+import InvokeRestApiBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiBlockType';
+import InvokeRestApiPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiPresentation';
+import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe(' Test Components /InvokeRestApi/: ', () => {
-  it('Render components <InvokeRestApiPresentation/>', () => {
+describe('Suite Test Components /InvokeRestApi/: ', () => {
+  it('AUT-FE-05021 Render component <InvokeRestApiPresentation/>', () => {
     render(<InvokeRestApiPresentation />);
     const text = screen.getByText(/invoke/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('Instance class InvokeRestApiBlockType', () => {
+  it('AUT-FE-05022 Instance class InvokeRestApiBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
       const flowTypes = useMemo(() => [new InvokeRestApiBlockType(flow)], [
