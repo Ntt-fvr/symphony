@@ -39,7 +39,7 @@ type ActionExecution {
   itemsAggregate(filter: ActionExecutionItemFilter): ActionExecutionItemAggregateResult
   scheduler(filter: ActionSchedulerFilter): ActionScheduler
   starTime: DateTime!
-  template(filter: ActionTemplateFilter): ActionTemplate
+  template(filter: ActionTemplateFilter): ActionTemplate!
 }
 
 type ActionExecutionAggregateResult {
@@ -236,6 +236,8 @@ enum ActionSchedulerType {
 }
 
 type ActionTemplate {
+  ActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
+  ActionExecutionAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
   actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
   actionTemplateItemAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   id: ID!
@@ -262,6 +264,7 @@ input ActionTemplateFilter {
 }
 
 enum ActionTemplateHasFilter {
+  ActionExecution
   actionTemplateItem
   name
   resourceSpecifications
@@ -318,6 +321,7 @@ enum ActionTemplateOrderable {
 }
 
 input ActionTemplatePatch {
+  ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]
   name: String
   resourceSpecifications: String
@@ -325,6 +329,7 @@ input ActionTemplatePatch {
 }
 
 input ActionTemplateRef {
+  ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]
   id: ID
   name: String
@@ -387,7 +392,7 @@ input AddActionExecutionInput {
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
   starTime: DateTime!
-  template: ActionTemplateRef
+  template: ActionTemplateRef!
 }
 
 input AddActionExecutionItemInput {
@@ -424,6 +429,7 @@ type AddActionSchedulerPayload {
 }
 
 input AddActionTemplateInput {
+  ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]!
   name: String!
   resourceSpecifications: String!
@@ -930,7 +936,7 @@ input AddNumericPoolInput {
   description: String
   isDelete: Boolean!
   limit: Int!
-  resource: [ResourceRef!]!
+  resources: [ResourceRef!]!
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -1401,7 +1407,7 @@ type AddServiceSpecificationReferencePayload {
 input AddStatusNumericPoolInput {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type AddStatusNumericPoolPayload {
@@ -2296,11 +2302,10 @@ enum ChangeRequestSource {
 }
 
 enum ChangeRequestStatus {
-  APPROVAL
   CANCELLED
   FAILED
   IN_EXECUTION
-  PENDING
+  PENDING_APPROVAL
   REJECTED
   SCHEDULED
   SUBMITTED
@@ -6506,8 +6511,8 @@ type NumericPool {
   id: ID!
   isDelete: Boolean!
   limit: Int!
-  resource(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
-  resourceAggregate(filter: ResourceFilter): ResourceAggregateResult
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   statusNumericPools(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool]
   statusNumericPoolsAggregate(filter: StatusNumericPoolFilter): StatusNumericPoolAggregateResult
 }
@@ -6539,7 +6544,7 @@ enum NumericPoolHasFilter {
   description
   isDelete
   limit
-  resource
+  resources
   statusNumericPools
 }
 
@@ -6560,7 +6565,7 @@ input NumericPoolPatch {
   description: String
   isDelete: Boolean
   limit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -6570,7 +6575,7 @@ input NumericPoolRef {
   id: ID
   isDelete: Boolean
   limit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -10855,7 +10860,7 @@ type StatusNumericPool {
   id: ID!
   numericPool(filter: NumericPoolFilter): NumericPool
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type StatusNumericPoolAggregateResult {
@@ -10873,20 +10878,20 @@ input StatusNumericPoolFilter {
 enum StatusNumericPoolHasFilter {
   numericPool
   status
-  value
+  values
 }
 
 input StatusNumericPoolPatch {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StatusNumericPoolRef {
   id: ID
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StringExactFilter {
