@@ -18,8 +18,8 @@ import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';
 import React from 'react';
 import ResourceCard from '../resource/ResourceCard';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {makeStyles} from '@material-ui/styles';
-
 type Props = $ReadOnly<{|
   location: Location,
   locationId: string,
@@ -49,7 +49,7 @@ const LocationDetailsTab = (props: Props) => {
     onAddEquipment,
     onAddResource,
   } = props;
-
+  const resourceCardFlag = useFeatureFlag('resource_inventory');
   return (
     <div>
       <LocationDetailsCard className={classes.card} location={location} />
@@ -65,11 +65,13 @@ const LocationDetailsTab = (props: Props) => {
         onWorkOrderSelected={onWorkOrderSelected}
         onAddEquipment={onAddEquipment}
       />
-      <ResourceCard
-        selectedLocationId={locationId}
-        onResourceSelected={onResourceSelected}
-        onAddResource={onAddResource}
-      />
+      {resourceCardFlag && (
+        <ResourceCard
+          selectedLocationId={locationId}
+          onResourceSelected={onResourceSelected}
+          onAddResource={onAddResource}
+        />
+      )}
     </div>
   );
 };
