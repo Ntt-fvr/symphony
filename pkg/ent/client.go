@@ -10683,6 +10683,38 @@ func (c *ResourceSpecificationClient) QueryResourceSpecificationItems(rs *Resour
 	return query
 }
 
+// QueryVendor queries the vendor edge of a ResourceSpecification.
+func (c *ResourceSpecificationClient) QueryVendor(rs *ResourceSpecification) *VendorQuery {
+	query := &VendorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rs.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.VendorTable, resourcespecification.VendorColumn),
+		)
+		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryResourceSpecificationVendor queries the resource_specification_vendor edge of a ResourceSpecification.
+func (c *ResourceSpecificationClient) QueryResourceSpecificationVendor(rs *ResourceSpecification) *VendorQuery {
+	query := &VendorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rs.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, id),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, resourcespecification.ResourceSpecificationVendorTable, resourcespecification.ResourceSpecificationVendorColumn),
+		)
+		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ResourceSpecificationClient) Hooks() []Hook {
 	hooks := c.hooks.ResourceSpecification
@@ -13770,6 +13802,38 @@ func (c *VendorClient) QueryVendorsRecomendations(v *Vendor) *RecommendationsQue
 			sqlgraph.From(vendor.Table, vendor.FieldID, id),
 			sqlgraph.To(recommendations.Table, recommendations.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorsRecomendationsTable, vendor.VendorsRecomendationsColumn),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryResourceSpecification queries the resource_specification edge of a Vendor.
+func (c *VendorClient) QueryResourceSpecification(v *Vendor) *ResourceSpecificationQuery {
+	query := &ResourceSpecificationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(vendor.Table, vendor.FieldID, id),
+			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, vendor.ResourceSpecificationTable, vendor.ResourceSpecificationColumn),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVendorRs queries the vendor_rs edge of a Vendor.
+func (c *VendorClient) QueryVendorRs(v *Vendor) *ResourceSpecificationQuery {
+	query := &ResourceSpecificationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(vendor.Table, vendor.FieldID, id),
+			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorRsTable, vendor.VendorRsColumn),
 		)
 		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
 		return fromV, nil

@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
 // ResourceSpecificationUpdate is the builder for updating ResourceSpecification entities.
@@ -131,6 +132,44 @@ func (rsu *ResourceSpecificationUpdate) AddResourceSpecificationItems(r ...*Reso
 	return rsu.AddResourceSpecificationItemIDs(ids...)
 }
 
+// SetVendorID sets the vendor edge to Vendor by id.
+func (rsu *ResourceSpecificationUpdate) SetVendorID(id int) *ResourceSpecificationUpdate {
+	rsu.mutation.SetVendorID(id)
+	return rsu
+}
+
+// SetNillableVendorID sets the vendor edge to Vendor by id if the given value is not nil.
+func (rsu *ResourceSpecificationUpdate) SetNillableVendorID(id *int) *ResourceSpecificationUpdate {
+	if id != nil {
+		rsu = rsu.SetVendorID(*id)
+	}
+	return rsu
+}
+
+// SetVendor sets the vendor edge to Vendor.
+func (rsu *ResourceSpecificationUpdate) SetVendor(v *Vendor) *ResourceSpecificationUpdate {
+	return rsu.SetVendorID(v.ID)
+}
+
+// SetResourceSpecificationVendorID sets the resource_specification_vendor edge to Vendor by id.
+func (rsu *ResourceSpecificationUpdate) SetResourceSpecificationVendorID(id int) *ResourceSpecificationUpdate {
+	rsu.mutation.SetResourceSpecificationVendorID(id)
+	return rsu
+}
+
+// SetNillableResourceSpecificationVendorID sets the resource_specification_vendor edge to Vendor by id if the given value is not nil.
+func (rsu *ResourceSpecificationUpdate) SetNillableResourceSpecificationVendorID(id *int) *ResourceSpecificationUpdate {
+	if id != nil {
+		rsu = rsu.SetResourceSpecificationVendorID(*id)
+	}
+	return rsu
+}
+
+// SetResourceSpecificationVendor sets the resource_specification_vendor edge to Vendor.
+func (rsu *ResourceSpecificationUpdate) SetResourceSpecificationVendor(v *Vendor) *ResourceSpecificationUpdate {
+	return rsu.SetResourceSpecificationVendorID(v.ID)
+}
+
 // Mutation returns the ResourceSpecificationMutation object of the builder.
 func (rsu *ResourceSpecificationUpdate) Mutation() *ResourceSpecificationMutation {
 	return rsu.mutation
@@ -203,6 +242,18 @@ func (rsu *ResourceSpecificationUpdate) RemoveResourceSpecificationItems(r ...*R
 		ids[i] = r[i].ID
 	}
 	return rsu.RemoveResourceSpecificationItemIDs(ids...)
+}
+
+// ClearVendor clears the "vendor" edge to type Vendor.
+func (rsu *ResourceSpecificationUpdate) ClearVendor() *ResourceSpecificationUpdate {
+	rsu.mutation.ClearVendor()
+	return rsu
+}
+
+// ClearResourceSpecificationVendor clears the "resource_specification_vendor" edge to type Vendor.
+func (rsu *ResourceSpecificationUpdate) ClearResourceSpecificationVendor() *ResourceSpecificationUpdate {
+	rsu.mutation.ClearResourceSpecificationVendor()
+	return rsu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -530,6 +581,76 @@ func (rsu *ResourceSpecificationUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if rsu.mutation.VendorCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   resourcespecification.VendorTable,
+			Columns: []string{resourcespecification.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsu.mutation.VendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   resourcespecification.VendorTable,
+			Columns: []string{resourcespecification.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rsu.mutation.ResourceSpecificationVendorCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   resourcespecification.ResourceSpecificationVendorTable,
+			Columns: []string{resourcespecification.ResourceSpecificationVendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsu.mutation.ResourceSpecificationVendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   resourcespecification.ResourceSpecificationVendorTable,
+			Columns: []string{resourcespecification.ResourceSpecificationVendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, rsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{resourcespecification.Label}
@@ -645,6 +766,44 @@ func (rsuo *ResourceSpecificationUpdateOne) AddResourceSpecificationItems(r ...*
 	return rsuo.AddResourceSpecificationItemIDs(ids...)
 }
 
+// SetVendorID sets the vendor edge to Vendor by id.
+func (rsuo *ResourceSpecificationUpdateOne) SetVendorID(id int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.SetVendorID(id)
+	return rsuo
+}
+
+// SetNillableVendorID sets the vendor edge to Vendor by id if the given value is not nil.
+func (rsuo *ResourceSpecificationUpdateOne) SetNillableVendorID(id *int) *ResourceSpecificationUpdateOne {
+	if id != nil {
+		rsuo = rsuo.SetVendorID(*id)
+	}
+	return rsuo
+}
+
+// SetVendor sets the vendor edge to Vendor.
+func (rsuo *ResourceSpecificationUpdateOne) SetVendor(v *Vendor) *ResourceSpecificationUpdateOne {
+	return rsuo.SetVendorID(v.ID)
+}
+
+// SetResourceSpecificationVendorID sets the resource_specification_vendor edge to Vendor by id.
+func (rsuo *ResourceSpecificationUpdateOne) SetResourceSpecificationVendorID(id int) *ResourceSpecificationUpdateOne {
+	rsuo.mutation.SetResourceSpecificationVendorID(id)
+	return rsuo
+}
+
+// SetNillableResourceSpecificationVendorID sets the resource_specification_vendor edge to Vendor by id if the given value is not nil.
+func (rsuo *ResourceSpecificationUpdateOne) SetNillableResourceSpecificationVendorID(id *int) *ResourceSpecificationUpdateOne {
+	if id != nil {
+		rsuo = rsuo.SetResourceSpecificationVendorID(*id)
+	}
+	return rsuo
+}
+
+// SetResourceSpecificationVendor sets the resource_specification_vendor edge to Vendor.
+func (rsuo *ResourceSpecificationUpdateOne) SetResourceSpecificationVendor(v *Vendor) *ResourceSpecificationUpdateOne {
+	return rsuo.SetResourceSpecificationVendorID(v.ID)
+}
+
 // Mutation returns the ResourceSpecificationMutation object of the builder.
 func (rsuo *ResourceSpecificationUpdateOne) Mutation() *ResourceSpecificationMutation {
 	return rsuo.mutation
@@ -717,6 +876,18 @@ func (rsuo *ResourceSpecificationUpdateOne) RemoveResourceSpecificationItems(r .
 		ids[i] = r[i].ID
 	}
 	return rsuo.RemoveResourceSpecificationItemIDs(ids...)
+}
+
+// ClearVendor clears the "vendor" edge to type Vendor.
+func (rsuo *ResourceSpecificationUpdateOne) ClearVendor() *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ClearVendor()
+	return rsuo
+}
+
+// ClearResourceSpecificationVendor clears the "resource_specification_vendor" edge to type Vendor.
+func (rsuo *ResourceSpecificationUpdateOne) ClearResourceSpecificationVendor() *ResourceSpecificationUpdateOne {
+	rsuo.mutation.ClearResourceSpecificationVendor()
+	return rsuo
 }
 
 // Save executes the query and returns the updated entity.
@@ -1034,6 +1205,76 @@ func (rsuo *ResourceSpecificationUpdateOne) sqlSave(ctx context.Context) (_node 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecificationitems.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rsuo.mutation.VendorCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   resourcespecification.VendorTable,
+			Columns: []string{resourcespecification.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsuo.mutation.VendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   resourcespecification.VendorTable,
+			Columns: []string{resourcespecification.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rsuo.mutation.ResourceSpecificationVendorCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   resourcespecification.ResourceSpecificationVendorTable,
+			Columns: []string{resourcespecification.ResourceSpecificationVendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rsuo.mutation.ResourceSpecificationVendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   resourcespecification.ResourceSpecificationVendorTable,
+			Columns: []string{resourcespecification.ResourceSpecificationVendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
 				},
 			},
 		}

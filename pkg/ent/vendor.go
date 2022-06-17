@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -28,7 +29,8 @@ type Vendor struct {
 	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the VendorQuery when eager-loading is set.
-	Edges VendorEdges `json:"edges"`
+	Edges                                                VendorEdges `json:"edges"`
+	resource_specification_resource_specification_vendor *int
 }
 
 // VendorEdges holds the relations/edges for other nodes in the graph.
@@ -37,9 +39,13 @@ type VendorEdges struct {
 	VendorFk []*Counter
 	// VendorsRecomendations holds the value of the vendors_recomendations edge.
 	VendorsRecomendations []*Recommendations
+	// ResourceSpecification holds the value of the resource_specification edge.
+	ResourceSpecification *ResourceSpecification
+	// VendorRs holds the value of the vendor_rs edge.
+	VendorRs []*ResourceSpecification
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // VendorFkOrErr returns the VendorFk value or an error if the edge
@@ -60,6 +66,29 @@ func (e VendorEdges) VendorsRecomendationsOrErr() ([]*Recommendations, error) {
 	return nil, &NotLoadedError{edge: "vendors_recomendations"}
 }
 
+// ResourceSpecificationOrErr returns the ResourceSpecification value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e VendorEdges) ResourceSpecificationOrErr() (*ResourceSpecification, error) {
+	if e.loadedTypes[2] {
+		if e.ResourceSpecification == nil {
+			// The edge resource_specification was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: resourcespecification.Label}
+		}
+		return e.ResourceSpecification, nil
+	}
+	return nil, &NotLoadedError{edge: "resource_specification"}
+}
+
+// VendorRsOrErr returns the VendorRs value or an error if the edge
+// was not loaded in eager-loading.
+func (e VendorEdges) VendorRsOrErr() ([]*ResourceSpecification, error) {
+	if e.loadedTypes[3] {
+		return e.VendorRs, nil
+	}
+	return nil, &NotLoadedError{edge: "vendor_rs"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Vendor) scanValues() []interface{} {
 	return []interface{}{
@@ -67,6 +96,13 @@ func (*Vendor) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+	}
+}
+
+// fkValues returns the types for scanning foreign-keys values from sql.Rows.
+func (*Vendor) fkValues() []interface{} {
+	return []interface{}{
+		&sql.NullInt64{}, // resource_specification_resource_specification_vendor
 	}
 }
 
@@ -97,6 +133,15 @@ func (v *Vendor) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		v.Name = value.String
 	}
+	values = values[3:]
+	if len(values) == len(vendor.ForeignKeys) {
+		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field resource_specification_resource_specification_vendor", value)
+		} else if value.Valid {
+			v.resource_specification_resource_specification_vendor = new(int)
+			*v.resource_specification_resource_specification_vendor = int(value.Int64)
+		}
+	}
 	return nil
 }
 
@@ -108,6 +153,16 @@ func (v *Vendor) QueryVendorFk() *CounterQuery {
 // QueryVendorsRecomendations queries the vendors_recomendations edge of the Vendor.
 func (v *Vendor) QueryVendorsRecomendations() *RecommendationsQuery {
 	return (&VendorClient{config: v.config}).QueryVendorsRecomendations(v)
+}
+
+// QueryResourceSpecification queries the resource_specification edge of the Vendor.
+func (v *Vendor) QueryResourceSpecification() *ResourceSpecificationQuery {
+	return (&VendorClient{config: v.config}).QueryResourceSpecification(v)
+}
+
+// QueryVendorRs queries the vendor_rs edge of the Vendor.
+func (v *Vendor) QueryVendorRs() *ResourceSpecificationQuery {
+	return (&VendorClient{config: v.config}).QueryVendorRs(v)
 }
 
 // Update returns a builder for updating this Vendor.
