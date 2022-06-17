@@ -1,4 +1,6 @@
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @lambda on FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
   update: DgraphDefault
@@ -12,26 +14,24 @@ directive @auth(
 ) on OBJECT | INTERFACE
 directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
 directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @generate(
-  query: GenerateQueryParams
-  mutation: GenerateMutationParams
-  subscription: Boolean
-) on OBJECT | INTERFACE
-directive @id(interface: Boolean) on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
-directive @lambda on FIELD_DEFINITION
+directive @remoteResponse(name: String) on FIELD_DEFINITION
 directive @lambdaOnMutate(
   add: Boolean
   update: Boolean
   delete: Boolean
 ) on OBJECT | INTERFACE
-directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @generate(
+  query: GenerateQueryParams
+  mutation: GenerateMutationParams
+  subscription: Boolean
+) on OBJECT | INTERFACE
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 directive @dgraph(
   type: String
   pred: String
 ) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -221,7 +221,7 @@ enum _SupportingServiceOrdering {
 type ActionExecution {
   id: ID!
   scheduler(filter: ActionSchedulerFilter): ActionScheduler
-  template(filter: ActionTemplateFilter): ActionTemplate
+  template(filter: ActionTemplateFilter): ActionTemplate!
   items(
     filter: ActionExecutionItemFilter
     first: Int
@@ -454,9 +454,18 @@ type ActionTemplate {
     first: Int
     offset: Int
   ): [ActionTemplateItem!]!
+  ActionExecution(
+    filter: ActionExecutionFilter
+    order: ActionExecutionOrder
+    first: Int
+    offset: Int
+  ): [ActionExecution!]
   actionTemplateItemAggregate(
     filter: ActionTemplateItemFilter
   ): ActionTemplateItemAggregateResult
+  ActionExecutionAggregate(
+    filter: ActionExecutionFilter
+  ): ActionExecutionAggregateResult
 }
 
 type ActionTemplateAggregateResult {
@@ -481,6 +490,7 @@ enum ActionTemplateHasFilter {
   type
   resourceSpecifications
   actionTemplateItem
+  ActionExecution
 }
 
 type ActionTemplateItem {
@@ -539,6 +549,7 @@ input ActionTemplatePatch {
   type: ActionTemplateType
   resourceSpecifications: String
   actionTemplateItem: [ActionTemplateItemRef!]
+  ActionExecution: [ActionExecutionRef!]
 }
 
 input ActionTemplateRef {
@@ -547,6 +558,7 @@ input ActionTemplateRef {
   type: ActionTemplateType
   resourceSpecifications: String
   actionTemplateItem: [ActionTemplateItemRef!]
+  ActionExecution: [ActionExecutionRef!]
 }
 
 enum ActionTemplateType {
@@ -556,7 +568,7 @@ enum ActionTemplateType {
 
 input AddActionExecutionInput {
   scheduler: ActionSchedulerRef
-  template: ActionTemplateRef
+  template: ActionTemplateRef!
   items: [ActionExecutionItemRef]
   starTime: DateTime!
   endTime: DateTime
@@ -614,6 +626,7 @@ input AddActionTemplateInput {
   type: ActionTemplateType!
   resourceSpecifications: String!
   actionTemplateItem: [ActionTemplateItemRef!]!
+  ActionExecution: [ActionExecutionRef!]
 }
 
 input AddActionTemplateItemInput {
@@ -954,7 +967,7 @@ input AddNumericPoolInput {
   description: String
   limit: Int!
   customLimit: Int
-  resource: [ResourceRef!]!
+  resources: [ResourceRef!]!
   isDelete: Boolean!
   statusNumericPools: [StatusNumericPoolRef]
 }
@@ -1352,7 +1365,7 @@ type AddServiceSpecificationReferencePayload {
 input AddStatusNumericPoolInput {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type AddStatusNumericPoolPayload {
@@ -1838,8 +1851,7 @@ enum ChangeRequestSource {
 enum ChangeRequestStatus {
   SUBMITTED
   CANCELLED
-  PENDING
-  APPROVAL
+  PENDING_APPROVAL
   REJECTED
   SCHEDULED
   IN_EXECUTION
@@ -3632,7 +3644,7 @@ type NumericPool {
   description: String
   limit: Int!
   customLimit: Int
-  resource(
+  resources(
     filter: ResourceFilter
     order: ResourceOrder
     first: Int
@@ -3644,7 +3656,7 @@ type NumericPool {
     first: Int
     offset: Int
   ): [StatusNumericPool]
-  resourceAggregate(filter: ResourceFilter): ResourceAggregateResult
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   statusNumericPoolsAggregate(
     filter: StatusNumericPoolFilter
   ): StatusNumericPoolAggregateResult
@@ -3676,7 +3688,7 @@ enum NumericPoolHasFilter {
   description
   limit
   customLimit
-  resource
+  resources
   isDelete
   statusNumericPools
 }
@@ -3697,7 +3709,7 @@ input NumericPoolPatch {
   description: String
   limit: Int
   customLimit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   isDelete: Boolean
   statusNumericPools: [StatusNumericPoolRef]
 }
@@ -3707,7 +3719,7 @@ input NumericPoolRef {
   description: String
   limit: Int
   customLimit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   isDelete: Boolean
   statusNumericPools: [StatusNumericPoolRef]
 }
@@ -5910,7 +5922,7 @@ type StatusNumericPool {
   id: ID!
   numericPool(filter: NumericPoolFilter): NumericPool
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type StatusNumericPoolAggregateResult {
@@ -5928,20 +5940,20 @@ input StatusNumericPoolFilter {
 enum StatusNumericPoolHasFilter {
   numericPool
   status
-  value
+  values
 }
 
 input StatusNumericPoolPatch {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StatusNumericPoolRef {
   id: ID
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StringExactFilter {
