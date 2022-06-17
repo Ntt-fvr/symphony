@@ -40,7 +40,7 @@ id: ID!
 description: String
 limit: Int!
 customLimit: Int
-resource: [Resource!]!
+resources: [Resource!]!
 isDelete: Boolean!
 statusNumericPools: [StatusNumericPool]
 }
@@ -49,7 +49,7 @@ type StatusNumericPool {
 id: ID!
 numericPool: NumericPool @hasInverse(field: statusNumericPools)
 status: UsageSubStatus
-value: [Int]
+values: [Int]
 }
 
 type Resource {
@@ -226,7 +226,7 @@ enum ChangeRequestSource{
 enum ChangeRequestStatus{
   SUBMITTED
   CANCELLED
-  PENDING APPROVAL
+  PENDING_APPROVAL
   REJECTED
   SCHEDULED
   IN_EXECUTION
@@ -300,22 +300,22 @@ enum _ServiceOrderItemOrdering {
 }
 
 type ExternalReference {
-    id: String! @id
-    href: String
-    externalReferenceType: String
-    name: String!
+  id: String! @id
+  href: String
+  externalReferenceType: String
+  name: String!
 }
 
 type ServiceOrderRelationship {
-    id: String! @id
-    href: String
-    relationshipType: String!
+  id: String! @id
+  href: String
+  relationshipType: String!
 }
 
 type AppointmentRef {
-    id: ID!
-    href: String
-    description: String
+  id: ID!
+  href: String
+  description: String
 }
 
 type ServiceOrderItem {
@@ -399,7 +399,7 @@ type ServiceSOM{
 type ServiceRelationship{
  id: ID!
  relationshipType: String!
- service : ServiceSOM!
+ service: ServiceSOM!
  serviceRelationshipCharacteristic: [Characteristic]
 }
 
@@ -508,8 +508,8 @@ type Characteristic {
 }
 
 type CharacteristicRelationship {
-    id: ID!
-    relationshipType: String
+  id: ID!
+  relationshipType: String
 }
 
 enum _NoteOrdering {
@@ -665,19 +665,19 @@ enum _RelationDirections {
 }
 
 type Subscriber {
-        id: ID!
-        callback: String
-        topic: String@search(by: [hash])
+  id: ID!
+  callback: String
+  topic: String@search(by: [hash])
 }
 
 type ServiceReference {
-    id: String! @id
-    href: String
-    name: String
-    supportingResource: [SupportingResource]
-    specificationName: String
-    externalId: String
-    specificationId: String
+  id: String! @id
+  href: String
+  name: String
+  supportingResource: [SupportingResource]
+  specificationName: String
+  externalId: String
+  specificationId: String
 }
 
 type ResourceOrderIM{
@@ -710,6 +710,7 @@ type ActionTemplate{
   type:ActionTemplateType!
   resourceSpecifications: String! @search(by: [hash])
   actionTemplateItem:[ActionTemplateItem!]!
+  ActionExecution: [ActionExecution!]
 }
 type ActionTemplateItem{
   id:ID!
@@ -755,7 +756,7 @@ type ActionExecutionItem {
 type ActionExecution {
   id:ID!
   scheduler:ActionScheduler
-  template: ActionTemplate
+  template: ActionTemplate!
   items: [ActionExecutionItem]
   starTime: DateTime!
   endTime: DateTime
