@@ -8,24 +8,10 @@
  * @format
  */
 
-import Button from '@material-ui/core/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import CloseIcon from '@material-ui/icons/Close';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogMapping from '../configure/DialogMapping';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import React, {useState} from 'react';
 import SubjectIcon from '@material-ui/icons/Subject';
-import Text from '@symphony/design-system/components/Text';
-import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import inventoryTheme from '../../common/theme';
 import {makeStyles} from '@material-ui/styles';
-import {useContext} from 'react';
-import {useFormInput} from '../assurance/common/useFormInput';
 
 const useStyles = makeStyles(() => ({
   mapping: {
@@ -39,7 +25,6 @@ type Props = $ReadOnly<{|
   title?: string,
   open?: boolean,
   parameter: any,
-  onClose: () => void,
   parameterTypes?: any,
 |}>;
 

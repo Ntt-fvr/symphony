@@ -16,14 +16,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
-import React, {useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
 import {makeStyles} from '@material-ui/styles';
 import {useContext} from 'react';
-import {useFormInput} from '../assurance/common/useFormInput';
 
 const useStyles = makeStyles(() => ({
   root: {

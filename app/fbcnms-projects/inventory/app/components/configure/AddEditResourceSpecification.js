@@ -189,7 +189,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   });
 
   const filterEdit = parameterTypes.filter(item => item.name !== item.oldName);
-  // const filterEdit2 = parameterTypes.filter(item => item.isEdit);//las que estan en true
+
   const editOneToOne = filterEdit.map(item => item);
 
   const newParameter = parameterTypes?.filter(item => isTempId(item?.id));
@@ -427,6 +427,7 @@ export const AddEditResourceSpecification = (props: Props) => {
             }}>
             <ExperimentalParametersTypesTable
               supportDelete={true}
+              parameterTypes={parameterTypes}
               idRs={dataForm?.id}
             />
           </ParameterTypesTableDispatcher.Provider>
