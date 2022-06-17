@@ -14,6 +14,7 @@ import PowerSearchExternalIDFilter from '../comparison_view/PowerSearchExternalI
 import PowerSearchParameterSelectorNameFilter from './power_search_bar/parameter_selector/PowerSearchParameterSelectorNameFilter';
 import PowerSearchParameterSelectorPriorityFilter from './power_search_bar/parameter_selector/PowerSearchParameterSelectorPriorityFilter';
 import PowerSearchParameterSelectorTagFilter from './power_search_bar/parameter_selector/PowerSearchParameterSelectorTagFilter';
+import PowerSearchResourceIdFilter from './power_search_bar/resource/PowerSearchResourceIdFilter';
 import PowerSearchResourceNameFilter from './power_search_bar/resource/PowerSearchResourceNameFilter';
 
 const ResourcesSearchConfig: Array<EntityConfig> = [
@@ -34,7 +35,7 @@ const ResourcesSearchConfig: Array<EntityConfig> = [
         name: 'resource_id',
         entityType: 'resource',
         label: 'ID',
-        component: PowerSearchResourceNameFilter,
+        component: PowerSearchResourceIdFilter,
         defaultOperator: 'contains',
       },
     ],

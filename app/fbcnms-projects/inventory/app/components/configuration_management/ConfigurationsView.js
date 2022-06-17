@@ -55,8 +55,7 @@ const ConfigurationsView = () => {
     ),
   );
 
-  console.log(filterConfigs);
-  console.log(ResourcesSearchConfig);
+  console.log(filters);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -76,20 +75,17 @@ const ConfigurationsView = () => {
               placeholder="Configuration"
               filterConfigs={filterConfigs}
               searchConfig={ResourcesSearchConfig}
-              filterValues={[]}
-              getSelectedFilter={
-                () => {}
-                /*getInitialFilterValue(
+              filterValues={filters}
+              getSelectedFilter={(filterConfig: FilterConfig) =>
+                getInitialFilterValue(
                   filterConfig.key,
                   filterConfig.name,
                   filterConfig.defaultOperator,
                   null,
                 )
-
-                 */
               }
-              //onFiltersChanged={() => {}}
-              //exportPath={'/configurations_view'}
+              onFiltersChanged={filters => setFilters(filters)}
+              exportPath={'/configurations_views'}
               //entity={'RESOURCE'}
             />
           </div>
