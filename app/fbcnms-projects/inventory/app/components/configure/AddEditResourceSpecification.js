@@ -432,6 +432,8 @@ export const AddEditResourceSpecification = (props: Props) => {
             />
           </ParameterTypesTableDispatcher.Provider>
         </ExpandingPanel>
+      </Card>
+      <Card margins="none">
         <ExpandingPanel title="Configure Actions">
           <TableConfigureAction />
         </ExpandingPanel>
@@ -474,11 +476,6 @@ export const AddEditResourceSpecification = (props: Props) => {
           }
         />
       )}
-      <Grid className={classes.relationship} item xs={12}>
-        <Text weight={'bold'} variant={'h6'}>
-          Relationship types definition
-        </Text>
-      </Grid>
       <RelationshipTypeItem dataForm={formValues} />
     </div>
   );
