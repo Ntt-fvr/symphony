@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
 // ResourceSpecificationCreate is the builder for creating a ResourceSpecification entity.
@@ -138,6 +139,44 @@ func (rsc *ResourceSpecificationCreate) AddResourceSpecificationItems(r ...*Reso
 		ids[i] = r[i].ID
 	}
 	return rsc.AddResourceSpecificationItemIDs(ids...)
+}
+
+// SetVendorID sets the vendor edge to Vendor by id.
+func (rsc *ResourceSpecificationCreate) SetVendorID(id int) *ResourceSpecificationCreate {
+	rsc.mutation.SetVendorID(id)
+	return rsc
+}
+
+// SetNillableVendorID sets the vendor edge to Vendor by id if the given value is not nil.
+func (rsc *ResourceSpecificationCreate) SetNillableVendorID(id *int) *ResourceSpecificationCreate {
+	if id != nil {
+		rsc = rsc.SetVendorID(*id)
+	}
+	return rsc
+}
+
+// SetVendor sets the vendor edge to Vendor.
+func (rsc *ResourceSpecificationCreate) SetVendor(v *Vendor) *ResourceSpecificationCreate {
+	return rsc.SetVendorID(v.ID)
+}
+
+// SetResourceSpecificationVendorID sets the resource_specification_vendor edge to Vendor by id.
+func (rsc *ResourceSpecificationCreate) SetResourceSpecificationVendorID(id int) *ResourceSpecificationCreate {
+	rsc.mutation.SetResourceSpecificationVendorID(id)
+	return rsc
+}
+
+// SetNillableResourceSpecificationVendorID sets the resource_specification_vendor edge to Vendor by id if the given value is not nil.
+func (rsc *ResourceSpecificationCreate) SetNillableResourceSpecificationVendorID(id *int) *ResourceSpecificationCreate {
+	if id != nil {
+		rsc = rsc.SetResourceSpecificationVendorID(*id)
+	}
+	return rsc
+}
+
+// SetResourceSpecificationVendor sets the resource_specification_vendor edge to Vendor.
+func (rsc *ResourceSpecificationCreate) SetResourceSpecificationVendor(v *Vendor) *ResourceSpecificationCreate {
+	return rsc.SetResourceSpecificationVendorID(v.ID)
 }
 
 // Mutation returns the ResourceSpecificationMutation object of the builder.
@@ -345,6 +384,44 @@ func (rsc *ResourceSpecificationCreate) createSpec() (*ResourceSpecification, *s
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: resourcespecificationitems.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rsc.mutation.VendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   resourcespecification.VendorTable,
+			Columns: []string{resourcespecification.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rsc.mutation.ResourceSpecificationVendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   resourcespecification.ResourceSpecificationVendorTable,
+			Columns: []string{resourcespecification.ResourceSpecificationVendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
 				},
 			},
 		}

@@ -33,15 +33,21 @@ input ActionBlockInput {
 }
 
 type ActionExecution {
+  endTime: DateTime
   id: ID!
   items(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
   itemsAggregate(filter: ActionExecutionItemFilter): ActionExecutionItemAggregateResult
   scheduler(filter: ActionSchedulerFilter): ActionScheduler
-  template(filter: ActionTemplateFilter): ActionTemplate
+  starTime: DateTime!
+  template(filter: ActionTemplateFilter): ActionTemplate!
 }
 
 type ActionExecutionAggregateResult {
   count: Int
+  endTimeMax: DateTime
+  endTimeMin: DateTime
+  starTimeMax: DateTime
+  starTimeMin: DateTime
 }
 
 input ActionExecutionFilter {
@@ -53,15 +59,18 @@ input ActionExecutionFilter {
 }
 
 enum ActionExecutionHasFilter {
+  endTime
   items
   scheduler
+  starTime
   template
 }
 
 type ActionExecutionItem {
   action(filter: ActionExecutionFilter): ActionExecution!
   id: ID!
-  resource(filter: ResourceFilter): Resource!
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionExecutionItemStatus
 }
 
@@ -79,20 +88,20 @@ input ActionExecutionItemFilter {
 
 enum ActionExecutionItemHasFilter {
   action
-  resource
+  resources
   status
 }
 
 input ActionExecutionItemPatch {
   action: ActionExecutionRef
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
 input ActionExecutionItemRef {
   action: ActionExecutionRef
   id: ID
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
@@ -102,26 +111,45 @@ enum ActionExecutionItemStatus {
   SUCCESSFULL
 }
 
+input ActionExecutionOrder {
+  asc: ActionExecutionOrderable
+  desc: ActionExecutionOrderable
+  then: ActionExecutionOrder
+}
+
+enum ActionExecutionOrderable {
+  endTime
+  starTime
+}
+
 input ActionExecutionPatch {
+  endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
+  starTime: DateTime
   template: ActionTemplateRef
 }
 
 input ActionExecutionRef {
+  endTime: DateTime
   id: ID
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
+  starTime: DateTime
   template: ActionTemplateRef
 }
 
 type ActionScheduler {
-  action(filter: ActionExecutionFilter): ActionExecution!
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
+  actions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
+  actionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
   cron: String
   date: DateTime
   description: String!
   id: ID!
   name: String!
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
 }
@@ -147,11 +175,13 @@ input ActionSchedulerFilter {
 }
 
 enum ActionSchedulerHasFilter {
-  action
+  actionTemplate
+  actions
   cron
   date
   description
   name
+  resources
   status
   type
 }
@@ -170,22 +200,26 @@ enum ActionSchedulerOrderable {
 }
 
 input ActionSchedulerPatch {
-  action: ActionExecutionRef
+  actionTemplate: ActionTemplateRef
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String
   name: String
+  resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
 }
 
 input ActionSchedulerRef {
-  action: ActionExecutionRef
+  actionTemplate: ActionTemplateRef
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String
   id: ID
   name: String
+  resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
 }
@@ -202,8 +236,10 @@ enum ActionSchedulerType {
 }
 
 type ActionTemplate {
+  ActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
+  ActionExecutionAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
   actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
-  actionTemplateItemAggregate(filter: ActionTemplateFilter): ActionTemplateAggregateResult
+  actionTemplateItemAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   id: ID!
   name: String!
   resourceSpecifications: String!
@@ -228,6 +264,7 @@ input ActionTemplateFilter {
 }
 
 enum ActionTemplateHasFilter {
+  ActionExecution
   actionTemplateItem
   name
   resourceSpecifications
@@ -235,6 +272,7 @@ enum ActionTemplateHasFilter {
 }
 
 type ActionTemplateItem {
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate
   id: ID!
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
   value(filter: ParameterFilter): Parameter!
@@ -253,16 +291,19 @@ input ActionTemplateItemFilter {
 }
 
 enum ActionTemplateItemHasFilter {
+  actionTemplate
   parameters
   value
 }
 
 input ActionTemplateItemPatch {
+  actionTemplate: ActionTemplateRef
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
 }
 
 input ActionTemplateItemRef {
+  actionTemplate: ActionTemplateRef
   id: ID
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
@@ -280,6 +321,7 @@ enum ActionTemplateOrderable {
 }
 
 input ActionTemplatePatch {
+  ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]
   name: String
   resourceSpecifications: String
@@ -287,6 +329,7 @@ input ActionTemplatePatch {
 }
 
 input ActionTemplateRef {
+  ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]
   id: ID
   name: String
@@ -345,14 +388,16 @@ input ActivityFilterInput {
 }
 
 input AddActionExecutionInput {
+  endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
-  template: ActionTemplateRef
+  starTime: DateTime!
+  template: ActionTemplateRef!
 }
 
 input AddActionExecutionItemInput {
   action: ActionExecutionRef!
-  resource: ResourceRef!
+  resources: [ResourceRef]!
   status: ActionExecutionItemStatus
 }
 
@@ -362,16 +407,18 @@ type AddActionExecutionItemPayload {
 }
 
 type AddActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   numUids: Int
 }
 
 input AddActionSchedulerInput {
-  action: ActionExecutionRef!
+  actionTemplate: ActionTemplateRef!
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String!
   name: String!
+  resources: [ResourceRef!]!
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
 }
@@ -382,6 +429,7 @@ type AddActionSchedulerPayload {
 }
 
 input AddActionTemplateInput {
+  ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]!
   name: String!
   resourceSpecifications: String!
@@ -389,6 +437,7 @@ input AddActionTemplateInput {
 }
 
 input AddActionTemplateItemInput {
+  actionTemplate: ActionTemplateRef
   parameters: ConfigurationParameterTypeRef!
   value: ParameterRef!
 }
@@ -466,13 +515,13 @@ type AddCMVersionPayload {
 }
 
 input AddCancellationRequestInput {
-  _atType: String
   cancellationReason: String
   externalId: String
   href: String
   requestedCancellationDate: String
   serviceorders: [ServiceOrderRef]
   state: String
+  type: String
 }
 
 type AddCancellationRequestPayload {
@@ -532,13 +581,13 @@ type AddChangeRequestPayload {
 }
 
 input AddCharacteristicInput {
-  _atType: String
   characteristicRelationship: [CharacteristicRelationshipRef]
   id: String!
-  name: String
+  name: String!
   services: [ServiceSOMRef]
+  type: String
   unitOfMeasure: String
-  value: String
+  value: String!
   valueType: String
   valueUnits: String
 }
@@ -669,7 +718,7 @@ input AddExternalReferenceInput {
   externalReferenceType: String
   href: String
   id: String!
-  name: String
+  name: String!
 }
 
 type AddExternalReferencePayload {
@@ -680,7 +729,7 @@ type AddExternalReferencePayload {
 input AddFeatureInput {
   isBundle: Boolean
   isEnabled: Boolean
-  name: String
+  name: String!
 }
 
 type AddFeaturePayload {
@@ -710,8 +759,8 @@ input AddFlowDraftInput {
   name: String!
 }
 
-input AddFlowExecutionRefInput {
-  cancelto: FlowExecutionRefRef
+input AddFlowExecutionReferenceInput {
+  cancelto: FlowExecutionReferenceRef
   creationDate: String
   domainId: String
   endExecutionDate: String
@@ -722,8 +771,8 @@ input AddFlowExecutionRefInput {
   workflowId: String
 }
 
-type AddFlowExecutionRefPayload {
-  flowExecutionRef(filter: FlowExecutionRefFilter, first: Int, offset: Int, order: FlowExecutionRefOrder): [FlowExecutionRef]
+type AddFlowExecutionReferencePayload {
+  flowExecutionReference(filter: FlowExecutionReferenceFilter, first: Int, offset: Int, order: FlowExecutionReferenceOrder): [FlowExecutionReference]
   numUids: Int
 }
 
@@ -854,11 +903,11 @@ input AddLocationTypeInput {
 }
 
 input AddModificationRequestInput {
-  _atType: String!
   externalId: String
   modifyReason: String!
   requestedCompletionDate: String!
   serviceorders: [ServiceOrderRef]
+  type: String!
 }
 
 type AddModificationRequestPayload {
@@ -887,7 +936,7 @@ input AddNumericPoolInput {
   description: String
   isDelete: Boolean!
   limit: Int!
-  resource: [ResourceRef!]!
+  resources: [ResourceRef!]!
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -1036,6 +1085,7 @@ type AddRelatedEntityPayload {
 }
 
 input AddResourceInput {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
@@ -1043,6 +1093,7 @@ input AddResourceInput {
   crossconnectionInv: [ResourceRef]
   externalId: String
   isDelete: Boolean!
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink: ResourceRef
@@ -1057,6 +1108,32 @@ input AddResourceInput {
   resourceSpecification: String!
   typePlanningSubStatus: TypePlanningSubStatus
   usageSubStatus: UsageSubStatus
+}
+
+input AddResourceOrderIMInput {
+  category: String
+  description: String
+  externalId: String
+  id: String
+  lineId: String
+  reservationId: String
+  resourceOrderItem: [ResourceOrderItemRef]
+}
+
+type AddResourceOrderIMPayload {
+  numUids: Int
+  resourceOrderIM(filter: ResourceOrderIMFilter, first: Int, offset: Int, order: ResourceOrderIMOrder): [ResourceOrderIM]
+}
+
+input AddResourceOrderItemInput {
+  action: String
+  id: String!
+  service: SupportingServiceRef
+}
+
+type AddResourceOrderItemPayload {
+  numUids: Int
+  resourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem]
 }
 
 type AddResourcePayload {
@@ -1112,7 +1189,7 @@ input AddResourcePropertyTypeInput {
 input AddResourceReferenceInput {
   href: String
   id: String!
-  name: String!
+  name: String
 }
 
 type AddResourceReferencePayload {
@@ -1125,6 +1202,7 @@ input AddResourceSpecificationInput {
   quantity: Int
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
   resourceType: ID!
+  vendor: ID
 }
 
 input AddResourceSpecificationItemsInput {
@@ -1132,20 +1210,10 @@ input AddResourceSpecificationItemsInput {
   resourceSpecificationRelationship: ID!
 }
 
-input AddResourceSpecificationRelationShipListInput {
-  nameList: [ResourceSpecificationRelationShipListInput]!
-  resourceSpecification: ID!
-}
-
 input AddResourceSpecificationRelationshipInput {
   name: String!
   resourceSpecification: ID!
-}
-
-input AddResourceSpecificationRelationshipList {
-  name: String!
-  resourceSpecification: ID!
-  resourceSpecificationRelationshipItems: [ResourceSpecificationRelationshipItemsInput]
+  resourceSpecificationList: [ID]
 }
 
 input AddResourceTypeInput {
@@ -1210,13 +1278,12 @@ input AddServiceEndpointInput {
 }
 
 input AddServiceOrderInput {
-  _atType: String
   cancelRequest: CancellationRequestRef
   category: String
   description: String
   externalId: String
   externalReference: [ExternalReferenceRef]
-  flowExecutionRef: FlowExecutionRefRef
+  flowExecutionReference: FlowExecutionReferenceRef
   modifyRequest: [ModificationRequestRef]
   note: [NoteRef]
   orderDate: String
@@ -1228,6 +1295,7 @@ input AddServiceOrderInput {
   serviceOrderItem: [ServiceOrderItemRef]
   startDate: String
   state: String
+  type: String
 }
 
 input AddServiceOrderItemInput {
@@ -1253,7 +1321,7 @@ type AddServiceOrderPayload {
 input AddServiceOrderRelationshipInput {
   href: String
   id: String!
-  relationshipType: String
+  relationshipType: String!
 }
 
 type AddServiceOrderRelationshipPayload {
@@ -1261,21 +1329,24 @@ type AddServiceOrderRelationshipPayload {
   serviceOrderRelationship(filter: ServiceOrderRelationshipFilter, first: Int, offset: Int, order: ServiceOrderRelationshipOrder): [ServiceOrderRelationship]
 }
 
-input AddServiceRefInput {
+input AddServiceReferenceInput {
+  externalId: String
   href: String
   id: String!
   name: String
-  supportingResource: [ResourceIntRef]
+  specificationId: String
+  specificationName: String
+  supportingResource: [SupportingResourceRef]
 }
 
-type AddServiceRefPayload {
+type AddServiceReferencePayload {
   numUids: Int
-  serviceRef(filter: ServiceRefFilter, first: Int, offset: Int, order: ServiceRefOrder): [ServiceRef]
+  serviceReference(filter: ServiceReferenceFilter, first: Int, offset: Int, order: ServiceReferenceOrder): [ServiceReference]
 }
 
 input AddServiceRelationshipInput {
   relationshipType: String!
-  service: ServiceSOMRef
+  service: ServiceSOMRef!
   serviceRelationshipCharacteristic: [CharacteristicRef]
 }
 
@@ -1303,12 +1374,12 @@ input AddServiceSOMInput {
   serviceCharacteristic: [CharacteristicRef]
   serviceDate: String
   serviceRelationship: [ServiceRelationshipRef]
-  serviceSpecification: ServiceSpecificationRefRef
+  serviceSpecification: ServiceSpecificationReferenceRef
   serviceType: String
   startDate: String
   startMode: String
   state: String
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
   supportingService: [ServiceSOMRef]
   type: String
 }
@@ -1318,25 +1389,25 @@ type AddServiceSOMPayload {
   serviceSOM(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM]
 }
 
-input AddServiceSpecificationRefInput {
+input AddServiceSpecificationReferenceInput {
   href: String
   id: String!
-  name: String!
+  name: String
   referredType: String
   services: [ServiceSOMRef]
   type: String
   version: String
 }
 
-type AddServiceSpecificationRefPayload {
+type AddServiceSpecificationReferencePayload {
   numUids: Int
-  serviceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef]
+  serviceSpecificationReference(filter: ServiceSpecificationReferenceFilter, first: Int, offset: Int, order: ServiceSpecificationReferenceOrder): [ServiceSpecificationReference]
 }
 
 input AddStatusNumericPoolInput {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type AddStatusNumericPoolPayload {
@@ -1796,6 +1867,7 @@ input CMVersionFilter {
   id: [ID!]
   not: CMVersionFilter
   or: [CMVersionFilter]
+  status: VersionStatus_hash
 }
 
 enum CMVersionHasFilter {
@@ -1844,7 +1916,6 @@ type CUD {
 }
 
 type CancellationRequest {
-  _atType: String
   cancellationReason: String
   externalId: String
   href: String
@@ -1853,11 +1924,10 @@ type CancellationRequest {
   serviceorders(filter: ServiceOrderFilter, first: Int, offset: Int, order: ServiceOrderOrder): [ServiceOrder]
   serviceordersAggregate(filter: ServiceOrderFilter): ServiceOrderAggregateResult
   state: String
+  type: String
 }
 
 type CancellationRequestAggregateResult {
-  _atTypeMax: String
-  _atTypeMin: String
   cancellationReasonMax: String
   cancellationReasonMin: String
   count: Int
@@ -1869,6 +1939,8 @@ type CancellationRequestAggregateResult {
   requestedCancellationDateMin: String
   stateMax: String
   stateMin: String
+  typeMax: String
+  typeMin: String
 }
 
 input CancellationRequestFilter {
@@ -1881,13 +1953,13 @@ input CancellationRequestFilter {
 }
 
 enum CancellationRequestHasFilter {
-  _atType
   cancellationReason
   externalId
   href
   requestedCancellationDate
   serviceorders
   state
+  type
 }
 
 input CancellationRequestOrder {
@@ -1897,26 +1969,25 @@ input CancellationRequestOrder {
 }
 
 enum CancellationRequestOrderable {
-  _atType
   cancellationReason
   externalId
   href
   requestedCancellationDate
   state
+  type
 }
 
 input CancellationRequestPatch {
-  _atType: String
   cancellationReason: String
   externalId: String
   href: String
   requestedCancellationDate: String
   serviceorders: [ServiceOrderRef]
   state: String
+  type: String
 }
 
 input CancellationRequestRef {
-  _atType: String
   cancellationReason: String
   externalId: String
   href: String
@@ -1924,6 +1995,7 @@ input CancellationRequestRef {
   requestedCancellationDate: String
   serviceorders: [ServiceOrderRef]
   state: String
+  type: String
 }
 
 enum CellularNetworkType {
@@ -2230,11 +2302,10 @@ enum ChangeRequestSource {
 }
 
 enum ChangeRequestStatus {
-  APPROVAL
   CANCELLED
   FAILED
   IN_EXECUTION
-  PENDING
+  PENDING_APPROVAL
   REJECTED
   SCHEDULED
   SUBMITTED
@@ -2248,28 +2319,28 @@ enum ChangeRequestType {
 }
 
 type Characteristic {
-  _atType: String
   characteristicId: ID!
   characteristicRelationship(filter: CharacteristicRelationshipFilter, first: Int, offset: Int, order: CharacteristicRelationshipOrder): [CharacteristicRelationship]
   characteristicRelationshipAggregate(filter: CharacteristicRelationshipFilter): CharacteristicRelationshipAggregateResult
   id: String!
-  name: String
+  name: String!
   services(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM]
   servicesAggregate(filter: ServiceSOMFilter): ServiceSOMAggregateResult
+  type: String
   unitOfMeasure: String
-  value: String
+  value: String!
   valueType: String
   valueUnits: String
 }
 
 type CharacteristicAggregateResult {
-  _atTypeMax: String
-  _atTypeMin: String
   count: Int
   idMax: String
   idMin: String
   nameMax: String
   nameMin: String
+  typeMax: String
+  typeMin: String
   unitOfMeasureMax: String
   unitOfMeasureMin: String
   valueMax: String
@@ -2290,11 +2361,11 @@ input CharacteristicFilter {
 }
 
 enum CharacteristicHasFilter {
-  _atType
   characteristicRelationship
   id
   name
   services
+  type
   unitOfMeasure
   value
   valueType
@@ -2308,9 +2379,9 @@ input CharacteristicOrder {
 }
 
 enum CharacteristicOrderable {
-  _atType
   id
   name
+  type
   unitOfMeasure
   value
   valueType
@@ -2318,11 +2389,11 @@ enum CharacteristicOrderable {
 }
 
 input CharacteristicPatch {
-  _atType: String
   characteristicRelationship: [CharacteristicRelationshipRef]
   id: String
   name: String
   services: [ServiceSOMRef]
+  type: String
   unitOfMeasure: String
   value: String
   valueType: String
@@ -2330,12 +2401,12 @@ input CharacteristicPatch {
 }
 
 input CharacteristicRef {
-  _atType: String
   characteristicId: ID
   characteristicRelationship: [CharacteristicRelationshipRef]
   id: String
   name: String
   services: [ServiceSOMRef]
+  type: String
   unitOfMeasure: String
   value: String
   valueType: String
@@ -2715,6 +2786,7 @@ input ConfigurationParameterTypeFilter {
   and: [ConfigurationParameterTypeFilter]
   has: [ConfigurationParameterTypeHasFilter]
   id: [ID!]
+  name: StringHashFilter
   not: ConfigurationParameterTypeFilter
   or: [ConfigurationParameterTypeFilter]
   resourceSpecification: StringHashFilter
@@ -3085,7 +3157,7 @@ type DeleteActionExecutionItemPayload {
 }
 
 type DeleteActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   msg: String
   numUids: Int
 }
@@ -3180,8 +3252,8 @@ type DeleteFeaturePayload {
   numUids: Int
 }
 
-type DeleteFlowExecutionRefPayload {
-  flowExecutionRef(filter: FlowExecutionRefFilter, first: Int, offset: Int, order: FlowExecutionRefOrder): [FlowExecutionRef]
+type DeleteFlowExecutionReferencePayload {
+  flowExecutionReference(filter: FlowExecutionReferenceFilter, first: Int, offset: Int, order: FlowExecutionReferenceOrder): [FlowExecutionReference]
   msg: String
   numUids: Int
 }
@@ -3234,10 +3306,16 @@ type DeleteRelatedEntityPayload {
   relatedEntity(filter: RelatedEntityFilter, first: Int, offset: Int, order: RelatedEntityOrder): [RelatedEntity]
 }
 
-type DeleteResourceIntPayload {
+type DeleteResourceOrderIMPayload {
   msg: String
   numUids: Int
-  resourceInt(filter: ResourceIntFilter, first: Int, offset: Int, order: ResourceIntOrder): [ResourceInt]
+  resourceOrderIM(filter: ResourceOrderIMFilter, first: Int, offset: Int, order: ResourceOrderIMOrder): [ResourceOrderIM]
+}
+
+type DeleteResourceOrderItemPayload {
+  msg: String
+  numUids: Int
+  resourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem]
 }
 
 type DeleteResourcePayload {
@@ -3282,12 +3360,6 @@ type DeleteServiceOrderRelationshipPayload {
   serviceOrderRelationship(filter: ServiceOrderRelationshipFilter, first: Int, offset: Int, order: ServiceOrderRelationshipOrder): [ServiceOrderRelationship]
 }
 
-type DeleteServiceRefPayload {
-  msg: String
-  numUids: Int
-  serviceRef(filter: ServiceRefFilter, first: Int, offset: Int, order: ServiceRefOrder): [ServiceRef]
-}
-
 type DeleteServiceReferencePayload {
   msg: String
   numUids: Int
@@ -3306,10 +3378,10 @@ type DeleteServiceSOMPayload {
   serviceSOM(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM]
 }
 
-type DeleteServiceSpecificationRefPayload {
+type DeleteServiceSpecificationReferencePayload {
   msg: String
   numUids: Int
-  serviceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef]
+  serviceSpecificationReference(filter: ServiceSpecificationReferenceFilter, first: Int, offset: Int, order: ServiceSpecificationReferenceOrder): [ServiceSpecificationReference]
 }
 
 type DeleteStatusNumericPoolPayload {
@@ -3799,6 +3871,7 @@ input EditResourceSpecificationInput {
   quantity: Int
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
   resourceType: ID
+  vendor: ID
 }
 
 input EditResourceSpecificationItemsInput {
@@ -4322,7 +4395,7 @@ type ExternalReference {
   externalReferenceType: String
   href: String
   id: String!
-  name: String
+  name: String!
 }
 
 type ExternalReferenceAggregateResult {
@@ -4383,7 +4456,7 @@ type Feature {
   id: ID!
   isBundle: Boolean
   isEnabled: Boolean
-  name: String
+  name: String!
 }
 
 type FeatureAggregateResult {
@@ -4593,8 +4666,8 @@ type FlowEdge {
   node: Flow
 }
 
-type FlowExecutionRef {
-  cancelto(filter: FlowExecutionRefFilter): FlowExecutionRef
+type FlowExecutionReference {
+  cancelto(filter: FlowExecutionReferenceFilter): FlowExecutionReference
   creationDate: String
   domainId: String
   endExecutionDate: String
@@ -4606,7 +4679,7 @@ type FlowExecutionRef {
   workflowId: String
 }
 
-type FlowExecutionRefAggregateResult {
+type FlowExecutionReferenceAggregateResult {
   count: Int
   creationDateMax: String
   creationDateMin: String
@@ -4624,18 +4697,18 @@ type FlowExecutionRefAggregateResult {
   workflowIdMin: String
 }
 
-input FlowExecutionRefFilter {
-  and: [FlowExecutionRefFilter]
+input FlowExecutionReferenceFilter {
+  and: [FlowExecutionReferenceFilter]
   creationDate: StringExactFilter
   endExecutionDate: StringExactFilter
   executionDate: StringExactFilter
-  has: [FlowExecutionRefHasFilter]
+  has: [FlowExecutionReferenceHasFilter]
   id: [ID!]
-  not: FlowExecutionRefFilter
-  or: [FlowExecutionRefFilter]
+  not: FlowExecutionReferenceFilter
+  or: [FlowExecutionReferenceFilter]
 }
 
-enum FlowExecutionRefHasFilter {
+enum FlowExecutionReferenceHasFilter {
   cancelto
   creationDate
   domainId
@@ -4647,13 +4720,13 @@ enum FlowExecutionRefHasFilter {
   workflowId
 }
 
-input FlowExecutionRefOrder {
-  asc: FlowExecutionRefOrderable
-  desc: FlowExecutionRefOrderable
-  then: FlowExecutionRefOrder
+input FlowExecutionReferenceOrder {
+  asc: FlowExecutionReferenceOrderable
+  desc: FlowExecutionReferenceOrderable
+  then: FlowExecutionReferenceOrder
 }
 
-enum FlowExecutionRefOrderable {
+enum FlowExecutionReferenceOrderable {
   creationDate
   domainId
   endExecutionDate
@@ -4663,8 +4736,8 @@ enum FlowExecutionRefOrderable {
   workflowId
 }
 
-input FlowExecutionRefPatch {
-  cancelto: FlowExecutionRefRef
+input FlowExecutionReferencePatch {
+  cancelto: FlowExecutionReferenceRef
   creationDate: String
   domainId: String
   endExecutionDate: String
@@ -4675,8 +4748,8 @@ input FlowExecutionRefPatch {
   workflowId: String
 }
 
-input FlowExecutionRefRef {
-  cancelto: FlowExecutionRefRef
+input FlowExecutionReferenceRef {
+  cancelto: FlowExecutionReferenceRef
   creationDate: String
   domainId: String
   endExecutionDate: String
@@ -5800,18 +5873,16 @@ enum Mode {
 }
 
 type ModificationRequest {
-  _atType: String!
   externalId: String
   id: ID!
   modifyReason: String!
   requestedCompletionDate: String!
   serviceorders(filter: ServiceOrderFilter, first: Int, offset: Int, order: ServiceOrderOrder): [ServiceOrder]
   serviceordersAggregate(filter: ServiceOrderFilter): ServiceOrderAggregateResult
+  type: String!
 }
 
 type ModificationRequestAggregateResult {
-  _atTypeMax: String
-  _atTypeMin: String
   count: Int
   externalIdMax: String
   externalIdMin: String
@@ -5819,6 +5890,8 @@ type ModificationRequestAggregateResult {
   modifyReasonMin: String
   requestedCompletionDateMax: String
   requestedCompletionDateMin: String
+  typeMax: String
+  typeMin: String
 }
 
 input ModificationRequestFilter {
@@ -5831,11 +5904,11 @@ input ModificationRequestFilter {
 }
 
 enum ModificationRequestHasFilter {
-  _atType
   externalId
   modifyReason
   requestedCompletionDate
   serviceorders
+  type
 }
 
 input ModificationRequestOrder {
@@ -5845,27 +5918,27 @@ input ModificationRequestOrder {
 }
 
 enum ModificationRequestOrderable {
-  _atType
   externalId
   modifyReason
   requestedCompletionDate
+  type
 }
 
 input ModificationRequestPatch {
-  _atType: String
   externalId: String
   modifyReason: String
   requestedCompletionDate: String
   serviceorders: [ServiceOrderRef]
+  type: String
 }
 
 input ModificationRequestRef {
-  _atType: String
   externalId: String
   id: ID
   modifyReason: String
   requestedCompletionDate: String
   serviceorders: [ServiceOrderRef]
+  type: String
 }
 
 type MultiPolygon {
@@ -5906,7 +5979,7 @@ type Mutation {
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -5924,7 +5997,7 @@ type Mutation {
   addFeature(input: [AddFeatureInput!]!): AddFeaturePayload @join__field(graph: DGRAPHSERVICE)
   addFloorPlan(input: AddFloorPlanInput!): FloorPlan! @join__field(graph: SYMPHONY)
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft! @join__field(graph: SYMPHONY)
-  addFlowExecutionRef(input: [AddFlowExecutionRefInput!]!): AddFlowExecutionRefPayload @join__field(graph: DGRAPHSERVICE)
+  addFlowExecutionReference(input: [AddFlowExecutionReferenceInput!]!): AddFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
   addFormula(input: AddFormulaInput!): Formula! @join__field(graph: SYMPHONY)
   addGeometry(input: [AddGeometryInput!]!, upsert: Boolean): AddGeometryPayload @join__field(graph: DGRAPHSERVICE)
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block! @join__field(graph: SYMPHONY)
@@ -5959,13 +6032,14 @@ type Mutation {
   addRelatedEntity(input: [AddRelatedEntityInput!]!, upsert: Boolean): AddRelatedEntityPayload @join__field(graph: DGRAPHSERVICE)
   addReportFilter(input: ReportFilterInput!): ReportFilter! @join__field(graph: SYMPHONY)
   addResource(input: [AddResourceInput!]!, upsert: Boolean): AddResourcePayload @join__field(graph: DGRAPHSERVICE)
+  addResourceOrderIM(input: [AddResourceOrderIMInput!]!): AddResourceOrderIMPayload @join__field(graph: DGRAPHSERVICE)
+  addResourceOrderItem(input: [AddResourceOrderItemInput!]!, upsert: Boolean): AddResourceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   addResourceProperty(input: [AddResourcePropertyInput!]!): AddResourcePropertyPayload @join__field(graph: DGRAPHSERVICE)
   addResourceReference(input: [AddResourceReferenceInput!]!, upsert: Boolean): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   addResourceSpecification(input: AddResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems! @join__field(graph: SYMPHONY)
-  addResourceSpecificationRelationShipList(input: AddResourceSpecificationRelationShipListInput!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
-  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
+  addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   addResourceType(input: AddResourceTypeInput!): ResourceType! @join__field(graph: SYMPHONY)
   addResourceTypeRelationship(input: AddResourceTypeRelationshipInput!): ResourceTypeRelationship! @join__field(graph: SYMPHONY)
   addRule(input: AddRuleInput!): Rule! @join__field(graph: SYMPHONY)
@@ -5982,10 +6056,10 @@ type Mutation {
   addServiceOrderItem(input: [AddServiceOrderItemInput!]!): AddServiceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   addServiceOrderRelationship(input: [AddServiceOrderRelationshipInput!]!, upsert: Boolean): AddServiceOrderRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   addServicePort(id: ID!, portId: ID!): Service! @join__field(graph: SYMPHONY)
-  addServiceRef(input: [AddServiceRefInput!]!, upsert: Boolean): AddServiceRefPayload @join__field(graph: DGRAPHSERVICE)
+  addServiceReference(input: [AddServiceReferenceInput!]!, upsert: Boolean): AddServiceReferencePayload @join__field(graph: DGRAPHSERVICE)
   addServiceRelationship(input: [AddServiceRelationshipInput!]!): AddServiceRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   addServiceSOM(input: [AddServiceSOMInput!]!): AddServiceSOMPayload @join__field(graph: DGRAPHSERVICE)
-  addServiceSpecificationRef(input: [AddServiceSpecificationRefInput!]!, upsert: Boolean): AddServiceSpecificationRefPayload @join__field(graph: DGRAPHSERVICE)
+  addServiceSpecificationReference(input: [AddServiceSpecificationReferenceInput!]!, upsert: Boolean): AddServiceSpecificationReferencePayload @join__field(graph: DGRAPHSERVICE)
   addServiceType(
     """
     AddServiceEndpointInput
@@ -6037,7 +6111,7 @@ type Mutation {
   deleteFeature(filter: FeatureFilter!): DeleteFeaturePayload @join__field(graph: DGRAPHSERVICE)
   deleteFloorPlan(id: ID!): Boolean! @join__field(graph: SYMPHONY)
   deleteFlowDraft(id: ID!): Boolean! @join__field(graph: SYMPHONY)
-  deleteFlowExecutionRef(filter: FlowExecutionRefFilter!): DeleteFlowExecutionRefPayload @join__field(graph: DGRAPHSERVICE)
+  deleteFlowExecutionReference(filter: FlowExecutionReferenceFilter!): DeleteFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
   deleteGeometry(filter: GeometryFilter!): DeleteGeometryPayload @join__field(graph: DGRAPHSERVICE)
   deleteHyperlink(id: ID!): Hyperlink! @join__field(graph: SYMPHONY)
   deleteImage(
@@ -6062,18 +6136,18 @@ type Mutation {
   deleteRelatedEntity(filter: RelatedEntityFilter!): DeleteRelatedEntityPayload @join__field(graph: DGRAPHSERVICE)
   deleteReportFilter(id: ID!): Boolean! @join__field(graph: SYMPHONY)
   deleteResource(filter: ResourceFilter!): DeleteResourcePayload @join__field(graph: DGRAPHSERVICE)
-  deleteResourceInt(filter: ResourceIntFilter!): DeleteResourceIntPayload @join__field(graph: DGRAPHSERVICE)
+  deleteResourceOrderIM(filter: ResourceOrderIMFilter!): DeleteResourceOrderIMPayload @join__field(graph: DGRAPHSERVICE)
+  deleteResourceOrderItem(filter: ResourceOrderItemFilter!): DeleteResourceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   deleteResourceProperty(filter: ResourcePropertyFilter!): DeleteResourcePropertyPayload @join__field(graph: DGRAPHSERVICE)
   deleteResourceReference(filter: ResourceReferenceFilter!): DeleteResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   deleteSchedulerConfig(filter: SchedulerConfigFilter!): DeleteSchedulerConfigPayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceOrder(filter: ServiceOrderFilter!): DeleteServiceOrderPayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceOrderItem(filter: ServiceOrderItemFilter!): DeleteServiceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceOrderRelationship(filter: ServiceOrderRelationshipFilter!): DeleteServiceOrderRelationshipPayload @join__field(graph: DGRAPHSERVICE)
-  deleteServiceRef(filter: ServiceRefFilter!): DeleteServiceRefPayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceReference(filter: ServiceReferenceFilter!): DeleteServiceReferencePayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceRelationship(filter: ServiceRelationshipFilter!): DeleteServiceRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   deleteServiceSOM(filter: ServiceSOMFilter!): DeleteServiceSOMPayload @join__field(graph: DGRAPHSERVICE)
-  deleteServiceSpecificationRef(filter: ServiceSpecificationRefFilter!): DeleteServiceSpecificationRefPayload @join__field(graph: DGRAPHSERVICE)
+  deleteServiceSpecificationReference(filter: ServiceSpecificationReferenceFilter!): DeleteServiceSpecificationReferencePayload @join__field(graph: DGRAPHSERVICE)
   deleteStatusNumericPool(filter: StatusNumericPoolFilter!): DeleteStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   deleteUsersGroup(id: ID!): Boolean! @join__field(graph: SYMPHONY)
@@ -6259,7 +6333,7 @@ type Mutation {
   updateConfigurationParameterType(input: UpdateConfigurationParameterTypeInput!): UpdateConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   updateExternalReference(input: UpdateExternalReferenceInput!): UpdateExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateFeature(input: UpdateFeatureInput!): UpdateFeaturePayload @join__field(graph: DGRAPHSERVICE)
-  updateFlowExecutionRef(input: UpdateFlowExecutionRefInput!): UpdateFlowExecutionRefPayload @join__field(graph: DGRAPHSERVICE)
+  updateFlowExecutionReference(input: UpdateFlowExecutionReferenceInput!): UpdateFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateGeometry(input: UpdateGeometryInput!): UpdateGeometryPayload @join__field(graph: DGRAPHSERVICE)
   updateModificationRequest(input: UpdateModificationRequestInput!): UpdateModificationRequestPayload @join__field(graph: DGRAPHSERVICE)
   updateNote(input: UpdateNoteInput!): UpdateNotePayload @join__field(graph: DGRAPHSERVICE)
@@ -6269,18 +6343,18 @@ type Mutation {
   updatePlace(input: UpdatePlaceInput!): UpdatePlacePayload @join__field(graph: DGRAPHSERVICE)
   updateRelatedEntity(input: UpdateRelatedEntityInput!): UpdateRelatedEntityPayload @join__field(graph: DGRAPHSERVICE)
   updateResource(input: UpdateResourceInput!): UpdateResourcePayload @join__field(graph: DGRAPHSERVICE)
-  updateResourceInt(input: UpdateResourceIntInput!): UpdateResourceIntPayload @join__field(graph: DGRAPHSERVICE)
+  updateResourceOrderIM(input: UpdateResourceOrderIMInput!): UpdateResourceOrderIMPayload @join__field(graph: DGRAPHSERVICE)
+  updateResourceOrderItem(input: UpdateResourceOrderItemInput!): UpdateResourceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   updateResourceProperty(input: UpdateResourcePropertyInput!): UpdateResourcePropertyPayload @join__field(graph: DGRAPHSERVICE)
   updateResourceReference(input: UpdateResourceReferenceInput!): UpdateResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateSchedulerConfig(input: UpdateSchedulerConfigInput!): UpdateSchedulerConfigPayload @join__field(graph: DGRAPHSERVICE)
   updateServiceOrder(input: UpdateServiceOrderInput!): UpdateServiceOrderPayload @join__field(graph: DGRAPHSERVICE)
   updateServiceOrderItem(input: UpdateServiceOrderItemInput!): UpdateServiceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   updateServiceOrderRelationship(input: UpdateServiceOrderRelationshipInput!): UpdateServiceOrderRelationshipPayload @join__field(graph: DGRAPHSERVICE)
-  updateServiceRef(input: UpdateServiceRefInput!): UpdateServiceRefPayload @join__field(graph: DGRAPHSERVICE)
   updateServiceReference(input: UpdateServiceReferenceInput!): UpdateServiceReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateServiceRelationship(input: UpdateServiceRelationshipInput!): UpdateServiceRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   updateServiceSOM(input: UpdateServiceSOMInput!): UpdateServiceSOMPayload @join__field(graph: DGRAPHSERVICE)
-  updateServiceSpecificationRef(input: UpdateServiceSpecificationRefInput!): UpdateServiceSpecificationRefPayload @join__field(graph: DGRAPHSERVICE)
+  updateServiceSpecificationReference(input: UpdateServiceSpecificationReferenceInput!): UpdateServiceSpecificationReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateStatusNumericPool(input: UpdateStatusNumericPoolInput!): UpdateStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   updateSubscriber(input: UpdateSubscriberInput!): UpdateSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   updateUserGroups(input: UpdateUserGroupsInput!): User! @join__field(graph: SYMPHONY)
@@ -6437,8 +6511,8 @@ type NumericPool {
   id: ID!
   isDelete: Boolean!
   limit: Int!
-  resource(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
-  resourceAggregate(filter: ResourceFilter): ResourceAggregateResult
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   statusNumericPools(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool]
   statusNumericPoolsAggregate(filter: StatusNumericPoolFilter): StatusNumericPoolAggregateResult
 }
@@ -6470,7 +6544,7 @@ enum NumericPoolHasFilter {
   description
   isDelete
   limit
-  resource
+  resources
   statusNumericPools
 }
 
@@ -6491,7 +6565,7 @@ input NumericPoolPatch {
   description: String
   isDelete: Boolean
   limit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -6501,7 +6575,7 @@ input NumericPoolRef {
   id: ID
   isDelete: Boolean
   limit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -7592,7 +7666,7 @@ type Query {
   aggregateConfigurationParameterType(filter: ConfigurationParameterTypeFilter): ConfigurationParameterTypeAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateExternalReference(filter: ExternalReferenceFilter): ExternalReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateFeature(filter: FeatureFilter): FeatureAggregateResult @join__field(graph: DGRAPHSERVICE)
-  aggregateFlowExecutionRef(filter: FlowExecutionRefFilter): FlowExecutionRefAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateFlowExecutionReference(filter: FlowExecutionReferenceFilter): FlowExecutionReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateGeometry(filter: GeometryFilter): GeometryAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateModificationRequest(filter: ModificationRequestFilter): ModificationRequestAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateNote(filter: NoteFilter): NoteAggregateResult @join__field(graph: DGRAPHSERVICE)
@@ -7602,18 +7676,18 @@ type Query {
   aggregatePlace(filter: PlaceFilter): PlaceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateRelatedEntity(filter: RelatedEntityFilter): RelatedEntityAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateResource(filter: ResourceFilter): ResourceAggregateResult @join__field(graph: DGRAPHSERVICE)
-  aggregateResourceInt(filter: ResourceIntFilter): ResourceIntAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateResourceOrderIM(filter: ResourceOrderIMFilter): ResourceOrderIMAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateResourceOrderItem(filter: ResourceOrderItemFilter): ResourceOrderItemAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateResourceProperty(filter: ResourcePropertyFilter): ResourcePropertyAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateResourceReference(filter: ResourceReferenceFilter): ResourceReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateSchedulerConfig(filter: SchedulerConfigFilter): SchedulerConfigAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceOrder(filter: ServiceOrderFilter): ServiceOrderAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceOrderItem(filter: ServiceOrderItemFilter): ServiceOrderItemAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceOrderRelationship(filter: ServiceOrderRelationshipFilter): ServiceOrderRelationshipAggregateResult @join__field(graph: DGRAPHSERVICE)
-  aggregateServiceRef(filter: ServiceRefFilter): ServiceRefAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceReference(filter: ServiceReferenceFilter): ServiceReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceRelationship(filter: ServiceRelationshipFilter): ServiceRelationshipAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateServiceSOM(filter: ServiceSOMFilter): ServiceSOMAggregateResult @join__field(graph: DGRAPHSERVICE)
-  aggregateServiceSpecificationRef(filter: ServiceSpecificationRefFilter): ServiceSpecificationRefAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateServiceSpecificationReference(filter: ServiceSpecificationReferenceFilter): ServiceSpecificationReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateStatusNumericPool(filter: StatusNumericPoolFilter): StatusNumericPoolAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateSubscriber(filter: SubscriberFilter): SubscriberAggregateResult @join__field(graph: DGRAPHSERVICE)
 
@@ -7880,10 +7954,10 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID, name: String, resourceSpecification: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
-  getFlowExecutionRef(id: ID!): FlowExecutionRef @join__field(graph: DGRAPHSERVICE)
+  getFlowExecutionReference(id: ID!): FlowExecutionReference @join__field(graph: DGRAPHSERVICE)
   getGeometry(x: String, y: String): Geometry @join__field(graph: DGRAPHSERVICE)
   getModificationRequest(id: ID!): ModificationRequest @join__field(graph: DGRAPHSERVICE)
   getNote(id: ID!): Note @join__field(graph: DGRAPHSERVICE)
@@ -7893,17 +7967,17 @@ type Query {
   getPlace(placeId: ID!): Place @join__field(graph: DGRAPHSERVICE)
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
   getResource(id: ID, name: String): Resource @join__field(graph: DGRAPHSERVICE)
-  getResourceInt(name: String!): ResourceInt @deprecated(reason: "@id argument for get query on interface is being deprecated. Only those @id fields which have interface argument set to true will be available in getQuery argument on interface post v21.11.0, please update your schema accordingly.") @join__field(graph: DGRAPHSERVICE)
+  getResourceOrderItem(id: String!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
-  getResourceReference(id: String, name: String): ResourceReference @join__field(graph: DGRAPHSERVICE)
+  getResourceReference(id: String!): ResourceReference @join__field(graph: DGRAPHSERVICE)
   getSchedulerConfig(id: ID!): SchedulerConfig @join__field(graph: DGRAPHSERVICE)
   getServiceOrder(id: ID!): ServiceOrder @join__field(graph: DGRAPHSERVICE)
   getServiceOrderItem(serviceOrderItemId: ID!): ServiceOrderItem @join__field(graph: DGRAPHSERVICE)
   getServiceOrderRelationship(id: String!): ServiceOrderRelationship @join__field(graph: DGRAPHSERVICE)
-  getServiceRef(id: String!): ServiceRef @join__field(graph: DGRAPHSERVICE)
+  getServiceReference(id: String!): ServiceReference @join__field(graph: DGRAPHSERVICE)
   getServiceRelationship(id: ID!): ServiceRelationship @join__field(graph: DGRAPHSERVICE)
   getServiceSOM(id: ID!): ServiceSOM @join__field(graph: DGRAPHSERVICE)
-  getServiceSpecificationRef(id: String!): ServiceSpecificationRef @join__field(graph: DGRAPHSERVICE)
+  getServiceSpecificationReference(id: String!): ServiceSpecificationReference @join__field(graph: DGRAPHSERVICE)
   getStatusNumericPool(id: ID!): StatusNumericPool @join__field(graph: DGRAPHSERVICE)
   getSubscriber(id: ID!): Subscriber @join__field(graph: DGRAPHSERVICE)
 
@@ -8272,7 +8346,7 @@ type Query {
     orderBy: PropertyTypeValueOrder
   ): PropertyTypeValueConnection! @join__field(graph: SYMPHONY)
   pythonPackages: [PythonPackage!]! @join__field(graph: SYMPHONY)
-  queryActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution] @join__field(graph: DGRAPHSERVICE)
+  queryActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution] @join__field(graph: DGRAPHSERVICE)
   queryActionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem] @join__field(graph: DGRAPHSERVICE)
   queryActionScheduler(filter: ActionSchedulerFilter, first: Int, offset: Int, order: ActionSchedulerOrder): [ActionScheduler] @join__field(graph: DGRAPHSERVICE)
   queryActionTemplate(filter: ActionTemplateFilter, first: Int, offset: Int, order: ActionTemplateOrder): [ActionTemplate] @join__field(graph: DGRAPHSERVICE)
@@ -8289,7 +8363,7 @@ type Query {
   queryConfigurationParameterType(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType] @join__field(graph: DGRAPHSERVICE)
   queryExternalReference(filter: ExternalReferenceFilter, first: Int, offset: Int, order: ExternalReferenceOrder): [ExternalReference] @join__field(graph: DGRAPHSERVICE)
   queryFeature(filter: FeatureFilter, first: Int, offset: Int, order: FeatureOrder): [Feature] @join__field(graph: DGRAPHSERVICE)
-  queryFlowExecutionRef(filter: FlowExecutionRefFilter, first: Int, offset: Int, order: FlowExecutionRefOrder): [FlowExecutionRef] @join__field(graph: DGRAPHSERVICE)
+  queryFlowExecutionReference(filter: FlowExecutionReferenceFilter, first: Int, offset: Int, order: FlowExecutionReferenceOrder): [FlowExecutionReference] @join__field(graph: DGRAPHSERVICE)
   queryGeometry(filter: GeometryFilter, first: Int, offset: Int, order: GeometryOrder): [Geometry] @join__field(graph: DGRAPHSERVICE)
   queryModificationRequest(filter: ModificationRequestFilter, first: Int, offset: Int, order: ModificationRequestOrder): [ModificationRequest] @join__field(graph: DGRAPHSERVICE)
   queryNote(filter: NoteFilter, first: Int, offset: Int, order: NoteOrder): [Note] @join__field(graph: DGRAPHSERVICE)
@@ -8299,18 +8373,18 @@ type Query {
   queryPlace(filter: PlaceFilter, first: Int, offset: Int, order: PlaceOrder): [Place] @join__field(graph: DGRAPHSERVICE)
   queryRelatedEntity(filter: RelatedEntityFilter, first: Int, offset: Int, order: RelatedEntityOrder): [RelatedEntity] @join__field(graph: DGRAPHSERVICE)
   queryResource(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource] @join__field(graph: DGRAPHSERVICE)
-  queryResourceInt(filter: ResourceIntFilter, first: Int, offset: Int, order: ResourceIntOrder): [ResourceInt] @join__field(graph: DGRAPHSERVICE)
+  queryResourceOrderIM(filter: ResourceOrderIMFilter, first: Int, offset: Int, order: ResourceOrderIMOrder): [ResourceOrderIM] @join__field(graph: DGRAPHSERVICE)
+  queryResourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem] @join__field(graph: DGRAPHSERVICE)
   queryResourceProperty(filter: ResourcePropertyFilter, first: Int, offset: Int, order: ResourcePropertyOrder): [ResourceProperty] @join__field(graph: DGRAPHSERVICE)
   queryResourceReference(filter: ResourceReferenceFilter, first: Int, offset: Int, order: ResourceReferenceOrder): [ResourceReference] @join__field(graph: DGRAPHSERVICE)
   querySchedulerConfig(filter: SchedulerConfigFilter, first: Int, offset: Int, order: SchedulerConfigOrder): [SchedulerConfig] @join__field(graph: DGRAPHSERVICE)
   queryServiceOrder(filter: ServiceOrderFilter, first: Int, offset: Int, order: ServiceOrderOrder): [ServiceOrder] @join__field(graph: DGRAPHSERVICE)
   queryServiceOrderItem(filter: ServiceOrderItemFilter, first: Int, offset: Int, order: ServiceOrderItemOrder): [ServiceOrderItem] @join__field(graph: DGRAPHSERVICE)
   queryServiceOrderRelationship(filter: ServiceOrderRelationshipFilter, first: Int, offset: Int, order: ServiceOrderRelationshipOrder): [ServiceOrderRelationship] @join__field(graph: DGRAPHSERVICE)
-  queryServiceRef(filter: ServiceRefFilter, first: Int, offset: Int, order: ServiceRefOrder): [ServiceRef] @join__field(graph: DGRAPHSERVICE)
   queryServiceReference(filter: ServiceReferenceFilter, first: Int, offset: Int, order: ServiceReferenceOrder): [ServiceReference] @join__field(graph: DGRAPHSERVICE)
   queryServiceRelationship(filter: ServiceRelationshipFilter, first: Int, offset: Int, order: ServiceRelationshipOrder): [ServiceRelationship] @join__field(graph: DGRAPHSERVICE)
   queryServiceSOM(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM] @join__field(graph: DGRAPHSERVICE)
-  queryServiceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef] @join__field(graph: DGRAPHSERVICE)
+  queryServiceSpecificationReference(filter: ServiceSpecificationReferenceFilter, first: Int, offset: Int, order: ServiceSpecificationReferenceOrder): [ServiceSpecificationReference] @join__field(graph: DGRAPHSERVICE)
   queryStatusNumericPool(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool] @join__field(graph: DGRAPHSERVICE)
   querySubscriber(filter: SubscriberFilter, first: Int, offset: Int, order: SubscriberOrder): [Subscriber] @join__field(graph: DGRAPHSERVICE)
   reportFilters(entity: FilterEntity!): [ReportFilter!]! @join__field(graph: SYMPHONY)
@@ -8841,7 +8915,8 @@ input ReportFilterInput {
   name: String!
 }
 
-type Resource implements ResourceInt {
+type Resource {
+  actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
@@ -8852,6 +8927,7 @@ type Resource implements ResourceInt {
   externalId: String
   id: ID!
   isDelete: Boolean!
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink(filter: ResourceFilter): Resource
@@ -8896,6 +8972,7 @@ input ResourceFilter {
 }
 
 enum ResourceHasFilter {
+  actionScheduler
   available
   belongsTo
   composedOf
@@ -8903,6 +8980,7 @@ enum ResourceHasFilter {
   crossconnectionInv
   externalId
   isDelete
+  isEditable
   lifecycleStatus
   locatedIn
   logicalLink
@@ -8919,50 +8997,140 @@ enum ResourceHasFilter {
   usageSubStatus
 }
 
-interface ResourceInt {
-  name: String!
-}
-
-type ResourceIntAggregateResult {
-  count: Int
-  nameMax: String
-  nameMin: String
-}
-
-input ResourceIntFilter {
-  and: [ResourceIntFilter]
-  has: [ResourceIntHasFilter]
-  name: StringHashFilter
-  not: ResourceIntFilter
-  or: [ResourceIntFilter]
-}
-
-enum ResourceIntHasFilter {
-  name
-}
-
-input ResourceIntOrder {
-  asc: ResourceIntOrderable
-  desc: ResourceIntOrderable
-  then: ResourceIntOrder
-}
-
-enum ResourceIntOrderable {
-  name
-}
-
-input ResourceIntPatch {
-  name: String
-}
-
-input ResourceIntRef {
-  name: String!
-}
-
 input ResourceOrder {
   asc: ResourceOrderable
   desc: ResourceOrderable
   then: ResourceOrder
+}
+
+type ResourceOrderIM {
+  category: String
+  description: String
+  externalId: String
+  id: String
+  lineId: String
+  reservationId: String
+  resourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem]
+  resourceOrderItemAggregate(filter: ResourceOrderItemFilter): ResourceOrderItemAggregateResult
+}
+
+type ResourceOrderIMAggregateResult {
+  categoryMax: String
+  categoryMin: String
+  count: Int
+  descriptionMax: String
+  descriptionMin: String
+  externalIdMax: String
+  externalIdMin: String
+  idMax: String
+  idMin: String
+  lineIdMax: String
+  lineIdMin: String
+  reservationIdMax: String
+  reservationIdMin: String
+}
+
+input ResourceOrderIMFilter {
+  and: [ResourceOrderIMFilter]
+  has: [ResourceOrderIMHasFilter]
+  not: ResourceOrderIMFilter
+  or: [ResourceOrderIMFilter]
+}
+
+enum ResourceOrderIMHasFilter {
+  category
+  description
+  externalId
+  id
+  lineId
+  reservationId
+  resourceOrderItem
+}
+
+input ResourceOrderIMOrder {
+  asc: ResourceOrderIMOrderable
+  desc: ResourceOrderIMOrderable
+  then: ResourceOrderIMOrder
+}
+
+enum ResourceOrderIMOrderable {
+  category
+  description
+  externalId
+  id
+  lineId
+  reservationId
+}
+
+input ResourceOrderIMPatch {
+  category: String
+  description: String
+  externalId: String
+  id: String
+  lineId: String
+  reservationId: String
+  resourceOrderItem: [ResourceOrderItemRef]
+}
+
+input ResourceOrderIMRef {
+  category: String
+  description: String
+  externalId: String
+  id: String
+  lineId: String
+  reservationId: String
+  resourceOrderItem: [ResourceOrderItemRef]
+}
+
+type ResourceOrderItem {
+  action: String
+  id: String!
+  service(filter: SupportingServiceFilter): SupportingService
+}
+
+type ResourceOrderItemAggregateResult {
+  actionMax: String
+  actionMin: String
+  count: Int
+  idMax: String
+  idMin: String
+}
+
+input ResourceOrderItemFilter {
+  and: [ResourceOrderItemFilter]
+  has: [ResourceOrderItemHasFilter]
+  id: StringHashFilter
+  not: ResourceOrderItemFilter
+  or: [ResourceOrderItemFilter]
+}
+
+enum ResourceOrderItemHasFilter {
+  action
+  id
+  service
+}
+
+input ResourceOrderItemOrder {
+  asc: ResourceOrderItemOrderable
+  desc: ResourceOrderItemOrderable
+  then: ResourceOrderItemOrder
+}
+
+enum ResourceOrderItemOrderable {
+  action
+  id
+}
+
+input ResourceOrderItemPatch {
+  action: String
+  id: String
+  service: SupportingServiceRef
+}
+
+input ResourceOrderItemRef {
+  action: String
+  id: String
+  service: SupportingServiceRef
 }
 
 enum ResourceOrderable {
@@ -8973,6 +9141,7 @@ enum ResourceOrderable {
 }
 
 input ResourcePatch {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
@@ -8980,6 +9149,7 @@ input ResourcePatch {
   crossconnectionInv: [ResourceRef]
   externalId: String
   isDelete: Boolean
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink: ResourceRef
@@ -9157,6 +9327,7 @@ type ResourcePropertyType implements Node {
 }
 
 input ResourceRef {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
   composedOf: [ResourceRef]
@@ -9165,6 +9336,7 @@ input ResourceRef {
   externalId: String
   id: ID
   isDelete: Boolean
+  isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
   logicalLink: ResourceRef
@@ -9181,10 +9353,10 @@ input ResourceRef {
   usageSubStatus: UsageSubStatus
 }
 
-type ResourceReference implements ResourceInt {
+type ResourceReference {
   href: String
   id: String!
-  name: String!
+  name: String
 }
 
 type ResourceReferenceAggregateResult {
@@ -9201,7 +9373,6 @@ input ResourceReferenceFilter {
   and: [ResourceReferenceFilter]
   has: [ResourceReferenceHasFilter]
   id: StringHashFilter
-  name: StringHashFilter
   not: ResourceReferenceFilter
   or: [ResourceReferenceFilter]
 }
@@ -9256,7 +9427,10 @@ type ResourceSpecification implements Node {
   name: String!
   quantity: Int
   resourcePropertyTypes: [ResourcePropertyType]!
+  resourceSpecificationItems: [ResourceSpecificationItems]
+  resourceSpecificationRelationship: [ResourceSpecificationRelationship]
   resourceType: ResourceType
+  vendor: Vendor
 }
 
 """A connection to a list of ResourceSpecification."""
@@ -9290,6 +9464,7 @@ input ResourceSpecificationFilterInput {
 }
 
 enum ResourceSpecificationFilterType {
+  ID
   NAME
   RESOURCE_TYPE
 }
@@ -9357,14 +9532,11 @@ enum ResourceSpecificationOrderField {
   UPDATED_AT
 }
 
-input ResourceSpecificationRelationShipListInput {
-  name: String!
-}
-
 type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
   resourceSpecification: ResourceSpecification!
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 
 """A connection to a list of ResourceSpecificationRelationships."""
@@ -9402,10 +9574,6 @@ enum ResourceSpecificationRelationshipFilterType {
   RESOURCE_SPECIFICATION
 }
 
-input ResourceSpecificationRelationshipItemsInput {
-  id_destino: ID
-}
-
 """Ordering options for ResourceSpecificationRelationships connections."""
 input ResourceSpecificationRelationshipOrder {
   """The ordering direction."""
@@ -9432,6 +9600,7 @@ enum ResourceSpecificationRelationshipOrderField {
 type ResourceType implements Node {
   id: ID!
   name: String!
+  resourceSpecification: [ResourceSpecification]
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -9925,14 +10094,13 @@ enum ServiceFilterType {
 }
 
 type ServiceOrder {
-  _atType: String
   cancelRequest(filter: CancellationRequestFilter): CancellationRequest
   category: String
   description: String
   externalId: String
   externalReference(filter: ExternalReferenceFilter, first: Int, offset: Int, order: ExternalReferenceOrder): [ExternalReference]
   externalReferenceAggregate(filter: ExternalReferenceFilter): ExternalReferenceAggregateResult
-  flowExecutionRef(filter: FlowExecutionRefFilter): FlowExecutionRef
+  flowExecutionReference(filter: FlowExecutionReferenceFilter): FlowExecutionReference
   id: ID!
   modifyRequest(filter: ModificationRequestFilter, first: Int, offset: Int, order: ModificationRequestOrder): [ModificationRequest]
   modifyRequestAggregate(filter: ModificationRequestFilter): ModificationRequestAggregateResult
@@ -9950,11 +10118,10 @@ type ServiceOrder {
   serviceOrderItemAggregate(filter: ServiceOrderItemFilter): ServiceOrderItemAggregateResult
   startDate: String
   state: String
+  type: String
 }
 
 type ServiceOrderAggregateResult {
-  _atTypeMax: String
-  _atTypeMin: String
   categoryMax: String
   categoryMin: String
   count: Int
@@ -9974,6 +10141,8 @@ type ServiceOrderAggregateResult {
   startDateMin: String
   stateMax: String
   stateMin: String
+  typeMax: String
+  typeMin: String
 }
 
 input ServiceOrderFilter {
@@ -9989,13 +10158,12 @@ input ServiceOrderFilter {
 }
 
 enum ServiceOrderHasFilter {
-  _atType
   cancelRequest
   category
   description
   externalId
   externalReference
-  flowExecutionRef
+  flowExecutionReference
   modifyRequest
   note
   orderDate
@@ -10007,6 +10175,7 @@ enum ServiceOrderHasFilter {
   serviceOrderItem
   startDate
   state
+  type
 }
 
 type ServiceOrderItem {
@@ -10097,7 +10266,6 @@ input ServiceOrderOrder {
 }
 
 enum ServiceOrderOrderable {
-  _atType
   category
   description
   externalId
@@ -10107,16 +10275,16 @@ enum ServiceOrderOrderable {
   requestedStartDate
   startDate
   state
+  type
 }
 
 input ServiceOrderPatch {
-  _atType: String
   cancelRequest: CancellationRequestRef
   category: String
   description: String
   externalId: String
   externalReference: [ExternalReferenceRef]
-  flowExecutionRef: FlowExecutionRefRef
+  flowExecutionReference: FlowExecutionReferenceRef
   modifyRequest: [ModificationRequestRef]
   note: [NoteRef]
   orderDate: String
@@ -10128,16 +10296,16 @@ input ServiceOrderPatch {
   serviceOrderItem: [ServiceOrderItemRef]
   startDate: String
   state: String
+  type: String
 }
 
 input ServiceOrderRef {
-  _atType: String
   cancelRequest: CancellationRequestRef
   category: String
   description: String
   externalId: String
   externalReference: [ExternalReferenceRef]
-  flowExecutionRef: FlowExecutionRefRef
+  flowExecutionReference: FlowExecutionReferenceRef
   id: ID
   modifyRequest: [ModificationRequestRef]
   note: [NoteRef]
@@ -10150,12 +10318,13 @@ input ServiceOrderRef {
   serviceOrderItem: [ServiceOrderItemRef]
   startDate: String
   state: String
+  type: String
 }
 
 type ServiceOrderRelationship {
   href: String
   id: String!
-  relationshipType: String
+  relationshipType: String!
 }
 
 type ServiceOrderRelationshipAggregateResult {
@@ -10206,84 +10375,48 @@ input ServiceOrderRelationshipRef {
   relationshipType: String
 }
 
-type ServiceRef implements ServiceReference {
+type ServiceReference {
+  externalId: String
   href: String
   id: String!
   name: String
-  supportingResource(filter: ResourceIntFilter, first: Int, offset: Int, order: ResourceIntOrder): [ResourceInt]
-  supportingResourceAggregate(filter: ResourceIntFilter): ResourceIntAggregateResult
+  specificationId: String
+  specificationName: String
+  supportingResource(filter: SupportingResourceFilter, first: Int, offset: Int): [SupportingResource]
 }
 
-type ServiceRefAggregateResult {
+type ServiceReferenceAggregateResult {
   count: Int
+  externalIdMax: String
+  externalIdMin: String
   hrefMax: String
   hrefMin: String
   idMax: String
   idMin: String
   nameMax: String
   nameMin: String
-}
-
-input ServiceRefFilter {
-  and: [ServiceRefFilter]
-  has: [ServiceRefHasFilter]
-  id: StringHashFilter
-  not: ServiceRefFilter
-  or: [ServiceRefFilter]
-}
-
-enum ServiceRefHasFilter {
-  href
-  id
-  name
-  supportingResource
-}
-
-input ServiceRefOrder {
-  asc: ServiceRefOrderable
-  desc: ServiceRefOrderable
-  then: ServiceRefOrder
-}
-
-enum ServiceRefOrderable {
-  href
-  id
-  name
-}
-
-input ServiceRefPatch {
-  href: String
-  id: String
-  name: String
-  supportingResource: [ResourceIntRef]
-}
-
-input ServiceRefRef {
-  href: String
-  id: String
-  name: String
-  supportingResource: [ResourceIntRef]
-}
-
-interface ServiceReference {
-  href: String
-}
-
-type ServiceReferenceAggregateResult {
-  count: Int
-  hrefMax: String
-  hrefMin: String
+  specificationIdMax: String
+  specificationIdMin: String
+  specificationNameMax: String
+  specificationNameMin: String
 }
 
 input ServiceReferenceFilter {
   and: [ServiceReferenceFilter]
   has: [ServiceReferenceHasFilter]
+  id: StringHashFilter
   not: ServiceReferenceFilter
   or: [ServiceReferenceFilter]
 }
 
 enum ServiceReferenceHasFilter {
+  externalId
   href
+  id
+  name
+  specificationId
+  specificationName
+  supportingResource
 }
 
 input ServiceReferenceOrder {
@@ -10293,17 +10426,38 @@ input ServiceReferenceOrder {
 }
 
 enum ServiceReferenceOrderable {
+  externalId
   href
+  id
+  name
+  specificationId
+  specificationName
 }
 
 input ServiceReferencePatch {
+  externalId: String
   href: String
+  id: String
+  name: String
+  specificationId: String
+  specificationName: String
+  supportingResource: [SupportingResourceRef]
+}
+
+input ServiceReferenceRef {
+  externalId: String
+  href: String
+  id: String
+  name: String
+  specificationId: String
+  specificationName: String
+  supportingResource: [SupportingResourceRef]
 }
 
 type ServiceRelationship {
   id: ID!
   relationshipType: String!
-  service(filter: ServiceSOMFilter): ServiceSOM
+  service(filter: ServiceSOMFilter): ServiceSOM!
   serviceRelationshipCharacteristic(filter: CharacteristicFilter, first: Int, offset: Int, order: CharacteristicOrder): [Characteristic]
   serviceRelationshipCharacteristicAggregate(filter: CharacteristicFilter): CharacteristicAggregateResult
 }
@@ -10351,7 +10505,7 @@ input ServiceRelationshipRef {
   serviceRelationshipCharacteristic: [CharacteristicRef]
 }
 
-type ServiceSOM implements ServiceReference {
+type ServiceSOM {
   category: String
   description: String
   endDate: String
@@ -10378,13 +10532,12 @@ type ServiceSOM implements ServiceReference {
   serviceDate: String
   serviceRelationship(filter: ServiceRelationshipFilter, first: Int, offset: Int, order: ServiceRelationshipOrder): [ServiceRelationship]
   serviceRelationshipAggregate(filter: ServiceRelationshipFilter): ServiceRelationshipAggregateResult
-  serviceSpecification(filter: ServiceSpecificationRefFilter): ServiceSpecificationRef
+  serviceSpecification(filter: ServiceSpecificationReferenceFilter): ServiceSpecificationReference
   serviceType: String
   startDate: String
   startMode: String
   state: String
-  supportingResource(filter: ResourceIntFilter, first: Int, offset: Int, order: ResourceIntOrder): [ResourceInt]
-  supportingResourceAggregate(filter: ResourceIntFilter): ResourceIntAggregateResult
+  supportingResource(filter: SupportingResourceFilter, first: Int, offset: Int): [SupportingResource]
   supportingService(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM]
   supportingServiceAggregate(filter: ServiceSOMFilter): ServiceSOMAggregateResult
   type: String
@@ -10498,12 +10651,12 @@ input ServiceSOMPatch {
   serviceCharacteristic: [CharacteristicRef]
   serviceDate: String
   serviceRelationship: [ServiceRelationshipRef]
-  serviceSpecification: ServiceSpecificationRefRef
+  serviceSpecification: ServiceSpecificationReferenceRef
   serviceType: String
   startDate: String
   startMode: String
   state: String
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
   supportingService: [ServiceSOMRef]
   type: String
 }
@@ -10528,12 +10681,12 @@ input ServiceSOMRef {
   serviceCharacteristic: [CharacteristicRef]
   serviceDate: String
   serviceRelationship: [ServiceRelationshipRef]
-  serviceSpecification: ServiceSpecificationRefRef
+  serviceSpecification: ServiceSpecificationReferenceRef
   serviceType: String
   startDate: String
   startMode: String
   state: String
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
   supportingService: [ServiceSOMRef]
   type: String
 }
@@ -10543,10 +10696,10 @@ type ServiceSearchResult {
   services: [Service]!
 }
 
-type ServiceSpecificationRef {
+type ServiceSpecificationReference {
   href: String
   id: String!
-  name: String!
+  name: String
   referredType: String
   services(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM]
   servicesAggregate(filter: ServiceSOMFilter): ServiceSOMAggregateResult
@@ -10554,7 +10707,7 @@ type ServiceSpecificationRef {
   version: String
 }
 
-type ServiceSpecificationRefAggregateResult {
+type ServiceSpecificationReferenceAggregateResult {
   count: Int
   hrefMax: String
   hrefMin: String
@@ -10570,15 +10723,15 @@ type ServiceSpecificationRefAggregateResult {
   versionMin: String
 }
 
-input ServiceSpecificationRefFilter {
-  and: [ServiceSpecificationRefFilter]
-  has: [ServiceSpecificationRefHasFilter]
+input ServiceSpecificationReferenceFilter {
+  and: [ServiceSpecificationReferenceFilter]
+  has: [ServiceSpecificationReferenceHasFilter]
   id: StringHashFilter
-  not: ServiceSpecificationRefFilter
-  or: [ServiceSpecificationRefFilter]
+  not: ServiceSpecificationReferenceFilter
+  or: [ServiceSpecificationReferenceFilter]
 }
 
-enum ServiceSpecificationRefHasFilter {
+enum ServiceSpecificationReferenceHasFilter {
   href
   id
   name
@@ -10588,13 +10741,13 @@ enum ServiceSpecificationRefHasFilter {
   version
 }
 
-input ServiceSpecificationRefOrder {
-  asc: ServiceSpecificationRefOrderable
-  desc: ServiceSpecificationRefOrderable
-  then: ServiceSpecificationRefOrder
+input ServiceSpecificationReferenceOrder {
+  asc: ServiceSpecificationReferenceOrderable
+  desc: ServiceSpecificationReferenceOrderable
+  then: ServiceSpecificationReferenceOrder
 }
 
-enum ServiceSpecificationRefOrderable {
+enum ServiceSpecificationReferenceOrderable {
   href
   id
   name
@@ -10603,7 +10756,7 @@ enum ServiceSpecificationRefOrderable {
   version
 }
 
-input ServiceSpecificationRefPatch {
+input ServiceSpecificationReferencePatch {
   href: String
   id: String
   name: String
@@ -10613,7 +10766,7 @@ input ServiceSpecificationRefPatch {
   version: String
 }
 
-input ServiceSpecificationRefRef {
+input ServiceSpecificationReferenceRef {
   href: String
   id: String
   name: String
@@ -10707,7 +10860,7 @@ type StatusNumericPool {
   id: ID!
   numericPool(filter: NumericPoolFilter): NumericPool
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type StatusNumericPoolAggregateResult {
@@ -10725,20 +10878,20 @@ input StatusNumericPoolFilter {
 enum StatusNumericPoolHasFilter {
   numericPool
   status
-  value
+  values
 }
 
 input StatusNumericPoolPatch {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StatusNumericPoolRef {
   id: ID
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StringExactFilter {
@@ -10837,6 +10990,42 @@ input SubscriberRef {
   callback: String
   id: ID
   topic: String
+}
+
+union SupportingResource = Resource | ResourceReference
+
+input SupportingResourceFilter {
+  memberTypes: [SupportingResourceType!]
+  resourceFilter: ResourceFilter
+  resourceReferenceFilter: ResourceReferenceFilter
+}
+
+input SupportingResourceRef {
+  resourceRef: ResourceRef
+  resourceReferenceRef: ResourceReferenceRef
+}
+
+enum SupportingResourceType {
+  Resource
+  ResourceReference
+}
+
+union SupportingService = ServiceReference | ServiceSOM
+
+input SupportingServiceFilter {
+  memberTypes: [SupportingServiceType!]
+  serviceReferenceFilter: ServiceReferenceFilter
+  serviceSOMFilter: ServiceSOMFilter
+}
+
+input SupportingServiceRef {
+  serviceReferenceRef: ServiceReferenceRef
+  serviceSOMRef: ServiceSOMRef
+}
+
+enum SupportingServiceType {
+  ServiceReference
+  ServiceSOM
 }
 
 type Survey implements Node {
@@ -11284,7 +11473,7 @@ type UpdateActionExecutionItemPayload {
 }
 
 type UpdateActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   numUids: Int
 }
 
@@ -11453,14 +11642,14 @@ type UpdateFeaturePayload {
   numUids: Int
 }
 
-input UpdateFlowExecutionRefInput {
-  filter: FlowExecutionRefFilter!
-  remove: FlowExecutionRefPatch
-  set: FlowExecutionRefPatch
+input UpdateFlowExecutionReferenceInput {
+  filter: FlowExecutionReferenceFilter!
+  remove: FlowExecutionReferencePatch
+  set: FlowExecutionReferencePatch
 }
 
-type UpdateFlowExecutionRefPayload {
-  flowExecutionRef(filter: FlowExecutionRefFilter, first: Int, offset: Int, order: FlowExecutionRefOrder): [FlowExecutionRef]
+type UpdateFlowExecutionReferencePayload {
+  flowExecutionReference(filter: FlowExecutionReferenceFilter, first: Int, offset: Int, order: FlowExecutionReferenceOrder): [FlowExecutionReference]
   numUids: Int
 }
 
@@ -11558,15 +11747,26 @@ input UpdateResourceInput {
   set: ResourcePatch
 }
 
-input UpdateResourceIntInput {
-  filter: ResourceIntFilter!
-  remove: ResourceIntPatch
-  set: ResourceIntPatch
+input UpdateResourceOrderIMInput {
+  filter: ResourceOrderIMFilter!
+  remove: ResourceOrderIMPatch
+  set: ResourceOrderIMPatch
 }
 
-type UpdateResourceIntPayload {
+type UpdateResourceOrderIMPayload {
   numUids: Int
-  resourceInt(filter: ResourceIntFilter, first: Int, offset: Int, order: ResourceIntOrder): [ResourceInt]
+  resourceOrderIM(filter: ResourceOrderIMFilter, first: Int, offset: Int, order: ResourceOrderIMOrder): [ResourceOrderIM]
+}
+
+input UpdateResourceOrderItemInput {
+  filter: ResourceOrderItemFilter!
+  remove: ResourceOrderItemPatch
+  set: ResourceOrderItemPatch
+}
+
+type UpdateResourceOrderItemPayload {
+  numUids: Int
+  resourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem]
 }
 
 type UpdateResourcePayload {
@@ -11640,17 +11840,6 @@ type UpdateServiceOrderRelationshipPayload {
   serviceOrderRelationship(filter: ServiceOrderRelationshipFilter, first: Int, offset: Int, order: ServiceOrderRelationshipOrder): [ServiceOrderRelationship]
 }
 
-input UpdateServiceRefInput {
-  filter: ServiceRefFilter!
-  remove: ServiceRefPatch
-  set: ServiceRefPatch
-}
-
-type UpdateServiceRefPayload {
-  numUids: Int
-  serviceRef(filter: ServiceRefFilter, first: Int, offset: Int, order: ServiceRefOrder): [ServiceRef]
-}
-
 input UpdateServiceReferenceInput {
   filter: ServiceReferenceFilter!
   remove: ServiceReferencePatch
@@ -11684,15 +11873,15 @@ type UpdateServiceSOMPayload {
   serviceSOM(filter: ServiceSOMFilter, first: Int, offset: Int, order: ServiceSOMOrder): [ServiceSOM]
 }
 
-input UpdateServiceSpecificationRefInput {
-  filter: ServiceSpecificationRefFilter!
-  remove: ServiceSpecificationRefPatch
-  set: ServiceSpecificationRefPatch
+input UpdateServiceSpecificationReferenceInput {
+  filter: ServiceSpecificationReferenceFilter!
+  remove: ServiceSpecificationReferencePatch
+  set: ServiceSpecificationReferencePatch
 }
 
-type UpdateServiceSpecificationRefPayload {
+type UpdateServiceSpecificationReferencePayload {
   numUids: Int
-  serviceSpecificationRef(filter: ServiceSpecificationRefFilter, first: Int, offset: Int, order: ServiceSpecificationRefOrder): [ServiceSpecificationRef]
+  serviceSpecificationReference(filter: ServiceSpecificationReferenceFilter, first: Int, offset: Int, order: ServiceSpecificationReferenceOrder): [ServiceSpecificationReference]
 }
 
 input UpdateStatusNumericPoolInput {
@@ -11934,6 +12123,7 @@ input VariableValueInput {
 type Vendor implements Node {
   id: ID!
   name: String!
+  resourceSpecification: [ResourceSpecification!]
   vendorRecommendations: [Recommendations!]
 }
 
@@ -11995,6 +12185,11 @@ enum VendorOrderField {
 enum VersionStatus {
   CURRENT
   REPLACED
+}
+
+input VersionStatus_hash {
+  eq: VersionStatus
+  in: [VersionStatus]
 }
 
 type Vertex {
@@ -12308,10 +12503,6 @@ enum YesNoResponse {
 }
 
 enum _CancellationRequestOrdering {
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   cancellationReason_asc
   cancellationReason_desc
   externalId_asc
@@ -12323,31 +12514,27 @@ enum _CancellationRequestOrdering {
   requestedCancellationDate_asc
   requestedCancellationDate_desc
   state_asc
-  state_desc
+  type_asc
+  type_desc
 }
 
 enum _CharacteristicOrdering {
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   id_asc
   id_desc
   name_asc
   name_desc
+  type_asc
+  type_desc
   unitOfMeasure_asc
   unitOfMeasure_desc
   valueType_asc
   valueType_desc
   valueUnits_asc
-  valueUnits_desc
   value_asc
   value_desc
 }
 
-enum _FlowExecutionRefOrdering {
-  _id_asc
-  _id_desc
+enum _FlowExecutionReferenceOrdering {
   domainId_asc
   domainId_desc
   id_asc
@@ -12361,10 +12548,6 @@ enum _FlowExecutionRefOrdering {
 }
 
 enum _ModificationRequestOrdering {
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   externalId_asc
   externalId_desc
   id_asc
@@ -12372,12 +12555,11 @@ enum _ModificationRequestOrdering {
   modifyReason_asc
   modifyReason_desc
   requestedCompletionDate_asc
-  requestedCompletionDate_desc
+  type_asc
+  type_desc
 }
 
 enum _NoteOrdering {
-  _id_asc
-  _id_desc
   author_asc
   author_desc
   date_asc
@@ -12389,8 +12571,6 @@ enum _NoteOrdering {
 }
 
 enum _PartyOrdering {
-  _id_asc
-  _id_desc
   href_asc
   href_desc
   id_asc
@@ -12402,16 +12582,14 @@ enum _PartyOrdering {
 }
 
 enum _PlaceOrdering {
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   id_asc
   id_desc
   name_asc
   name_desc
   role_asc
   role_desc
+  type_asc
+  type_desc
 }
 
 enum _RelationDirections {
@@ -12420,21 +12598,15 @@ enum _RelationDirections {
 }
 
 enum _ServiceOrderItemOrdering {
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   action_asc
   action_desc
   id_asc
   id_desc
+  type_asc
+  type_desc
 }
 
 enum _ServiceOrderOrdering {
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   category_asc
   category_desc
   description_asc
@@ -12451,15 +12623,11 @@ enum _ServiceOrderOrdering {
   requestedStartDate_desc
   state_asc
   state_desc
+  type_asc
+  type_desc
 }
 
 enum _ServiceSOMOrdering {
-  _atSchemaLocation_asc
-  _atSchemaLocation_desc
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   category_asc
   category_desc
   description_asc
@@ -12480,6 +12648,8 @@ enum _ServiceSOMOrdering {
   name_desc
   relationshipType_asc
   relationshipType_desc
+  schemaLocation_asc
+  schemaLocation_desc
   serviceDate_asc
   serviceDate_desc
   serviceState_asc
@@ -12492,34 +12662,30 @@ enum _ServiceSOMOrdering {
   type_desc
 }
 
-enum _ServiceSpecificationRefOrdering {
-  _atReferredType_asc
-  _atReferredType_desc
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
+enum _ServiceSpecificationReferenceOrdering {
   href_asc
   href_desc
   id_asc
   id_desc
   name_asc
   name_desc
+  referredType_asc
+  referredType_desc
+  type_asc
+  type_desc
   version_asc
   version_desc
 }
 
 enum _SupportingServiceOrdering {
-  _atReferredType_asc
-  _atReferredType_desc
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
   href_asc
   href_desc
   id_asc
   id_desc
+  referredType_asc
+  referredType_desc
+  type_asc
+  type_desc
 }
 
 enum core__Purpose {
