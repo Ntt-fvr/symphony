@@ -13,7 +13,7 @@
  import * as React from 'react';
  import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
  import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
- import {priorityValues} from '../../common/FilterTypes';
+ import { sourceChangeRequestValues } from '../../common/FilterTypes';
  
  const PowerSearchChangeRequestSourceFilter = (props: FilterProps) => {
    const {
@@ -32,12 +32,12 @@
        value={(value.stringSet ?? [])
          .map(
            value =>
-             priorityValues.find(priority => priority.value === value)?.label,
+             sourceChangeRequestValues.find(priority => priority.value === value)?.label,
          )
          .join(', ')}
        input={
          <MutipleSelectInput
-           options={priorityValues}
+           options={sourceChangeRequestValues}
            onSubmit={onInputBlurred}
            onBlur={onInputBlurred}
            value={value.stringSet ?? []}

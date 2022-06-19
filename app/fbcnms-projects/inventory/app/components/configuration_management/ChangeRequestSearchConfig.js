@@ -19,17 +19,17 @@ const ChangeRequestSearchConfig: Array<EntityConfig> = [
     type: 'changeRequest',
     label: 'ChangeRequest',
     filters: [
-      {
-        key: 'changeRequest_resource',
-        name: 'changeRequest_resource',
-        entityType: 'changeRequest',
-        label: 'Resources Type',
-        component: PowerSearchChangeRequestResourceFilter,
-        defaultOperator: 'contains',
-      },
+      // {
+      //   key: 'changeRequest_resource',
+      //   name: 'changeRequest_resource',
+      //   entityType: 'changeRequest',
+      //   label: 'Resources Type',
+      //   component: PowerSearchChangeRequestResourceFilter,
+      //   defaultOperator: 'contains',
+      // },
       {
         key: 'changeRequest_source',
-        name: 'changeRequest_source',
+        name: 'source',
         entityType: 'changeRequest',
         label: 'Change source',
         component: PowerSearchChangeRequestSourceFilter,
@@ -37,7 +37,7 @@ const ChangeRequestSearchConfig: Array<EntityConfig> = [
       },
       {
         key: 'changeRequest_status',
-        name: 'changeRequest_status',
+        name: 'status',
         entityType: 'changeRequest',
         label: 'Status',
         component: PowerSearchChangeRequestStatusFilter,
