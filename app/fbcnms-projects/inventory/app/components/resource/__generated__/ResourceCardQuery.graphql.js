@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type ResourceSpecificationFilterType = "NAME" | "RESOURCE_TYPE" | "%future added value";
+export type ResourceSpecificationFilterType = "ID" | "NAME" | "RESOURCE_TYPE" | "%future added value";
 export type ResourceSpecificationFilterInput = {|
   filterType: ResourceSpecificationFilterType,
   idSet?: ?$ReadOnlyArray<string>,

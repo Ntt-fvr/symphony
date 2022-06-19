@@ -12,15 +12,19 @@ import ActionPickerScheduled from './ActionPickerScheduled';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
+import ResourceFilterDropDown from './resource-filter/ResourceFilterDropDown';
 import Table from '@symphony/design-system/components/Table/Table';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
+import {ResourceCriteriaConfig} from './resource-filter/ResourceCriteriaConfig';
 import {StepToStep} from './StepToStep';
+import {getSelectedFilter} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -74,7 +78,15 @@ const useStyles = makeStyles(() => ({
     boxShadow: '0px 1px 3px 0px rgba(0, 0, 43, 0.15)',
   },
   searchBar: {
-    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  },
+  backgroundWhite: {
+    backgroundColor: 'white',
+  },
+  searchArea: {
+    backgroundColor: symphony.palette.D10,
   },
   selectField: {
     width: '200px',
@@ -150,6 +162,7 @@ const StepperAction = (props: Props) => {
   const {returnSheduledAction} = props;
 
   const [activeStep, setActiveStep] = useState(1);
+  const [selectedSpecification, setSelectedSpecification] = useState('');
   const [checked, setChecked] = useState(true);
   const [checkedResource, setCheckedResource] = useState(false);
   const [openActionPickerScheduled, setOpenActionPickerScheduled] = useState(
@@ -159,7 +172,13 @@ const StepperAction = (props: Props) => {
   const handleConfirmDate = () => {
     setOpenActionPickerScheduled(prevStatePicker => !prevStatePicker);
   };
-
+  const filterConfigs = ResourceCriteriaConfig.map(ent => ent.filters).reduce(
+    (allFilters, currentFilter) => allFilters.concat(currentFilter),
+    [],
+  );
+  const onFiltersChanged = data => {
+    console.log(data);
+  };
   const classes = useStyles();
   return (
     <div>
@@ -220,15 +239,27 @@ const StepperAction = (props: Props) => {
                 </Grid>
               </Grid>
               <Grid style={{marginBottom: '40px'}} item xs={12}>
-                <div className={classes.bar}>
+                <div className={classes.searchArea}>
                   <div className={classes.searchBar}>
+                    <Grid div className={classes.backgroundWhite}>
+                      <ResourceFilterDropDown
+                        onEntitySelected={spec =>
+                          setSelectedSpecification(spec)
+                        }
+                      />
+                    </Grid>
+                    <Divider orientation="vertical" />
                     <PowerSearchBar
+                      filterValues={[]}
                       placeholder="Filter Resource Type"
-                      getSelectedFilter={[]}
-                      onFiltersChanged={[]}
-                      filterConfigs={[]}
-                      searchConfig={[]}
+                      getSelectedFilter={filterConfig =>
+                        getSelectedFilter(filterConfig, [])
+                      }
+                      onFiltersChanged={onFiltersChanged}
+                      filterConfigs={filterConfigs}
+                      searchConfig={ResourceCriteriaConfig}
                       entity={'SERVICE'}
+                      resourceSpecification={selectedSpecification}
                     />
                   </div>
                 </div>

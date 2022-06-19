@@ -100,6 +100,7 @@ type Props = $ReadOnly<{|
   // used when a filter is selected from filter typeahead
   getSelectedFilter: (filterConfig: FilterConfig) => FilterValue,
   entity?: FilterEntity,
+  resourceSpecification?: ?string,
 |}>;
 
 const PowerSearchBar = (props: Props) => {
@@ -116,6 +117,7 @@ const PowerSearchBar = (props: Props) => {
     header,
     footer,
     exportPath,
+    resourceSpecification,
   } = props;
   const [filterValues, setFilterValues] = useState(props.filterValues ?? []);
 
@@ -205,6 +207,7 @@ const PowerSearchBar = (props: Props) => {
                     onNewInputBlurred={value => onFilterBlurred(i, value)}
                     onValueChanged={value => onFilterValueChanged(i, value)}
                     onRemoveFilter={() => removeFilter(i)}
+                    resourceSpecification={resourceSpecification ?? null}
                   />
                 </div>
               );
