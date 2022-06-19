@@ -17,7 +17,6 @@ import Button from '@symphony/design-system/components/Button';
 import ButtonDialogMapping from '../configure/ButtonDialogMapping';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import DialogMapping from '../configure/DialogMapping';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DroppableTableBody from '../draggable/DroppableTableBody';
 import EnumPropertyValueInput from './EnumPropertyValueInput';
@@ -27,7 +26,6 @@ import IconButton from '@material-ui/core/IconButton';
 import ParameterTypeSelect from './ParameterTypeSelect';
 import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
 import ParameterValueInput from './ParameterValueInput';
-import SubjectIcon from '@material-ui/icons/Subject';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -40,7 +38,7 @@ import {PlusIcon} from '@symphony/design-system/icons';
 import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
-import {useContext, useState} from 'react';
+import {useContext} from 'react';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -108,17 +106,15 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  // parameterTypes: Array<any>,
+  parameterTypes?: any,
   supportDelete?: boolean,
   idRs?: number,
 |}>;
 
 const ExperimentalParametersTypesTable = (props: Props) => {
-  const {idRs, supportMandatory = true, supportDelete} = props;
-  const [openModal, setOpenModal] = useState(false);
-  const [item, setItem] = useState({});
+  const {idRs, supportMandatory = true, supportDelete, parameterTypes} = props;
   const classes = useStyles();
-  const {dispatch, parameterTypes} = useContext(ParameterTypesTableDispatcher);
+  const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
   const handleRemove = parameterId => {
     const variables: RemoveConfigurationParameterTypeMutationVariables = {
@@ -129,11 +125,6 @@ const ExperimentalParametersTypesTable = (props: Props) => {
     RemoveConfigurationParameterTypeMutation(variables, {
       onCompleted: () => isCompleted(),
     });
-  };
-
-  const handleModal = parameter => {
-    setOpenModal(preventState => !preventState);
-    setItem(parameter);
   };
 
   return (
@@ -230,29 +221,6 @@ const ExperimentalParametersTypesTable = (props: Props) => {
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <FormField>
                   <EnumPropertyValueInput property={[]} />
-                  {/* <TextInput
-                    autoFocus={true}
-                    type="multiline"
-                    rows={4}
-                    placeholder="Text"
-                    autoComplete="off"
-                    value={parameter?.mappingIn}
-                    className={classes.input}
-                    onChange={({target}) =>
-                      dispatch({
-                        type: 'UPDATE_PARAMETER_TYPE_TEXT_IN',
-                        id: parameter.id,
-                        mappingIn: target.value,
-                      })
-                    }
-                    onBlur={() =>
-                      dispatch({
-                        type: 'UPDATE_PARAMETER_TYPE_TEXT_IN',
-                        id: parameter.id,
-                        mappingIn: parameter.mappingIn.trim(),
-                      })
-                    }
-                  /> */}
                 </FormField>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">
