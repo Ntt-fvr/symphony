@@ -9,13 +9,13 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
+import ExecutionsTypes from './ExecutionsTypes';
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
 import React, {useEffect, useMemo, useState} from 'react';
 import ScheduledActionsTypes from './ScheduledActionsTypes';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
-import {ExecutionsTypes} from './ExecutionsTypes';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
