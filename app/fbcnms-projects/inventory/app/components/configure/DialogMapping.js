@@ -58,7 +58,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  deleteItem?: () => void,
   title?: string,
   open?: boolean,
   parameter: any,
@@ -67,7 +66,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogConfirmDelete = (props: Props) => {
-  const {onClose, deleteItem, title, parameter} = props;
+  const {onClose, title, parameter} = props;
   const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
   const classes = useStyles();
@@ -206,10 +205,7 @@ const DialogConfirmDelete = (props: Props) => {
           Cancel
         </Button>
         <Button
-          onClick={() => {
-            onClose();
-            deleteItem();
-          }}
+          onClick={onClose}
           className={classes.option}
           variant="contained"
           color="primary">
