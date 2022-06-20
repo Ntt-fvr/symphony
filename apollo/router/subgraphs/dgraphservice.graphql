@@ -350,6 +350,8 @@ type ActionScheduler {
     offset: Int
   ): [ActionExecution!]
   status: ActionSchedulerStatus!
+  resourceTypeName:String
+  resourceSpecificationName:String
   resources(
     filter: ResourceFilter
     order: ResourceOrder
@@ -414,6 +416,8 @@ input ActionSchedulerPatch {
   type: ActionSchedulerType
   date: DateTime
   cron: String
+  resourceTypeName:String
+  resourceSpecificationName:String
   actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
   resources: [ResourceRef!]
@@ -427,6 +431,8 @@ input ActionSchedulerRef {
   type: ActionSchedulerType
   date: DateTime
   cron: String
+  resourceTypeName:String
+  resourceSpecificationName:String
   actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
   resources: [ResourceRef!]
@@ -608,6 +614,8 @@ input AddActionSchedulerInput {
   actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus!
   resources: [ResourceRef!]!
+  resourceTypeName:String
+  resourceSpecificationName:String
   actionTemplate: ActionTemplateRef!
 }
 

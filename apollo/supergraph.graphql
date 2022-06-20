@@ -148,6 +148,8 @@ type ActionScheduler {
   description: String!
   id: ID!
   name: String!
+  resourceTypeName:String
+  resourceSpecificationName:String
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
@@ -206,6 +208,8 @@ input ActionSchedulerPatch {
   date: DateTime
   description: String
   name: String
+  resourceTypeName:String
+  resourceSpecificationName:String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -219,6 +223,8 @@ input ActionSchedulerRef {
   description: String
   id: ID
   name: String
+  resourceTypeName:String
+  resourceSpecificationName:String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -419,6 +425,8 @@ input AddActionSchedulerInput {
   description: String!
   name: String!
   resources: [ResourceRef!]!
+  resourceTypeName:String
+  resourceSpecificationName:String
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
 }

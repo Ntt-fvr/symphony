@@ -734,6 +734,8 @@ type ActionScheduler{
   type:ActionSchedulerType!
   date: DateTime
   cron: String
+  resourceTypeName:String
+  resourceSpecificationName:String
   actions:[ActionExecution!] @hasInverse(field: scheduler)
   status: ActionSchedulerStatus! 
   resources: [Resource!]!
