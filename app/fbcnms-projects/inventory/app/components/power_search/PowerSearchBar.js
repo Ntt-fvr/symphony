@@ -32,7 +32,7 @@ import {
   configToFilterQuery,
   doesFilterHasValue,
 } from '../comparison_view/FilterUtils';
-import {makeStyles} from '@material-ui/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import {useEffect, useRef, useState} from 'react';
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette?.common?.white,
     padding: '8px 14px',
   },
   searchBarContainer: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'text',
   },
   headerContainer: {
-    marginRight: theme.spacing(),
+    marginRight: theme?.spacing(),
   },
   placeholder: {
     position: 'absolute',
@@ -71,14 +71,14 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   filter: {
-    marginRight: theme.spacing(),
+    marginRight: theme?.spacing(),
   },
   typeahead: {
     flexGrow: 1,
   },
   footer: {
     padding: '8px 4px 8px 10px',
-    color: theme.palette.grey.A200,
+    color: theme?.palette?.grey.A200,
     fontWeight: 'bold',
     pointerEvents: 'none',
   },

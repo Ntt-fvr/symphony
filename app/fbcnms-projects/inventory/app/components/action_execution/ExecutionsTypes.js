@@ -197,4 +197,4 @@ const ExecutionsTypes = () => {
   );
 };
 
-export {ExecutionsTypes};
+export default ExecutionsTypes;

@@ -18,7 +18,7 @@ import {MenuItem} from '@material-ui/core';
 import {TextField} from '@material-ui/core';
 import {debounce} from 'lodash';
 import {fetchQuery, graphql} from 'relay-runtime';
-import {makeStyles, useTheme} from '@material-ui/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 
 const autoSuggestStyles = theme => ({
   container: {

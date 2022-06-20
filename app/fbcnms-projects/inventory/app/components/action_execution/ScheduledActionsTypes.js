@@ -347,4 +347,4 @@ const ScheduledActionsTypes = () => {
   );
 };
 
-export {ScheduledActionsTypes};
+export default ScheduledActionsTypes;

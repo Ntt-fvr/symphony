@@ -10,10 +10,10 @@
 
 import * as React from 'react';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
+import ScheduledActionsTypes from './ScheduledActionsTypes';
 import StepperAction from './StepperAction';
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
-import {ScheduledActionsTypes} from './ScheduledActionsTypes';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 
