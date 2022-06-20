@@ -16,9 +16,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
-import React, {useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
 import {makeStyles} from '@material-ui/styles';
@@ -64,6 +63,7 @@ type Props = $ReadOnly<{|
   open?: boolean,
   parameter: any,
   onClose: () => void,
+  parameterTypes?: any,
 |}>;
 
 const DialogConfirmDelete = (props: Props) => {

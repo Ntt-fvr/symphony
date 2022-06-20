@@ -37,8 +37,11 @@ export type AddEditResourceSpecificationQueryResponse = {|
     +rawValue: ?string,
     +resourceSpecification: string,
     +stringValue: ?string,
+    +tags: ?$ReadOnlyArray<{|
+      +id: string,
+      +name: string,
+    |}>,
     +type: ParameterKind,
-    +__typename: string,
   |}>
 |};
 export type AddEditResourceSpecificationQuery = {|
@@ -70,14 +73,31 @@ query AddEditResourceSpecificationQuery {
     rawValue
     resourceSpecification
     stringValue
+    tags {
+      id
+      name
+    }
     type
-    __typename
   }
 }
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": null,
@@ -86,20 +106,8 @@ var v0 = [
     "name": "queryConfigurationParameterType",
     "plural": true,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
+      (v0/*: any*/),
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -222,15 +230,21 @@ var v0 = [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "type",
+        "concreteType": "ConfigParamTag",
+        "kind": "LinkedField",
+        "name": "tags",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          (v0/*: any*/)
+        ],
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "__typename",
+        "name": "type",
         "storageKey": null
       }
     ],
@@ -243,7 +257,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddEditResourceSpecificationQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -252,19 +266,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AddEditResourceSpecificationQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "e096f00f1b51ad2925bcdc05029a660e",
+    "cacheID": "863825093b37af0d6d4ff5d11628b768",
     "id": null,
     "metadata": {},
     "name": "AddEditResourceSpecificationQuery",
     "operationKind": "query",
-    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    mappingIn\n    mappingOut\n    nodeType\n    rawValue\n    resourceSpecification\n    stringValue\n    type\n    __typename\n  }\n}\n"
+    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    mappingIn\n    mappingOut\n    nodeType\n    rawValue\n    resourceSpecification\n    stringValue\n    tags {\n      id\n      name\n    }\n    type\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '5fea99cdfd17b02960b5d47fdeef6223';
+(node/*: any*/).hash = 'b32c603888c3148d3a8ca16e9873144c';
 
 module.exports = node;
