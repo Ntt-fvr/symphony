@@ -19,6 +19,7 @@ export type ConfigurationParameterTypeFilter = {|
   and?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
   has?: ?$ReadOnlyArray<?ConfigurationParameterTypeHasFilter>,
   id?: ?$ReadOnlyArray<string>,
+  name?: ?StringHashFilter,
   not?: ?ConfigurationParameterTypeFilter,
   or?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
   resourceSpecification?: ?StringHashFilter,

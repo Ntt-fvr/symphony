@@ -113,6 +113,7 @@ export type ResourceRef = {|
   externalId?: ?string,
   id?: ?string,
   isDelete?: ?boolean,
+  isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
   locatedIn?: ?string,
   logicalLink?: ?ResourceRef,
