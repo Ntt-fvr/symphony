@@ -64,11 +64,4 @@ describe('suite test component <DialogMapping/>', () => {
     fireEvent.click(screen.getByText(/Save/i));
     expect(handleClick);
   });
-
-  it('CM-FE 12001 event onChange into field name', async () => {
-    const component = render(<DialogMapping />);
-    const inputName = component.getByPlaceholderText(/Text-uno/i);
-    fireEvent.change(inputName, {target: {value: 'xxx'}});
-    await expect(inputName.itemValue).toBe('xxx');
-  });
 });
