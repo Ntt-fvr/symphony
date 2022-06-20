@@ -20,7 +20,7 @@ const ResourceCriteriaConfig: Array<EntityConfig> = [
         entityType: 'resource',
         label: 'Id',
         component: ResourcePowerSearchFilter,
-        defaultOperator: 'contains',
+        defaultOperator: 'is',
       },
       {
         key: 'name',
@@ -28,7 +28,7 @@ const ResourceCriteriaConfig: Array<EntityConfig> = [
         entityType: 'resource',
         label: 'Name',
         component: ResourcePowerSearchFilter,
-        defaultOperator: 'contains',
+        defaultOperator: 'is',
       },
     ],
   },

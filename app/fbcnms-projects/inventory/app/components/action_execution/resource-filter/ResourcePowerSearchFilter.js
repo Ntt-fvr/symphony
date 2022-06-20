@@ -43,8 +43,13 @@ const ResourcePowerSearchFilter = props => {
         resourceSpecification: {
           eq: resourceSpecification,
         },
-        id: config.label == 'id' ? searchTerm : null,
-        name: config.label == 'name' ? searchTerm : null,
+        id: config.label.toLocaleLowerCase() == 'id' ? searchTerm : null,
+        name:
+          config.label.toLocaleLowerCase() == 'name'
+            ? {
+                in: [...selectedResource.map(res => res.label), searchTerm],
+              }
+            : null,
       },
     }).then(data => {
       setSearchEntries(data.queryResource ?? []);

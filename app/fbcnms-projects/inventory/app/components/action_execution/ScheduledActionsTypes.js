@@ -286,6 +286,7 @@ const ScheduledActionsTypes = () => {
               filterConfigs={filterConfigs}
               searchConfig={ResourceCriteriaConfig}
               entity={'SERVICE'}
+              resourceSpecification={selectedSpecification}
             />
           </div>
         </div>
