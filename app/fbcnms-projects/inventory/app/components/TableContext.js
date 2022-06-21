@@ -68,6 +68,7 @@ type Props = $ReadOnly<{|
   tableTypes: Array<TableType>,
   nameCard: string,
   selectMultiple?: boolean,
+  data: any,
   // supportDelete?: boolean,
 |}>;
 
@@ -75,6 +76,7 @@ const TableContextForm = ({
   tableTypes,
   nameCard,
   selectMultiple,
+  data,
 }: // supportDelete,
 Props) => {
   const classes = useStyles();
@@ -149,7 +151,7 @@ Props) => {
                               ))}
                             </>
                           )}>
-                          {options.map((item, index) => (
+                          {data.map((item, index) => (
                             <MenuItem key={index} value={item.name}>
                               {item.name}
                             </MenuItem>
@@ -202,7 +204,7 @@ Props) => {
                                   options: target.value,
                                 });
                               }}>
-                              {options.map((item, index) => (
+                              {data.map((item, index) => (
                                 <MenuItem key={index} value={item.name}>
                                   {item.name}
                                 </MenuItem>

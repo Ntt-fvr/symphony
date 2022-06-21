@@ -34,20 +34,24 @@ const useStyles = makeStyles(() => ({
 
 const ResourceSpecificationRelationshipsQuery = graphql`
   query RelationshipTypeItemQuery(
-    $filterBy: [ResourceSpecificationFilterInput!]!
-    $filterBy2: [ResourceTypeRelationshipFilterInput!]!
+    $filterBy2: [ResourceTypeRelationshipFilterInput!]
   ) {
-    resourceSpecifications(filterBy: $filterBy) {
-      totalCount
+    resourceTypes {
       edges {
         node {
           id
           name
-          resourceType {
+          resourceTypeClass
+          resourceSpecification {
             id
             name
-            resourceTypeBaseType
-            resourceTypeClass
+            resourceSpecificationRelationship {
+              id
+              name
+            }
+            resourceSpecificationItems {
+              id
+            }
           }
         }
       }
@@ -85,13 +89,6 @@ export default function RelationshipTypeItem(props: Props) {
   const response = useLazyLoadQuery<RelationshipTypeItemQuery>(
     ResourceSpecificationRelationshipsQuery,
     {
-      filterBy: [
-        {
-          filterType: 'RESOURCE_TYPE',
-          operator: 'IS_ONE_OF',
-          idSet: [dataForm?.resourceType?.id || dataForm?.id],
-        },
-      ],
       filterBy2: [
         {
           filterType: 'RESOURCE_RELATIONSHIP_RESOURCE',
@@ -116,6 +113,12 @@ export default function RelationshipTypeItem(props: Props) {
       [dataForm.resourceType?.resourceTypeClass],
     ),
   ];
+
+  const resourceTypeData = response.resourceTypes?.edges.map(p => p.node);
+  const search = text =>
+    resourceTypeData.filter(({resourceTypeClass}) =>
+      resourceTypeClass.includes(text),
+    );
 
   const dataFormTable = [
     {
@@ -151,6 +154,7 @@ export default function RelationshipTypeItem(props: Props) {
             <TableTypesDispatcher.Provider
               value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
               <TableContextForm
+                data={search('CARD')}
                 nameCard="Cards"
                 selectMultiple
                 tableTypes={tableTypesCards}
@@ -160,13 +164,21 @@ export default function RelationshipTypeItem(props: Props) {
           {getdataAllRelationShips.includes('PORT') && (
             <TableTypesDispatcher.Provider
               value={{dispatch: tableTypesDispatcherPorts, tableTypesPorts}}>
-              <TableContextForm nameCard="Ports" tableTypes={tableTypesPorts} />
+              <TableContextForm
+                data={search('PORT')}
+                nameCard="Ports"
+                tableTypes={tableTypesPorts}
+              />
             </TableTypesDispatcher.Provider>
           )}
           {getdataAllRelationShips.includes('SLOT') && (
             <TableTypesDispatcher.Provider
               value={{dispatch: tableTypesDispatcherSlots, tableTypesSlots}}>
-              <TableContextForm nameCard="Slots" tableTypes={tableTypesSlots} />
+              <TableContextForm
+                data={search('SLOT')}
+                nameCard="Slots"
+                tableTypes={tableTypesSlots}
+              />
             </TableTypesDispatcher.Provider>
           )}
           {getdataAllRelationShips.includes('VLAN') && (
