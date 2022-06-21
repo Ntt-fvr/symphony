@@ -104,10 +104,16 @@ export type AddResourceMutationResponse = {|
   +addResource: ?{|
     +numUids: ?number,
     +resource: ?$ReadOnlyArray<?{|
-      +locatedIn: ?string,
       +name: string,
+      +externalId: ?string,
+      +locatedIn: ?string,
       +resourceSpecification: string,
       +isDelete: boolean,
+      +lifecycleStatus: ?LifecycleStatus,
+      +planningSubStatus: ?PlanningSubStatus,
+      +typePlanningSubStatus: ?TypePlanningSubStatus,
+      +usageSubStatus: ?UsageSubStatus,
+      +operationalSubStatus: ?OperationalSubStatus,
     |}>,
   |}
 |};
@@ -125,10 +131,16 @@ mutation AddResourceMutation(
   addResource(input: $input) {
     numUids
     resource {
-      locatedIn
       name
+      externalId
+      locatedIn
       resourceSpecification
       isDelete
+      lifecycleStatus
+      planningSubStatus
+      typePlanningSubStatus
+      usageSubStatus
+      operationalSubStatus
       id
     }
   }
@@ -161,28 +173,70 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "locatedIn",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "externalId",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resourceSpecification",
+  "name": "locatedIn",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "resourceSpecification",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "isDelete",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "lifecycleStatus",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "planningSubStatus",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "typePlanningSubStatus",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "usageSubStatus",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "operationalSubStatus",
   "storageKey": null
 };
 return {
@@ -212,7 +266,13 @@ return {
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v6/*: any*/)
+              (v6/*: any*/),
+              (v7/*: any*/),
+              (v8/*: any*/),
+              (v9/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/),
+              (v12/*: any*/)
             ],
             "storageKey": null
           }
@@ -250,6 +310,12 @@ return {
               (v4/*: any*/),
               (v5/*: any*/),
               (v6/*: any*/),
+              (v7/*: any*/),
+              (v8/*: any*/),
+              (v9/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/),
+              (v12/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -266,16 +332,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1b7cd134d84ad0049f4403392bda6338",
+    "cacheID": "da236517d019138536d4353bf9396211",
     "id": null,
     "metadata": {},
     "name": "AddResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      locatedIn\n      name\n      resourceSpecification\n      isDelete\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDelete\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '2da79dc3eed261d3b95c0655bc51e3a8';
+(node/*: any*/).hash = 'eeb27d54160064f6cdb3b13b6a61a93d';
 
 module.exports = node;

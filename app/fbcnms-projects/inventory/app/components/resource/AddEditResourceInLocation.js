@@ -12,6 +12,14 @@ import React, {useState} from 'react';
 
 import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
 
+import type {
+  LifecycleStatus,
+  OperationalSubStatus,
+  PlanningSubStatus,
+  TypePlanningSubStatus,
+  UsageSubStatus,
+} from '../../mutations/__generated__/AddResourceMutation.graphql';
+
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -27,6 +35,7 @@ import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
+import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -86,13 +95,13 @@ type ResourceType = {
   data: {
     id: string,
     name: string,
-    externalID: string,
+    externalId: string,
     administrativeSubstate: string,
-    lifesycleState: string,
-    planningStatus: string,
-    administrativeStatus: string,
-    operationalStatus: string,
-    usageStatus: string,
+    lifecycleStatus: LifecycleStatus,
+    typePlanningSubStatus: TypePlanningSubStatus,
+    planningSubStatus: PlanningSubStatus,
+    operationalSubStatus: OperationalSubStatus,
+    usageSubStatus: UsageSubStatus,
   },
 };
 
@@ -134,6 +143,12 @@ const AddEditResourceInLocation = (props: Props) => {
           name: resourceType.data.name,
           resourceSpecification: dataformModal.id,
           isDelete: true,
+          externalId: resourceType.data.externalId,
+          lifecycleStatus: resourceType.data.lifecycleStatus,
+          typePlanningSubStatus: resourceType.data.typePlanningSubStatus,
+          planningSubStatus: resourceType.data.planningSubStatus,
+          usageSubStatus: resourceType.data.usageSubStatus,
+          operationalSubStatus: resourceType.data.operationalSubStatus,
         },
       ],
     };
@@ -147,11 +162,16 @@ const AddEditResourceInLocation = (props: Props) => {
   }
 
   const selectListData = {
-    lifesycleState: ['Planning', 'Installing', 'Operating', 'Retired'],
-    planningStatus: ['Proposed', 'Feasibility Checked', 'Designed', 'Ordered'],
-    administrativeStatus: ['Activated', 'Deactivated'],
-    operationalStatus: ['Working', 'Not Working'],
-    usageStatus: ['Available', 'Reserved', 'Not Available', 'Assigned'],
+    lifecycleStatus: ['PLANNING', 'INSTALLING', 'OPERATING', 'RETIRED'],
+    typePlanningSubStatus: [
+      'PROPOSED',
+      'FEASIBILITY CHECKED',
+      'DESIGNED',
+      'ORDERED',
+    ],
+    planningSubStatus: ['ACTIVATED', 'DESACTIVATED'],
+    operationalSubStatus: ['WORKING', 'NOT WORKING'],
+    usageSubStatus: ['AVAILABLE', 'RESERVED', 'NOT AVAILABLE', 'ASSIGNED'],
   };
 
   return (
@@ -191,31 +211,31 @@ const AddEditResourceInLocation = (props: Props) => {
                   select
                   label="Lifesycle state"
                   variant="outlined"
-                  name="lifesycleState"
+                  name="lifecycleStatus"
                   onChange={handleChange}
                   fullWidth>
-                  {selectListData.lifesycleState.map((item, index) => (
+                  {selectListData.lifecycleStatus.map((item, index) => (
                     <MenuItem key={index} value={item}>
-                      {item}
+                      {startCase(camelCase(item))}
                     </MenuItem>
                   ))}
                 </TextField>
               </form>
             </Grid>
 
-            {resourceType.data.lifesycleState === 'Planning' ? (
+            {resourceType.data.lifecycleStatus === 'PLANNING' ? (
               <Grid item xs={6}>
                 <form className={classes.formField}>
                   <TextField
                     select
                     label="Planning Status"
                     variant="outlined"
-                    name="planningStatus"
+                    name="typePlanningSubStatus"
                     onChange={handleChange}
                     fullWidth>
-                    {selectListData.planningStatus.map((item, index) => (
-                      <MenuItem key={index} value={index}>
-                        {item}
+                    {selectListData.typePlanningSubStatus.map((item, index) => (
+                      <MenuItem key={index} value={item}>
+                        {startCase(camelCase(item))}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -223,7 +243,7 @@ const AddEditResourceInLocation = (props: Props) => {
               </Grid>
             ) : null}
 
-            {resourceType.data.lifesycleState === 'Operating' ? (
+            {resourceType.data.lifecycleStatus === 'OPERATING' ? (
               <>
                 <Grid item xs={6}>
                   <form className={classes.formField}>
@@ -231,13 +251,30 @@ const AddEditResourceInLocation = (props: Props) => {
                       select
                       label="Administrative Status"
                       variant="outlined"
-                      name="administrativeStatus"
+                      name="planningSubStatus"
                       onChange={handleChange}
                       fullWidth>
-                      {selectListData.administrativeStatus.map(
+                      {selectListData.planningSubStatus.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {startCase(camelCase(item))}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
+                </Grid>
+                <Grid item xs={6}>
+                  <form className={classes.formField}>
+                    <TextField
+                      select
+                      label="Operational Status"
+                      variant="outlined"
+                      name="operationalSubStatus"
+                      onChange={handleChange}
+                      fullWidth>
+                      {selectListData.operationalSubStatus.map(
                         (item, index) => (
-                          <MenuItem key={index} value={index}>
-                            {item}
+                          <MenuItem key={index} value={item}>
+                            {startCase(camelCase(item))}
                           </MenuItem>
                         ),
                       )}
@@ -248,31 +285,14 @@ const AddEditResourceInLocation = (props: Props) => {
                   <form className={classes.formField}>
                     <TextField
                       select
-                      label="Operational Status"
-                      variant="outlined"
-                      name="operationalStatus"
-                      onChange={handleChange}
-                      fullWidth>
-                      {selectListData.operationalStatus.map((item, index) => (
-                        <MenuItem key={index} value={index}>
-                          {item}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </form>
-                </Grid>
-                <Grid item xs={6}>
-                  <form className={classes.formField}>
-                    <TextField
-                      select
                       label="Usage Status"
                       variant="outlined"
-                      name="usageStatus"
+                      name="usageSubStatus"
                       onChange={handleChange}
                       fullWidth>
-                      {selectListData.usageStatus.map((item, index) => (
-                        <MenuItem key={index} value={index}>
-                          {item}
+                      {selectListData.usageSubStatus.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {startCase(camelCase(item))}
                         </MenuItem>
                       ))}
                     </TextField>
