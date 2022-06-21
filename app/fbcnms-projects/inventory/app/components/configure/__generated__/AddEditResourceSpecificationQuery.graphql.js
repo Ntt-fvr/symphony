@@ -18,7 +18,6 @@ export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum
 export type AddEditResourceSpecificationQueryVariables = {||};
 export type AddEditResourceSpecificationQueryResponse = {|
   +queryConfigurationParameterType: ?$ReadOnlyArray<?{|
-    +resourceSpecification: any,
     +name: string,
     +id: string,
     +booleanValue: ?boolean,
@@ -32,17 +31,17 @@ export type AddEditResourceSpecificationQueryResponse = {|
     +isListable: ?boolean,
     +isMandatory: ?boolean,
     +isPrioritary: ?boolean,
-    +latitudeValue: ?number,
-    +longitudeValue: ?number,
     +mappingIn: ?string,
     +mappingOut: ?string,
     +nodeType: ?string,
-    +rangeFromValue: ?number,
-    +rangeToValue: ?number,
     +rawValue: ?string,
+    +resourceSpecification: string,
     +stringValue: ?string,
+    +tags: ?$ReadOnlyArray<{|
+      +id: string,
+      +name: string,
+    |}>,
     +type: ParameterKind,
-    +__typename: string,
   |}>
 |};
 export type AddEditResourceSpecificationQuery = {|
@@ -55,7 +54,6 @@ export type AddEditResourceSpecificationQuery = {|
 /*
 query AddEditResourceSpecificationQuery {
   queryConfigurationParameterType {
-    resourceSpecification
     name
     id
     booleanValue
@@ -69,23 +67,37 @@ query AddEditResourceSpecificationQuery {
     isListable
     isMandatory
     isPrioritary
-    latitudeValue
-    longitudeValue
     mappingIn
     mappingOut
     nodeType
-    rangeFromValue
-    rangeToValue
     rawValue
+    resourceSpecification
     stringValue
+    tags {
+      id
+      name
+    }
     type
-    __typename
   }
 }
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": null,
@@ -94,27 +106,8 @@ var v0 = [
     "name": "queryConfigurationParameterType",
     "plural": true,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "resourceSpecification",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
+      (v0/*: any*/),
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -196,20 +189,6 @@ var v0 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "latitudeValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "longitudeValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
         "name": "mappingIn",
         "storageKey": null
       },
@@ -231,21 +210,14 @@ var v0 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "rangeFromValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "rangeToValue",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
         "name": "rawValue",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "resourceSpecification",
         "storageKey": null
       },
       {
@@ -258,15 +230,21 @@ var v0 = [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "type",
+        "concreteType": "ConfigParamTag",
+        "kind": "LinkedField",
+        "name": "tags",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          (v0/*: any*/)
+        ],
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "__typename",
+        "name": "type",
         "storageKey": null
       }
     ],
@@ -279,7 +257,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddEditResourceSpecificationQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -288,19 +266,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AddEditResourceSpecificationQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "a67ed785c3c05e09548721c84c1a31e6",
+    "cacheID": "863825093b37af0d6d4ff5d11628b768",
     "id": null,
     "metadata": {},
     "name": "AddEditResourceSpecificationQuery",
     "operationKind": "query",
-    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    resourceSpecification\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    latitudeValue\n    longitudeValue\n    mappingIn\n    mappingOut\n    nodeType\n    rangeFromValue\n    rangeToValue\n    rawValue\n    stringValue\n    type\n    __typename\n  }\n}\n"
+    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    mappingIn\n    mappingOut\n    nodeType\n    rawValue\n    resourceSpecification\n    stringValue\n    tags {\n      id\n      name\n    }\n    type\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '20bab10756ea41e3ea24d56db9a32c21';
+(node/*: any*/).hash = 'b32c603888c3148d3a8ca16e9873144c';
 
 module.exports = node;

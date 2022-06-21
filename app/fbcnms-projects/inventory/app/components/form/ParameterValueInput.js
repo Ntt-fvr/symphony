@@ -92,10 +92,10 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
       onKeyDown,
     } = this.props;
     const disabled = this.props.disabled || showDisabled;
-    const property = this.props.property;
-    const propertyType = !!property.propertyType
-      ? property.propertyType
-      : property;
+    const parameter = this.props.property;
+    const propertyType = !!parameter.propertyType
+      ? parameter.propertyType
+      : parameter;
     const label = headlineVariant === 'form' ? null : this.props.label;
     const propInputType = propertyType.type;
 
@@ -104,13 +104,13 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
         return inputType == 'Property' ? (
           <EnumPropertySelectValueInput
             className={classNames(classes.input, className)}
-            property={property}
+            property={parameter}
             onChange={onChange}
             disabled={disabled}
           />
         ) : (
           <EnumPropertyValueInput
-            property={property}
+            property={parameter}
             onChange={onChange}
             disabled={disabled}
           />
@@ -130,12 +130,12 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
             autoFocus={autoFocus}
             disabled={disabled}
             className={classNames(classes.input, className)}
-            value={property.stringValue ?? ''}
+            value={parameter.stringValue ?? ''}
             onBlur={e => onBlur && onBlur(e)}
             onEnterPressed={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
-                update(property, {
+                update(parameter, {
                   stringValue: {$set: event.target.value},
                 }),
               )
@@ -153,12 +153,12 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
             disabled={disabled}
             className={classNames(classes.input, className)}
             placeholder="0"
-            value={property.intValue ?? undefined}
+            value={parameter.intValue ?? undefined}
             onBlur={e => onBlur && onBlur(e)}
             onEnterPressed={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
-                update(property, {
+                update(parameter, {
                   intValue: {$set: parseInt(event.target.value)},
                 }),
               )
@@ -172,12 +172,12 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
             autoFocus={autoFocus}
             disabled={disabled}
             className={classNames(classes.input, className)}
-            value={property.floatValue ?? 0}
+            value={parameter.floatValue ?? 0}
             onBlur={e => onBlur && onBlur(e)}
             onEnterPressed={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
-                update(property, {
+                update(parameter, {
                   floatValue: {$set: parseFloat(event.target.value)},
                 }),
               )
@@ -193,19 +193,19 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
             label={this.props.label}
             className={classNames(classes.input, className)}
             value={{
-              latitude: property.latitudeValue,
-              longitude: property.longitudeValue,
+              latitude: parameter.latitudeValue,
+              longitude: parameter.longitudeValue,
             }}
             onLatitudeChange={event =>
               onChange(
-                update(property, {
+                update(parameter, {
                   latitudeValue: {$set: parseFloat(event.target.value)},
                 }),
               )
             }
             onLongitudeChange={event =>
               onChange(
-                update(property, {
+                update(parameter, {
                   longitudeValue: {$set: parseFloat(event.target.value)},
                 }),
               )
@@ -218,10 +218,10 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
             className={classNames(classes.input, className)}
             label={label}
             disabled={disabled}
-            selectedValue={property.booleanValue}
+            selectedValue={parameter.booleanValue}
             onChange={value =>
               onChange(
-                update(property, {
+                update(parameter, {
                   booleanValue: {
                     $set: value,
                   },
@@ -251,19 +251,19 @@ class ParameterValueInput<T: Property | PropertyType> extends React.Component<
             className={classNames(classes.input, className)}
             onBlur={e => onBlur && onBlur(e)}
             value={{
-              rangeFrom: property.rangeFromValue,
-              rangeTo: property.rangeToValue,
+              rangeFrom: parameter.rangeFromValue,
+              rangeTo: parameter.rangeToValue,
             }}
             onRangeFromChange={event =>
               onChange(
-                update(property, {
+                update(parameter, {
                   rangeFromValue: {$set: parseFloat(event.target.value)},
                 }),
               )
             }
             onRangeToChange={event =>
               onChange(
-                update(property, {
+                update(parameter, {
                   rangeToValue: {$set: parseFloat(event.target.value)},
                 }),
               )

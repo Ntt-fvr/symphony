@@ -279,6 +279,11 @@ export const arrayConfigs = [
     title: 'Property Combo',
     enabledByDefault: false,
   },
+  {
+    id: 'resource_inventory',
+    title: 'Resource Inventory',
+    enabledByDefault: true,
+  },
 ];
 
 export const featureConfigs: {[FeatureID]: FeatureConfig} = {};
