@@ -34,6 +34,10 @@ const (
 	EdgeResourceSpecification = "resource_specification"
 	// EdgeResourceSpecificationItems holds the string denoting the resource_specification_items edge name in mutations.
 	EdgeResourceSpecificationItems = "resource_specification_items"
+	// EdgeVendor holds the string denoting the vendor edge name in mutations.
+	EdgeVendor = "vendor"
+	// EdgeResourceSpecificationVendor holds the string denoting the resource_specification_vendor edge name in mutations.
+	EdgeResourceSpecificationVendor = "resource_specification_vendor"
 
 	// Table holds the table name of the resourcespecification in the database.
 	Table = "resource_specifications"
@@ -65,6 +69,20 @@ const (
 	ResourceSpecificationItemsInverseTable = "resource_specification_items"
 	// ResourceSpecificationItemsColumn is the table column denoting the resource_specification_items relation/edge.
 	ResourceSpecificationItemsColumn = "resource_specification_resource_specification_items"
+	// VendorTable is the table the holds the vendor relation/edge.
+	VendorTable = "resource_specifications"
+	// VendorInverseTable is the table name for the Vendor entity.
+	// It exists in this package in order to avoid circular dependency with the "vendor" package.
+	VendorInverseTable = "vendors"
+	// VendorColumn is the table column denoting the vendor relation/edge.
+	VendorColumn = "vendor_vendor_rs"
+	// ResourceSpecificationVendorTable is the table the holds the resource_specification_vendor relation/edge.
+	ResourceSpecificationVendorTable = "vendors"
+	// ResourceSpecificationVendorInverseTable is the table name for the Vendor entity.
+	// It exists in this package in order to avoid circular dependency with the "vendor" package.
+	ResourceSpecificationVendorInverseTable = "vendors"
+	// ResourceSpecificationVendorColumn is the table column denoting the resource_specification_vendor relation/edge.
+	ResourceSpecificationVendorColumn = "resource_specification_resource_specification_vendor"
 )
 
 // Columns holds all SQL columns for resourcespecification fields.
@@ -79,6 +97,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the ResourceSpecification type.
 var ForeignKeys = []string{
 	"resource_type_resource_specification",
+	"vendor_vendor_rs",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

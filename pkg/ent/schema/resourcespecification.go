@@ -38,6 +38,9 @@ func (ResourceSpecification) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("resourcespecification")),
 		edge.To("resource_specification_items", ResourceSpecificationItems.Type).
 			Annotations(entgql.MapsTo("resourcespecificationitems")),
+		edge.From("vendor", Vendor.Type).
+			Ref("vendor_rs").Unique(),
+		edge.To("resource_specification_vendor", Vendor.Type).Unique(),
 	}
 }
 

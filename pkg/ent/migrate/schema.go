@@ -2359,6 +2359,7 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "quantity", Type: field.TypeInt, Nullable: true},
 		{Name: "resource_type_resource_specification", Type: field.TypeInt, Nullable: true},
+		{Name: "vendor_vendor_rs", Type: field.TypeInt, Nullable: true},
 	}
 	// ResourceSpecificationsTable holds the schema information for the "resource_specifications" table.
 	ResourceSpecificationsTable = &schema.Table{
@@ -2371,6 +2372,13 @@ var (
 				Columns: []*schema.Column{ResourceSpecificationsColumns[5]},
 
 				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "resource_specifications_vendors_vendor_rs",
+				Columns: []*schema.Column{ResourceSpecificationsColumns[6]},
+
+				RefColumns: []*schema.Column{VendorsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -3044,13 +3052,22 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "resource_specification_resource_specification_vendor", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// VendorsTable holds the schema information for the "vendors" table.
 	VendorsTable = &schema.Table{
-		Name:        "vendors",
-		Columns:     VendorsColumns,
-		PrimaryKey:  []*schema.Column{VendorsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "vendors",
+		Columns:    VendorsColumns,
+		PrimaryKey: []*schema.Column{VendorsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "vendors_resource_specifications_resource_specification_vendor",
+				Columns: []*schema.Column{VendorsColumns[4]},
+
+				RefColumns: []*schema.Column{ResourceSpecificationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// WorkOrdersColumns holds the columns for the "work_orders" table.
 	WorkOrdersColumns = []*schema.Column{
@@ -3818,6 +3835,7 @@ func init() {
 	ResourcePropertyTypesTable.ForeignKeys[0].RefTable = PropertyCategoriesTable
 	ResourcePropertyTypesTable.ForeignKeys[1].RefTable = ResourceSpecificationsTable
 	ResourceSpecificationsTable.ForeignKeys[0].RefTable = ResourceTypesTable
+	ResourceSpecificationsTable.ForeignKeys[1].RefTable = VendorsTable
 	ResourceSpecificationItemsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
 	ResourceSpecificationItemsTable.ForeignKeys[1].RefTable = ResourceSpecificationRelationshipsTable
 	ResourceSpecificationRelationshipsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
@@ -3849,6 +3867,7 @@ func init() {
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	ThresholdsTable.ForeignKeys[0].RefTable = KpisTable
 	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	VendorsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
 	WorkOrdersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	WorkOrdersTable.ForeignKeys[1].RefTable = ProjectsTable
 	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
