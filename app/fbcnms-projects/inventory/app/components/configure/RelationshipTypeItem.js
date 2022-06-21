@@ -36,22 +36,22 @@ const ResourceSpecificationRelationshipsQuery = graphql`
   query RelationshipTypeItemQuery(
     $filterBy2: [ResourceTypeRelationshipFilterInput!]
   ) {
-    resourceTypes {
+    resourceSpecifications {
       edges {
         node {
           id
           name
-          resourceTypeClass
-          resourceSpecification {
+          resourceType {
             id
             name
-            resourceSpecificationRelationship {
-              id
-              name
-            }
-            resourceSpecificationItems {
-              id
-            }
+            resourceTypeClass
+          }
+          resourceSpecificationRelationship {
+            id
+            name
+          }
+          resourceSpecificationItems {
+            id
           }
         }
       }
@@ -80,10 +80,11 @@ const ResourceSpecificationRelationshipsQuery = graphql`
 
 type Props = $ReadOnly<{|
   dataForm: ResourceSpecifications,
+  callback: any,
 |}>;
 
 export default function RelationshipTypeItem(props: Props) {
-  const {dataForm} = props;
+  const {dataForm, callback} = props;
   const classes = useStyles();
 
   const response = useLazyLoadQuery<RelationshipTypeItemQuery>(
@@ -114,17 +115,17 @@ export default function RelationshipTypeItem(props: Props) {
     ),
   ];
 
-  const resourceTypeData = response.resourceTypes?.edges.map(p => p.node);
   const search = text =>
-    resourceTypeData.filter(({resourceTypeClass}) =>
-      resourceTypeClass.includes(text),
-    );
+    response.resourceSpecifications?.edges
+      .map(p => p.node)
+      .filter(item => item?.resourceType?.resourceTypeClass?.includes(text));
 
   const dataFormTable = [
     {
       id: '',
       name: '',
       options: '',
+      resourceSpecification: '',
     },
   ];
   const dimanycMapTable = (dataFormTable ?? [])
@@ -140,6 +141,8 @@ export default function RelationshipTypeItem(props: Props) {
   const [tableTypesCards, tableTypesDispatcherCards] = useTableTypesReducer(
     dimanycMapTable,
   );
+
+  callback(tableTypesPorts);
 
   return (
     <>

@@ -8,33 +8,33 @@
  * @format
  */
 
-import Button from '@material-ui/core/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
-import Grid from '@material-ui/core/Grid';
-
-import React, {useMemo, useState} from 'react';
-import RelationshipTypeItem from './RelationshipTypeItem';
-
-import TextField from '@material-ui/core/TextField';
-import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
-
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
+import type {AddResourceSpecificationRelationshipListMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
+import AddResourceSpecificationRelationshipListMutation from '../../mutations/AddResourceSpecificationRelationshipListMutation';
+import Button from '@material-ui/core/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
+import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import React, {useMemo, useState} from 'react';
+import RelationshipTypeItem from './RelationshipTypeItem';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
+import TextField from '@material-ui/core/TextField';
+import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
+import {convertTableTypeToMutationInput} from '../context/TableTypeState';
+import {makeStyles} from '@material-ui/styles';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from './../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from './../assurance/common/useDisabledButton';
@@ -89,6 +89,11 @@ export const AddEditResourceSpecification = (props: Props) => {
   } = props;
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
+  const [dataCallback, setDataCallback] = useState();
+
+  const callback = data => {
+    setDataCallback(data);
+  };
   const classes = useStyles();
 
   const [
@@ -178,6 +183,14 @@ export const AddEditResourceSpecification = (props: Props) => {
       onCompleted: () => {
         isCompleted();
         closeForm();
+      },
+    });
+    const variablesPort: AddResourceSpecificationRelationshipListMutationVariables = {
+      input: convertTableTypeToMutationInput(dataCallback),
+    };
+    AddResourceSpecificationRelationshipListMutation(variablesPort, {
+      onCompleted: () => {
+        isCompleted();
       },
     });
   }
@@ -316,7 +329,7 @@ export const AddEditResourceSpecification = (props: Props) => {
           }
         />
       )}
-      <RelationshipTypeItem dataForm={formValues} />
+      <RelationshipTypeItem callback={callback} dataForm={formValues} />
     </div>
   );
 };

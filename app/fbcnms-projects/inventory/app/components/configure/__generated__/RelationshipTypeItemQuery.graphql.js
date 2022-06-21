@@ -33,22 +33,22 @@ export type RelationshipTypeItemQueryVariables = {|
   filterBy2?: ?$ReadOnlyArray<ResourceTypeRelationshipFilterInput>
 |};
 export type RelationshipTypeItemQueryResponse = {|
-  +resourceTypes: {|
+  +resourceSpecifications: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
-        +resourceTypeClass: ResourceTypeClassKind,
-        +resourceSpecification: ?$ReadOnlyArray<?{|
+        +resourceType: ?{|
           +id: string,
           +name: string,
-          +resourceSpecificationRelationship: ?$ReadOnlyArray<?{|
-            +id: string,
-            +name: string,
-          |}>,
-          +resourceSpecificationItems: ?$ReadOnlyArray<?{|
-            +id: string
-          |}>,
+          +resourceTypeClass: ResourceTypeClassKind,
+        |},
+        +resourceSpecificationRelationship: ?$ReadOnlyArray<?{|
+          +id: string,
+          +name: string,
+        |}>,
+        +resourceSpecificationItems: ?$ReadOnlyArray<?{|
+          +id: string
         |}>,
       |}
     |}>
@@ -84,22 +84,22 @@ export type RelationshipTypeItemQuery = {|
 query RelationshipTypeItemQuery(
   $filterBy2: [ResourceTypeRelationshipFilterInput!]
 ) {
-  resourceTypes {
+  resourceSpecifications {
     edges {
       node {
         id
         name
-        resourceTypeClass
-        resourceSpecification {
+        resourceType {
           id
           name
-          resourceSpecificationRelationship {
-            id
-            name
-          }
-          resourceSpecificationItems {
-            id
-          }
+          resourceTypeClass
+        }
+        resourceSpecificationRelationship {
+          id
+          name
+        }
+        resourceSpecificationItems {
+          id
         }
       }
     }
@@ -148,31 +148,30 @@ v2 = {
   "name": "name",
   "storageKey": null
 },
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "resourceTypeClass",
-  "storageKey": null
-},
-v4 = [
+v3 = [
   (v1/*: any*/),
   (v2/*: any*/),
-  (v3/*: any*/)
-],
-v5 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "ResourceTypeConnection",
+    "kind": "ScalarField",
+    "name": "resourceTypeClass",
+    "storageKey": null
+  }
+],
+v4 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ResourceSpecificationConnection",
     "kind": "LinkedField",
-    "name": "resourceTypes",
+    "name": "resourceSpecifications",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ResourceTypeEdge",
+        "concreteType": "ResourceSpecificationEdge",
         "kind": "LinkedField",
         "name": "edges",
         "plural": true,
@@ -180,49 +179,45 @@ v5 = [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ResourceType",
+            "concreteType": "ResourceSpecification",
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
             "selections": [
               (v1/*: any*/),
               (v2/*: any*/),
-              (v3/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ResourceSpecification",
+                "concreteType": "ResourceType",
                 "kind": "LinkedField",
-                "name": "resourceSpecification",
+                "name": "resourceType",
+                "plural": false,
+                "selections": (v3/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceSpecificationRelationship",
+                "kind": "LinkedField",
+                "name": "resourceSpecificationRelationship",
                 "plural": true,
                 "selections": [
                   (v1/*: any*/),
-                  (v2/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ResourceSpecificationRelationship",
-                    "kind": "LinkedField",
-                    "name": "resourceSpecificationRelationship",
-                    "plural": true,
-                    "selections": [
-                      (v1/*: any*/),
-                      (v2/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ResourceSpecificationItems",
-                    "kind": "LinkedField",
-                    "name": "resourceSpecificationItems",
-                    "plural": true,
-                    "selections": [
-                      (v1/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceSpecificationItems",
+                "kind": "LinkedField",
+                "name": "resourceSpecificationItems",
+                "plural": true,
+                "selections": [
+                  (v1/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -287,7 +282,7 @@ v5 = [
                 "kind": "LinkedField",
                 "name": "resourceTypeA",
                 "plural": false,
-                "selections": (v4/*: any*/),
+                "selections": (v3/*: any*/),
                 "storageKey": null
               },
               {
@@ -297,7 +292,7 @@ v5 = [
                 "kind": "LinkedField",
                 "name": "resourceTypeB",
                 "plural": false,
-                "selections": (v4/*: any*/),
+                "selections": (v3/*: any*/),
                 "storageKey": null
               }
             ],
@@ -316,7 +311,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "RelationshipTypeItemQuery",
-    "selections": (v5/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -325,19 +320,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RelationshipTypeItemQuery",
-    "selections": (v5/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "68d5b045524bb07f993f188d865737e7",
+    "cacheID": "c94677041d3b9a145853b851b949c18e",
     "id": null,
     "metadata": {},
     "name": "RelationshipTypeItemQuery",
     "operationKind": "query",
-    "text": "query RelationshipTypeItemQuery(\n  $filterBy2: [ResourceTypeRelationshipFilterInput!]\n) {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeClass\n        resourceSpecification {\n          id\n          name\n          resourceSpecificationRelationship {\n            id\n            name\n          }\n          resourceSpecificationItems {\n            id\n          }\n        }\n      }\n    }\n  }\n  resourceTypeRelationships(filterBy: $filterBy2) {\n    totalCount\n    edges {\n      node {\n        id\n        resourceRelationshipType\n        resourceTypeA {\n          id\n          name\n          resourceTypeClass\n        }\n        resourceTypeB {\n          id\n          name\n          resourceTypeClass\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RelationshipTypeItemQuery(\n  $filterBy2: [ResourceTypeRelationshipFilterInput!]\n) {\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n          resourceTypeClass\n        }\n        resourceSpecificationRelationship {\n          id\n          name\n        }\n        resourceSpecificationItems {\n          id\n        }\n      }\n    }\n  }\n  resourceTypeRelationships(filterBy: $filterBy2) {\n    totalCount\n    edges {\n      node {\n        id\n        resourceRelationshipType\n        resourceTypeA {\n          id\n          name\n          resourceTypeClass\n        }\n        resourceTypeB {\n          id\n          name\n          resourceTypeClass\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '00e77f122e00e140c8da2cebbc060a6c';
+(node/*: any*/).hash = '476f7268193965724891b457d4270a23';
 
 module.exports = node;
