@@ -83,7 +83,7 @@ const dataMock = [
     resourceType: 'RNCellDU01',
     source: 'WORKFLOW',
     affectedResources: '1',
-    status: 'SUCCESFUL',
+    status: 'SUCCESSFUL',
   },
   {
     id: '686876768',
@@ -138,7 +138,7 @@ const tableColumns = [
     key: 'status',
     title: `${fbt('Status', '')}`,
     render: row => (
-      <ButtonAlarmStatus skin={stringCapitalizeFisrt(row.status)}>
+      <ButtonAlarmStatus skin={row.status}>
         {stringCapitalizeFisrt(row.status)}
       </ButtonAlarmStatus>
     ),
