@@ -8,10 +8,11 @@
  * @format
  */
 
-import React, {useState} from 'react';
-
-import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
-
+import type {AddCMVersionMutationVariables} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
+import type {
+  AddResourceMutationResponse,
+  AddResourceMutationVariables,
+} from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {
   LifecycleStatus,
   OperationalSubStatus,
@@ -19,7 +20,9 @@ import type {
   TypePlanningSubStatus,
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
+import AddCMVersionMutation from '../../mutations/AddCMVersionMutation';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -29,6 +32,7 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import MomentUtils from '@date-io/moment';
+import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
 import moment from 'moment';
@@ -152,13 +156,27 @@ const AddEditResourceInLocation = (props: Props) => {
         },
       ],
     };
-    AddResourceMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        setResourceType({data: {}});
-        closeFormAddEdit();
+
+    const response: MutationCallbacks<AddResourceMutationResponse> = {
+      onCompleted: response => {
+        const cmVersionVariables: AddCMVersionMutationVariables = {
+          input: [
+            {
+              resource: {
+                id: response.addResource?.resource[0]?.id,
+              },
+              parameters: [],
+              status: 'CURRENT',
+            },
+          ],
+        };
+        AddCMVersionMutation(cmVersionVariables);
       },
-    });
+    };
+    AddResourceMutation(variables, response);
+    isCompleted();
+    setResourceType({data: {}});
+    closeFormAddEdit();
   }
 
   const selectListData = {
