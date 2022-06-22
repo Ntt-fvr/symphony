@@ -1,25 +1,6 @@
-directive @generate(
-  query: GenerateQueryParams
-  mutation: GenerateMutationParams
-  subscription: Boolean
-) on OBJECT | INTERFACE
-directive @dgraph(
-  type: String
-  pred: String
-) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @id(interface: Boolean) on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
 directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @remoteResponse(name: String) on FIELD_DEFINITION
-directive @lambdaOnMutate(
-  add: Boolean
-  update: Boolean
-  delete: Boolean
-) on OBJECT | INTERFACE
+directive @lambda on FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
   update: DgraphDefault
@@ -31,12 +12,31 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @lambda on FIELD_DEFINITION
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
+directive @generate(
+  query: GenerateQueryParams
+  mutation: GenerateMutationParams
+  subscription: Boolean
+) on OBJECT | INTERFACE
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
-  _atType_asc
-  _atType_desc
+  type_asc
+  type_desc
   cancellationReason_asc
   cancellationReason_desc
   externalId_asc
@@ -46,16 +46,13 @@ enum _CancellationRequestOrdering {
   requestedCancellationDate_asc
   requestedCancellationDate_desc
   state_asc
-  state_desc
-  _id_asc
-  _id_desc
 }
 
 enum _CharacteristicOrdering {
   id_asc
   id_desc
-  _atType_asc
-  _atType_desc
+  type_asc
+  type_desc
   name_asc
   name_desc
   unitOfMeasure_asc
@@ -65,12 +62,9 @@ enum _CharacteristicOrdering {
   valueType_asc
   valueType_desc
   valueUnits_asc
-  valueUnits_desc
-  _id_asc
-  _id_desc
 }
 
-enum _FlowExecutionRefOrdering {
+enum _FlowExecutionReferenceOrdering {
   id_asc
   id_desc
   domainId_asc
@@ -81,23 +75,18 @@ enum _FlowExecutionRefOrdering {
   runId_desc
   workflowId_asc
   workflowId_desc
-  _id_asc
-  _id_desc
 }
 
 enum _ModificationRequestOrdering {
   id_asc
   id_desc
-  _atType_asc
-  _atType_desc
+  type_asc
+  type_desc
   externalId_asc
   externalId_desc
   modifyReason_asc
   modifyReason_desc
   requestedCompletionDate_asc
-  requestedCompletionDate_desc
-  _id_asc
-  _id_desc
 }
 
 enum _NoteOrdering {
@@ -109,8 +98,6 @@ enum _NoteOrdering {
   date_desc
   text_asc
   text_desc
-  _id_asc
-  _id_desc
 }
 
 enum _PartyOrdering {
@@ -122,8 +109,6 @@ enum _PartyOrdering {
   name_desc
   role_asc
   role_desc
-  _id_asc
-  _id_desc
 }
 
 enum _PlaceOrdering {
@@ -133,10 +118,8 @@ enum _PlaceOrdering {
   name_desc
   role_asc
   role_desc
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
+  type_asc
+  type_desc
 }
 
 enum _RelationDirections {
@@ -147,19 +130,17 @@ enum _RelationDirections {
 enum _ServiceOrderItemOrdering {
   id_asc
   id_desc
-  _atType_asc
-  _atType_desc
+  type_asc
+  type_desc
   action_asc
   action_desc
-  _id_asc
-  _id_desc
 }
 
 enum _ServiceOrderOrdering {
   id_asc
   id_desc
-  _atType_asc
-  _atType_desc
+  type_asc
+  type_desc
   category_asc
   category_desc
   description_asc
@@ -174,8 +155,6 @@ enum _ServiceOrderOrdering {
   requestedStartDate_desc
   state_asc
   state_desc
-  _id_asc
-  _id_desc
 }
 
 enum _ServiceSOMOrdering {
@@ -209,29 +188,23 @@ enum _ServiceSOMOrdering {
   type_desc
   relationshipType_asc
   relationshipType_desc
-  _atSchemaLocation_asc
-  _atSchemaLocation_desc
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
+  schemaLocation_asc
+  schemaLocation_desc
 }
 
-enum _ServiceSpecificationRefOrdering {
+enum _ServiceSpecificationReferenceOrdering {
   id_asc
   id_desc
-  _atReferredType_asc
-  _atReferredType_desc
-  _atType_asc
-  _atType_desc
+  referredType_asc
+  referredType_desc
+  type_asc
+  type_desc
   href_asc
   href_desc
   name_asc
   name_desc
   version_asc
   version_desc
-  _id_asc
-  _id_desc
 }
 
 enum _SupportingServiceOrdering {
@@ -239,23 +212,23 @@ enum _SupportingServiceOrdering {
   id_desc
   href_asc
   href_desc
-  _atReferredType_asc
-  _atReferredType_desc
-  _atType_asc
-  _atType_desc
-  _id_asc
-  _id_desc
+  referredType_asc
+  referredType_desc
+  type_asc
+  type_desc
 }
 
 type ActionExecution {
   id: ID!
   scheduler(filter: ActionSchedulerFilter): ActionScheduler
-  template(filter: ActionTemplateFilter): ActionTemplate
+  template(filter: ActionTemplateFilter): ActionTemplate!
   items(
     filter: ActionExecutionItemFilter
     first: Int
     offset: Int
   ): [ActionExecutionItem]
+  starTime: DateTime!
+  endTime: DateTime
   itemsAggregate(
     filter: ActionExecutionItemFilter
   ): ActionExecutionItemAggregateResult
@@ -263,6 +236,10 @@ type ActionExecution {
 
 type ActionExecutionAggregateResult {
   count: Int
+  starTimeMin: DateTime
+  starTimeMax: DateTime
+  endTimeMin: DateTime
+  endTimeMax: DateTime
 }
 
 input ActionExecutionFilter {
@@ -277,13 +254,21 @@ enum ActionExecutionHasFilter {
   scheduler
   template
   items
+  starTime
+  endTime
 }
 
 type ActionExecutionItem {
   id: ID!
   action(filter: ActionExecutionFilter): ActionExecution!
-  resource(filter: ResourceFilter): Resource!
+  resources(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource]!
   status: ActionExecutionItemStatus
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
 }
 
 type ActionExecutionItemAggregateResult {
@@ -300,20 +285,20 @@ input ActionExecutionItemFilter {
 
 enum ActionExecutionItemHasFilter {
   action
-  resource
+  resources
   status
 }
 
 input ActionExecutionItemPatch {
   action: ActionExecutionRef
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
 input ActionExecutionItemRef {
   id: ID
   action: ActionExecutionRef
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
@@ -323,10 +308,23 @@ enum ActionExecutionItemStatus {
   FAILED
 }
 
+input ActionExecutionOrder {
+  asc: ActionExecutionOrderable
+  desc: ActionExecutionOrderable
+  then: ActionExecutionOrder
+}
+
+enum ActionExecutionOrderable {
+  starTime
+  endTime
+}
+
 input ActionExecutionPatch {
   scheduler: ActionSchedulerRef
   template: ActionTemplateRef
   items: [ActionExecutionItemRef]
+  starTime: DateTime
+  endTime: DateTime
 }
 
 input ActionExecutionRef {
@@ -334,6 +332,8 @@ input ActionExecutionRef {
   scheduler: ActionSchedulerRef
   template: ActionTemplateRef
   items: [ActionExecutionItemRef]
+  starTime: DateTime
+  endTime: DateTime
 }
 
 type ActionScheduler {
@@ -343,8 +343,24 @@ type ActionScheduler {
   type: ActionSchedulerType!
   date: DateTime
   cron: String
-  action(filter: ActionExecutionFilter): ActionExecution!
+  actions(
+    filter: ActionExecutionFilter
+    order: ActionExecutionOrder
+    first: Int
+    offset: Int
+  ): [ActionExecution!]
   status: ActionSchedulerStatus!
+  resources(
+    filter: ResourceFilter
+    order: ResourceOrder
+    first: Int
+    offset: Int
+  ): [Resource!]!
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
+  actionsAggregate(
+    filter: ActionExecutionFilter
+  ): ActionExecutionAggregateResult
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
 }
 
 type ActionSchedulerAggregateResult {
@@ -373,8 +389,10 @@ enum ActionSchedulerHasFilter {
   type
   date
   cron
-  action
+  actions
   status
+  resources
+  actionTemplate
 }
 
 input ActionSchedulerOrder {
@@ -396,8 +414,10 @@ input ActionSchedulerPatch {
   type: ActionSchedulerType
   date: DateTime
   cron: String
-  action: ActionExecutionRef
+  actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
+  resources: [ResourceRef!]
+  actionTemplate: ActionTemplateRef
 }
 
 input ActionSchedulerRef {
@@ -407,8 +427,10 @@ input ActionSchedulerRef {
   type: ActionSchedulerType
   date: DateTime
   cron: String
-  action: ActionExecutionRef
+  actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
+  resources: [ResourceRef!]
+  actionTemplate: ActionTemplateRef
 }
 
 enum ActionSchedulerStatus {
@@ -432,9 +454,18 @@ type ActionTemplate {
     first: Int
     offset: Int
   ): [ActionTemplateItem!]!
+  ActionExecution(
+    filter: ActionExecutionFilter
+    order: ActionExecutionOrder
+    first: Int
+    offset: Int
+  ): [ActionExecution!]
   actionTemplateItemAggregate(
     filter: ActionTemplateItemFilter
   ): ActionTemplateItemAggregateResult
+  ActionExecutionAggregate(
+    filter: ActionExecutionFilter
+  ): ActionExecutionAggregateResult
 }
 
 type ActionTemplateAggregateResult {
@@ -459,6 +490,7 @@ enum ActionTemplateHasFilter {
   type
   resourceSpecifications
   actionTemplateItem
+  ActionExecution
 }
 
 type ActionTemplateItem {
@@ -517,6 +549,7 @@ input ActionTemplatePatch {
   type: ActionTemplateType
   resourceSpecifications: String
   actionTemplateItem: [ActionTemplateItemRef!]
+  ActionExecution: [ActionExecutionRef!]
 }
 
 input ActionTemplateRef {
@@ -525,6 +558,7 @@ input ActionTemplateRef {
   type: ActionTemplateType
   resourceSpecifications: String
   actionTemplateItem: [ActionTemplateItemRef!]
+  ActionExecution: [ActionExecutionRef!]
 }
 
 enum ActionTemplateType {
@@ -534,13 +568,15 @@ enum ActionTemplateType {
 
 input AddActionExecutionInput {
   scheduler: ActionSchedulerRef
-  template: ActionTemplateRef
+  template: ActionTemplateRef!
   items: [ActionExecutionItemRef]
+  starTime: DateTime!
+  endTime: DateTime
 }
 
 input AddActionExecutionItemInput {
   action: ActionExecutionRef!
-  resource: ResourceRef!
+  resources: [ResourceRef]!
   status: ActionExecutionItemStatus
 }
 
@@ -556,6 +592,7 @@ type AddActionExecutionItemPayload {
 type AddActionExecutionPayload {
   actionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -568,8 +605,10 @@ input AddActionSchedulerInput {
   type: ActionSchedulerType!
   date: DateTime
   cron: String
-  action: ActionExecutionRef!
+  actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus!
+  resources: [ResourceRef!]!
+  actionTemplate: ActionTemplateRef!
 }
 
 type AddActionSchedulerPayload {
@@ -587,6 +626,7 @@ input AddActionTemplateInput {
   type: ActionTemplateType!
   resourceSpecifications: String!
   actionTemplateItem: [ActionTemplateItemRef!]!
+  ActionExecution: [ActionExecutionRef!]
 }
 
 input AddActionTemplateItemInput {
@@ -630,7 +670,7 @@ type AddAppointmentRefPayload {
 }
 
 input AddCancellationRequestInput {
-  _atType: String
+  type: String
   cancellationReason: String
   externalId: String
   href: String
@@ -717,10 +757,10 @@ type AddChangeRequestPayload {
 
 input AddCharacteristicInput {
   id: String!
-  _atType: String
-  name: String
+  type: String
+  name: String!
   unitOfMeasure: String
-  value: String
+  value: String!
   valueType: String
   valueUnits: String
   services: [ServiceSOMRef]
@@ -827,7 +867,7 @@ input AddExternalReferenceInput {
   id: String!
   href: String
   externalReferenceType: String
-  name: String
+  name: String!
 }
 
 type AddExternalReferencePayload {
@@ -843,7 +883,7 @@ type AddExternalReferencePayload {
 input AddFeatureInput {
   isBundle: Boolean
   isEnabled: Boolean
-  name: String
+  name: String!
 }
 
 type AddFeaturePayload {
@@ -856,7 +896,7 @@ type AddFeaturePayload {
   numUids: Int
 }
 
-input AddFlowExecutionRefInput {
+input AddFlowExecutionReferenceInput {
   domainId: String
   projectId: String
   runId: String
@@ -864,17 +904,17 @@ input AddFlowExecutionRefInput {
   creationDate: String
   executionDate: String
   endExecutionDate: String
-  cancelto: FlowExecutionRefRef
+  cancelto: FlowExecutionReferenceRef
   serviceorders: ServiceOrderRef
 }
 
-type AddFlowExecutionRefPayload {
-  flowExecutionRef(
-    filter: FlowExecutionRefFilter
-    order: FlowExecutionRefOrder
+type AddFlowExecutionReferencePayload {
+  flowExecutionReference(
+    filter: FlowExecutionReferenceFilter
+    order: FlowExecutionReferenceOrder
     first: Int
     offset: Int
-  ): [FlowExecutionRef]
+  ): [FlowExecutionReference]
   numUids: Int
 }
 
@@ -894,7 +934,7 @@ type AddGeometryPayload {
 }
 
 input AddModificationRequestInput {
-  _atType: String!
+  type: String!
   externalId: String
   modifyReason: String!
   requestedCompletionDate: String!
@@ -927,7 +967,7 @@ input AddNumericPoolInput {
   description: String
   limit: Int!
   customLimit: Int
-  resource: [ResourceRef!]!
+  resources: [ResourceRef!]!
   isDelete: Boolean!
   statusNumericPools: [StatusNumericPoolRef]
 }
@@ -1051,6 +1091,43 @@ input AddResourceInput {
   isDelete: Boolean!
   numericPool: [NumericPoolRef]
   isEditable: Boolean
+  actionScheduler: ActionSchedulerRef
+}
+
+input AddResourceOrderIMInput {
+  id: String
+  reservationId: String
+  lineId: String
+  category: String
+  description: String
+  externalId: String
+  resourceOrderItem: [ResourceOrderItemRef]
+}
+
+type AddResourceOrderIMPayload {
+  resourceOrderIM(
+    filter: ResourceOrderIMFilter
+    order: ResourceOrderIMOrder
+    first: Int
+    offset: Int
+  ): [ResourceOrderIM]
+  numUids: Int
+}
+
+input AddResourceOrderItemInput {
+  id: String!
+  action: String
+  service: SupportingServiceRef
+}
+
+type AddResourceOrderItemPayload {
+  resourceOrderItem(
+    filter: ResourceOrderItemFilter
+    order: ResourceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ResourceOrderItem]
+  numUids: Int
 }
 
 type AddResourcePayload {
@@ -1090,7 +1167,7 @@ type AddResourcePropertyPayload {
 input AddResourceReferenceInput {
   id: String!
   href: String
-  name: String!
+  name: String
 }
 
 type AddResourceReferencePayload {
@@ -1124,7 +1201,7 @@ type AddSchedulerConfigPayload {
 }
 
 input AddServiceOrderInput {
-  _atType: String
+  type: String
   category: String
   description: String
   externalId: String
@@ -1137,7 +1214,7 @@ input AddServiceOrderInput {
   externalReference: [ExternalReferenceRef]
   orderRelationship: [ServiceOrderRelationshipRef]
   relatedParty: [PartyRef]
-  flowExecutionRef: FlowExecutionRefRef
+  flowExecutionReference: FlowExecutionReferenceRef
   cancelRequest: CancellationRequestRef
   modifyRequest: [ModificationRequestRef]
   serviceOrderItem: [ServiceOrderItemRef]
@@ -1177,7 +1254,7 @@ type AddServiceOrderPayload {
 input AddServiceOrderRelationshipInput {
   id: String!
   href: String
-  relationshipType: String
+  relationshipType: String!
 }
 
 type AddServiceOrderRelationshipPayload {
@@ -1190,26 +1267,29 @@ type AddServiceOrderRelationshipPayload {
   numUids: Int
 }
 
-input AddServiceRefInput {
+input AddServiceReferenceInput {
   id: String!
   href: String
   name: String
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
+  specificationName: String
+  externalId: String
+  specificationId: String
 }
 
-type AddServiceRefPayload {
-  serviceRef(
-    filter: ServiceRefFilter
-    order: ServiceRefOrder
+type AddServiceReferencePayload {
+  serviceReference(
+    filter: ServiceReferenceFilter
+    order: ServiceReferenceOrder
     first: Int
     offset: Int
-  ): [ServiceRef]
+  ): [ServiceReference]
   numUids: Int
 }
 
 input AddServiceRelationshipInput {
   relationshipType: String!
-  service: ServiceSOMRef
+  service: ServiceSOMRef!
   serviceRelationshipCharacteristic: [CharacteristicRef]
 }
 
@@ -1242,10 +1322,10 @@ input AddServiceSOMInput {
   type: String
   relatedParty: [PartyRef]
   place: [PlaceRef]
-  serviceSpecification: ServiceSpecificationRefRef
+  serviceSpecification: ServiceSpecificationReferenceRef
   serviceCharacteristic: [CharacteristicRef]
   supportingService: [ServiceSOMRef]
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
   serviceRelationship: [ServiceRelationshipRef]
   relatedEntity: [RelatedEntityRef]
   note: [NoteRef]
@@ -1262,30 +1342,30 @@ type AddServiceSOMPayload {
   numUids: Int
 }
 
-input AddServiceSpecificationRefInput {
+input AddServiceSpecificationReferenceInput {
   id: String!
   referredType: String
   type: String
   href: String
-  name: String!
+  name: String
   version: String
   services: [ServiceSOMRef]
 }
 
-type AddServiceSpecificationRefPayload {
-  serviceSpecificationRef(
-    filter: ServiceSpecificationRefFilter
-    order: ServiceSpecificationRefOrder
+type AddServiceSpecificationReferencePayload {
+  serviceSpecificationReference(
+    filter: ServiceSpecificationReferenceFilter
+    order: ServiceSpecificationReferenceOrder
     first: Int
     offset: Int
-  ): [ServiceSpecificationRef]
+  ): [ServiceSpecificationReference]
   numUids: Int
 }
 
 input AddStatusNumericPoolInput {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type AddStatusNumericPoolPayload {
@@ -1370,7 +1450,7 @@ input AuthRule {
 
 type CancellationRequest {
   id: ID!
-  _atType: String
+  type: String
   cancellationReason: String
   externalId: String
   href: String
@@ -1389,8 +1469,8 @@ type CancellationRequest {
 
 type CancellationRequestAggregateResult {
   count: Int
-  _atTypeMin: String
-  _atTypeMax: String
+  typeMin: String
+  typeMax: String
   cancellationReasonMin: String
   cancellationReasonMax: String
   externalIdMin: String
@@ -1413,7 +1493,7 @@ input CancellationRequestFilter {
 }
 
 enum CancellationRequestHasFilter {
-  _atType
+  type
   cancellationReason
   externalId
   href
@@ -1429,7 +1509,7 @@ input CancellationRequestOrder {
 }
 
 enum CancellationRequestOrderable {
-  _atType
+  type
   cancellationReason
   externalId
   href
@@ -1438,7 +1518,7 @@ enum CancellationRequestOrderable {
 }
 
 input CancellationRequestPatch {
-  _atType: String
+  type: String
   cancellationReason: String
   externalId: String
   href: String
@@ -1449,7 +1529,7 @@ input CancellationRequestPatch {
 
 input CancellationRequestRef {
   id: ID
-  _atType: String
+  type: String
   cancellationReason: String
   externalId: String
   href: String
@@ -1771,8 +1851,7 @@ enum ChangeRequestSource {
 enum ChangeRequestStatus {
   SUBMITTED
   CANCELLED
-  PENDING
-  APPROVAL
+  PENDING_APPROVAL
   REJECTED
   SCHEDULED
   IN_EXECUTION
@@ -1789,10 +1868,10 @@ enum ChangeRequestType {
 type Characteristic {
   characteristicId: ID!
   id: String!
-  _atType: String
-  name: String
+  type: String
+  name: String!
   unitOfMeasure: String
-  value: String
+  value: String!
   valueType: String
   valueUnits: String
   services(
@@ -1817,8 +1896,8 @@ type CharacteristicAggregateResult {
   count: Int
   idMin: String
   idMax: String
-  _atTypeMin: String
-  _atTypeMax: String
+  typeMin: String
+  typeMax: String
   nameMin: String
   nameMax: String
   unitOfMeasureMin: String
@@ -1842,7 +1921,7 @@ input CharacteristicFilter {
 
 enum CharacteristicHasFilter {
   id
-  _atType
+  type
   name
   unitOfMeasure
   value
@@ -1860,7 +1939,7 @@ input CharacteristicOrder {
 
 enum CharacteristicOrderable {
   id
-  _atType
+  type
   name
   unitOfMeasure
   value
@@ -1870,7 +1949,7 @@ enum CharacteristicOrderable {
 
 input CharacteristicPatch {
   id: String
-  _atType: String
+  type: String
   name: String
   unitOfMeasure: String
   value: String
@@ -1883,7 +1962,7 @@ input CharacteristicPatch {
 input CharacteristicRef {
   characteristicId: ID
   id: String
-  _atType: String
+  type: String
   name: String
   unitOfMeasure: String
   value: String
@@ -1961,6 +2040,7 @@ type CMVersionAggregateResult {
 
 input CMVersionFilter {
   id: [ID!]
+  status: VersionStatus_hash
   has: [CMVersionHasFilter]
   and: [CMVersionFilter]
   or: [CMVersionFilter]
@@ -2322,6 +2402,7 @@ type DeleteActionExecutionItemPayload {
 type DeleteActionExecutionPayload {
   actionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -2493,13 +2574,13 @@ type DeleteFeaturePayload {
   numUids: Int
 }
 
-type DeleteFlowExecutionRefPayload {
-  flowExecutionRef(
-    filter: FlowExecutionRefFilter
-    order: FlowExecutionRefOrder
+type DeleteFlowExecutionReferencePayload {
+  flowExecutionReference(
+    filter: FlowExecutionReferenceFilter
+    order: FlowExecutionReferenceOrder
     first: Int
     offset: Int
-  ): [FlowExecutionRef]
+  ): [FlowExecutionReference]
   msg: String
   numUids: Int
 }
@@ -2587,13 +2668,24 @@ type DeleteRelatedEntityPayload {
   numUids: Int
 }
 
-type DeleteResourceIntPayload {
-  resourceInt(
-    filter: ResourceIntFilter
-    order: ResourceIntOrder
+type DeleteResourceOrderIMPayload {
+  resourceOrderIM(
+    filter: ResourceOrderIMFilter
+    order: ResourceOrderIMOrder
     first: Int
     offset: Int
-  ): [ResourceInt]
+  ): [ResourceOrderIM]
+  msg: String
+  numUids: Int
+}
+
+type DeleteResourceOrderItemPayload {
+  resourceOrderItem(
+    filter: ResourceOrderItemFilter
+    order: ResourceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ResourceOrderItem]
   msg: String
   numUids: Int
 }
@@ -2686,17 +2778,6 @@ type DeleteServiceReferencePayload {
   numUids: Int
 }
 
-type DeleteServiceRefPayload {
-  serviceRef(
-    filter: ServiceRefFilter
-    order: ServiceRefOrder
-    first: Int
-    offset: Int
-  ): [ServiceRef]
-  msg: String
-  numUids: Int
-}
-
 type DeleteServiceRelationshipPayload {
   serviceRelationship(
     filter: ServiceRelationshipFilter
@@ -2719,13 +2800,13 @@ type DeleteServiceSOMPayload {
   numUids: Int
 }
 
-type DeleteServiceSpecificationRefPayload {
-  serviceSpecificationRef(
-    filter: ServiceSpecificationRefFilter
-    order: ServiceSpecificationRefOrder
+type DeleteServiceSpecificationReferencePayload {
+  serviceSpecificationReference(
+    filter: ServiceSpecificationReferenceFilter
+    order: ServiceSpecificationReferenceOrder
     first: Int
     offset: Int
-  ): [ServiceSpecificationRef]
+  ): [ServiceSpecificationReference]
   msg: String
   numUids: Int
 }
@@ -2777,7 +2858,7 @@ type ExternalReference {
   id: String!
   href: String
   externalReferenceType: String
-  name: String
+  name: String!
 }
 
 type ExternalReferenceAggregateResult {
@@ -2838,7 +2919,7 @@ type Feature {
   id: ID!
   isBundle: Boolean
   isEnabled: Boolean
-  name: String
+  name: String!
 }
 
 type FeatureAggregateResult {
@@ -2899,7 +2980,7 @@ input FloatRange {
   max: Float!
 }
 
-type FlowExecutionRef {
+type FlowExecutionReference {
   id: ID!
   domainId: String
   projectId: String
@@ -2908,11 +2989,11 @@ type FlowExecutionRef {
   creationDate: String
   executionDate: String
   endExecutionDate: String
-  cancelto(filter: FlowExecutionRefFilter): FlowExecutionRef
+  cancelto(filter: FlowExecutionReferenceFilter): FlowExecutionReference
   serviceorders(filter: ServiceOrderFilter): ServiceOrder
 }
 
-type FlowExecutionRefAggregateResult {
+type FlowExecutionReferenceAggregateResult {
   count: Int
   domainIdMin: String
   domainIdMax: String
@@ -2930,18 +3011,18 @@ type FlowExecutionRefAggregateResult {
   endExecutionDateMax: String
 }
 
-input FlowExecutionRefFilter {
+input FlowExecutionReferenceFilter {
   id: [ID!]
   creationDate: StringExactFilter
   executionDate: StringExactFilter
   endExecutionDate: StringExactFilter
-  has: [FlowExecutionRefHasFilter]
-  and: [FlowExecutionRefFilter]
-  or: [FlowExecutionRefFilter]
-  not: FlowExecutionRefFilter
+  has: [FlowExecutionReferenceHasFilter]
+  and: [FlowExecutionReferenceFilter]
+  or: [FlowExecutionReferenceFilter]
+  not: FlowExecutionReferenceFilter
 }
 
-enum FlowExecutionRefHasFilter {
+enum FlowExecutionReferenceHasFilter {
   domainId
   projectId
   runId
@@ -2953,13 +3034,13 @@ enum FlowExecutionRefHasFilter {
   serviceorders
 }
 
-input FlowExecutionRefOrder {
-  asc: FlowExecutionRefOrderable
-  desc: FlowExecutionRefOrderable
-  then: FlowExecutionRefOrder
+input FlowExecutionReferenceOrder {
+  asc: FlowExecutionReferenceOrderable
+  desc: FlowExecutionReferenceOrderable
+  then: FlowExecutionReferenceOrder
 }
 
-enum FlowExecutionRefOrderable {
+enum FlowExecutionReferenceOrderable {
   domainId
   projectId
   runId
@@ -2969,7 +3050,7 @@ enum FlowExecutionRefOrderable {
   endExecutionDate
 }
 
-input FlowExecutionRefPatch {
+input FlowExecutionReferencePatch {
   domainId: String
   projectId: String
   runId: String
@@ -2977,11 +3058,11 @@ input FlowExecutionRefPatch {
   creationDate: String
   executionDate: String
   endExecutionDate: String
-  cancelto: FlowExecutionRefRef
+  cancelto: FlowExecutionReferenceRef
   serviceorders: ServiceOrderRef
 }
 
-input FlowExecutionRefRef {
+input FlowExecutionReferenceRef {
   id: ID
   domainId: String
   projectId: String
@@ -2990,7 +3071,7 @@ input FlowExecutionRefRef {
   creationDate: String
   executionDate: String
   endExecutionDate: String
-  cancelto: FlowExecutionRefRef
+  cancelto: FlowExecutionReferenceRef
   serviceorders: ServiceOrderRef
 }
 
@@ -3117,7 +3198,7 @@ enum Mode {
 
 type ModificationRequest {
   id: ID!
-  _atType: String!
+  type: String!
   externalId: String
   modifyReason: String!
   requestedCompletionDate: String!
@@ -3134,8 +3215,8 @@ type ModificationRequest {
 
 type ModificationRequestAggregateResult {
   count: Int
-  _atTypeMin: String
-  _atTypeMax: String
+  typeMin: String
+  typeMax: String
   externalIdMin: String
   externalIdMax: String
   modifyReasonMin: String
@@ -3154,7 +3235,7 @@ input ModificationRequestFilter {
 }
 
 enum ModificationRequestHasFilter {
-  _atType
+  type
   externalId
   modifyReason
   requestedCompletionDate
@@ -3168,14 +3249,14 @@ input ModificationRequestOrder {
 }
 
 enum ModificationRequestOrderable {
-  _atType
+  type
   externalId
   modifyReason
   requestedCompletionDate
 }
 
 input ModificationRequestPatch {
-  _atType: String
+  type: String
   externalId: String
   modifyReason: String
   requestedCompletionDate: String
@@ -3184,7 +3265,7 @@ input ModificationRequestPatch {
 
 input ModificationRequestRef {
   id: ID
-  _atType: String
+  type: String
   externalId: String
   modifyReason: String
   requestedCompletionDate: String
@@ -3351,16 +3432,16 @@ type Mutation {
   addGeometry(input: [AddGeometryInput!]!, upsert: Boolean): AddGeometryPayload
   updateGeometry(input: UpdateGeometryInput!): UpdateGeometryPayload
   deleteGeometry(filter: GeometryFilter!): DeleteGeometryPayload
-  addServiceSpecificationRef(
-    input: [AddServiceSpecificationRefInput!]!
+  addServiceSpecificationReference(
+    input: [AddServiceSpecificationReferenceInput!]!
     upsert: Boolean
-  ): AddServiceSpecificationRefPayload
-  updateServiceSpecificationRef(
-    input: UpdateServiceSpecificationRefInput!
-  ): UpdateServiceSpecificationRefPayload
-  deleteServiceSpecificationRef(
-    filter: ServiceSpecificationRefFilter!
-  ): DeleteServiceSpecificationRefPayload
+  ): AddServiceSpecificationReferencePayload
+  updateServiceSpecificationReference(
+    input: UpdateServiceSpecificationReferenceInput!
+  ): UpdateServiceSpecificationReferencePayload
+  deleteServiceSpecificationReference(
+    filter: ServiceSpecificationReferenceFilter!
+  ): DeleteServiceSpecificationReferencePayload
   addCharacteristic(input: [AddCharacteristicInput!]!): AddCharacteristicPayload
   updateCharacteristic(
     input: UpdateCharacteristicInput!
@@ -3380,15 +3461,15 @@ type Mutation {
   addNote(input: [AddNoteInput!]!): AddNotePayload
   updateNote(input: UpdateNoteInput!): UpdateNotePayload
   deleteNote(filter: NoteFilter!): DeleteNotePayload
-  addFlowExecutionRef(
-    input: [AddFlowExecutionRefInput!]!
-  ): AddFlowExecutionRefPayload
-  updateFlowExecutionRef(
-    input: UpdateFlowExecutionRefInput!
-  ): UpdateFlowExecutionRefPayload
-  deleteFlowExecutionRef(
-    filter: FlowExecutionRefFilter!
-  ): DeleteFlowExecutionRefPayload
+  addFlowExecutionReference(
+    input: [AddFlowExecutionReferenceInput!]!
+  ): AddFlowExecutionReferencePayload
+  updateFlowExecutionReference(
+    input: UpdateFlowExecutionReferenceInput!
+  ): UpdateFlowExecutionReferencePayload
+  deleteFlowExecutionReference(
+    filter: FlowExecutionReferenceFilter!
+  ): DeleteFlowExecutionReferencePayload
   addCancellationRequest(
     input: [AddCancellationRequestInput!]!
   ): AddCancellationRequestPayload
@@ -3413,20 +3494,35 @@ type Mutation {
   addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload
   updateSubscriber(input: UpdateSubscriberInput!): UpdateSubscriberPayload
   deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload
-  updateResourceInt(input: UpdateResourceIntInput!): UpdateResourceIntPayload
-  deleteResourceInt(filter: ResourceIntFilter!): DeleteResourceIntPayload
+  addServiceReference(
+    input: [AddServiceReferenceInput!]!
+    upsert: Boolean
+  ): AddServiceReferencePayload
   updateServiceReference(
     input: UpdateServiceReferenceInput!
   ): UpdateServiceReferencePayload
   deleteServiceReference(
     filter: ServiceReferenceFilter!
   ): DeleteServiceReferencePayload
-  addServiceRef(
-    input: [AddServiceRefInput!]!
+  addResourceOrderIM(
+    input: [AddResourceOrderIMInput!]!
+  ): AddResourceOrderIMPayload
+  updateResourceOrderIM(
+    input: UpdateResourceOrderIMInput!
+  ): UpdateResourceOrderIMPayload
+  deleteResourceOrderIM(
+    filter: ResourceOrderIMFilter!
+  ): DeleteResourceOrderIMPayload
+  addResourceOrderItem(
+    input: [AddResourceOrderItemInput!]!
     upsert: Boolean
-  ): AddServiceRefPayload
-  updateServiceRef(input: UpdateServiceRefInput!): UpdateServiceRefPayload
-  deleteServiceRef(filter: ServiceRefFilter!): DeleteServiceRefPayload
+  ): AddResourceOrderItemPayload
+  updateResourceOrderItem(
+    input: UpdateResourceOrderItemInput!
+  ): UpdateResourceOrderItemPayload
+  deleteResourceOrderItem(
+    filter: ResourceOrderItemFilter!
+  ): DeleteResourceOrderItemPayload
   addActionTemplate(input: [AddActionTemplateInput!]!): AddActionTemplatePayload
   updateActionTemplate(
     input: UpdateActionTemplateInput!
@@ -3548,7 +3644,7 @@ type NumericPool {
   description: String
   limit: Int!
   customLimit: Int
-  resource(
+  resources(
     filter: ResourceFilter
     order: ResourceOrder
     first: Int
@@ -3560,7 +3656,7 @@ type NumericPool {
     first: Int
     offset: Int
   ): [StatusNumericPool]
-  resourceAggregate(filter: ResourceFilter): ResourceAggregateResult
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   statusNumericPoolsAggregate(
     filter: StatusNumericPoolFilter
   ): StatusNumericPoolAggregateResult
@@ -3592,7 +3688,7 @@ enum NumericPoolHasFilter {
   description
   limit
   customLimit
-  resource
+  resources
   isDelete
   statusNumericPools
 }
@@ -3613,7 +3709,7 @@ input NumericPoolPatch {
   description: String
   limit: Int
   customLimit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   isDelete: Boolean
   statusNumericPools: [StatusNumericPoolRef]
 }
@@ -3623,7 +3719,7 @@ input NumericPoolRef {
   description: String
   limit: Int
   customLimit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   isDelete: Boolean
   statusNumericPools: [StatusNumericPoolRef]
 }
@@ -4221,7 +4317,7 @@ type Query {
   aggregateRelatedEntity(
     filter: RelatedEntityFilter
   ): RelatedEntityAggregateResult
-  getResourceReference(id: String, name: String): ResourceReference
+  getResourceReference(id: String!): ResourceReference
   queryResourceReference(
     filter: ResourceReferenceFilter
     order: ResourceReferenceOrder
@@ -4247,16 +4343,16 @@ type Query {
     offset: Int
   ): [Geometry]
   aggregateGeometry(filter: GeometryFilter): GeometryAggregateResult
-  getServiceSpecificationRef(id: String!): ServiceSpecificationRef
-  queryServiceSpecificationRef(
-    filter: ServiceSpecificationRefFilter
-    order: ServiceSpecificationRefOrder
+  getServiceSpecificationReference(id: String!): ServiceSpecificationReference
+  queryServiceSpecificationReference(
+    filter: ServiceSpecificationReferenceFilter
+    order: ServiceSpecificationReferenceOrder
     first: Int
     offset: Int
-  ): [ServiceSpecificationRef]
-  aggregateServiceSpecificationRef(
-    filter: ServiceSpecificationRefFilter
-  ): ServiceSpecificationRefAggregateResult
+  ): [ServiceSpecificationReference]
+  aggregateServiceSpecificationReference(
+    filter: ServiceSpecificationReferenceFilter
+  ): ServiceSpecificationReferenceAggregateResult
   getCharacteristic(characteristicId: ID!): Characteristic
   queryCharacteristic(
     filter: CharacteristicFilter
@@ -4285,16 +4381,16 @@ type Query {
     offset: Int
   ): [Note]
   aggregateNote(filter: NoteFilter): NoteAggregateResult
-  getFlowExecutionRef(id: ID!): FlowExecutionRef
-  queryFlowExecutionRef(
-    filter: FlowExecutionRefFilter
-    order: FlowExecutionRefOrder
+  getFlowExecutionReference(id: ID!): FlowExecutionReference
+  queryFlowExecutionReference(
+    filter: FlowExecutionReferenceFilter
+    order: FlowExecutionReferenceOrder
     first: Int
     offset: Int
-  ): [FlowExecutionRef]
-  aggregateFlowExecutionRef(
-    filter: FlowExecutionRefFilter
-  ): FlowExecutionRefAggregateResult
+  ): [FlowExecutionReference]
+  aggregateFlowExecutionReference(
+    filter: FlowExecutionReferenceFilter
+  ): FlowExecutionReferenceAggregateResult
   getCancellationRequest(id: ID!): CancellationRequest
   queryCancellationRequest(
     filter: CancellationRequestFilter
@@ -4331,17 +4427,7 @@ type Query {
     offset: Int
   ): [Subscriber]
   aggregateSubscriber(filter: SubscriberFilter): SubscriberAggregateResult
-  getResourceInt(name: String!): ResourceInt
-    @deprecated(
-      reason: "@id argument for get query on interface is being deprecated. Only those @id fields which have interface argument set to true will be available in getQuery argument on interface post v21.11.0, please update your schema accordingly."
-    )
-  queryResourceInt(
-    filter: ResourceIntFilter
-    order: ResourceIntOrder
-    first: Int
-    offset: Int
-  ): [ResourceInt]
-  aggregateResourceInt(filter: ResourceIntFilter): ResourceIntAggregateResult
+  getServiceReference(id: String!): ServiceReference
   queryServiceReference(
     filter: ServiceReferenceFilter
     order: ServiceReferenceOrder
@@ -4351,14 +4437,25 @@ type Query {
   aggregateServiceReference(
     filter: ServiceReferenceFilter
   ): ServiceReferenceAggregateResult
-  getServiceRef(id: String!): ServiceRef
-  queryServiceRef(
-    filter: ServiceRefFilter
-    order: ServiceRefOrder
+  queryResourceOrderIM(
+    filter: ResourceOrderIMFilter
+    order: ResourceOrderIMOrder
     first: Int
     offset: Int
-  ): [ServiceRef]
-  aggregateServiceRef(filter: ServiceRefFilter): ServiceRefAggregateResult
+  ): [ResourceOrderIM]
+  aggregateResourceOrderIM(
+    filter: ResourceOrderIMFilter
+  ): ResourceOrderIMAggregateResult
+  getResourceOrderItem(id: String!): ResourceOrderItem
+  queryResourceOrderItem(
+    filter: ResourceOrderItemFilter
+    order: ResourceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ResourceOrderItem]
+  aggregateResourceOrderItem(
+    filter: ResourceOrderItemFilter
+  ): ResourceOrderItemAggregateResult
   getActionTemplate(id: ID!): ActionTemplate
   queryActionTemplate(
     filter: ActionTemplateFilter
@@ -4400,6 +4497,7 @@ type Query {
   getActionExecution(id: ID!): ActionExecution
   queryActionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -4469,7 +4567,7 @@ input RelatedEntityRef {
   role: String
 }
 
-type Resource implements ResourceInt {
+type Resource {
   id: ID!
   name: String!
   available: Boolean
@@ -4523,6 +4621,7 @@ type Resource implements ResourceInt {
     offset: Int
   ): [NumericPool]
   isEditable: Boolean
+  actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -4579,46 +4678,7 @@ enum ResourceHasFilter {
   isDelete
   numericPool
   isEditable
-}
-
-interface ResourceInt {
-  name: String!
-}
-
-type ResourceIntAggregateResult {
-  count: Int
-  nameMin: String
-  nameMax: String
-}
-
-input ResourceIntFilter {
-  name: StringHashFilter
-  has: [ResourceIntHasFilter]
-  and: [ResourceIntFilter]
-  or: [ResourceIntFilter]
-  not: ResourceIntFilter
-}
-
-enum ResourceIntHasFilter {
-  name
-}
-
-input ResourceIntOrder {
-  asc: ResourceIntOrderable
-  desc: ResourceIntOrderable
-  then: ResourceIntOrder
-}
-
-enum ResourceIntOrderable {
-  name
-}
-
-input ResourceIntPatch {
-  name: String
-}
-
-input ResourceIntRef {
-  name: String!
+  actionScheduler
 }
 
 input ResourceOrder {
@@ -4632,6 +4692,143 @@ enum ResourceOrderable {
   externalId
   locatedIn
   resourceSpecification
+}
+
+type ResourceOrderIM {
+  id: String
+  reservationId: String
+  lineId: String
+  category: String
+  description: String
+  externalId: String
+  resourceOrderItem(
+    filter: ResourceOrderItemFilter
+    order: ResourceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ResourceOrderItem]
+  resourceOrderItemAggregate(
+    filter: ResourceOrderItemFilter
+  ): ResourceOrderItemAggregateResult
+}
+
+type ResourceOrderIMAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  reservationIdMin: String
+  reservationIdMax: String
+  lineIdMin: String
+  lineIdMax: String
+  categoryMin: String
+  categoryMax: String
+  descriptionMin: String
+  descriptionMax: String
+  externalIdMin: String
+  externalIdMax: String
+}
+
+input ResourceOrderIMFilter {
+  has: [ResourceOrderIMHasFilter]
+  and: [ResourceOrderIMFilter]
+  or: [ResourceOrderIMFilter]
+  not: ResourceOrderIMFilter
+}
+
+enum ResourceOrderIMHasFilter {
+  id
+  reservationId
+  lineId
+  category
+  description
+  externalId
+  resourceOrderItem
+}
+
+input ResourceOrderIMOrder {
+  asc: ResourceOrderIMOrderable
+  desc: ResourceOrderIMOrderable
+  then: ResourceOrderIMOrder
+}
+
+enum ResourceOrderIMOrderable {
+  id
+  reservationId
+  lineId
+  category
+  description
+  externalId
+}
+
+input ResourceOrderIMPatch {
+  id: String
+  reservationId: String
+  lineId: String
+  category: String
+  description: String
+  externalId: String
+  resourceOrderItem: [ResourceOrderItemRef]
+}
+
+input ResourceOrderIMRef {
+  id: String
+  reservationId: String
+  lineId: String
+  category: String
+  description: String
+  externalId: String
+  resourceOrderItem: [ResourceOrderItemRef]
+}
+
+type ResourceOrderItem {
+  id: String!
+  action: String
+  service(filter: SupportingServiceFilter): SupportingService
+}
+
+type ResourceOrderItemAggregateResult {
+  count: Int
+  idMin: String
+  idMax: String
+  actionMin: String
+  actionMax: String
+}
+
+input ResourceOrderItemFilter {
+  id: StringHashFilter
+  has: [ResourceOrderItemHasFilter]
+  and: [ResourceOrderItemFilter]
+  or: [ResourceOrderItemFilter]
+  not: ResourceOrderItemFilter
+}
+
+enum ResourceOrderItemHasFilter {
+  id
+  action
+  service
+}
+
+input ResourceOrderItemOrder {
+  asc: ResourceOrderItemOrderable
+  desc: ResourceOrderItemOrderable
+  then: ResourceOrderItemOrder
+}
+
+enum ResourceOrderItemOrderable {
+  id
+  action
+}
+
+input ResourceOrderItemPatch {
+  id: String
+  action: String
+  service: SupportingServiceRef
+}
+
+input ResourceOrderItemRef {
+  id: String
+  action: String
+  service: SupportingServiceRef
 }
 
 input ResourcePatch {
@@ -4657,6 +4854,7 @@ input ResourcePatch {
   isDelete: Boolean
   numericPool: [NumericPoolRef]
   isEditable: Boolean
+  actionScheduler: ActionSchedulerRef
 }
 
 type ResourceProperty {
@@ -4803,12 +5001,13 @@ input ResourceRef {
   isDelete: Boolean
   numericPool: [NumericPoolRef]
   isEditable: Boolean
+  actionScheduler: ActionSchedulerRef
 }
 
-type ResourceReference implements ResourceInt {
+type ResourceReference {
   id: String!
   href: String
-  name: String!
+  name: String
 }
 
 type ResourceReferenceAggregateResult {
@@ -4823,7 +5022,6 @@ type ResourceReferenceAggregateResult {
 
 input ResourceReferenceFilter {
   id: StringHashFilter
-  name: StringHashFilter
   has: [ResourceReferenceHasFilter]
   and: [ResourceReferenceFilter]
   or: [ResourceReferenceFilter]
@@ -4944,7 +5142,7 @@ enum SchedulerConfigStatus {
 
 type ServiceOrder {
   id: ID!
-  _atType: String
+  type: String
   category: String
   description: String
   externalId: String
@@ -4972,7 +5170,9 @@ type ServiceOrder {
     first: Int
     offset: Int
   ): [Party]
-  flowExecutionRef(filter: FlowExecutionRefFilter): FlowExecutionRef
+  flowExecutionReference(
+    filter: FlowExecutionReferenceFilter
+  ): FlowExecutionReference
   cancelRequest(filter: CancellationRequestFilter): CancellationRequest
   modifyRequest(
     filter: ModificationRequestFilter
@@ -5005,8 +5205,8 @@ type ServiceOrder {
 
 type ServiceOrderAggregateResult {
   count: Int
-  _atTypeMin: String
-  _atTypeMax: String
+  typeMin: String
+  typeMax: String
   categoryMin: String
   categoryMax: String
   descriptionMin: String
@@ -5040,7 +5240,7 @@ input ServiceOrderFilter {
 }
 
 enum ServiceOrderHasFilter {
-  _atType
+  type
   category
   description
   externalId
@@ -5053,7 +5253,7 @@ enum ServiceOrderHasFilter {
   externalReference
   orderRelationship
   relatedParty
-  flowExecutionRef
+  flowExecutionReference
   cancelRequest
   modifyRequest
   serviceOrderItem
@@ -5148,7 +5348,7 @@ input ServiceOrderOrder {
 }
 
 enum ServiceOrderOrderable {
-  _atType
+  type
   category
   description
   externalId
@@ -5161,7 +5361,7 @@ enum ServiceOrderOrderable {
 }
 
 input ServiceOrderPatch {
-  _atType: String
+  type: String
   category: String
   description: String
   externalId: String
@@ -5174,7 +5374,7 @@ input ServiceOrderPatch {
   externalReference: [ExternalReferenceRef]
   orderRelationship: [ServiceOrderRelationshipRef]
   relatedParty: [PartyRef]
-  flowExecutionRef: FlowExecutionRefRef
+  flowExecutionReference: FlowExecutionReferenceRef
   cancelRequest: CancellationRequestRef
   modifyRequest: [ModificationRequestRef]
   serviceOrderItem: [ServiceOrderItemRef]
@@ -5183,7 +5383,7 @@ input ServiceOrderPatch {
 
 input ServiceOrderRef {
   id: ID
-  _atType: String
+  type: String
   category: String
   description: String
   externalId: String
@@ -5196,7 +5396,7 @@ input ServiceOrderRef {
   externalReference: [ExternalReferenceRef]
   orderRelationship: [ServiceOrderRelationshipRef]
   relatedParty: [PartyRef]
-  flowExecutionRef: FlowExecutionRefRef
+  flowExecutionReference: FlowExecutionReferenceRef
   cancelRequest: CancellationRequestRef
   modifyRequest: [ModificationRequestRef]
   serviceOrderItem: [ServiceOrderItemRef]
@@ -5206,7 +5406,7 @@ input ServiceOrderRef {
 type ServiceOrderRelationship {
   id: String!
   href: String
-  relationshipType: String
+  relationshipType: String!
 }
 
 type ServiceOrderRelationshipAggregateResult {
@@ -5257,22 +5457,21 @@ input ServiceOrderRelationshipRef {
   relationshipType: String
 }
 
-type ServiceRef implements ServiceReference {
+type ServiceReference {
   id: String!
   href: String
   name: String
   supportingResource(
-    filter: ResourceIntFilter
-    order: ResourceIntOrder
+    filter: SupportingResourceFilter
     first: Int
     offset: Int
-  ): [ResourceInt]
-  supportingResourceAggregate(
-    filter: ResourceIntFilter
-  ): ResourceIntAggregateResult
+  ): [SupportingResource]
+  specificationName: String
+  externalId: String
+  specificationId: String
 }
 
-type ServiceRefAggregateResult {
+type ServiceReferenceAggregateResult {
   count: Int
   idMin: String
   idMax: String
@@ -5280,19 +5479,16 @@ type ServiceRefAggregateResult {
   hrefMax: String
   nameMin: String
   nameMax: String
-}
-
-interface ServiceReference {
-  href: String
-}
-
-type ServiceReferenceAggregateResult {
-  count: Int
-  hrefMin: String
-  hrefMax: String
+  specificationNameMin: String
+  specificationNameMax: String
+  externalIdMin: String
+  externalIdMax: String
+  specificationIdMin: String
+  specificationIdMax: String
 }
 
 input ServiceReferenceFilter {
+  id: StringHashFilter
   has: [ServiceReferenceHasFilter]
   and: [ServiceReferenceFilter]
   or: [ServiceReferenceFilter]
@@ -5300,7 +5496,13 @@ input ServiceReferenceFilter {
 }
 
 enum ServiceReferenceHasFilter {
+  id
   href
+  name
+  supportingResource
+  specificationName
+  externalId
+  specificationId
 }
 
 input ServiceReferenceOrder {
@@ -5310,58 +5512,38 @@ input ServiceReferenceOrder {
 }
 
 enum ServiceReferenceOrderable {
+  id
   href
+  name
+  specificationName
+  externalId
+  specificationId
 }
 
 input ServiceReferencePatch {
-  href: String
-}
-
-input ServiceRefFilter {
-  id: StringHashFilter
-  has: [ServiceRefHasFilter]
-  and: [ServiceRefFilter]
-  or: [ServiceRefFilter]
-  not: ServiceRefFilter
-}
-
-enum ServiceRefHasFilter {
-  id
-  href
-  name
-  supportingResource
-}
-
-input ServiceRefOrder {
-  asc: ServiceRefOrderable
-  desc: ServiceRefOrderable
-  then: ServiceRefOrder
-}
-
-enum ServiceRefOrderable {
-  id
-  href
-  name
-}
-
-input ServiceRefPatch {
   id: String
   href: String
   name: String
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
+  specificationName: String
+  externalId: String
+  specificationId: String
 }
 
-input ServiceRefRef {
+input ServiceReferenceRef {
   id: String
   href: String
   name: String
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
+  specificationName: String
+  externalId: String
+  specificationId: String
 }
 
 type ServiceRelationship {
   id: ID!
   relationshipType: String!
-  service(filter: ServiceSOMFilter): ServiceSOM
+  service(filter: ServiceSOMFilter): ServiceSOM!
   serviceRelationshipCharacteristic(
     filter: CharacteristicFilter
     order: CharacteristicOrder
@@ -5416,7 +5598,7 @@ input ServiceRelationshipRef {
   serviceRelationshipCharacteristic: [CharacteristicRef]
 }
 
-type ServiceSOM implements ServiceReference {
+type ServiceSOM {
   id: ID!
   href: String
   category: String
@@ -5447,8 +5629,8 @@ type ServiceSOM implements ServiceReference {
     offset: Int
   ): [Place]
   serviceSpecification(
-    filter: ServiceSpecificationRefFilter
-  ): ServiceSpecificationRef
+    filter: ServiceSpecificationReferenceFilter
+  ): ServiceSpecificationReference
   serviceCharacteristic(
     filter: CharacteristicFilter
     order: CharacteristicOrder
@@ -5462,11 +5644,10 @@ type ServiceSOM implements ServiceReference {
     offset: Int
   ): [ServiceSOM]
   supportingResource(
-    filter: ResourceIntFilter
-    order: ResourceIntOrder
+    filter: SupportingResourceFilter
     first: Int
     offset: Int
-  ): [ResourceInt]
+  ): [SupportingResource]
   serviceRelationship(
     filter: ServiceRelationshipFilter
     order: ServiceRelationshipOrder
@@ -5494,9 +5675,6 @@ type ServiceSOM implements ServiceReference {
   supportingServiceAggregate(
     filter: ServiceSOMFilter
   ): ServiceSOMAggregateResult
-  supportingResourceAggregate(
-    filter: ResourceIntFilter
-  ): ResourceIntAggregateResult
   serviceRelationshipAggregate(
     filter: ServiceRelationshipFilter
   ): ServiceRelationshipAggregateResult
@@ -5615,10 +5793,10 @@ input ServiceSOMPatch {
   type: String
   relatedParty: [PartyRef]
   place: [PlaceRef]
-  serviceSpecification: ServiceSpecificationRefRef
+  serviceSpecification: ServiceSpecificationReferenceRef
   serviceCharacteristic: [CharacteristicRef]
   supportingService: [ServiceSOMRef]
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
   serviceRelationship: [ServiceRelationshipRef]
   relatedEntity: [RelatedEntityRef]
   note: [NoteRef]
@@ -5645,22 +5823,22 @@ input ServiceSOMRef {
   type: String
   relatedParty: [PartyRef]
   place: [PlaceRef]
-  serviceSpecification: ServiceSpecificationRefRef
+  serviceSpecification: ServiceSpecificationReferenceRef
   serviceCharacteristic: [CharacteristicRef]
   supportingService: [ServiceSOMRef]
-  supportingResource: [ResourceIntRef]
+  supportingResource: [SupportingResourceRef]
   serviceRelationship: [ServiceRelationshipRef]
   relatedEntity: [RelatedEntityRef]
   note: [NoteRef]
   feature: [FeatureRef]
 }
 
-type ServiceSpecificationRef {
+type ServiceSpecificationReference {
   id: String!
   referredType: String
   type: String
   href: String
-  name: String!
+  name: String
   version: String
   services(
     filter: ServiceSOMFilter
@@ -5671,7 +5849,7 @@ type ServiceSpecificationRef {
   servicesAggregate(filter: ServiceSOMFilter): ServiceSOMAggregateResult
 }
 
-type ServiceSpecificationRefAggregateResult {
+type ServiceSpecificationReferenceAggregateResult {
   count: Int
   idMin: String
   idMax: String
@@ -5687,15 +5865,15 @@ type ServiceSpecificationRefAggregateResult {
   versionMax: String
 }
 
-input ServiceSpecificationRefFilter {
+input ServiceSpecificationReferenceFilter {
   id: StringHashFilter
-  has: [ServiceSpecificationRefHasFilter]
-  and: [ServiceSpecificationRefFilter]
-  or: [ServiceSpecificationRefFilter]
-  not: ServiceSpecificationRefFilter
+  has: [ServiceSpecificationReferenceHasFilter]
+  and: [ServiceSpecificationReferenceFilter]
+  or: [ServiceSpecificationReferenceFilter]
+  not: ServiceSpecificationReferenceFilter
 }
 
-enum ServiceSpecificationRefHasFilter {
+enum ServiceSpecificationReferenceHasFilter {
   id
   referredType
   type
@@ -5705,13 +5883,13 @@ enum ServiceSpecificationRefHasFilter {
   services
 }
 
-input ServiceSpecificationRefOrder {
-  asc: ServiceSpecificationRefOrderable
-  desc: ServiceSpecificationRefOrderable
-  then: ServiceSpecificationRefOrder
+input ServiceSpecificationReferenceOrder {
+  asc: ServiceSpecificationReferenceOrderable
+  desc: ServiceSpecificationReferenceOrderable
+  then: ServiceSpecificationReferenceOrder
 }
 
-enum ServiceSpecificationRefOrderable {
+enum ServiceSpecificationReferenceOrderable {
   id
   referredType
   type
@@ -5720,7 +5898,7 @@ enum ServiceSpecificationRefOrderable {
   version
 }
 
-input ServiceSpecificationRefPatch {
+input ServiceSpecificationReferencePatch {
   id: String
   referredType: String
   type: String
@@ -5730,7 +5908,7 @@ input ServiceSpecificationRefPatch {
   services: [ServiceSOMRef]
 }
 
-input ServiceSpecificationRefRef {
+input ServiceSpecificationReferenceRef {
   id: String
   referredType: String
   type: String
@@ -5744,7 +5922,7 @@ type StatusNumericPool {
   id: ID!
   numericPool(filter: NumericPoolFilter): NumericPool
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type StatusNumericPoolAggregateResult {
@@ -5762,20 +5940,20 @@ input StatusNumericPoolFilter {
 enum StatusNumericPoolHasFilter {
   numericPool
   status
-  value
+  values
 }
 
 input StatusNumericPoolPatch {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StatusNumericPoolRef {
   id: ID
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StringExactFilter {
@@ -5862,6 +6040,40 @@ input SubscriberRef {
   topic: String
 }
 
+union SupportingResource = Resource | ResourceReference
+input SupportingResourceFilter {
+  memberTypes: [SupportingResourceType!]
+  resourceFilter: ResourceFilter
+  resourceReferenceFilter: ResourceReferenceFilter
+}
+
+input SupportingResourceRef {
+  resourceRef: ResourceRef
+  resourceReferenceRef: ResourceReferenceRef
+}
+
+enum SupportingResourceType {
+  Resource
+  ResourceReference
+}
+
+union SupportingService = ServiceSOM | ServiceReference
+input SupportingServiceFilter {
+  memberTypes: [SupportingServiceType!]
+  serviceSOMFilter: ServiceSOMFilter
+  serviceReferenceFilter: ServiceReferenceFilter
+}
+
+input SupportingServiceRef {
+  serviceSOMRef: ServiceSOMRef
+  serviceReferenceRef: ServiceReferenceRef
+}
+
+enum SupportingServiceType {
+  ServiceSOM
+  ServiceReference
+}
+
 enum TypePlanningSubStatus {
   PROPOSED
   FEASIBILITY_CHECKED
@@ -5893,6 +6105,7 @@ type UpdateActionExecutionItemPayload {
 type UpdateActionExecutionPayload {
   actionExecution(
     filter: ActionExecutionFilter
+    order: ActionExecutionOrder
     first: Int
     offset: Int
   ): [ActionExecution]
@@ -6138,19 +6351,19 @@ type UpdateFeaturePayload {
   numUids: Int
 }
 
-input UpdateFlowExecutionRefInput {
-  filter: FlowExecutionRefFilter!
-  set: FlowExecutionRefPatch
-  remove: FlowExecutionRefPatch
+input UpdateFlowExecutionReferenceInput {
+  filter: FlowExecutionReferenceFilter!
+  set: FlowExecutionReferencePatch
+  remove: FlowExecutionReferencePatch
 }
 
-type UpdateFlowExecutionRefPayload {
-  flowExecutionRef(
-    filter: FlowExecutionRefFilter
-    order: FlowExecutionRefOrder
+type UpdateFlowExecutionReferencePayload {
+  flowExecutionReference(
+    filter: FlowExecutionReferenceFilter
+    order: FlowExecutionReferenceOrder
     first: Int
     offset: Int
-  ): [FlowExecutionRef]
+  ): [FlowExecutionReference]
   numUids: Int
 }
 
@@ -6283,19 +6496,35 @@ input UpdateResourceInput {
   remove: ResourcePatch
 }
 
-input UpdateResourceIntInput {
-  filter: ResourceIntFilter!
-  set: ResourceIntPatch
-  remove: ResourceIntPatch
+input UpdateResourceOrderIMInput {
+  filter: ResourceOrderIMFilter!
+  set: ResourceOrderIMPatch
+  remove: ResourceOrderIMPatch
 }
 
-type UpdateResourceIntPayload {
-  resourceInt(
-    filter: ResourceIntFilter
-    order: ResourceIntOrder
+type UpdateResourceOrderIMPayload {
+  resourceOrderIM(
+    filter: ResourceOrderIMFilter
+    order: ResourceOrderIMOrder
     first: Int
     offset: Int
-  ): [ResourceInt]
+  ): [ResourceOrderIM]
+  numUids: Int
+}
+
+input UpdateResourceOrderItemInput {
+  filter: ResourceOrderItemFilter!
+  set: ResourceOrderItemPatch
+  remove: ResourceOrderItemPatch
+}
+
+type UpdateResourceOrderItemPayload {
+  resourceOrderItem(
+    filter: ResourceOrderItemFilter
+    order: ResourceOrderItemOrder
+    first: Int
+    offset: Int
+  ): [ResourceOrderItem]
   numUids: Int
 }
 
@@ -6421,22 +6650,6 @@ type UpdateServiceReferencePayload {
   numUids: Int
 }
 
-input UpdateServiceRefInput {
-  filter: ServiceRefFilter!
-  set: ServiceRefPatch
-  remove: ServiceRefPatch
-}
-
-type UpdateServiceRefPayload {
-  serviceRef(
-    filter: ServiceRefFilter
-    order: ServiceRefOrder
-    first: Int
-    offset: Int
-  ): [ServiceRef]
-  numUids: Int
-}
-
 input UpdateServiceRelationshipInput {
   filter: ServiceRelationshipFilter!
   set: ServiceRelationshipPatch
@@ -6469,19 +6682,19 @@ type UpdateServiceSOMPayload {
   numUids: Int
 }
 
-input UpdateServiceSpecificationRefInput {
-  filter: ServiceSpecificationRefFilter!
-  set: ServiceSpecificationRefPatch
-  remove: ServiceSpecificationRefPatch
+input UpdateServiceSpecificationReferenceInput {
+  filter: ServiceSpecificationReferenceFilter!
+  set: ServiceSpecificationReferencePatch
+  remove: ServiceSpecificationReferencePatch
 }
 
-type UpdateServiceSpecificationRefPayload {
-  serviceSpecificationRef(
-    filter: ServiceSpecificationRefFilter
-    order: ServiceSpecificationRefOrder
+type UpdateServiceSpecificationReferencePayload {
+  serviceSpecificationReference(
+    filter: ServiceSpecificationReferenceFilter
+    order: ServiceSpecificationReferenceOrder
     first: Int
     offset: Int
-  ): [ServiceSpecificationRef]
+  ): [ServiceSpecificationReference]
   numUids: Int
 }
 
@@ -6527,6 +6740,11 @@ enum UsageSubStatus {
 enum VersionStatus {
   CURRENT
   REPLACED
+}
+
+input VersionStatus_hash {
+  eq: VersionStatus
+  in: [VersionStatus]
 }
 
 enum WeekDay {
