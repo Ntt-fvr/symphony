@@ -130,7 +130,7 @@ function BuilderTopBar() {
           block.model.attributes.type === 'ForEachLoopBlock',
       );
       if (isCoupledBlocks) {
-        onClose();
+        toggleModal();
       } else {
         return flow.removeBlocks([...selection.selectedElements]);
       }
@@ -139,14 +139,14 @@ function BuilderTopBar() {
   useKeyboardShortcut(PREDICATES.del, deleteSelected);
 
   const deleteBlocks = useCallback(() => {
-    onClose();
+    toggleModal();
     flow.removeBlocks([...selection.selectedElements]);
     return enqueueSnackbar(`${fbt('The block has been removed!', '')}`, {
       variant: 'success',
     });
   }, [flow, selection, openModal]);
 
-  const onClose = () => {
+  const toggleModal = () => {
     setOpenModal(!openModal);
   };
 
@@ -281,8 +281,8 @@ function BuilderTopBar() {
       <DialogModal
         alertType={'info'}
         isOpen={openModal}
-        handleOpenModal={onClose}
-        handleClick={deleteBlocks}
+        handleOpenModal={toggleModal}
+        handleBtnConfirmClicked={deleteBlocks}
         btnConfirmText={fbt('Continue', '')}
         title={fbt('Delete a complex block', '')}
         description={fbt(

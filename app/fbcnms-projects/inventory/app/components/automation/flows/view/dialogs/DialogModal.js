@@ -92,7 +92,7 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   isOpen: boolean,
   handleOpenModal: () => void,
-  handleClick: () => void,
+  handleBtnConfirmClicked: () => void,
   btnConfirmText: string,
   title?: string,
   alertType?: string,
@@ -104,7 +104,7 @@ const DialogModal = ({
   alertType,
   isOpen,
   handleOpenModal,
-  handleClick,
+  handleBtnConfirmClicked,
   btnConfirmText,
   title,
   description,
@@ -153,7 +153,7 @@ const DialogModal = ({
             onClick={handleOpenModal}>
             Cancel
           </Button>
-          <Button onClick={handleClick}>{btnConfirmText}</Button>
+          <Button onClick={handleBtnConfirmClicked}>{btnConfirmText}</Button>
         </DialogActions>
       </div>
     </Dialog>
