@@ -1840,6 +1840,22 @@ func (rs *ResourceSpecification) ResourceSpecificationItems(ctx context.Context)
 	return result, err
 }
 
+func (rs *ResourceSpecification) Vendor(ctx context.Context) (*Vendor, error) {
+	result, err := rs.Edges.VendorOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryVendor().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rs *ResourceSpecification) ResourceSpecificationVendor(ctx context.Context) (*Vendor, error) {
+	result, err := rs.Edges.ResourceSpecificationVendorOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryResourceSpecificationVendor().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (rsi *ResourceSpecificationItems) Resourcespecificationrelationship(ctx context.Context) (*ResourceSpecificationRelationship, error) {
 	result, err := rsi.Edges.ResourcespecificationrelationshipOrErr()
 	if IsNotLoaded(err) {
@@ -2404,6 +2420,22 @@ func (v *Vendor) VendorsRecomendations(ctx context.Context) ([]*Recommendations,
 	result, err := v.Edges.VendorsRecomendationsOrErr()
 	if IsNotLoaded(err) {
 		result, err = v.QueryVendorsRecomendations().All(ctx)
+	}
+	return result, err
+}
+
+func (v *Vendor) ResourceSpecification(ctx context.Context) (*ResourceSpecification, error) {
+	result, err := v.Edges.ResourceSpecificationOrErr()
+	if IsNotLoaded(err) {
+		result, err = v.QueryResourceSpecification().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (v *Vendor) VendorRs(ctx context.Context) ([]*ResourceSpecification, error) {
+	result, err := v.Edges.VendorRsOrErr()
+	if IsNotLoaded(err) {
+		result, err = v.QueryVendorRs().All(ctx)
 	}
 	return result, err
 }
