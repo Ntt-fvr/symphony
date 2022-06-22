@@ -8,53 +8,77 @@
  * @format
  */
 
- import type {FilterProps} from '../comparison_view/ComparisonViewTypes';
+import type {FilterProps} from '../comparison_view/ComparisonViewTypes';
 
- import * as React from 'react';
- import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
- import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
- import {priorityValues} from '../../common/FilterTypes';
- 
- const PowerSearchChangeRequestResourceFilter = (props: FilterProps) => {
-   const {
-     value,
-     onInputBlurred,
-     onValueChanged,
-     onRemoveFilter,
-     editMode,
-   } = props;
-   return (
-     <PowerSearchFilter
-       name="Resource Type"
-       operator={value.operator}
-       editMode={editMode}
-       onRemoveFilter={onRemoveFilter}
-       value={(value.stringSet ?? [])
-         .map(
-           value =>
-             priorityValues.find(priority => priority.value === value)?.label,
-         )
-         .join(', ')}
-       input={
-         <MutipleSelectInput
-           options={priorityValues}
-           onSubmit={onInputBlurred}
-           onBlur={onInputBlurred}
-           value={value.stringSet ?? []}
-           onChange={newName =>
-             onValueChanged({
-               id: value.id,
-               key: value.key,
-               name: value.name,
-               operator: value.operator,
-               stringSet: newName,
-             })
-           }
-         />
-       }
-     />
-   );
- };
- 
- export default PowerSearchChangeRequestResourceFilter;
- 
+import * as React from 'react';
+import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
+import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
+import {priorityValues} from '../../common/FilterTypes';
+import { fetchQuery } from 'relay-runtime/lib/query/fetchQueryInternal';
+import RelayEnvironment from '../../common/RelayEnvironment';
+
+const PowerSearcChangeRequestResourceFilterQuery = graphql`
+  query PowerSearchChangeRequestResourceFilterQuery {
+    resourceTypes {
+      edges {
+        node {
+          id
+          name
+          resourceTypeBaseType
+          resourceTypeClass
+        }
+      }
+    }
+  }
+`;
+
+const PowerSearchChangeRequestResourceFilter = (props: FilterProps) => {
+  const {
+    value,
+    onInputBlurred,
+    onValueChanged,
+    onRemoveFilter,
+    editMode,
+  } = props;
+
+  // useEffect(() => {
+  //   fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {}).then(data => {
+  //     arrayoptions = []
+  //     // data.edges.
+  //   });
+  // }, []);
+
+  return (
+    <PowerSearchFilter
+      name="Resource Type"
+      operator={value.operator}
+      editMode={editMode}
+      onRemoveFilter={onRemoveFilter}
+      value={(value.stringSet ?? [])
+        .map(
+          value =>
+            priorityValues.find(priority => priority.value === value)?.label,
+        )
+        .join(', ')}
+      input={
+        <MutipleSelectInput
+          options={priorityValues}
+          onSubmit={onInputBlurred}
+          onBlur={onInputBlurred}
+          value={value.stringSet ?? []}
+          onChange={newName =>
+            onValueChanged({
+              id: value.id,
+              key: value.key,
+              name: value.name,
+              operator: value.operator,
+              stringSet: newName,
+            })
+          }
+        />
+      }
+    />
+  );
+};
+
+export default PowerSearchChangeRequestResourceFilter;

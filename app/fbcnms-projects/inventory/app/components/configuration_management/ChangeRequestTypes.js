@@ -33,7 +33,7 @@ import {
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {ConstructionOutlined} from '@material-ui/icons';
 
-export const PROJECTS_PAGE_SIZE = 15;
+export const PROJECTS_PAGE_SIZE = 10;
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
@@ -55,23 +55,28 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ChangeRequestTypesQuery = graphql`
-  query ChangeRequestTypesQuery {
-    queryChangeRequest {
-      activities {
-        author
+  const ChangeRequestTypesQuery = graphql`
+    query ChangeRequestTypesQuery {
+      queryChangeRequest {
+        activities {
+          author
+          id
+        }
+        items {
+          resource {
+            id
+          }
+        }
+        description
+        aprobator
         id
+        requester
+        source
+        status
+        type
       }
-      description
-      aprobator
-      id
-      requester
-      source
-      status
-      type
     }
-  }
-`;
+  `;
 
 const dataMock = [
   {
@@ -98,9 +103,14 @@ const dataMock = [
 
 const stringCapitalizeFisrt = string => {
   let convertString = string.toLowerCase();
-
   return convertString.charAt(0).toUpperCase() + convertString.slice(1);
 };
+
+const countResources = (items) => {
+  console.log(items)
+
+
+}
 
 const tableColumns = [
   {
@@ -130,8 +140,8 @@ const tableColumns = [
   {
     key: 'affected resources',
     title: `${fbt('Affected resources', '')}`,
-    render: row => <CircleIndicator>{row.affectedResources}</CircleIndicator>,
-    tooltip: row => row.affectedResources ?? '',
+    render: row => <CircleIndicator>{countResources(row.items)}</CircleIndicator>,
+    tooltip: row => countResources(row.items) ?? '',
   },
   {
     key: 'status',
@@ -152,7 +162,7 @@ const ChangeRequestTypes = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const [dataRow, setDataRow] = useState({});
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
-  const [changeRequest, setChangeRequest] = useState(dataMock);
+  const [changeRequest, setChangeRequest] = useState([]);
   const classes = useStyles();
 
   const locationTypesFilterConfigs = useLocationTypes();
@@ -173,11 +183,11 @@ const ChangeRequestTypes = () => {
     [locationTypesFilterConfigs, projectPropertiesFilterConfigs],
   );
 
-  // useEffect(() => {
-  //   fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {}).then(data => {
-  //     setChangeRequest(data.queryChangeRequest);
-  //   });
-  // }, []);
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {}).then(data => {
+      setChangeRequest(data.queryChangeRequest);
+    });
+  }, []);
 
   const showInfo = data => {
     setDataRow(data);
@@ -237,7 +247,7 @@ const ChangeRequestTypes = () => {
               filterConfigs={filterConfigs}
               filterValues={filters}
               searchConfig={ChangeRequestSearchConfig}
-              exportPath={'/configurations_types'}
+              exportPath={'/change_request_types'}
               entity={'CHANGE_REQUEST'}
               onFiltersChanged={filters => {
                 filterData(filters);
