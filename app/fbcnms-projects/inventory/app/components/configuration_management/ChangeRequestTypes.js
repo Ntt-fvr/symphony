@@ -7,31 +7,31 @@
  * @flow
  * @format
  */
-import {useMemo} from 'react';
 import Button from '@symphony/design-system/components/Button';
 import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonsChangeRequest from './common/ButtonsChangeRequest';
 import ConfigureTitle from './common/ConfigureTitle';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
-import {ChangeRequestByBulk} from './ChangeRequestByBulk';
-import {ChangeRequestDetails} from './ChangeRequestDetails';
-import {CircleIndicator} from '../resource_instance/CircleIndicator';
-import {Grid} from '@material-ui/core';
-import {makeStyles} from '@material-ui/styles';
-import {fetchQuery, graphql} from 'relay-runtime';
-import RelayEnvironment from '../../common/RelayEnvironment';
-import {ChangeRequestSearchConfig} from './ChangeRequestSearchConfig';
 import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
 import usePropertyFilters from '../comparison_view/hooks/propertiesHook';
+import {ChangeRequestByBulk} from './ChangeRequestByBulk';
+import {ChangeRequestDetails} from './ChangeRequestDetails';
+import {ChangeRequestSearchConfig} from './ChangeRequestSearchConfig';
+import {CircleIndicator} from '../resource_instance/CircleIndicator';
+import {ConstructionOutlined} from '@material-ui/icons';
+import {Grid} from '@material-ui/core';
 import {
   buildPropertyFilterConfigs,
   getSelectedFilter,
 } from '../comparison_view/FilterUtils';
+import {fetchQuery, graphql} from 'relay-runtime';
+import {makeStyles} from '@material-ui/styles';
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
-import {ConstructionOutlined} from '@material-ui/icons';
+import {useMemo} from 'react';
 
 export const PROJECTS_PAGE_SIZE = 10;
 const useStyles = makeStyles(() => ({
@@ -87,7 +87,7 @@ const dataMock = [
     resourceType: 'RNCellDU01',
     source: 'WORKFLOW',
     affectedResources: '1',
-    status: 'SUCCESFUL',
+    status: 'SUCCESSFUL',
   },
   {
     id: '686876768',
@@ -102,7 +102,12 @@ const dataMock = [
 ];
 
 const stringCapitalizeFisrt = string => {
+<<<<<<< HEAD
   let convertString = string.toLowerCase();
+=======
+  const convertString = string.toLowerCase();
+
+>>>>>>> feat/CM
   return convertString.charAt(0).toUpperCase() + convertString.slice(1);
 };
 
@@ -147,7 +152,7 @@ const tableColumns = [
     key: 'status',
     title: `${fbt('Status', '')}`,
     render: row => (
-      <ButtonAlarmStatus skin={stringCapitalizeFisrt(row.status)}>
+      <ButtonAlarmStatus skin={row.status}>
         {stringCapitalizeFisrt(row.status)}
       </ButtonAlarmStatus>
     ),
@@ -212,15 +217,15 @@ const ChangeRequestTypes = () => {
   }
 
   const filterData = filters => {
-    let arrayFilters = [];
-    let data = {};
+    const arrayFilters = [];
+    const data = {};
 
     filters.map(function (filter) {
       data[filter.name] = item => filter.stringSet.includes(item[filter.name]);
       arrayFilters.push(data[filter.name]);
     });
 
-    let result = dataMock.filter(item => arrayFilters.every(f => f(item)));
+    const result = dataMock.filter(item => arrayFilters.every(f => f(item)));
 
     setChangeRequest(result);
     setFilters(filters);

@@ -16,9 +16,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
-import React, {useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
 import {makeStyles} from '@material-ui/styles';
@@ -59,15 +58,15 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  deleteItem?: () => void,
   title?: string,
   open?: boolean,
   parameter: any,
   onClose: () => void,
+  parameterTypes?: any,
 |}>;
 
 const DialogConfirmDelete = (props: Props) => {
-  const {onClose, deleteItem, title, parameter} = props;
+  const {onClose, title, parameter} = props;
   const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
   const classes = useStyles();
@@ -206,10 +205,7 @@ const DialogConfirmDelete = (props: Props) => {
           Cancel
         </Button>
         <Button
-          onClick={() => {
-            onClose();
-            deleteItem();
-          }}
+          onClick={onClose}
           className={classes.option}
           variant="contained"
           color="primary">
