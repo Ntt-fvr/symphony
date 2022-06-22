@@ -26,10 +26,12 @@ import {
   RedoIcon,
   UndoIcon,
 } from '@symphony/design-system/icons';
+import {TYPE as ForEachLoopType} from '../canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
 import {
   PREDICATES,
   useKeyboardShortcut,
 } from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
+import {TYPE as ParallelType} from '../canvas/graph/facades/shapes/vertexes/logic/Parallel';
 import {makeStyles} from '@material-ui/styles';
 import {useCopyPaste} from '../widgets/copyPaste/CopyPasteContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
@@ -126,8 +128,8 @@ function BuilderTopBar() {
     } else {
       const isCoupledBlocks = [...selection.selectedElements].find(
         block =>
-          block.model.attributes.type === 'ParallelBlock' ||
-          block.model.attributes.type === 'ForEachLoopBlock',
+          block.model.attributes.type === ParallelType ||
+          block.model.attributes.type === ForEachLoopType,
       );
       if (isCoupledBlocks) {
         toggleModal();
@@ -139,8 +141,27 @@ function BuilderTopBar() {
   useKeyboardShortcut(PREDICATES.del, deleteSelected);
 
   const deleteBlocks = useCallback(() => {
+    const blockList = flow.getBlocks();
+    const coupleBlockList = [...selection.selectedElements].filter(
+      block =>
+        block.model.attributes.type === ParallelType ||
+        block.model.attributes.type === ForEachLoopType,
+    );
+
+    const isChildrenBlockList = blockList.filter(block =>
+      coupleBlockList.find(
+        coupleBlock => coupleBlock.id === block.model.attributes.parent,
+      ),
+    );
+
+    const selectedElementList = [
+      ...selection.selectedElements,
+      ...isChildrenBlockList,
+    ];
+
     toggleModal();
-    flow.removeBlocks([...selection.selectedElements]);
+    flow.removeBlocks([...selectedElementList]);
+
     return enqueueSnackbar(`${fbt('The block has been removed!', '')}`, {
       variant: 'success',
     });
