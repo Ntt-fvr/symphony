@@ -437,6 +437,62 @@ func HasVendorsRecomendationsWith(preds ...predicate.Recommendations) predicate.
 	})
 }
 
+// HasResourceSpecification applies the HasEdge predicate on the "resource_specification" edge.
+func HasResourceSpecification() predicate.Vendor {
+	return predicate.Vendor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourceSpecificationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, ResourceSpecificationTable, ResourceSpecificationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasResourceSpecificationWith applies the HasEdge predicate on the "resource_specification" edge with a given conditions (other predicates).
+func HasResourceSpecificationWith(preds ...predicate.ResourceSpecification) predicate.Vendor {
+	return predicate.Vendor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourceSpecificationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, ResourceSpecificationTable, ResourceSpecificationColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasVendorRs applies the HasEdge predicate on the "vendor_rs" edge.
+func HasVendorRs() predicate.Vendor {
+	return predicate.Vendor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VendorRsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VendorRsTable, VendorRsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVendorRsWith applies the HasEdge predicate on the "vendor_rs" edge with a given conditions (other predicates).
+func HasVendorRsWith(preds ...predicate.ResourceSpecification) predicate.Vendor {
+	return predicate.Vendor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VendorRsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VendorRsTable, VendorRsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Vendor) predicate.Vendor {
 	return predicate.Vendor(func(s *sql.Selector) {
