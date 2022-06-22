@@ -16,27 +16,44 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ChangeRequestSource = "GUI" | "NON_RT_RIC" | "NSSMF" | "WORKFLOW" | "%future added value";
 export type ChangeRequestStatus = "APPROVAL" | "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "REJECTED" | "SCHEDULED" | "SUBMITTED" | "SUCCESSFUL" | "SUCCESSFUL_WITH_WARNINGS" | "%future added value";
-export type ChangeRequestType = "AUTOMATIC" | "MANUAL" | "%future added value";
-export type ChangeRequestTypesQueryVariables = {||};
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type ResourceSpecificationFilterType = "NAME" | "RESOURCE_TYPE" | "%future added value";
+export type ResourceSpecificationFilterInput = {|
+  filterType: ResourceSpecificationFilterType,
+  idSet?: ?$ReadOnlyArray<string>,
+  maxDepth?: ?number,
+  operator: FilterOperator,
+  stringSet?: ?$ReadOnlyArray<string>,
+  stringValue?: ?string,
+|};
+export type ChangeRequestTypesQueryVariables = {|
+  filterBy?: ?$ReadOnlyArray<ResourceSpecificationFilterInput>
+|};
 export type ChangeRequestTypesQueryResponse = {|
   +queryChangeRequest: ?$ReadOnlyArray<?{|
-    +activities: ?$ReadOnlyArray<?{|
-      +author: string,
-      +id: string,
-    |}>,
-    +items: $ReadOnlyArray<{|
-      +resource: ?{|
-        +id: string
-      |}
-    |}>,
-    +description: string,
-    +aprobator: ?string,
     +id: string,
-    +requester: string,
+    +items: $ReadOnlyArray<{|
+      +id: string,
+      +resource: ?{|
+        +id: string,
+        +resourceSpecification: string,
+      |},
+    |}>,
     +source: ?ChangeRequestSource,
     +status: ChangeRequestStatus,
-    +type: ?ChangeRequestType,
-  |}>
+  |}>,
+  +resourceSpecifications: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+        +resourceType: ?{|
+          +id: string,
+          +name: string,
+        |},
+      |}
+    |}>
+  |},
 |};
 export type ChangeRequestTypesQuery = {|
   variables: ChangeRequestTypesQueryVariables,
@@ -46,203 +63,199 @@ export type ChangeRequestTypesQuery = {|
 
 
 /*
-query ChangeRequestTypesQuery {
+query ChangeRequestTypesQuery(
+  $filterBy: [ResourceSpecificationFilterInput!]
+) {
   queryChangeRequest {
-    activities {
-      author
-      id
-    }
+    id
     items {
+      id
       resource {
         id
+        resourceSpecification
       }
-      id
     }
-    description
-    aprobator
-    id
-    requester
     source
     status
-    type
+  }
+  resourceSpecifications(filterBy: $filterBy) {
+    edges {
+      node {
+        id
+        name
+        resourceType {
+          id
+          name
+        }
+      }
+    }
   }
 }
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "filterBy"
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "ChangeRequestActivity",
-  "kind": "LinkedField",
-  "name": "activities",
-  "plural": true,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "author",
-      "storageKey": null
-    },
-    (v0/*: any*/)
-  ],
-  "storageKey": null
-},
 v2 = {
   "alias": null,
   "args": null,
-  "concreteType": "Resource",
-  "kind": "LinkedField",
-  "name": "resource",
-  "plural": false,
-  "selections": [
-    (v0/*: any*/)
-  ],
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "description",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "aprobator",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "requester",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "source",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "type",
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "ChangeRequestTypesQuery",
+v3 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ChangeRequest",
+    "kind": "LinkedField",
+    "name": "queryChangeRequest",
+    "plural": true,
     "selections": [
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "ChangeRequest",
+        "concreteType": "ChangeItem",
         "kind": "LinkedField",
-        "name": "queryChangeRequest",
+        "name": "items",
         "plural": true,
         "selections": [
           (v1/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "ChangeItem",
+            "concreteType": "Resource",
             "kind": "LinkedField",
-            "name": "items",
-            "plural": true,
+            "name": "resource",
+            "plural": false,
             "selections": [
-              (v2/*: any*/)
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourceSpecification",
+                "storageKey": null
+              }
             ],
             "storageKey": null
-          },
-          (v3/*: any*/),
-          (v4/*: any*/),
-          (v0/*: any*/),
-          (v5/*: any*/),
-          (v6/*: any*/),
-          (v7/*: any*/),
-          (v8/*: any*/)
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "source",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "status",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filterBy",
+        "variableName": "filterBy"
+      }
+    ],
+    "concreteType": "ResourceSpecificationConnection",
+    "kind": "LinkedField",
+    "name": "resourceSpecifications",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ResourceSpecificationEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceSpecification",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceType",
+                "kind": "LinkedField",
+                "name": "resourceType",
+                "plural": false,
+                "selections": [
+                  (v1/*: any*/),
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "ChangeRequestTypesQuery",
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ChangeRequestTypesQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ChangeRequest",
-        "kind": "LinkedField",
-        "name": "queryChangeRequest",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ChangeItem",
-            "kind": "LinkedField",
-            "name": "items",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              (v0/*: any*/)
-            ],
-            "storageKey": null
-          },
-          (v3/*: any*/),
-          (v4/*: any*/),
-          (v0/*: any*/),
-          (v5/*: any*/),
-          (v6/*: any*/),
-          (v7/*: any*/),
-          (v8/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "5102c4e89ee2dcfd518539635b47165c",
+    "cacheID": "b292a64e9ff521cac151693f9ca686ff",
     "id": null,
     "metadata": {},
     "name": "ChangeRequestTypesQuery",
     "operationKind": "query",
-    "text": "query ChangeRequestTypesQuery {\n  queryChangeRequest {\n    activities {\n      author\n      id\n    }\n    items {\n      resource {\n        id\n      }\n      id\n    }\n    description\n    aprobator\n    id\n    requester\n    source\n    status\n    type\n  }\n}\n"
+    "text": "query ChangeRequestTypesQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n) {\n  queryChangeRequest {\n    id\n    items {\n      id\n      resource {\n        id\n        resourceSpecification\n      }\n    }\n    source\n    status\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b93dd371880d926f55a059d25b625f5c';
+(node/*: any*/).hash = '125a9b03f38125855858f28ae9657b95';
 
 module.exports = node;

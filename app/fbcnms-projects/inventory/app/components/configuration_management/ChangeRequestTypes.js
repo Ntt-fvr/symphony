@@ -55,67 +55,50 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-  const ChangeRequestTypesQuery = graphql`
-    query ChangeRequestTypesQuery {
-      queryChangeRequest {
-        activities {
-          author
+const ChangeRequestTypesQuery = graphql`
+  query ChangeRequestTypesQuery(
+    $filterBy: [ResourceSpecificationFilterInput!]
+  ) {
+    queryChangeRequest {
+      id
+      items {
+        id
+        resource {
           id
+          resourceSpecification
         }
-        items {
-          resource {
+      }
+      source
+      status
+    }
+    resourceSpecifications(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          resourceType {
             id
+            name
           }
         }
-        description
-        aprobator
-        id
-        requester
-        source
-        status
-        type
       }
     }
-  `;
-
-const dataMock = [
-  {
-    id: '686876767',
-    key: '01',
-    creationDate: '01/03/22',
-    lastModificationDate: '01/03/22',
-    resourceType: 'RNCellDU01',
-    source: 'WORKFLOW',
-    affectedResources: '1',
-    status: 'SUCCESSFUL',
-  },
-  {
-    id: '686876768',
-    key: '02',
-    creationDate: '01/04/22',
-    lastModificationDate: '01/05/22',
-    resourceType: 'RNCellDU02',
-    source: 'MANUAL',
-    affectedResources: '6',
-    status: 'SCHEDULED',
-  },
-];
+  }
+`;
 
 const stringCapitalizeFisrt = string => {
-<<<<<<< HEAD
-  let convertString = string.toLowerCase();
-=======
   const convertString = string.toLowerCase();
-
->>>>>>> feat/CM
   return convertString.charAt(0).toUpperCase() + convertString.slice(1);
 };
 
-const countResources = (items) => {
-  console.log(items)
+const countResources = items => {
+  const hash = {};
+  const itemsNotRepeated = items.filter(item =>
+    hash[item.resource.id] ? false : (hash[item.resource.id] = true),
+  );
 
-
-}
+  return itemsNotRepeated.length;
+};
 
 const tableColumns = [
   {
@@ -145,7 +128,9 @@ const tableColumns = [
   {
     key: 'affected resources',
     title: `${fbt('Affected resources', '')}`,
-    render: row => <CircleIndicator>{countResources(row.items)}</CircleIndicator>,
+    render: row => (
+      <CircleIndicator>{countResources(row.items)}</CircleIndicator>
+    ),
     tooltip: row => countResources(row.items) ?? '',
   },
   {
@@ -189,7 +174,16 @@ const ChangeRequestTypes = () => {
   );
 
   useEffect(() => {
-    fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {}).then(data => {
+    fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {
+      filterBy: [
+        {
+          filterType: 'ID',
+          operator: 'IS_ONE_OF',
+          idSet: [317827579904],
+        },
+      ],
+    }).then(data => {
+      console.log(data)
       setChangeRequest(data.queryChangeRequest);
     });
   }, []);
