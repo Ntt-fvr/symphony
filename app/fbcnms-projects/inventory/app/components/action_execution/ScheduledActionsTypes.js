@@ -242,7 +242,7 @@ const ScheduledActionsTypes = () => {
     setOpenCreateAction(setStateCreateAction => !setStateCreateAction);
   };
   if (openCreateAction) {
-    return <CreateAction />;
+    return <CreateAction closeForm={() => setOpenCreateAction(false)} />;
   }
 
   const onFiltersChanged = data => {
@@ -272,7 +272,9 @@ const ScheduledActionsTypes = () => {
           <div className={classes.searchBar}>
             <Grid div className={classes.backgroundWhite}>
               <ResourceFilterDropDown
-                onEntitySelected={spec => setSelectedSpecification(spec)}
+                onEntitySelected={(type, spec) =>
+                  setSelectedSpecification(spec)
+                }
               />
             </Grid>
             <Divider orientation="vertical" />

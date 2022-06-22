@@ -135,6 +135,7 @@ export default function ResourceFilterDropDown(props: Props) {
   const classes = useStyles();
   const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
+  const [resourceTypeSelected, setResourceTypeSelected] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [resourceSpecs, setResourceSpecs] = useState([]);
   const SEARCH_DEBOUNCE_TIMEOUT_MS = 200;
@@ -182,10 +183,11 @@ export default function ResourceFilterDropDown(props: Props) {
   const onSuggestionsFetchRequested = searchTerm => {
     _debounceFetchSuggestions(searchTerm);
   };
+
   return (
     <div className={classes.container}>
       <Grid className={classes.root} container direction="row" spacing={1}>
-        <Grid item xs={resourceSpecs?.length > 0 ? 6 : null}>
+        <Grid item xs={resourceTypeSelected ? 6 : null}>
           <Autosuggest
             suggestions={suggestions}
             onSuggestionsFetchRequested={searchTerm =>
@@ -203,6 +205,7 @@ export default function ResourceFilterDropDown(props: Props) {
               e.preventDefault();
               const suggestion: DashboardSuggestion = data.suggestion;
               setSearchValue(suggestion.name);
+              setResourceTypeSelected(true);
               setResourceSpecs(suggestion.resourceSpecification);
             }}
             renderInputComponent={inputProps => (
@@ -223,7 +226,7 @@ export default function ResourceFilterDropDown(props: Props) {
             }}
           />
         </Grid>
-        {resourceSpecs?.length > 0 ? (
+        {resourceTypeSelected ? (
           <Grid item xs={6}>
             <TextField
               required
@@ -235,7 +238,7 @@ export default function ResourceFilterDropDown(props: Props) {
               variant="outlined"
               onChange={e => {
                 e.preventDefault();
-                onEntitySelected(e.target.value);
+                onEntitySelected(searchValue, e.target.value);
               }}>
               {resourceSpecs?.map(spec => (
                 <MenuItem key={spec.id} value={spec.id}>

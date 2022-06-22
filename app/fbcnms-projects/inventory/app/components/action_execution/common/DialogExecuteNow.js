@@ -54,7 +54,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  onClick?: () => void,
+  onSave?: () => void,
   name?: string,
   open?: boolean,
   execDetails: {},
@@ -64,7 +64,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogExecuteNow = (props: Props) => {
-  const {onClose, dataRow} = props;
+  const {onSave, onClose, dataRow} = props;
 
   const classes = useStyles();
   return (
@@ -113,14 +113,14 @@ const DialogExecuteNow = (props: Props) => {
                   <Text useEllipsis={true} weight="bold">
                     Action:
                   </Text>
-                  {props.execType == 'start' ? (
+                  {props.execType == 'ONE_TIME_EXECUTION' ? (
                     <Text useEllipsis={true} weight="bold">
                       Date:
                     </Text>
                   ) : (
                     ''
                   )}
-                  {props.execType == 'start' ? (
+                  {props.execType == 'ONE_TIME_EXECUTION' ? (
                     <Text useEllipsis={true} weight="bold">
                       Hour:
                     </Text>
@@ -138,14 +138,14 @@ const DialogExecuteNow = (props: Props) => {
                   item
                   xs={2}>
                   <Text>{dataRow.actionTempleate}</Text>
-                  {props.execType == 'start' ? (
+                  {props.execType == 'ONE_TIME_EXECUTION' ? (
                     <Text>
                       {moment(props.execDetails.date).format('MM/DD/YYYY')}
                     </Text>
                   ) : (
                     ''
                   )}
-                  {props.execType == 'start' ? (
+                  {props.execType == 'ONE_TIME_EXECUTION' ? (
                     <Text>{moment(props.execDetails.hour).format('LT')}</Text>
                   ) : (
                     ''
@@ -166,7 +166,10 @@ const DialogExecuteNow = (props: Props) => {
           Cancel
         </Button>
         <Button
-          onClick={onClose}
+          onClick={() => {
+            onSave();
+            onClose();
+          }}
           className={classes.option}
           variant="contained"
           color="primary">

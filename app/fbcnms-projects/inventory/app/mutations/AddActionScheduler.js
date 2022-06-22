@@ -8,10 +8,11 @@
  * @format
  */
 import type {
-  AddActionTemplateMutation,
-  AddActionTemplateMutationResponse,
-  AddActionTemplateMutationVariables,
-} from './__generated__/AddActionTemplateMutation.graphql';
+  AddActionSchedulerMutation,
+  AddActionSchedulerMutationResponse,
+  AddActionSchedulerMutationVariables,
+} from './__generated__/AddActionSchedulerMutation.graphql';
+
 import type {MutationCallbacks} from './MutationCallbacks.js';
 
 import type {SelectorStoreUpdater} from 'relay-runtime';
@@ -20,22 +21,15 @@ import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddActionTemplateMutation($input: [AddActionTemplateInput!]!) {
-    addActionTemplate(input: $input) {
-      actionTemplate {
-        actionTemplateItem {
-          id
-          parameters {
-            id
-            name
-          }
-          value {
-            stringValue
-          }
-        }
-        id
+  mutation AddActionSchedulerMutation($input: [AddActionSchedulerInput!]!) {
+    addActionScheduler(input: $input) {
+      actionScheduler {
         name
-        resourceSpecifications
+        id
+        resources {
+          id
+        }
+        date
         type
       }
     }
@@ -43,12 +37,12 @@ const mutation = graphql`
 `;
 
 export default (
-  variables: AddActionTemplateMutationVariables,
-  callbacks?: MutationCallbacks<AddActionTemplateMutationResponse>,
+  variables: AddActionSchedulerMutationVariables,
+  callbacks?: MutationCallbacks<AddActionSchedulerMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddActionTemplateMutation>(RelayEnvironment, {
+  commitMutation<AddActionSchedulerMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

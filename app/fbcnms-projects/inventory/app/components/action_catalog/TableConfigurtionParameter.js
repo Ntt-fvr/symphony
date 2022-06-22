@@ -64,6 +64,7 @@ type Props = $ReadOnly<{|resourceSpecification: string|}>;
 const TableConfigurtionParameter = (props: Props) => {
   const {resourceSpecification, actionItems, setActionItems} = props;
   const classes = useStyles();
+
   const [configParams, setConfigParams] = useState([]);
 
   useEffect(() => {
@@ -80,11 +81,19 @@ const TableConfigurtionParameter = (props: Props) => {
     }).then(data => {
       setConfigParams(data?.queryConfigurationParameterType);
     });
-    setActionItems([{id: 0}]);
-  }, [setActionItems, resourceSpecification]);
+  }, [resourceSpecification]);
 
   const addParam = id => {
-    setActionItems([...actionItems, {id: id}]);
+    setActionItems([
+      ...actionItems,
+      {
+        id: id,
+        parameters: {
+          id: '',
+        },
+        value: {stringValue: ''},
+      },
+    ]);
   };
 
   const updateParam = (id, editParam) => {
@@ -131,6 +140,7 @@ const TableConfigurtionParameter = (props: Props) => {
                   placeholder="Select Parameter"
                   name="family"
                   variant="outlined"
+                  value={item.parameters?.id}
                   onChange={e => {
                     e.preventDefault();
                     updateParam(item?.id, pt => ({
@@ -156,6 +166,7 @@ const TableConfigurtionParameter = (props: Props) => {
                   placeholder="Value"
                   autoComplete="off"
                   className={classes.input}
+                  value={item?.value?.stringValue}
                   onChange={e => {
                     e.preventDefault();
                     updateParam(item?.id, pt => ({

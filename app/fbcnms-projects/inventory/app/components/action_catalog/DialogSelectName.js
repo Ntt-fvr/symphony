@@ -9,7 +9,6 @@
  */
 
 import ActionTypesTableDispactcher from './context/ActionTypesTableDispactcher';
-import AddActionTemplateItemMutation from '../../mutations/AddActionTemplateItem';
 import AddActionTemplateMutation from '../../mutations/AddActionTemplate';
 import Button from '@material-ui/core/Button';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -65,22 +64,32 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   open?: boolean,
+  isEdit?: boolean,
+  actionDetails?: {},
   onClose: () => void,
   isDialogSelectDate: boolean,
   resourceSpecification: string,
 |}>;
 
 const DialogSelectName = (props: Props) => {
-  const {onClose, isDialogSelectDate, resourceSpecification} = props;
+  const {
+    onClose,
+    isEdit,
+    actionDetails,
+    isDialogSelectDate,
+    resourceSpecification,
+  } = props;
   const [isDialogConfirmChange, setIsDialogConfirmChange] = useState(
     isDialogSelectDate,
   );
-  const [name, setName] = useState('');
-  const [type, setType] = useState('');
+  const [name, setName] = useState(isEdit ? actionDetails?.name : '');
+  const [type, setType] = useState(isEdit ? actionDetails?.type : '');
   const {dispatch} = useContext(ActionTypesTableDispactcher);
 
   const [activeStep, setActiveStep] = useState(0);
-  const [checkedHidden, setCheckedHidden] = useState(false);
+  const [checkedHidden, setCheckedHidden] = useState(
+    isEdit ? actionDetails?.type == 'CONFIGURATION_PARAMETER' : false,
+  );
   const handleConfirmDate = () => {
     setActiveStep(2);
   };
@@ -100,33 +109,24 @@ const DialogSelectName = (props: Props) => {
   };
 
   const saveAction = items => {
-    const itemVariables = {
-      input: items.map(i => {
-        return {parameters: i.parameters, value: i.value};
-      }),
-    };
-    const response = {
-      onCompleted: responsedata => {
-        const templateVariables = {
-          input: {
-            name: name,
-            type: type,
-            resourceSpecifications: resourceSpecification,
-            actionTemplateItem:
-              responsedata.addActionTemplateItem.actionTemplateItem,
-          },
-        };
-        AddActionTemplateMutation(templateVariables, {
-          onCompleted: templateResponse => {
-            dispatch({
-              type: 'ADD_ACTION_TYPE',
-              value: templateResponse.addActionTemplate.actionTemplate,
-            });
-          },
-        });
+    const templateVariables = {
+      input: {
+        name: name,
+        type: type,
+        resourceSpecifications: resourceSpecification,
+        actionTemplateItem: items.map(i => {
+          return {parameters: i.parameters, value: i.value};
+        }),
       },
     };
-    AddActionTemplateItemMutation(itemVariables, response);
+    AddActionTemplateMutation(templateVariables, {
+      onCompleted: templateResponse => {
+        dispatch({
+          type: 'ADD_ACTION_TYPE',
+          value: templateResponse.addActionTemplate.actionTemplate,
+        });
+      },
+    });
   };
 
   const classes = useStyles();
@@ -202,6 +202,8 @@ const DialogSelectName = (props: Props) => {
             handleBackStep={handleBack}
             activeStep={activeStep}
             onClose={onClose}
+            isEdit={isEdit}
+            actionDetails={actionDetails}
             resourceSpecification={resourceSpecification}
             handleSave={items => {
               saveAction(items);

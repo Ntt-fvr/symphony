@@ -43,9 +43,9 @@ const ResourcePowerSearchFilter = props => {
         resourceSpecification: {
           eq: resourceSpecification,
         },
-        id: config.label.toLocaleLowerCase() == 'id' ? searchTerm : null,
+        id: config.key.toLocaleLowerCase() == 'id' ? searchTerm : null,
         name:
-          config.label.toLocaleLowerCase() == 'name'
+          config.key.toLocaleLowerCase() == 'name'
             ? {
                 in: [...selectedResource.map(res => res.label), searchTerm],
               }
@@ -92,7 +92,10 @@ const ResourcePowerSearchFilter = props => {
             )
             .map(resource => ({
               id: resource.id,
-              label: resource.name,
+              label:
+                config.key.toLocaleLowerCase() == 'name'
+                  ? resource.name
+                  : resource.id,
             }))}
           onBlur={onInputBlurred}
           onChange={newEntries => {
@@ -100,7 +103,7 @@ const ResourcePowerSearchFilter = props => {
             onValueChanged({
               id: value.id,
               key: value.key,
-              name: value.name,
+              name: newEntries.map(entry => entry.label),
               operator: value.operator,
               idSet: newEntries.map(entry => entry.id),
               searchResult: searchEntries,

@@ -9,6 +9,7 @@
  */
 
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import AddActionSchedulerMutation from '../../mutations/AddActionScheduler';
 import Button from '@material-ui/core/Button';
 import DialogExecuteNow from './common/DialogExecuteNow';
 import Event from '@material-ui/icons/Event';
@@ -21,6 +22,8 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
+import UpdateResourceMutation from '../../mutations/UpdateResource';
+import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {
   DatePicker,
@@ -54,6 +57,7 @@ type Props = $ReadOnly<{|
   open?: boolean,
   onClose?: () => void,
   goBack?: () => void,
+  formData: {},
 |}>;
 
 const data = {
@@ -61,7 +65,7 @@ const data = {
   resourceSpecification: 'RNCellDU_Nokia_MLN1_3132331',
 };
 const ActionPickerScheduled = (props: Props) => {
-  const {goBack} = props;
+  const {goBack, formData, closeForm} = props;
   const [execType, setExecType] = useState(false);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date('2022-03-02T24:00:00'));
@@ -71,6 +75,46 @@ const ActionPickerScheduled = (props: Props) => {
     setOpenDialogExecuteNow(
       prevStateDialogExecuteNow => !prevStateDialogExecuteNow,
     );
+  };
+
+  const handleSave = () => {
+    const selectedDate = moment(date).format('MM/DD/YYYY');
+    const selectedTime = moment(time).format('LT');
+    const dateTime =
+      execType == 'ONE_TIME_EXECUTION'
+        ? moment(selectedDate + selectedTime, 'MM/DD/YYYYLT')
+        : null;
+    const variables = {
+      input: [
+        {
+          ...formData,
+          type: execType,
+          date: dateTime?.toISOString(),
+        },
+      ],
+    };
+    const response = {
+      onCompleted: response => {
+        const resourceVariables = {
+          input: {
+            filter: {
+              id: response.addActionScheduler.actionScheduler[0].resources?.map(
+                item => item.id,
+              ),
+            },
+            set: {
+              actionScheduler: {
+                id: response.addActionScheduler.actionScheduler[0].id,
+              },
+            },
+          },
+        };
+        UpdateResourceMutation(resourceVariables, {
+          onCompleted: () => closeForm(),
+        });
+      },
+    };
+    AddActionSchedulerMutation(variables, response);
   };
 
   const classes = useStyles();
@@ -98,26 +142,26 @@ const ActionPickerScheduled = (props: Props) => {
             <RadioGroup row onChange={({target}) => setExecType(target.value)}>
               <FormControlLabel
                 className={classes.radioButton}
-                value="End"
+                value="MANUAL_EXECUTION"
                 control={<Radio color="primary" />}
                 label="Manual Execution"
                 labelPlacement="end"
               />
               <FormControlLabel
                 className={classes.radioButton}
-                value="start"
+                value="ONE_TIME_EXECUTION"
                 control={<Radio color="primary" />}
                 label="One time execution"
               />
               <FormControlLabel
                 className={classes.radioButton}
-                value="bottom"
+                value="PERIODICAL_EXECUTION"
                 control={<Radio color="primary" />}
                 label="Períodical Execution"
               />
             </RadioGroup>
           </Grid>
-          {execType == 'start' && (
+          {execType == 'ONE_TIME_EXECUTION' && (
             <Grid item xs={12}>
               <MuiPickersUtilsProvider utils={MomentUtils}>
                 <Grid container spacing={3}>
@@ -198,6 +242,7 @@ const ActionPickerScheduled = (props: Props) => {
           execType={execType ?? ''}
           execDetails={{date: date ?? '', hour: time ?? ''}}
           onClose={handleOpenModal}
+          onSave={handleSave}
         />
       )}
     </div>

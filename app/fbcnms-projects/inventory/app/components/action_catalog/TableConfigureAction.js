@@ -48,6 +48,8 @@ type Props = $ReadOnly<{|actionTypes: [{}], resourceSpecification: string|}>;
 const TableConfigureAction = (props: Props) => {
   const {actionTypes, resourceSpecification} = props;
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedActionTemplate, setSelectedActionTemplate] = useState({});
   const classes = useStyles();
 
   const handleModalAddAction = () => {
@@ -103,7 +105,14 @@ const TableConfigureAction = (props: Props) => {
             </TableCell>
             <TableCell component="div">
               <FormAction>
-                <IconButton aria-label="Edit">
+                <IconButton
+                  aria-label="Edit"
+                  onClick={e => {
+                    e.preventDefault();
+                    setSelectedActionTemplate(item);
+                    setIsEditMode(true);
+                    handleModalAddAction();
+                  }}>
                   <EditIcon color="primary" />
                 </IconButton>
               </FormAction>
@@ -124,7 +133,10 @@ const TableConfigureAction = (props: Props) => {
       <FormAction>
         <Button
           variant="text"
-          onClick={handleModalAddAction}
+          onClick={() => {
+            setIsEditMode(false);
+            handleModalAddAction();
+          }}
           leftIcon={PlusIcon}>
           <fbt desc="">Add Action</fbt>
         </Button>
@@ -132,7 +144,12 @@ const TableConfigureAction = (props: Props) => {
       {isDialogSelectDate && (
         <DialogSelectName
           isDialogSelectDate={isDialogSelectDate}
-          onClose={handleModalAddAction}
+          onClose={() => {
+            setIsEditMode(false);
+            handleModalAddAction();
+          }}
+          isEdit={isEditMode}
+          actionDetails={selectedActionTemplate}
           resourceSpecification={resourceSpecification}
         />
       )}

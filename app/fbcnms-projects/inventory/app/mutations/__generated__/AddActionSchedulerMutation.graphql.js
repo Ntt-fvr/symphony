@@ -25,10 +25,18 @@ export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added va
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
-export type AddActionTemplateItemInput = {|
-  actionTemplate?: ?ActionTemplateRef,
-  parameters: ConfigurationParameterTypeRef,
-  value: ParameterRef,
+export type AddActionSchedulerInput = {|
+  actionTemplate: ActionTemplateRef,
+  actions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  cron?: ?string,
+  date?: ?any,
+  description: string,
+  name: string,
+  resources: $ReadOnlyArray<ResourceRef>,
+  resourceTypeName?: ?string,
+  resourceSpecificationName?: ?string,
+  status: ActionSchedulerStatus,
+  type: ActionSchedulerType,
 |};
 export type ActionTemplateRef = {|
   ActionExecution?: ?$ReadOnlyArray<ActionExecutionRef>,
@@ -183,30 +191,42 @@ export type ConfigParamTagRef = {|
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
 |};
-export type AddActionTemplateItemMutationVariables = {|
-  input: $ReadOnlyArray<AddActionTemplateItemInput>
+export type AddActionSchedulerMutationVariables = {|
+  input: $ReadOnlyArray<AddActionSchedulerInput>
 |};
-export type AddActionTemplateItemMutationResponse = {|
-  +addActionTemplateItem: ?{|
-    +actionTemplateItem: ?$ReadOnlyArray<?{|
-      +id: string
+export type AddActionSchedulerMutationResponse = {|
+  +addActionScheduler: ?{|
+    +actionScheduler: ?$ReadOnlyArray<?{|
+      +name: string,
+      +id: string,
+      +resources: $ReadOnlyArray<{|
+        +id: string
+      |}>,
+      +date: ?any,
+      +type: ActionSchedulerType,
     |}>
   |}
 |};
-export type AddActionTemplateItemMutation = {|
-  variables: AddActionTemplateItemMutationVariables,
-  response: AddActionTemplateItemMutationResponse,
+export type AddActionSchedulerMutation = {|
+  variables: AddActionSchedulerMutationVariables,
+  response: AddActionSchedulerMutationResponse,
 |};
 */
 
 
 /*
-mutation AddActionTemplateItemMutation(
-  $input: [AddActionTemplateItemInput!]!
+mutation AddActionSchedulerMutation(
+  $input: [AddActionSchedulerInput!]!
 ) {
-  addActionTemplateItem(input: $input) {
-    actionTemplateItem {
+  addActionScheduler(input: $input) {
+    actionScheduler {
+      name
       id
+      resources {
+        id
+      }
+      date
+      type
     }
   }
 }
@@ -220,7 +240,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -230,24 +257,51 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "AddActionTemplateItemPayload",
+    "concreteType": "AddActionSchedulerPayload",
     "kind": "LinkedField",
-    "name": "addActionTemplateItem",
+    "name": "addActionScheduler",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ActionTemplateItem",
+        "concreteType": "ActionScheduler",
         "kind": "LinkedField",
-        "name": "actionTemplateItem",
+        "name": "actionScheduler",
         "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "id",
+            "name": "name",
+            "storageKey": null
+          },
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Resource",
+            "kind": "LinkedField",
+            "name": "resources",
+            "plural": true,
+            "selections": [
+              (v1/*: any*/)
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "date",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "type",
             "storageKey": null
           }
         ],
@@ -262,8 +316,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddActionTemplateItemMutation",
-    "selections": (v1/*: any*/),
+    "name": "AddActionSchedulerMutation",
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -271,20 +325,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddActionTemplateItemMutation",
-    "selections": (v1/*: any*/)
+    "name": "AddActionSchedulerMutation",
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "bd4632c6a20055887abb83546956b55f",
+    "cacheID": "bb4681c778b03b735dd253c8a085d2e3",
     "id": null,
     "metadata": {},
-    "name": "AddActionTemplateItemMutation",
+    "name": "AddActionSchedulerMutation",
     "operationKind": "mutation",
-    "text": "mutation AddActionTemplateItemMutation(\n  $input: [AddActionTemplateItemInput!]!\n) {\n  addActionTemplateItem(input: $input) {\n    actionTemplateItem {\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddActionSchedulerMutation(\n  $input: [AddActionSchedulerInput!]!\n) {\n  addActionScheduler(input: $input) {\n    actionScheduler {\n      name\n      id\n      resources {\n        id\n      }\n      date\n      type\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'e00a71f9f2946d00b4fb437744dd5031';
+(node/*: any*/).hash = '7d861dc4c56452bb75e5b8cfdfa76479';
 
 module.exports = node;

@@ -8,10 +8,11 @@
  * @format
  */
 import type {
-  AddActionTemplateMutation,
-  AddActionTemplateMutationResponse,
-  AddActionTemplateMutationVariables,
-} from './__generated__/AddActionTemplateMutation.graphql';
+  UpdateResourceMutation,
+  UpdateResourceMutationResponse,
+  UpdateResourceMutationVariables,
+} from './__generated__/UpdateResourceMutation.graphql';
+
 import type {MutationCallbacks} from './MutationCallbacks.js';
 
 import type {SelectorStoreUpdater} from 'relay-runtime';
@@ -20,35 +21,22 @@ import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddActionTemplateMutation($input: [AddActionTemplateInput!]!) {
-    addActionTemplate(input: $input) {
-      actionTemplate {
-        actionTemplateItem {
-          id
-          parameters {
-            id
-            name
-          }
-          value {
-            stringValue
-          }
-        }
+  mutation UpdateResourceMutation($input: UpdateResourceInput!) {
+    updateResource(input: $input) {
+      resource {
         id
-        name
-        resourceSpecifications
-        type
       }
     }
   }
 `;
 
 export default (
-  variables: AddActionTemplateMutationVariables,
-  callbacks?: MutationCallbacks<AddActionTemplateMutationResponse>,
+  variables: UpdateResourceMutationVariables,
+  callbacks?: MutationCallbacks<UpdateResourceMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddActionTemplateMutation>(RelayEnvironment, {
+  commitMutation<UpdateResourceMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

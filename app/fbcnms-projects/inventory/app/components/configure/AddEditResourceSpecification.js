@@ -130,6 +130,16 @@ const ConfigurationParameters = graphql`
       id
       name
       type
+      actionTemplateItem {
+        id
+        parameters {
+          id
+          name
+        }
+        value {
+          stringValue
+        }
+      }
       resourceSpecifications
     }
   }

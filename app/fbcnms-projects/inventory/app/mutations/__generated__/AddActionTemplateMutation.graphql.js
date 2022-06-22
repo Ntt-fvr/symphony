@@ -80,6 +80,8 @@ export type ActionSchedulerRef = {|
   description?: ?string,
   id?: ?string,
   name?: ?string,
+  resourceTypeName?: ?string,
+  resourceSpecificationName?: ?string,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
@@ -189,8 +191,19 @@ export type AddActionTemplateMutationVariables = {|
 export type AddActionTemplateMutationResponse = {|
   +addActionTemplate: ?{|
     +actionTemplate: ?$ReadOnlyArray<?{|
+      +actionTemplateItem: $ReadOnlyArray<{|
+        +id: string,
+        +parameters: {|
+          +id: string,
+          +name: string,
+        |},
+        +value: {|
+          +stringValue: ?string
+        |},
+      |}>,
       +id: string,
       +name: string,
+      +resourceSpecifications: string,
       +type: ActionTemplateType,
     |}>
   |}
@@ -208,8 +221,20 @@ mutation AddActionTemplateMutation(
 ) {
   addActionTemplate(input: $input) {
     actionTemplate {
+      actionTemplateItem {
+        id
+        parameters {
+          id
+          name
+        }
+        value {
+          stringValue
+          id
+        }
+      }
       id
       name
+      resourceSpecifications
       type
     }
   }
@@ -226,62 +251,118 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "AddActionTemplatePayload",
-    "kind": "LinkedField",
-    "name": "addActionTemplate",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ActionTemplate",
-        "kind": "LinkedField",
-        "name": "actionTemplate",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "type",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ConfigurationParameterType",
+  "kind": "LinkedField",
+  "name": "parameters",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    (v3/*: any*/)
+  ],
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceSpecifications",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AddActionTemplateMutation",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "AddActionTemplatePayload",
+        "kind": "LinkedField",
+        "name": "addActionTemplate",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ActionTemplate",
+            "kind": "LinkedField",
+            "name": "actionTemplate",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ActionTemplateItem",
+                "kind": "LinkedField",
+                "name": "actionTemplateItem",
+                "plural": true,
+                "selections": [
+                  (v2/*: any*/),
+                  (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Parameter",
+                    "kind": "LinkedField",
+                    "name": "value",
+                    "plural": false,
+                    "selections": [
+                      (v5/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v6/*: any*/),
+              (v7/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Mutation",
     "abstractKey": null
   },
@@ -290,19 +371,72 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddActionTemplateMutation",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "AddActionTemplatePayload",
+        "kind": "LinkedField",
+        "name": "addActionTemplate",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ActionTemplate",
+            "kind": "LinkedField",
+            "name": "actionTemplate",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ActionTemplateItem",
+                "kind": "LinkedField",
+                "name": "actionTemplateItem",
+                "plural": true,
+                "selections": [
+                  (v2/*: any*/),
+                  (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Parameter",
+                    "kind": "LinkedField",
+                    "name": "value",
+                    "plural": false,
+                    "selections": [
+                      (v5/*: any*/),
+                      (v2/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v6/*: any*/),
+              (v7/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "bfe562d88815bd31ba89a47ae1f26c90",
+    "cacheID": "a16effcf8c1486bdc7ed0a89118fe075",
     "id": null,
     "metadata": {},
     "name": "AddActionTemplateMutation",
     "operationKind": "mutation",
-    "text": "mutation AddActionTemplateMutation(\n  $input: [AddActionTemplateInput!]!\n) {\n  addActionTemplate(input: $input) {\n    actionTemplate {\n      id\n      name\n      type\n    }\n  }\n}\n"
+    "text": "mutation AddActionTemplateMutation(\n  $input: [AddActionTemplateInput!]!\n) {\n  addActionTemplate(input: $input) {\n    actionTemplate {\n      actionTemplateItem {\n        id\n        parameters {\n          id\n          name\n        }\n        value {\n          stringValue\n          id\n        }\n      }\n      id\n      name\n      resourceSpecifications\n      type\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '76c90c5dd8241814ed4a65a51b46bcbe';
+(node/*: any*/).hash = '9f32919a4bb3dd279da0a9339be9ff9d';
 
 module.exports = node;

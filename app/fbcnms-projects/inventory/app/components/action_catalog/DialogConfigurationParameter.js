@@ -41,6 +41,8 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   open?: boolean,
   onClose: () => void,
+  isEdit?: boolean,
+  actionDetails?: {},
   setIsDialogConfirmChange: any,
   activeStep: any,
   handleBackStep: any,
@@ -51,13 +53,17 @@ type Props = $ReadOnly<{|
 const DialogConfigurationParameter = (props: Props) => {
   const {
     onClose,
+    isEdit,
+    actionDetails,
     setIsDialogConfirmChange,
     activeStep,
     handleBackStep,
     resourceSpecification,
     handleSave,
   } = props;
-  const [actionItems, setActionItems] = useState([{id: 0}]);
+  const [actionItems, setActionItems] = useState(
+    isEdit ? actionDetails.actionTemplateItem : [{id: 0}],
+  );
 
   const classes = useStyles();
   const handleBack = () => {
@@ -110,7 +116,7 @@ const DialogConfigurationParameter = (props: Props) => {
           style={{height: '36px'}}
           variant="contained"
           color="primary">
-          save
+          {isEdit ? 'update' : 'save'}
         </Button>
       </DialogActions>
     </div>

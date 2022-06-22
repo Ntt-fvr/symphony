@@ -142,6 +142,8 @@ export type ActionSchedulerRef = {|
   description?: ?string,
   id?: ?string,
   name?: ?string,
+  resourceTypeName?: ?string,
+  resourceSpecificationName?: ?string,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
