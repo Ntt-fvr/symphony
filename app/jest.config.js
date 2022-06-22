@@ -19,7 +19,7 @@ module.exports = {
     '!**/fbcnms-packages/fbcnms-test/**',
   ],
 
-  coverageReporters: ['json', 'html'],
+  coverageReporters: ['json', 'html', 'lcov'],
   modulePathIgnorePatterns: [],
   projects: [
     {

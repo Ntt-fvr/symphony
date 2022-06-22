@@ -9,6 +9,7 @@
  */
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import DialogModal from '../../view/dialogs/DialogModal';
 import FlowHeader from './FlowHeader';
 import IconButton from '@symphony/design-system/components/IconButton';
 import MenuTopBar from './MenuTopBar';
@@ -25,10 +26,12 @@ import {
   RedoIcon,
   UndoIcon,
 } from '@symphony/design-system/icons';
+import {TYPE as ForEachLoopType} from '../canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
 import {
   PREDICATES,
   useKeyboardShortcut,
 } from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
+import {TYPE as ParallelType} from '../canvas/graph/facades/shapes/vertexes/logic/Parallel';
 import {makeStyles} from '@material-ui/styles';
 import {useCopyPaste} from '../widgets/copyPaste/CopyPasteContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
@@ -117,15 +120,56 @@ function BuilderTopBar() {
   const flowData = useFlowData();
   const enqueueSnackbar = useEnqueueSnackbar();
   const copyPaste = useCopyPaste();
+  const [openModal, setOpenModal] = useState(false);
 
   const deleteSelected = useCallback(() => {
     if (selection.selectedLink) {
       return flow.removeConnector(selection.selectedLink);
     } else {
-      return flow.removeBlocks([...selection.selectedElements]);
+      const isCoupledBlocks = [...selection.selectedElements].find(
+        block =>
+          block.model.attributes.type === ParallelType ||
+          block.model.attributes.type === ForEachLoopType,
+      );
+      if (isCoupledBlocks) {
+        toggleModal();
+      } else {
+        return flow.removeBlocks([...selection.selectedElements]);
+      }
     }
   }, [flow, selection]);
   useKeyboardShortcut(PREDICATES.del, deleteSelected);
+
+  const deleteBlocks = useCallback(() => {
+    const blockList = flow.getBlocks();
+    const coupleBlockList = [...selection.selectedElements].filter(
+      block =>
+        block.model.attributes.type === ParallelType ||
+        block.model.attributes.type === ForEachLoopType,
+    );
+
+    const isChildrenBlockList = blockList.filter(block =>
+      coupleBlockList.find(
+        coupleBlock => coupleBlock.id === block.model.attributes.parent,
+      ),
+    );
+
+    const selectedElementList = [
+      ...selection.selectedElements,
+      ...isChildrenBlockList,
+    ];
+
+    toggleModal();
+    flow.removeBlocks([...selectedElementList]);
+
+    return enqueueSnackbar(`${fbt('The block has been removed!', '')}`, {
+      variant: 'success',
+    });
+  }, [flow, selection, openModal]);
+
+  const toggleModal = () => {
+    setOpenModal(!openModal);
+  };
 
   const save = useCallback(() => {
     flowData
@@ -177,82 +221,97 @@ function BuilderTopBar() {
   const isSaved = () => !flowData.flowDraft?.id || !flowData.hasChanges;
 
   return (
-    <ToolsBar className={classes.root}>
-      <div className={classes.left}>
-        <Tooltip tooltip={'Show Grid'}>
-          <IconButton
-            className={!isGrid ? classes.blue : null}
-            skin={'inherit'}
-            onClick={() => handleShowGrid()}
-            icon={GridIcon}
-          />
-        </Tooltip>
-        <Tooltip tooltip={'Undo'}>
-          <IconButton
-            className={classes.marginLeft}
-            skin={'inherit'}
-            icon={UndoIcon}
-          />
-        </Tooltip>
-        <Tooltip tooltip={'Redo'}>
-          <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
-        </Tooltip>
-      </div>
-      <div className={classes.left}>
-        {copyPaste.allowDuplicate && (
-          <Tooltip tooltip={'Duplicate'}>
+    <>
+      <ToolsBar className={classes.root}>
+        <div className={classes.left}>
+          <Tooltip tooltip={'Show Grid'}>
             <IconButton
+              className={!isGrid ? classes.blue : null}
               skin={'inherit'}
-              icon={DuplicateFlowIcon}
-              onClick={copyPaste.duplicate}
-              disabled={!copyPaste.allowDuplicate}
+              onClick={() => handleShowGrid()}
+              icon={GridIcon}
             />
           </Tooltip>
-        )}
-        {!(
-          selection.selectedElements.length === 0 && !selection.selectedLink
-        ) && (
-          <Tooltip tooltip={'Delete block'}>
+          <Tooltip tooltip={'Undo'}>
             <IconButton
+              className={classes.marginLeft}
               skin={'inherit'}
-              icon={DeleteOutlineIcon}
-              onClick={deleteSelected}
-              disabled={
-                selection.selectedElements.length === 0 &&
-                !selection.selectedLink
-              }
+              icon={UndoIcon}
             />
           </Tooltip>
-        )}
-      </div>
+          <Tooltip tooltip={'Redo'}>
+            <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
+          </Tooltip>
+        </div>
+        <div className={classes.left}>
+          {copyPaste.allowDuplicate && (
+            <Tooltip tooltip={'Duplicate'}>
+              <IconButton
+                skin={'inherit'}
+                icon={DuplicateFlowIcon}
+                onClick={copyPaste.duplicate}
+                disabled={!copyPaste.allowDuplicate}
+              />
+            </Tooltip>
+          )}
+          {!(
+            selection.selectedElements.length === 0 && !selection.selectedLink
+          ) && (
+            <Tooltip tooltip={'Delete block'}>
+              <IconButton
+                skin={'inherit'}
+                icon={DeleteOutlineIcon}
+                onClick={deleteSelected}
+                disabled={
+                  selection.selectedElements.length === 0 &&
+                  !selection.selectedLink
+                }
+              />
+            </Tooltip>
+          )}
+        </div>
 
-      <div className={classes.right}>
-        <Button
-          className={classes.textVariant}
-          variant={'text'}
-          skin={'inherit'}
-          color={'secondary'}
-          leftIcon={isSaved() ? CheckIcon : null}
-          disabled={isSaved()}
-          onClick={save}>
-          {isSaved() ? 'Saved' : Strings.common.saveButton}
-        </Button>
-        <MenuTopBar
-          name={flowData.flowDraft?.name || ''}
-          description={flowData.flowDraft?.name || ''}
-          editText="Here you can change the name and description of your workflow"
-          duplicateText="Duplicating this workflow saves the same settings as the current workflow and will be available in the general list of workflows as a draft. Please assign a new name and description."
-        />
-        <Tooltip tooltip={'publish last saved version'}>
+        <div className={classes.right}>
           <Button
-            onClick={publish}
-            disabled={isSaved() && flowData.hasPublish}
-            className={flowData.hasPublish ? classes.publish : null}>
-            {flowData.hasPublish ? 'Published' : 'Publish'}
+            className={classes.textVariant}
+            variant={'text'}
+            skin={'inherit'}
+            color={'secondary'}
+            leftIcon={isSaved() ? CheckIcon : null}
+            disabled={isSaved()}
+            onClick={save}>
+            {isSaved() ? 'Saved' : Strings.common.saveButton}
           </Button>
-        </Tooltip>
-      </div>
-    </ToolsBar>
+          <MenuTopBar
+            name={flowData.flowDraft?.name || ''}
+            description={flowData.flowDraft?.name || ''}
+            editText="Here you can change the name and description of your workflow"
+            duplicateText="Duplicating this workflow saves the same settings as the current workflow and will be available in the general list of workflows as a draft. Please assign a new name and description."
+          />
+          <Tooltip tooltip={'publish last saved version'}>
+            <Button
+              onClick={publish}
+              disabled={isSaved() && flowData.hasPublish}
+              className={flowData.hasPublish ? classes.publish : null}>
+              {flowData.hasPublish ? 'Published' : 'Publish'}
+            </Button>
+          </Tooltip>
+        </div>
+      </ToolsBar>
+
+      <DialogModal
+        alertType={'info'}
+        isOpen={openModal}
+        handleOpenModal={toggleModal}
+        handleBtnConfirmClicked={deleteBlocks}
+        btnConfirmText={fbt('Continue', '')}
+        title={fbt('Delete a complex block', '')}
+        description={fbt(
+          'All blocks it contains will also be deleted. Are you sure you want to continue?',
+          '',
+        )}
+      />
+    </>
   );
 }
 
