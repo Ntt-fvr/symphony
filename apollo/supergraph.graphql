@@ -247,6 +247,7 @@ type ActionTemplate {
   actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
   actionTemplateItemAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   id: ID!
+  isDeleted:Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -282,6 +283,7 @@ type ActionTemplateItem {
   id: ID!
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
   value(filter: ParameterFilter): Parameter!
+  isDeleted:Boolean
 }
 
 type ActionTemplateItemAggregateResult {
@@ -306,6 +308,7 @@ input ActionTemplateItemPatch {
   actionTemplate: ActionTemplateRef
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
+  isDeleted:Boolean
 }
 
 input ActionTemplateItemRef {
@@ -330,6 +333,7 @@ input ActionTemplatePatch {
   ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]
   name: String
+  isDeleted:Boolean
   resourceSpecifications: String
   type: ActionTemplateType
 }
@@ -440,6 +444,7 @@ input AddActionTemplateInput {
   ActionExecution: [ActionExecutionRef!]
   actionTemplateItem: [ActionTemplateItemRef!]!
   name: String!
+  isDeleted:Boolean
   resourceSpecifications: String!
   type: ActionTemplateType!
 }
@@ -448,6 +453,7 @@ input AddActionTemplateItemInput {
   actionTemplate: ActionTemplateRef
   parameters: ConfigurationParameterTypeRef!
   value: ParameterRef!
+  isDeleted:Boolean
 }
 
 type AddActionTemplateItemPayload {

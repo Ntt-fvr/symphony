@@ -466,6 +466,7 @@ type ActionTemplate {
     first: Int
     offset: Int
   ): [ActionExecution!]
+  isDeleted:Boolean
   actionTemplateItemAggregate(
     filter: ActionTemplateItemFilter
   ): ActionTemplateItemAggregateResult
@@ -504,6 +505,7 @@ type ActionTemplateItem {
   parameters(
     filter: ConfigurationParameterTypeFilter
   ): ConfigurationParameterType!
+  isDeleted:Boolean
   value(filter: ParameterFilter): Parameter!
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate
 }
@@ -529,6 +531,7 @@ enum ActionTemplateItemHasFilter {
 input ActionTemplateItemPatch {
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
+  isDeleted:Boolean
   actionTemplate: ActionTemplateRef
 }
 
@@ -553,6 +556,7 @@ enum ActionTemplateOrderable {
 input ActionTemplatePatch {
   name: String
   type: ActionTemplateType
+  isDeleted:Boolean
   resourceSpecifications: String
   actionTemplateItem: [ActionTemplateItemRef!]
   ActionExecution: [ActionExecutionRef!]
@@ -633,6 +637,7 @@ input AddActionTemplateInput {
   name: String!
   type: ActionTemplateType!
   resourceSpecifications: String!
+  isDeleted:Boolean
   actionTemplateItem: [ActionTemplateItemRef!]!
   ActionExecution: [ActionExecutionRef!]
 }
@@ -640,6 +645,7 @@ input AddActionTemplateInput {
 input AddActionTemplateItemInput {
   parameters: ConfigurationParameterTypeRef!
   value: ParameterRef!
+  isDeleted:Boolean
   actionTemplate: ActionTemplateRef
 }
 

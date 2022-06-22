@@ -708,6 +708,7 @@ type ActionTemplate{
   id:ID!
   name:String!
   type:ActionTemplateType!
+  isDeleted:Boolean
   resourceSpecifications: String! @search(by: [hash])
   actionTemplateItem:[ActionTemplateItem!]!
   ActionExecution: [ActionExecution!]
@@ -716,6 +717,7 @@ type ActionTemplateItem{
   id:ID!
   parameters:ConfigurationParameterType!
   value:Parameter!
+  isDeleted:Boolean
   actionTemplate:ActionTemplate @hasInverse(field: actionTemplateItem)
 }
 enum ActionSchedulerType {
