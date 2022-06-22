@@ -31,11 +31,12 @@ const useStyles = makeStyles(() => ({
 }));
 export type Props = $ReadOnly<{|
   data?: any,
+  names?: [],
   closeForm?: () => void,
 |}>;
 
 const CreateAction = (props: Props) => {
-  const {closeForm} = props;
+  const {closeForm, names} = props;
   const classes = useStyles();
   const [
     returnScheduledActionsTypes,
@@ -70,6 +71,7 @@ const CreateAction = (props: Props) => {
         <Grid item xs={12}>
           <StepperAction
             returnSheduledAction={showScheduledActionsTypes}
+            names={names}
             closeForm={closeForm}
           />
         </Grid>

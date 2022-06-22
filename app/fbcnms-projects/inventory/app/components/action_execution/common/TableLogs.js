@@ -68,7 +68,7 @@ export type Values = {
 
 export type Props = $ReadOnly<{|
   className?: string,
-  valuesTable: Values,
+  valuesTable?: Values,
 |}>;
 
 const TableLogs = (props: Props) => {
@@ -88,11 +88,11 @@ const TableLogs = (props: Props) => {
           <TableBody>
             <StyledTableRow>
               <TableCell>Action execution start time</TableCell>
-              <TableCell>{valuesTable.logs.actionExecutionStartTime}</TableCell>
+              <TableCell>{valuesTable?.starTime}</TableCell>
             </StyledTableRow>
             <StyledTableRow>
               <TableCell>Action execution end time</TableCell>
-              <TableCell>{valuesTable.logs.actionExecutionEndTime}</TableCell>
+              <TableCell>{valuesTable?.endTime}</TableCell>
             </StyledTableRow>
           </TableBody>
         </Table>

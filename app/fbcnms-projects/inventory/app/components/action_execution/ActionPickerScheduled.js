@@ -65,7 +65,7 @@ const data = {
   resourceSpecification: 'RNCellDU_Nokia_MLN1_3132331',
 };
 const ActionPickerScheduled = (props: Props) => {
-  const {goBack, formData, closeForm} = props;
+  const {goBack, formData, closeForm, nameValid} = props;
   const [execType, setExecType] = useState(false);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date('2022-03-02T24:00:00'));
@@ -117,6 +117,16 @@ const ActionPickerScheduled = (props: Props) => {
     AddActionSchedulerMutation(variables, response);
   };
 
+  const handleDisabled = () => {
+    return !(
+      formData?.name &&
+      formData?.description &&
+      execType &&
+      nameValid &&
+      formData.resources?.length > 0 &&
+      formData.actionTemplate?.id
+    );
+  };
   const classes = useStyles();
   return (
     <div>
@@ -231,6 +241,7 @@ const ActionPickerScheduled = (props: Props) => {
             }}
             className={classes.option}
             variant="contained"
+            disabled={handleDisabled()}
             color="primary">
             Save
           </Button>

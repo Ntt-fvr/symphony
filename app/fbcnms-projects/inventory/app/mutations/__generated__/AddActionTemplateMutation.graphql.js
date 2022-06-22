@@ -29,6 +29,7 @@ export type AddActionTemplateInput = {|
   ActionExecution?: ?$ReadOnlyArray<ActionExecutionRef>,
   actionTemplateItem: $ReadOnlyArray<ActionTemplateItemRef>,
   name: string,
+  isDeleted?: ?boolean,
   resourceSpecifications: string,
   type: ActionTemplateType,
 |};

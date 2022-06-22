@@ -17,6 +17,7 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import moment from 'moment';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -47,7 +48,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogExecutionDetails = (props: Props) => {
-  const {onClose, name} = props;
+  const {onClose, name, valuesTable, resource, resourceData} = props;
 
   const classes = useStyles();
   return (
@@ -103,19 +104,22 @@ const DialogExecutionDetails = (props: Props) => {
           </Grid>
           <Grid item xs={9}>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Action
+              {valuesTable?.template.name}
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Date
+              {moment(valuesTable?.starTime)?.format('MM/DD/YYYY')}
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Hours
+              {moment(valuesTable?.starTime)?.format('LT')}
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Resource Type
+              {
+                resourceData?.find(item => item.id == resource)?.resourceType
+                  .name
+              }
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Resource Specification
+              {resourceData?.find(item => item.id == resource)?.name}
             </Text>
           </Grid>
         </Grid>

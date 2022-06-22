@@ -62,53 +62,22 @@ const useStyles = makeStyles(() => ({
 }));
 export type Props = $ReadOnly<{|
   className?: string,
-  valuesTable: any,
+  valuesTable?: any,
 |}>;
-const dataResourceType = [
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132331',
-    executionResult: 'Succesful',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132332',
-    executionResult: 'Faild',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132333',
-    executionResult: 'Succesful',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132334',
-    executionResult: 'Faild',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132335',
-    executionResult: 'Succesful',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132336',
-    executionResult: 'Succesful',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132337',
-    executionResult: 'Succesful',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132338',
-    executionResult: 'Succesful',
-  },
-  {
-    name: 'RNCellDU_Nokia_MLN1_3132339',
-    executionResult: 'Succesful',
-  },
-];
+
+const toPascalCase = name => {
+  return name.replace(/(\w)(\w*)/g, function (g0, g1, g2) {
+    return g1.toUpperCase() + g2.toLowerCase();
+  });
+};
 
 const TableAffectedResources = (props: Props) => {
-  const {} = props;
+  const {valuesTable, resourceData, resourceExecData} = props;
   const classes = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [page, setPage] = useState(0);
+  const [selectedResource, setSelectedResource] = useState('');
 
   const openModalDetails = () => {
     setOpenModal(prevStateModal => !prevStateModal);
@@ -133,35 +102,36 @@ const TableAffectedResources = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dataResourceType
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((item, index) => (
-                <StyledTableRow key={index}>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>
-                    <ButtonAlarmStatus
-                      className={classes.buttonStatus}
-                      skin={item.executionResult}>
-                      {item.executionResult}
-                    </ButtonAlarmStatus>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      className={classes.iconVisibility}
-                      skin="gray"
-                      icon={RemoveRedEyeIcon}
-                      onClick={openModalDetails}
-                    />
-                  </TableCell>
-                </StyledTableRow>
-              ))}
+            {resourceExecData?.map((resource, index) => (
+              <StyledTableRow key={index}>
+                <TableCell>{resource.name}</TableCell>
+                <TableCell>
+                  <ButtonAlarmStatus
+                    className={classes.buttonStatus}
+                    skin={toPascalCase(resource.status)}>
+                    {resource.status}
+                  </ButtonAlarmStatus>
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    className={classes.iconVisibility}
+                    skin="gray"
+                    icon={RemoveRedEyeIcon}
+                    onClick={() => {
+                      setSelectedResource(resource.resourceSpecification);
+                      openModalDetails();
+                    }}
+                  />
+                </TableCell>
+              </StyledTableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[3, 4, 5]}
         component="div"
-        count={dataResourceType.length}
+        count={valuesTable?.items?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
@@ -171,6 +141,9 @@ const TableAffectedResources = (props: Props) => {
         <DialogExecutionDetails
           name={'Execution Details'}
           onClose={openModalDetails}
+          valuesTable={valuesTable}
+          resourceData={resourceData}
+          resource={selectedResource}
         />
       )}
     </div>

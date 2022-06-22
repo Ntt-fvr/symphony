@@ -11,11 +11,14 @@
 import Button from '@symphony/design-system/components/Button';
 import ConfigureTitle from './common/ConfigureTitle';
 import PowerSearchBar from '../power_search/PowerSearchBar';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import ResourceTypeQuery from './common/ResourceTypesFetch';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
 import {ResourceTypeDetails} from './ResourceTypeDetails';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -38,10 +41,10 @@ const useStyles = makeStyles(() => ({
 }));
 const tableColumns = [
   {
-    key: 'actionTempleate',
-    title: 'Action Templeate',
-    render: row => row.actionTempleate ?? '',
-    tooltip: row => row.actionTempleate ?? '',
+    key: 'actionTemplate',
+    title: 'Action Template',
+    render: row => row.template.name ?? '',
+    tooltip: row => row.template.name ?? '',
   },
   {
     key: 'resourceSpecification',
@@ -52,86 +55,116 @@ const tableColumns = [
   {
     key: 'executionTime',
     title: `${fbt('Execution Time', '')}`,
-    render: row => row.logs?.actionExecutionStartTime ?? '',
-    tooltip: row => row.logs?.actionExecutionStartTime ?? '',
+    render: row => row.starTime ?? '',
+    tooltip: row => row.starTime ?? '',
   },
 ];
 
-const data = [
-  {
-    id: '386547056643',
-    key: '386547056643',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132331',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Succesful',
-  },
-  {
-    id: '386547056644',
-    key: '386547056644',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132332',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Faild',
-  },
-  {
-    id: '386547056645',
-    key: '386547056645',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132333',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Succesful',
-  },
-  {
-    id: '386547056646',
-    key: '386547056646',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132334',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Faild',
-  },
-];
+const executionsQuery = graphql`
+  query ExecutionsTypesQuery {
+    queryActionExecution {
+      starTime
+      id
+      template {
+        id
+        name
+        resourceSpecifications
+      }
+    }
+  }
+`;
+
+const executionDetailsQuery = graphql`
+  query ExecutionsTypesDetailQuery($getActionExecutionId: ID!) {
+    getActionExecution(id: $getActionExecutionId) {
+      id
+      endTime
+      template {
+        name
+        resourceSpecifications
+      }
+      scheduler {
+        type
+      }
+      starTime
+      items {
+        resources {
+          resourceSpecification
+          name
+        }
+        status
+      }
+    }
+  }
+`;
+
 export const PROJECTS_PAGE_SIZE = 15;
 
 const ExecutionsTypes = () => {
   const classes = useStyles();
   const [filters, setFilters] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
-  const [dataRow, setDataRow] = useState({});
+  const [selectedExecution, setSelectedExecution] = useState({});
+  const [executionData, setExecutionData] = useState([]);
+  const [resourceData, setResourceData] = useState([]);
+  const [resourceExecData, setResourceExecData] = useState([]);
 
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
   const showInfo = data => {
-    setDataRow(data);
+    fetchQuery(RelayEnvironment, executionDetailsQuery, {
+      getActionExecutionId: data?.id,
+    }).then(data => {
+      const resourceFilter = [];
+      data.getActionExecution.items.forEach(item => {
+        item.resources.forEach(resource => {
+          resourceFilter.push({
+            name: resource.name,
+            status: item.status,
+            resourceSpecification: resource.resourceSpecification,
+          });
+        });
+      });
+      setSelectedExecution(data.getActionExecution);
+      setResourceExecData(resourceFilter);
+      handleOpenDetails();
+    });
   };
+
+  useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
+    fetchQuery(RelayEnvironment, executionsQuery, {}).then(data => {
+      ResourceTypeQuery().then(response => {
+        const resources = response.resourceSpecifications.edges.map(
+          resource => resource.node,
+        );
+        setResourceData(resources);
+        setExecutionData(
+          data.queryActionExecution.map(item => {
+            return {
+              ...item,
+              resourceSpecification: resources.find(
+                resource => resource.id == item.template.resourceSpecifications,
+              ).name,
+            };
+          }),
+        );
+      });
+    });
+  }, [setExecutionData]);
+
   if (openDetails) {
     return (
-      <ResourceTypeDetails data={dataRow} setOpenDetails={setOpenDetails} />
+      <ResourceTypeDetails
+        data={selectedExecution}
+        setOpenDetails={setOpenDetails}
+        resourceData={resourceData}
+        resourceExecData={resourceExecData}
+      />
     );
   }
 
@@ -162,7 +195,7 @@ const ExecutionsTypes = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <Table
-          data={data}
+          data={executionData}
           columns={[
             {
               key: 'id',
@@ -171,7 +204,6 @@ const ExecutionsTypes = () => {
               render: row => (
                 <Button
                   onClick={() => {
-                    handleOpenDetails();
                     showInfo(row);
                   }}
                   variant="text"

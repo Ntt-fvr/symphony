@@ -15,8 +15,10 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
 import PowerSearchBar from '../power_search/PowerSearchBar';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import ResourceFilterDropDown from './resource-filter/ResourceFilterDropDown';
+import ResourceTypeQuery from './common/ResourceTypesFetch';
 import Switch from '@material-ui/core/Switch';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
@@ -24,6 +26,7 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {CreateAction} from './CreateAction';
 import {Grid} from '@material-ui/core';
 import {ResourceCriteriaConfig} from './resource-filter/ResourceCriteriaConfig';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {getSelectedFilter} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
@@ -66,10 +69,10 @@ const tableColumns = [
     ),
   },
   {
-    key: 'actionTempleate',
-    title: 'Action Templeate',
-    render: row => row.actionTempleate ?? '',
-    tooltip: row => row.actionTempleate ?? '',
+    key: 'actionTemplate',
+    title: 'Action Template',
+    render: row => row.actionTemplate.name ?? '',
+    tooltip: row => row.actionTemplate.name ?? '',
   },
   {
     key: 'resourceType',
@@ -86,90 +89,45 @@ const tableColumns = [
   {
     key: 'lastExecution',
     title: `${fbt('Last Execution', '')}`,
-    render: row => row.logs?.actionExecutionStartTime ?? '',
-    tooltip: row => row.logs?.actionExecutionStartTime ?? '',
+    render: row => (row.actions.length > 0 ? row.actions?.starTime : ''),
+    tooltip: row => (row.actions.length > 0 ? row.actions?.starTime : ''),
   },
   {
     key: 'executionType',
     title: `${fbt('Execution Type', '')}`,
-    render: row => row.executionType ?? '',
-    tooltip: row => row.executionType ?? '',
+    render: row => row.type ?? '',
+    tooltip: row => row.type ?? '',
   },
   {
     key: 'manualExecutions',
     title: `${fbt('Manual Executions', '')}`,
-    render: row => row.manualExecutions ?? '',
-    tooltip: row => row.manualExecutions ?? '',
+    render: row => row.actionsAggregate?.count ?? '',
+    tooltip: row => row.actionsAggregate?.count ?? '',
   },
 ];
 
-const data = [
-  {
-    id: '386547056643',
-    key: '386547056643',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132331',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    manualExecutions: '2',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Succesful',
-    status: false,
-  },
-  {
-    id: '386547056644',
-    key: '386547056644',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132332',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'One Time',
-    manualExecutions: '5',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Faild',
-    status: false,
-  },
-  {
-    id: '386547056645',
-    key: '386547056645',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132333',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Periodical',
-    manualExecutions: '10',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Succesful',
-    status: true,
-  },
-  {
-    id: '386547056646',
-    key: '386547056646',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132334',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    manualExecutions: '22',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Faild',
-    status: true,
-  },
-];
-export const PROJECTS_PAGE_SIZE = 15;
+const actionsQuery = graphql`
+  query ScheduledActionsTypesQuery {
+    queryActionScheduler {
+      id
+      name
+      actions {
+        starTime
+      }
+      status
+      actionTemplate {
+        resourceSpecifications
+        name
+      }
+      type
+      actionsAggregate {
+        count
+      }
+    }
+  }
+`;
+
+export const PROJECTS_PAGE_SIZE = 5;
 
 const AntSwitch = withStyles(theme => ({
   root: {
@@ -211,7 +169,7 @@ const ScheduledActionsTypes = () => {
   const [openModal, setOpenModal] = useState(false);
   const [dataRow, setDataRow] = useState({});
   const [selectedSpecification, setSelectedSpecification] = useState('');
-  const [rows, setRows] = useState(data);
+  const [rows, setRows] = useState([]);
 
   const handleChange = (value, id) => {
     const index = rows.findIndex(item => item.id == id);
@@ -228,6 +186,30 @@ const ScheduledActionsTypes = () => {
     ]);
   };
 
+  useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
+    fetchQuery(RelayEnvironment, actionsQuery, {}).then(data => {
+      ResourceTypeQuery().then(resourceTypes => {
+        setRows(
+          data.queryActionScheduler.map(item => {
+            const resourceSpecificationItem = resourceTypes.resourceSpecifications.edges
+              .map(item => item.node)
+              .find(
+                type => type.id == item.actionTemplate.resourceSpecifications,
+              );
+            return {
+              ...item,
+              resourceType: resourceSpecificationItem.resourceType.name,
+              resourceSpecification: resourceSpecificationItem.name,
+            };
+          }),
+        );
+      });
+    });
+  }, [setRows]);
   const handleOpenModal = dataRow => {
     setOpenModal(prevStateOpenModal => !prevStateOpenModal);
     setDataRow(dataRow);
@@ -242,7 +224,12 @@ const ScheduledActionsTypes = () => {
     setOpenCreateAction(setStateCreateAction => !setStateCreateAction);
   };
   if (openCreateAction) {
-    return <CreateAction closeForm={() => setOpenCreateAction(false)} />;
+    return (
+      <CreateAction
+        closeForm={() => setOpenCreateAction(false)}
+        names={rows.map(item => item?.name)}
+      />
+    );
   }
 
   const onFiltersChanged = data => {
@@ -333,7 +320,7 @@ const ScheduledActionsTypes = () => {
               });
             },
             pageSize: PROJECTS_PAGE_SIZE,
-            totalRowsCount: 10,
+            totalRowsCount: rows?.length,
           }}
         />
       </Grid>

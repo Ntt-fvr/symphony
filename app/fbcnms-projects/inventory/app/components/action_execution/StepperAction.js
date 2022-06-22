@@ -30,6 +30,8 @@ import {fetchQuery, graphql} from 'relay-runtime';
 import {getSelectedFilter} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
 
+import {useValidation} from '../assurance/common/useValidation';
+
 const useStyles = makeStyles(() => ({
   root: {},
   CardContiner: {
@@ -124,6 +126,8 @@ const queryActionTemplate = graphql`
 type Props = $ReadOnly<{|
   open?: boolean,
   onClose?: () => void,
+  names?: [],
+  closeForm?: () => void,
   returnSheduledAction?: () => void,
 |}>;
 
@@ -141,11 +145,10 @@ const tableColumns = [
 ];
 
 const StepperAction = (props: Props) => {
-  const {returnSheduledAction, closeForm} = props;
+  const {returnSheduledAction, closeForm, names} = props;
 
   const activeStep = 1;
   const [selectedSpecification, setSelectedSpecification] = useState('');
-  const [selectedResourceType, setSelectedResourceType] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [resourceData, setResourceData] = useState([]);
@@ -156,6 +159,8 @@ const StepperAction = (props: Props) => {
   const [openActionPickerScheduled, setOpenActionPickerScheduled] = useState(
     true,
   );
+
+  const validationName = useValidation(name, names, 'Action');
 
   const handleConfirmDate = () => {
     setOpenActionPickerScheduled(prevStatePicker => !prevStatePicker);
@@ -213,7 +218,6 @@ const StepperAction = (props: Props) => {
 
   const handleSpecification = (type, spec) => {
     setSelectedSpecification(spec);
-    setSelectedResourceType(type);
     updateTableData(spec, filters);
   };
 
@@ -268,7 +272,6 @@ const StepperAction = (props: Props) => {
       actionTemplate: {
         id: selectedAction,
       },
-      resourceTypeName: selectedResourceType,
     };
   };
 
@@ -308,8 +311,8 @@ const StepperAction = (props: Props) => {
                 spacing={3}>
                 <Grid item xs={5}>
                   <TextField
+                    {...validationName}
                     className={classes.formField}
-                    helperText={'*Required'}
                     required
                     label="Name"
                     fullWidth
@@ -317,7 +320,9 @@ const StepperAction = (props: Props) => {
                     autoComplete="off"
                     variant="outlined"
                     value={name}
-                    onChange={({target}) => setName(target.value)}
+                    onChange={({target}) => {
+                      setName(target.value);
+                    }}
                   />
                 </Grid>
                 <Grid item xs={5}>
@@ -448,6 +453,7 @@ const StepperAction = (props: Props) => {
             <ActionPickerScheduled
               goBack={handleConfirmDate}
               formData={formData()}
+              nameValid={!names.includes(name)}
               closeForm={closeForm}
             />
           )}
