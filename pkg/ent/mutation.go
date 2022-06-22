@@ -58530,29 +58530,33 @@ func (m *ResourcePropertyTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ResourceSpecificationMutation struct {
 	config
-	op                                  Op
-	typ                                 string
-	id                                  *int
-	create_time                         *time.Time
-	update_time                         *time.Time
-	name                                *string
-	quantity                            *int
-	addquantity                         *int
-	clearedFields                       map[string]struct{}
-	resourcetype                        *int
-	clearedresourcetype                 bool
-	resource_property_type              map[int]struct{}
-	removedresource_property_type       map[int]struct{}
-	clearedresource_property_type       bool
-	resource_specification              map[int]struct{}
-	removedresource_specification       map[int]struct{}
-	clearedresource_specification       bool
-	resource_specification_items        map[int]struct{}
-	removedresource_specification_items map[int]struct{}
-	clearedresource_specification_items bool
-	done                                bool
-	oldValue                            func(context.Context) (*ResourceSpecification, error)
-	predicates                          []predicate.ResourceSpecification
+	op                                   Op
+	typ                                  string
+	id                                   *int
+	create_time                          *time.Time
+	update_time                          *time.Time
+	name                                 *string
+	quantity                             *int
+	addquantity                          *int
+	clearedFields                        map[string]struct{}
+	resourcetype                         *int
+	clearedresourcetype                  bool
+	resource_property_type               map[int]struct{}
+	removedresource_property_type        map[int]struct{}
+	clearedresource_property_type        bool
+	resource_specification               map[int]struct{}
+	removedresource_specification        map[int]struct{}
+	clearedresource_specification        bool
+	resource_specification_items         map[int]struct{}
+	removedresource_specification_items  map[int]struct{}
+	clearedresource_specification_items  bool
+	vendor                               *int
+	clearedvendor                        bool
+	resource_specification_vendor        *int
+	clearedresource_specification_vendor bool
+	done                                 bool
+	oldValue                             func(context.Context) (*ResourceSpecification, error)
+	predicates                           []predicate.ResourceSpecification
 }
 
 var _ ent.Mutation = (*ResourceSpecificationMutation)(nil)
@@ -59014,6 +59018,84 @@ func (m *ResourceSpecificationMutation) ResetResourceSpecificationItems() {
 	m.removedresource_specification_items = nil
 }
 
+// SetVendorID sets the vendor edge to Vendor by id.
+func (m *ResourceSpecificationMutation) SetVendorID(id int) {
+	m.vendor = &id
+}
+
+// ClearVendor clears the vendor edge to Vendor.
+func (m *ResourceSpecificationMutation) ClearVendor() {
+	m.clearedvendor = true
+}
+
+// VendorCleared returns if the edge vendor was cleared.
+func (m *ResourceSpecificationMutation) VendorCleared() bool {
+	return m.clearedvendor
+}
+
+// VendorID returns the vendor id in the mutation.
+func (m *ResourceSpecificationMutation) VendorID() (id int, exists bool) {
+	if m.vendor != nil {
+		return *m.vendor, true
+	}
+	return
+}
+
+// VendorIDs returns the vendor ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// VendorID instead. It exists only for internal usage by the builders.
+func (m *ResourceSpecificationMutation) VendorIDs() (ids []int) {
+	if id := m.vendor; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetVendor reset all changes of the "vendor" edge.
+func (m *ResourceSpecificationMutation) ResetVendor() {
+	m.vendor = nil
+	m.clearedvendor = false
+}
+
+// SetResourceSpecificationVendorID sets the resource_specification_vendor edge to Vendor by id.
+func (m *ResourceSpecificationMutation) SetResourceSpecificationVendorID(id int) {
+	m.resource_specification_vendor = &id
+}
+
+// ClearResourceSpecificationVendor clears the resource_specification_vendor edge to Vendor.
+func (m *ResourceSpecificationMutation) ClearResourceSpecificationVendor() {
+	m.clearedresource_specification_vendor = true
+}
+
+// ResourceSpecificationVendorCleared returns if the edge resource_specification_vendor was cleared.
+func (m *ResourceSpecificationMutation) ResourceSpecificationVendorCleared() bool {
+	return m.clearedresource_specification_vendor
+}
+
+// ResourceSpecificationVendorID returns the resource_specification_vendor id in the mutation.
+func (m *ResourceSpecificationMutation) ResourceSpecificationVendorID() (id int, exists bool) {
+	if m.resource_specification_vendor != nil {
+		return *m.resource_specification_vendor, true
+	}
+	return
+}
+
+// ResourceSpecificationVendorIDs returns the resource_specification_vendor ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ResourceSpecificationVendorID instead. It exists only for internal usage by the builders.
+func (m *ResourceSpecificationMutation) ResourceSpecificationVendorIDs() (ids []int) {
+	if id := m.resource_specification_vendor; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetResourceSpecificationVendor reset all changes of the "resource_specification_vendor" edge.
+func (m *ResourceSpecificationMutation) ResetResourceSpecificationVendor() {
+	m.resource_specification_vendor = nil
+	m.clearedresource_specification_vendor = false
+}
+
 // Op returns the operation name.
 func (m *ResourceSpecificationMutation) Op() Op {
 	return m.op
@@ -59204,7 +59286,7 @@ func (m *ResourceSpecificationMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ResourceSpecificationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.resourcetype != nil {
 		edges = append(edges, resourcespecification.EdgeResourcetype)
 	}
@@ -59216,6 +59298,12 @@ func (m *ResourceSpecificationMutation) AddedEdges() []string {
 	}
 	if m.resource_specification_items != nil {
 		edges = append(edges, resourcespecification.EdgeResourceSpecificationItems)
+	}
+	if m.vendor != nil {
+		edges = append(edges, resourcespecification.EdgeVendor)
+	}
+	if m.resource_specification_vendor != nil {
+		edges = append(edges, resourcespecification.EdgeResourceSpecificationVendor)
 	}
 	return edges
 }
@@ -59246,6 +59334,14 @@ func (m *ResourceSpecificationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case resourcespecification.EdgeVendor:
+		if id := m.vendor; id != nil {
+			return []ent.Value{*id}
+		}
+	case resourcespecification.EdgeResourceSpecificationVendor:
+		if id := m.resource_specification_vendor; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -59253,7 +59349,7 @@ func (m *ResourceSpecificationMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ResourceSpecificationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.removedresource_property_type != nil {
 		edges = append(edges, resourcespecification.EdgeResourcePropertyType)
 	}
@@ -59295,7 +59391,7 @@ func (m *ResourceSpecificationMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ResourceSpecificationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.clearedresourcetype {
 		edges = append(edges, resourcespecification.EdgeResourcetype)
 	}
@@ -59307,6 +59403,12 @@ func (m *ResourceSpecificationMutation) ClearedEdges() []string {
 	}
 	if m.clearedresource_specification_items {
 		edges = append(edges, resourcespecification.EdgeResourceSpecificationItems)
+	}
+	if m.clearedvendor {
+		edges = append(edges, resourcespecification.EdgeVendor)
+	}
+	if m.clearedresource_specification_vendor {
+		edges = append(edges, resourcespecification.EdgeResourceSpecificationVendor)
 	}
 	return edges
 }
@@ -59323,6 +59425,10 @@ func (m *ResourceSpecificationMutation) EdgeCleared(name string) bool {
 		return m.clearedresource_specification
 	case resourcespecification.EdgeResourceSpecificationItems:
 		return m.clearedresource_specification_items
+	case resourcespecification.EdgeVendor:
+		return m.clearedvendor
+	case resourcespecification.EdgeResourceSpecificationVendor:
+		return m.clearedresource_specification_vendor
 	}
 	return false
 }
@@ -59333,6 +59439,12 @@ func (m *ResourceSpecificationMutation) ClearEdge(name string) error {
 	switch name {
 	case resourcespecification.EdgeResourcetype:
 		m.ClearResourcetype()
+		return nil
+	case resourcespecification.EdgeVendor:
+		m.ClearVendor()
+		return nil
+	case resourcespecification.EdgeResourceSpecificationVendor:
+		m.ClearResourceSpecificationVendor()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecification unique edge %s", name)
@@ -59354,6 +59466,12 @@ func (m *ResourceSpecificationMutation) ResetEdge(name string) error {
 		return nil
 	case resourcespecification.EdgeResourceSpecificationItems:
 		m.ResetResourceSpecificationItems()
+		return nil
+	case resourcespecification.EdgeVendor:
+		m.ResetVendor()
+		return nil
+	case resourcespecification.EdgeResourceSpecificationVendor:
+		m.ResetResourceSpecificationVendor()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceSpecification edge %s", name)
@@ -79857,6 +79975,11 @@ type VendorMutation struct {
 	vendors_recomendations        map[int]struct{}
 	removedvendors_recomendations map[int]struct{}
 	clearedvendors_recomendations bool
+	resource_specification        *int
+	clearedresource_specification bool
+	vendor_rs                     map[int]struct{}
+	removedvendor_rs              map[int]struct{}
+	clearedvendor_rs              bool
 	done                          bool
 	oldValue                      func(context.Context) (*Vendor, error)
 	predicates                    []predicate.Vendor
@@ -80158,6 +80281,98 @@ func (m *VendorMutation) ResetVendorsRecomendations() {
 	m.removedvendors_recomendations = nil
 }
 
+// SetResourceSpecificationID sets the resource_specification edge to ResourceSpecification by id.
+func (m *VendorMutation) SetResourceSpecificationID(id int) {
+	m.resource_specification = &id
+}
+
+// ClearResourceSpecification clears the resource_specification edge to ResourceSpecification.
+func (m *VendorMutation) ClearResourceSpecification() {
+	m.clearedresource_specification = true
+}
+
+// ResourceSpecificationCleared returns if the edge resource_specification was cleared.
+func (m *VendorMutation) ResourceSpecificationCleared() bool {
+	return m.clearedresource_specification
+}
+
+// ResourceSpecificationID returns the resource_specification id in the mutation.
+func (m *VendorMutation) ResourceSpecificationID() (id int, exists bool) {
+	if m.resource_specification != nil {
+		return *m.resource_specification, true
+	}
+	return
+}
+
+// ResourceSpecificationIDs returns the resource_specification ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ResourceSpecificationID instead. It exists only for internal usage by the builders.
+func (m *VendorMutation) ResourceSpecificationIDs() (ids []int) {
+	if id := m.resource_specification; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetResourceSpecification reset all changes of the "resource_specification" edge.
+func (m *VendorMutation) ResetResourceSpecification() {
+	m.resource_specification = nil
+	m.clearedresource_specification = false
+}
+
+// AddVendorRIDs adds the vendor_rs edge to ResourceSpecification by ids.
+func (m *VendorMutation) AddVendorRIDs(ids ...int) {
+	if m.vendor_rs == nil {
+		m.vendor_rs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.vendor_rs[ids[i]] = struct{}{}
+	}
+}
+
+// ClearVendorRs clears the vendor_rs edge to ResourceSpecification.
+func (m *VendorMutation) ClearVendorRs() {
+	m.clearedvendor_rs = true
+}
+
+// VendorRsCleared returns if the edge vendor_rs was cleared.
+func (m *VendorMutation) VendorRsCleared() bool {
+	return m.clearedvendor_rs
+}
+
+// RemoveVendorRIDs removes the vendor_rs edge to ResourceSpecification by ids.
+func (m *VendorMutation) RemoveVendorRIDs(ids ...int) {
+	if m.removedvendor_rs == nil {
+		m.removedvendor_rs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedvendor_rs[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedVendorRs returns the removed ids of vendor_rs.
+func (m *VendorMutation) RemovedVendorRsIDs() (ids []int) {
+	for id := range m.removedvendor_rs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// VendorRsIDs returns the vendor_rs ids in the mutation.
+func (m *VendorMutation) VendorRsIDs() (ids []int) {
+	for id := range m.vendor_rs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetVendorRs reset all changes of the "vendor_rs" edge.
+func (m *VendorMutation) ResetVendorRs() {
+	m.vendor_rs = nil
+	m.clearedvendor_rs = false
+	m.removedvendor_rs = nil
+}
+
 // Op returns the operation name.
 func (m *VendorMutation) Op() Op {
 	return m.op
@@ -80307,12 +80522,18 @@ func (m *VendorMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *VendorMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.vendor_fk != nil {
 		edges = append(edges, vendor.EdgeVendorFk)
 	}
 	if m.vendors_recomendations != nil {
 		edges = append(edges, vendor.EdgeVendorsRecomendations)
+	}
+	if m.resource_specification != nil {
+		edges = append(edges, vendor.EdgeResourceSpecification)
+	}
+	if m.vendor_rs != nil {
+		edges = append(edges, vendor.EdgeVendorRs)
 	}
 	return edges
 }
@@ -80333,6 +80554,16 @@ func (m *VendorMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case vendor.EdgeResourceSpecification:
+		if id := m.resource_specification; id != nil {
+			return []ent.Value{*id}
+		}
+	case vendor.EdgeVendorRs:
+		ids := make([]ent.Value, 0, len(m.vendor_rs))
+		for id := range m.vendor_rs {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -80340,12 +80571,15 @@ func (m *VendorMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *VendorMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.removedvendor_fk != nil {
 		edges = append(edges, vendor.EdgeVendorFk)
 	}
 	if m.removedvendors_recomendations != nil {
 		edges = append(edges, vendor.EdgeVendorsRecomendations)
+	}
+	if m.removedvendor_rs != nil {
+		edges = append(edges, vendor.EdgeVendorRs)
 	}
 	return edges
 }
@@ -80366,6 +80600,12 @@ func (m *VendorMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case vendor.EdgeVendorRs:
+		ids := make([]ent.Value, 0, len(m.removedvendor_rs))
+		for id := range m.removedvendor_rs {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -80373,12 +80613,18 @@ func (m *VendorMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *VendorMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.clearedvendor_fk {
 		edges = append(edges, vendor.EdgeVendorFk)
 	}
 	if m.clearedvendors_recomendations {
 		edges = append(edges, vendor.EdgeVendorsRecomendations)
+	}
+	if m.clearedresource_specification {
+		edges = append(edges, vendor.EdgeResourceSpecification)
+	}
+	if m.clearedvendor_rs {
+		edges = append(edges, vendor.EdgeVendorRs)
 	}
 	return edges
 }
@@ -80391,6 +80637,10 @@ func (m *VendorMutation) EdgeCleared(name string) bool {
 		return m.clearedvendor_fk
 	case vendor.EdgeVendorsRecomendations:
 		return m.clearedvendors_recomendations
+	case vendor.EdgeResourceSpecification:
+		return m.clearedresource_specification
+	case vendor.EdgeVendorRs:
+		return m.clearedvendor_rs
 	}
 	return false
 }
@@ -80399,6 +80649,9 @@ func (m *VendorMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *VendorMutation) ClearEdge(name string) error {
 	switch name {
+	case vendor.EdgeResourceSpecification:
+		m.ClearResourceSpecification()
+		return nil
 	}
 	return fmt.Errorf("unknown Vendor unique edge %s", name)
 }
@@ -80413,6 +80666,12 @@ func (m *VendorMutation) ResetEdge(name string) error {
 		return nil
 	case vendor.EdgeVendorsRecomendations:
 		m.ResetVendorsRecomendations()
+		return nil
+	case vendor.EdgeResourceSpecification:
+		m.ResetResourceSpecification()
+		return nil
+	case vendor.EdgeVendorRs:
+		m.ResetVendorRs()
 		return nil
 	}
 	return fmt.Errorf("unknown Vendor edge %s", name)

@@ -8295,6 +8295,7 @@ type Vendor implements Node {
   id: ID!
   name: String!
   vendorRecommendations: [Recommendations!]
+  resourceSpecification: [ResourceSpecification!]
 }
 
 input AddVendorInput {
@@ -9501,12 +9502,15 @@ type ResourceSpecification implements Node {
   resourceType: ResourceType
   resourcePropertyTypes: [ResourcePropertyType]!  
   resourceSpecificationRelationship: [ResourceSpecificationRelationship]
+  resourceSpecificationItems: [ResourceSpecificationItems]
+  vendor: Vendor
 }
 input AddResourceSpecificationInput {  
   name: String!
   quantity: Int
   resourceType: ID!
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
+  vendor: ID
 }
 input EditResourceSpecificationInput {
   id: ID!
@@ -9514,6 +9518,7 @@ input EditResourceSpecificationInput {
   quantity: Int
   resourceType: ID 
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
+  vendor: ID
 }
 enum ResourceSpecificationFilterType {
   ID
@@ -9534,6 +9539,7 @@ type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
   resourceSpecification: ResourceSpecification!
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 
 input AddResourceSpecificationRelationshipInput {  

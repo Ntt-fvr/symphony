@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -88,6 +89,40 @@ func (vc *VendorCreate) AddVendorsRecomendations(r ...*Recommendations) *VendorC
 		ids[i] = r[i].ID
 	}
 	return vc.AddVendorsRecomendationIDs(ids...)
+}
+
+// SetResourceSpecificationID sets the resource_specification edge to ResourceSpecification by id.
+func (vc *VendorCreate) SetResourceSpecificationID(id int) *VendorCreate {
+	vc.mutation.SetResourceSpecificationID(id)
+	return vc
+}
+
+// SetNillableResourceSpecificationID sets the resource_specification edge to ResourceSpecification by id if the given value is not nil.
+func (vc *VendorCreate) SetNillableResourceSpecificationID(id *int) *VendorCreate {
+	if id != nil {
+		vc = vc.SetResourceSpecificationID(*id)
+	}
+	return vc
+}
+
+// SetResourceSpecification sets the resource_specification edge to ResourceSpecification.
+func (vc *VendorCreate) SetResourceSpecification(r *ResourceSpecification) *VendorCreate {
+	return vc.SetResourceSpecificationID(r.ID)
+}
+
+// AddVendorRIDs adds the vendor_rs edge to ResourceSpecification by ids.
+func (vc *VendorCreate) AddVendorRIDs(ids ...int) *VendorCreate {
+	vc.mutation.AddVendorRIDs(ids...)
+	return vc
+}
+
+// AddVendorRs adds the vendor_rs edges to ResourceSpecification.
+func (vc *VendorCreate) AddVendorRs(r ...*ResourceSpecification) *VendorCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vc.AddVendorRIDs(ids...)
 }
 
 // Mutation returns the VendorMutation object of the builder.
@@ -249,6 +284,44 @@ func (vc *VendorCreate) createSpec() (*Vendor, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := vc.mutation.ResourceSpecificationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   vendor.ResourceSpecificationTable,
+			Columns: []string{vendor.ResourceSpecificationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcespecification.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := vc.mutation.VendorRsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorRsTable,
+			Columns: []string{vendor.VendorRsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcespecification.FieldID,
 				},
 			},
 		}
