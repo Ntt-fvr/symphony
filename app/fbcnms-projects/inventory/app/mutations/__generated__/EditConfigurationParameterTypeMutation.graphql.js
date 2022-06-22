@@ -14,6 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ConfigurationParameterTypeHasFilter = "booleanValue" | "category" | "externalId" | "floatValue" | "index" | "intValue" | "isDeleted" | "isEditable" | "isListable" | "isMandatory" | "isPrioritary" | "latitudeValue" | "longitudeValue" | "mappingIn" | "mappingOut" | "name" | "nodeType" | "parameters" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resourceSpecification" | "stringValue" | "tags" | "type" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
@@ -21,7 +22,25 @@ export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added va
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
-export type AddConfigurationParameterTypeInput = {|
+export type UpdateConfigurationParameterTypeInput = {|
+  filter: ConfigurationParameterTypeFilter,
+  remove?: ?ConfigurationParameterTypePatch,
+  set?: ?ConfigurationParameterTypePatch,
+|};
+export type ConfigurationParameterTypeFilter = {|
+  and?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
+  has?: ?$ReadOnlyArray<?ConfigurationParameterTypeHasFilter>,
+  id?: ?$ReadOnlyArray<string>,
+  name?: ?StringHashFilter,
+  not?: ?ConfigurationParameterTypeFilter,
+  or?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
+  resourceSpecification?: ?StringHashFilter,
+|};
+export type StringHashFilter = {|
+  eq?: ?string,
+  in?: ?$ReadOnlyArray<?string>,
+|};
+export type ConfigurationParameterTypePatch = {|
   booleanValue?: ?boolean,
   category?: ?string,
   externalId?: ?string,
@@ -37,16 +56,16 @@ export type AddConfigurationParameterTypeInput = {|
   longitudeValue?: ?number,
   mappingIn?: ?string,
   mappingOut?: ?string,
-  name: string,
+  name?: ?string,
   nodeType?: ?string,
   parameters?: ?$ReadOnlyArray<ParameterRef>,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   rawValue?: ?string,
-  resourceSpecification: string,
+  resourceSpecification?: ?string,
   stringValue?: ?string,
   tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
-  type: ParameterKind,
+  type?: ?ParameterKind,
 |};
 export type ParameterRef = {|
   booleanValue?: ?boolean,
@@ -158,11 +177,11 @@ export type ResourcePropertyRef = {|
   resourcePropertyType?: ?string,
   stringValue?: ?string,
 |};
-export type AddConfigurationParameterTypeMutationVariables = {|
-  input: $ReadOnlyArray<AddConfigurationParameterTypeInput>
+export type EditConfigurationParameterTypeMutationVariables = {|
+  input: UpdateConfigurationParameterTypeInput
 |};
-export type AddConfigurationParameterTypeMutationResponse = {|
-  +addConfigurationParameterType: ?{|
+export type EditConfigurationParameterTypeMutationResponse = {|
+  +updateConfigurationParameterType: ?{|
     +configurationParameterType: ?$ReadOnlyArray<?{|
       +booleanValue: ?boolean,
       +category: ?string,
@@ -176,10 +195,14 @@ export type AddConfigurationParameterTypeMutationResponse = {|
       +isListable: ?boolean,
       +isMandatory: ?boolean,
       +isPrioritary: ?boolean,
+      +latitudeValue: ?number,
+      +longitudeValue: ?number,
       +mappingIn: ?string,
       +mappingOut: ?string,
       +name: string,
       +nodeType: ?string,
+      +rangeFromValue: ?number,
+      +rangeToValue: ?number,
       +rawValue: ?string,
       +resourceSpecification: string,
       +stringValue: ?string,
@@ -187,18 +210,18 @@ export type AddConfigurationParameterTypeMutationResponse = {|
     |}>
   |}
 |};
-export type AddConfigurationParameterTypeMutation = {|
-  variables: AddConfigurationParameterTypeMutationVariables,
-  response: AddConfigurationParameterTypeMutationResponse,
+export type EditConfigurationParameterTypeMutation = {|
+  variables: EditConfigurationParameterTypeMutationVariables,
+  response: EditConfigurationParameterTypeMutationResponse,
 |};
 */
 
 
 /*
-mutation AddConfigurationParameterTypeMutation(
-  $input: [AddConfigurationParameterTypeInput!]!
+mutation EditConfigurationParameterTypeMutation(
+  $input: UpdateConfigurationParameterTypeInput!
 ) {
-  addConfigurationParameterType(input: $input) {
+  updateConfigurationParameterType(input: $input) {
     configurationParameterType {
       booleanValue
       category
@@ -212,10 +235,14 @@ mutation AddConfigurationParameterTypeMutation(
       isListable
       isMandatory
       isPrioritary
+      latitudeValue
+      longitudeValue
       mappingIn
       mappingOut
       name
       nodeType
+      rangeFromValue
+      rangeToValue
       rawValue
       resourceSpecification
       stringValue
@@ -243,9 +270,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "AddConfigurationParameterTypePayload",
+    "concreteType": "UpdateConfigurationParameterTypePayload",
     "kind": "LinkedField",
-    "name": "addConfigurationParameterType",
+    "name": "updateConfigurationParameterType",
     "plural": false,
     "selections": [
       {
@@ -344,6 +371,20 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "latitudeValue",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "longitudeValue",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "mappingIn",
             "storageKey": null
           },
@@ -366,6 +407,20 @@ v1 = [
             "args": null,
             "kind": "ScalarField",
             "name": "nodeType",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "rangeFromValue",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "rangeToValue",
             "storageKey": null
           },
           {
@@ -408,7 +463,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddConfigurationParameterTypeMutation",
+    "name": "EditConfigurationParameterTypeMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -417,20 +472,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddConfigurationParameterTypeMutation",
+    "name": "EditConfigurationParameterTypeMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a9815c86c61afe970f1c43fab3fe143b",
+    "cacheID": "cfe36e238606b46ee69a2651c40af306",
     "id": null,
     "metadata": {},
-    "name": "AddConfigurationParameterTypeMutation",
+    "name": "EditConfigurationParameterTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation AddConfigurationParameterTypeMutation(\n  $input: [AddConfigurationParameterTypeInput!]!\n) {\n  addConfigurationParameterType(input: $input) {\n    configurationParameterType {\n      booleanValue\n      category\n      externalId\n      floatValue\n      id\n      index\n      intValue\n      isDeleted\n      isEditable\n      isListable\n      isMandatory\n      isPrioritary\n      mappingIn\n      mappingOut\n      name\n      nodeType\n      rawValue\n      resourceSpecification\n      stringValue\n      type\n    }\n  }\n}\n"
+    "text": "mutation EditConfigurationParameterTypeMutation(\n  $input: UpdateConfigurationParameterTypeInput!\n) {\n  updateConfigurationParameterType(input: $input) {\n    configurationParameterType {\n      booleanValue\n      category\n      externalId\n      floatValue\n      id\n      index\n      intValue\n      isDeleted\n      isEditable\n      isListable\n      isMandatory\n      isPrioritary\n      latitudeValue\n      longitudeValue\n      mappingIn\n      mappingOut\n      name\n      nodeType\n      rangeFromValue\n      rangeToValue\n      rawValue\n      resourceSpecification\n      stringValue\n      type\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '2160194474728cc588e317a74bd7f109';
+(node/*: any*/).hash = '4fbc95547bd01b3abb430acd7b42dc2a';
 
 module.exports = node;

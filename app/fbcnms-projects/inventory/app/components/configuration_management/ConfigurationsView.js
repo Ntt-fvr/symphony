@@ -15,9 +15,9 @@ import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useMemo, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
+import {ConfigurationViewQueryRenderer} from './ConfigurationViewQueryRenderer';
 import {Grid} from '@material-ui/core';
 import {ResourcesSearchConfig} from './ResourcesSearchConfig';
-import {WorkOrderSearchConfig} from '../work_orders/WorkOrderSearchConfig';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
 
@@ -39,10 +39,6 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
   },
 }));
-
-const tableColumns = [];
-const data = [];
-const PROJECTS_PAGE_SIZE = 2;
 
 const ConfigurationsView = () => {
   const [filters, setFilters] = useState([]);
@@ -92,22 +88,27 @@ const ConfigurationsView = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <Table
-          data={data}
-          columns={tableColumns}
-          paginationSettings={{
-            loadNext: onCompleted => {
-              loadNext(PROJECTS_PAGE_SIZE, {
-                onComplete: () => onCompleted && onCompleted(),
-              });
-            },
-            pageSize: PROJECTS_PAGE_SIZE,
-            totalRowsCount: 10,
-          }}
-        />
+        <ConfigurationViewQueryRenderer />
       </Grid>
     </Grid>
   );
 };
+
+/*
+<Table
+    data={data}
+    columns={tableColumns}
+    paginationSettings={{
+        loadNext: onCompleted => {
+            loadNext(PROJECTS_PAGE_SIZE, {
+                onComplete: () => onCompleted && onCompleted(),
+            });
+        },
+        pageSize: PROJECTS_PAGE_SIZE,
+        totalRowsCount: 10,
+    }}
+
+/>
+ */
 
 export {ConfigurationsView};
