@@ -1,22 +1,7 @@
-directive @dgraph(
-  type: String
-  pred: String
-) on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
   update: DgraphDefault
 ) on FIELD_DEFINITION
-directive @remoteResponse(name: String) on FIELD_DEFINITION
-directive @lambda on FIELD_DEFINITION
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @lambdaOnMutate(
-  add: Boolean
-  update: Boolean
-  delete: Boolean
-) on OBJECT | INTERFACE
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
-directive @id(interface: Boolean) on FIELD_DEFINITION
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -24,14 +9,29 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
+directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
 directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @lambda on FIELD_DEFINITION
 directive @generate(
   query: GenerateQueryParams
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -1092,6 +1092,7 @@ input AddResourceInput {
   numericPools: [NumericPoolRef]
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
+  changeItems: [ChangeItemRef]
 }
 
 input AddResourceOrderIMInput {
@@ -4617,6 +4618,12 @@ type Resource {
   ): [NumericPool]
   isEditable: Boolean
   actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
+  changeItems(
+    filter: ChangeItemFilter
+    order: ChangeItemOrder
+    first: Int
+    offset: Int
+  ): [ChangeItem]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinksAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -4624,6 +4631,7 @@ type Resource {
     filter: ResourcePropertyFilter
   ): ResourcePropertyAggregateResult
   numericPoolsAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
+  changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
 }
 
 type ResourceAggregateResult {
@@ -4673,6 +4681,7 @@ enum ResourceHasFilter {
   numericPools
   isEditable
   actionScheduler
+  changeItems
 }
 
 input ResourceOrder {
@@ -4849,6 +4858,7 @@ input ResourcePatch {
   numericPools: [NumericPoolRef]
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
+  changeItems: [ChangeItemRef]
 }
 
 type ResourceProperty {
@@ -4996,6 +5006,7 @@ input ResourceRef {
   numericPools: [NumericPoolRef]
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
+  changeItems: [ChangeItemRef]
 }
 
 type ResourceReference {

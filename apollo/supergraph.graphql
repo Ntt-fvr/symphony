@@ -1088,6 +1088,7 @@ input AddResourceInput {
   actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
   crossconnectionInv: ResourceRef
@@ -8919,6 +8920,8 @@ type Resource {
   actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
+  changeItems(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem]
+  changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   crossConnection(filter: ResourceFilter): Resource
@@ -8974,6 +8977,7 @@ enum ResourceHasFilter {
   actionScheduler
   available
   belongsTo
+  changeItems
   composedOf
   crossConnection
   crossconnectionInv
@@ -9143,6 +9147,7 @@ input ResourcePatch {
   actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
   crossconnectionInv: ResourceRef
@@ -9329,6 +9334,7 @@ input ResourceRef {
   actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
   crossconnectionInv: ResourceRef
