@@ -36,6 +36,7 @@ import ParameterTypesTableDispatcher from '../form/context/property_types/Parame
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
+import UpdateonfigurationParameterTypeMutation from '../../mutations/UpdateConfigurationParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {graphql} from 'relay-runtime';
 import {toMutablePropertyType} from '../../common/PropertyType';
@@ -139,8 +140,10 @@ const ConfigurationParameters = graphql`
         value {
           stringValue
         }
+        isDeleted
       }
       resourceSpecifications
+      isDeleted
     }
   }
 `;
@@ -159,6 +162,24 @@ type Props = $ReadOnly<{|
   isCompleted: () => void,
   filterData: Array<ResourceSpecifications>,
 |}>;
+
+function convertParameterTypeToMutationInput(params) {
+  return {
+    booleanValue: params?.booleanValue,
+    floatValue: params?.floatValue,
+    index: params?.index,
+    intValue: params?.intValue,
+    isEditable: params?.isEditable,
+    latitudeValue: params?.latitudeValue,
+    longitudeValue: params?.longitudeValue,
+    name: params?.name,
+    nodeType: params?.nodeType,
+    rangeFromValue: params?.rangeFromValue,
+    rangeToValue: params?.rangeToValue,
+    stringValue: params?.stringValue,
+    type: params?.type,
+  };
+}
 
 export const AddEditResourceSpecification = (props: Props) => {
   const {
@@ -200,6 +221,10 @@ export const AddEditResourceSpecification = (props: Props) => {
       .filter(Boolean)
       .map(toMutablePropertyType),
   );
+
+  const currentParams = (filterConfigurationParameter ?? [])
+    .filter(Boolean)
+    .map(item => item.id);
   const [actionTypes, actionTypesTableDispatcher] = useActionTypesReducer(
     (filterActionTemplate ?? []).filter(Boolean),
   );
@@ -259,18 +284,13 @@ export const AddEditResourceSpecification = (props: Props) => {
     };
 
     const response = {
-      onCompleted: response => {
+      onCompleted: () => {
         const configParamVariables = {
-          input: convertPropertyTypeToMutationInput(parameterTypes).map(
-            item => {
-              return {
-                resourceSpecification: response.addResourceSpecification.id,
-                name: item.name,
-                type: item.type,
-                stringValue: item.stringValue,
-              };
-            },
-          ),
+          input: parameterTypes.map(item => {
+            return {
+              ...convertParameterTypeToMutationInput(item),
+            };
+          }),
         };
 
         AddConfigurationParameterMutation(configParamVariables, {
@@ -298,12 +318,58 @@ export const AddEditResourceSpecification = (props: Props) => {
         ),
       },
     };
-    EditResourceSpecificationMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        closeForm();
+
+    const response = {
+      onCompleted: response => {
+        const addConfigParamVariables = {
+          input: parameterTypes
+            .filter(item =>
+              currentParams.length > 0
+                ? !currentParams.includes(item?.id)
+                : true,
+            )
+            ?.map(item => {
+              return {
+                ...convertParameterTypeToMutationInput(item),
+                resourceSpecification: response.editResourceSpecification?.id,
+              };
+            }),
+        };
+
+        AddConfigurationParameterMutation(addConfigParamVariables, {
+          onCompleted: () => {
+            if (currentParams.length > 0) {
+              parameterTypes
+                .filter(item => currentParams.includes(item.id))
+                .map(item => {
+                  const configParamVariables = {
+                    input: {
+                      filter: {
+                        id: item.id,
+                      },
+                      set: {
+                        ...convertParameterTypeToMutationInput(item),
+                      },
+                    },
+                  };
+                  UpdateonfigurationParameterTypeMutation(
+                    configParamVariables,
+                    {
+                      onCompleted: () => {
+                        setResourceSpecification({data: {}});
+                        setConfigurationParametes({data: {}});
+                      },
+                    },
+                  );
+                });
+            }
+            isCompleted();
+            closeForm();
+          },
+        });
       },
-    });
+    };
+    EditResourceSpecificationMutation(variables, response);
   }
 
   return (

@@ -92,6 +92,7 @@ const TableConfigurtionParameter = (props: Props) => {
           id: '',
         },
         value: {stringValue: ''},
+        isDeleted: false,
       },
     ]);
   };
@@ -104,11 +105,6 @@ const TableConfigurtionParameter = (props: Props) => {
       ...actionItems.slice(paramIndex + 1),
     ];
     setActionItems(newParams);
-  };
-
-  const deleteParam = id => {
-    const params = actionItems;
-    setActionItems(params.filter(prt => prt.id !== id));
   };
 
   return (
@@ -128,72 +124,77 @@ const TableConfigurtionParameter = (props: Props) => {
           </TableRow>
         </TableHead>
 
-        {actionItems?.map(item => (
-          <TableRow component="div" key={item?.id}>
-            <TableCell component="div" scope="row">
-              <FormField>
-                <TextField
-                  required
-                  id="outlined-select-parameter"
-                  select
-                  className={classes.selectField}
-                  placeholder="Select Parameter"
-                  name="family"
-                  variant="outlined"
-                  value={item.parameters?.id}
-                  onChange={e => {
-                    e.preventDefault();
-                    updateParam(item?.id, pt => ({
-                      ...pt,
-                      parameters: {
-                        id: e.target.value,
-                      },
-                    }));
-                  }}>
-                  {configParams?.map(param => (
-                    <MenuItem key={param.id} value={param.id}>
-                      {param.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </FormField>
-            </TableCell>
+        {actionItems
+          ?.filter(item => !item.isDeleted)
+          ?.map(item => (
+            <TableRow component="div" key={item?.id}>
+              <TableCell component="div" scope="row">
+                <FormField>
+                  <TextField
+                    required
+                    id="outlined-select-parameter"
+                    select
+                    className={classes.selectField}
+                    placeholder="Select Parameter"
+                    name="family"
+                    variant="outlined"
+                    value={item.parameters?.id}
+                    onChange={e => {
+                      e.preventDefault();
+                      updateParam(item?.id, pt => ({
+                        ...pt,
+                        parameters: {
+                          id: e.target.value,
+                        },
+                      }));
+                    }}>
+                    {configParams?.map(param => (
+                      <MenuItem key={param.id} value={param.id}>
+                        {param.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </FormField>
+              </TableCell>
 
-            <TableCell component="div" scope="row">
-              <FormField>
-                <TextInput
-                  autoFocus={true}
-                  placeholder="Value"
-                  autoComplete="off"
-                  className={classes.input}
-                  value={item?.value?.stringValue}
-                  onChange={e => {
-                    e.preventDefault();
-                    updateParam(item?.id, pt => ({
-                      ...pt,
-                      value: {
-                        stringValue: e.target.value,
-                      },
-                    }));
-                  }}
-                />
-              </FormField>
-            </TableCell>
+              <TableCell component="div" scope="row">
+                <FormField>
+                  <TextInput
+                    autoFocus={true}
+                    placeholder="Value"
+                    autoComplete="off"
+                    className={classes.input}
+                    value={item?.value?.stringValue}
+                    onChange={e => {
+                      e.preventDefault();
+                      updateParam(item?.id, pt => ({
+                        ...pt,
+                        value: {
+                          stringValue: e.target.value,
+                        },
+                      }));
+                    }}
+                  />
+                </FormField>
+              </TableCell>
 
-            <TableCell component="div" scope="row">
-              <FormAction>
-                <IconButton
-                  aria-label="delete"
-                  onClick={e => {
-                    e.preventDefault();
-                    deleteParam(item.id);
-                  }}>
-                  <DeleteOutlinedIcon color="primary" />
-                </IconButton>
-              </FormAction>
-            </TableCell>
-          </TableRow>
-        ))}
+              <TableCell component="div" scope="row">
+                <FormAction>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={e => {
+                      e.preventDefault();
+                      updateParam(item?.id, pt => ({
+                        ...pt,
+                        isDeleted: true,
+                      }));
+                    }}>
+                    <DeleteOutlinedIcon color="primary" />
+                  </IconButton>
+                </FormAction>
+              </TableCell>
+            </TableRow>
+          ))}
       </Table>
       <FormAction>
         <Button

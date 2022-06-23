@@ -23,6 +23,8 @@ import Radio from '@material-ui/core/Radio';
 import React, {useContext, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import UpdateActionTemplateItemMutation from '../../mutations/UpdateActionTemplateItem';
+import UpdateActionTemplateMutation from '../../mutations/UpdateActionTemplate';
 import inventoryTheme from '../../common/theme';
 import {StepperName} from './StepperName';
 import {makeStyles} from '@material-ui/styles';
@@ -102,6 +104,7 @@ const DialogSelectName = (props: Props) => {
   };
   const handleChecked = e => {
     setType(e.target.value);
+
     setCheckedHidden(prevStateChecked => !prevStateChecked);
   };
   const handleName = e => {
@@ -115,7 +118,11 @@ const DialogSelectName = (props: Props) => {
         type: type,
         resourceSpecifications: resourceSpecification,
         actionTemplateItem: items.map(i => {
-          return {parameters: i.parameters, value: i.value};
+          return {
+            parameters: i.parameters,
+            value: i.value,
+            isDeleted: i.isDeleted ?? false,
+          };
         }),
       },
     };
@@ -127,6 +134,74 @@ const DialogSelectName = (props: Props) => {
         });
       },
     });
+  };
+
+  const updateAction = items => {
+    const savedItems = actionDetails.actionTemplateItem.map(item => item.id);
+    const templateVariables = {
+      input: {
+        filter: {
+          id: actionDetails.id,
+        },
+        set: {
+          name: name,
+          type: type,
+          resourceSpecifications: resourceSpecification,
+          actionTemplateItem: items
+            .filter(item => !savedItems.includes(item.id))
+            .map(i => {
+              return {
+                parameters: i.parameters,
+                value: i.value,
+                isDeleted: i.isDeleted ?? false,
+              };
+            }),
+        },
+      },
+    };
+
+    const response = {
+      onCompleted: () => {
+        items
+          .filter(item => savedItems.includes(item.id))
+          .map(item => {
+            const updateTemplateItemVariables = {
+              input: {
+                filter: {
+                  id: item.id,
+                },
+                set: {
+                  parameters: item.parameters,
+                  value: item.value,
+                  isDeleted: item.isDeleted ?? false,
+                },
+              },
+            };
+            UpdateActionTemplateItemMutation(updateTemplateItemVariables, {
+              onCompleted: () => {},
+            });
+          });
+
+        dispatch({
+          type: 'UPDATE_ACTION_TYPE_NAME',
+          id: actionDetails.id,
+          name: name,
+        });
+        dispatch({
+          type: 'UPDATE_ACTION_TYPE_ITEMS',
+          id: actionDetails.id,
+          actionTemplateItem: {actionTemplateItem: items},
+        });
+
+        dispatch({
+          type: 'UPDATE_ACTION_TYPE',
+          id: actionDetails.id,
+          value: {value: {stringValue: type}},
+        });
+      },
+    };
+
+    UpdateActionTemplateMutation(templateVariables, response);
   };
 
   const classes = useStyles();
@@ -207,6 +282,9 @@ const DialogSelectName = (props: Props) => {
             resourceSpecification={resourceSpecification}
             handleSave={items => {
               saveAction(items);
+            }}
+            handleUpdate={items => {
+              updateAction(items);
             }}
             setIsDialogConfirmChange={setIsDialogConfirmChange}
           />

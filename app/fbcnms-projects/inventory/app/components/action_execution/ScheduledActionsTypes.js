@@ -21,6 +21,7 @@ import ResourceFilterDropDown from './resource-filter/ResourceFilterDropDown';
 import ResourceTypeQuery from './common/ResourceTypesFetch';
 import Switch from '@material-ui/core/Switch';
 import Table from '@symphony/design-system/components/Table/Table';
+import UpdateActionSchedulerMutation from '../../mutations/UpdateActionScheduler';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {CreateAction} from './CreateAction';
@@ -184,6 +185,22 @@ const ScheduledActionsTypes = () => {
       updateAction(rows[index]),
       ...rows.slice(index + 1),
     ]);
+
+    const variables = {
+      input: {
+        filter: {
+          id: id,
+        },
+        set: {
+          status: value ? 'ACTIVED' : 'DEACTIVATED',
+        },
+      },
+    };
+    UpdateActionSchedulerMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+      },
+    });
   };
 
   useEffect(() => {
@@ -226,7 +243,10 @@ const ScheduledActionsTypes = () => {
   if (openCreateAction) {
     return (
       <CreateAction
-        closeForm={() => setOpenCreateAction(false)}
+        closeForm={() => {
+          setOpenCreateAction(false);
+          isCompleted();
+        }}
         names={rows.map(item => item?.name)}
       />
     );
@@ -294,7 +314,7 @@ const ScheduledActionsTypes = () => {
                     onChange={e => {
                       handleChange(e.target.checked, row.id);
                     }}
-                    checked={row.status}
+                    checked={row.status != 'DEACTIVATED'}
                     inputProps={{'aria-label': 'ant design'}}
                   />
                 ) ?? '',

@@ -58,8 +58,10 @@ export type AddEditResourceSpecificationQueryResponse = {|
       +value: {|
         +stringValue: ?string
       |},
+      +isDeleted: ?boolean,
     |}>,
     +resourceSpecifications: string,
+    +isDeleted: ?boolean,
   |}>,
 |};
 export type AddEditResourceSpecificationQuery = {|
@@ -112,8 +114,10 @@ query AddEditResourceSpecificationQuery {
         stringValue
         id
       }
+      isDeleted
     }
     resourceSpecifications
+    isDeleted
   }
 }
 */
@@ -137,17 +141,24 @@ v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "stringValue",
+  "name": "isDeleted",
   "storageKey": null
 },
 v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "type",
+  "name": "stringValue",
   "storageKey": null
 },
 v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
+},
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "ConfigurationParameterType",
@@ -206,13 +217,7 @@ v4 = {
       "name": "intValue",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "isDeleted",
-      "storageKey": null
-    },
+    (v2/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -297,8 +302,8 @@ v4 = {
       "name": "rawValue",
       "storageKey": null
     },
-    (v2/*: any*/),
     (v3/*: any*/),
+    (v4/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -309,7 +314,7 @@ v4 = {
   ],
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "ConfigurationParameterType",
@@ -322,7 +327,7 @@ v5 = {
   ],
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -336,7 +341,7 @@ return {
     "metadata": null,
     "name": "AddEditResourceSpecificationQuery",
     "selections": [
-      (v4/*: any*/),
+      (v5/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -347,7 +352,7 @@ return {
         "selections": [
           (v1/*: any*/),
           (v0/*: any*/),
-          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -357,7 +362,7 @@ return {
             "plural": true,
             "selections": [
               (v1/*: any*/),
-              (v5/*: any*/),
+              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -366,14 +371,16 @@ return {
                 "name": "value",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
-              }
+              },
+              (v2/*: any*/)
             ],
             "storageKey": null
           },
-          (v6/*: any*/)
+          (v7/*: any*/),
+          (v2/*: any*/)
         ],
         "storageKey": null
       }
@@ -387,7 +394,7 @@ return {
     "kind": "Operation",
     "name": "AddEditResourceSpecificationQuery",
     "selections": [
-      (v4/*: any*/),
+      (v5/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -398,7 +405,7 @@ return {
         "selections": [
           (v1/*: any*/),
           (v0/*: any*/),
-          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -408,7 +415,7 @@ return {
             "plural": true,
             "selections": [
               (v1/*: any*/),
-              (v5/*: any*/),
+              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -417,31 +424,33 @@ return {
                 "name": "value",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
+                  (v3/*: any*/),
                   (v1/*: any*/)
                 ],
                 "storageKey": null
-              }
+              },
+              (v2/*: any*/)
             ],
             "storageKey": null
           },
-          (v6/*: any*/)
+          (v7/*: any*/),
+          (v2/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "57920f436c0b062268f8716177c0b6d8",
+    "cacheID": "8875c162f95f26d04a6e8b9f4b7ba094",
     "id": null,
     "metadata": {},
     "name": "AddEditResourceSpecificationQuery",
     "operationKind": "query",
-    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    resourceSpecification\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    latitudeValue\n    longitudeValue\n    mappingIn\n    mappingOut\n    nodeType\n    rangeFromValue\n    rangeToValue\n    rawValue\n    stringValue\n    type\n    __typename\n  }\n  queryActionTemplate {\n    id\n    name\n    type\n    actionTemplateItem {\n      id\n      parameters {\n        id\n        name\n      }\n      value {\n        stringValue\n        id\n      }\n    }\n    resourceSpecifications\n  }\n}\n"
+    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    resourceSpecification\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    latitudeValue\n    longitudeValue\n    mappingIn\n    mappingOut\n    nodeType\n    rangeFromValue\n    rangeToValue\n    rawValue\n    stringValue\n    type\n    __typename\n  }\n  queryActionTemplate {\n    id\n    name\n    type\n    actionTemplateItem {\n      id\n      parameters {\n        id\n        name\n      }\n      value {\n        stringValue\n        id\n      }\n      isDeleted\n    }\n    resourceSpecifications\n    isDeleted\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '91b0b477d64dd54cc9a0e9457f787ed9';
+(node/*: any*/).hash = '2d40fc314724aa81db7cf598c88404fd';
 
 module.exports = node;

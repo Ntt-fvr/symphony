@@ -60,6 +60,7 @@ const DialogConfigurationParameter = (props: Props) => {
     handleBackStep,
     resourceSpecification,
     handleSave,
+    handleUpdate,
   } = props;
   const [actionItems, setActionItems] = useState(
     isEdit ? actionDetails.actionTemplateItem : [{id: 0}],
@@ -110,7 +111,11 @@ const DialogConfigurationParameter = (props: Props) => {
         </Button>
         <Button
           onClick={() => {
-            handleSave(actionItems);
+            if (isEdit) {
+              handleUpdate(actionItems);
+            } else {
+              handleSave(actionItems);
+            }
             onClose();
           }}
           style={{height: '36px'}}

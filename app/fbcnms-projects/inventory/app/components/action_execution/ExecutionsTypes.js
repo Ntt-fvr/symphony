@@ -98,7 +98,7 @@ const executionDetailsQuery = graphql`
   }
 `;
 
-export const PROJECTS_PAGE_SIZE = 15;
+export const PROJECTS_PAGE_SIZE = 5;
 
 const ExecutionsTypes = () => {
   const classes = useStyles();
@@ -221,7 +221,7 @@ const ExecutionsTypes = () => {
               });
             },
             pageSize: PROJECTS_PAGE_SIZE,
-            totalRowsCount: 10,
+            totalRowsCount: executionData.length,
           }}
         />
       </Grid>

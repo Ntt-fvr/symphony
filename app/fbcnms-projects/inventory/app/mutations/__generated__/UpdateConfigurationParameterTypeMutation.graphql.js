@@ -18,34 +18,116 @@ export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "
 export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
 export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
+export type ConfigurationParameterTypeHasFilter = "booleanValue" | "category" | "externalId" | "floatValue" | "index" | "intValue" | "isDeleted" | "isEditable" | "isListable" | "isMandatory" | "isPrioritary" | "latitudeValue" | "longitudeValue" | "mappingIn" | "mappingOut" | "name" | "nodeType" | "parameters" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resourceSpecification" | "stringValue" | "tags" | "type" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
-export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "composedOf" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDelete" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLink" | "logicalLinkInv" | "name" | "numericPool" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "usageSubStatus" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
-export type UpdateResourceInput = {|
-  filter: ResourceFilter,
-  remove?: ?ResourcePatch,
-  set?: ?ResourcePatch,
+export type UpdateConfigurationParameterTypeInput = {|
+  filter: ConfigurationParameterTypeFilter,
+  remove?: ?ConfigurationParameterTypePatch,
+  set?: ?ConfigurationParameterTypePatch,
 |};
-export type ResourceFilter = {|
-  and?: ?$ReadOnlyArray<?ResourceFilter>,
-  has?: ?$ReadOnlyArray<?ResourceHasFilter>,
+export type ConfigurationParameterTypeFilter = {|
+  and?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
+  has?: ?$ReadOnlyArray<?ConfigurationParameterTypeHasFilter>,
   id?: ?$ReadOnlyArray<string>,
-  locatedIn?: ?StringHashFilter,
   name?: ?StringHashFilter,
-  not?: ?ResourceFilter,
-  or?: ?$ReadOnlyArray<?ResourceFilter>,
+  not?: ?ConfigurationParameterTypeFilter,
+  or?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
   resourceSpecification?: ?StringHashFilter,
 |};
 export type StringHashFilter = {|
   eq?: ?string,
   in?: ?$ReadOnlyArray<?string>,
 |};
-export type ResourcePatch = {|
+export type ConfigurationParameterTypePatch = {|
+  booleanValue?: ?boolean,
+  category?: ?string,
+  externalId?: ?string,
+  floatValue?: ?number,
+  index?: ?number,
+  intValue?: ?number,
+  isDeleted?: ?boolean,
+  isEditable?: ?boolean,
+  isListable?: ?boolean,
+  isMandatory?: ?boolean,
+  isPrioritary?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  mappingIn?: ?string,
+  mappingOut?: ?string,
+  name?: ?string,
+  nodeType?: ?string,
+  parameters?: ?$ReadOnlyArray<ParameterRef>,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  rawValue?: ?string,
+  resourceSpecification?: ?string,
+  stringValue?: ?string,
+  tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
+  type?: ?ParameterKind,
+|};
+export type ParameterRef = {|
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
+  id?: ?string,
+  intValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  parameterType?: ?ConfigurationParameterTypeRef,
+  previous?: ?ParameterRef,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
+  versionCM?: ?$ReadOnlyArray<?CMVersionRef>,
+|};
+export type ConfigurationParameterTypeRef = {|
+  booleanValue?: ?boolean,
+  category?: ?string,
+  externalId?: ?string,
+  floatValue?: ?number,
+  id?: ?string,
+  index?: ?number,
+  intValue?: ?number,
+  isDeleted?: ?boolean,
+  isEditable?: ?boolean,
+  isListable?: ?boolean,
+  isMandatory?: ?boolean,
+  isPrioritary?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  mappingIn?: ?string,
+  mappingOut?: ?string,
+  name?: ?string,
+  nodeType?: ?string,
+  parameters?: ?$ReadOnlyArray<ParameterRef>,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  rawValue?: ?string,
+  resourceSpecification?: ?string,
+  stringValue?: ?string,
+  tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
+  type?: ?ParameterKind,
+|};
+export type ConfigParamTagRef = {|
+  id?: ?string,
+  name?: ?string,
+  parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+|};
+export type CMVersionRef = {|
+  id?: ?string,
+  parameters?: ?$ReadOnlyArray<ParameterRef>,
+  previous?: ?CMVersionRef,
+  resource?: ?ResourceRef,
+  status?: ?VersionStatus,
+  validFrom?: ?any,
+  validTo?: ?any,
+|};
+export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
@@ -53,6 +135,7 @@ export type ResourcePatch = {|
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?$ReadOnlyArray<?ResourceRef>,
   externalId?: ?string,
+  id?: ?string,
   isDelete?: ?boolean,
   isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
@@ -107,31 +190,12 @@ export type ActionExecutionItemRef = {|
   resources?: ?$ReadOnlyArray<?ResourceRef>,
   status?: ?ActionExecutionItemStatus,
 |};
-export type ResourceRef = {|
-  actionScheduler?: ?ActionSchedulerRef,
-  available?: ?boolean,
-  belongsTo?: ?ResourceRef,
-  composedOf?: ?$ReadOnlyArray<?ResourceRef>,
-  crossConnection?: ?ResourceRef,
-  crossconnectionInv?: ?$ReadOnlyArray<?ResourceRef>,
-  externalId?: ?string,
+export type ActionTemplateItemRef = {|
+  actionTemplate?: ?ActionTemplateRef,
   id?: ?string,
-  isDelete?: ?boolean,
-  isEditable?: ?boolean,
-  lifecycleStatus?: ?LifecycleStatus,
-  locatedIn?: ?string,
-  logicalLink?: ?ResourceRef,
-  logicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
-  name?: ?string,
-  numericPool?: ?$ReadOnlyArray<?NumericPoolRef>,
-  operationalSubStatus?: ?OperationalSubStatus,
-  physicalLink?: ?ResourceRef,
-  physicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
-  planningSubStatus?: ?PlanningSubStatus,
-  resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
-  resourceSpecification?: ?string,
-  typePlanningSubStatus?: ?TypePlanningSubStatus,
-  usageSubStatus?: ?UsageSubStatus,
+  parameters?: ?ConfigurationParameterTypeRef,
+  value?: ?ParameterRef,
+  isDeleted?: ?boolean,
 |};
 export type NumericPoolRef = {|
   customLimit?: ?number,
@@ -162,93 +226,32 @@ export type ResourcePropertyRef = {|
   resourcePropertyType?: ?string,
   stringValue?: ?string,
 |};
-export type ActionTemplateItemRef = {|
-  actionTemplate?: ?ActionTemplateRef,
-  id?: ?string,
-  parameters?: ?ConfigurationParameterTypeRef,
-  value?: ?ParameterRef,
-  isDeleted?: ?boolean,
+export type UpdateConfigurationParameterTypeMutationVariables = {|
+  input: UpdateConfigurationParameterTypeInput
 |};
-export type ConfigurationParameterTypeRef = {|
-  booleanValue?: ?boolean,
-  category?: ?string,
-  externalId?: ?string,
-  floatValue?: ?number,
-  id?: ?string,
-  index?: ?number,
-  intValue?: ?number,
-  isDeleted?: ?boolean,
-  isEditable?: ?boolean,
-  isListable?: ?boolean,
-  isMandatory?: ?boolean,
-  isPrioritary?: ?boolean,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  mappingIn?: ?string,
-  mappingOut?: ?string,
-  name?: ?string,
-  nodeType?: ?string,
-  parameters?: ?$ReadOnlyArray<ParameterRef>,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
-  rawValue?: ?string,
-  resourceSpecification?: ?string,
-  stringValue?: ?string,
-  tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
-  type?: ?ParameterKind,
-|};
-export type ParameterRef = {|
-  booleanValue?: ?boolean,
-  floatValue?: ?number,
-  id?: ?string,
-  intValue?: ?number,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  parameterType?: ?ConfigurationParameterTypeRef,
-  previous?: ?ParameterRef,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
-  stringValue?: ?string,
-  versionCM?: ?$ReadOnlyArray<?CMVersionRef>,
-|};
-export type CMVersionRef = {|
-  id?: ?string,
-  parameters?: ?$ReadOnlyArray<ParameterRef>,
-  previous?: ?CMVersionRef,
-  resource?: ?ResourceRef,
-  status?: ?VersionStatus,
-  validFrom?: ?any,
-  validTo?: ?any,
-|};
-export type ConfigParamTagRef = {|
-  id?: ?string,
-  name?: ?string,
-  parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
-|};
-export type UpdateResourceMutationVariables = {|
-  input: UpdateResourceInput
-|};
-export type UpdateResourceMutationResponse = {|
-  +updateResource: ?{|
-    +resource: ?$ReadOnlyArray<?{|
-      +id: string
+export type UpdateConfigurationParameterTypeMutationResponse = {|
+  +updateConfigurationParameterType: ?{|
+    +configurationParameterType: ?$ReadOnlyArray<?{|
+      +id: string,
+      +name: string,
     |}>
   |}
 |};
-export type UpdateResourceMutation = {|
-  variables: UpdateResourceMutationVariables,
-  response: UpdateResourceMutationResponse,
+export type UpdateConfigurationParameterTypeMutation = {|
+  variables: UpdateConfigurationParameterTypeMutationVariables,
+  response: UpdateConfigurationParameterTypeMutationResponse,
 |};
 */
 
 
 /*
-mutation UpdateResourceMutation(
-  $input: UpdateResourceInput!
+mutation UpdateConfigurationParameterTypeMutation(
+  $input: UpdateConfigurationParameterTypeInput!
 ) {
-  updateResource(input: $input) {
-    resource {
+  updateConfigurationParameterType(input: $input) {
+    configurationParameterType {
       id
+      name
     }
   }
 }
@@ -272,17 +275,17 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "UpdateResourcePayload",
+    "concreteType": "UpdateConfigurationParameterTypePayload",
     "kind": "LinkedField",
-    "name": "updateResource",
+    "name": "updateConfigurationParameterType",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "Resource",
+        "concreteType": "ConfigurationParameterType",
         "kind": "LinkedField",
-        "name": "resource",
+        "name": "configurationParameterType",
         "plural": true,
         "selections": [
           {
@@ -290,6 +293,13 @@ v1 = [
             "args": null,
             "kind": "ScalarField",
             "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
             "storageKey": null
           }
         ],
@@ -304,7 +314,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "UpdateResourceMutation",
+    "name": "UpdateConfigurationParameterTypeMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -313,20 +323,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "UpdateResourceMutation",
+    "name": "UpdateConfigurationParameterTypeMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "fbfec567a5edf33318829bc5a49aba5d",
+    "cacheID": "0030f9cc0663c9890dfe2de4639ab2aa",
     "id": null,
     "metadata": {},
-    "name": "UpdateResourceMutation",
+    "name": "UpdateConfigurationParameterTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    resource {\n      id\n    }\n  }\n}\n"
+    "text": "mutation UpdateConfigurationParameterTypeMutation(\n  $input: UpdateConfigurationParameterTypeInput!\n) {\n  updateConfigurationParameterType(input: $input) {\n    configurationParameterType {\n      id\n      name\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0b281fcbd379fc4f7323a636e078e354';
+(node/*: any*/).hash = '5fbf4d3e490f5a208103e3dac4b9318b';
 
 module.exports = node;

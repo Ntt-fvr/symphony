@@ -9,6 +9,7 @@
  */
 
 import * as React from 'react';
+import ActionTypesTableDispactcher from './context/ActionTypesTableDispactcher';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DialogSelectName from './DialogSelectName';
@@ -20,12 +21,13 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+import UpdateActionTemplateMutation from '../../mutations/UpdateActionTemplate';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {EditIcon} from '@symphony/design-system/icons';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -50,10 +52,34 @@ const TableConfigureAction = (props: Props) => {
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedActionTemplate, setSelectedActionTemplate] = useState({});
+  const {dispatch} = useContext(ActionTypesTableDispactcher);
   const classes = useStyles();
 
   const handleModalAddAction = () => {
     setIsDialogSelectDate(preventState => !preventState);
+  };
+
+  const handleDeleteAction = id => {
+    UpdateActionTemplateMutation(
+      {
+        input: {
+          filter: {
+            id: id,
+          },
+          set: {
+            isDeleted: true,
+          },
+        },
+      },
+      {
+        onCompleted: () => {
+          dispatch({
+            type: 'REMOVE_ACTION_TYPE',
+            id: id,
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -77,58 +103,62 @@ const TableConfigureAction = (props: Props) => {
           </TableRow>
         </TableHead>
 
-        {actionTypes?.map((item, i) => (
-          <TableRow component="div" key={i}>
-            <TableCell component="div" scope="row">
-              <FormField>
-                <TextInput
-                  autoFocus={true}
-                  placeholder="Name"
-                  autoComplete="off"
-                  value={item?.name}
-                  className={classes.input}
-                  disabled={true}
-                />
-              </FormField>
-            </TableCell>
-            <TableCell component="div" scope="row">
-              <FormField>
-                <TextInput
-                  autoFocus={true}
-                  placeholder="Type"
-                  autoComplete="off"
-                  value={item?.type}
-                  className={classes.input}
-                  disabled={true}
-                />
-              </FormField>
-            </TableCell>
-            <TableCell component="div">
-              <FormAction>
-                <IconButton
-                  aria-label="Edit"
-                  onClick={e => {
-                    e.preventDefault();
-                    setSelectedActionTemplate(item);
-                    setIsEditMode(true);
-                    handleModalAddAction();
-                  }}>
-                  <EditIcon color="primary" />
-                </IconButton>
-              </FormAction>
-            </TableCell>
+        {actionTypes
+          ?.filter(action => !action.isDeleted)
+          .map((item, i) => (
+            <TableRow component="div" key={i}>
+              <TableCell component="div" scope="row">
+                <FormField>
+                  <TextInput
+                    autoFocus={true}
+                    placeholder="Name"
+                    autoComplete="off"
+                    value={item?.name}
+                    className={classes.input}
+                    disabled={true}
+                  />
+                </FormField>
+              </TableCell>
+              <TableCell component="div" scope="row">
+                <FormField>
+                  <TextInput
+                    autoFocus={true}
+                    placeholder="Type"
+                    autoComplete="off"
+                    value={item?.type}
+                    className={classes.input}
+                    disabled={true}
+                  />
+                </FormField>
+              </TableCell>
+              <TableCell component="div">
+                <FormAction>
+                  <IconButton
+                    aria-label="Edit"
+                    onClick={e => {
+                      e.preventDefault();
+                      setSelectedActionTemplate(item);
+                      setIsEditMode(true);
+                      handleModalAddAction();
+                    }}>
+                    <EditIcon color="primary" />
+                  </IconButton>
+                </FormAction>
+              </TableCell>
 
-            <TableCell component="div">
-              <FormAction>
-                <IconButton aria-label="delete">
-                  <DeleteOutlinedIcon color="primary" />
-                </IconButton>
-              </FormAction>
-            </TableCell>
+              <TableCell component="div">
+                <FormAction>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDeleteAction(item?.id)}>
+                    <DeleteOutlinedIcon color="primary" />
+                  </IconButton>
+                </FormAction>
+              </TableCell>
 
-            <TableCell component="div" scope="row" />
-          </TableRow>
-        ))}
+              <TableCell component="div" scope="row" />
+            </TableRow>
+          ))}
       </Table>
       <FormAction>
         <Button

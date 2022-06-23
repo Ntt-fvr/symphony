@@ -43,6 +43,7 @@ export type ActionTemplateRef = {|
   actionTemplateItem?: ?$ReadOnlyArray<ActionTemplateItemRef>,
   id?: ?string,
   name?: ?string,
+  isDeleted?: ?boolean,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
 |};
@@ -134,6 +135,7 @@ export type ActionTemplateItemRef = {|
   id?: ?string,
   parameters?: ?ConfigurationParameterTypeRef,
   value?: ?ParameterRef,
+  isDeleted?: ?boolean,
 |};
 export type ConfigurationParameterTypeRef = {|
   booleanValue?: ?boolean,

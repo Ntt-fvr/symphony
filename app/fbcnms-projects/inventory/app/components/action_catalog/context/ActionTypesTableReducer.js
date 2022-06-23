@@ -57,7 +57,7 @@ export function reducer(
     case 'UPDATE_ACTION_TYPE_ITEMS':
       return editActionType(state, action.id, pt => ({
         ...pt,
-        ...action.items,
+        ...action.actionTemplateItem,
       }));
     default:
       return state;
