@@ -14,8 +14,6 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type ResourceTypeBaseTypeKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
-export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
 export type PowerSearchChangeRequestResourceFilterQueryVariables = {||};
 export type PowerSearchChangeRequestResourceFilterQueryResponse = {|
   +resourceTypes: {|
@@ -23,8 +21,6 @@ export type PowerSearchChangeRequestResourceFilterQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
-        +resourceTypeBaseType: ResourceTypeBaseTypeKind,
-        +resourceTypeClass: ResourceTypeClassKind,
       |}
     |}>
   |}
@@ -43,8 +39,6 @@ query PowerSearchChangeRequestResourceFilterQuery {
       node {
         id
         name
-        resourceTypeBaseType
-        resourceTypeClass
       }
     }
   }
@@ -90,20 +84,6 @@ var v0 = [
                 "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourceTypeBaseType",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourceTypeClass",
-                "storageKey": null
               }
             ],
             "storageKey": null
@@ -133,16 +113,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "07f78f0045b47ec97f6e5e93cdf0a372",
+    "cacheID": "8db3e042dd8e928d4102d7dad8768ebb",
     "id": null,
     "metadata": {},
     "name": "PowerSearchChangeRequestResourceFilterQuery",
     "operationKind": "query",
-    "text": "query PowerSearchChangeRequestResourceFilterQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n}\n"
+    "text": "query PowerSearchChangeRequestResourceFilterQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'dbaa808c7b861ab925f23d2963a5d7d8';
+(node/*: any*/).hash = '400f4bf29b1c7dfc5442b336d25d13f2';
 
 module.exports = node;

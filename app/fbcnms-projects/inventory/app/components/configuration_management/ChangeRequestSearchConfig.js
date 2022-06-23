@@ -10,7 +10,6 @@
 
 import type {EntityConfig} from '../comparison_view/ComparisonViewTypes';
 
-
 import PowerSearchChangeRequestResourceFilter from './PowerSearchChangeRequestResourceFilter';
 import PowerSearchChangeRequestSourceFilter from './PowerSearchChangeRequestSourceFilter';
 import PowerSearchChangeRequestStatusFilter from './PowerSearchChangeRequestStatusFilter';
@@ -19,14 +18,14 @@ const ChangeRequestSearchConfig: Array<EntityConfig> = [
     type: 'changeRequest',
     label: 'ChangeRequest',
     filters: [
-      // {
-      //   key: 'changeRequest_resource',
-      //   name: 'changeRequest_resource',
-      //   entityType: 'changeRequest',
-      //   label: 'Resources Type',
-      //   component: PowerSearchChangeRequestResourceFilter,
-      //   defaultOperator: 'contains',
-      // },
+      {
+        key: 'changeRequest_resource',
+        name: 'type',
+        entityType: 'changeRequest',
+        label: 'Resources Type',
+        component: PowerSearchChangeRequestResourceFilter,
+        defaultOperator: 'is_one_of',
+      },
       {
         key: 'changeRequest_source',
         name: 'source',

@@ -69,7 +69,6 @@ const ChangeRequestTypesQuery = graphql`
         }
       }
       source
-      status
     }
     resourceSpecifications(filterBy: $filterBy) {
       edges {
@@ -86,10 +85,10 @@ const ChangeRequestTypesQuery = graphql`
   }
 `;
 
-const stringCapitalizeFisrt = string => {
-  const convertString = string.toLowerCase();
-  return convertString.charAt(0).toUpperCase() + convertString.slice(1);
-};
+// const stringCapitalizeFisrt = string => {
+//   const convertString = string.toLowerCase();
+//   return convertString.charAt(0).toUpperCase() + convertString.slice(1);
+// };
 
 const countResources = items => {
   const hash = {};
@@ -100,51 +99,6 @@ const countResources = items => {
   return itemsNotRepeated.length;
 };
 
-const tableColumns = [
-  {
-    key: 'creation date',
-    title: 'Creation date',
-    render: row => row.creationDate ?? '01/03/22',
-    tooltip: row => row.creationDate ?? '01/03/22',
-  },
-  {
-    key: 'last modification date',
-    title: `${fbt('Last modification date', '')}`,
-    render: row => row.lastModificationDate ?? '01/05/22',
-    tooltip: row => row.lastModificationDate ?? '01/03/05',
-  },
-  {
-    key: 'resource type',
-    title: `${fbt('Resource type', '')}`,
-    render: row => row.resourceType ?? '',
-    tooltip: row => row.resourceType ?? '',
-  },
-  {
-    key: 'change source',
-    title: `${fbt('Change source', '')}`,
-    render: row => row.source ?? '',
-    tooltip: row => row.source ?? '',
-  },
-  {
-    key: 'affected resources',
-    title: `${fbt('Affected resources', '')}`,
-    render: row => (
-      <CircleIndicator>{countResources(row.items)}</CircleIndicator>
-    ),
-    tooltip: row => countResources(row.items) ?? '',
-  },
-  {
-    key: 'status',
-    title: `${fbt('Status', '')}`,
-    render: row => (
-      <ButtonAlarmStatus skin={row.status}>
-        {stringCapitalizeFisrt(row.status)}
-      </ButtonAlarmStatus>
-    ),
-    tooltip: row => row.status ?? '',
-  },
-];
-
 export type Props = $ReadOnly<{||}>;
 
 const ChangeRequestTypes = () => {
@@ -152,6 +106,7 @@ const ChangeRequestTypes = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const [dataRow, setDataRow] = useState({});
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
+  const [changeRequestInitial, setChangeRequestInitial] = useState([]);
   const [changeRequest, setChangeRequest] = useState([]);
   const classes = useStyles();
 
@@ -174,19 +129,85 @@ const ChangeRequestTypes = () => {
   );
 
   useEffect(() => {
+    dataListInitial();
+  }, []);
+
+  const dataListInitial = () => {
     fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {
       filterBy: [
         {
           filterType: 'ID',
           operator: 'IS_ONE_OF',
-          idSet: [317827579904],
+          idSet: [],
         },
       ],
     }).then(data => {
-      console.log(data)
-      setChangeRequest(data.queryChangeRequest);
+      const dataModify = data.queryChangeRequest.map(item => {
+        delete item.writable;
+        return {
+          ...item,
+        };
+      });
+      dataModify.forEach(item => {
+        delete item.writable;
+        fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {
+          filterBy: [
+            {
+              filterType: 'ID',
+              operator: 'IS_ONE_OF',
+              idSet: [item.items[0].resource.resourceSpecification],
+            },
+          ],
+        }).then(datas => {
+          item.type =
+            datas.resourceSpecifications.edges[0].node.resourceType.name;
+        });
+        setChangeRequestInitial(dataModify);
+        setChangeRequest(dataModify);
+      });
     });
-  }, []);
+  };
+
+  const tableColumns = [
+    {
+      key: 'creation date',
+      title: 'Creation date',
+      render: row => row.creationDate ?? '01/03/22',
+      tooltip: row => row.creationDate ?? '01/03/22',
+    },
+    {
+      key: 'last modification date',
+      title: `${fbt('Last modification date', '')}`,
+      render: row => row.lastModificationDate ?? '01/05/22',
+      tooltip: row => row.lastModificationDate ?? '01/03/05',
+    },
+    {
+      key: 'resource type',
+      title: `${fbt('Resource type', '')}`,
+      render: row => row.type ?? '',
+      tooltip: row => row.type ?? '',
+    },
+    {
+      key: 'change source',
+      title: `${fbt('Change source', '')}`,
+      render: row => row.source ?? '',
+      tooltip: row => row.source ?? '',
+    },
+    {
+      key: 'affected resources',
+      title: `${fbt('Affected resources', '')}`,
+      render: row => (
+        <CircleIndicator>{countResources(row.items)}</CircleIndicator>
+      ),
+      tooltip: row => countResources(row.items) ?? '',
+    },
+    {
+      key: 'status',
+      title: `${fbt('Status', '')}`,
+      render: row => row.status ?? '',
+      tooltip: row => row.status ?? '',
+    },
+  ];
 
   const showInfo = data => {
     setDataRow(data);
@@ -219,11 +240,15 @@ const ChangeRequestTypes = () => {
       arrayFilters.push(data[filter.name]);
     });
 
-    const result = dataMock.filter(item => arrayFilters.every(f => f(item)));
+    const result = changeRequestInitial.filter(item =>
+      arrayFilters.every(f => f(item)),
+    );
 
     setChangeRequest(result);
     setFilters(filters);
   };
+
+  console.log(changeRequest);
 
   return (
     <Grid className={classes.root} container spacing={0}>
