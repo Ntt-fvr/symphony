@@ -316,6 +316,7 @@ input ActionTemplateItemRef {
   id: ID
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
+  isDeleted:Boolean
 }
 
 input ActionTemplateOrder {
@@ -343,6 +344,7 @@ input ActionTemplateRef {
   actionTemplateItem: [ActionTemplateItemRef!]
   id: ID
   name: String
+  isDeleted:Boolean
   resourceSpecifications: String
   type: ActionTemplateType
 }
