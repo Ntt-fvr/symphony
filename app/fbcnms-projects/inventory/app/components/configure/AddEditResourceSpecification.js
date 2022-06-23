@@ -284,12 +284,13 @@ export const AddEditResourceSpecification = (props: Props) => {
     };
 
     const response = {
-      onCompleted: () => {
+      onCompleted: response => {
         const configParamVariables = {
           input: convertPropertyTypeToMutationInput(parameterTypes).map(
             item => {
               return {
                 ...convertParameterTypeToMutationInput(item),
+                resourceSpecification: response.addResourceSpecification?.id,
               };
             },
           ),
