@@ -78,6 +78,7 @@ type Resource {
   numericPools: [NumericPool]
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
+  changeItems: [ChangeItem] @hasInverse(field: resource)
 }
 type ResourceProperty{
   id: ID!
