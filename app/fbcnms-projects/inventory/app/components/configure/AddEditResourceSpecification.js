@@ -286,11 +286,13 @@ export const AddEditResourceSpecification = (props: Props) => {
     const response = {
       onCompleted: () => {
         const configParamVariables = {
-          input: parameterTypes.map(item => {
-            return {
-              ...convertParameterTypeToMutationInput(item),
-            };
-          }),
+          input: convertPropertyTypeToMutationInput(parameterTypes).map(
+            item => {
+              return {
+                ...convertParameterTypeToMutationInput(item),
+              };
+            },
+          ),
         };
 
         AddConfigurationParameterMutation(configParamVariables, {
@@ -322,7 +324,7 @@ export const AddEditResourceSpecification = (props: Props) => {
     const response = {
       onCompleted: response => {
         const addConfigParamVariables = {
-          input: parameterTypes
+          input: convertPropertyTypeToMutationInput(parameterTypes)
             .filter(item =>
               currentParams.length > 0
                 ? !currentParams.includes(item?.id)
@@ -339,7 +341,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         AddConfigurationParameterMutation(addConfigParamVariables, {
           onCompleted: () => {
             if (currentParams.length > 0) {
-              parameterTypes
+              convertPropertyTypeToMutationInput(parameterTypes)
                 .filter(item => currentParams.includes(item.id))
                 .map(item => {
                   const configParamVariables = {
