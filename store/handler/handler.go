@@ -87,6 +87,18 @@ func getKey(r *http.Request, key string) string {
 	return key
 }
 
+func getNifiKey(r *http.Request, key string) string {
+	if key == "" {
+		return key
+	}
+	if global, _ := strconv.ParseBool(r.Header.Get("Is-Global")); !global {
+		if ns := r.Header.Get("x-auth-organization"); ns != "" {
+			key = "nifi" + "/" + ns + "/" + key
+		}
+	}
+	return key
+}
+
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := h.logger.For(ctx)
@@ -162,6 +174,107 @@ func (h *Handler) download(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	logger := h.logger.For(ctx)
 	key := getKey(r, vars["key"])
+	if key == "" {
+		logger.Error("cannot resolve object key")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	filename := vars["filename"]
+	if filename == "" {
+		logger.Error("cannot resolve object filename")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	u, err := h.bucket.SignedURL(ctx, key, &blob.SignedURLOptions{
+		BeforeSign: setResponseContentDisposition(filename),
+	})
+	if err != nil {
+		logger.Error("cannot sign download url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	logger.Debug("signed download url",
+		zap.String("key", key),
+		zap.String("filename", filename),
+	)
+	http.Redirect(w, r, u, http.StatusSeeOther)
+}
+
+func (h *Handler) getNifi(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := h.logger.For(ctx)
+	key := getNifiKey(r, mux.Vars(r)["key"])
+	if key == "" {
+		logger.Error("cannot resolve object key")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	u, err := h.bucket.SignedURL(ctx, key, nil)
+	if err != nil {
+		logger.Error("cannot sign get object url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	logger.Debug("signed get url", zap.String("key", key))
+	http.Redirect(w, r, u, http.StatusSeeOther)
+}
+
+func (h *Handler) putNifi(w http.ResponseWriter, r *http.Request) {
+	var (
+		ctx    = r.Context()
+		logger = h.logger.For(ctx)
+		rsp    struct {
+			URL string `json:"URL"`
+			Key string `json:"key"`
+		}
+		err error
+	)
+	rsp.Key = uuid.New().String()
+	key := getNifiKey(r, rsp.Key)
+	if rsp.URL, err = h.bucket.SignedURL(ctx, key,
+		&blob.SignedURLOptions{
+			Method:      http.MethodPut,
+			ContentType: mux.Vars(r)["contentType"],
+		},
+	); err != nil {
+		logger.Error("cannot sign put object url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(&rsp); err != nil {
+		logger.Error("cannot write put object response", zap.Error(err))
+		return
+	}
+	logger.Debug("signed put url", zap.String("key", key))
+}
+
+func (h *Handler) deleteNifi(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := h.logger.For(ctx)
+	key := getNifiKey(r, mux.Vars(r)["key"])
+	if key == "" {
+		logger.Error("cannot resolve object key")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	u, err := h.bucket.SignedURL(ctx, key,
+		&blob.SignedURLOptions{Method: http.MethodDelete},
+	)
+	if err != nil {
+		logger.Error("cannot sign delete object url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	logger.Debug("signed delete url", zap.String("key", key))
+	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
+}
+
+func (h *Handler) downloadNifi(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	vars := mux.Vars(r)
+	logger := h.logger.For(ctx)
+	key := getNifiKey(r, vars["key"])
 	if key == "" {
 		logger.Error("cannot resolve object key")
 		http.Error(w, "", http.StatusBadRequest)
