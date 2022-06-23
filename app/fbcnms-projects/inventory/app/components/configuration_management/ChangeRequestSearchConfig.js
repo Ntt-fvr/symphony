@@ -16,7 +16,7 @@ import PowerSearchChangeRequestStatusFilter from './PowerSearchChangeRequestStat
 const ChangeRequestSearchConfig: Array<EntityConfig> = [
   {
     type: 'changeRequest',
-    label: 'ChangeRequest',
+    label: 'Change Request',
     filters: [
       {
         key: 'changeRequest_resource',
@@ -30,7 +30,7 @@ const ChangeRequestSearchConfig: Array<EntityConfig> = [
         key: 'changeRequest_source',
         name: 'source',
         entityType: 'changeRequest',
-        label: 'Change source',
+        label: 'Change Source',
         component: PowerSearchChangeRequestSourceFilter,
         defaultOperator: 'is_one_of',
       },

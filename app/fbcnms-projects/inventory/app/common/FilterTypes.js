@@ -97,14 +97,24 @@ export const statusChangeRequestValues = [
 
 export const sourceChangeRequestValues = [
   {
-    key: 'workflow',
-    value: 'WORKFLOW',
-    label: 'Workflow',
+    key: 'gui',
+    value: 'GUI',
+    label: 'gui',
   },
   {
-    key: 'manual',
-    value: 'MANUAL',
-    label: 'Manual',
+    key: 'non_rt_ric',
+    value: 'NON_RT_RIC',
+    label: 'non_rt_ric',
+  },
+  {
+    key: 'nssmf',
+    value: 'NSSMF',
+    label: 'nssmf',
+  },
+  {
+    key: 'workflow',
+    value: 'WORKFLOW',
+    label: 'workflow',
   },
 
 ]

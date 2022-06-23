@@ -25,7 +25,7 @@
    } = props;
    return (
      <PowerSearchFilter
-       name="Source"
+       name="Change Source"
        operator={value.operator}
        editMode={editMode}
        onRemoveFilter={onRemoveFilter}

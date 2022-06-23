@@ -69,6 +69,7 @@ const ChangeRequestTypesQuery = graphql`
         }
       }
       source
+      status
     }
     resourceSpecifications(filterBy: $filterBy) {
       edges {
@@ -85,10 +86,10 @@ const ChangeRequestTypesQuery = graphql`
   }
 `;
 
-// const stringCapitalizeFisrt = string => {
-//   const convertString = string.toLowerCase();
-//   return convertString.charAt(0).toUpperCase() + convertString.slice(1);
-// };
+const stringCapitalizeFisrt = string => {
+  const convertString = string.toLowerCase();
+  return convertString.charAt(0).toUpperCase() + convertString.slice(1);
+};
 
 const countResources = items => {
   const hash = {};
@@ -204,7 +205,11 @@ const ChangeRequestTypes = () => {
     {
       key: 'status',
       title: `${fbt('Status', '')}`,
-      render: row => row.status ?? '',
+      render: row => (
+        <ButtonAlarmStatus skin={row.status}>
+          {stringCapitalizeFisrt(row.status)}
+        </ButtonAlarmStatus>
+      ),
       tooltip: row => row.status ?? '',
     },
   ];
@@ -266,7 +271,7 @@ const ChangeRequestTypes = () => {
         <div className={classes.bar}>
           <div className={classes.searchBar}>
             <PowerSearchBar
-              placeholder="Configuration management"
+              placeholder="Filter"
               getSelectedFilter={filters => setFilters(filters)}
               filterConfigs={filterConfigs}
               filterValues={filters}
