@@ -253,7 +253,6 @@ const ChangeRequestTypes = () => {
     setFilters(filters);
   };
 
-  console.log(changeRequest);
 
   return (
     <Grid className={classes.root} container spacing={0}>
