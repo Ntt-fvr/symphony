@@ -191,17 +191,22 @@ export type AddCMVersionMutationResponse = {|
   +addCMVersion: ?{|
     +cMVersion: ?$ReadOnlyArray<?{|
       +id: string,
-      +parameters: $ReadOnlyArray<{|
-        +id: string,
-        +booleanValue: ?boolean,
-        +intValue: ?number,
-        +stringValue: ?string,
-      |}>,
+      +status: VersionStatus,
       +resource: {|
         +id: string,
         +name: string,
       |},
-      +status: VersionStatus,
+      +parameters: $ReadOnlyArray<{|
+        +id: string,
+        +intValue: ?number,
+        +stringValue: ?string,
+        +booleanValue: ?boolean,
+        +floatValue: ?number,
+        +latitudeValue: ?number,
+        +longitudeValue: ?number,
+        +rangeFromValue: ?number,
+        +rangeToValue: ?number,
+      |}>,
     |}>
   |}
 |};
@@ -219,17 +224,22 @@ mutation AddCMVersionMutation(
   addCMVersion(input: $input) {
     cMVersion {
       id
-      parameters {
-        id
-        booleanValue
-        intValue
-        stringValue
-      }
+      status
       resource {
         id
         name
       }
-      status
+      parameters {
+        id
+        intValue
+        stringValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+      }
     }
   }
 }
@@ -277,34 +287,8 @@ v2 = [
           {
             "alias": null,
             "args": null,
-            "concreteType": "Parameter",
-            "kind": "LinkedField",
-            "name": "parameters",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "booleanValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "intValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "stringValue",
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "status",
             "storageKey": null
           },
           {
@@ -329,8 +313,69 @@ v2 = [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "status",
+            "concreteType": "Parameter",
+            "kind": "LinkedField",
+            "name": "parameters",
+            "plural": true,
+            "selections": [
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "intValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "stringValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "booleanValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "floatValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "latitudeValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "longitudeValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "rangeFromValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "rangeToValue",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -358,16 +403,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "7fdfc8258db219ceb85be9344eec7e26",
+    "cacheID": "1ad5d4e3188949ebd0b6d5ce6cc2ae96",
     "id": null,
     "metadata": {},
     "name": "AddCMVersionMutation",
     "operationKind": "mutation",
-    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      parameters {\n        id\n        booleanValue\n        intValue\n        stringValue\n      }\n      resource {\n        id\n        name\n      }\n      status\n    }\n  }\n}\n"
+    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      status\n      resource {\n        id\n        name\n      }\n      parameters {\n        id\n        intValue\n        stringValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'aaf3751fef359ff41e01f7d012c51a78';
+(node/*: any*/).hash = '3aaf9d1eed54568a1ff1c08f8a1329e4';
 
 module.exports = node;

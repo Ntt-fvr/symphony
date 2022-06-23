@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ChangeRequestSource = "GUI" | "NON_RT_RIC" | "NSSMF" | "WORKFLOW" | "%future added value";
-export type ChangeRequestStatus = "APPROVAL" | "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "REJECTED" | "SCHEDULED" | "SUBMITTED" | "SUCCESSFUL" | "SUCCESSFUL_WITH_WARNINGS" | "%future added value";
+export type ChangeRequestStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING_APPROVAL" | "REJECTED" | "SCHEDULED" | "SUBMITTED" | "SUCCESSFUL" | "SUCCESSFUL_WITH_WARNINGS" | "%future added value";
 export type ChangeRequestType = "AUTOMATIC" | "MANUAL" | "%future added value";
 export type ChangeRequestTypesQueryVariables = {||};
 export type ChangeRequestTypesQueryResponse = {|

@@ -9,6 +9,7 @@
  */
 
 import type {AddCMVersionMutationVariables} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
+import type {AddEditResourceInLocationQuery} from './__generated__/AddEditResourceInLocationQuery.graphql';
 import type {
   AddResourceMutationResponse,
   AddResourceMutationVariables,
@@ -40,7 +41,9 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   formField: {
@@ -95,6 +98,23 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const queryConfigurationParameterType = graphql`
+  query AddEditResourceInLocationQuery(
+    $filter: ConfigurationParameterTypeFilter
+  ) {
+    queryConfigurationParameterType(filter: $filter) {
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+    }
+  }
+`;
+
 type ResourceType = {
   data: {
     id: string,
@@ -129,6 +149,28 @@ const AddEditResourceInLocation = (props: Props) => {
   const [slotStartDate, setSlotStartDate] = useState(moment);
   const [slotEndDate, setSlotEndDate] = useState(moment);
   const [slotInstallDate, setSlotInstallDate] = useState(moment);
+
+  const response = useLazyLoadQuery<AddEditResourceInLocationQuery>(
+    queryConfigurationParameterType,
+    {
+      filter: {
+        resourceSpecification: {
+          eq: dataformModal.id,
+        },
+      },
+    },
+  );
+
+  const dataPropertyType = response.queryConfigurationParameterType
+    ?.map(p => p)
+    .filter(Boolean);
+
+  const convertParametersMap = (data: T): Array<T> =>
+    data?.map(prop => {
+      return {
+        ...prop,
+      };
+    });
 
   function handleChange({target}) {
     setResourceType({
@@ -165,16 +207,18 @@ const AddEditResourceInLocation = (props: Props) => {
               resource: {
                 id: response.addResource?.resource[0]?.id,
               },
-              parameters: [],
+              parameters: convertParametersMap(dataPropertyType),
               status: 'CURRENT',
             },
           ],
         };
-        AddCMVersionMutation(cmVersionVariables);
+        AddCMVersionMutation(cmVersionVariables, {
+          onCompleted: () => isCompleted(),
+        });
+        isCompleted();
       },
     };
     AddResourceMutation(variables, response);
-    isCompleted();
     setResourceType({data: {}});
     closeFormAddEdit();
   }

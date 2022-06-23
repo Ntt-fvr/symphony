@@ -24,17 +24,22 @@ const mutation = graphql`
     addCMVersion(input: $input) {
       cMVersion {
         id
-        parameters {
-          id
-          booleanValue
-          intValue
-          stringValue
-        }
+        status
         resource {
           id
           name
         }
-        status
+        parameters {
+          id
+          intValue
+          stringValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+        }
       }
     }
   }
