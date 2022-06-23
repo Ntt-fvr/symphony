@@ -284,6 +284,11 @@ export const arrayConfigs = [
     title: 'Resource Inventory',
     enabledByDefault: true,
   },
+  {
+    id: 'resource_port_management',
+    title: 'Port management',
+    enabledByDefault: true,
+  },
 ];
 
 export const featureConfigs: {[FeatureID]: FeatureConfig} = {};

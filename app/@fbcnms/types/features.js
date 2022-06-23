@@ -50,4 +50,5 @@ export type FeatureID =
   | 'scheduling_filter_dates'
   | 'property_combo'
   | 'equipment_&_ports_module'
-  | 'resource_inventory';
+  | 'resource_inventory'
+  | 'resource_port_management';
