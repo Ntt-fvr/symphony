@@ -7955,7 +7955,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String, resourceSpecification: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
   getFlowExecutionReference(id: ID!): FlowExecutionReference @join__field(graph: DGRAPHSERVICE)
