@@ -219,7 +219,7 @@ const DialogSelectName = (props: Props) => {
               <StepperName activeStep={activeStep} />
             </Grid>
             <Grid className={classes.title}>
-              <CardHeader>Name and Type action</CardHeader>
+              <CardHeader>Name and Type action*</CardHeader>
               <Grid item xs={6}>
                 <FormField>
                   <TextField
@@ -235,7 +235,7 @@ const DialogSelectName = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid className={classes.subtitle}>
-                <Text variant={'subtitle2'}>Select Type Action</Text>
+                <Text variant={'subtitle2'}>Select Type Action*</Text>
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
@@ -267,6 +267,7 @@ const DialogSelectName = (props: Props) => {
                 }}
                 className={classes.option}
                 variant="contained"
+                disabled={!(name && type)}
                 color="primary">
                 Next
               </Button>

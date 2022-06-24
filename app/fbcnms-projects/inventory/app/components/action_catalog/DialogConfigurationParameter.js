@@ -63,8 +63,17 @@ const DialogConfigurationParameter = (props: Props) => {
     handleUpdate,
   } = props;
   const [actionItems, setActionItems] = useState(
-    isEdit ? actionDetails.actionTemplateItem : [{id: 0}],
+    isEdit ? actionDetails.actionTemplateItem : [],
   );
+
+  const handleDisabled = () => {
+    return !(
+      actionItems.length > 0 &&
+      actionItems.every(
+        item => !!(item.parameters.id && item.value.stringValue),
+      )
+    );
+  };
 
   const classes = useStyles();
   const handleBack = () => {
@@ -120,6 +129,7 @@ const DialogConfigurationParameter = (props: Props) => {
           }}
           style={{height: '36px'}}
           variant="contained"
+          disabled={handleDisabled()}
           color="primary">
           {isEdit ? 'update' : 'save'}
         </Button>

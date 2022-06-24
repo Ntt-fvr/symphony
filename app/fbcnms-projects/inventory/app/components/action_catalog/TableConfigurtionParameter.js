@@ -113,10 +113,10 @@ const TableConfigurtionParameter = (props: Props) => {
         <TableHead component="div">
           <TableRow component="div">
             <TableCell style={{width: '50%'}} component="div">
-              <fbt desc="">Configuration Parameter</fbt>
+              <fbt desc="">Configuration Parameter*</fbt>
             </TableCell>
             <TableCell style={{width: '40%'}} component="div">
-              <fbt desc="">Value</fbt>
+              <fbt desc="">Value*</fbt>
             </TableCell>
             <TableCell style={{width: '10%'}} component="div">
               <fbt desc="">Delete</fbt>

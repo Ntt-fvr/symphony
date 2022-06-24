@@ -275,6 +275,16 @@ const StepperAction = (props: Props) => {
     };
   };
 
+  const handleDisabled = () => {
+    return !(
+      name &&
+      description &&
+      checkedResource?.length > 0 &&
+      selectedAction &&
+      names.includes(name)
+    );
+  };
+
   return (
     <div>
       <Grid item xs={12}>
@@ -444,6 +454,7 @@ const StepperAction = (props: Props) => {
                   }}
                   className={classes.option}
                   variant="contained"
+                  disabled={handleDisabled()}
                   color="primary">
                   Next
                 </Button>
