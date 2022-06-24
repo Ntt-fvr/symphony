@@ -41,7 +41,7 @@ description: String
 limit: Int!
 customLimit: Int
 resources: [Resource!]!
-isDelete: Boolean!
+isDeleted: Boolean!
 statusNumericPools: [StatusNumericPool]
 }
 
@@ -67,17 +67,18 @@ type Resource {
   locatedIn: String @search(by: [hash])
   #contains: String @search(by: [hash]) @hasInverse(field: locatedIn)
   physicalLink: Resource
-  physicalLinkInv: [Resource] @hasInverse(field: physicalLink)
-  logicalLink: Resource
-  logicalLinkInv: [Resource] @hasInverse(field: logicalLink)
+  physicalLinkInv: Resource @hasInverse(field: physicalLink)
+  logicalLinks: [Resource]
+  logicalLinkInv: [Resource] @hasInverse(field: logicalLinks)
   crossConnection: Resource
-  crossconnectionInv: [Resource] @hasInverse(field: crossConnection)
+  crossconnectionInv: Resource @hasInverse(field: crossConnection)
   resourceSpecification: String! @search(by: [hash])
   resourceProperties: [ResourceProperty]
-  isDelete: Boolean!
-  numericPool: [NumericPool]
+  isDeleted: Boolean!
+  numericPools: [NumericPool]
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
+  changeItems: [ChangeItem] @hasInverse(field: resource)
 }
 type ResourceProperty{
   id: ID!
@@ -110,7 +111,7 @@ type Parameter {
   id: ID!
   parameterType: ConfigurationParameterType!
   previous: Parameter
-  versionCM: [CMVersion]!
+  versionCMs: [CMVersion]!
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -709,14 +710,14 @@ type ActionTemplate{
   name:String!
   type:ActionTemplateType!
   resourceSpecifications: String! @search(by: [hash])
-  actionTemplateItem:[ActionTemplateItem!]!
-  ActionExecution: [ActionExecution!]
+  actionTemplateItems:[ActionTemplateItem!]!
+  actionExecutions: [ActionExecution!]
 }
 type ActionTemplateItem{
   id:ID!
   parameters:ConfigurationParameterType!
   value:Parameter!
-  actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItem)
+  actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItems)
 }
 enum ActionSchedulerType {
   MANUAL_EXECUTION
