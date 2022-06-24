@@ -149,7 +149,16 @@ const TableConfigurtionParameter = (props: Props) => {
                       }));
                     }}>
                     {configParams?.map(param => (
-                      <MenuItem key={param.id} value={param.id}>
+                      <MenuItem
+                        key={param.id}
+                        value={param.id}
+                        disabled={
+                          param.id != item.parameters.id &&
+                          actionItems
+                            .filter(i => !i.isDeleted)
+                            .map(i => i.parameters.id)
+                            .includes(param.id)
+                        }>
                         {param.name}
                       </MenuItem>
                     ))}

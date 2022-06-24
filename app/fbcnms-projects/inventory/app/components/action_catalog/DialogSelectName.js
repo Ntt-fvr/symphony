@@ -117,13 +117,15 @@ const DialogSelectName = (props: Props) => {
         name: name,
         type: type,
         resourceSpecifications: resourceSpecification,
-        actionTemplateItem: items.map(i => {
-          return {
-            parameters: i.parameters,
-            value: i.value,
-            isDeleted: i.isDeleted ?? false,
-          };
-        }),
+        actionTemplateItem: items
+          .filter(item => !item.isDeleted)
+          .map(i => {
+            return {
+              parameters: i.parameters,
+              value: i.value,
+              isDeleted: i.isDeleted ?? false,
+            };
+          }),
       },
     };
     AddActionTemplateMutation(templateVariables, {
@@ -137,7 +139,9 @@ const DialogSelectName = (props: Props) => {
   };
 
   const updateAction = items => {
-    const savedItems = actionDetails.actionTemplateItem.map(item => item.id);
+    const savedItems = actionDetails.actionTemplateItem
+      .filter(item => !item.isDeleted)
+      .map(item => item.id);
     const templateVariables = {
       input: {
         filter: {
@@ -148,7 +152,7 @@ const DialogSelectName = (props: Props) => {
           type: type,
           resourceSpecifications: resourceSpecification,
           actionTemplateItem: items
-            .filter(item => !savedItems.includes(item.id))
+            .filter(item => !savedItems.includes(item.id) && !item.isDeleted)
             .map(i => {
               return {
                 parameters: i.parameters,
