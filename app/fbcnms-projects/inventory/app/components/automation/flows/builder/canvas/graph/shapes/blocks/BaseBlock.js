@@ -18,9 +18,13 @@ import type {
 } from '../../facades/shapes/vertexes/BaseVertext';
 import type {Paper} from '../../facades/Paper';
 
+import type {DecisionSettings} from './blockTypes/decision/DecisionSettings';
 import type {ErrorHandling} from './blockTypes/ErrorSettings';
+import type {GoToSettings} from './blockTypes/goTo/GoToSettings';
 import type {InputSettings} from './blockTypes/InputSettings';
 import type {OutputSettings} from './blockTypes/OutputSettings';
+import type {TimerSettings} from './blockTypes/timer/TimerSettings';
+import type {WaitSignalSettings} from './blockTypes/waitSignal/WaitSignalSettings';
 
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
@@ -57,6 +61,13 @@ const selectionHighlighting = {
   },
 };
 
+type settingsTypes = {
+  ...WaitSignalSettings,
+  ...TimerSettings,
+  ...GoToSettings,
+  ...DecisionSettings,
+};
+
 export interface IBlock {
   +id: string;
   +select: () => void;
@@ -65,7 +76,7 @@ export interface IBlock {
   +view: IVertexView;
   +type: string;
   +name: string;
-  +settings: string;
+  +settings: settingsTypes;
   +inputSettings: InputSettings;
   +outputSettings: OutputSettings;
   +errorSettings: ErrorHandling;

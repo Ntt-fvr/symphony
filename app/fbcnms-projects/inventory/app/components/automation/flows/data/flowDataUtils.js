@@ -12,17 +12,13 @@ import type {
   ActionBlockInput,
   ActionTypeId,
   ConnectorInput,
-  DecisionBlockInput,
-  DecisionRouteInput,
   EndBlockInput,
-  GotoBlockInput,
   ImportFlowDraftInput,
   ImportFlowDraftMutationResponse,
-  StartBlockInput,
-  TriggerBlockInput,
-  TriggerTypeId,
-  TrueFalseBlockInput,
 } from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
+import type {BaseBlockInput} from '../builder/canvas/graph/shapes/blocks/blockTypes/BaseBlockSettingsTypes';
+import type {DecisionBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/decision/DecisionSettings';
+import type {GotoBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToSettings';
 import type {IBlock} from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../builder/canvas/graph/shapes/connectors/BaseConnector';
 import type {IShape} from '../builder/canvas/graph/facades/shapes/BaseShape';
@@ -31,6 +27,13 @@ import type {
   PublishFlowInput,
   PublishFlowMutationResponse,
 } from '../../../../mutations/__generated__/PublishFlowMutation.graphql';
+import type {StartBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartSettings';
+import type {TrueFalseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseSettings';
+
+import {TYPE as TimerType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
+import {TYPE as TriggerStart} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
+import {TYPE as TriggerWorkforce} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerWorkforce';
+import {TYPE as WaitSignal} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
 
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
 import PublishFlowMutation from '../../../../mutations/PublishFlowMutation';
@@ -75,11 +78,6 @@ export function publishFlow(
   });
 }
 
-type StartBlockInputType = {
-  ...StartBlockInput,
-  ...BaseBlockInput,
-};
-
 export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
   return {
     ...mapBlockForSave(block),
@@ -87,30 +85,13 @@ export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
   };
 }
 
-export type DecisionRouteInputType = Array<{|
-  cid?: ?string,
-  name: String,
-  ...DecisionRouteInput,
-|}>;
-type DecisionBlockInputType = {
-  routes: DecisionRouteInputType,
-  stateParamDefinitions: string,
-  ...DecisionBlockInput,
-  ...BaseBlockInput,
-};
-
 export function mapDecisionBlockForSave(block: IBlock): DecisionBlockInputType {
+  const {routes} = block.settings;
   return {
     ...mapBlockForSave(block),
-    routes: [],
-    stateParamDefinitions: '',
+    routes: routes,
   };
 }
-
-type TrueFalseBlockInputType = {
-  ...TrueFalseBlockInput,
-  ...BaseBlockInput,
-};
 
 export function mapTrueFalseBlockForSave(
   block: IBlock,
@@ -120,12 +101,8 @@ export function mapTrueFalseBlockForSave(
   };
 }
 
-type GotoBlockInputType = {
-  ...GotoBlockInput,
-  type: string,
-};
-
 export function mapGoToBlockForSave(block: IBlock): GotoBlockInputType {
+  const {gotoType, targetBlockCid} = block.settings;
   return {
     cid: block.id,
     uiRepresentation: {
@@ -133,8 +110,8 @@ export function mapGoToBlockForSave(block: IBlock): GotoBlockInputType {
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
-    targetBlockCid: '',
-    type: block.settings.type,
+    targetBlockCid: targetBlockCid,
+    type: gotoType,
   };
 }
 
@@ -155,23 +132,63 @@ export function mapActionBlocksForSave(
 }
 
 type TriggerBlockInputType = {
-  signalModule: string,
-  customFilter: string,
-  blocked: boolean,
-  ...TriggerBlockInput,
+  type?: string,
+  signalModule?: string,
+  customFilter?: string,
+  blocked?: boolean,
+  behavior?: string,
+  seconds?: number,
+  datetime?: string,
+  enableExpressionL?: boolean,
+  expression?: string,
+  exitPoint?: string,
 };
 
-export function mapTriggerBlocksForSave(
-  block: IBlock,
-  triggerType: TriggerTypeId,
-): TriggerBlockInputType {
-  return {
-    ...mapBlockForSave(block),
-    triggerType,
-    signalModule: '',
-    customFilter: '',
-    blocked: true,
-  };
+export function mapTriggerBlocksForSave(block: IBlock): TriggerBlockInputType {
+  const {
+    blocked,
+    customFilter,
+    signalModule,
+    signalType,
+    behavior,
+    seconds,
+    datetime,
+    enableExpressionL,
+    expression,
+    exitPoint,
+  } = block.settings;
+
+  switch (block.model.attributes.type) {
+    case TimerType:
+      return {
+        cid: block.id,
+        behavior: behavior,
+        seconds: seconds,
+        datetime: datetime,
+        enableExpressionL: enableExpressionL,
+        expression: expression,
+        exitPoint: exitPoint,
+        uiRepresentation: {
+          name: block.name,
+          xPosition: Math.floor(block.model.attributes.position.x),
+          yPosition: Math.floor(block.model.attributes.position.y),
+        },
+      };
+    case TriggerStart:
+      return {};
+    case TriggerWorkforce:
+      return {};
+    case WaitSignal:
+      return {
+        ...mapBlockForSave(block),
+        type: signalType,
+        signalModule: signalModule,
+        customFilter: customFilter,
+        blocked: blocked,
+      };
+    default:
+      return;
+  }
 }
 
 export function mapEndBlockForSave(block: IBlock): EndBlockInput {
@@ -180,33 +197,6 @@ export function mapEndBlockForSave(block: IBlock): EndBlockInput {
     params: [],
   };
 }
-
-type BaseBlockInput = $ReadOnly<{|
-  cid: string,
-  uiRepresentation: {|
-    name: string,
-    xPosition: number,
-    yPosition: number,
-  |},
-  enableInputTransformation: boolean,
-  inputTransfStrategy?: string,
-  inputParamDefinitions?: string,
-  enableInputStateTransformation: boolean,
-  inputStateTransfStrategy: string,
-  inputStateParamDefinitions: string,
-  enableOutputTransformation: boolean,
-  outputTranfStrategy?: string,
-  outputParamDefinitions?: string,
-  enableOutputStateTransformation: boolean,
-  outputStateTransfStrategy: string,
-  outputStateParamDefinitions: string,
-  enableErrorHandling?: boolean,
-  enableRetryPolicy?: boolean,
-  retryInterval?: number,
-  units?: string,
-  maxAttemps?: number,
-  backoffRate?: number,
-|}>;
 
 function mapBlockForSave(block: IBlock): BaseBlockInput {
   const {

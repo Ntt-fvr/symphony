@@ -9,12 +9,28 @@
  */
 'use strict';
 
+import type {
+  BaseBlockInput,
+  BlockUIRepresentationInput,
+} from '../BaseBlockSettingsTypes';
+
+type DecisionRouteInputType = {|
+  cid?: ?string,
+  name: String,
+  condition: string,
+|};
+
+export type DecisionBlockInputType = {
+  routes: DecisionRouteInputType,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+  ...BaseBlockInput,
+};
 type DecisionSettings = $ReadOnly<{|
-  decisionSettings: string,
+  routes: DecisionRouteInputType,
 |}>;
 
 export const initialDecisionSettings: DecisionSettings = {
-  decisionSettings: 'DecisionSettings',
+  routes: null,
 };
 
 export const setDecisionSettings: DecisionSettings = newDecisionSettings => {
