@@ -6,6 +6,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -40,6 +41,8 @@ type Config struct {
 	Logger log.Logger
 	Bucket *blob.Bucket
 }
+
+var name string
 
 // New creates a new sign handler from config.
 func New(cfg Config) *Handler {
@@ -82,18 +85,6 @@ func getKey(r *http.Request, key string) string {
 	if global, _ := strconv.ParseBool(r.Header.Get("Is-Global")); !global {
 		if ns := r.Header.Get("x-auth-organization"); ns != "" {
 			key = ns + "/" + key
-		}
-	}
-	return key
-}
-
-func getNifiKey(r *http.Request, key string) string {
-	if key == "" {
-		return key
-	}
-	if global, _ := strconv.ParseBool(r.Header.Get("Is-Global")); !global {
-		if ns := r.Header.Get("x-auth-organization"); ns != "" {
-			key = "nifi" + "/" + ns + "/" + key
 		}
 	}
 	return key
@@ -203,7 +194,7 @@ func (h *Handler) download(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) getNifi(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := h.logger.For(ctx)
-	key := getNifiKey(r, mux.Vars(r)["key"])
+	key := getKey(r, mux.Vars(r)["key"])
 	if key == "" {
 		logger.Error("cannot resolve object key")
 		http.Error(w, "", http.StatusBadRequest)
@@ -229,8 +220,10 @@ func (h *Handler) putNifi(w http.ResponseWriter, r *http.Request) {
 		}
 		err error
 	)
+	var name string
+	fmt.Scan(&name)
 	rsp.Key = uuid.New().String()
-	key := getNifiKey(r, rsp.Key)
+	key := name + getKey(r, rsp.Key)
 	if rsp.URL, err = h.bucket.SignedURL(ctx, key,
 		&blob.SignedURLOptions{
 			Method:      http.MethodPut,
@@ -252,7 +245,7 @@ func (h *Handler) putNifi(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) deleteNifi(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := h.logger.For(ctx)
-	key := getNifiKey(r, mux.Vars(r)["key"])
+	key := getKey(r, mux.Vars(r)["key"])
 	if key == "" {
 		logger.Error("cannot resolve object key")
 		http.Error(w, "", http.StatusBadRequest)
@@ -274,7 +267,7 @@ func (h *Handler) downloadNifi(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
 	logger := h.logger.For(ctx)
-	key := getNifiKey(r, vars["key"])
+	key := getKey(r, vars["key"])
 	if key == "" {
 		logger.Error("cannot resolve object key")
 		http.Error(w, "", http.StatusBadRequest)
