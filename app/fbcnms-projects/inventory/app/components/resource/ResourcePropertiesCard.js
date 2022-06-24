@@ -15,6 +15,7 @@ import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import CardPorts from './ResourceCardPorts';
 import Grid from '@material-ui/core/Grid';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import ModalSteper from './ModalSteper';
@@ -324,7 +325,7 @@ const ResourcePropertiesCard = (props: Props) => {
                         </CardActions>
                       </Card>
                     ) : null}
-                    {selectedTab === 'ports' ? <div>soy ports</div> : null}
+                    {selectedTab === 'ports' ? <CardPorts /> : null}
                     {selectedTab === 'network' ? (
                       <ResourceNetworkCard
                         onAddResourceSlot={onAddResourceSlot}
