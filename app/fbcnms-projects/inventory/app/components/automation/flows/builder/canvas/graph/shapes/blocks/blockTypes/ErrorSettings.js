@@ -9,8 +9,22 @@
  */
 'use strict';
 
-export const initialErrorSettings = {
-  initialErrorSettings: 'initialErrorSettings',
+export type ErrorHandling = {
+  enableErrorHandling: boolean,
+  enableRetryPolicy: boolean,
+  retryInterval: number,
+  units: string,
+  maxAttemps: number,
+  backoffRate: number,
+};
+
+export const initialErrorSettings: ErrorHandling = {
+  enableErrorHandling: null,
+  enableRetryPolicy: null,
+  retryInterval: null,
+  units: null,
+  maxAttemps: null,
+  backoffRate: null,
 };
 
 export const setErrorSettings = newErrorSettings => {

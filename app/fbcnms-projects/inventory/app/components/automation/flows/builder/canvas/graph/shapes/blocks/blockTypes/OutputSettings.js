@@ -9,8 +9,22 @@
  */
 'use strict';
 
-export const initialOutputSettings = {
-  initialOutputSettings: 'initialOutputSettings',
+export type OutputSettings = {
+  enableOutputTransformation: boolean,
+  outputParamDefinitions: string,
+  outputTranfStrategy: string,
+  enableOutputStateTransformation: boolean,
+  outputStateTransfStrategy: string,
+  outputStateParamDefinitions: string,
+};
+
+export const initialOutputSettings: OutputSettings = {
+  enableOutputTransformation: null,
+  outputTranfStrategy: null,
+  outputParamDefinitions: null,
+  enableOutputStateTransformation: null,
+  outputStateTransfStrategy: null,
+  outputStateParamDefinitions: null,
 };
 
 export const setOutputSettings = newOutputSettings => {

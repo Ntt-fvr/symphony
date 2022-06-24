@@ -18,6 +18,10 @@ import type {
 } from '../../facades/shapes/vertexes/BaseVertext';
 import type {Paper} from '../../facades/Paper';
 
+import type {ErrorHandling} from './blockTypes/ErrorSettings';
+import type {InputSettings} from './blockTypes/InputSettings';
+import type {OutputSettings} from './blockTypes/OutputSettings';
+
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
 import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
@@ -62,9 +66,9 @@ export interface IBlock {
   +type: string;
   +name: string;
   +settings: string;
-  +inputSettings: string;
-  +outputSettings: string;
-  +errorSettings: string;
+  +inputSettings: InputSettings;
+  +outputSettings: OutputSettings;
+  +errorSettings: ErrorHandling;
   +isSelected: boolean;
   +getPorts: () => $ReadOnlyArray<VertexPort>;
   +getInputPort: () => ?VertexPort;
@@ -94,9 +98,9 @@ export default class BaseBlock implements IBlock {
   type: string;
   name: string;
   settings: string;
-  inputSettings: string;
-  outputSettings: string;
-  errorSettings: string;
+  inputSettings: InputSettings;
+  outputSettings: OutputSettings;
+  errorSettings: ErrorHandling;
   isSelected: boolean;
   id: string;
   outConnectors: Array<IConnector>;
