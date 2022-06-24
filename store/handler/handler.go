@@ -42,8 +42,6 @@ type Config struct {
 	Bucket *blob.Bucket
 }
 
-var name string
-
 // New creates a new sign handler from config.
 func New(cfg Config) *Handler {
 	h := &Handler{logger: cfg.Logger}
