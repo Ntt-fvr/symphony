@@ -21,7 +21,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import RouterIcon from '@material-ui/icons/Router';
 import SearchIcon from '@material-ui/icons/Search';
 import Step from '@material-ui/core/Step';
@@ -31,6 +32,7 @@ import Stepper from '@material-ui/core/Stepper';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -128,6 +130,18 @@ function customStepIcon(props) {
   );
 }
 
+const ModalSteperListLogicLinkQuery = graphql`
+  query ModalSteperQuery($filter: ResourceFilter) {
+    queryResource(filter: $filter) {
+      id
+      name
+      logicalLinks {
+        id
+        name
+      }
+    }
+  }
+`;
 type Props = $ReadOnly<{|
   openModal: boolean,
   titleSteps: Array<string>,
@@ -151,6 +165,16 @@ const ModalSteper = (props: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [getDataList, setGetDataList] = useState({});
   const [searchData, setSearchData] = useState('');
+  const [resourceLogicLinks, setResourceLogicLinks] = useState({});
+  const [selectedId, setSelectedId] = useState({});
+
+  const isResourceLogicLinks = useCallback(() => {
+    fetchQuery(RelayEnvironment, ModalSteperListLogicLinkQuery, {
+      filter: {resourceSpecification: selectedId},
+    }).then(data => {
+      setResourceLogicLinks(data);
+    });
+  }, [setResourceLogicLinks, selectedId]);
 
   const connector = (
     <StepConnector
@@ -163,11 +187,17 @@ const ModalSteper = (props: Props) => {
   );
 
   const handleNext = () => {
+    if (activeStep === 2) {
+      isResourceLogicLinks();
+    }
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     setSelectedIndex(null);
   };
 
   const handleListItemClick = (event, index, item) => {
+    if (activeStep === 2) {
+      setSelectedId({eq: item.node.id});
+    }
     setSelectedIndex(index);
     setGetDataList(item.node);
   };
@@ -187,6 +217,16 @@ const ModalSteper = (props: Props) => {
         .toLowerCase()
         .includes(searchData.toLocaleLowerCase()),
   );
+
+  const searchRInstance =
+    resourceLogicLinks?.queryResource
+      ?.flatMap(item => item.logicalLinks)
+      ?.filter(item =>
+        item?.name
+          .toString()
+          .toLowerCase()
+          .includes(searchData.toLocaleLowerCase()),
+      ) || [];
 
   return (
     <div>
@@ -274,11 +314,11 @@ const ModalSteper = (props: Props) => {
                   </List>
                 ))}
               {activeStep === 3 &&
-                searchRSpecifications.map((item, index) => (
+                searchRInstance.map((item, index) => (
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node.id}
+                      key={item.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -288,7 +328,7 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node.name} />
+                      <ListItemText primary={item.name} />
                     </ListItem>
                   </List>
                 ))}
@@ -341,7 +381,7 @@ const ModalSteper = (props: Props) => {
                   ? () => saveModal(getDataList)
                   : handleNext
               }>
-              Next
+              {titleSteps.length >= 2 && activeStep === 3 ? 'Add Link' : 'Next'}
             </Button>
           </Grid>
         </DialogActions>
