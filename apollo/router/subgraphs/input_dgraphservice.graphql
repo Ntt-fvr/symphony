@@ -159,7 +159,7 @@ type ConfigurationParameterType {
   mappingOut: String
   tags: [ConfigParamTag!]
   parameters: [Parameter!]
-  resourceSpecification: String! @id @search(by: [hash])
+  resourceSpecification: String! @search(by: [hash])
 }
 type ConfigParamTag{
   id: ID!
