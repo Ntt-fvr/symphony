@@ -188,10 +188,10 @@ const ResourceTypes = () => {
     <Grid className={classes.root} container>
       <Grid item xs={12} style={{marginBottom: '1rem'}}>
         <ConfigureTitle
-          title={fbt('Resources', 'Resources Title')}
+          title={fbt('ResourceTypes', 'Resources Title')}
           subtitle={fbt(
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-            'Resources description',
+            'List of the types of resources required for the inventory management.',
+            'ResourceTypes description',
           )}
         />
       </Grid>
