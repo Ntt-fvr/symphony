@@ -267,7 +267,7 @@ const DialogSelectName = (props: Props) => {
                 }}
                 className={classes.option}
                 variant="contained"
-                disabled={!(name && type)}
+                disabled={!(name && type && checkedHidden)}
                 color="primary">
                 Next
               </Button>

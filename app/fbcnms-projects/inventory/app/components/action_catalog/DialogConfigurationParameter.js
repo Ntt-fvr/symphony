@@ -68,10 +68,10 @@ const DialogConfigurationParameter = (props: Props) => {
 
   const handleDisabled = () => {
     return !(
-      actionItems.length > 0 &&
-      actionItems.every(
-        item => !!(item.parameters.id && item.value.stringValue),
-      )
+      actionItems.filter(item => !item.isDeleted).length > 0 &&
+      actionItems
+        .filter(item => !item.isDeleted)
+        .every(item => !!(item.parameters.id && item.value.stringValue))
     );
   };
 
