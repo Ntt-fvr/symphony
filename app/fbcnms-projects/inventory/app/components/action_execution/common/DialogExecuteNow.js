@@ -20,6 +20,7 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import moment from 'moment';
+import {actionExecutionTypes} from './ActionExecution-enums';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -99,11 +100,17 @@ const DialogExecuteNow = (props: Props) => {
                 <InfoOutlinedIcon color={'primary'} />
               </Grid>
               <Grid container item xs={11}>
-                <CardHeader>Are you sure to run the action now?</CardHeader>
-                <Text>
-                  This will perform the action inmediately on the selected
-                  resource and cannot be undone
-                </Text>
+                <Grid item xs={12}>
+                  <CardHeader>Are you sure to run the action now?</CardHeader>
+                  {props.execType == actionExecutionTypes.ManualExecution ? (
+                    <Text>
+                      This will perform the action inmediately on the selected
+                      resource and cannot be undone
+                    </Text>
+                  ) : (
+                    ''
+                  )}
+                </Grid>
                 <Grid
                   style={{marginTop: '20px'}}
                   container
@@ -113,14 +120,14 @@ const DialogExecuteNow = (props: Props) => {
                   <Text useEllipsis={true} weight="bold">
                     Action:
                   </Text>
-                  {props.execType == 'ONE_TIME_EXECUTION' ? (
+                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
                     <Text useEllipsis={true} weight="bold">
                       Date:
                     </Text>
                   ) : (
                     ''
                   )}
-                  {props.execType == 'ONE_TIME_EXECUTION' ? (
+                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
                     <Text useEllipsis={true} weight="bold">
                       Hour:
                     </Text>
@@ -137,20 +144,20 @@ const DialogExecuteNow = (props: Props) => {
                   direction="column"
                   item
                   xs={2}>
-                  <Text>{dataRow.actionTempleate}</Text>
-                  {props.execType == 'ONE_TIME_EXECUTION' ? (
+                  <Text>{dataRow.actionTemplate.name}</Text>
+                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
                     <Text>
                       {moment(props.execDetails.date).format('MM/DD/YYYY')}
                     </Text>
                   ) : (
                     ''
                   )}
-                  {props.execType == 'ONE_TIME_EXECUTION' ? (
+                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
                     <Text>{moment(props.execDetails.hour).format('LT')}</Text>
                   ) : (
                     ''
                   )}
-                  <Text>{dataRow.resourceSpecification}</Text>
+                  <Text>{'resource_spec_1'}</Text>
                 </Grid>
               </Grid>
             </Grid>
@@ -173,7 +180,7 @@ const DialogExecuteNow = (props: Props) => {
           className={classes.option}
           variant="contained"
           color="primary">
-          Execute Now
+          {props.execType == actionExecutionTypes.ManualExecution ? 'Confirm' : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>

@@ -27,6 +27,7 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {CreateAction} from './CreateAction';
 import {Grid} from '@material-ui/core';
 import {ResourceCriteriaConfig} from './resource-filter/ResourceCriteriaConfig';
+import {actionExecutionStatusEnums} from './common/ActionExecution-enums';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {getSelectedFilter} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
@@ -192,7 +193,9 @@ const ScheduledActionsTypes = () => {
           id: id,
         },
         set: {
-          status: value ? 'ACTIVED' : 'DEACTIVATED',
+          status: value
+            ? actionExecutionStatusEnums.Activated
+            : actionExecutionStatusEnums.Deactivated,
         },
       },
     };
@@ -314,7 +317,9 @@ const ScheduledActionsTypes = () => {
                     onChange={e => {
                       handleChange(e.target.checked, row.id);
                     }}
-                    checked={row.status != 'DEACTIVATED'}
+                    checked={
+                      row.status != actionExecutionStatusEnums.Deactivated
+                    }
                     inputProps={{'aria-label': 'ant design'}}
                   />
                 ) ?? '',

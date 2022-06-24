@@ -271,6 +271,8 @@ const StepperAction = (props: Props) => {
       resources: checkedResource,
       actionTemplate: {
         id: selectedAction,
+        name: actionTemplates.find(template => template.id == selectedAction)
+          .name,
       },
     };
   };
@@ -281,7 +283,7 @@ const StepperAction = (props: Props) => {
       description &&
       checkedResource?.length > 0 &&
       selectedAction &&
-      names.includes(name)
+      !names.includes(name)
     );
   };
 
