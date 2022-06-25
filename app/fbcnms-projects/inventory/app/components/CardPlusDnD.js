@@ -25,14 +25,13 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../common/theme';
 import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
 import {generateTempId} from '../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
-import {useMemo, useState} from 'react';
+import {useMemo} from 'react';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -100,7 +99,6 @@ const CardPlusDnD = (props: Props) => {
     ]);
   };
   const onNewValueChange = (index, param, value) => {
-    console.log(index, param, value);
     const oldParams = [...parameters];
 
     oldParams[index] = value;

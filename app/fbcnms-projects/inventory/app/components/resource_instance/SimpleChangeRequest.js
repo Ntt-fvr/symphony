@@ -40,7 +40,7 @@ const SimpleChangeRequest = (props: Props) => {
   const {handleSimpleChangeRequest, cmVersion, resource} = props;
   const [parameters, setParameters] = useState([]);
   const [schedule, setSchedule] = useState(DEFAULT_DATA_SCHEDULE);
-  const [description, setDescription] = useState(null);
+  const [description, setDescription] = useState('');
   const classes = useStyles();
   const [openModalStatus, setOpenModalStatus] = useState(false);
   const handelModal = () => {

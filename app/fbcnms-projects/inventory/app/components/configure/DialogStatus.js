@@ -8,11 +8,11 @@
  * @format
  */
 import type {
-  AddRequestChangeMutation,
   AddRequestChangeMutationResponse,
   AddRequestChangeMutationVariables,
 } from '../../mutations/__generated__/AddRequestChangeMutation.graphql';
 
+import AddRequestChangeMutation from '../../mutations/AddRequestChangeMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -213,7 +213,6 @@ const DialogStatus = (props: Props) => {
           </Text>
         </Grid>
         <TextField
-          required
           fullWidth
           multiline
           rows={2}
