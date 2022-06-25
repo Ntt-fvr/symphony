@@ -15,6 +15,7 @@ import IconButton from '@symphony/design-system/components/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
+import Switch from '@material-ui/core/Switch';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {CreateAction} from './CreateAction';
@@ -103,6 +104,7 @@ const data = [
       actionExecutionEndTime: '15-02-2022 - 13:05:00',
     },
     executionResult: 'Succesful',
+    enableExecution: true,
   },
   {
     id: '386547056644',
@@ -118,6 +120,7 @@ const data = [
       actionExecutionEndTime: '15-02-2022 - 13:05:00',
     },
     executionResult: 'Faild',
+    enableExecution: true,
   },
   {
     id: '386547056645',
@@ -133,6 +136,7 @@ const data = [
       actionExecutionEndTime: '15-02-2022 - 13:05:00',
     },
     executionResult: 'Succesful',
+    enableExecution: true,
   },
   {
     id: '386547056646',
@@ -148,6 +152,7 @@ const data = [
       actionExecutionEndTime: '15-02-2022 - 13:05:00',
     },
     executionResult: 'Faild',
+    enableExecution: true,
   },
 ];
 export const PROJECTS_PAGE_SIZE = 15;
@@ -157,7 +162,14 @@ const ScheduledActionsTypes = () => {
   const [openCreateAction, setOpenCreateAction] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [dataRow, setDataRow] = useState({});
+  const [rows, setRows] = useState(data);
 
+  const handleChange = (value, id) => {
+    const action = rows.find(item => item.id == id);
+    delete action.enableExecution;
+    const current = rows.filter(item => item.id != id);
+    setRows([...current, {enableExecution: value, ...action}]);
+  };
   const handleOpenModal = dataRow => {
     setOpenModal(prevStateOpenModal => !prevStateOpenModal);
     setDataRow(dataRow);
@@ -217,6 +229,21 @@ const ScheduledActionsTypes = () => {
                   onClick={() => handleOpenModal(row)}
                 />
               ),
+            },
+            {
+              key: 'enableExecution',
+              title: `${fbt('Status', '')}`,
+              render: row =>
+                (
+                  <Switch
+                    onChange={e => {
+                      handleChange(e.target.checked, row.id);
+                    }}
+                    color="primary"
+                    name="Status"
+                    inputProps={{'aria-label': 'primary checkbox'}}
+                  />
+                ) ?? '',
             },
           ]}
           paginationSettings={{

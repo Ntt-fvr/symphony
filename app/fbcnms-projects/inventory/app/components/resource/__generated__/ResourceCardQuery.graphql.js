@@ -26,7 +26,7 @@ export type ResourceCardQueryResponse = {|
     +name: string,
     +locatedIn: ?string,
     +resourceSpecification: string,
-    +isDelete: boolean,
+    +isDeleted: boolean,
     +lifecycleStatus: ?LifecycleStatus,
     +typePlanningSubStatus: ?TypePlanningSubStatus,
     +planningSubStatus: ?PlanningSubStatus,
@@ -68,7 +68,7 @@ query ResourceCardQuery {
     name
     locatedIn
     resourceSpecification
-    isDelete
+    isDeleted
     lifecycleStatus
     typePlanningSubStatus
     planningSubStatus
@@ -146,7 +146,7 @@ v3 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "isDelete",
+        "name": "isDeleted",
         "storageKey": null
       },
       {
@@ -283,16 +283,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "9cf67856aef1229c26e7b720a909ea23",
+    "cacheID": "7fa986ce2c9764f42b2bfee639350fc2",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDelete\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4343506ae80a3d53faac6534e243bc3e';
+(node/*: any*/).hash = '20875516c227b0d3373b621e137ed528';
 
 module.exports = node;

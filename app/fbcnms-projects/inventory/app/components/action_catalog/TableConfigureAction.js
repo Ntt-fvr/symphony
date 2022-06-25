@@ -49,6 +49,7 @@ const actionTypes = [{}];
 const TableConfigureAction = (props: Props) => {
   const {} = props;
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
+  const [isEdit, setIsEdit] = useState(true);
   const classes = useStyles();
 
   const handleModalAddAction = () => {
@@ -82,6 +83,7 @@ const TableConfigureAction = (props: Props) => {
                   placeholder="Name"
                   autoComplete="off"
                   className={classes.input}
+                  disabled={isEdit}
                 />
               </FormField>
             </TableCell>
@@ -96,7 +98,7 @@ const TableConfigureAction = (props: Props) => {
 
             <TableCell component="div">
               <FormAction>
-                <IconButton aria-label="delete">
+                <IconButton aria-label="Edit">
                   <EditIcon color="primary" />
                 </IconButton>
               </FormAction>

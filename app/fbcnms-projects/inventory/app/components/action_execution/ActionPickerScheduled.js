@@ -8,15 +8,25 @@
  * @format
  */
 
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import Button from '@material-ui/core/Button';
 import DialogExecuteNow from './common/DialogExecuteNow';
+import Event from '@material-ui/icons/Event';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import MomentUtils from '@date-io/moment';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import symphony from '@symphony/design-system/theme/symphony';
+import {
+  DatePicker,
+  MuiPickersUtilsProvider,
+  TimePicker,
+} from '@material-ui/pickers';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -52,6 +62,9 @@ const data = {
 };
 const ActionPickerScheduled = (props: Props) => {
   const {goBack} = props;
+  const [execType, setExecType] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date('2022-03-02T24:00:00'));
   const [openDialogExecuteNow, setOpenDialogExecuteNow] = useState(false);
 
   const handleOpenModal = () => {
@@ -82,7 +95,7 @@ const ActionPickerScheduled = (props: Props) => {
           direction="row"
           spacing={3}>
           <Grid item xs={12}>
-            <RadioGroup row>
+            <RadioGroup row onChange={({target}) => setExecType(target.value)}>
               <FormControlLabel
                 className={classes.radioButton}
                 value="End"
@@ -104,6 +117,59 @@ const ActionPickerScheduled = (props: Props) => {
               />
             </RadioGroup>
           </Grid>
+          {execType == 'start' && (
+            <Grid item xs={12}>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <Grid container spacing={3}>
+                  <Grid item>
+                    <DatePicker
+                      autoOk
+                      variant="inline"
+                      margin="normal"
+                      label="Date"
+                      value={date}
+                      onChange={setDate}
+                      inputVariant="outlined"
+                      format="MM/DD/YYYY"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton>
+                              <Event style={{color: symphony.palette.D400}} />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <TimePicker
+                      autoOk
+                      margin="normal"
+                      variant="inline"
+                      id="time-picker"
+                      label="Time"
+                      value={time}
+                      minutesStep={5}
+                      inputVariant="outlined"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton>
+                              <AccessTimeIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      placeholder="08:00 AM"
+                      mask="__:__ _M"
+                      onChange={date => setTime(date)}
+                    />
+                  </Grid>
+                </Grid>
+              </MuiPickersUtilsProvider>
+            </Grid>
+          )}
         </Grid>
         <Grid container justify="flex-end">
           <Button
@@ -127,7 +193,12 @@ const ActionPickerScheduled = (props: Props) => {
         </Grid>
       </Grid>
       {openDialogExecuteNow && (
-        <DialogExecuteNow dataRow={data} onClose={handleOpenModal} />
+        <DialogExecuteNow
+          dataRow={data}
+          execType={execType ?? ''}
+          execDetails={{date: date ?? '', hour: time ?? ''}}
+          onClose={handleOpenModal}
+        />
       )}
     </div>
   );
