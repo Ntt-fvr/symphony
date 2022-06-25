@@ -9,46 +9,49 @@
  */
 
 import type {
-  AddResourceMutation,
-  AddResourceMutationResponse,
-  AddResourceMutationVariables,
-} from './__generated__/AddResourceMutation.graphql.js';
-
+  AddCMVersionMutation,
+  AddCMVersionMutationResponse,
+  AddCMVersionMutationVariables,
+} from './__generated__/AddCMVersionMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
-
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
 import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddResourceMutation($input: [AddResourceInput!]!) {
-    addResource(input: $input) {
-      numUids
-      resource {
+  mutation AddCMVersionMutation($input: [AddCMVersionInput!]!) {
+    addCMVersion(input: $input) {
+      cMVersion {
         id
-        name
-        externalId
-        locatedIn
-        resourceSpecification
-        isDeleted
-        lifecycleStatus
-        planningSubStatus
-        typePlanningSubStatus
-        usageSubStatus
-        operationalSubStatus
+        status
+        resource {
+          id
+          name
+        }
+        parameters {
+          id
+          intValue
+          stringValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+        }
       }
     }
   }
 `;
 
 export default (
-  variables: AddResourceMutationVariables,
-  callbacks?: MutationCallbacks<AddResourceMutationResponse>,
+  variables: AddCMVersionMutationVariables,
+  callbacks?: MutationCallbacks<AddCMVersionMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddResourceMutation>(RelayEnvironment, {
+  commitMutation<AddCMVersionMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

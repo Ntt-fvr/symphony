@@ -54,13 +54,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ResourceCardListQuery = graphql`
-  query ResourceCardQuery($filterBy: [ResourceSpecificationFilterInput!]) {
+  query ResourceCardQuery {
     queryResource {
       id
       name
-      isDelete
-      resourceSpecification
       locatedIn
+      resourceSpecification
+      isDeleted
+      lifecycleStatus
+      typePlanningSubStatus
+      planningSubStatus
+      usageSubStatus
+      operationalSubStatus
     }
     resourceTypes {
       edges {
@@ -70,7 +75,7 @@ const ResourceCardListQuery = graphql`
         }
       }
     }
-    resourceSpecifications(filterBy: $filterBy) {
+    resourceSpecifications {
       edges {
         node {
           id
@@ -88,11 +93,12 @@ const ResourceCardListQuery = graphql`
 type Props = $ReadOnly<{|
   mode?: string,
   onAddResource: (selectedResourceType: {}) => void,
-  onEditResource: () => void,
+  onEditResource: void => void,
   onResourceSelected: (selectedResourceId: string) => void,
   onCancel: () => void,
   selectedResourceType: {},
   selectedLocationId: ?string,
+  selectedResourceId: ?string,
 |}>;
 
 const ResourceCard = (props: Props) => {
@@ -104,10 +110,12 @@ const ResourceCard = (props: Props) => {
     selectedResourceType,
     onCancel,
     selectedLocationId,
+    selectedResourceId,
   } = props;
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
+  const [dataEdit, setDataEdit] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -134,6 +142,10 @@ const ResourceCard = (props: Props) => {
     item => item.locatedIn === selectedLocationId,
   );
 
+  const editResource = resources => {
+    onEditResource(setDataEdit(resources));
+  };
+
   switch (mode) {
     case 'add':
       return (
@@ -147,7 +159,7 @@ const ResourceCard = (props: Props) => {
     case 'edit':
       return (
         <AddEditResourceInLocation
-          dataformModal={selectedResourceType}
+          dataformModal={dataEdit}
           selectedLocationId={selectedLocationId}
           isCompleted={isCompleted}
           closeFormAddEdit={onCancel}
@@ -156,8 +168,9 @@ const ResourceCard = (props: Props) => {
     case 'show':
       return (
         <ResourcePropertiesCard
+          selectedResourceId={selectedResourceId}
           onAddResourceSlot={onAddResource}
-          onEditResource={onEditResource}
+          onEditResource={editResource}
           dataListStepper={resourceTypes}
         />
       );

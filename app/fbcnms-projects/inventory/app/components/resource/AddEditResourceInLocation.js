@@ -8,10 +8,22 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import type {AddCMVersionMutationVariables} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
+import type {AddEditResourceInLocationQuery} from './__generated__/AddEditResourceInLocationQuery.graphql';
+import type {
+  AddResourceMutationResponse,
+  AddResourceMutationVariables,
+} from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {
+  LifecycleStatus,
+  OperationalSubStatus,
+  PlanningSubStatus,
+  TypePlanningSubStatus,
+  UsageSubStatus,
+} from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
-import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
-
+import AddCMVersionMutation from '../../mutations/AddCMVersionMutation';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -21,13 +33,17 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import MomentUtils from '@date-io/moment';
+import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
+import {camelCase, startCase} from 'lodash';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   formField: {
@@ -82,17 +98,34 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const queryConfigurationParameterType = graphql`
+  query AddEditResourceInLocationQuery(
+    $filter: ConfigurationParameterTypeFilter
+  ) {
+    queryConfigurationParameterType(filter: $filter) {
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+    }
+  }
+`;
+
 type ResourceType = {
   data: {
     id: string,
     name: string,
-    externalID: string,
+    externalId: string,
     administrativeSubstate: string,
-    lifesycleState: string,
-    planningStatus: string,
-    administrativeStatus: string,
-    operationalStatus: string,
-    usageStatus: string,
+    lifecycleStatus: LifecycleStatus,
+    typePlanningSubStatus: TypePlanningSubStatus,
+    planningSubStatus: PlanningSubStatus,
+    operationalSubStatus: OperationalSubStatus,
+    usageSubStatus: UsageSubStatus,
   },
 };
 
@@ -117,6 +150,28 @@ const AddEditResourceInLocation = (props: Props) => {
   const [slotEndDate, setSlotEndDate] = useState(moment);
   const [slotInstallDate, setSlotInstallDate] = useState(moment);
 
+  const response = useLazyLoadQuery<AddEditResourceInLocationQuery>(
+    queryConfigurationParameterType,
+    {
+      filter: {
+        resourceSpecification: {
+          eq: dataformModal.id,
+        },
+      },
+    },
+  );
+
+  const dataPropertyType = response.queryConfigurationParameterType
+    ?.map(p => p)
+    .filter(Boolean);
+
+  const convertParametersMap = (data: T): Array<T> =>
+    data?.map(prop => {
+      return {
+        ...prop,
+      };
+    });
+
   function handleChange({target}) {
     setResourceType({
       data: {
@@ -134,24 +189,51 @@ const AddEditResourceInLocation = (props: Props) => {
           name: resourceType.data.name,
           resourceSpecification: dataformModal.id,
           isDelete: true,
+          externalId: resourceType.data.externalId,
+          lifecycleStatus: resourceType.data.lifecycleStatus,
+          typePlanningSubStatus: resourceType.data.typePlanningSubStatus,
+          planningSubStatus: resourceType.data.planningSubStatus,
+          usageSubStatus: resourceType.data.usageSubStatus,
+          operationalSubStatus: resourceType.data.operationalSubStatus,
         },
       ],
     };
-    AddResourceMutation(variables, {
-      onCompleted: () => {
+
+    const response: MutationCallbacks<AddResourceMutationResponse> = {
+      onCompleted: response => {
+        const cmVersionVariables: AddCMVersionMutationVariables = {
+          input: [
+            {
+              resource: {
+                id: response.addResource?.resource[0]?.id,
+              },
+              parameters: convertParametersMap(dataPropertyType),
+              status: 'CURRENT',
+            },
+          ],
+        };
+        AddCMVersionMutation(cmVersionVariables, {
+          onCompleted: () => isCompleted(),
+        });
         isCompleted();
-        setResourceType({data: {}});
-        closeFormAddEdit();
       },
-    });
+    };
+    AddResourceMutation(variables, response);
+    setResourceType({data: {}});
+    closeFormAddEdit();
   }
 
   const selectListData = {
-    lifesycleState: ['Planning', 'Installing', 'Operating', 'Retired'],
-    planningStatus: ['Proposed', 'Feasibility Checked', 'Designed', 'Ordered'],
-    administrativeStatus: ['Activated', 'Deactivated'],
-    operationalStatus: ['Working', 'Not Working'],
-    usageStatus: ['Available', 'Reserved', 'Not Available', 'Assigned'],
+    lifecycleStatus: ['PLANNING', 'INSTALLING', 'OPERATING', 'RETIRED'],
+    typePlanningSubStatus: [
+      'PROPOSED',
+      'FEASIBILITY CHECKED',
+      'DESIGNED',
+      'ORDERED',
+    ],
+    planningSubStatus: ['ACTIVATED', 'DESACTIVATED'],
+    operationalSubStatus: ['WORKING', 'NOT WORKING'],
+    usageSubStatus: ['AVAILABLE', 'RESERVED', 'NOT AVAILABLE', 'ASSIGNED'],
   };
 
   return (
@@ -191,31 +273,31 @@ const AddEditResourceInLocation = (props: Props) => {
                   select
                   label="Lifesycle state"
                   variant="outlined"
-                  name="lifesycleState"
+                  name="lifecycleStatus"
                   onChange={handleChange}
                   fullWidth>
-                  {selectListData.lifesycleState.map((item, index) => (
+                  {selectListData.lifecycleStatus.map((item, index) => (
                     <MenuItem key={index} value={item}>
-                      {item}
+                      {startCase(camelCase(item))}
                     </MenuItem>
                   ))}
                 </TextField>
               </form>
             </Grid>
 
-            {resourceType.data.lifesycleState === 'Planning' ? (
+            {resourceType.data.lifecycleStatus === 'PLANNING' ? (
               <Grid item xs={6}>
                 <form className={classes.formField}>
                   <TextField
                     select
                     label="Planning Status"
                     variant="outlined"
-                    name="planningStatus"
+                    name="typePlanningSubStatus"
                     onChange={handleChange}
                     fullWidth>
-                    {selectListData.planningStatus.map((item, index) => (
-                      <MenuItem key={index} value={index}>
-                        {item}
+                    {selectListData.typePlanningSubStatus.map((item, index) => (
+                      <MenuItem key={index} value={item}>
+                        {startCase(camelCase(item))}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -223,7 +305,7 @@ const AddEditResourceInLocation = (props: Props) => {
               </Grid>
             ) : null}
 
-            {resourceType.data.lifesycleState === 'Operating' ? (
+            {resourceType.data.lifecycleStatus === 'OPERATING' ? (
               <>
                 <Grid item xs={6}>
                   <form className={classes.formField}>
@@ -231,13 +313,30 @@ const AddEditResourceInLocation = (props: Props) => {
                       select
                       label="Administrative Status"
                       variant="outlined"
-                      name="administrativeStatus"
+                      name="planningSubStatus"
                       onChange={handleChange}
                       fullWidth>
-                      {selectListData.administrativeStatus.map(
+                      {selectListData.planningSubStatus.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {startCase(camelCase(item))}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </form>
+                </Grid>
+                <Grid item xs={6}>
+                  <form className={classes.formField}>
+                    <TextField
+                      select
+                      label="Operational Status"
+                      variant="outlined"
+                      name="operationalSubStatus"
+                      onChange={handleChange}
+                      fullWidth>
+                      {selectListData.operationalSubStatus.map(
                         (item, index) => (
-                          <MenuItem key={index} value={index}>
-                            {item}
+                          <MenuItem key={index} value={item}>
+                            {startCase(camelCase(item))}
                           </MenuItem>
                         ),
                       )}
@@ -248,31 +347,14 @@ const AddEditResourceInLocation = (props: Props) => {
                   <form className={classes.formField}>
                     <TextField
                       select
-                      label="Operational Status"
-                      variant="outlined"
-                      name="operationalStatus"
-                      onChange={handleChange}
-                      fullWidth>
-                      {selectListData.operationalStatus.map((item, index) => (
-                        <MenuItem key={index} value={index}>
-                          {item}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </form>
-                </Grid>
-                <Grid item xs={6}>
-                  <form className={classes.formField}>
-                    <TextField
-                      select
                       label="Usage Status"
                       variant="outlined"
-                      name="usageStatus"
+                      name="usageSubStatus"
                       onChange={handleChange}
                       fullWidth>
-                      {selectListData.usageStatus.map((item, index) => (
-                        <MenuItem key={index} value={index}>
-                          {item}
+                      {selectListData.usageSubStatus.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {startCase(camelCase(item))}
                         </MenuItem>
                       ))}
                     </TextField>

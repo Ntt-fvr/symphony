@@ -17,10 +17,27 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
+export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "usageSubStatus" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
-export type ResourceCardQueryVariables = {||};
-export type ResourceCardQueryResponse = {|
+export type ResourceFilter = {|
+  and?: ?$ReadOnlyArray<?ResourceFilter>,
+  has?: ?$ReadOnlyArray<?ResourceHasFilter>,
+  id?: ?$ReadOnlyArray<string>,
+  locatedIn?: ?StringHashFilter,
+  name?: ?StringHashFilter,
+  not?: ?ResourceFilter,
+  or?: ?$ReadOnlyArray<?ResourceFilter>,
+  resourceSpecification?: ?StringHashFilter,
+|};
+export type StringHashFilter = {|
+  eq?: ?string,
+  in?: ?$ReadOnlyArray<?string>,
+|};
+export type ResourcePropertiesCardQueryVariables = {|
+  filterResource?: ?ResourceFilter
+|};
+export type ResourcePropertiesCardQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
@@ -33,14 +50,6 @@ export type ResourceCardQueryResponse = {|
     +usageSubStatus: ?UsageSubStatus,
     +operationalSubStatus: ?OperationalSubStatus,
   |}>,
-  +resourceTypes: {|
-    +edges: $ReadOnlyArray<{|
-      +node: ?{|
-        +id: string,
-        +name: string,
-      |}
-    |}>
-  |},
   +resourceSpecifications: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -54,16 +63,18 @@ export type ResourceCardQueryResponse = {|
     |}>
   |},
 |};
-export type ResourceCardQuery = {|
-  variables: ResourceCardQueryVariables,
-  response: ResourceCardQueryResponse,
+export type ResourcePropertiesCardQuery = {|
+  variables: ResourcePropertiesCardQueryVariables,
+  response: ResourcePropertiesCardQueryResponse,
 |};
 */
 
 
 /*
-query ResourceCardQuery {
-  queryResource {
+query ResourcePropertiesCardQuery(
+  $filterResource: ResourceFilter
+) {
+  queryResource(filter: $filterResource) {
     id
     name
     locatedIn
@@ -74,14 +85,6 @@ query ResourceCardQuery {
     planningSubStatus
     usageSubStatus
     operationalSubStatus
-  }
-  resourceTypes {
-    edges {
-      node {
-        id
-        name
-      }
-    }
   }
   resourceSpecifications {
     edges {
@@ -99,35 +102,44 @@ query ResourceCardQuery {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "filterResource"
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v2 = [
-  (v0/*: any*/),
-  (v1/*: any*/)
-],
 v3 = [
   {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filterResource"
+      }
+    ],
     "concreteType": "Resource",
     "kind": "LinkedField",
     "name": "queryResource",
     "plural": true,
     "selections": [
-      (v0/*: any*/),
       (v1/*: any*/),
+      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -190,38 +202,6 @@ v3 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "ResourceTypeConnection",
-    "kind": "LinkedField",
-    "name": "resourceTypes",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ResourceTypeEdge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceType",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": (v2/*: any*/),
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
     "concreteType": "ResourceSpecificationConnection",
     "kind": "LinkedField",
     "name": "resourceSpecifications",
@@ -243,8 +223,8 @@ v3 = [
             "name": "node",
             "plural": false,
             "selections": [
-              (v0/*: any*/),
               (v1/*: any*/),
+              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -252,7 +232,10 @@ v3 = [
                 "kind": "LinkedField",
                 "name": "resourceType",
                 "plural": false,
-                "selections": (v2/*: any*/),
+                "selections": [
+                  (v1/*: any*/),
+                  (v2/*: any*/)
+                ],
                 "storageKey": null
               }
             ],
@@ -267,32 +250,32 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ResourceCardQuery",
+    "name": "ResourcePropertiesCardQuery",
     "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ResourceCardQuery",
+    "name": "ResourcePropertiesCardQuery",
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "7fa986ce2c9764f42b2bfee639350fc2",
+    "cacheID": "983165df93a0b8d8b0513c825e104502",
     "id": null,
     "metadata": {},
-    "name": "ResourceCardQuery",
+    "name": "ResourcePropertiesCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '20875516c227b0d3373b621e137ed528';
+(node/*: any*/).hash = 'c1f6b8e6254d067fc3d9a32d5b4675a1';
 
 module.exports = node;
