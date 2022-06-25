@@ -91,13 +91,13 @@ const CardPlusDnD = (props: Props) => {
   const onNewValueChange = (index, param, value) => {
     const oldParams = [...parameters];
     if (param.stringValue !== null) {
-      param.newVstringValuealue = value;
+      param.newValue = value;
     }
     if (param.intValue !== null) {
-      param.intValue = parseInt(value) || null;
+      param.newValue = parseInt(value) || null;
     }
     if (param.floatValue !== null) {
-      param.floatValue = parseFloat(value) || null;
+      param.newValue = parseFloat(value) || null;
     }
 
     oldParams[index] = param;
