@@ -8,12 +8,12 @@
  * @format
  */
 
-import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
+import React, {useCallback, useEffect, useState} from 'react';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -48,11 +48,28 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{||}>;
-const actionTypes = [{}];
+const configParams = [{value: 'one'}, {value: 'two'}, {value: 'three'}];
 
 const TableConfigurtionParameter = (props: Props) => {
   const {} = props;
   const classes = useStyles();
+  const [actionTypes, setActionTypes] = useState([{id: 0}]);
+
+  useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
+    setActionTypes([{id: 0}]);
+  }, [setActionTypes]);
+  const addParam = id => {
+    setActionTypes([...actionTypes, {id: id}]);
+  };
+
+  const deleteParam = id => {
+    const params = actionTypes;
+    setActionTypes(params.filter(prt => prt.id !== id));
+  };
 
   return (
     <div className={classes.container}>
@@ -71,8 +88,8 @@ const TableConfigurtionParameter = (props: Props) => {
           </TableRow>
         </TableHead>
 
-        {actionTypes?.map((item, i) => (
-          <TableRow component="div" key={i}>
+        {actionTypes?.map(item => (
+          <TableRow component="div" key={item.id}>
             <TableCell component="div" scope="row">
               <FormField>
                 <TextField
@@ -82,11 +99,12 @@ const TableConfigurtionParameter = (props: Props) => {
                   className={classes.selectField}
                   placeholder="Select Parameter"
                   name="family"
-                  defaultValue=""
                   variant="outlined">
-                  <MenuItem>one</MenuItem>
-                  <MenuItem>two</MenuItem>
-                  <MenuItem>three</MenuItem>
+                  {configParams?.map(param => (
+                    <MenuItem key={param.value} value={param.value}>
+                      {param.value}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </FormField>
             </TableCell>
@@ -104,7 +122,12 @@ const TableConfigurtionParameter = (props: Props) => {
 
             <TableCell component="div" scope="row">
               <FormAction>
-                <IconButton aria-label="delete">
+                <IconButton
+                  aria-label="delete"
+                  onClick={e => {
+                    e.preventDefault();
+                    deleteParam(item.id);
+                  }}>
                   <DeleteOutlinedIcon color="primary" />
                 </IconButton>
               </FormAction>
@@ -113,7 +136,13 @@ const TableConfigurtionParameter = (props: Props) => {
         ))}
       </Table>
       <FormAction>
-        <Button variant="text" leftIcon={PlusIcon}>
+        <Button
+          variant="text"
+          leftIcon={PlusIcon}
+          onClick={e => {
+            e.preventDefault();
+            addParam(actionTypes.length);
+          }}>
           <fbt desc="">Add Parameter</fbt>
         </Button>
       </FormAction>
