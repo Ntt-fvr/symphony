@@ -19,6 +19,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import moment from 'moment';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -56,6 +57,8 @@ type Props = $ReadOnly<{|
   onClick?: () => void,
   name?: string,
   open?: boolean,
+  execDetails: {},
+  execType: string,
   onClose: () => void,
   dataRow: any,
 |}>;
@@ -110,6 +113,20 @@ const DialogExecuteNow = (props: Props) => {
                   <Text useEllipsis={true} weight="bold">
                     Action:
                   </Text>
+                  {props.execType == 'start' ? (
+                    <Text useEllipsis={true} weight="bold">
+                      Date:
+                    </Text>
+                  ) : (
+                    ''
+                  )}
+                  {props.execType == 'start' ? (
+                    <Text useEllipsis={true} weight="bold">
+                      Hour:
+                    </Text>
+                  ) : (
+                    ''
+                  )}
                   <Text useEllipsis={true} weight="bold">
                     Resource:
                   </Text>
@@ -121,6 +138,18 @@ const DialogExecuteNow = (props: Props) => {
                   item
                   xs={2}>
                   <Text>{dataRow.actionTempleate}</Text>
+                  {props.execType == 'start' ? (
+                    <Text>
+                      {moment(props.execDetails.date).format('MM/DD/YYYY')}
+                    </Text>
+                  ) : (
+                    ''
+                  )}
+                  {props.execType == 'start' ? (
+                    <Text>{moment(props.execDetails.hour).format('LT')}</Text>
+                  ) : (
+                    ''
+                  )}
                   <Text>{dataRow.resourceSpecification}</Text>
                 </Grid>
               </Grid>
