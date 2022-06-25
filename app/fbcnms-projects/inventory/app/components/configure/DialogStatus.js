@@ -7,6 +7,11 @@
  * @flow strict-local
  * @format
  */
+import type {
+  AddRequestChangeMutation,
+  AddRequestChangeMutationResponse,
+  AddRequestChangeMutationVariables,
+} from '../../mutations/__generated__/AddRequestChangeMutation.graphql';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -17,11 +22,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import React from 'react';
+import React, {useCallback} from 'react';
+import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import {getGraphError} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
-
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
@@ -66,7 +73,81 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogStatus = (props: Props) => {
-  const {onClose, name, onClick} = props;
+  const {
+    onClose,
+    name,
+    onClick,
+    description,
+    onChangeDescription,
+    parameters,
+    cmVersion,
+    resource,
+  } = props;
+  const enqueueSnackbar = useEnqueueSnackbar();
+
+  const _enqueueError = useCallback(
+    (message: string) => {
+      enqueueSnackbar(message, {
+        children: key => (
+          <SnackbarItem id={key} message={message} variant="error" />
+        ),
+      });
+    },
+    [enqueueSnackbar],
+  );
+
+  const handleOnClose = () => {
+    onChangeDescription('');
+    onClose();
+  };
+
+  const handleOnSave = () => {
+    const variables: AddRequestChangeMutationVariables = {
+      input: [
+        {
+          description: description,
+          items: [
+            {
+              resource: {
+                id: resource.id,
+              },
+              stringValue: 'hola',
+              floatValue: 1,
+              intValue: 1,
+              parameterType: {
+                id: '0x3',
+              },
+            },
+          ],
+          activities: [],
+          type: 'MANUAL',
+          source: 'WORKFLOW',
+          status: 'SCHEDULED',
+          requester: 'idusuariosesion',
+          scheduler: {
+            time: '2022-06-15T15:10:00', //utc sin Z
+            weekDay: 'FRIDAY',
+          },
+        },
+      ],
+    };
+
+    const callbacks: MutationCallbacks<AddRequestChangeMutationResponse> = {
+      onCompleted: (response, errors) => {
+        if (errors && errors[0]) {
+          _enqueueError(errors[0].message);
+        } else {
+          // navigate to main page
+          onClick(response.addWorkOrder.id);
+        }
+      },
+      onError: (error: Error) => {
+        _enqueueError(getGraphError(error));
+      },
+    };
+
+    AddRequestChangeMutation(variables, callbacks);
+  };
 
   const classes = useStyles();
   return (
@@ -131,6 +212,8 @@ const DialogStatus = (props: Props) => {
           label="Description"
           variant="outlined"
           name="text_out"
+          onChange={e => onChangeDescription(e.target.value)}
+          value={description}
           className={classes.textarea}
           inputProps={{maxLength: 200}}
         />
@@ -141,11 +224,11 @@ const DialogStatus = (props: Props) => {
           className={classes.option}
           variant="outlined"
           color="primary"
-          onClick={onClose}>
+          onClick={handleOnClose}>
           Cancel
         </Button>
         <Button
-          onClick={onClick}
+          onClick={handleOnSave}
           className={classes.option}
           variant="contained"
           color="primary">

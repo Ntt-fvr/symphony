@@ -25,7 +25,11 @@ import Typography from '@material-ui/core/Typography';
 import {Configuration} from '../resource_instance/Configuration';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {ResourceNetworkCard} from './ResourceNetworkCard';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useHistory} from 'react-router';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -58,12 +62,81 @@ type Props = $ReadOnly<{|
   dataListStepper: any,
 |}>;
 
+const getResourceQuery = graphql`
+  query ResourcePropertiesCardResourceQuery($getResourceId: ID) {
+    getResource(id: $getResourceId) {
+      id
+      name
+      resourceSpecification
+      locatedIn
+      isDelete
+    }
+  }
+`;
+
+const getAllCmVersion = graphql`
+  query ResourcePropertiesCardGetAllCmVersionsQuery {
+    queryCMVersion {
+      id
+      parameters {
+        id
+        stringValue
+        rangeToValue
+        rangeFromValue
+        floatValue
+        intValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        versionCM {
+          id
+        }
+        parameterType {
+          id
+          name
+          resourceSpecification
+          stringValue
+          floatValue
+          intValue
+        }
+      }
+      status
+      resource {
+        id
+        name
+        resourceProperties {
+          id
+          resourcePropertyType
+        }
+
+        locatedIn
+      }
+    }
+  }
+`;
+
 const ResourcePropertiesCard = (props: Props) => {
   const {onAddResourceSlot, onEditResource, dataListStepper} = props;
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
+  const history = useHistory();
+  const urlParams = new URLSearchParams(history.location.search);
+  const resourceId = urlParams.get('resource');
 
+  const resource = useLazyLoadQuery<ResourcePropertiesCardQuery>(
+    getResourceQuery,
+    {
+      getResourceId: resourceId,
+    },
+  ).getResource;
+
+  const cmVersion = useLazyLoadQuery<ResourcePropertiesCardGetAllCmVersions>(
+    getAllCmVersion,
+  ).queryCMVersion.find(
+    cm => cm.resource.id === resource.id && cm.status === 'CURRENT',
+  );
+  console.log(cmVersion);
   return (
     <div className={classes.root}>
       <Grid
@@ -192,7 +265,9 @@ const ResourcePropertiesCard = (props: Props) => {
               dataListStepper={dataListStepper}
             />
           ) : null}
-          {selectedTab === 'configuration' ? <Configuration /> : null}
+          {selectedTab === 'configuration' ? (
+            <Configuration cmVersion={cmVersion} resource={resource} />
+          ) : null}
           {selectedTab === 'services' ? <div>Services</div> : null}
         </PerfectScrollbar>
         {openDialog && (

@@ -51,7 +51,7 @@ const days = [
 ];
 
 const CardSuggested = (props: Props) => {
-  const {} = props;
+  const {schedule, onSchedule} = props;
   const classes = useStyles();
 
   const [checkedHidden, setCheckedHidden] = useState(true);
@@ -60,7 +60,8 @@ const CardSuggested = (props: Props) => {
   );
 
   const handleDateChange = date => {
-    setSelectedDate(date);
+    console.log(date);
+    onSchedule({date});
   };
 
   return (
@@ -111,7 +112,6 @@ const CardSuggested = (props: Props) => {
                         marginLeft: '40px',
                         width: '70%',
                       }}
-                      label="Family name"
                       name="family"
                       defaultValue=""
                       variant="outlined">

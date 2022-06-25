@@ -18,7 +18,9 @@ import DroppableTableBody from './draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
+import Select from '@symphony/design-system/components/Select/Select';
 import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -27,8 +29,9 @@ import fbt from 'fbt';
 import inventoryTheme from '../common/theme';
 import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
+import {generateTempId} from '../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -57,47 +60,57 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{||}>;
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = [...list];
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 const CardPlusDnD = (props: Props) => {
-  const {} = props;
-  const [parameters, setParameters] = useState([]);
+  const {parameters, onChange, cmVersionParams} = props;
 
   const classes = useStyles();
 
-  const handleDelete = (i, ID) => {
-    i, ID;
+  const cmParamsOptions = useMemo(() => {
+    const options = cmVersionParams.map(cmParam => {
+      return {
+        key: cmParam.id,
+        label: cmParam.parameterType?.name,
+        value: cmParam.id,
+        selected: !!parameters.find(param => param.id === cmParam.id),
+        ...cmParam,
+      };
+    });
+
+    return options;
+  }, [cmVersionParams, parameters]);
+
+  const handleDeleteParameter = index => {
+    const oldParams = [...parameters];
+    oldParams.splice(index, 1);
+    onChange(oldParams);
   };
 
   const handleAddParameters = () => {
-    const id = Math.floor(Math.random() * 101);
-    setParameters([...parameters, {id}]);
+    onChange([...parameters, {id: generateTempId()}]);
   };
-  const nameChange = ({target}) => {
-    target.value;
-  };
+  const onNewValueChange = (index, param, value) => {
+    const oldParams = [...parameters];
+    if (param.stringValue !== null) {
+      param.newVstringValuealue = value;
+    }
+    if (param.intValue !== null) {
+      param.intValue = parseInt(value) || null;
+    }
+    if (param.floatValue !== null) {
+      param.floatValue = parseFloat(value) || null;
+    }
 
-  const onDragEnd = result => {
-    {
-      const {source, destination} = result;
-      if (!destination) {
-        return;
-      }
-      if (
-        source.index === destination.index &&
-        source.droppableId === destination.droppableId
-      ) {
-        return;
-      }
-      setParameters(parameters =>
-        reorder(parameters, source.index, destination.index),
-      );
+    oldParams[index] = param;
+    onChange(oldParams);
+  };
+  const onParamSelect = (index, value) => {
+    const oldParams = [...parameters];
+    const selectedParam = cmVersionParams.find(cmParam => cmParam.id === value);
+    if (
+      !cmParamsOptions.find(cmParam => cmParam.id === selectedParam.id).selected
+    ) {
+      oldParams[index] = {...selectedParam, newValue: ''};
+      onChange(oldParams);
     }
   };
 
@@ -114,7 +127,6 @@ const CardPlusDnD = (props: Props) => {
           <Table component="div" className={classes.root}>
             <TableHead component="div">
               <TableRow component="div">
-                <TableCell component="div" />
                 <TableCell component="div">
                   <fbt desc="">Parameter name</fbt>
                 </TableCell>
@@ -129,33 +141,31 @@ const CardPlusDnD = (props: Props) => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <DroppableTableBody onDragEnd={onDragEnd}>
+            <TableBody>
               {parameters.map((item, i) => (
-                <DraggableTableRow
-                  id={item.id}
-                  index={i}
-                  key={`${i}.${item.id}`}>
+                <TableRow id={item.id} index={i} key={`${i}.${item.id}`}>
                   <TableCell style={{width: '30%'}} component="div" scope="row">
                     <FormField>
-                      <TextInput
-                        autoFocus={true}
-                        placeholder="Parameter name"
-                        autoComplete="off"
-                        value={item.id}
-                        className={classes.input}
-                        onChange={nameChange}
+                      <Select
+                        placeholder={'Parameter name'}
+                        disabled={props.disabled}
+                        options={cmParamsOptions}
+                        selectedValue={item.id}
+                        size="full"
+                        onChange={selected => onParamSelect(i, selected)}
                       />
                     </FormField>
                   </TableCell>
                   <TableCell style={{width: '30%'}} component="div" scope="row">
                     <FormField>
                       <TextInput
-                        autoFocus={true}
+                        disabled={true}
                         placeholder="Current value"
                         autoComplete="off"
-                        value={item.id}
+                        value={
+                          item.stringValue || item.intValue || item.floatValue
+                        }
                         className={classes.input}
-                        onChange={nameChange}
                       />
                     </FormField>
                   </TableCell>
@@ -165,9 +175,11 @@ const CardPlusDnD = (props: Props) => {
                         autoFocus={true}
                         placeholder="New Value"
                         autoComplete="off"
-                        value={item.id}
+                        value={item.newValue}
                         className={classes.input}
-                        onChange={nameChange}
+                        onChange={e =>
+                          onNewValueChange(i, item, e.target.value)
+                        }
                       />
                     </FormField>
                   </TableCell>
@@ -176,14 +188,14 @@ const CardPlusDnD = (props: Props) => {
                       <IconButton aria-label="delete">
                         <DeleteOutlinedIcon
                           color="primary"
-                          onClick={() => handleDelete()}
+                          onClick={() => handleDeleteParameter(i)}
                         />
                       </IconButton>
                     </FormAction>
                   </TableCell>
-                </DraggableTableRow>
+                </TableRow>
               ))}
-            </DroppableTableBody>
+            </TableBody>
           </Table>
           <FormAction>
             <Button

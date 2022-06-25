@@ -34,7 +34,10 @@ type Props = $ReadOnly<{|
 |}>;
 
 const SimpleChangeRequest = (props: Props) => {
-  const {handleSimpleChangeRequest} = props;
+  const {handleSimpleChangeRequest, cmVersion, resource} = props;
+  const [parameters, setParameters] = useState([]);
+  const [schedule, setSchedule] = useState(null);
+  const [description, setDescription] = useState(null);
   const classes = useStyles();
   const [openModalStatus, setOpenModalStatus] = useState(false);
   const handelModal = () => {
@@ -70,15 +73,25 @@ const SimpleChangeRequest = (props: Props) => {
         </Grid>
       </Grid>
       <Grid>
-        <CardPlusDnD />
+        <CardPlusDnD
+          onChange={setParameters}
+          parameters={parameters}
+          cmVersionParams={cmVersion.parameters}
+        />
       </Grid>
       <Grid>
-        <CardSuggested />
+        <CardSuggested onSchedule={setSchedule} schedule={schedule} />
       </Grid>
       {openModalStatus && (
         <DialogStatus
+          description={description}
+          onChangeDescription={setDescription}
+          cmVersion={cmVersion}
+          schedule={schedule}
+          parameters={parameters}
           onClick={() => handleSimpleChangeRequest()}
           open={openModalStatus}
+          resource={resource}
           onClose={() =>
             setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal)
           }
