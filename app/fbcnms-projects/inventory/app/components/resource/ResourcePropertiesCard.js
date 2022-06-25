@@ -98,6 +98,7 @@ const getAllCmVersion = graphql`
           stringValue
           floatValue
           intValue
+          type
         }
       }
       status
@@ -136,7 +137,6 @@ const ResourcePropertiesCard = (props: Props) => {
   ).queryCMVersion.find(
     cm => cm.resource.id === resource.id && cm.status === 'CURRENT',
   );
-  console.log(cmVersion);
   return (
     <div className={classes.root}>
       <Grid

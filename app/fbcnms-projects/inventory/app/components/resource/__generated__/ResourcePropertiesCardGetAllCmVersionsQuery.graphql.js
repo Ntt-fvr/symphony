@@ -14,6 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type ResourcePropertiesCardGetAllCmVersionsQueryVariables = {||};
 export type ResourcePropertiesCardGetAllCmVersionsQueryResponse = {|
@@ -39,6 +40,7 @@ export type ResourcePropertiesCardGetAllCmVersionsQueryResponse = {|
         +stringValue: ?string,
         +floatValue: ?number,
         +intValue: ?number,
+        +type: ParameterKind,
       |},
     |}>,
     +status: VersionStatus,
@@ -84,6 +86,7 @@ query ResourcePropertiesCardGetAllCmVersionsQuery {
         stringValue
         floatValue
         intValue
+        type
       }
     }
     status
@@ -224,7 +227,14 @@ v5 = [
               },
               (v1/*: any*/),
               (v2/*: any*/),
-              (v3/*: any*/)
+              (v3/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "type",
+                "storageKey": null
+              }
             ],
             "storageKey": null
           }
@@ -299,16 +309,16 @@ return {
     "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "5279e095c83a77a076197755ed820fab",
+    "cacheID": "f4f4564bd88328bc68ac0b1d1490e2c1",
     "id": null,
     "metadata": {},
     "name": "ResourcePropertiesCardGetAllCmVersionsQuery",
     "operationKind": "query",
-    "text": "query ResourcePropertiesCardGetAllCmVersionsQuery {\n  queryCMVersion {\n    id\n    parameters {\n      id\n      stringValue\n      rangeToValue\n      rangeFromValue\n      floatValue\n      intValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      versionCM {\n        id\n      }\n      parameterType {\n        id\n        name\n        resourceSpecification\n        stringValue\n        floatValue\n        intValue\n      }\n    }\n    status\n    resource {\n      id\n      name\n      resourceProperties {\n        id\n        resourcePropertyType\n      }\n      locatedIn\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardGetAllCmVersionsQuery {\n  queryCMVersion {\n    id\n    parameters {\n      id\n      stringValue\n      rangeToValue\n      rangeFromValue\n      floatValue\n      intValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      versionCM {\n        id\n      }\n      parameterType {\n        id\n        name\n        resourceSpecification\n        stringValue\n        floatValue\n        intValue\n        type\n      }\n    }\n    status\n    resource {\n      id\n      name\n      resourceProperties {\n        id\n        resourcePropertyType\n      }\n      locatedIn\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b57d44566056aca1a93dd746792c8fdb';
+(node/*: any*/).hash = '22f6940b2f08656ab4a69e6f59967cc4';
 
 module.exports = node;
