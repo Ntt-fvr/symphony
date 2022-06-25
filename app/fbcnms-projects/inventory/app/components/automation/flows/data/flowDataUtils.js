@@ -8,20 +8,20 @@
  * @flow
  * @format
  */
+import type {BaseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/BaseBlockSettingsTypes';
 import type {
-  ActionBlockInput,
-  ActionTypeId,
   ConnectorInput,
-  EndBlockInput,
   ImportFlowDraftInput,
   ImportFlowDraftMutationResponse,
 } from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
-import type {BaseBlockInput} from '../builder/canvas/graph/shapes/blocks/blockTypes/BaseBlockSettingsTypes';
 import type {DecisionBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/decision/DecisionSettings';
-import type {GotoBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToSettings';
+import type {EndBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/end/EndSettings';
+import type {ExecuteFlowBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowSettings';
+import type {GoToBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToSettings';
 import type {IBlock} from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../builder/canvas/graph/shapes/connectors/BaseConnector';
 import type {IShape} from '../builder/canvas/graph/facades/shapes/BaseShape';
+import type {InvokeRestAPIBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiSettings';
 import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks';
 import type {
   PublishFlowInput,
@@ -79,9 +79,15 @@ export function publishFlow(
 }
 
 export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
+  const {paramDefinitions} = block.settings;
   return {
-    ...mapBlockForSave(block),
-    paramDefinitions: [],
+    cid: block.id,
+    paramDefinitions: paramDefinitions,
+    uiRepresentation: {
+      name: block.name,
+      xPosition: Math.floor(block.model.attributes.position.x),
+      yPosition: Math.floor(block.model.attributes.position.y),
+    },
   };
 }
 
@@ -101,8 +107,32 @@ export function mapTrueFalseBlockForSave(
   };
 }
 
-export function mapGoToBlockForSave(block: IBlock): GotoBlockInputType {
-  const {gotoType, targetBlockCid} = block.settings;
+export function mapInvokeRestAPIBlockForSave(
+  block: IBlock,
+): InvokeRestAPIBlockInputType {
+  const {
+    entryPoint,
+    exitPoint,
+    method,
+    url,
+    connectionTimeOut,
+    body,
+    headers,
+  } = block.settings;
+  return {
+    ...mapBlockForSave(block),
+    entryPoint: entryPoint,
+    exitPoint: exitPoint,
+    method: method,
+    url: url,
+    connectionTimeOut: connectionTimeOut,
+    body: body,
+    headers: headers,
+  };
+}
+
+export function mapGoToBlockForSave(block: IBlock): GoToBlockInputType {
+  const {goToType, targetBlockCid} = block.settings;
   return {
     cid: block.id,
     uiRepresentation: {
@@ -111,23 +141,17 @@ export function mapGoToBlockForSave(block: IBlock): GotoBlockInputType {
       yPosition: Math.floor(block.model.attributes.position.y),
     },
     targetBlockCid: targetBlockCid,
-    type: gotoType,
+    type: goToType,
   };
 }
 
-type ActionBlockInputType = {
-  ...ActionBlockInput,
-  ...BaseBlockInput,
-};
-
 export function mapActionBlocksForSave(
   block: IBlock,
-  actionType: ActionTypeId,
-): ActionBlockInputType {
+): ExecuteFlowBlockInputType {
+  const {flow} = block.settings;
   return {
     ...mapBlockForSave(block),
-    actionType,
-    params: [],
+    flow: flow,
   };
 }
 
@@ -191,14 +215,20 @@ export function mapTriggerBlocksForSave(block: IBlock): TriggerBlockInputType {
   }
 }
 
-export function mapEndBlockForSave(block: IBlock): EndBlockInput {
+export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
+  const {params} = block.settings;
   return {
-    ...mapBlockForSave(block),
-    params: [],
+    cid: block.id,
+    params: params,
+    uiRepresentation: {
+      name: block.name,
+      xPosition: Math.floor(block.model.attributes.position.x),
+      yPosition: Math.floor(block.model.attributes.position.y),
+    },
   };
 }
 
-function mapBlockForSave(block: IBlock): BaseBlockInput {
+function mapBlockForSave(block: IBlock): BaseBlockInputType {
   const {
     enableInputTransformation,
     inputTransfStrategy,

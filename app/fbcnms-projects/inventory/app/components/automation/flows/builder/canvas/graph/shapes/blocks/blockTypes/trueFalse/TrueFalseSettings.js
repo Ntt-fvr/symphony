@@ -9,6 +9,11 @@
  */
 'use strict';
 
+import type {BaseBlockInputType} from '../BaseBlockSettingsTypes';
+
+export type TrueFalseBlockInputType = {
+  ...BaseBlockInputType,
+};
 type TrueFalseSettings = $ReadOnly<{|
   trueFalseSettings: string,
 |}>;

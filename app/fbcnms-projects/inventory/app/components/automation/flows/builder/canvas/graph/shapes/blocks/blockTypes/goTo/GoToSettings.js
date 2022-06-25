@@ -10,7 +10,7 @@
 'use strict';
 import type {BlockUIRepresentationInput} from '../BaseBlockSettingsTypes';
 
-export type GotoBlockInputType = {
+export type GoToBlockInputType = {
   cid: string,
   targetBlockCid?: ?string,
   uiRepresentation?: ?BlockUIRepresentationInput,
@@ -18,12 +18,12 @@ export type GotoBlockInputType = {
 };
 
 export type GoToSettings = $ReadOnly<{|
-  gotoType: string,
+  goToType: string,
   targetBlockCid: string,
 |}>;
 
 export const initialGoToSettings: GoToSettings = {
-  gotoType: null,
+  goToType: null,
   targetBlockCid: null,
 };
 

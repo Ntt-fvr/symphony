@@ -8,13 +8,19 @@
  * @format
  */
 'use strict';
+import type {BaseBlockInputType} from '../BaseBlockSettingsTypes';
 
-type ExecuteFlowSettings = $ReadOnly<{|
-  executeFlowSettings: string,
+export type ExecuteFlowBlockInputType = {
+  flow: string,
+  ...BaseBlockInputType,
+};
+
+export type ExecuteFlowSettings = $ReadOnly<{|
+  flow: string,
 |}>;
 
 export const initialExecuteFlowSettings: ExecuteFlowSettings = {
-  executeFlowSettings: 'ExecuteFlowSettings',
+  flow: null,
 };
 
 export const setExecuteFlowSettings: ExecuteFlowSettings = newExecuteFlowSettings => {

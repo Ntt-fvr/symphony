@@ -35,7 +35,7 @@ export type VariableDefinitionInput = {|
   defaultValue?: ?string,
 |};
 
-export type BaseBlockInput = $ReadOnly<{|
+export type BaseBlockInputType = $ReadOnly<{|
   cid: string,
   uiRepresentation: {|
     name: string,

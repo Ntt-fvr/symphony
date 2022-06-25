@@ -9,28 +9,28 @@
  */
 'use strict';
 
-import type {
-  BaseBlockInput,
-  BlockUIRepresentationInput,
-} from '../BaseBlockSettingsTypes';
+import type {BaseBlockInputType} from '../BaseBlockSettingsTypes';
 
 type DecisionRouteInputType = {|
-  cid?: ?string,
+  cid: string,
   name: String,
   condition: string,
 |};
 
 export type DecisionBlockInputType = {
   routes: DecisionRouteInputType,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-  ...BaseBlockInput,
+  ...BaseBlockInputType,
 };
-type DecisionSettings = $ReadOnly<{|
+export type DecisionSettings = $ReadOnly<{|
   routes: DecisionRouteInputType,
 |}>;
 
 export const initialDecisionSettings: DecisionSettings = {
-  routes: null,
+  routes: {
+    cid: null,
+    name: null,
+    condition: null,
+  },
 };
 
 export const setDecisionSettings: DecisionSettings = newDecisionSettings => {

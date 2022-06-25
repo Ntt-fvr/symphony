@@ -46,11 +46,11 @@ export default function ErrorHandlingSettings({block}: Props) {
     {name: 'Hours', id: 'hours'},
   ];
   const [inputValues, handleInputChange] = useForm({
-    retryPolicy: errorSettings?.retryPolicy || false,
-    retryInterval: errorSettings?.retryInterval || null,
+    enableRetryPolicy: errorSettings?.enableRetryPolicy || false,
+    retryInterval: errorSettings?.retryInterval || '',
     units: errorSettings?.units || '',
-    maxAttemps: errorSettings?.maxAttemps || null,
-    backOffRate: errorSettings?.backOffRate || null,
+    maxAttemps: errorSettings?.maxAttemps || '',
+    backoffRate: errorSettings?.backoffRate || '',
     errorCatching: errorSettings?.errorCatching || false,
   });
 
@@ -59,11 +59,11 @@ export default function ErrorHandlingSettings({block}: Props) {
   }, [inputValues]);
 
   const {
-    retryPolicy,
+    enableRetryPolicy,
     retryInterval,
     units,
     maxAttemps,
-    backOffRate,
+    backoffRate,
     errorCatching,
   } = inputValues;
 
@@ -73,14 +73,14 @@ export default function ErrorHandlingSettings({block}: Props) {
         <Grid container spacing={4}>
           <Grid item xs={12} className={classes.formLabel}>
             <FormControlLabel
-              value={retryPolicy}
+              value={enableRetryPolicy}
               control={
                 <Switch
                   title=""
-                  checked={retryPolicy}
+                  checked={enableRetryPolicy}
                   onChange={value => {
                     handleInputChange({
-                      target: {name: 'retryPolicy', value},
+                      target: {name: 'enableRetryPolicy', value},
                     });
                   }}
                 />
@@ -91,7 +91,7 @@ export default function ErrorHandlingSettings({block}: Props) {
               labelPlacement="start"
             />
           </Grid>
-          {retryPolicy && (
+          {enableRetryPolicy && (
             <>
               <Grid item xs={6}>
                 <TextField
@@ -99,7 +99,7 @@ export default function ErrorHandlingSettings({block}: Props) {
                   type={'number'}
                   name={'retryInterval'}
                   value={retryInterval}
-                  onChange={handleInputChange}
+                  handleInputChange={handleInputChange}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -117,16 +117,16 @@ export default function ErrorHandlingSettings({block}: Props) {
                   type={'number'}
                   name={'maxAttemps'}
                   value={maxAttemps}
-                  onChange={handleInputChange}
+                  handleInputChange={handleInputChange}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   label={'Backoff rate'}
                   type={'number'}
-                  name={'backOffRate'}
-                  value={backOffRate}
-                  onChange={handleInputChange}
+                  name={'backoffRate'}
+                  value={backoffRate}
+                  handleInputChange={handleInputChange}
                 />
               </Grid>
             </>
