@@ -32,7 +32,7 @@ input ActionBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
-type ActionExecution {
+type ActionExecution implements Node {
   endTime: DateTime
   id: ID!
   items(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
@@ -66,7 +66,7 @@ enum ActionExecutionHasFilter {
   template
 }
 
-type ActionExecutionItem {
+type ActionExecutionItem implements Node {
   action(filter: ActionExecutionFilter): ActionExecution!
   id: ID!
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]!
@@ -139,7 +139,7 @@ input ActionExecutionRef {
   template: ActionTemplateRef
 }
 
-type ActionScheduler {
+type ActionScheduler implements Node {
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
   actions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
   actionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
@@ -235,7 +235,7 @@ enum ActionSchedulerType {
   PERIODICAL_EXECUTION
 }
 
-type ActionTemplate {
+type ActionTemplate implements Node {
   actionExecutions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
   actionExecutionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
   actionTemplateItems(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
@@ -271,7 +271,7 @@ enum ActionTemplateHasFilter {
   type
 }
 
-type ActionTemplateItem {
+type ActionTemplateItem implements Node {
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
   id: ID!
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
@@ -552,10 +552,11 @@ input AddChangeRequestActivityInput {
   activityType: ChangeRequestActivityField!
   author: String!
   changeRequest: ChangeRequestRef!
-  createTime: DateTime!
+  createTime: DateTime
   isCreate: Boolean!
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 type AddChangeRequestActivityPayload {
@@ -566,6 +567,7 @@ type AddChangeRequestActivityPayload {
 input AddChangeRequestInput {
   activities: [ChangeRequestActivityRef]
   aprobator: String
+  createTime: DateTime
   description: String!
   items: [ChangeItemRef!]!
   requester: String!
@@ -573,6 +575,7 @@ input AddChangeRequestInput {
   source: ChangeRequestSource
   status: ChangeRequestStatus!
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
 type AddChangeRequestPayload {
@@ -1115,7 +1118,6 @@ input AddResourceOrderIMInput {
   category: String
   description: String
   externalId: String
-  id: String
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
@@ -1188,8 +1190,8 @@ input AddResourcePropertyTypeInput {
 }
 
 input AddResourceReferenceInput {
+  externalId: String
   href: String
-  id: String!
   name: String
 }
 
@@ -1258,12 +1260,13 @@ input AddRuleTypeInput {
 
 input AddSchedulerConfigInput {
   changeRequest: ChangeRequestRef!
-  createTime: DateTime!
+  createTime: DateTime
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus!
   time: DateTime
-  weekDay: WeekDay!
+  type: TypeSchedulerConfig!
+  updateTime: DateTime
+  weekDay: WeekDay
 }
 
 type AddSchedulerConfigPayload {
@@ -1843,7 +1846,7 @@ input BlockVariableInput {
   variableDefinitionKey: String
 }
 
-type CMVersion {
+type CMVersion implements Node {
   id: ID!
   parameters(filter: ParameterFilter, first: Int, offset: Int, order: ParameterOrder): [Parameter!]!
   parametersAggregate(filter: ParameterFilter): ParameterAggregateResult
@@ -2006,7 +2009,7 @@ enum CellularNetworkType {
   WCDMA
 }
 
-type ChangeItem {
+type ChangeItem implements Node {
   booleanValue: Boolean
   floatValue: Float
   id: ID!
@@ -2126,10 +2129,11 @@ enum ChangeItemStatus {
   SUCCESSFUL
 }
 
-type ChangeRequest {
+type ChangeRequest implements DefaultConfig & Node {
   activities(filter: ChangeRequestActivityFilter, first: Int, offset: Int, order: ChangeRequestActivityOrder): [ChangeRequestActivity]
   activitiesAggregate(filter: ChangeRequestActivityFilter): ChangeRequestActivityAggregateResult
   aprobator: String
+  createTime: DateTime
   description: String!
   id: ID!
   items(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem!]!
@@ -2139,17 +2143,19 @@ type ChangeRequest {
   source: ChangeRequestSource
   status: ChangeRequestStatus!
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
-type ChangeRequestActivity {
+type ChangeRequestActivity implements DefaultConfig & Node {
   activityType: ChangeRequestActivityField!
   author: String!
   changeRequest(filter: ChangeRequestFilter): ChangeRequest!
-  createTime: DateTime!
+  createTime: DateTime
   id: ID!
   isCreate: Boolean!
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 type ChangeRequestActivityAggregateResult {
@@ -2162,6 +2168,8 @@ type ChangeRequestActivityAggregateResult {
   newValueMin: String
   oldValueMax: String
   oldValueMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 enum ChangeRequestActivityField {
@@ -2190,6 +2198,7 @@ enum ChangeRequestActivityHasFilter {
   isCreate
   newValue
   oldValue
+  updateTime
 }
 
 input ChangeRequestActivityOrder {
@@ -2203,6 +2212,7 @@ enum ChangeRequestActivityOrderable {
   createTime
   newValue
   oldValue
+  updateTime
 }
 
 input ChangeRequestActivityPatch {
@@ -2213,6 +2223,7 @@ input ChangeRequestActivityPatch {
   isCreate: Boolean
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 input ChangeRequestActivityRef {
@@ -2224,16 +2235,21 @@ input ChangeRequestActivityRef {
   isCreate: Boolean
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 type ChangeRequestAggregateResult {
   aprobatorMax: String
   aprobatorMin: String
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   descriptionMax: String
   descriptionMin: String
   requesterMax: String
   requesterMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ChangeRequestFilter {
@@ -2249,6 +2265,7 @@ input ChangeRequestFilter {
 enum ChangeRequestHasFilter {
   activities
   aprobator
+  createTime
   description
   items
   requester
@@ -2256,6 +2273,7 @@ enum ChangeRequestHasFilter {
   source
   status
   type
+  updateTime
 }
 
 input ChangeRequestOrder {
@@ -2266,13 +2284,16 @@ input ChangeRequestOrder {
 
 enum ChangeRequestOrderable {
   aprobator
+  createTime
   description
   requester
+  updateTime
 }
 
 input ChangeRequestPatch {
   activities: [ChangeRequestActivityRef]
   aprobator: String
+  createTime: DateTime
   description: String
   items: [ChangeItemRef!]
   requester: String
@@ -2280,11 +2301,13 @@ input ChangeRequestPatch {
   source: ChangeRequestSource
   status: ChangeRequestStatus
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
 input ChangeRequestRef {
   activities: [ChangeRequestActivityRef]
   aprobator: String
+  createTime: DateTime
   description: String
   id: ID
   items: [ChangeItemRef!]
@@ -2293,6 +2316,7 @@ input ChangeRequestRef {
   source: ChangeRequestSource
   status: ChangeRequestStatus
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
 enum ChangeRequestSource {
@@ -2655,7 +2679,7 @@ enum ComparatorOrderField {
   UPDATED_AT
 }
 
-type ConfigParamTag {
+type ConfigParamTag implements Node {
   id: ID!
   name: String!
   parameters(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType]
@@ -2702,7 +2726,7 @@ input ConfigParamTagRef {
   parameters: [ConfigurationParameterTypeRef]
 }
 
-type ConfigurationParameterType {
+type ConfigurationParameterType implements Node {
   booleanValue: Boolean
   category: String
   externalId: String
@@ -3151,6 +3175,47 @@ input DecisionRouteInput {
   condition: VariableExpressionInput!
 }
 
+interface DefaultConfig {
+  createTime: DateTime
+  updateTime: DateTime
+}
+
+type DefaultConfigAggregateResult {
+  count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
+}
+
+input DefaultConfigFilter {
+  and: [DefaultConfigFilter]
+  has: [DefaultConfigHasFilter]
+  not: DefaultConfigFilter
+  or: [DefaultConfigFilter]
+}
+
+enum DefaultConfigHasFilter {
+  createTime
+  updateTime
+}
+
+input DefaultConfigOrder {
+  asc: DefaultConfigOrderable
+  desc: DefaultConfigOrderable
+  then: DefaultConfigOrder
+}
+
+enum DefaultConfigOrderable {
+  createTime
+  updateTime
+}
+
+input DefaultConfigPatch {
+  createTime: DateTime
+  updateTime: DateTime
+}
+
 type DeleteActionExecutionItemPayload {
   actionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
   msg: String
@@ -3241,6 +3306,12 @@ type DeleteConfigurationParameterTypePayload {
   numUids: Int
 }
 
+type DeleteDefaultConfigPayload {
+  defaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig]
+  msg: String
+  numUids: Int
+}
+
 type DeleteExternalReferencePayload {
   externalReference(filter: ExternalReferenceFilter, first: Int, offset: Int, order: ExternalReferenceOrder): [ExternalReference]
   msg: String
@@ -3268,6 +3339,12 @@ type DeleteGeometryPayload {
 type DeleteModificationRequestPayload {
   modificationRequest(filter: ModificationRequestFilter, first: Int, offset: Int, order: ModificationRequestOrder): [ModificationRequest]
   msg: String
+  numUids: Int
+}
+
+type DeleteNodePayload {
+  msg: String
+  node(filter: NodeFilter, first: Int, offset: Int): [Node]
   numUids: Int
 }
 
@@ -6036,7 +6113,7 @@ type Mutation {
   addResourceOrderIM(input: [AddResourceOrderIMInput!]!): AddResourceOrderIMPayload @join__field(graph: DGRAPHSERVICE)
   addResourceOrderItem(input: [AddResourceOrderItemInput!]!, upsert: Boolean): AddResourceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   addResourceProperty(input: [AddResourcePropertyInput!]!): AddResourcePropertyPayload @join__field(graph: DGRAPHSERVICE)
-  addResourceReference(input: [AddResourceReferenceInput!]!, upsert: Boolean): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
+  addResourceReference(input: [AddResourceReferenceInput!]!): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   addResourceSpecification(input: AddResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems! @join__field(graph: SYMPHONY)
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
@@ -6108,6 +6185,7 @@ type Mutation {
   deleteConfigParamTag(filter: ConfigParamTagFilter!): DeleteConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
   deleteConfigurationParameterType(filter: ConfigurationParameterTypeFilter!): DeleteConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean! @join__field(graph: SYMPHONY)
+  deleteDefaultConfig(filter: DefaultConfigFilter!): DeleteDefaultConfigPayload @join__field(graph: DGRAPHSERVICE)
   deleteExternalReference(filter: ExternalReferenceFilter!): DeleteExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   deleteFeature(filter: FeatureFilter!): DeleteFeaturePayload @join__field(graph: DGRAPHSERVICE)
   deleteFloorPlan(id: ID!): Boolean! @join__field(graph: SYMPHONY)
@@ -6126,6 +6204,7 @@ type Mutation {
     id: ID!
   ): File! @join__field(graph: SYMPHONY)
   deleteModificationRequest(filter: ModificationRequestFilter!): DeleteModificationRequestPayload @join__field(graph: DGRAPHSERVICE)
+  deleteNode(filter: NodeFilter!): DeleteNodePayload @join__field(graph: DGRAPHSERVICE)
   deleteNote(filter: NoteFilter!): DeleteNotePayload @join__field(graph: DGRAPHSERVICE)
   deleteNumericPool(filter: NumericPoolFilter!): DeleteNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   deleteParameter(filter: ParameterFilter!): DeleteParameterPayload @join__field(graph: DGRAPHSERVICE)
@@ -6332,6 +6411,7 @@ type Mutation {
   updateCharacteristicRelationship(input: UpdateCharacteristicRelationshipInput!): UpdateCharacteristicRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   updateConfigParamTag(input: UpdateConfigParamTagInput!): UpdateConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
   updateConfigurationParameterType(input: UpdateConfigurationParameterTypeInput!): UpdateConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  updateDefaultConfig(input: UpdateDefaultConfigInput!): UpdateDefaultConfigPayload @join__field(graph: DGRAPHSERVICE)
   updateExternalReference(input: UpdateExternalReferenceInput!): UpdateExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateFeature(input: UpdateFeatureInput!): UpdateFeaturePayload @join__field(graph: DGRAPHSERVICE)
   updateFlowExecutionReference(input: UpdateFlowExecutionReferenceInput!): UpdateFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
@@ -6442,6 +6522,19 @@ enum NetworkTypeOrderField {
 """An object with an ID"""
 interface Node {
   """The id of the object."""
+  id: ID!
+}
+
+type NodeAggregateResult {
+  count: Int
+}
+
+input NodeFilter {
+  id: [ID!]
+  not: NodeFilter
+}
+
+input NodeRef {
   id: ID!
 }
 
@@ -6674,7 +6767,7 @@ type PageInfo {
   startCursor: Cursor
 }
 
-type Parameter {
+type Parameter implements Node {
   booleanValue: Boolean
   floatValue: Float
   id: ID!
@@ -7665,11 +7758,13 @@ type Query {
   aggregateCharacteristicRelationship(filter: CharacteristicRelationshipFilter): CharacteristicRelationshipAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateConfigParamTag(filter: ConfigParamTagFilter): ConfigParamTagAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateConfigurationParameterType(filter: ConfigurationParameterTypeFilter): ConfigurationParameterTypeAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateDefaultConfig(filter: DefaultConfigFilter): DefaultConfigAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateExternalReference(filter: ExternalReferenceFilter): ExternalReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateFeature(filter: FeatureFilter): FeatureAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateFlowExecutionReference(filter: FlowExecutionReferenceFilter): FlowExecutionReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateGeometry(filter: GeometryFilter): GeometryAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateModificationRequest(filter: ModificationRequestFilter): ModificationRequestAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateNode(filter: NodeFilter): NodeAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateNote(filter: NoteFilter): NoteAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateNumericPool(filter: NumericPoolFilter): NumericPoolAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateParameter(filter: ParameterFilter): ParameterAggregateResult @join__field(graph: DGRAPHSERVICE)
@@ -7961,6 +8056,7 @@ type Query {
   getFlowExecutionReference(id: ID!): FlowExecutionReference @join__field(graph: DGRAPHSERVICE)
   getGeometry(x: String, y: String): Geometry @join__field(graph: DGRAPHSERVICE)
   getModificationRequest(id: ID!): ModificationRequest @join__field(graph: DGRAPHSERVICE)
+  getNode(id: ID!): Node @join__field(graph: DGRAPHSERVICE)
   getNote(id: ID!): Note @join__field(graph: DGRAPHSERVICE)
   getNumericPool(id: ID!): NumericPool @join__field(graph: DGRAPHSERVICE)
   getParameter(id: ID!): Parameter @join__field(graph: DGRAPHSERVICE)
@@ -7968,9 +8064,10 @@ type Query {
   getPlace(placeId: ID!): Place @join__field(graph: DGRAPHSERVICE)
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
   getResource(id: ID, name: String): Resource @join__field(graph: DGRAPHSERVICE)
+  getResourceOrderIM(id: ID!): ResourceOrderIM @join__field(graph: DGRAPHSERVICE)
   getResourceOrderItem(id: String!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
-  getResourceReference(id: String!): ResourceReference @join__field(graph: DGRAPHSERVICE)
+  getResourceReference(id: ID!): ResourceReference @join__field(graph: DGRAPHSERVICE)
   getSchedulerConfig(id: ID!): SchedulerConfig @join__field(graph: DGRAPHSERVICE)
   getServiceOrder(id: ID!): ServiceOrder @join__field(graph: DGRAPHSERVICE)
   getServiceOrderItem(serviceOrderItemId: ID!): ServiceOrderItem @join__field(graph: DGRAPHSERVICE)
@@ -8362,11 +8459,13 @@ type Query {
   queryCharacteristicRelationship(filter: CharacteristicRelationshipFilter, first: Int, offset: Int, order: CharacteristicRelationshipOrder): [CharacteristicRelationship] @join__field(graph: DGRAPHSERVICE)
   queryConfigParamTag(filter: ConfigParamTagFilter, first: Int, offset: Int, order: ConfigParamTagOrder): [ConfigParamTag] @join__field(graph: DGRAPHSERVICE)
   queryConfigurationParameterType(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType] @join__field(graph: DGRAPHSERVICE)
+  queryDefaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig] @join__field(graph: DGRAPHSERVICE)
   queryExternalReference(filter: ExternalReferenceFilter, first: Int, offset: Int, order: ExternalReferenceOrder): [ExternalReference] @join__field(graph: DGRAPHSERVICE)
   queryFeature(filter: FeatureFilter, first: Int, offset: Int, order: FeatureOrder): [Feature] @join__field(graph: DGRAPHSERVICE)
   queryFlowExecutionReference(filter: FlowExecutionReferenceFilter, first: Int, offset: Int, order: FlowExecutionReferenceOrder): [FlowExecutionReference] @join__field(graph: DGRAPHSERVICE)
   queryGeometry(filter: GeometryFilter, first: Int, offset: Int, order: GeometryOrder): [Geometry] @join__field(graph: DGRAPHSERVICE)
   queryModificationRequest(filter: ModificationRequestFilter, first: Int, offset: Int, order: ModificationRequestOrder): [ModificationRequest] @join__field(graph: DGRAPHSERVICE)
+  queryNode(filter: NodeFilter, first: Int, offset: Int): [Node] @join__field(graph: DGRAPHSERVICE)
   queryNote(filter: NoteFilter, first: Int, offset: Int, order: NoteOrder): [Note] @join__field(graph: DGRAPHSERVICE)
   queryNumericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool] @join__field(graph: DGRAPHSERVICE)
   queryParameter(filter: ParameterFilter, first: Int, offset: Int, order: ParameterOrder): [Parameter] @join__field(graph: DGRAPHSERVICE)
@@ -8916,7 +9015,7 @@ input ReportFilterInput {
   name: String!
 }
 
-type Resource {
+type Resource implements Node {
   actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
@@ -8964,6 +9063,7 @@ type ResourceAggregateResult {
 
 input ResourceFilter {
   and: [ResourceFilter]
+  externalId: StringHashFilter
   has: [ResourceHasFilter]
   id: [ID!]
   locatedIn: StringHashFilter
@@ -9010,7 +9110,7 @@ type ResourceOrderIM {
   category: String
   description: String
   externalId: String
-  id: String
+  id: ID!
   lineId: String
   reservationId: String
   resourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem]
@@ -9025,8 +9125,6 @@ type ResourceOrderIMAggregateResult {
   descriptionMin: String
   externalIdMax: String
   externalIdMin: String
-  idMax: String
-  idMin: String
   lineIdMax: String
   lineIdMin: String
   reservationIdMax: String
@@ -9036,15 +9134,16 @@ type ResourceOrderIMAggregateResult {
 input ResourceOrderIMFilter {
   and: [ResourceOrderIMFilter]
   has: [ResourceOrderIMHasFilter]
+  id: [ID!]
   not: ResourceOrderIMFilter
   or: [ResourceOrderIMFilter]
+  reservationId: StringHashFilter
 }
 
 enum ResourceOrderIMHasFilter {
   category
   description
   externalId
-  id
   lineId
   reservationId
   resourceOrderItem
@@ -9060,7 +9159,6 @@ enum ResourceOrderIMOrderable {
   category
   description
   externalId
-  id
   lineId
   reservationId
 }
@@ -9069,7 +9167,6 @@ input ResourceOrderIMPatch {
   category: String
   description: String
   externalId: String
-  id: String
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
@@ -9079,7 +9176,7 @@ input ResourceOrderIMRef {
   category: String
   description: String
   externalId: String
-  id: String
+  id: ID
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
@@ -9170,7 +9267,7 @@ input ResourcePatch {
   usageSubStatus: UsageSubStatus
 }
 
-type ResourceProperty {
+type ResourceProperty implements Node {
   booleanValue: Boolean
   floatValue: Float
   id: ID!
@@ -9359,32 +9456,34 @@ input ResourceRef {
 }
 
 type ResourceReference {
+  externalId: String
   href: String
-  id: String!
+  id: ID!
   name: String
 }
 
 type ResourceReferenceAggregateResult {
   count: Int
+  externalIdMax: String
+  externalIdMin: String
   hrefMax: String
   hrefMin: String
-  idMax: String
-  idMin: String
   nameMax: String
   nameMin: String
 }
 
 input ResourceReferenceFilter {
   and: [ResourceReferenceFilter]
+  externalId: StringHashFilter
   has: [ResourceReferenceHasFilter]
-  id: StringHashFilter
+  id: [ID!]
   not: ResourceReferenceFilter
   or: [ResourceReferenceFilter]
 }
 
 enum ResourceReferenceHasFilter {
+  externalId
   href
-  id
   name
 }
 
@@ -9395,20 +9494,21 @@ input ResourceReferenceOrder {
 }
 
 enum ResourceReferenceOrderable {
+  externalId
   href
-  id
   name
 }
 
 input ResourceReferencePatch {
+  externalId: String
   href: String
-  id: String
   name: String
 }
 
 input ResourceReferenceRef {
+  externalId: String
   href: String
-  id: String
+  id: ID
   name: String
 }
 
@@ -9884,15 +9984,16 @@ enum RuleTypeOrderField {
   UPDATED_AT
 }
 
-type SchedulerConfig {
+type SchedulerConfig implements DefaultConfig & Node {
   changeRequest(filter: ChangeRequestFilter): ChangeRequest!
-  createTime: DateTime!
+  createTime: DateTime
   id: ID!
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus!
   time: DateTime
-  weekDay: WeekDay!
+  type: TypeSchedulerConfig!
+  updateTime: DateTime
+  weekDay: WeekDay
 }
 
 type SchedulerConfigAggregateResult {
@@ -9903,6 +10004,8 @@ type SchedulerConfigAggregateResult {
   nameMin: String
   timeMax: DateTime
   timeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input SchedulerConfigFilter {
@@ -9918,8 +10021,9 @@ enum SchedulerConfigHasFilter {
   createTime
   name
   rollbackPolicy
-  status
   time
+  type
+  updateTime
   weekDay
 }
 
@@ -9933,6 +10037,7 @@ enum SchedulerConfigOrderable {
   createTime
   name
   time
+  updateTime
 }
 
 input SchedulerConfigPatch {
@@ -9940,8 +10045,9 @@ input SchedulerConfigPatch {
   createTime: DateTime
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus
   time: DateTime
+  type: TypeSchedulerConfig
+  updateTime: DateTime
   weekDay: WeekDay
 }
 
@@ -9951,14 +10057,10 @@ input SchedulerConfigRef {
   id: ID
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus
   time: DateTime
+  type: TypeSchedulerConfig
+  updateTime: DateTime
   weekDay: WeekDay
-}
-
-enum SchedulerConfigStatus {
-  APPROVED
-  REJECTED
 }
 
 type SearchEntry {
@@ -11460,6 +11562,11 @@ enum TypePlanningSubStatus {
   PROPOSED
 }
 
+enum TypeSchedulerConfig {
+  AS_SOON_AS_APPROVED
+  SCHEDULED_CHANGE
+}
+
 input UpdateActionExecutionInput {
   filter: ActionExecutionFilter!
   remove: ActionExecutionPatch
@@ -11622,6 +11729,17 @@ input UpdateConfigurationParameterTypeInput {
 
 type UpdateConfigurationParameterTypePayload {
   configurationParameterType(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType]
+  numUids: Int
+}
+
+input UpdateDefaultConfigInput {
+  filter: DefaultConfigFilter!
+  remove: DefaultConfigPatch
+  set: DefaultConfigPatch
+}
+
+type UpdateDefaultConfigPayload {
+  defaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig]
   numUids: Int
 }
 
