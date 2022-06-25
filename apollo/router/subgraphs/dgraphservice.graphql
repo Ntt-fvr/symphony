@@ -1,10 +1,13 @@
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @remoteResponse(name: String) on FIELD_DEFINITION
 directive @lambda on FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
   update: DgraphDefault
 ) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -12,26 +15,23 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @remoteResponse(name: String) on FIELD_DEFINITION
-directive @lambdaOnMutate(
-  add: Boolean
-  update: Boolean
-  delete: Boolean
-) on OBJECT | INTERFACE
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @generate(
   query: GenerateQueryParams
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
 directive @dgraph(
   type: String
   pred: String
 ) on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @id(interface: Boolean) on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -455,12 +455,12 @@ type ActionTemplate {
   name: String!
   type: ActionTemplateType!
   resourceSpecifications: String!
-  actionTemplateItem(
+  actionTemplateItems(
     filter: ActionTemplateItemFilter
     first: Int
     offset: Int
   ): [ActionTemplateItem!]!
-  ActionExecution(
+  actionExecutions(
     filter: ActionExecutionFilter
     order: ActionExecutionOrder
     first: Int
@@ -470,7 +470,7 @@ type ActionTemplate {
   actionTemplateItemAggregate(
     filter: ActionTemplateItemFilter
   ): ActionTemplateItemAggregateResult
-  ActionExecutionAggregate(
+  actionExecutionsAggregate(
     filter: ActionExecutionFilter
   ): ActionExecutionAggregateResult
 }
@@ -496,8 +496,8 @@ enum ActionTemplateHasFilter {
   name
   type
   resourceSpecifications
-  actionTemplateItem
-  ActionExecution
+  actionTemplateItems
+  actionExecutions
 }
 
 type ActionTemplateItem {
@@ -559,8 +559,8 @@ input ActionTemplatePatch {
   type: ActionTemplateType
   isDeleted:Boolean
   resourceSpecifications: String
-  actionTemplateItem: [ActionTemplateItemRef!]
-  ActionExecution: [ActionExecutionRef!]
+  actionTemplateItems: [ActionTemplateItemRef!]
+  actionExecutions: [ActionExecutionRef!]
 }
 
 input ActionTemplateRef {
@@ -984,7 +984,7 @@ input AddNumericPoolInput {
   limit: Int!
   customLimit: Int
   resources: [ResourceRef!]!
-  isDelete: Boolean!
+  isDeleted: Boolean!
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -1001,7 +1001,7 @@ type AddNumericPoolPayload {
 input AddParameterInput {
   parameterType: ConfigurationParameterTypeRef!
   previous: ParameterRef
-  versionCM: [CMVersionRef]!
+  versionCMs: [CMVersionRef]!
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -1097,17 +1097,18 @@ input AddResourceInput {
   composedOf: [ResourceRef]
   locatedIn: String
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
-  logicalLink: ResourceRef
+  physicalLinkInv: ResourceRef
+  logicalLinks: [ResourceRef]
   logicalLinkInv: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   resourceSpecification: String!
   resourceProperties: [ResourcePropertyRef]
-  isDelete: Boolean!
-  numericPool: [NumericPoolRef]
+  isDeleted: Boolean!
+  numericPools: [NumericPoolRef]
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
+  changeItems: [ChangeItemRef]
 }
 
 input AddResourceOrderIMInput {
@@ -3666,7 +3667,7 @@ type NumericPool {
     first: Int
     offset: Int
   ): [Resource!]!
-  isDelete: Boolean!
+  isDeleted: Boolean!
   statusNumericPools(
     filter: StatusNumericPoolFilter
     first: Int
@@ -3705,7 +3706,7 @@ enum NumericPoolHasFilter {
   limit
   customLimit
   resources
-  isDelete
+  isDeleted
   statusNumericPools
 }
 
@@ -3726,7 +3727,7 @@ input NumericPoolPatch {
   limit: Int
   customLimit: Int
   resources: [ResourceRef!]
-  isDelete: Boolean
+  isDeleted: Boolean
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -3736,7 +3737,7 @@ input NumericPoolRef {
   limit: Int
   customLimit: Int
   resources: [ResourceRef!]
-  isDelete: Boolean
+  isDeleted: Boolean
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -3751,7 +3752,7 @@ type Parameter {
     filter: ConfigurationParameterTypeFilter
   ): ConfigurationParameterType!
   previous(filter: ParameterFilter): Parameter
-  versionCM(
+  versionCMs(
     filter: CMVersionFilter
     order: CMVersionOrder
     first: Int
@@ -3765,7 +3766,7 @@ type Parameter {
   longitudeValue: Float
   rangeFromValue: Float
   rangeToValue: Float
-  versionCMAggregate(filter: CMVersionFilter): CMVersionAggregateResult
+  versionCMsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
 }
 
 type ParameterAggregateResult {
@@ -3809,7 +3810,7 @@ input ParameterFilter {
 enum ParameterHasFilter {
   parameterType
   previous
-  versionCM
+  versionCMs
   stringValue
   intValue
   booleanValue
@@ -3852,7 +3853,7 @@ enum ParameterOrderable {
 input ParameterPatch {
   parameterType: ConfigurationParameterTypeRef
   previous: ParameterRef
-  versionCM: [CMVersionRef]
+  versionCMs: [CMVersionRef]
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -3867,7 +3868,7 @@ input ParameterRef {
   id: ID
   parameterType: ConfigurationParameterTypeRef
   previous: ParameterRef
-  versionCM: [CMVersionRef]
+  versionCMs: [CMVersionRef]
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -4190,7 +4191,6 @@ type Query {
   getConfigurationParameterType(
     id: ID
     name: String
-    resourceSpecification: String
   ): ConfigurationParameterType
   queryConfigurationParameterType(
     filter: ConfigurationParameterTypeFilter
@@ -4602,13 +4602,13 @@ type Resource {
   ): [Resource]
   locatedIn: String
   physicalLink(filter: ResourceFilter): Resource
-  physicalLinkInv(
+  physicalLinkInv(filter: ResourceFilter): Resource
+  logicalLinks(
     filter: ResourceFilter
     order: ResourceOrder
     first: Int
     offset: Int
   ): [Resource]
-  logicalLink(filter: ResourceFilter): Resource
   logicalLinkInv(
     filter: ResourceFilter
     order: ResourceOrder
@@ -4616,12 +4616,7 @@ type Resource {
     offset: Int
   ): [Resource]
   crossConnection(filter: ResourceFilter): Resource
-  crossconnectionInv(
-    filter: ResourceFilter
-    order: ResourceOrder
-    first: Int
-    offset: Int
-  ): [Resource]
+  crossconnectionInv(filter: ResourceFilter): Resource
   resourceSpecification: String!
   resourceProperties(
     filter: ResourcePropertyFilter
@@ -4629,8 +4624,8 @@ type Resource {
     first: Int
     offset: Int
   ): [ResourceProperty]
-  isDelete: Boolean!
-  numericPool(
+  isDeleted: Boolean!
+  numericPools(
     filter: NumericPoolFilter
     order: NumericPoolOrder
     first: Int
@@ -4638,14 +4633,20 @@ type Resource {
   ): [NumericPool]
   isEditable: Boolean
   actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
+  changeItems(
+    filter: ChangeItemFilter
+    order: ChangeItemOrder
+    first: Int
+    offset: Int
+  ): [ChangeItem]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
-  physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  logicalLinksAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
-  crossconnectionInvAggregate(filter: ResourceFilter): ResourceAggregateResult
   resourcePropertiesAggregate(
     filter: ResourcePropertyFilter
   ): ResourcePropertyAggregateResult
-  numericPoolAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
+  numericPoolsAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
+  changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
 }
 
 type ResourceAggregateResult {
@@ -4685,16 +4686,17 @@ enum ResourceHasFilter {
   locatedIn
   physicalLink
   physicalLinkInv
-  logicalLink
+  logicalLinks
   logicalLinkInv
   crossConnection
   crossconnectionInv
   resourceSpecification
   resourceProperties
-  isDelete
-  numericPool
+  isDeleted
+  numericPools
   isEditable
   actionScheduler
+  changeItems
 }
 
 input ResourceOrder {
@@ -4860,17 +4862,18 @@ input ResourcePatch {
   composedOf: [ResourceRef]
   locatedIn: String
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
-  logicalLink: ResourceRef
+  physicalLinkInv: ResourceRef
+  logicalLinks: [ResourceRef]
   logicalLinkInv: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   resourceSpecification: String
   resourceProperties: [ResourcePropertyRef]
-  isDelete: Boolean
-  numericPool: [NumericPoolRef]
+  isDeleted: Boolean
+  numericPools: [NumericPoolRef]
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
+  changeItems: [ChangeItemRef]
 }
 
 type ResourceProperty {
@@ -5007,17 +5010,18 @@ input ResourceRef {
   composedOf: [ResourceRef]
   locatedIn: String
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
-  logicalLink: ResourceRef
+  physicalLinkInv: ResourceRef
+  logicalLinks: [ResourceRef]
   logicalLinkInv: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   resourceSpecification: String
   resourceProperties: [ResourcePropertyRef]
-  isDelete: Boolean
-  numericPool: [NumericPoolRef]
+  isDeleted: Boolean
+  numericPools: [NumericPoolRef]
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
+  changeItems: [ChangeItemRef]
 }
 
 type ResourceReference {

@@ -242,10 +242,10 @@ enum ActionSchedulerType {
 }
 
 type ActionTemplate {
-  ActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
-  ActionExecutionAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
-  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
-  actionTemplateItemAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
+  actionExecutions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
+  actionExecutionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
+  actionTemplateItems(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
+  actionTemplateItemsAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   id: ID!
   isDeleted:Boolean
   name: String!
@@ -271,8 +271,8 @@ input ActionTemplateFilter {
 }
 
 enum ActionTemplateHasFilter {
-  ActionExecution
-  actionTemplateItem
+  actionExecutions
+  actionTemplateItems
   name
   resourceSpecifications
   type
@@ -331,8 +331,8 @@ enum ActionTemplateOrderable {
 }
 
 input ActionTemplatePatch {
-  ActionExecution: [ActionExecutionRef!]
-  actionTemplateItem: [ActionTemplateItemRef!]
+  actionExecutions: [ActionExecutionRef!]
+  actionTemplateItems: [ActionTemplateItemRef!]
   name: String
   isDeleted:Boolean
   resourceSpecifications: String
@@ -340,8 +340,8 @@ input ActionTemplatePatch {
 }
 
 input ActionTemplateRef {
-  ActionExecution: [ActionExecutionRef!]
-  actionTemplateItem: [ActionTemplateItemRef!]
+  actionExecutions: [ActionExecutionRef!]
+  actionTemplateItems: [ActionTemplateItemRef!]
   id: ID
   name: String
   isDeleted:Boolean
@@ -443,8 +443,8 @@ type AddActionSchedulerPayload {
 }
 
 input AddActionTemplateInput {
-  ActionExecution: [ActionExecutionRef!]
-  actionTemplateItem: [ActionTemplateItemRef!]!
+  actionExecutions: [ActionExecutionRef!]
+  actionTemplateItems: [ActionTemplateItemRef!]!
   name: String!
   isDeleted:Boolean
   resourceSpecifications: String!
@@ -950,7 +950,7 @@ type AddNotePayload {
 input AddNumericPoolInput {
   customLimit: Int
   description: String
-  isDelete: Boolean!
+  isDeleted: Boolean!
   limit: Int!
   resources: [ResourceRef!]!
   statusNumericPools: [StatusNumericPoolRef]
@@ -977,7 +977,7 @@ input AddParameterInput {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM: [CMVersionRef]!
+  versionCMs: [CMVersionRef]!
 }
 
 type AddParameterPayload {
@@ -1104,21 +1104,22 @@ input AddResourceInput {
   actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   externalId: String
-  isDelete: Boolean!
+  isDeleted: Boolean!
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
+  logicalLinks: [ResourceRef]
   name: String!
-  numericPool: [NumericPoolRef]
+  numericPools: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
+  physicalLinkInv: ResourceRef
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String!
@@ -6525,7 +6526,7 @@ type NumericPool {
   customLimit: Int
   description: String
   id: ID!
-  isDelete: Boolean!
+  isDeleted: Boolean!
   limit: Int!
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -6558,7 +6559,7 @@ input NumericPoolFilter {
 enum NumericPoolHasFilter {
   customLimit
   description
-  isDelete
+  isDeleted
   limit
   resources
   statusNumericPools
@@ -6579,7 +6580,7 @@ enum NumericPoolOrderable {
 input NumericPoolPatch {
   customLimit: Int
   description: String
-  isDelete: Boolean
+  isDeleted: Boolean
   limit: Int
   resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
@@ -6589,7 +6590,7 @@ input NumericPoolRef {
   customLimit: Int
   description: String
   id: ID
-  isDelete: Boolean
+  isDeleted: Boolean
   limit: Int
   resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
@@ -6701,8 +6702,8 @@ type Parameter {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]!
-  versionCMAggregate(filter: CMVersionFilter): CMVersionAggregateResult
+  versionCMs(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]!
+  versionCMsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
 }
 
 type ParameterAggregateResult {
@@ -6787,7 +6788,7 @@ enum ParameterHasFilter {
   rangeFromValue
   rangeToValue
   stringValue
-  versionCM
+  versionCMs
 }
 
 enum ParameterKind {
@@ -6830,7 +6831,7 @@ input ParameterPatch {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM: [CMVersionRef]
+  versionCMs: [CMVersionRef]
 }
 
 input ParameterRef {
@@ -6845,7 +6846,7 @@ input ParameterRef {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM: [CMVersionRef]
+  versionCMs: [CMVersionRef]
 }
 
 input ParentPropertyTypeValueInput {
@@ -7970,7 +7971,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String, resourceSpecification: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
   getFlowExecutionReference(id: ID!): FlowExecutionReference @join__field(graph: DGRAPHSERVICE)
@@ -8935,27 +8936,28 @@ type Resource {
   actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
+  changeItems(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem]
+  changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   crossConnection(filter: ResourceFilter): Resource
-  crossconnectionInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
-  crossconnectionInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  crossconnectionInv(filter: ResourceFilter): Resource
   externalId: String
   id: ID!
-  isDelete: Boolean!
+  isDeleted: Boolean!
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink(filter: ResourceFilter): Resource
   logicalLinkInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  logicalLinks(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
+  logicalLinksAggregate(filter: ResourceFilter): ResourceAggregateResult
   name: String!
-  numericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
-  numericPoolAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
+  numericPools(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
+  numericPoolsAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
   operationalSubStatus: OperationalSubStatus
   physicalLink(filter: ResourceFilter): Resource
-  physicalLinkInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
-  physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  physicalLinkInv(filter: ResourceFilter): Resource
   planningSubStatus: PlanningSubStatus
   resourceProperties(filter: ResourcePropertyFilter, first: Int, offset: Int, order: ResourcePropertyOrder): [ResourceProperty]
   resourcePropertiesAggregate(filter: ResourcePropertyFilter): ResourcePropertyAggregateResult
@@ -8991,18 +8993,19 @@ enum ResourceHasFilter {
   actionScheduler
   available
   belongsTo
+  changeItems
   composedOf
   crossConnection
   crossconnectionInv
   externalId
-  isDelete
+  isDeleted
   isEditable
   lifecycleStatus
   locatedIn
-  logicalLink
   logicalLinkInv
+  logicalLinks
   name
-  numericPool
+  numericPools
   operationalSubStatus
   physicalLink
   physicalLinkInv
@@ -9160,21 +9163,22 @@ input ResourcePatch {
   actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   externalId: String
-  isDelete: Boolean
+  isDeleted: Boolean
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
+  logicalLinks: [ResourceRef]
   name: String
-  numericPool: [NumericPoolRef]
+  numericPools: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
+  physicalLinkInv: ResourceRef
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
@@ -9346,22 +9350,23 @@ input ResourceRef {
   actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   externalId: String
   id: ID
-  isDelete: Boolean
+  isDeleted: Boolean
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
+  logicalLinks: [ResourceRef]
   name: String
-  numericPool: [NumericPoolRef]
+  numericPools: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
+  physicalLinkInv: ResourceRef
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
