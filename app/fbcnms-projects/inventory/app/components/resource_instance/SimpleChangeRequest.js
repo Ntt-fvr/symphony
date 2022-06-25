@@ -14,6 +14,7 @@ import CardPlusDnD from '../CardPlusDnD';
 import DialogStatus from '../configure/DialogStatus';
 import Grid from '@material-ui/core/Grid';
 import {CardSuggested} from '../CardSuggested';
+import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 
@@ -33,15 +34,21 @@ type Props = $ReadOnly<{|
   handleSimpleChangeRequest: any,
 |}>;
 
+const DEFAULT_DATA_SCHEDULE = {date: new Date(), day: 'MONDAY'};
+
 const SimpleChangeRequest = (props: Props) => {
   const {handleSimpleChangeRequest, cmVersion, resource} = props;
   const [parameters, setParameters] = useState([]);
-  const [schedule, setSchedule] = useState(null);
+  const [schedule, setSchedule] = useState(DEFAULT_DATA_SCHEDULE);
   const [description, setDescription] = useState(null);
   const classes = useStyles();
   const [openModalStatus, setOpenModalStatus] = useState(false);
   const handelModal = () => {
     setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal);
+  };
+  const handleOnClose = () => {
+    setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal);
+    setSchedule(DEFAULT_DATA_SCHEDULE);
   };
 
   return (
@@ -64,6 +71,7 @@ const SimpleChangeRequest = (props: Props) => {
         </Grid>
         <Grid>
           <Button
+            disabled={parameters.filter(p => !isTempId(p.id)).length === 0}
             variant="contained"
             color="primary"
             className={classes.buttons}
@@ -88,13 +96,11 @@ const SimpleChangeRequest = (props: Props) => {
           onChangeDescription={setDescription}
           cmVersion={cmVersion}
           schedule={schedule}
-          parameters={parameters}
+          parameters={parameters.filter(p => !isTempId(p.id))}
           onClick={() => handleSimpleChangeRequest()}
           open={openModalStatus}
           resource={resource}
-          onClose={() =>
-            setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal)
-          }
+          onClose={handleOnClose}
         />
       )}
     </Grid>

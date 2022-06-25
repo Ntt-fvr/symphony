@@ -26,9 +26,12 @@ import React, {useCallback} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import moment from 'moment';
 import {getGraphError} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
+import {useMainContext} from './../../components/MainContext';
+
 const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
@@ -72,6 +75,13 @@ type Props = $ReadOnly<{|
   onClose: () => void,
 |}>;
 
+const TYPES = {
+  string: 'stringValue',
+  int: 'intValue',
+  float: 'floatValue',
+  enum: 'stringValue',
+};
+
 const DialogStatus = (props: Props) => {
   const {
     onClose,
@@ -80,10 +90,11 @@ const DialogStatus = (props: Props) => {
     description,
     onChangeDescription,
     parameters,
-    cmVersion,
     resource,
+    schedule,
   } = props;
   const enqueueSnackbar = useEnqueueSnackbar();
+  const {me} = useMainContext();
 
   const _enqueueError = useCallback(
     (message: string) => {
@@ -106,27 +117,24 @@ const DialogStatus = (props: Props) => {
       input: [
         {
           description: description,
-          items: [
-            {
-              resource: {
-                id: resource.id,
-              },
-              stringValue: 'hola',
-              floatValue: 1,
-              intValue: 1,
+          items: parameters.map(param => {
+            return {
+              [TYPES[param.parameterType.type]]:
+                param[TYPES[param.parameterType.type]],
+              resource: {id: resource.id},
               parameterType: {
-                id: '0x3',
+                id: param.parameterType.id,
               },
-            },
-          ],
+            };
+          }),
           activities: [],
           type: 'MANUAL',
           source: 'WORKFLOW',
           status: 'SCHEDULED',
-          requester: 'idusuariosesion',
+          requester: me.user.id,
           scheduler: {
-            time: '2022-06-15T15:10:00', //utc sin Z
-            weekDay: 'FRIDAY',
+            time: moment(schedule.date).format('YYYY-MM-DD[T]HH:mm:ss'), //utc sin Z
+            weekDay: schedule.day,
           },
         },
       ],
@@ -138,7 +146,7 @@ const DialogStatus = (props: Props) => {
           _enqueueError(errors[0].message);
         } else {
           // navigate to main page
-          onClick(response.addWorkOrder.id);
+          onClick();
         }
       },
       onError: (error: Error) => {

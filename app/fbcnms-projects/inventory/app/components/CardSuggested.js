@@ -41,13 +41,13 @@ const useStyles = makeStyles(() => ({
 export type Props = $ReadOnly<{||}>;
 
 const days = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
 ];
 
 const CardSuggested = (props: Props) => {
@@ -55,13 +55,13 @@ const CardSuggested = (props: Props) => {
   const classes = useStyles();
 
   const [checkedHidden, setCheckedHidden] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date('2022-03-02T24:00:00'),
-  );
 
   const handleDateChange = date => {
-    console.log(date);
     onSchedule({date});
+  };
+
+  const handleOnSelectDay = e => {
+    onSchedule({...schedule, day: e.target.value});
   };
 
   return (
@@ -114,6 +114,8 @@ const CardSuggested = (props: Props) => {
                       }}
                       name="family"
                       defaultValue=""
+                      onChange={handleOnSelectDay}
+                      value={schedule.day}
                       variant="outlined">
                       {days.map((item, index) => (
                         <MenuItem key={index} value={item}>
@@ -130,8 +132,8 @@ const CardSuggested = (props: Props) => {
                         placeholder="08:00 AM"
                         mask="__:__ _M"
                         inputVariant="outlined"
-                        value={selectedDate}
-                        onChange={date => handleDateChange(date)}
+                        value={schedule.date}
+                        onChange={handleDateChange}
                       />
                     </MuiPickersUtilsProvider>
                   </Grid>

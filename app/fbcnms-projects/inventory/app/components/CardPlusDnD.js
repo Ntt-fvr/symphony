@@ -18,6 +18,7 @@ import DroppableTableBody from './draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
+import ParameterValueInput from './form/ParameterValueInput';
 import Select from '@symphony/design-system/components/Select/Select';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -60,6 +61,13 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{||}>;
 
+const DEFAULT_PARAM_GENERATED = {
+  propertyType: {type: 'string'},
+  current: {
+    propertyType: {type: 'string'},
+  },
+};
+
 const CardPlusDnD = (props: Props) => {
   const {parameters, onChange, cmVersionParams} = props;
 
@@ -86,21 +94,16 @@ const CardPlusDnD = (props: Props) => {
   };
 
   const handleAddParameters = () => {
-    onChange([...parameters, {id: generateTempId()}]);
+    onChange([
+      ...parameters,
+      {...DEFAULT_PARAM_GENERATED, id: generateTempId()},
+    ]);
   };
   const onNewValueChange = (index, param, value) => {
+    console.log(index, param, value);
     const oldParams = [...parameters];
-    if (param.stringValue !== null) {
-      param.newValue = value;
-    }
-    if (param.intValue !== null) {
-      param.newValue = parseInt(value) || null;
-    }
-    if (param.floatValue !== null) {
-      param.newValue = parseFloat(value) || null;
-    }
 
-    oldParams[index] = param;
+    oldParams[index] = value;
     onChange(oldParams);
   };
   const onParamSelect = (index, value) => {
@@ -109,7 +112,11 @@ const CardPlusDnD = (props: Props) => {
     if (
       !cmParamsOptions.find(cmParam => cmParam.id === selectedParam.id).selected
     ) {
-      oldParams[index] = {...selectedParam, newValue: ''};
+      oldParams[index] = {
+        ...selectedParam,
+        current: {...selectedParam, propertyType: selectedParam.parameterType},
+        propertyType: selectedParam.parameterType,
+      };
       onChange(oldParams);
     }
   };
@@ -158,28 +165,23 @@ const CardPlusDnD = (props: Props) => {
                   </TableCell>
                   <TableCell style={{width: '30%'}} component="div" scope="row">
                     <FormField>
-                      <TextInput
-                        disabled={true}
-                        placeholder="Current value"
-                        autoComplete="off"
-                        value={
-                          item.stringValue || item.intValue || item.floatValue
-                        }
+                      <ParameterValueInput
+                        disabled
+                        label="Current value"
                         className={classes.input}
+                        inputType="PropertyType"
+                        property={item.current}
                       />
                     </FormField>
                   </TableCell>
                   <TableCell style={{width: '30%'}} component="div" scope="row">
                     <FormField>
-                      <TextInput
-                        autoFocus={true}
-                        placeholder="New Value"
-                        autoComplete="off"
-                        value={item.newValue}
+                      <ParameterValueInput
+                        label="New value"
                         className={classes.input}
-                        onChange={e =>
-                          onNewValueChange(i, item, e.target.value)
-                        }
+                        inputType="PropertyType"
+                        property={item}
+                        onChange={value => onNewValueChange(i, item, value)}
                       />
                     </FormField>
                   </TableCell>
