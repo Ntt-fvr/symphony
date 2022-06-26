@@ -77,12 +77,14 @@ export type Props = $ReadOnly<{|
 |}>;
 
 const ChangeRequestByBulk = (props: Props) => {
-  const {onClick} = props;
+  const {onClick ,infoCSV } = props;
   const classes = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => {
     setOpenModal(prevStateOpenModal => !prevStateOpenModal);
   };
+
+  console.log(infoCSV)
 
   return (
     <div>
@@ -172,7 +174,7 @@ const ChangeRequestByBulk = (props: Props) => {
               </FormField>
             </CardAccordion>
             <CardAccordion title={'Upload change'}>
-              <TableResource valuesTable={valuesTable} />
+              <TableResource valuesTable={infoCSV} />
             </CardAccordion>
             <Grid item xs={6}>
               <CardAccordion title={'Suggested change request schedule'}>
