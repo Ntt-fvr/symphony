@@ -34,7 +34,11 @@ type Props = $ReadOnly<{|
   handleSimpleChangeRequest: any,
 |}>;
 
-const DEFAULT_DATA_SCHEDULE = {date: new Date(), day: 'MONDAY'};
+const DEFAULT_DATA_SCHEDULE = {
+  date: new Date(),
+  day: 'MONDAY',
+  type: 'AS_SOON_AS_APPROVED',
+};
 
 const SimpleChangeRequest = (props: Props) => {
   const {handleSimpleChangeRequest, cmVersion, resource} = props;

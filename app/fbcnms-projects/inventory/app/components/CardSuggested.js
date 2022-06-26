@@ -64,25 +64,34 @@ const CardSuggested = (props: Props) => {
     onSchedule({...schedule, day: e.target.value});
   };
 
+  const handleOnChangeScheduleType = () => {
+    const checked = !checkedHidden;
+    setCheckedHidden(checked);
+    onSchedule({
+      ...schedule,
+      type: checked ? 'SCHEDULED_CHANGE' : 'AS_SOON_AS_APPROVED',
+    });
+  };
+
   return (
     <div className={classes.container}>
       <Card margins="none">
         <Grid style={{margin: '0 16px'}}>
           <CardHeader className={classes.cardHeader}>
-            Parameters to changed
+            Suggested change request schedule
           </CardHeader>
           <Grid container>
             <Grid item xs={12}>
               <FormControlLabel
                 style={{padding: '0 0 0 40px'}}
-                onChange={() => setCheckedHidden(!checkedHidden)}
+                onChange={handleOnChangeScheduleType}
                 checked={checkedHidden}
                 value="approved"
                 control={<Radio color="primary" />}
                 label="As soon as approved "
               />
               <FormControlLabel
-                onChange={() => setCheckedHidden(!checkedHidden)}
+                onChange={handleOnChangeScheduleType}
                 checked={!checkedHidden}
                 value="approval"
                 control={<Radio color="primary" />}

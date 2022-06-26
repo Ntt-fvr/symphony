@@ -82,6 +82,8 @@ const TYPES = {
   enum: 'stringValue',
 };
 
+const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
+
 const DialogStatus = (props: Props) => {
   const {
     onClose,
@@ -113,6 +115,7 @@ const DialogStatus = (props: Props) => {
   };
 
   const handleOnSave = () => {
+    const createdTime = moment(new Date()).format(DATE_FORMAT);
     const variables: AddRequestChangeMutationVariables = {
       input: [
         {
@@ -127,14 +130,31 @@ const DialogStatus = (props: Props) => {
               },
             };
           }),
-          activities: [],
+          activities: [
+            {
+              activityType: 'CREATION_DATE',
+              author: me.user.id,
+              createTime: createdTime,
+            },
+            {
+              activityType: 'STATUS',
+              author: me.user.id,
+              createTime: createdTime,
+              oldValue: null,
+              newValue: 'SUBMITTED',
+            },
+          ],
           type: 'MANUAL',
-          source: 'WORKFLOW',
+          source: 'GUI',
           status: 'SCHEDULED',
           requester: me.user.id,
           scheduler: {
-            time: moment(schedule.date).format('YYYY-MM-DD[T]HH:mm:ss'), //utc sin Z
-            weekDay: schedule.day,
+            time:
+              schedule.type === 'SCHEDULED_CHANGE'
+                ? moment(schedule.date).format(DATE_FORMAT)
+                : null,
+            weekDay: schedule.type === 'SCHEDULED_CHANGE' ? schedule.day : null,
+            type: schedule.type,
           },
         },
       ],
