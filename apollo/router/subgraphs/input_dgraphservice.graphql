@@ -52,16 +52,13 @@ status: UsageSubStatus
 values: [Int]
 }
 
-interface Node {
-  id: ID!
-}
-
 interface DefaultConfig {
+  id: ID!
   createTime: DateTime
   updateTime: DateTime
 }
 
-type Resource implements Node{
+type Resource implements DefaultConfig{
   name: String! @id @search(by: [hash])
   available: Boolean
   externalId: String @search(by: [hash])
@@ -88,7 +85,7 @@ type Resource implements Node{
   actionScheduler: ActionScheduler
   changeItems: [ChangeItem] @hasInverse(field: resource)
 }
-type ResourceProperty implements Node{
+type ResourceProperty implements DefaultConfig{
   stringValue: String @search(by: [term])
   intValue: Int
   booleanValue: Boolean
@@ -105,7 +102,7 @@ enum VersionStatus{
   CURRENT
   REPLACED
 }
-type CMVersion implements Node{
+type CMVersion implements DefaultConfig{
   parameters: [Parameter!]!
   previous: CMVersion
   validFrom: DateTime
@@ -113,7 +110,7 @@ type CMVersion implements Node{
   status: VersionStatus! @search(by: [hash])
   resource: Resource!
 }
-type Parameter implements Node{
+type Parameter implements DefaultConfig{
   parameterType: ConfigurationParameterType!
   previous: Parameter
   versionCMs: [CMVersion]!
@@ -138,7 +135,7 @@ enum ParameterKind{
   gps_location
   datetime_local
 }
-type ConfigurationParameterType implements Node{
+type ConfigurationParameterType implements DefaultConfig{
   externalId: String
   name: String! @id
   type: ParameterKind!
@@ -165,7 +162,7 @@ type ConfigurationParameterType implements Node{
   parameters: [Parameter!]
   resourceSpecification: String! @search(by: [hash])
 }
-type ConfigParamTag implements Node{
+type ConfigParamTag implements DefaultConfig{
   name: String!
   parameters: [ConfigurationParameterType]
 }
@@ -176,7 +173,7 @@ enum ChangeItemStatus{
   SUCCESSFUL
   FAILED
 }
-type ChangeItem implements Node{
+type ChangeItem implements DefaultConfig{
   resource: Resource
   parameterType: ConfigurationParameterType! 
   stringValue: String
@@ -208,7 +205,7 @@ enum TypeSchedulerConfig {
   SCHEDULED_CHANGE
 }
 
-type SchedulerConfig implements Node & DefaultConfig{
+type SchedulerConfig implements DefaultConfig{
   name: String
   weekDay: WeekDay
   time: DateTime
@@ -238,7 +235,7 @@ enum ChangeRequestStatus{
   SUCCESSFUL_WITH_WARNINGS
   FAILED
 }
-type ChangeRequest implements Node & DefaultConfig{
+type ChangeRequest implements DefaultConfig{
   description: String!
   items: [ChangeItem!]!
   scheduler: SchedulerConfig
@@ -257,7 +254,7 @@ enum ChangeRequestActivityField {
   NAME
   DESCRIPTION
 }
-type ChangeRequestActivity implements Node & DefaultConfig{
+type ChangeRequestActivity implements DefaultConfig{
   author: String! @search(by: [hash])
   isCreate: Boolean!
   activityType: ChangeRequestActivityField!
@@ -706,14 +703,14 @@ enum ActionTemplateType {
   AUTOMATION_FLOW
   CONFIGURATION_PARAMETER
 }
-type ActionTemplate implements Node{
+type ActionTemplate implements DefaultConfig{
   name:String!
   type:ActionTemplateType!
   resourceSpecifications: String! @search(by: [hash])
   actionTemplateItems:[ActionTemplateItem!]!
   actionExecutions: [ActionExecution!]
 }
-type ActionTemplateItem implements Node{
+type ActionTemplateItem implements DefaultConfig{
   parameters:ConfigurationParameterType!
   value:Parameter!
   actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItems)
@@ -727,7 +724,7 @@ enum ActionSchedulerStatus {
   ACTIVED
   DEACTIVATED
 }
-type ActionScheduler implements Node{
+type ActionScheduler implements DefaultConfig{
   name:String!
   description:String!
   type:ActionSchedulerType!
@@ -745,13 +742,13 @@ enum ActionExecutionItemStatus {
   FAILED
 }
 
-type ActionExecutionItem implements Node{
+type ActionExecutionItem implements DefaultConfig{
   action: ActionExecution! @hasInverse(field: items)
   resources: [Resource]!
   status: ActionExecutionItemStatus
 }
 
-type ActionExecution implements Node{
+type ActionExecution implements DefaultConfig{
   scheduler:ActionScheduler
   template: ActionTemplate!
   items: [ActionExecutionItem]
