@@ -30,7 +30,6 @@ import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {useHistory} from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -66,6 +65,7 @@ const ResourceCardListQuery = graphql`
       name
       locatedIn
       resourceSpecification
+      isDeleted
       lifecycleStatus
       typePlanningSubStatus
       planningSubStatus
@@ -156,7 +156,7 @@ const ResourcePropertiesCard = (props: Props) => {
       query={ResourceCardListQuery}
       variables={{
         filterResource: {
-          id: resourceId,
+          id: selectedResourceId,
         },
       }}
       render={resourceData => {
