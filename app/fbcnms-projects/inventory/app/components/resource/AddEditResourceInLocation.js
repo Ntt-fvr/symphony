@@ -11,7 +11,6 @@
 import React, {useState} from 'react';
 
 import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
-
 import type {
   LifecycleStatus,
   OperationalSubStatus,
