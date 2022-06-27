@@ -122,8 +122,7 @@ const DialogStatus = (props: Props) => {
           description: description,
           items: parameters.map(param => {
             return {
-              [TYPES[param.parameterType.type]]:
-                param[TYPES[param.parameterType.type]],
+              [TYPES[param.parameterType.type]]: param.newValue,
               resource: {id: resource.id},
               parameterType: {
                 id: param.parameterType.id,
