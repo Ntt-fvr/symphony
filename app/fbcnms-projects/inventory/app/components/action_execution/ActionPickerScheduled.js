@@ -62,7 +62,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const ActionPickerScheduled = (props: Props) => {
-  const {goBack, formData, closeForm, nameValid} = props;
+  const {goBack, formData, closeForm, nameValid, resourceSpec} = props;
   const [execType, setExecType] = useState(false);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date('2022-03-02T24:00:00'));
@@ -253,6 +253,7 @@ const ActionPickerScheduled = (props: Props) => {
           execDetails={{date: date ?? '', hour: time ?? ''}}
           onClose={handleOpenModal}
           onSave={handleSave}
+          resourceSpec={resourceSpec}
         />
       )}
     </div>

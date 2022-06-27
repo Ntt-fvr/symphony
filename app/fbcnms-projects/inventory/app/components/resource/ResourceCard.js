@@ -58,7 +58,7 @@ const ResourceCardListQuery = graphql`
     queryResource {
       id
       name
-      isDelete
+      isDeleted
       resourceSpecification
       locatedIn
     }

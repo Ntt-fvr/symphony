@@ -169,6 +169,7 @@ const TableConfigurtionParameter = (props: Props) => {
               <TableCell component="div" scope="row">
                 <FormField>
                   <TextInput
+                    required
                     autoFocus={true}
                     placeholder="Value"
                     autoComplete="off"

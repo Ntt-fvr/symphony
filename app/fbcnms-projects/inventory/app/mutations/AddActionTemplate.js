@@ -23,7 +23,7 @@ const mutation = graphql`
   mutation AddActionTemplateMutation($input: [AddActionTemplateInput!]!) {
     addActionTemplate(input: $input) {
       actionTemplate {
-        actionTemplateItem {
+        actionTemplateItems {
           id
           parameters {
             id

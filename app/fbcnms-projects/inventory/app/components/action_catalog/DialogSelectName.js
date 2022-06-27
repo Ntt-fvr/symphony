@@ -117,7 +117,7 @@ const DialogSelectName = (props: Props) => {
         name: name,
         type: type,
         resourceSpecifications: resourceSpecification,
-        actionTemplateItem: items
+        actionTemplateItems: items
           .filter(item => !item.isDeleted)
           .map(i => {
             return {
@@ -139,7 +139,7 @@ const DialogSelectName = (props: Props) => {
   };
 
   const updateAction = items => {
-    const savedItems = actionDetails.actionTemplateItem
+    const savedItems = actionDetails.actionTemplateItems
       .filter(item => !item.isDeleted)
       .map(item => item.id);
     const templateVariables = {
@@ -151,7 +151,7 @@ const DialogSelectName = (props: Props) => {
           name: name,
           type: type,
           resourceSpecifications: resourceSpecification,
-          actionTemplateItem: items
+          actionTemplateItems: items
             .filter(item => !savedItems.includes(item.id) && !item.isDeleted)
             .map(i => {
               return {
@@ -194,7 +194,7 @@ const DialogSelectName = (props: Props) => {
         dispatch({
           type: 'UPDATE_ACTION_TYPE_ITEMS',
           id: actionDetails.id,
-          actionTemplateItem: {actionTemplateItem: items},
+          actionTemplateItems: {actionTemplateItems: items},
         });
 
         dispatch({

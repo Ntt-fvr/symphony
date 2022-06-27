@@ -131,7 +131,7 @@ const ConfigurationParameters = graphql`
       id
       name
       type
-      actionTemplateItem {
+      actionTemplateItems {
         id
         parameters {
           id

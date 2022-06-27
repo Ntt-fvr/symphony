@@ -18,6 +18,7 @@ export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "
 export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
 export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
+export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
@@ -26,8 +27,8 @@ export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERE
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type AddActionTemplateInput = {|
-  ActionExecution?: ?$ReadOnlyArray<ActionExecutionRef>,
-  actionTemplateItem: $ReadOnlyArray<ActionTemplateItemRef>,
+  actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  actionTemplateItems: $ReadOnlyArray<ActionTemplateItemRef>,
   name: string,
   isDeleted?: ?boolean,
   resourceSpecifications: string,
@@ -51,22 +52,23 @@ export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
-  crossconnectionInv?: ?$ReadOnlyArray<?ResourceRef>,
+  crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
   id?: ?string,
-  isDelete?: ?boolean,
+  isDeleted?: ?boolean,
   isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
   locatedIn?: ?string,
-  logicalLink?: ?ResourceRef,
   logicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  logicalLinks?: ?$ReadOnlyArray<?ResourceRef>,
   name?: ?string,
-  numericPool?: ?$ReadOnlyArray<?NumericPoolRef>,
+  numericPools?: ?$ReadOnlyArray<?NumericPoolRef>,
   operationalSubStatus?: ?OperationalSubStatus,
   physicalLink?: ?ResourceRef,
-  physicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  physicalLinkInv?: ?ResourceRef,
   planningSubStatus?: ?PlanningSubStatus,
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
@@ -88,8 +90,8 @@ export type ActionSchedulerRef = {|
   type?: ?ActionSchedulerType,
 |};
 export type ActionTemplateRef = {|
-  ActionExecution?: ?$ReadOnlyArray<ActionExecutionRef>,
-  actionTemplateItem?: ?$ReadOnlyArray<ActionTemplateItemRef>,
+  actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
   id?: ?string,
   name?: ?string,
   isDeleted?: ?boolean,
@@ -143,7 +145,7 @@ export type ParameterRef = {|
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   stringValue?: ?string,
-  versionCM?: ?$ReadOnlyArray<?CMVersionRef>,
+  versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
 |};
 export type CMVersionRef = {|
   id?: ?string,
@@ -159,11 +161,25 @@ export type ConfigParamTagRef = {|
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
 |};
+export type ChangeItemRef = {|
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
+  id?: ?string,
+  intValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  parameterType?: ?ConfigurationParameterTypeRef,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  resource?: ?ResourceRef,
+  status?: ?ChangeItemStatus,
+  stringValue?: ?string,
+|};
 export type NumericPoolRef = {|
   customLimit?: ?number,
   description?: ?string,
   id?: ?string,
-  isDelete?: ?boolean,
+  isDeleted?: ?boolean,
   limit?: ?number,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   statusNumericPools?: ?$ReadOnlyArray<?StatusNumericPoolRef>,
@@ -194,7 +210,7 @@ export type AddActionTemplateMutationVariables = {|
 export type AddActionTemplateMutationResponse = {|
   +addActionTemplate: ?{|
     +actionTemplate: ?$ReadOnlyArray<?{|
-      +actionTemplateItem: $ReadOnlyArray<{|
+      +actionTemplateItems: $ReadOnlyArray<{|
         +id: string,
         +parameters: {|
           +id: string,
@@ -224,7 +240,7 @@ mutation AddActionTemplateMutation(
 ) {
   addActionTemplate(input: $input) {
     actionTemplate {
-      actionTemplateItem {
+      actionTemplateItems {
         id
         parameters {
           id
@@ -335,7 +351,7 @@ return {
                 "args": null,
                 "concreteType": "ActionTemplateItem",
                 "kind": "LinkedField",
-                "name": "actionTemplateItem",
+                "name": "actionTemplateItems",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
@@ -396,7 +412,7 @@ return {
                 "args": null,
                 "concreteType": "ActionTemplateItem",
                 "kind": "LinkedField",
-                "name": "actionTemplateItem",
+                "name": "actionTemplateItems",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
@@ -430,16 +446,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a16effcf8c1486bdc7ed0a89118fe075",
+    "cacheID": "a9d1813d79618ded0c4e6c7ce93c1a07",
     "id": null,
     "metadata": {},
     "name": "AddActionTemplateMutation",
     "operationKind": "mutation",
-    "text": "mutation AddActionTemplateMutation(\n  $input: [AddActionTemplateInput!]!\n) {\n  addActionTemplate(input: $input) {\n    actionTemplate {\n      actionTemplateItem {\n        id\n        parameters {\n          id\n          name\n        }\n        value {\n          stringValue\n          id\n        }\n      }\n      id\n      name\n      resourceSpecifications\n      type\n    }\n  }\n}\n"
+    "text": "mutation AddActionTemplateMutation(\n  $input: [AddActionTemplateInput!]!\n) {\n  addActionTemplate(input: $input) {\n    actionTemplate {\n      actionTemplateItems {\n        id\n        parameters {\n          id\n          name\n        }\n        value {\n          stringValue\n          id\n        }\n      }\n      id\n      name\n      resourceSpecifications\n      type\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '9f32919a4bb3dd279da0a9339be9ff9d';
+(node/*: any*/).hash = '459c25700fee7d9b62c86c94d5353d13';
 
 module.exports = node;

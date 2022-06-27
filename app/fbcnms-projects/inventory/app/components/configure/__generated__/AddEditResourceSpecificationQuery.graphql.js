@@ -49,7 +49,7 @@ export type AddEditResourceSpecificationQueryResponse = {|
     +id: string,
     +name: string,
     +type: ActionTemplateType,
-    +actionTemplateItem: $ReadOnlyArray<{|
+    +actionTemplateItems: $ReadOnlyArray<{|
       +id: string,
       +parameters: {|
         +id: string,
@@ -104,7 +104,7 @@ query AddEditResourceSpecificationQuery {
     id
     name
     type
-    actionTemplateItem {
+    actionTemplateItems {
       id
       parameters {
         id
@@ -358,7 +358,7 @@ return {
             "args": null,
             "concreteType": "ActionTemplateItem",
             "kind": "LinkedField",
-            "name": "actionTemplateItem",
+            "name": "actionTemplateItems",
             "plural": true,
             "selections": [
               (v1/*: any*/),
@@ -411,7 +411,7 @@ return {
             "args": null,
             "concreteType": "ActionTemplateItem",
             "kind": "LinkedField",
-            "name": "actionTemplateItem",
+            "name": "actionTemplateItems",
             "plural": true,
             "selections": [
               (v1/*: any*/),
@@ -441,16 +441,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8875c162f95f26d04a6e8b9f4b7ba094",
+    "cacheID": "6b4f4d674229df9ff5a0934dea69a8ff",
     "id": null,
     "metadata": {},
     "name": "AddEditResourceSpecificationQuery",
     "operationKind": "query",
-    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    resourceSpecification\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    latitudeValue\n    longitudeValue\n    mappingIn\n    mappingOut\n    nodeType\n    rangeFromValue\n    rangeToValue\n    rawValue\n    stringValue\n    type\n    __typename\n  }\n  queryActionTemplate {\n    id\n    name\n    type\n    actionTemplateItem {\n      id\n      parameters {\n        id\n        name\n      }\n      value {\n        stringValue\n        id\n      }\n      isDeleted\n    }\n    resourceSpecifications\n    isDeleted\n  }\n}\n"
+    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    resourceSpecification\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    latitudeValue\n    longitudeValue\n    mappingIn\n    mappingOut\n    nodeType\n    rangeFromValue\n    rangeToValue\n    rawValue\n    stringValue\n    type\n    __typename\n  }\n  queryActionTemplate {\n    id\n    name\n    type\n    actionTemplateItems {\n      id\n      parameters {\n        id\n        name\n      }\n      value {\n        stringValue\n        id\n      }\n      isDeleted\n    }\n    resourceSpecifications\n    isDeleted\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '2d40fc314724aa81db7cf598c88404fd';
+(node/*: any*/).hash = 'c5b7e46e504e41917e32913ed1bcb27f';
 
 module.exports = node;

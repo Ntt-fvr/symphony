@@ -36,7 +36,7 @@ export type Props = $ReadOnly<{|
 |}>;
 
 const CreateAction = (props: Props) => {
-  const {closeForm, names} = props;
+  const {closeForm, names, resourceSpecs} = props;
   const classes = useStyles();
   const [
     returnScheduledActionsTypes,
@@ -72,6 +72,7 @@ const CreateAction = (props: Props) => {
           <StepperAction
             returnSheduledAction={showScheduledActionsTypes}
             names={names}
+            resourceSpecs={resourceSpecs}
             closeForm={closeForm}
           />
         </Grid>

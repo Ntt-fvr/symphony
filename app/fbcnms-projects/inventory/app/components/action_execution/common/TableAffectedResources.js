@@ -78,6 +78,7 @@ const TableAffectedResources = (props: Props) => {
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [page, setPage] = useState(0);
   const [selectedResource, setSelectedResource] = useState('');
+  const [selectedResourceSpec, setSelectedResourceSpec] = useState('');
 
   const openModalDetails = () => {
     setOpenModal(prevStateModal => !prevStateModal);
@@ -96,7 +97,7 @@ const TableAffectedResources = (props: Props) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Resource Type</StyledTableCell>
+              <StyledTableCell>Resource</StyledTableCell>
               <StyledTableCell>Execution Result</StyledTableCell>
               <StyledTableCell>View Details</StyledTableCell>
             </TableRow>
@@ -118,7 +119,8 @@ const TableAffectedResources = (props: Props) => {
                     skin="gray"
                     icon={RemoveRedEyeIcon}
                     onClick={() => {
-                      setSelectedResource(resource.resourceSpecification);
+                      setSelectedResource(resource.name);
+                      setSelectedResourceSpec(resource.resourceSpecification);
                       openModalDetails();
                     }}
                   />
@@ -139,11 +141,12 @@ const TableAffectedResources = (props: Props) => {
       />
       {openModal && (
         <DialogExecutionDetails
-          name={'Execution Details'}
+          name={'Resource Execution Details'}
           onClose={openModalDetails}
           valuesTable={valuesTable}
           resourceData={resourceData}
-          resource={selectedResource}
+          resourceName={selectedResource}
+          resourceSpec={selectedResourceSpec}
         />
       )}
     </div>

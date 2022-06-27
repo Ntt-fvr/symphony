@@ -14,7 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type ActionTemplateHasFilter = "ActionExecution" | "actionTemplateItem" | "name" | "resourceSpecifications" | "type" | "%future added value";
+export type ActionTemplateHasFilter = "actionExecutions" | "actionTemplateItems" | "name" | "resourceSpecifications" | "type" | "%future added value";
 export type ActionTemplateFilter = {|
   and?: ?$ReadOnlyArray<?ActionTemplateFilter>,
   has?: ?$ReadOnlyArray<?ActionTemplateHasFilter>,

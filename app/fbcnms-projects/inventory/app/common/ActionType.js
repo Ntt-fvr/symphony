@@ -9,11 +9,10 @@
  */
 
 export type ActionType = {|
-    id: string,
-    type: string,
-    name: string,
-    index?: ?number,
-    actionTemplateItem: [],
-    resourceSpecification: string,
-  |};
-  
+  id: string,
+  type: string,
+  name: string,
+  index?: ?number,
+  actionTemplateItems: [],
+  resourceSpecification: string,
+|};

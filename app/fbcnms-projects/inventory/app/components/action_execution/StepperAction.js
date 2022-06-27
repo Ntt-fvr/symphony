@@ -129,6 +129,7 @@ type Props = $ReadOnly<{|
   names?: [],
   closeForm?: () => void,
   returnSheduledAction?: () => void,
+  resourceSpecs?: [],
 |}>;
 
 const tableColumns = [
@@ -145,7 +146,7 @@ const tableColumns = [
 ];
 
 const StepperAction = (props: Props) => {
-  const {returnSheduledAction, closeForm, names} = props;
+  const {returnSheduledAction, closeForm, names, resourceSpecs} = props;
 
   const activeStep = 1;
   const [selectedSpecification, setSelectedSpecification] = useState('');
@@ -468,6 +469,10 @@ const StepperAction = (props: Props) => {
               formData={formData()}
               nameValid={!names.includes(name)}
               closeForm={closeForm}
+              resourceSpec={
+                resourceSpecs.find(item => item.id == selectedSpecification)
+                  .name
+              }
             />
           )}
         </Card>

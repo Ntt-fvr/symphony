@@ -29,5 +29,5 @@ export type ActionTypeTableDispatcherActionType =
   | {|
       type: 'UPDATE_ACTION_TYPE_ITEMS',
       id: string,
-      actionTemplateItem: [],
+      actionTemplateItems: [],
     |};

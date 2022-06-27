@@ -65,7 +65,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogExecuteNow = (props: Props) => {
-  const {onSave, onClose, dataRow} = props;
+  const {onSave, onClose, dataRow, resourceSpec} = props;
 
   const classes = useStyles();
   return (
@@ -120,14 +120,14 @@ const DialogExecuteNow = (props: Props) => {
                   <Text useEllipsis={true} weight="bold">
                     Action:
                   </Text>
-                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
                     <Text useEllipsis={true} weight="bold">
                       Date:
                     </Text>
                   ) : (
                     ''
                   )}
-                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
                     <Text useEllipsis={true} weight="bold">
                       Hour:
                     </Text>
@@ -145,19 +145,19 @@ const DialogExecuteNow = (props: Props) => {
                   item
                   xs={2}>
                   <Text>{dataRow.actionTemplate.name}</Text>
-                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
                     <Text>
                       {moment(props.execDetails.date).format('MM/DD/YYYY')}
                     </Text>
                   ) : (
                     ''
                   )}
-                  {props.execType == {actionExecutionStatusEnums.OneTimeExecution} ? (
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
                     <Text>{moment(props.execDetails.hour).format('LT')}</Text>
                   ) : (
                     ''
                   )}
-                  <Text>{'resource_spec_1'}</Text>
+                  <Text>{resourceSpec}</Text>
                 </Grid>
               </Grid>
             </Grid>
@@ -180,7 +180,11 @@ const DialogExecuteNow = (props: Props) => {
           className={classes.option}
           variant="contained"
           color="primary">
-          {props.execType == actionExecutionTypes.ManualExecution ? 'Confirm' : 'Save'}
+          {props.execType == actionExecutionTypes.ManualExecution
+            ? 'Confirm'
+            : !props.execType
+            ? 'Execute Now'
+            : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>

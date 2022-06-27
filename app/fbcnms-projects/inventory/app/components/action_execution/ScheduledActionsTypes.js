@@ -171,6 +171,7 @@ const ScheduledActionsTypes = () => {
   const [openModal, setOpenModal] = useState(false);
   const [dataRow, setDataRow] = useState({});
   const [selectedSpecification, setSelectedSpecification] = useState('');
+  const [resourceSpecs, setResourceSpecs] = useState({});
   const [rows, setRows] = useState([]);
 
   const handleChange = (value, id) => {
@@ -227,6 +228,9 @@ const ScheduledActionsTypes = () => {
             };
           }),
         );
+        setResourceSpecs(
+          resourceTypes.resourceSpecifications.edges.map(item => item.node),
+        );
       });
     });
   }, [setRows]);
@@ -250,6 +254,7 @@ const ScheduledActionsTypes = () => {
           setOpenCreateAction(false);
           isCompleted();
         }}
+        resourceSpecs={resourceSpecs}
         names={rows.map(item => item?.name)}
       />
     );

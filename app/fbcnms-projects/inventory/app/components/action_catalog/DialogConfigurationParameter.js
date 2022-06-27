@@ -63,7 +63,7 @@ const DialogConfigurationParameter = (props: Props) => {
     handleUpdate,
   } = props;
   const [actionItems, setActionItems] = useState(
-    isEdit ? actionDetails.actionTemplateItem : [],
+    isEdit ? actionDetails.actionTemplateItems : [],
   );
 
   const handleDisabled = () => {

@@ -28,7 +28,7 @@ const mutation = graphql`
         name
         resourceSpecifications
         type
-        actionTemplateItem {
+        actionTemplateItems {
           id
           parameters {
             id

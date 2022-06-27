@@ -28,7 +28,7 @@ export const getInitialActionType = (
   index: index,
   type: item?.type ?? '',
   resourceSpecification: resourceSpecification,
-  actionTemplateItem: [],
+  actionTemplateItems: [],
 });
 
 export const useActionTypesReducer = (

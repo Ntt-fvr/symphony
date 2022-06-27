@@ -65,10 +65,10 @@ const TableDetails = (props: Props) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Scheduled action</StyledTableCell>
+              <StyledTableCell>Action Type</StyledTableCell>
               <StyledTableCell>Resource Type</StyledTableCell>
               <StyledTableCell>Resource Specification</StyledTableCell>
-              <StyledTableCell>Execution type</StyledTableCell>
+              <StyledTableCell>Execution Type</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -83,7 +83,12 @@ const TableDetails = (props: Props) => {
                 }
               </TableCell>
               <TableCell>
-                {valuesTable?.template?.resourceSpecifications}
+                {
+                  resourceData.find(
+                    item =>
+                      item.id == valuesTable?.template?.resourceSpecifications,
+                  ).name
+                }
               </TableCell>
               <TableCell>{valuesTable?.scheduler?.type}</TableCell>
             </StyledTableRow>
