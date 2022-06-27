@@ -333,6 +333,7 @@ const StepperAction = (props: Props) => {
                     autoComplete="off"
                     variant="outlined"
                     value={name}
+                    placeholder="actionName"
                     onChange={({target}) => {
                       setName(target.value);
                     }}
