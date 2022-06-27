@@ -120,6 +120,8 @@ const DialogStatus = (props: Props) => {
       input: [
         {
           description: description,
+          createTime: createdTime,
+          updateTime: createdTime,
           items: parameters.map(param => {
             return {
               [TYPES[param.parameterType.type]]: param.newValue,
