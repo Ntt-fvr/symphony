@@ -136,7 +136,7 @@ enum ParameterKind{
 type ConfigurationParameterType {
   id: ID!
   externalId: String
-  name: String! @id
+  name: String!
   type: ParameterKind!
   nodeType: String
   index: Int
