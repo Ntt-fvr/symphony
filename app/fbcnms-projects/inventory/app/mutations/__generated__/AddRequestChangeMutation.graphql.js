@@ -14,10 +14,14 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "%future added value";
+export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
+export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
+export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
 export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type ChangeRequestActivityField = "CREATION_DATE" | "DESCRIPTION" | "NAME" | "PRIORITY" | "REQUESTER" | "STATUS" | "%future added value";
 export type ChangeRequestSource = "GUI" | "NON_RT_RIC" | "NSSMF" | "WORKFLOW" | "%future added value";
-export type ChangeRequestStatus = "APPROVAL" | "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "REJECTED" | "SCHEDULED" | "SUBMITTED" | "SUCCESSFUL" | "SUCCESSFUL_WITH_WARNINGS" | "%future added value";
+export type ChangeRequestStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING_APPROVAL" | "REJECTED" | "SCHEDULED" | "SUBMITTED" | "SUCCESSFUL" | "SUCCESSFUL_WITH_WARNINGS" | "%future added value";
 export type ChangeRequestType = "AUTOMATIC" | "MANUAL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
@@ -116,7 +120,7 @@ export type ParameterRef = {|
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   stringValue?: ?string,
-  versionCM?: ?$ReadOnlyArray<?CMVersionRef>,
+  versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
 |};
 export type CMVersionRef = {|
   id?: ?string,
@@ -128,43 +132,86 @@ export type CMVersionRef = {|
   validTo?: ?any,
 |};
 export type ResourceRef = {|
+  actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
-  crossconnectionInv?: ?$ReadOnlyArray<?ResourceRef>,
+  crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
   id?: ?string,
-  isDelete?: ?boolean,
+  isDeleted?: ?boolean,
+  isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
   locatedIn?: ?string,
-  logicalLink?: ?ResourceRef,
   logicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  logicalLinks?: ?$ReadOnlyArray<?ResourceRef>,
   name?: ?string,
-  numericPool?: ?$ReadOnlyArray<?NumericPoolRef>,
+  numericPools?: ?$ReadOnlyArray<?NumericPoolRef>,
   operationalSubStatus?: ?OperationalSubStatus,
   physicalLink?: ?ResourceRef,
-  physicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  physicalLinkInv?: ?ResourceRef,
   planningSubStatus?: ?PlanningSubStatus,
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
   usageSubStatus?: ?UsageSubStatus,
 |};
+export type ActionSchedulerRef = {|
+  actionTemplate?: ?ActionTemplateRef,
+  actions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  cron?: ?string,
+  date?: ?any,
+  description?: ?string,
+  id?: ?string,
+  name?: ?string,
+  resources?: ?$ReadOnlyArray<ResourceRef>,
+  status?: ?ActionSchedulerStatus,
+  type?: ?ActionSchedulerType,
+|};
+export type ActionTemplateRef = {|
+  actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
+  id?: ?string,
+  name?: ?string,
+  resourceSpecifications?: ?string,
+  type?: ?ActionTemplateType,
+|};
+export type ActionExecutionRef = {|
+  endTime?: ?any,
+  id?: ?string,
+  items?: ?$ReadOnlyArray<?ActionExecutionItemRef>,
+  scheduler?: ?ActionSchedulerRef,
+  starTime?: ?any,
+  template?: ?ActionTemplateRef,
+|};
+export type ActionExecutionItemRef = {|
+  action?: ?ActionExecutionRef,
+  id?: ?string,
+  resources?: ?$ReadOnlyArray<?ResourceRef>,
+  status?: ?ActionExecutionItemStatus,
+|};
+export type ActionTemplateItemRef = {|
+  actionTemplate?: ?ActionTemplateRef,
+  id?: ?string,
+  parameters?: ?ConfigurationParameterTypeRef,
+  value?: ?ParameterRef,
+|};
 export type NumericPoolRef = {|
   customLimit?: ?number,
   description?: ?string,
   id?: ?string,
-  isDelete?: ?boolean,
+  isDeleted?: ?boolean,
   limit?: ?number,
-  resource?: ?$ReadOnlyArray<ResourceRef>,
+  resources?: ?$ReadOnlyArray<ResourceRef>,
   statusNumericPools?: ?$ReadOnlyArray<?StatusNumericPoolRef>,
 |};
 export type StatusNumericPoolRef = {|
   id?: ?string,
   numericPool?: ?NumericPoolRef,
   status?: ?UsageSubStatus,
-  value?: ?$ReadOnlyArray<?number>,
+  values?: ?$ReadOnlyArray<?number>,
 |};
 export type ResourcePropertyRef = {|
   booleanValue?: ?boolean,

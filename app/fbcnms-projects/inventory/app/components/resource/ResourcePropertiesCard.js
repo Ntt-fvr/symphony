@@ -30,6 +30,7 @@ import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useHistory} from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -83,6 +84,39 @@ const ResourceCardListQuery = graphql`
         }
       }
     }
+    queryCMVersion {
+      id
+      parameters {
+        id
+        stringValue
+        rangeToValue
+        rangeFromValue
+        floatValue
+        intValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        parameterType {
+          id
+          name
+          resourceSpecification
+          stringValue
+          floatValue
+          intValue
+          type
+        }
+      }
+      status
+      resource {
+        id
+        name
+        resourceProperties {
+          id
+          resourcePropertyType
+        }
+        locatedIn
+      }
+    }
   }
 `;
 
@@ -103,6 +137,11 @@ const ResourcePropertiesCard = (props: Props) => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
+  const history = useHistory();
+  const urlParams = new URLSearchParams(history.location.search);
+  const resourceId = urlParams.get('resource');
+
+  console.log(selectedResourceId);
 
   const validateForm = data => {
     return (
@@ -332,7 +371,16 @@ const ResourcePropertiesCard = (props: Props) => {
                         dataListStepper={dataListStepper}
                       />
                     ) : null}
-                    {selectedTab === 'configuration' ? <Configuration /> : null}
+                    {selectedTab === 'configuration' ? (
+                      <Configuration
+                        resource={item}
+                        cmVersion={resourceData.queryCMVersion.find(
+                          cm =>
+                            cm.resource.id === item.id &&
+                            cm.status === 'CURRENT',
+                        )}
+                      />
+                    ) : null}
                     {selectedTab === 'services' ? <div>Services</div> : null}
                   </PerfectScrollbar>
                   {openDialog && (

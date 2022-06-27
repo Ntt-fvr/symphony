@@ -26,7 +26,6 @@ export type ResourceCardQueryResponse = {|
     +name: string,
     +locatedIn: ?string,
     +resourceSpecification: string,
-    +isDeleted: boolean,
     +lifecycleStatus: ?LifecycleStatus,
     +typePlanningSubStatus: ?TypePlanningSubStatus,
     +planningSubStatus: ?PlanningSubStatus,
@@ -68,7 +67,6 @@ query ResourceCardQuery {
     name
     locatedIn
     resourceSpecification
-    isDeleted
     lifecycleStatus
     typePlanningSubStatus
     planningSubStatus
@@ -140,13 +138,6 @@ v3 = [
         "args": null,
         "kind": "ScalarField",
         "name": "resourceSpecification",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "isDeleted",
         "storageKey": null
       },
       {
@@ -283,16 +274,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "7fa986ce2c9764f42b2bfee639350fc2",
+    "cacheID": "6b7272de86a2b2268985ac47d719b8dc",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '20875516c227b0d3373b621e137ed528';
+(node/*: any*/).hash = '7d6f44963b01400ce8d3885543292eed';
 
 module.exports = node;

@@ -56,6 +56,18 @@ const CardPlusDnDInput = ({
     );
   }
 
+  const handleOnChange = e => {
+    const value = e.target.value;
+    let parsedValue = value;
+
+    if (type === TYPES.int) {
+      parsedValue = parseInt(parsedValue);
+    } else if (type === TYPES.float) {
+      parsedValue = parseFloat(parsedValue);
+    }
+    onChange(index, item, parsedValue);
+  };
+
   return (
     <TextInput
       autoFocus={autoFocus}
@@ -65,7 +77,7 @@ const CardPlusDnDInput = ({
       className={classes.input}
       type={type === TYPES.int || type === TYPES.float ? 'number' : 'text'}
       step={type === TYPES.float ? '0.01' : '1'}
-      onChange={e => onChange(index, item, e.target.value)}
+      onChange={handleOnChange}
     />
   );
 };

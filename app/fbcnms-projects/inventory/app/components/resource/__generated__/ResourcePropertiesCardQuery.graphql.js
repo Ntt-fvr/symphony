@@ -16,10 +16,12 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
+export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "usageSubStatus" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
+export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type ResourceFilter = {|
   and?: ?$ReadOnlyArray<?ResourceFilter>,
   has?: ?$ReadOnlyArray<?ResourceHasFilter>,
@@ -43,7 +45,6 @@ export type ResourcePropertiesCardQueryResponse = {|
     +name: string,
     +locatedIn: ?string,
     +resourceSpecification: string,
-    +isDeleted: boolean,
     +lifecycleStatus: ?LifecycleStatus,
     +typePlanningSubStatus: ?TypePlanningSubStatus,
     +planningSubStatus: ?PlanningSubStatus,
@@ -62,6 +63,39 @@ export type ResourcePropertiesCardQueryResponse = {|
       |}
     |}>
   |},
+  +queryCMVersion: ?$ReadOnlyArray<?{|
+    +id: string,
+    +parameters: $ReadOnlyArray<{|
+      +id: string,
+      +stringValue: ?string,
+      +rangeToValue: ?number,
+      +rangeFromValue: ?number,
+      +floatValue: ?number,
+      +intValue: ?number,
+      +booleanValue: ?boolean,
+      +latitudeValue: ?number,
+      +longitudeValue: ?number,
+      +parameterType: {|
+        +id: string,
+        +name: string,
+        +resourceSpecification: string,
+        +stringValue: ?string,
+        +floatValue: ?number,
+        +intValue: ?number,
+        +type: ParameterKind,
+      |},
+    |}>,
+    +status: VersionStatus,
+    +resource: {|
+      +id: string,
+      +name: string,
+      +resourceProperties: ?$ReadOnlyArray<?{|
+        +id: string,
+        +resourcePropertyType: string,
+      |}>,
+      +locatedIn: ?string,
+    |},
+  |}>,
 |};
 export type ResourcePropertiesCardQuery = {|
   variables: ResourcePropertiesCardQueryVariables,
@@ -79,7 +113,6 @@ query ResourcePropertiesCardQuery(
     name
     locatedIn
     resourceSpecification
-    isDeleted
     lifecycleStatus
     typePlanningSubStatus
     planningSubStatus
@@ -96,6 +129,39 @@ query ResourcePropertiesCardQuery(
           name
         }
       }
+    }
+  }
+  queryCMVersion {
+    id
+    parameters {
+      id
+      stringValue
+      rangeToValue
+      rangeFromValue
+      floatValue
+      intValue
+      booleanValue
+      latitudeValue
+      longitudeValue
+      parameterType {
+        id
+        name
+        resourceSpecification
+        stringValue
+        floatValue
+        intValue
+        type
+      }
+    }
+    status
+    resource {
+      id
+      name
+      resourceProperties {
+        id
+        resourcePropertyType
+      }
+      locatedIn
     }
   }
 }
@@ -123,7 +189,42 @@ v2 = {
   "name": "name",
   "storageKey": null
 },
-v3 = [
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "locatedIn",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceSpecification",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
+  "storageKey": null
+},
+v8 = [
   {
     "alias": null,
     "args": [
@@ -140,27 +241,8 @@ v3 = [
     "selections": [
       (v1/*: any*/),
       (v2/*: any*/),
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "locatedIn",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "resourceSpecification",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "isDeleted",
-        "storageKey": null
-      },
+      (v3/*: any*/),
+      (v4/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -246,6 +328,132 @@ v3 = [
       }
     ],
     "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "CMVersion",
+    "kind": "LinkedField",
+    "name": "queryCMVersion",
+    "plural": true,
+    "selections": [
+      (v1/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Parameter",
+        "kind": "LinkedField",
+        "name": "parameters",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          (v5/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "rangeToValue",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "rangeFromValue",
+            "storageKey": null
+          },
+          (v6/*: any*/),
+          (v7/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "booleanValue",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "latitudeValue",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "longitudeValue",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ConfigurationParameterType",
+            "kind": "LinkedField",
+            "name": "parameterType",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              (v2/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
+              (v6/*: any*/),
+              (v7/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "type",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "status",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Resource",
+        "kind": "LinkedField",
+        "name": "resource",
+        "plural": false,
+        "selections": [
+          (v1/*: any*/),
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceProperty",
+            "kind": "LinkedField",
+            "name": "resourceProperties",
+            "plural": true,
+            "selections": [
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourcePropertyType",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          (v3/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -254,7 +462,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourcePropertiesCardQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v8/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -263,19 +471,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ResourcePropertiesCardQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v8/*: any*/)
   },
   "params": {
-    "cacheID": "983165df93a0b8d8b0513c825e104502",
+    "cacheID": "46ef87f4d922f86b60e558d55c875467",
     "id": null,
     "metadata": {},
     "name": "ResourcePropertiesCardQuery",
     "operationKind": "query",
-    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n  queryCMVersion {\n    id\n    parameters {\n      id\n      stringValue\n      rangeToValue\n      rangeFromValue\n      floatValue\n      intValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      parameterType {\n        id\n        name\n        resourceSpecification\n        stringValue\n        floatValue\n        intValue\n        type\n      }\n    }\n    status\n    resource {\n      id\n      name\n      resourceProperties {\n        id\n        resourcePropertyType\n      }\n      locatedIn\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c1f6b8e6254d067fc3d9a32d5b4675a1';
+(node/*: any*/).hash = 'a8f98f676ea0c57fafb6643ef10aed1a';
 
 module.exports = node;
