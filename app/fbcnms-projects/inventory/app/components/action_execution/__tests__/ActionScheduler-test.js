@@ -10,6 +10,7 @@
 
 import '@testing-library/jest-dom';
 import React from 'react';
+import ScheduledActionsTypes from '../ScheduledActionsTypes';
 import StepperAction from '../StepperAction';
 import {fireEvent, render, screen} from '@testing-library/react';
 
@@ -40,5 +41,29 @@ describe('suite test component ScheduledActionTypes', () => {
     expect(
       screen.getByText('Action name existing', {exact: false}),
     ).toBeInTheDocument();
+  });
+
+  it('CM-ASDLR FE-3 render Scheduled Action', () => {
+    render(<ScheduledActionsTypes />);
+
+    const columnActionTemplate = screen.getByText('Action Template');
+    expect(columnActionTemplate);
+
+    const columnResourceType = screen.getByText('Resource Type');
+    expect(columnResourceType);
+
+    const columnResourceSpecification = screen.getByText(
+      'Resource Specification',
+    );
+    expect(columnResourceSpecification);
+
+    const columnLastExecution = screen.getByText('Last Execution');
+    expect(columnLastExecution);
+
+    const columnExecutionTypee = screen.getByText('Execution Type');
+    expect(columnExecutionTypee);
+
+    const columnManualExecutions = screen.getByText('Manual Executions');
+    expect(columnManualExecutions);
   });
 });
