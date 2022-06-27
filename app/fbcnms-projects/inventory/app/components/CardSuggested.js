@@ -69,7 +69,7 @@ const CardSuggested = (props: Props) => {
     setCheckedHidden(checked);
     onSchedule({
       ...schedule,
-      type: checked ? 'SCHEDULED_CHANGE' : 'AS_SOON_AS_APPROVED',
+      type: checked ? 'AS_SOON_AS_APPROVED' : 'SCHEDULED_CHANGE',
     });
   };
 
