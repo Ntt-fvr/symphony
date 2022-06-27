@@ -22,6 +22,7 @@ export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERE
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type ResourceFilter = {|
   and?: ?$ReadOnlyArray<?ResourceFilter>,
+  externalId?: ?StringHashFilter,
   has?: ?$ReadOnlyArray<?ResourceHasFilter>,
   id?: ?$ReadOnlyArray<string>,
   locatedIn?: ?StringHashFilter,
