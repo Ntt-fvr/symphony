@@ -92,11 +92,27 @@ const useStyles = makeStyles(() => ({
 
 export type Props = $ReadOnly<{|
   setOpenDetails: any,
-  data: any,
+  // idChangeRequest: any, id for filter
 |}>;
 
 const ChangeRequestDetails = (props: Props) => {
-  const {setOpenDetails, data} = props;
+  const {setOpenDetails} = props;
+  const data = {
+    id: '686876767',
+    key: '01',
+    creationDate: '01/03/22',
+    lastModificationDate: '01/03/22',
+    resourceType: 'RNCellDU01',
+    changeSource: 'WORKFLOW',
+    affectedResources: '1',
+    status: 'SUCCESSFUL',
+  };
+
+  const stringCapitalizeFisrt = string => {
+    const convertString = string.toLowerCase();
+
+    return convertString.charAt(0).toUpperCase() + convertString.slice(1);
+  };
   const classes = useStyles();
 
   const resourceType = useFormInput(data.resourceType.trim());
@@ -126,7 +142,7 @@ const ChangeRequestDetails = (props: Props) => {
           <ButtonAlarmStatus
             className={classes.buttonStatus}
             skin={data.status}>
-            Status: {data.status}{' '}
+            Status: {stringCapitalizeFisrt(data.status)}
           </ButtonAlarmStatus>
           <FormField>
             <TextField

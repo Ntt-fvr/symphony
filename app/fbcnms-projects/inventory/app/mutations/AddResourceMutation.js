@@ -26,10 +26,17 @@ const mutation = graphql`
     addResource(input: $input) {
       numUids
       resource {
-        locatedIn
+        id
         name
+        externalId
+        locatedIn
         resourceSpecification
-        isDelete
+        isDeleted
+        lifecycleStatus
+        planningSubStatus
+        typePlanningSubStatus
+        usageSubStatus
+        operationalSubStatus
       }
     }
   }

@@ -14,6 +14,7 @@ import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+import Select from '@symphony/design-system/components/Select/Select';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -52,17 +53,11 @@ const ButtonsChangeRequest = (props: Props) => {
 
   return (
     <Grid className={classes.root}>
-      <Button
-        className={classNames(className)}
-        onClick={onClickNf}
-        disabled={disabled}
-        size="medium"
-        variant="outlined"
-        color={color}>
-        <Text useEllipsis={true} color={'primary'}>
-          NF Initial Configuration
-        </Text>
-      </Button>
+      <Select
+        options={[]}
+        // selectedValue={workOrder.priority}
+        // onChange={value => _setWorkOrderDetail('priority', value)}
+      />
 
       <Button
         onClick={onClickBulk}

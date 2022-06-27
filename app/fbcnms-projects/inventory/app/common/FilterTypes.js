@@ -42,6 +42,83 @@ export const priorityValues = [
   },
 ];
 
+export const statusChangeRequestValues = [
+  {
+    key: 'approval',
+    value: 'APPROVAL',
+    label: 'Approval',
+  },
+  {
+    key: 'canceled',
+    value: 'CANCELED',
+    label: 'Canceled',
+  },
+  {
+    key: 'failed',
+    value: 'FAILED',
+    label: 'Failed',
+  },
+  {
+    key: 'in_execution',
+    value: 'IN_EXECUTION',
+    label: 'In_execution',
+  },
+  {
+    key: 'pending',
+    value: 'PENDING',
+    label: 'Pending',
+  },
+  {
+    key: 'rejected',
+    value: 'REJECTED',
+    label: 'Rejected',
+  },
+  {
+    key: 'scheduled',
+    value: 'SCHEDULED',
+    label: 'Scheduled',
+  },
+  {
+    key: 'submitted',
+    value: 'SUBMITTED',
+    label: 'Submitted',
+  },
+  {
+    key: 'succesful',
+    value: 'SUCCESFUL',
+    label: 'Succesful',
+  },
+  {
+    key: 'succesful_with_warnings',
+    value: 'SUCCESSFUL_WITH_WARNINGS',
+    label: 'Succesful_with_warnings',
+  }
+]
+
+export const sourceChangeRequestValues = [
+  {
+    key: 'gui',
+    value: 'GUI',
+    label: 'gui',
+  },
+  {
+    key: 'non_rt_ric',
+    value: 'NON_RT_RIC',
+    label: 'non_rt_ric',
+  },
+  {
+    key: 'nssmf',
+    value: 'NSSMF',
+    label: 'nssmf',
+  },
+  {
+    key: 'workflow',
+    value: 'WORKFLOW',
+    label: 'workflow',
+  },
+
+]
+
 export const prioritySortingValues = {
   URGENT: 0,
   HIGH: 1,

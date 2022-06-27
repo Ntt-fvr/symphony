@@ -55,6 +55,15 @@ func (r resourceSpecificationResolver) ResourceSpecificationItems(ctx context.Co
 	return variable, nil
 }
 
+func (resourceSpecificationResolver) Vendor(ctx context.Context, resourceSpecification *ent.ResourceSpecification) (*ent.Vendor, error) {
+	variable, err := resourceSpecification.Vendor(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+	}
+	return variable, nil
+
+}
+
 func (r mutationResolver) AddResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error) {
 
 	client := r.ClientFrom(ctx)
@@ -63,6 +72,7 @@ func (r mutationResolver) AddResourceSpecification(ctx context.Context, input mo
 		SetName(input.Name).
 		SetNillableQuantity(input.Quantity).
 		SetResourcetypeID(input.ResourceType).
+		SetNillableVendorID(input.Vendor).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -76,30 +86,6 @@ func (r mutationResolver) AddResourceSpecification(ctx context.Context, input mo
 		return nil, err
 	}
 	return typ, nil
-}
-
-func (r mutationResolver) AddNewResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error) {
-
-	client := r.ClientFrom(ctx)
-	typ, err := client.
-		ResourceSpecification.Create().
-		SetName(input.Name).
-		SetNillableQuantity(input.Quantity).
-		SetResourcetypeID(input.ResourceType).
-		Save(ctx)
-	if err != nil {
-		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
-		}
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
-	}
-	if err := r.AddResourcePropertyType(ctx, func(ptc *ent.ResourcePropertyTypeCreate) {
-		ptc.SetResourceSpecificationID(typ.ID)
-	}, input.ResourcePropertyTypes...); err != nil {
-		return nil, err
-	}
-	return typ, nil
-
 }
 
 func (r mutationResolver) RemoveResourceSpecification(ctx context.Context, id int) (int, error) {
@@ -132,7 +118,6 @@ func (r mutationResolver) RemoveResourceSpecification(ctx context.Context, id in
 }
 
 func (r mutationResolver) EditResourceSpecification(ctx context.Context, input models.EditResourceSpecificationInput) (*ent.ResourceSpecification, error) {
-
 	client := r.ClientFrom(ctx)
 	et, err := client.ResourceSpecification.Get(ctx, input.ID)
 	if err != nil {
@@ -141,12 +126,16 @@ func (r mutationResolver) EditResourceSpecification(ctx context.Context, input m
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
 	}
-	var resourcetype, err3 = et.Resourcetype(ctx)
-	if err3 != nil {
-		return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
+	var resourcetype, err1 = et.Resourcetype(ctx)
+	if err1 != nil {
+		return nil, errors.Wrap(err1, "has ocurred error on proces: %v")
 	}
 
-	if input.Name != et.Name || input.ResourceType != &resourcetype.ID {
+	var vendor, err2 = et.Vendor(ctx)
+	if err2 != nil {
+		return nil, errors.Wrap(err2, "has occurred error on process: %w")
+	}
+	if input.Name != et.Name || input.ResourceType != &resourcetype.ID || input.Vendor != &vendor.ID {
 		if et, err = client.ResourceSpecification.
 			UpdateOne(et).
 			SetName(input.Name).

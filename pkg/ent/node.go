@@ -6303,7 +6303,7 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 		ID:     rs.ID,
 		Type:   "ResourceSpecification",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 4),
+		Edges:  make([]*Edge, 6),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(rs.CreateTime); err != nil {
@@ -6374,6 +6374,26 @@ func (rs *ResourceSpecification) Node(ctx context.Context) (node *Node, err erro
 	}
 	node.Edges[3].IDs, err = rs.QueryResourceSpecificationItems().
 		Select(resourcespecificationitems.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "Vendor",
+		Name: "vendor",
+	}
+	node.Edges[4].IDs, err = rs.QueryVendor().
+		Select(vendor.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[5] = &Edge{
+		Type: "Vendor",
+		Name: "resource_specification_vendor",
+	}
+	node.Edges[5].IDs, err = rs.QueryResourceSpecificationVendor().
+		Select(vendor.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -8491,7 +8511,7 @@ func (v *Vendor) Node(ctx context.Context) (node *Node, err error) {
 		ID:     v.ID,
 		Type:   "Vendor",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(v.CreateTime); err != nil {
@@ -8534,6 +8554,26 @@ func (v *Vendor) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = v.QueryVendorsRecomendations().
 		Select(recommendations.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "resource_specification",
+	}
+	node.Edges[2].IDs, err = v.QueryResourceSpecification().
+		Select(resourcespecification.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "ResourceSpecification",
+		Name: "vendor_rs",
+	}
+	node.Edges[3].IDs, err = v.QueryVendorRs().
+		Select(resourcespecification.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

@@ -14,26 +14,24 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type ResourceSpecificationFilterType = "NAME" | "RESOURCE_TYPE" | "%future added value";
-export type ResourceSpecificationFilterInput = {|
-  filterType: ResourceSpecificationFilterType,
-  idSet?: ?$ReadOnlyArray<string>,
-  maxDepth?: ?number,
-  operator: FilterOperator,
-  stringSet?: ?$ReadOnlyArray<string>,
-  stringValue?: ?string,
-|};
-export type ResourceCardQueryVariables = {|
-  filterBy?: ?$ReadOnlyArray<ResourceSpecificationFilterInput>
-|};
+export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
+export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
+export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
+export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
+export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
+export type ResourceCardQueryVariables = {||};
 export type ResourceCardQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
-    +isDelete: boolean,
-    +resourceSpecification: string,
     +locatedIn: ?string,
+    +resourceSpecification: string,
+    +isDeleted: boolean,
+    +lifecycleStatus: ?LifecycleStatus,
+    +typePlanningSubStatus: ?TypePlanningSubStatus,
+    +planningSubStatus: ?PlanningSubStatus,
+    +usageSubStatus: ?UsageSubStatus,
+    +operationalSubStatus: ?OperationalSubStatus,
   |}>,
   +resourceTypes: {|
     +edges: $ReadOnlyArray<{|
@@ -64,15 +62,18 @@ export type ResourceCardQuery = {|
 
 
 /*
-query ResourceCardQuery(
-  $filterBy: [ResourceSpecificationFilterInput!]
-) {
+query ResourceCardQuery {
   queryResource {
     id
     name
-    isDelete
-    resourceSpecification
     locatedIn
+    resourceSpecification
+    isDeleted
+    lifecycleStatus
+    typePlanningSubStatus
+    planningSubStatus
+    usageSubStatus
+    operationalSubStatus
   }
   resourceTypes {
     edges {
@@ -82,7 +83,7 @@ query ResourceCardQuery(
       }
     }
   }
-  resourceSpecifications(filterBy: $filterBy) {
+  resourceSpecifications {
     edges {
       node {
         id
@@ -98,32 +99,25 @@ query ResourceCardQuery(
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filterBy"
-  }
-],
-v1 = {
+var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = {
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v3 = [
-  (v1/*: any*/),
-  (v2/*: any*/)
+v2 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
 ],
-v4 = [
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -132,13 +126,13 @@ v4 = [
     "name": "queryResource",
     "plural": true,
     "selections": [
+      (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "isDelete",
+        "name": "locatedIn",
         "storageKey": null
       },
       {
@@ -152,7 +146,42 @@ v4 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "locatedIn",
+        "name": "isDeleted",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "lifecycleStatus",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "typePlanningSubStatus",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "planningSubStatus",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "usageSubStatus",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "operationalSubStatus",
         "storageKey": null
       }
     ],
@@ -181,7 +210,7 @@ v4 = [
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
-            "selections": (v3/*: any*/),
+            "selections": (v2/*: any*/),
             "storageKey": null
           }
         ],
@@ -192,13 +221,7 @@ v4 = [
   },
   {
     "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filterBy",
-        "variableName": "filterBy"
-      }
-    ],
+    "args": null,
     "concreteType": "ResourceSpecificationConnection",
     "kind": "LinkedField",
     "name": "resourceSpecifications",
@@ -220,8 +243,8 @@ v4 = [
             "name": "node",
             "plural": false,
             "selections": [
+              (v0/*: any*/),
               (v1/*: any*/),
-              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -229,7 +252,7 @@ v4 = [
                 "kind": "LinkedField",
                 "name": "resourceType",
                 "plural": false,
-                "selections": (v3/*: any*/),
+                "selections": (v2/*: any*/),
                 "storageKey": null
               }
             ],
@@ -244,32 +267,32 @@ v4 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceCardQuery",
-    "selections": (v4/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ResourceCardQuery",
-    "selections": (v4/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "c46b9d5cbfbcc1e56e88a23ac3417752",
+    "cacheID": "7fa986ce2c9764f42b2bfee639350fc2",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n) {\n  queryResource {\n    id\n    name\n    isDelete\n    resourceSpecification\n    locatedIn\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f0643e0e08165b0768ef555245ad7b0b';
+(node/*: any*/).hash = '20875516c227b0d3373b621e137ed528';
 
 module.exports = node;

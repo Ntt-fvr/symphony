@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationitems"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcespecificationrelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
 // ResourceSpecificationQuery is the builder for querying ResourceSpecification entities.
@@ -33,11 +34,13 @@ type ResourceSpecificationQuery struct {
 	unique     []string
 	predicates []predicate.ResourceSpecification
 	// eager-loading edges.
-	withResourcetype               *ResourceTypeQuery
-	withResourcePropertyType       *ResourcePropertyTypeQuery
-	withResourceSpecification      *ResourceSpecificationRelationshipQuery
-	withResourceSpecificationItems *ResourceSpecificationItemsQuery
-	withFKs                        bool
+	withResourcetype                *ResourceTypeQuery
+	withResourcePropertyType        *ResourcePropertyTypeQuery
+	withResourceSpecification       *ResourceSpecificationRelationshipQuery
+	withResourceSpecificationItems  *ResourceSpecificationItemsQuery
+	withVendor                      *VendorQuery
+	withResourceSpecificationVendor *VendorQuery
+	withFKs                         bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -148,6 +151,50 @@ func (rsq *ResourceSpecificationQuery) QueryResourceSpecificationItems() *Resour
 			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
 			sqlgraph.To(resourcespecificationitems.Table, resourcespecificationitems.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, resourcespecification.ResourceSpecificationItemsTable, resourcespecification.ResourceSpecificationItemsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVendor chains the current query on the vendor edge.
+func (rsq *ResourceSpecificationQuery) QueryVendor() *VendorQuery {
+	query := &VendorQuery{config: rsq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rsq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resourcespecification.VendorTable, resourcespecification.VendorColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryResourceSpecificationVendor chains the current query on the resource_specification_vendor edge.
+func (rsq *ResourceSpecificationQuery) QueryResourceSpecificationVendor() *VendorQuery {
+	query := &VendorQuery{config: rsq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rsq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resourcespecification.Table, resourcespecification.FieldID, selector),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, resourcespecification.ResourceSpecificationVendorTable, resourcespecification.ResourceSpecificationVendorColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rsq.driver.Dialect(), step)
 		return fromU, nil
@@ -325,16 +372,18 @@ func (rsq *ResourceSpecificationQuery) Clone() *ResourceSpecificationQuery {
 		return nil
 	}
 	return &ResourceSpecificationQuery{
-		config:                         rsq.config,
-		limit:                          rsq.limit,
-		offset:                         rsq.offset,
-		order:                          append([]OrderFunc{}, rsq.order...),
-		unique:                         append([]string{}, rsq.unique...),
-		predicates:                     append([]predicate.ResourceSpecification{}, rsq.predicates...),
-		withResourcetype:               rsq.withResourcetype.Clone(),
-		withResourcePropertyType:       rsq.withResourcePropertyType.Clone(),
-		withResourceSpecification:      rsq.withResourceSpecification.Clone(),
-		withResourceSpecificationItems: rsq.withResourceSpecificationItems.Clone(),
+		config:                          rsq.config,
+		limit:                           rsq.limit,
+		offset:                          rsq.offset,
+		order:                           append([]OrderFunc{}, rsq.order...),
+		unique:                          append([]string{}, rsq.unique...),
+		predicates:                      append([]predicate.ResourceSpecification{}, rsq.predicates...),
+		withResourcetype:                rsq.withResourcetype.Clone(),
+		withResourcePropertyType:        rsq.withResourcePropertyType.Clone(),
+		withResourceSpecification:       rsq.withResourceSpecification.Clone(),
+		withResourceSpecificationItems:  rsq.withResourceSpecificationItems.Clone(),
+		withVendor:                      rsq.withVendor.Clone(),
+		withResourceSpecificationVendor: rsq.withResourceSpecificationVendor.Clone(),
 		// clone intermediate query.
 		sql:  rsq.sql.Clone(),
 		path: rsq.path,
@@ -382,6 +431,28 @@ func (rsq *ResourceSpecificationQuery) WithResourceSpecificationItems(opts ...fu
 		opt(query)
 	}
 	rsq.withResourceSpecificationItems = query
+	return rsq
+}
+
+//  WithVendor tells the query-builder to eager-loads the nodes that are connected to
+// the "vendor" edge. The optional arguments used to configure the query builder of the edge.
+func (rsq *ResourceSpecificationQuery) WithVendor(opts ...func(*VendorQuery)) *ResourceSpecificationQuery {
+	query := &VendorQuery{config: rsq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rsq.withVendor = query
+	return rsq
+}
+
+//  WithResourceSpecificationVendor tells the query-builder to eager-loads the nodes that are connected to
+// the "resource_specification_vendor" edge. The optional arguments used to configure the query builder of the edge.
+func (rsq *ResourceSpecificationQuery) WithResourceSpecificationVendor(opts ...func(*VendorQuery)) *ResourceSpecificationQuery {
+	query := &VendorQuery{config: rsq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rsq.withResourceSpecificationVendor = query
 	return rsq
 }
 
@@ -455,14 +526,16 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 		nodes       = []*ResourceSpecification{}
 		withFKs     = rsq.withFKs
 		_spec       = rsq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [6]bool{
 			rsq.withResourcetype != nil,
 			rsq.withResourcePropertyType != nil,
 			rsq.withResourceSpecification != nil,
 			rsq.withResourceSpecificationItems != nil,
+			rsq.withVendor != nil,
+			rsq.withResourceSpecificationVendor != nil,
 		}
 	)
-	if rsq.withResourcetype != nil {
+	if rsq.withResourcetype != nil || rsq.withVendor != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -601,6 +674,59 @@ func (rsq *ResourceSpecificationQuery) sqlAll(ctx context.Context) ([]*ResourceS
 				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_resource_specification_items" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.ResourceSpecificationItems = append(node.Edges.ResourceSpecificationItems, n)
+		}
+	}
+
+	if query := rsq.withVendor; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*ResourceSpecification)
+		for i := range nodes {
+			if fk := nodes[i].vendor_vendor_rs; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(vendor.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "vendor_vendor_rs" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Vendor = n
+			}
+		}
+	}
+
+	if query := rsq.withResourceSpecificationVendor; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*ResourceSpecification)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.Vendor(func(s *sql.Selector) {
+			s.Where(sql.InValues(resourcespecification.ResourceSpecificationVendorColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.resource_specification_resource_specification_vendor
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "resource_specification_resource_specification_vendor" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_resource_specification_vendor" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.ResourceSpecificationVendor = n
 		}
 	}
 
