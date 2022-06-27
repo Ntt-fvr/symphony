@@ -30,7 +30,7 @@ const mutation = graphql`
         externalId
         locatedIn
         resourceSpecification
-        isDelete
+        isDeleted
         lifecycleStatus
         planningSubStatus
         typePlanningSubStatus

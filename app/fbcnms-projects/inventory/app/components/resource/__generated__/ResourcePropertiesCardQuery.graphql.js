@@ -17,7 +17,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
-export type ResourceHasFilter = "available" | "belongsTo" | "composedOf" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDelete" | "lifecycleStatus" | "locatedIn" | "logicalLink" | "logicalLinkInv" | "name" | "numericPool" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "usageSubStatus" | "%future added value";
+export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "usageSubStatus" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type ResourceFilter = {|
@@ -43,7 +43,7 @@ export type ResourcePropertiesCardQueryResponse = {|
     +name: string,
     +locatedIn: ?string,
     +resourceSpecification: string,
-    +isDelete: boolean,
+    +isDeleted: boolean,
     +lifecycleStatus: ?LifecycleStatus,
     +typePlanningSubStatus: ?TypePlanningSubStatus,
     +planningSubStatus: ?PlanningSubStatus,
@@ -79,7 +79,7 @@ query ResourcePropertiesCardQuery(
     name
     locatedIn
     resourceSpecification
-    isDelete
+    isDeleted
     lifecycleStatus
     typePlanningSubStatus
     planningSubStatus
@@ -158,7 +158,7 @@ v3 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "isDelete",
+        "name": "isDeleted",
         "storageKey": null
       },
       {
@@ -266,16 +266,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "ebf250aef211dfd9a48fae6772585b36",
+    "cacheID": "983165df93a0b8d8b0513c825e104502",
     "id": null,
     "metadata": {},
     "name": "ResourcePropertiesCardQuery",
     "operationKind": "query",
-    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDelete\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b137a3e86f1f9b736ae0d516d78bdea8';
+(node/*: any*/).hash = 'c1f6b8e6254d067fc3d9a32d5b4675a1';
 
 module.exports = node;

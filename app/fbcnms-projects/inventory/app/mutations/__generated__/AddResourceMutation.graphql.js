@@ -14,74 +14,189 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "%future added value";
+export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
+export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
+export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
+export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
+export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
+export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type AddResourceInput = {|
+  actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
-  crossconnectionInv?: ?$ReadOnlyArray<?ResourceRef>,
+  crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
-  isDelete: boolean,
+  isDeleted: boolean,
   isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
   locatedIn?: ?string,
-  logicalLink?: ?ResourceRef,
   logicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  logicalLinks?: ?$ReadOnlyArray<?ResourceRef>,
   name: string,
-  numericPool?: ?$ReadOnlyArray<?NumericPoolRef>,
+  numericPools?: ?$ReadOnlyArray<?NumericPoolRef>,
   operationalSubStatus?: ?OperationalSubStatus,
   physicalLink?: ?ResourceRef,
-  physicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  physicalLinkInv?: ?ResourceRef,
   planningSubStatus?: ?PlanningSubStatus,
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification: string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
   usageSubStatus?: ?UsageSubStatus,
 |};
+export type ActionSchedulerRef = {|
+  actionTemplate?: ?ActionTemplateRef,
+  actions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  cron?: ?string,
+  date?: ?any,
+  description?: ?string,
+  id?: ?string,
+  name?: ?string,
+  resources?: ?$ReadOnlyArray<ResourceRef>,
+  status?: ?ActionSchedulerStatus,
+  type?: ?ActionSchedulerType,
+|};
+export type ActionTemplateRef = {|
+  actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
+  id?: ?string,
+  name?: ?string,
+  resourceSpecifications?: ?string,
+  type?: ?ActionTemplateType,
+|};
+export type ActionExecutionRef = {|
+  endTime?: ?any,
+  id?: ?string,
+  items?: ?$ReadOnlyArray<?ActionExecutionItemRef>,
+  scheduler?: ?ActionSchedulerRef,
+  starTime?: ?any,
+  template?: ?ActionTemplateRef,
+|};
+export type ActionExecutionItemRef = {|
+  action?: ?ActionExecutionRef,
+  id?: ?string,
+  resources?: ?$ReadOnlyArray<?ResourceRef>,
+  status?: ?ActionExecutionItemStatus,
+|};
 export type ResourceRef = {|
+  actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
-  crossconnectionInv?: ?$ReadOnlyArray<?ResourceRef>,
+  crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
   id?: ?string,
-  isDelete?: ?boolean,
+  isDeleted?: ?boolean,
   isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
   locatedIn?: ?string,
-  logicalLink?: ?ResourceRef,
   logicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  logicalLinks?: ?$ReadOnlyArray<?ResourceRef>,
   name?: ?string,
-  numericPool?: ?$ReadOnlyArray<?NumericPoolRef>,
+  numericPools?: ?$ReadOnlyArray<?NumericPoolRef>,
   operationalSubStatus?: ?OperationalSubStatus,
   physicalLink?: ?ResourceRef,
-  physicalLinkInv?: ?$ReadOnlyArray<?ResourceRef>,
+  physicalLinkInv?: ?ResourceRef,
   planningSubStatus?: ?PlanningSubStatus,
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
   usageSubStatus?: ?UsageSubStatus,
 |};
+export type ChangeItemRef = {|
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
+  id?: ?string,
+  intValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  parameterType?: ?ConfigurationParameterTypeRef,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  resource?: ?ResourceRef,
+  status?: ?ChangeItemStatus,
+  stringValue?: ?string,
+|};
+export type ConfigurationParameterTypeRef = {|
+  booleanValue?: ?boolean,
+  category?: ?string,
+  externalId?: ?string,
+  floatValue?: ?number,
+  id?: ?string,
+  index?: ?number,
+  intValue?: ?number,
+  isDeleted?: ?boolean,
+  isEditable?: ?boolean,
+  isListable?: ?boolean,
+  isMandatory?: ?boolean,
+  isPrioritary?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  mappingIn?: ?string,
+  mappingOut?: ?string,
+  name?: ?string,
+  nodeType?: ?string,
+  parameters?: ?$ReadOnlyArray<ParameterRef>,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  rawValue?: ?string,
+  resourceSpecification?: ?string,
+  stringValue?: ?string,
+  tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
+  type?: ?ParameterKind,
+|};
+export type ParameterRef = {|
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
+  id?: ?string,
+  intValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  parameterType?: ?ConfigurationParameterTypeRef,
+  previous?: ?ParameterRef,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
+  versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
+|};
+export type CMVersionRef = {|
+  id?: ?string,
+  parameters?: ?$ReadOnlyArray<ParameterRef>,
+  previous?: ?CMVersionRef,
+  resource?: ?ResourceRef,
+  status?: ?VersionStatus,
+  validFrom?: ?any,
+  validTo?: ?any,
+|};
+export type ConfigParamTagRef = {|
+  id?: ?string,
+  name?: ?string,
+  parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+|};
 export type NumericPoolRef = {|
   customLimit?: ?number,
   description?: ?string,
   id?: ?string,
-  isDelete?: ?boolean,
+  isDeleted?: ?boolean,
   limit?: ?number,
-  resource?: ?$ReadOnlyArray<ResourceRef>,
+  resources?: ?$ReadOnlyArray<ResourceRef>,
   statusNumericPools?: ?$ReadOnlyArray<?StatusNumericPoolRef>,
 |};
 export type StatusNumericPoolRef = {|
   id?: ?string,
   numericPool?: ?NumericPoolRef,
   status?: ?UsageSubStatus,
-  value?: ?$ReadOnlyArray<?number>,
+  values?: ?$ReadOnlyArray<?number>,
 |};
 export type ResourcePropertyRef = {|
   booleanValue?: ?boolean,
@@ -97,6 +212,12 @@ export type ResourcePropertyRef = {|
   resourcePropertyType?: ?string,
   stringValue?: ?string,
 |};
+export type ActionTemplateItemRef = {|
+  actionTemplate?: ?ActionTemplateRef,
+  id?: ?string,
+  parameters?: ?ConfigurationParameterTypeRef,
+  value?: ?ParameterRef,
+|};
 export type AddResourceMutationVariables = {|
   input: $ReadOnlyArray<AddResourceInput>
 |};
@@ -108,7 +229,7 @@ export type AddResourceMutationResponse = {|
       +externalId: ?string,
       +locatedIn: ?string,
       +resourceSpecification: string,
-      +isDelete: boolean,
+      +isDeleted: boolean,
       +lifecycleStatus: ?LifecycleStatus,
       +planningSubStatus: ?PlanningSubStatus,
       +typePlanningSubStatus: ?TypePlanningSubStatus,
@@ -135,7 +256,7 @@ mutation AddResourceMutation(
       externalId
       locatedIn
       resourceSpecification
-      isDelete
+      isDeleted
       lifecycleStatus
       planningSubStatus
       typePlanningSubStatus
@@ -201,7 +322,7 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isDelete",
+  "name": "isDeleted",
   "storageKey": null
 },
 v8 = {
@@ -332,16 +453,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "da236517d019138536d4353bf9396211",
+    "cacheID": "f97c2b555a62afe1691b2c8ad4bcef0b",
     "id": null,
     "metadata": {},
     "name": "AddResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDelete\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eeb27d54160064f6cdb3b13b6a61a93d';
+(node/*: any*/).hash = 'eb09b1c2c8c883b2d95c152a01cb2566';
 
 module.exports = node;

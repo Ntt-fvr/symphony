@@ -142,7 +142,7 @@ const AddEditResourceInLocation = (props: Props) => {
           locatedIn: selectedLocationId,
           name: resourceType.data.name,
           resourceSpecification: dataformModal.id,
-          isDelete: true,
+          isDeleted: true,
           externalId: resourceType.data.externalId,
           lifecycleStatus: resourceType.data.lifecycleStatus,
           typePlanningSubStatus: resourceType.data.typePlanningSubStatus,
