@@ -15,9 +15,8 @@ import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Grid from '@material-ui/core/Grid';
 import React, {useMemo, useState} from 'react';
 import RelationshipTypeItem from './RelationshipTypeItem';
-import Text from '@symphony/design-system/components/Text';
+
 import TextField from '@material-ui/core/TextField';
-import _ from 'lodash';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
@@ -37,10 +36,12 @@ import EditResourceSpecificationMutation from '../../mutations/EditResourceSpeci
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
+import MenuItem from '@material-ui/core/MenuItem';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
+import inventoryTheme from '../../common/theme';
 import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {graphql} from 'relay-runtime';
@@ -61,33 +62,8 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   formField: {
-    margin: '0 22px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
-    },
-    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
-    },
-    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
-    },
-    '& .MuiFormControl-root': {
-      marginBottom: '41px',
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
-      },
-    },
-    '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
-      fontSize: '14px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    '& label': {
-      fontSize: '14px',
-      lineHeight: '8px',
-    },
+    margin: '0 22px 41px 22px',
+    ...inventoryTheme.formField,
   },
   header: {
     marginBottom: '1rem',
@@ -167,7 +143,7 @@ export const AddEditResourceSpecification = (props: Props) => {
   const classes = useStyles();
 
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
-    item => item?.resourceSpecification == dataForm?.id,
+    item => item?.resourceSpecification === dataForm?.id,
   );
 
   const [
@@ -403,6 +379,18 @@ export const AddEditResourceSpecification = (props: Props) => {
                   }
                 />
               )}
+            </form>
+          </Grid>
+          <Grid item xs={4}>
+            <form className={classes.formField} autoComplete="off">
+              <TextField
+                required
+                select
+                label="Vendor"
+                variant="outlined"
+                fullWidth>
+                <MenuItem>Nokia</MenuItem>
+              </TextField>
             </form>
           </Grid>
         </Grid>
