@@ -9,12 +9,20 @@
  */
 'use strict';
 
-type ManualStartSettings = $ReadOnly<{|
-  manualStartSettings: string,
+import type {BlockUIRepresentationInput} from '../BaseBlockSettingsTypes';
+
+export type StartBlockInputType = {
+  cid: string,
+  paramDefinitions: string,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+};
+
+export type ManualStartSettings = $ReadOnly<{|
+  paramDefinitions: string,
 |}>;
 
 export const initialManualStartSettings: ManualStartSettings = {
-  manualStartSettings: 'ManualStartSettings',
+  paramDefinitions: null,
 };
 
 export const setManualStartSettings: ManualStartSettings = newManualStartSettings => {

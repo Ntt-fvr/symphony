@@ -16,6 +16,9 @@ export type OutputSettings = {
   enableOutputStateTransformation: boolean,
   outputStateTransfStrategy: string,
   outputStateParamDefinitions: string,
+  addOriginal: boolean,
+  addOriginalJson: string,
+  additionMethod: string,
 };
 
 export const initialOutputSettings: OutputSettings = {
@@ -25,6 +28,9 @@ export const initialOutputSettings: OutputSettings = {
   enableOutputStateTransformation: null,
   outputStateTransfStrategy: null,
   outputStateParamDefinitions: null,
+  addOriginal: null,
+  addOriginalJson: null,
+  additionMethod: null,
 };
 
 export const setOutputSettings = newOutputSettings => {

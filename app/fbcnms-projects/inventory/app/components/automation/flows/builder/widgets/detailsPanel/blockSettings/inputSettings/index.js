@@ -27,21 +27,22 @@ export default function InputSettings({block}: Props) {
   const {inputSettings} = block;
 
   const [inputValues, handleInputChange] = useForm({
-    inputTransform: inputSettings?.inputTransform || false,
-    inputJson: inputSettings?.inputJson || null,
-    inputStrategy: inputSettings?.inputStrategy || '',
-    stateTransform: inputSettings?.stateTransform || false,
-    stateJson: inputSettings?.stateJson || null,
-    stateStrategy: inputSettings?.stateStrategy || '',
+    enableInputTransformation: inputSettings.enableInputTransformation || false,
+    inputParamDefinitions: inputSettings.inputParamDefinitions || '',
+    inputTransfStrategy: inputSettings.inputTransfStrategy || '',
+    enableInputStateTransformation:
+      inputSettings.enableInputStateTransformation || false,
+    inputStateParamDefinitions: inputSettings.inputStateParamDefinitions || '',
+    inputStateTransfStrategy: inputSettings.inputStateTransfStrategy || '',
   });
 
   const {
-    inputTransform,
-    inputStrategy,
-    inputJson,
-    stateTransform,
-    stateStrategy,
-    stateJson,
+    enableInputTransformation,
+    inputTransfStrategy,
+    inputParamDefinitions,
+    enableInputStateTransformation,
+    inputStateTransfStrategy,
+    inputStateParamDefinitions,
   } = inputValues;
 
   useEffect(() => {
@@ -49,31 +50,31 @@ export default function InputSettings({block}: Props) {
   }, [inputValues]);
 
   useEffect(() => {
-    if (inputTransform === false)
+    if (enableInputTransformation === false)
       handleInputChange({
-        target: {name: 'inputStrategy', value: ''},
+        target: {name: 'inputTransfStrategy', value: ''},
       });
-  }, [inputTransform]);
+  }, [enableInputTransformation]);
 
   useEffect(() => {
-    if (stateTransform === false)
+    if (enableInputStateTransformation === false)
       handleInputChange({
-        target: {name: 'stateStrategy', value: ''},
+        target: {name: 'inputStateTransfStrategy', value: ''},
       });
-  }, [stateTransform]);
+  }, [enableInputStateTransformation]);
 
   return (
     <Grid container spacing={4}>
       <Grid item xs={12}>
         <Transform
-          inputTransformValue={inputTransform}
-          inputTransformName={'inputTransform'}
+          inputTransformValue={enableInputTransformation}
+          inputTransformName={'enableInputTransformation'}
           inputTransformLabel={'Transform Input'}
-          inputStrategyValue={inputStrategy}
-          inputStrategyName="inputStrategy"
+          inputStrategyValue={inputTransfStrategy}
+          inputStrategyName="inputTransfStrategy"
           inputStrategyLabel="Strategy"
-          inputJsonValue={inputJson}
-          inputJsonName="inputJson"
+          inputJsonValue={inputParamDefinitions}
+          inputJsonName="inputParamDefinitions"
           strategies={strategies}
           handleInputChange={handleInputChange}
         />
@@ -83,14 +84,14 @@ export default function InputSettings({block}: Props) {
       </Grid>
       <Grid item xs={12}>
         <Transform
-          inputTransformValue={stateTransform}
-          inputTransformName={'stateTransform'}
+          inputTransformValue={enableInputStateTransformation}
+          inputTransformName={'enableInputStateTransformation'}
           inputTransformLabel={'Transform State'}
-          inputStrategyValue={stateStrategy}
-          inputStrategyName="stateStrategy"
+          inputStrategyValue={inputStateTransfStrategy}
+          inputStrategyName="inputStateTransfStrategy"
           inputStrategyLabel="Strategy"
-          inputJsonValue={stateJson}
-          inputJsonName="stateJson"
+          inputJsonValue={inputStateParamDefinitions}
+          inputJsonName="inputStateParamDefinitions"
           strategies={strategies}
           handleInputChange={handleInputChange}
         />

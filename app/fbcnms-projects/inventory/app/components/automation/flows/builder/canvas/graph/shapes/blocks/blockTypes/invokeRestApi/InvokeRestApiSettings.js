@@ -9,12 +9,45 @@
  */
 'use strict';
 
-type InvokeRestApiSettings = $ReadOnly<{|
-  invokeRestApiSettings: string,
+import type {BaseBlockInputType} from '../BaseBlockSettingsTypes';
+
+type EntryPointInput = {
+  role: string,
+  cid: string,
+};
+type ExitPointInput = {
+  role: string,
+  cid: string,
+};
+
+export type InvokeRestAPIBlockInputType = {
+  entryPoint: EntryPointInput,
+  exitPoint: ExitPointInput,
+  method: string,
+  url: string,
+  connectionTimeOut: number,
+  body: string,
+  headers: string,
+  ...BaseBlockInputType,
+};
+export type InvokeRestApiSettings = $ReadOnly<{|
+  entryPoint: EntryPointInput,
+  exitPoint: ExitPointInput,
+  method: string,
+  url: string,
+  connectionTimeOut: number,
+  body: string,
+  headers: string,
 |}>;
 
 export const initialInvokeRestApiSettings: InvokeRestApiSettings = {
-  invokeRestApiSettings: 'InvokeRestApiSettings',
+  entryPoint: null,
+  exitPoint: null,
+  method: null,
+  url: null,
+  connectionTimeOut: null,
+  body: null,
+  headers: null,
 };
 
 export const setInvokeRestApiSettings: InvokeRestApiSettings = newInvokeRestApiSettings => {

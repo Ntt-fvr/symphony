@@ -19,6 +19,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 export default function OutputSettings({block}: Props) {
+  const {outputSettings} = block;
   const strategies = [
     {name: 'Replace', id: 'replace'},
     {name: 'Merge', id: 'merge'},
@@ -30,24 +31,27 @@ export default function OutputSettings({block}: Props) {
   ];
 
   const [outputValues, handleInputChange] = useForm({
-    outputTransform: false,
-    outputJson: null,
-    outputStrategy: '',
-    stateTransform: false,
-    stateJson: null,
-    stateStrategy: '',
-    addOriginal: false,
-    addOriginalJson: null,
-    additionMethod: '',
+    enableOutputTransformation:
+      outputSettings.enableOutputTransformation || false,
+    outputParamDefinitions: outputSettings.outputParamDefinitions || '',
+    outputTranfStrategy: outputSettings.outputTranfStrategy || '',
+    enableOutputStateTransformation:
+      outputSettings.enableOutputStateTransformation || false,
+    outputStateParamDefinitions:
+      outputSettings.outputStateParamDefinitions || '',
+    outputStateTransfStrategy: outputSettings.outputStateTransfStrategy || '',
+    addOriginal: outputSettings.addOriginal || '',
+    addOriginalJson: outputSettings.addOriginalJson || '',
+    additionMethod: outputSettings.additionMethod || '',
   });
 
   const {
-    outputTransform,
-    outputStrategy,
-    outputJson,
-    stateTransform,
-    stateStrategy,
-    stateJson,
+    enableOutputTransformation,
+    outputTranfStrategy,
+    outputParamDefinitions,
+    enableOutputStateTransformation,
+    outputStateTransfStrategy,
+    outputStateParamDefinitions,
     addOriginal,
     addOriginalJson,
     additionMethod,
@@ -58,18 +62,18 @@ export default function OutputSettings({block}: Props) {
   }, [outputValues]);
 
   useEffect(() => {
-    if (outputTransform === false)
+    if (enableOutputTransformation === false)
       handleInputChange({
-        target: {name: 'outputStrategy', value: ''},
+        target: {name: 'outputTranfStrategy', value: ''},
       });
-  }, [outputTransform]);
+  }, [enableOutputTransformation]);
 
   useEffect(() => {
-    if (stateTransform === false)
+    if (enableOutputStateTransformation === false)
       handleInputChange({
-        target: {name: 'stateStrategy', value: ''},
+        target: {name: 'outputStateTransfStrategy', value: ''},
       });
-  }, [stateTransform]);
+  }, [enableOutputStateTransformation]);
 
   useEffect(() => {
     if (addOriginal === false)
@@ -82,13 +86,13 @@ export default function OutputSettings({block}: Props) {
     <Grid container spacing={4}>
       <Grid item xs={12}>
         <Transform
-          inputTransformValue={outputTransform}
-          inputTransformName={'outputTransform'}
+          inputTransformValue={enableOutputTransformation}
+          inputTransformName={'enableOutputTransformation'}
           inputTransformLabel={'Transform Output'}
-          inputStrategyValue={outputStrategy}
-          inputStrategyName="outputStrategy"
-          inputJsonValue={outputJson}
-          inputJsonName="outputJson"
+          inputStrategyValue={outputTranfStrategy}
+          inputStrategyName="outputTranfStrategy"
+          inputJsonValue={outputParamDefinitions}
+          inputJsonName="outputParamDefinitions"
           inputStrategyLabel="Strategy"
           strategies={strategies}
           handleInputChange={handleInputChange}
@@ -99,14 +103,14 @@ export default function OutputSettings({block}: Props) {
       </Grid>
       <Grid item xs={12}>
         <Transform
-          inputTransformValue={stateTransform}
-          inputTransformName={'stateTransform'}
+          inputTransformValue={enableOutputStateTransformation}
+          inputTransformName={'enableOutputStateTransformation'}
           inputTransformLabel={'Transform State'}
-          inputStrategyValue={stateStrategy}
-          inputStrategyName="stateStrategy"
+          inputStrategyValue={outputStateTransfStrategy}
+          inputStrategyName="outputStateTransfStrategy"
           inputStrategyLabel="Strategy"
-          inputJsonValue={stateJson}
-          inputJsonName="stateJson"
+          inputJsonValue={outputStateParamDefinitions}
+          inputJsonName="outputStateParamDefinitions"
           strategies={strategies}
           handleInputChange={handleInputChange}
         />

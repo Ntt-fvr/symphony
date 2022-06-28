@@ -28,10 +28,11 @@ const ConfigurationGoTo = ({block}: Props) => {
   ];
 
   const [goToSettingsValues, handleInputChange] = useForm({
-    type: settings?.type || '',
+    goToType: settings?.goToType || '',
+    targetBlockCid: settings?.targetBlockCid || '',
   });
 
-  const {type} = goToSettingsValues;
+  const {goToType} = goToSettingsValues;
 
   useEffect(() => {
     block.setSettings(goToSettingsValues);
@@ -41,8 +42,8 @@ const ConfigurationGoTo = ({block}: Props) => {
     <Grid item xs={12}>
       <Select
         label={'Type'}
-        name={'type'}
-        value={type}
+        name={'goToType'}
+        value={goToType}
         onChange={handleInputChange}
         items={types}
       />

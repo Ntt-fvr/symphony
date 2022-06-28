@@ -9,12 +9,22 @@
  */
 'use strict';
 
-type TimerSettings = $ReadOnly<{|
-  timerSettings: string,
+export type TimerSettings = $ReadOnly<{|
+  behavior: string,
+  seconds: number,
+  datetime: string,
+  enableExpressionL: boolean,
+  expression: string,
+  exitPoint: string,
 |}>;
 
 export const initialTimerSettings: TimerSettings = {
-  timerSettings: 'TimerSettings',
+  behavior: null,
+  seconds: null,
+  datetime: null,
+  enableExpressionL: null,
+  expression: null,
+  exitPoint: null,
 };
 
 export const setTimerSettings: TimerSettings = newTimerSettings => {

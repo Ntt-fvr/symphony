@@ -30,16 +30,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type strategies = {
+  name: string,
+  id: string,
+};
 type Props = $ReadOnly<{|
   // TODO Revisar tipado
-  inputTransformValue: string,
+  inputTransformValue: boolean,
   inputTransformName: string,
   inputTransformLabel: string,
   inputStrategyValue: string,
   inputStrategyName: string,
   inputStrategyLabel: string,
   inputJsonValue: string,
-  strategies: string,
+  strategies: Array<strategies>,
   inputJsonName: string,
   handleInputChange: () => void,
 |}>;

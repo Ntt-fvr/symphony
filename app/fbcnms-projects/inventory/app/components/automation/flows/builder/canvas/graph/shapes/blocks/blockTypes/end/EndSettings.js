@@ -9,12 +9,20 @@
  */
 'use strict';
 
-type EndSettings = $ReadOnly<{|
-  endSettings: string,
+import type {BlockUIRepresentationInput} from '../BaseBlockSettingsTypes';
+
+export type EndBlockInputType = {|
+  cid: string,
+  params: string,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+
+export type EndSettings = $ReadOnly<{|
+  params: string,
 |}>;
 
 export const initialEndSettings: EndSettings = {
-  endSettings: 'EndSettings',
+  params: null,
 };
 
 export const setEndSettings: EndSettings = newEndSettings => {

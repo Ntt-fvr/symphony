@@ -16,6 +16,7 @@ export type ErrorHandling = {
   units: string,
   maxAttemps: number,
   backoffRate: number,
+  errorCatching: boolean,
 };
 
 export const initialErrorSettings: ErrorHandling = {
@@ -25,6 +26,7 @@ export const initialErrorSettings: ErrorHandling = {
   units: null,
   maxAttemps: null,
   backoffRate: null,
+  errorCatching: null,
 };
 
 export const setErrorSettings = newErrorSettings => {

@@ -42,17 +42,17 @@ const ConfigurationInvokeApi = ({block}: Props) => {
   ];
 
   const [invokeApiSettingsValues, handleInputChange] = useForm({
-    urlMethod: settings?.urlMethod || '',
-    connectionTimeout: settings?.connectionTimeout || 0,
-    urlAddress: settings?.urlAddress || '',
+    method: settings?.method || '',
+    connectionTimeOut: settings?.connectionTimeOut || 0,
+    url: settings?.url || '',
     headers: settings?.headers || '',
     body: settings?.body || '',
   });
 
   const {
-    urlMethod,
-    connectionTimeout,
-    urlAddress,
+    method,
+    connectionTimeOut,
+    url,
     headers,
     body,
   } = invokeApiSettingsValues;
@@ -68,16 +68,16 @@ const ConfigurationInvokeApi = ({block}: Props) => {
       <Grid item xs={12} className={classes.grid}>
         <Select
           label={'URL Method'}
-          name={'urlMethod'}
-          value={urlMethod}
+          name={'method'}
+          value={method}
           onChange={handleInputChange}
           items={urlMethods}
         />
       </Grid>
       <Grid item xs={12} className={classes.gridCodeEditor}>
         <CodeEditor
-          value={urlAddress}
-          name={'urlAddress'}
+          value={url}
+          name={'url'}
           onChange={handleInputChange}
           mode="xml"
           title={'URL'}
@@ -87,8 +87,8 @@ const ConfigurationInvokeApi = ({block}: Props) => {
         <TextField
           label={'Connection Timeout'}
           type={'number'}
-          name={'connectionTimeout'}
-          value={connectionTimeout}
+          name={'connectionTimeOut'}
+          value={connectionTimeOut}
           handleInputChange={handleInputChange}
         />
       </Grid>
