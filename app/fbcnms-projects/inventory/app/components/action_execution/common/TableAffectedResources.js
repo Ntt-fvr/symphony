@@ -105,12 +105,12 @@ const TableAffectedResources = (props: Props) => {
           <TableBody>
             {resourceExecData?.map((resource, index) => (
               <StyledTableRow key={index}>
-                <TableCell>{resource.name}</TableCell>
+                <TableCell>{resource?.name}</TableCell>
                 <TableCell>
                   <ButtonAlarmStatus
                     className={classes.buttonStatus}
-                    skin={toPascalCase(resource.status)}>
-                    {resource.status}
+                    skin={toPascalCase(resource?.status)}>
+                    {resource?.status}
                   </ButtonAlarmStatus>
                 </TableCell>
                 <TableCell>
@@ -119,8 +119,8 @@ const TableAffectedResources = (props: Props) => {
                     skin="gray"
                     icon={RemoveRedEyeIcon}
                     onClick={() => {
-                      setSelectedResource(resource.name);
-                      setSelectedResourceSpec(resource.resourceSpecification);
+                      setSelectedResource(resource?.name);
+                      setSelectedResourceSpec(resource?.resourceSpecification);
                       openModalDetails();
                     }}
                   />

@@ -76,18 +76,18 @@ const TableDetails = (props: Props) => {
               <TableCell>{valuesTable?.template?.name}</TableCell>
               <TableCell>
                 {
-                  resourceData.find(
+                  resourceData?.find(
                     item =>
                       item.id == valuesTable?.template?.resourceSpecifications,
-                  ).resourceType.name
+                  )?.resourceType?.name
                 }
               </TableCell>
               <TableCell>
                 {
-                  resourceData.find(
+                  resourceData?.find(
                     item =>
                       item.id == valuesTable?.template?.resourceSpecifications,
-                  ).name
+                  )?.name
                 }
               </TableCell>
               <TableCell>{valuesTable?.scheduler?.type}</TableCell>
