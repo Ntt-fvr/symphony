@@ -56,16 +56,22 @@ export type ChangeRequestDetailsQueryResponse = {|
     +requester: string,
     +items: $ReadOnlyArray<{|
       +id: string,
+      +stringValue: ?string,
+      +intValue: ?number,
+      +floatValue: ?number,
       +parameterType: {|
         +id: string,
         +name: string,
         +stringValue: ?string,
+        +intValue: ?number,
+        +floatValue: ?number,
         +type: ParameterKind,
         +resourceSpecification: string,
         +parameters: ?$ReadOnlyArray<{|
           +id: string,
           +stringValue: ?string,
           +intValue: ?number,
+          +floatValue: ?number,
         |}>,
       |},
       +resource: ?{|
@@ -73,7 +79,6 @@ export type ChangeRequestDetailsQueryResponse = {|
         +name: string,
         +resourceSpecification: string,
       |},
-      +stringValue: ?string,
     |}>,
   |}>,
   +resourceSpecifications: {|
@@ -110,16 +115,22 @@ query ChangeRequestDetailsQuery(
     requester
     items {
       id
+      stringValue
+      intValue
+      floatValue
       parameterType {
         id
         name
         stringValue
+        intValue
+        floatValue
         type
         resourceSpecification
         parameters {
           id
           stringValue
           intValue
+          floatValue
         }
       }
       resource {
@@ -127,7 +138,6 @@ query ChangeRequestDetailsQuery(
         name
         resourceSpecification
       }
-      stringValue
     }
   }
   resourceSpecifications(filterBy: $filterBy) {
@@ -174,24 +184,38 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "stringValue",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "stringValue",
+  "name": "intValue",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "resourceSpecification",
   "storageKey": null
 },
-v7 = [
+v9 = [
   {
     "alias": null,
     "args": [
@@ -245,6 +269,9 @@ v7 = [
         "plural": true,
         "selections": [
           (v2/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -254,10 +281,12 @@ v7 = [
             "plural": false,
             "selections": [
               (v2/*: any*/),
+              (v7/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v3/*: any*/),
               (v6/*: any*/),
+              (v3/*: any*/),
+              (v8/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -267,14 +296,9 @@ v7 = [
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
+                  (v4/*: any*/),
                   (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "intValue",
-                    "storageKey": null
-                  }
+                  (v6/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -290,12 +314,11 @@ v7 = [
             "plural": false,
             "selections": [
               (v2/*: any*/),
-              (v4/*: any*/),
-              (v6/*: any*/)
+              (v7/*: any*/),
+              (v8/*: any*/)
             ],
             "storageKey": null
-          },
-          (v5/*: any*/)
+          }
         ],
         "storageKey": null
       }
@@ -333,7 +356,7 @@ v7 = [
             "plural": false,
             "selections": [
               (v2/*: any*/),
-              (v4/*: any*/),
+              (v7/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -343,7 +366,7 @@ v7 = [
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
-                  (v4/*: any*/)
+                  (v7/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -366,7 +389,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ChangeRequestDetailsQuery",
-    "selections": (v7/*: any*/),
+    "selections": (v9/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -378,19 +401,19 @@ return {
     ],
     "kind": "Operation",
     "name": "ChangeRequestDetailsQuery",
-    "selections": (v7/*: any*/)
+    "selections": (v9/*: any*/)
   },
   "params": {
-    "cacheID": "548ae6d611a94bf8e1ce2e9e5afc76f1",
+    "cacheID": "457b90daee409694765d78a8c060dfd6",
     "id": null,
     "metadata": {},
     "name": "ChangeRequestDetailsQuery",
     "operationKind": "query",
-    "text": "query ChangeRequestDetailsQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n  $filter: ChangeRequestFilter\n) {\n  queryChangeRequest(filter: $filter) {\n    description\n    id\n    source\n    status\n    type\n    requester\n    items {\n      id\n      parameterType {\n        id\n        name\n        stringValue\n        type\n        resourceSpecification\n        parameters {\n          id\n          stringValue\n          intValue\n        }\n      }\n      resource {\n        id\n        name\n        resourceSpecification\n      }\n      stringValue\n    }\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ChangeRequestDetailsQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n  $filter: ChangeRequestFilter\n) {\n  queryChangeRequest(filter: $filter) {\n    description\n    id\n    source\n    status\n    type\n    requester\n    items {\n      id\n      stringValue\n      intValue\n      floatValue\n      parameterType {\n        id\n        name\n        stringValue\n        intValue\n        floatValue\n        type\n        resourceSpecification\n        parameters {\n          id\n          stringValue\n          intValue\n          floatValue\n        }\n      }\n      resource {\n        id\n        name\n        resourceSpecification\n      }\n    }\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ec99e449514e353a9b5c668126edf0c3';
+(node/*: any*/).hash = '51e74606f2bffe5428cf380acb6273a0';
 
 module.exports = node;

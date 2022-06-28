@@ -95,8 +95,7 @@ const TableResource = (props: Props) => {
                     item?.parameterType?.parameters[0]?.intValue}
                 </TableCell>
                 <TableCell>
-                  {item?.parameterType?.parameters[0]?.stringValue ||
-                    item?.parameterType?.parameters[0]?.intValue}
+                  {item?.stringValue || item?.intValue || item?.floatValue}
                 </TableCell>
               </StyledTableRow>
             ))}

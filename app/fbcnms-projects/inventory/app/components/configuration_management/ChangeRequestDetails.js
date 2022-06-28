@@ -19,40 +19,11 @@ import {CardAccordion} from './common/CardAccordion';
 import {CardSuggested} from './common/CardSuggested';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
-import {MenuItem} from '@material-ui/core';
 import {TableResource} from './common/TableResource';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useFormInput} from '../assurance/common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-
-const valuesTable = [
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132331',
-    parameter: 'arfcndu1',
-    currentValue: '3960001',
-    newValue: '183001',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132332',
-    parameter: 'arfcndu2',
-    currentValue: '3960002',
-    newValue: '183002',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu3',
-    currentValue: '3960003',
-    newValue: '183003',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu4',
-    currentValue: '3960004',
-    newValue: '183004',
-  },
-];
-
-const status = ['Approve', 'Reject'];
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -61,7 +32,7 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   titleModule: {
-    margin: '0 0 40px 0',
+    margin: '0 0 20px 0',
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -70,6 +41,7 @@ const useStyles = makeStyles(() => ({
   },
   buttonStatus: {
     height: '38px',
+    margin: '0 0 30px 0',
   },
   accordionDetails: {
     '&.MuiAccordionDetails-root': {
@@ -103,26 +75,34 @@ const ChangeRequest = graphql`
       status
       type
       requester
+      #
       items {
         id
+        stringValue
+        intValue
+        floatValue
+        #
         parameterType {
           id
           name
           stringValue
+          intValue
+          floatValue
           type
           resourceSpecification
           parameters {
             id
             stringValue
             intValue
+            floatValue
           }
         }
+        #
         resource {
           id
           name
           resourceSpecification
         }
-        stringValue
       }
     }
     resourceSpecifications(filterBy: $filterBy) {
@@ -212,33 +192,12 @@ const ChangeRequestDetails = (props: Props) => {
             </ButtonSaveDelete>
           </Grid>
         </Grid>
-        <Grid style={{display: 'flex'}}>
+        <Grid style={{}}>
           <ButtonAlarmStatus
             className={classes.buttonStatus}
             skin={CHRQ.status}>
             Status: {stringCapitalizeFisrt(CHRQ.status)}
           </ButtonAlarmStatus>
-          <FormField>
-            <TextField
-              required
-              id="outlined-select-action"
-              select
-              style={{
-                padding: '0',
-                marginLeft: '40px',
-                width: '250px',
-              }}
-              label="Action"
-              name="action"
-              defaultValue=""
-              variant="outlined">
-              {status.map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormField>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={8}>
