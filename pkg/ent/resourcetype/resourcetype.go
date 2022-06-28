@@ -107,12 +107,13 @@ type ResourceTypeClass string
 
 // ResourceTypeClass values.
 const (
-	ResourceTypeClassEQUIPMENT ResourceTypeClass = "EQUIPMENT"
-	ResourceTypeClassSLOT      ResourceTypeClass = "SLOT"
-	ResourceTypeClassRACK      ResourceTypeClass = "RACK"
-	ResourceTypeClassPORT      ResourceTypeClass = "PORT"
-	ResourceTypeClassCARD      ResourceTypeClass = "CARD"
-	ResourceTypeClassVLAN      ResourceTypeClass = "VLAN"
+	ResourceTypeClassEQUIPMENT        ResourceTypeClass = "EQUIPMENT"
+	ResourceTypeClassSLOT             ResourceTypeClass = "SLOT"
+	ResourceTypeClassRACK             ResourceTypeClass = "RACK"
+	ResourceTypeClassPORT             ResourceTypeClass = "PORT"
+	ResourceTypeClassCARD             ResourceTypeClass = "CARD"
+	ResourceTypeClassVLAN             ResourceTypeClass = "VLAN"
+	ResourceTypeClassNETWORK_FUNCTION ResourceTypeClass = "NETWORK_FUNCTION"
 )
 
 func (_resourcetypeclass ResourceTypeClass) String() string {
@@ -122,7 +123,7 @@ func (_resourcetypeclass ResourceTypeClass) String() string {
 // ResourceTypeClassValidator is a validator for the "ResourceTypeClass" field enum values. It is called by the builders before save.
 func ResourceTypeClassValidator(_resourcetypeclass ResourceTypeClass) error {
 	switch _resourcetypeclass {
-	case ResourceTypeClassEQUIPMENT, ResourceTypeClassSLOT, ResourceTypeClassRACK, ResourceTypeClassPORT, ResourceTypeClassCARD, ResourceTypeClassVLAN:
+	case ResourceTypeClassEQUIPMENT, ResourceTypeClassSLOT, ResourceTypeClassRACK, ResourceTypeClassPORT, ResourceTypeClassCARD, ResourceTypeClassVLAN, ResourceTypeClassNETWORK_FUNCTION:
 		return nil
 	default:
 		return fmt.Errorf("resourcetype: invalid enum value for ResourceTypeClass field: %q", _resourcetypeclass)
