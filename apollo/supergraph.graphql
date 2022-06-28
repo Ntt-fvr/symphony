@@ -846,6 +846,17 @@ type AddFeaturePayload {
   numUids: Int
 }
 
+input AddFilesInput {
+  annotation: String
+  category: String
+  contentType: String!
+  documentCategoryId: ID
+  fileName: String!
+  fileSize: Int!
+  imgKey: String!
+  modified: Time!
+}
+
 input AddFloorPlanInput {
   image: AddImageInput!
   latitude: Float!
@@ -6225,7 +6236,7 @@ type Mutation {
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -6241,6 +6252,7 @@ type Mutation {
   addEventSeverity(input: AddEventSeverityInput!): EventSeverity! @join__field(graph: SYMPHONY)
   addExternalReference(input: [AddExternalReferenceInput!]!, upsert: Boolean): AddExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   addFeature(input: [AddFeatureInput!]!): AddFeaturePayload @join__field(graph: DGRAPHSERVICE)
+  addFiles(input: AddFilesInput!): File! @join__field(graph: SYMPHONY)
   addFloorPlan(input: AddFloorPlanInput!): FloorPlan! @join__field(graph: SYMPHONY)
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft! @join__field(graph: SYMPHONY)
   addFlowExecutionReference(input: [AddFlowExecutionReferenceInput!]!): AddFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
@@ -8217,7 +8229,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getDefaultConfig(id: ID!): DefaultConfig @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
