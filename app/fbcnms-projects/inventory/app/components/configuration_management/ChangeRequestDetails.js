@@ -23,6 +23,7 @@ import {MenuItem} from '@material-ui/core';
 import {TableResource} from './common/TableResource';
 import {makeStyles} from '@material-ui/styles';
 import {useFormInput} from '../assurance/common/useFormInput';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const valuesTable = [
   {
@@ -90,23 +91,62 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ChangeRequest = graphql`
+  query ChangeRequestDetailsQuery(
+    $filterBy: [ResourceSpecificationFilterInput!]
+    $filter: ChangeRequestFilter
+  ) {
+    queryChangeRequest(filter: $filter) {
+      description
+      id
+      source
+      status
+      type
+      requester
+      items {
+        id
+        parameterType {
+          id
+          name
+          stringValue
+          type
+          resourceSpecification
+          parameters {
+            id
+            stringValue
+            intValue
+          }
+        }
+        resource {
+          id
+          name
+          resourceSpecification
+        }
+        stringValue
+      }
+    }
+    resourceSpecifications(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          resourceType {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export type Props = $ReadOnly<{|
   setOpenDetails: any,
-  // idChangeRequest: any, id for filter
+  idChangeRequest: string,
 |}>;
 
 const ChangeRequestDetails = (props: Props) => {
-  const {setOpenDetails} = props;
-  const data = {
-    id: '686876767',
-    key: '01',
-    creationDate: '01/03/22',
-    lastModificationDate: '01/03/22',
-    resourceType: 'RNCellDU01',
-    changeSource: 'WORKFLOW',
-    affectedResources: '1',
-    status: 'SUCCESSFUL',
-  };
+  const {setOpenDetails, idChangeRequest} = props;
 
   const stringCapitalizeFisrt = string => {
     const convertString = string.toLowerCase();
@@ -114,9 +154,43 @@ const ChangeRequestDetails = (props: Props) => {
     return convertString.charAt(0).toUpperCase() + convertString.slice(1);
   };
   const classes = useStyles();
+  const response = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
+    filter: {
+      id: idChangeRequest,
+    },
+  });
 
-  const resourceType = useFormInput(data.resourceType.trim());
-  const changeSource = useFormInput(data.changeSource.trim());
+  const filterChangeRequest = response?.queryChangeRequest?.find(
+    itemChRq => itemChRq?.id === idChangeRequest,
+  );
+
+  const rs = filterChangeRequest?.items.map(
+    itemRS => itemRS?.parameterType?.resourceSpecification,
+  );
+  const te = rs[0].toString();
+
+  const response2 = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
+    filterBy: [
+      {
+        filterType: 'ID',
+        operator: 'IS_ONE_OF',
+        idSet: [te],
+      },
+    ],
+    filter: {
+      id: idChangeRequest,
+    },
+  });
+  const CHRQ = response2?.queryChangeRequest?.find(
+    chRq => chRq?.id === idChangeRequest,
+  );
+  const RT = response2?.resourceSpecifications?.edges?.find(
+    chRq => chRq?.node?.id === te,
+  );
+  console.log('RES2', response2, CHRQ);
+  const resourceType = useFormInput(RT.node.resourceType.name);
+  const changeSource = useFormInput(CHRQ.source);
+  const description = useFormInput(CHRQ.description);
 
   return (
     <div>
@@ -141,8 +215,8 @@ const ChangeRequestDetails = (props: Props) => {
         <Grid style={{display: 'flex'}}>
           <ButtonAlarmStatus
             className={classes.buttonStatus}
-            skin={data.status}>
-            Status: {stringCapitalizeFisrt(data.status)}
+            skin={CHRQ.status}>
+            Status: {stringCapitalizeFisrt(CHRQ.status)}
           </ButtonAlarmStatus>
           <FormField>
             <TextField
@@ -180,7 +254,7 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Id"
                       variant="outlined"
                       name="ID"
-                      value={data.id}
+                      value={CHRQ.id}
                       disabled
                     />
                   </Grid>
@@ -191,6 +265,7 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Resource type"
                       variant="outlined"
                       name="resourceType"
+                      disabled
                       {...resourceType}
                     />
                   </Grid>
@@ -201,25 +276,28 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Change source"
                       variant="outlined"
                       name="changeSource"
+                      disabled
                       {...changeSource}
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       style={{width: '100%'}}
-                      id="change_source"
-                      label="Change source"
+                      id="description"
+                      label="Description"
                       variant="outlined"
                       multiline
                       rows={4}
-                      name="name"
+                      name="description"
+                      disabled
+                      {...description}
                     />
                   </Grid>
                 </Grid>
               </FormField>
             </CardAccordion>
             <CardAccordion title={'Target parameters'}>
-              <TableResource valuesTable={valuesTable} />
+              <TableResource valuesTable={CHRQ} />
             </CardAccordion>
             <CardAccordion title={'Suggested change request schedule'}>
               <CardSuggested />

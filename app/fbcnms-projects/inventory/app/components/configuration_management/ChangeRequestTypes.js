@@ -105,7 +105,7 @@ export type Props = $ReadOnly<{||}>;
 const ChangeRequestTypes = () => {
   const [filters, setFilters] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
-  const [dataRow, setDataRow] = useState({});
+  const [dataIdChangeRequest, setDataIdChangeRequest] = useState('');
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
   const [changeRequestInitial, setChangeRequestInitial] = useState([]);
   const [changeRequest, setChangeRequest] = useState([]);
@@ -215,7 +215,7 @@ const ChangeRequestTypes = () => {
   ];
 
   const showInfo = data => {
-    setDataRow(data);
+    setDataIdChangeRequest(data);
   };
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
@@ -225,7 +225,10 @@ const ChangeRequestTypes = () => {
   };
   if (openDetails) {
     return (
-      <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails} />
+      <ChangeRequestDetails
+        idChangeRequest={dataIdChangeRequest}
+        setOpenDetails={setOpenDetails}
+      />
     );
   }
   if (openBulkRequest) {
@@ -252,7 +255,6 @@ const ChangeRequestTypes = () => {
     setChangeRequest(result);
     setFilters(filters);
   };
-
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -299,7 +301,7 @@ const ChangeRequestTypes = () => {
                 <Button
                   onClick={() => {
                     handleOpenDetails();
-                    showInfo(row);
+                    showInfo(row.id);
                   }}
                   variant="text"
                   tooltip={row.id ?? ''}>
