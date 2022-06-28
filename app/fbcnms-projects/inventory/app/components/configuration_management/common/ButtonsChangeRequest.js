@@ -17,7 +17,7 @@ import {makeStyles} from '@material-ui/styles';
 import Select from '@symphony/design-system/components/Select/Select';
 import {uploadFileNifi} from '../../FileUpload/FileUploadUtilsNifi';
 import shortid from 'shortid';
-import {csvFileExportKeyQuery} from '../../CSVFileExport';
+import { csvToArray } from '../csvToArray';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -69,49 +69,24 @@ const ButtonsChangeRequest = (props: Props) => {
 
   const [selectedValue, setSelectedValue] = useState('');
 
-  const csvToArray = (str, delimiter = ',') => {
-    // slice from start of text to the first \n index
-    // use split to create an array from string by delimiter
-    const headers = str.slice(0, str.indexOf('\n')).split(delimiter);
-
-    // slice from \n index + 1 to the end of the text
-    // use split to create an array of each csv value row
-    const rows = str.slice(str.indexOf('\n') + 1).split('\n');
-
-    // Map the rows
-    // split values from each row into an array
-    // use headers.reduce to create an object
-    // object properties derived from headers:values
-    // the object passed as an element of the array
-    const arr = rows.map(function (row) {
-      const values = row.split(delimiter);
-      const el = headers.reduce(function (object, header, index) {
-        object[header] = values[index];
-        return object;
-      }, {});
-      return el;
-    });
-
-    // return the array
-    console.log(arr);
-    return arr;
-  };
-
   const fileValidate = value => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.csv';
     input.onchange = e => {
       const file = e.target.files[0];
-      console.log(file);
       const fileId = shortid.generate();
-      // uploadFileNifi(file,fileId)
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const text = e.target.result;
-        onClickBulk(csvToArray(text));
-      };
-      reader.readAsText(file);
+
+      if (value == 'enrichment-data') {
+        uploadFileNifi(fileId,file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const text = e.target.result;
+          onClickBulk(csvToArray(text), file.name);
+        };
+        reader.readAsText(file);
+      }
     };
     input.click();
     setSelectedValue(value);
