@@ -108,6 +108,7 @@ const ChangeRequestTypes = () => {
   const [changeRequestInitial, setChangeRequestInitial] = useState([]);
   const [changeRequest, setChangeRequest] = useState([]);
   const [infoCSV, setinfoCSV] = useState([])
+  const [nameFile, setNameFile] = useState('')
   const classes = useStyles();
 
   const locationTypesFilterConfigs = useLocationTypes();
@@ -219,9 +220,10 @@ const ChangeRequestTypes = () => {
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
-  const bulk = (infoCSV) => {
+  const bulk = (infoCSV ,nameFile) => {
     setOpenBulkRequest(prevStateBulk => !prevStateBulk);
     setinfoCSV(infoCSV)
+    setNameFile(nameFile)
   };
   if (openDetails) {
     return (
@@ -233,6 +235,7 @@ const ChangeRequestTypes = () => {
       <ChangeRequestByBulk
         onClick={() => setOpenBulkRequest(prevStateBulk => !prevStateBulk)}
         infoCSV={infoCSV}
+        nameFile={nameFile}
       />
     );
   }

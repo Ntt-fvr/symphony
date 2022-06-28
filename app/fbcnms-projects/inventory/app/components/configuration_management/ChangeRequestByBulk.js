@@ -23,33 +23,7 @@ import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
 import {TableResource} from './common/TableResource';
 import {makeStyles} from '@material-ui/styles';
-
-const valuesTable = [
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132331',
-    parameter: 'arfcndu1',
-    currentValue: '3960001',
-    newValue: '183001',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132332',
-    parameter: 'arfcndu2',
-    currentValue: '3960002',
-    newValue: '183002',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu3',
-    currentValue: '3960003',
-    newValue: '183003',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu4',
-    currentValue: '3960004',
-    newValue: '183004',
-  },
-];
+import {csvToArray} from './csvToArray';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -77,14 +51,33 @@ export type Props = $ReadOnly<{|
 |}>;
 
 const ChangeRequestByBulk = (props: Props) => {
-  const {onClick ,infoCSV } = props;
+  const {onClick, infoCSV, nameFile} = props;
+  console.log(props);
+  const [infoTable, setInfoTable] = useState(props.infoCSV);
+  const [nameFileSelected, setNameFileSelected] = useState(props.nameFile);
   const classes = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => {
     setOpenModal(prevStateOpenModal => !prevStateOpenModal);
   };
 
-  console.log(infoCSV)
+  const fileValidate = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = e => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const text = e.target.result;
+        setInfoTable(csvToArray(text));
+        setNameFileSelected(file.name);
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+    setSelectedValue(value);
+  };
 
   return (
     <div>
@@ -145,36 +138,22 @@ const ChangeRequestByBulk = (props: Props) => {
                 placeholder="PAHT"
                 autoComplete="off"
                 className={classes.inputUpload}
+                value={nameFileSelected === '' ? nameFile : nameFileSelected}
               />
             </FormField>
           </Grid>
           <Grid item xs={8} container direction="row" alignItems="center">
-            <ButtonUpload variant="text" leftIcon={CloudUploadIcon}>
+            <ButtonUpload variant="text" leftIcon={CloudUploadIcon} onClick={fileValidate}>
               Upload file
             </ButtonUpload>
           </Grid>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <CardAccordion
-              className={classes.accordionDetails}
-              title={'Details'}>
-              <FormField>
-                <Grid container spacing={1}>
-                  <Grid item xs={4}>
-                    <TextField
-                      style={{width: '100%'}}
-                      id="resourceType"
-                      label="Resource Type"
-                      variant="outlined"
-                      name="resourceType"
-                    />
-                  </Grid>
-                </Grid>
-              </FormField>
-            </CardAccordion>
             <CardAccordion title={'Upload change'}>
-              <TableResource valuesTable={infoCSV} />
+              <TableResource
+                valuesTable={infoTable.length === 0 ? infoCSV : infoTable}
+              />
             </CardAccordion>
             <Grid item xs={6}>
               <CardAccordion title={'Suggested change request schedule'}>

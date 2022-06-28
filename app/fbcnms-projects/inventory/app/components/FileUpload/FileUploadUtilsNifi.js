@@ -15,10 +15,9 @@ export async function uploadFileNifi(
   file: File,
   //onUpload: (File, string) => void
 ) {
-  const signingResponse = await axios.get('/store/putNifi', {
+  const signingResponse = await axios.get('/store/putNifi' + '?contentType=text/csv', {
     params: {
-      contentType: file.type,
-      nameFile: file.name
+      contentType: file.type
     },
   });
 
@@ -27,7 +26,9 @@ export async function uploadFileNifi(
       'Content-Type': file.type,
     },
   };
+  console.log(signingResponse.data.URL)
   await axios.put(signingResponse.data.URL, file, config);
+  console.log(signingResponse.data.key)
 
 //   onUpload(file, signingResponse.data.key);
 }
