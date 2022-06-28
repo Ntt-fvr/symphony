@@ -8,12 +8,18 @@
  * @format
  */
 
+import type {WaitSignalSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalSettings';
+
 import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
-import {render, screen} from '@testing-library/react';
-
 import TriggerStartIconPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalPresentation';
 import WaitSignalBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalBlockType';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
+import {
+  getInitialBlockSettings,
+  setBlockSettings,
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
+import {render, screen} from '@testing-library/react';
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
 describe('Suite Test Components /waitSignal/: ', () => {
@@ -33,5 +39,18 @@ describe('Suite Test Components /waitSignal/: ', () => {
     render(<TestComponent />);
     const text = screen.getByText(/triggerBlock.wait-signal/i);
     expect(text).toBeInTheDocument();
+  });
+
+  test('AUT-FE-05051 Test setWaitSignalSettings', () => {
+    const objectTest: WaitSignalSettings = getInitialBlockSettings(TYPE);
+
+    expect(objectTest.signalType).toStrictEqual(null);
+    expect(objectTest.blocked).toStrictEqual(null);
+    const setObjectTest: WaitSignalSettings = setBlockSettings(TYPE, {
+      ...objectTest,
+      blocked: true,
+    });
+    expect(setObjectTest.signalType).toStrictEqual(null);
+    expect(setObjectTest.blocked).toStrictEqual(true);
   });
 });

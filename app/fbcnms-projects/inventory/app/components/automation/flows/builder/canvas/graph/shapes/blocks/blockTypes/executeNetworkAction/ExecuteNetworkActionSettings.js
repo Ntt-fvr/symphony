@@ -9,12 +9,12 @@
  */
 'use strict';
 
-type ExecuteNetworkActionSettings = $ReadOnly<{|
+export type ExecuteNetworkActionSettings = $ReadOnly<{|
   executeNetworkActionSettings: string,
 |}>;
 
 export const initialExecuteNetworkActionSettings: ExecuteNetworkActionSettings = {
-  executeNetworkActionSettings: 'ExecuteNetworkActionSettings',
+  executeNetworkActionSettings: null,
 };
 
 export const setExecuteNetworkActionSettings: ExecuteNetworkActionSettings = newExecuteNetworkActionSettings => {

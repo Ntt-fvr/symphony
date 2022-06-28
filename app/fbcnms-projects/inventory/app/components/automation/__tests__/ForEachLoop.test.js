@@ -8,8 +8,15 @@
  * @format
  */
 
+import type {ForEachLoopSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopSettings';
+
 import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
+import {
+  getInitialBlockSettings,
+  setBlockSettings,
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
 import {render, screen} from '@testing-library/react';
 
 import ForEachLoopBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopBlockType';
@@ -36,5 +43,16 @@ describe('Suite Test Components /ForEachLoop/: ', () => {
 
     const text = screen.getByText(/forEachLoopBlock/i);
     expect(text).toBeInTheDocument();
+  });
+  test('AUT-FE-05055 Test setParallelSettings', () => {
+    const objectTest: ForEachLoopSettings = getInitialBlockSettings(TYPE);
+
+    expect(objectTest.forEachLoopSettings).toStrictEqual(null);
+
+    const setObjectTest: ForEachLoopSettings = setBlockSettings(TYPE, {
+      ...objectTest,
+      forEachLoopSettings: true,
+    });
+    expect(setObjectTest.forEachLoopSettings).toStrictEqual(true);
   });
 });
