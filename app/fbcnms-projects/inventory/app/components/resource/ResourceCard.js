@@ -58,7 +58,7 @@ const ResourceCardListQuery = graphql`
     queryResource {
       id
       name
-      isDelete
+      isDeleted
       resourceSpecification
       locatedIn
     }
@@ -133,6 +133,8 @@ const ResourceCard = (props: Props) => {
   const filterDataById = resourceTypes?.queryResource?.filter(
     item => item.locatedIn === selectedLocationId,
   );
+
+  console.log(resourceTypes);
 
   switch (mode) {
     case 'add':

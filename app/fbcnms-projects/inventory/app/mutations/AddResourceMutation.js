@@ -29,7 +29,7 @@ const mutation = graphql`
         locatedIn
         name
         resourceSpecification
-        isDelete
+        isDeleted
       }
     }
   }

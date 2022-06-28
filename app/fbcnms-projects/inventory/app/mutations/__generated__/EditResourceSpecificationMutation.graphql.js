@@ -21,6 +21,7 @@ export type EditResourceSpecificationInput = {|
   quantity?: ?number,
   resourcePropertyTypes?: ?$ReadOnlyArray<?AddResourcePropertyTypeInput>,
   resourceType?: ?string,
+  vendor?: ?string,
 |};
 export type AddResourcePropertyTypeInput = {|
   booleanValue?: ?boolean,

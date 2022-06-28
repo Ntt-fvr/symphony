@@ -1,4 +1,3 @@
-
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -34,15 +33,21 @@ input ActionBlockInput {
 }
 
 type ActionExecution {
+  endTime: DateTime
   id: ID!
   items(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
   itemsAggregate(filter: ActionExecutionItemFilter): ActionExecutionItemAggregateResult
   scheduler(filter: ActionSchedulerFilter): ActionScheduler
-  template(filter: ActionTemplateFilter): ActionTemplate
+  starTime: DateTime!
+  template(filter: ActionTemplateFilter): ActionTemplate!
 }
 
 type ActionExecutionAggregateResult {
   count: Int
+  endTimeMax: DateTime
+  endTimeMin: DateTime
+  starTimeMax: DateTime
+  starTimeMin: DateTime
 }
 
 input ActionExecutionFilter {
@@ -54,15 +59,18 @@ input ActionExecutionFilter {
 }
 
 enum ActionExecutionHasFilter {
+  endTime
   items
   scheduler
+  starTime
   template
 }
 
 type ActionExecutionItem {
   action(filter: ActionExecutionFilter): ActionExecution!
   id: ID!
-  resource(filter: ResourceFilter): Resource!
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionExecutionItemStatus
 }
 
@@ -80,20 +88,20 @@ input ActionExecutionItemFilter {
 
 enum ActionExecutionItemHasFilter {
   action
-  resource
+  resources
   status
 }
 
 input ActionExecutionItemPatch {
   action: ActionExecutionRef
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
 input ActionExecutionItemRef {
   action: ActionExecutionRef
   id: ID
-  resource: ResourceRef
+  resources: [ResourceRef]
   status: ActionExecutionItemStatus
 }
 
@@ -103,26 +111,45 @@ enum ActionExecutionItemStatus {
   SUCCESSFULL
 }
 
+input ActionExecutionOrder {
+  asc: ActionExecutionOrderable
+  desc: ActionExecutionOrderable
+  then: ActionExecutionOrder
+}
+
+enum ActionExecutionOrderable {
+  endTime
+  starTime
+}
+
 input ActionExecutionPatch {
+  endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
+  starTime: DateTime
   template: ActionTemplateRef
 }
 
 input ActionExecutionRef {
+  endTime: DateTime
   id: ID
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
+  starTime: DateTime
   template: ActionTemplateRef
 }
 
 type ActionScheduler {
-  action(filter: ActionExecutionFilter): ActionExecution!
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
+  actions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
+  actionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
   cron: String
   date: DateTime
   description: String!
   id: ID!
   name: String!
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
 }
@@ -148,11 +175,13 @@ input ActionSchedulerFilter {
 }
 
 enum ActionSchedulerHasFilter {
-  action
+  actionTemplate
+  actions
   cron
   date
   description
   name
+  resources
   status
   type
 }
@@ -171,22 +200,26 @@ enum ActionSchedulerOrderable {
 }
 
 input ActionSchedulerPatch {
-  action: ActionExecutionRef
+  actionTemplate: ActionTemplateRef
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String
   name: String
+  resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
 }
 
 input ActionSchedulerRef {
-  action: ActionExecutionRef
+  actionTemplate: ActionTemplateRef
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String
   id: ID
   name: String
+  resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
 }
@@ -203,8 +236,10 @@ enum ActionSchedulerType {
 }
 
 type ActionTemplate {
-  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
-  actionTemplateItemAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
+  actionExecutions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
+  actionExecutionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
+  actionTemplateItems(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
+  actionTemplateItemsAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   id: ID!
   name: String!
   resourceSpecifications: String!
@@ -229,7 +264,8 @@ input ActionTemplateFilter {
 }
 
 enum ActionTemplateHasFilter {
-  actionTemplateItem
+  actionExecutions
+  actionTemplateItems
   name
   resourceSpecifications
   type
@@ -285,14 +321,16 @@ enum ActionTemplateOrderable {
 }
 
 input ActionTemplatePatch {
-  actionTemplateItem: [ActionTemplateItemRef!]
+  actionExecutions: [ActionExecutionRef!]
+  actionTemplateItems: [ActionTemplateItemRef!]
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
 }
 
 input ActionTemplateRef {
-  actionTemplateItem: [ActionTemplateItemRef!]
+  actionExecutions: [ActionExecutionRef!]
+  actionTemplateItems: [ActionTemplateItemRef!]
   id: ID
   name: String
   resourceSpecifications: String
@@ -350,14 +388,16 @@ input ActivityFilterInput {
 }
 
 input AddActionExecutionInput {
+  endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
-  template: ActionTemplateRef
+  starTime: DateTime!
+  template: ActionTemplateRef!
 }
 
 input AddActionExecutionItemInput {
   action: ActionExecutionRef!
-  resource: ResourceRef!
+  resources: [ResourceRef]!
   status: ActionExecutionItemStatus
 }
 
@@ -367,16 +407,18 @@ type AddActionExecutionItemPayload {
 }
 
 type AddActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   numUids: Int
 }
 
 input AddActionSchedulerInput {
-  action: ActionExecutionRef!
+  actionTemplate: ActionTemplateRef!
+  actions: [ActionExecutionRef!]
   cron: String
   date: DateTime
   description: String!
   name: String!
+  resources: [ResourceRef!]!
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
 }
@@ -387,7 +429,8 @@ type AddActionSchedulerPayload {
 }
 
 input AddActionTemplateInput {
-  actionTemplateItem: [ActionTemplateItemRef!]!
+  actionExecutions: [ActionExecutionRef!]
+  actionTemplateItems: [ActionTemplateItemRef!]!
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -891,9 +934,9 @@ type AddNotePayload {
 input AddNumericPoolInput {
   customLimit: Int
   description: String
-  isDelete: Boolean!
+  isDeleted: Boolean!
   limit: Int!
-  resource: [ResourceRef!]!
+  resources: [ResourceRef!]!
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -918,7 +961,7 @@ input AddParameterInput {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM: [CMVersionRef]!
+  versionCMs: [CMVersionRef]!
 }
 
 type AddParameterPayload {
@@ -1042,23 +1085,25 @@ type AddRelatedEntityPayload {
 }
 
 input AddResourceInput {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   externalId: String
-  isDelete: Boolean!
+  isDeleted: Boolean!
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
+  logicalLinks: [ResourceRef]
   name: String!
-  numericPool: [NumericPoolRef]
+  numericPools: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
+  physicalLinkInv: ResourceRef
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String!
@@ -1158,6 +1203,7 @@ input AddResourceSpecificationInput {
   quantity: Int
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
   resourceType: ID!
+  vendor: ID
 }
 
 input AddResourceSpecificationItemsInput {
@@ -1165,20 +1211,10 @@ input AddResourceSpecificationItemsInput {
   resourceSpecificationRelationship: ID!
 }
 
-input AddResourceSpecificationRelationShipListInput {
-  nameList: [ResourceSpecificationRelationShipListInput]!
-  resourceSpecification: ID!
-}
-
 input AddResourceSpecificationRelationshipInput {
   name: String!
   resourceSpecification: ID!
-}
-
-input AddResourceSpecificationRelationshipList {
-  name: String!
-  resourceSpecification: ID!
-  resourceSpecificationRelationshipItems: [ResourceSpecificationRelationshipItemsInput]
+  resourceSpecificationList: [ID]
 }
 
 input AddResourceTypeInput {
@@ -1372,7 +1408,7 @@ type AddServiceSpecificationReferencePayload {
 input AddStatusNumericPoolInput {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type AddStatusNumericPoolPayload {
@@ -2267,11 +2303,10 @@ enum ChangeRequestSource {
 }
 
 enum ChangeRequestStatus {
-  APPROVAL
   CANCELLED
   FAILED
   IN_EXECUTION
-  PENDING
+  PENDING_APPROVAL
   REJECTED
   SCHEDULED
   SUBMITTED
@@ -3123,7 +3158,7 @@ type DeleteActionExecutionItemPayload {
 }
 
 type DeleteActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   msg: String
   numUids: Int
 }
@@ -3837,6 +3872,7 @@ input EditResourceSpecificationInput {
   quantity: Int
   resourcePropertyTypes: [AddResourcePropertyTypeInput]
   resourceType: ID
+  vendor: ID
 }
 
 input EditResourceSpecificationItemsInput {
@@ -6003,9 +6039,8 @@ type Mutation {
   addResourceReference(input: [AddResourceReferenceInput!]!, upsert: Boolean): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   addResourceSpecification(input: AddResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems! @join__field(graph: SYMPHONY)
-  addResourceSpecificationRelationShipList(input: AddResourceSpecificationRelationShipListInput!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
-  addResourceSpecificationRelationshipItemsList(input: AddResourceSpecificationRelationshipList!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
+  addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   addResourceType(input: AddResourceTypeInput!): ResourceType! @join__field(graph: SYMPHONY)
   addResourceTypeRelationship(input: AddResourceTypeRelationshipInput!): ResourceTypeRelationship! @join__field(graph: SYMPHONY)
   addRule(input: AddRuleInput!): Rule! @join__field(graph: SYMPHONY)
@@ -6475,10 +6510,10 @@ type NumericPool {
   customLimit: Int
   description: String
   id: ID!
-  isDelete: Boolean!
+  isDeleted: Boolean!
   limit: Int!
-  resource(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
-  resourceAggregate(filter: ResourceFilter): ResourceAggregateResult
+  resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
+  resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   statusNumericPools(filter: StatusNumericPoolFilter, first: Int, offset: Int): [StatusNumericPool]
   statusNumericPoolsAggregate(filter: StatusNumericPoolFilter): StatusNumericPoolAggregateResult
 }
@@ -6508,9 +6543,9 @@ input NumericPoolFilter {
 enum NumericPoolHasFilter {
   customLimit
   description
-  isDelete
+  isDeleted
   limit
-  resource
+  resources
   statusNumericPools
 }
 
@@ -6529,9 +6564,9 @@ enum NumericPoolOrderable {
 input NumericPoolPatch {
   customLimit: Int
   description: String
-  isDelete: Boolean
+  isDeleted: Boolean
   limit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -6539,9 +6574,9 @@ input NumericPoolRef {
   customLimit: Int
   description: String
   id: ID
-  isDelete: Boolean
+  isDeleted: Boolean
   limit: Int
-  resource: [ResourceRef!]
+  resources: [ResourceRef!]
   statusNumericPools: [StatusNumericPoolRef]
 }
 
@@ -6651,8 +6686,8 @@ type Parameter {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]!
-  versionCMAggregate(filter: CMVersionFilter): CMVersionAggregateResult
+  versionCMs(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]!
+  versionCMsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
 }
 
 type ParameterAggregateResult {
@@ -6737,7 +6772,7 @@ enum ParameterHasFilter {
   rangeFromValue
   rangeToValue
   stringValue
-  versionCM
+  versionCMs
 }
 
 enum ParameterKind {
@@ -6780,7 +6815,7 @@ input ParameterPatch {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM: [CMVersionRef]
+  versionCMs: [CMVersionRef]
 }
 
 input ParameterRef {
@@ -6795,7 +6830,7 @@ input ParameterRef {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
-  versionCM: [CMVersionRef]
+  versionCMs: [CMVersionRef]
 }
 
 input ParentPropertyTypeValueInput {
@@ -7920,7 +7955,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String, resourceSpecification: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
   getFlowExecutionReference(id: ID!): FlowExecutionReference @join__field(graph: DGRAPHSERVICE)
@@ -8312,7 +8347,7 @@ type Query {
     orderBy: PropertyTypeValueOrder
   ): PropertyTypeValueConnection! @join__field(graph: SYMPHONY)
   pythonPackages: [PythonPackage!]! @join__field(graph: SYMPHONY)
-  queryActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution] @join__field(graph: DGRAPHSERVICE)
+  queryActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution] @join__field(graph: DGRAPHSERVICE)
   queryActionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem] @join__field(graph: DGRAPHSERVICE)
   queryActionScheduler(filter: ActionSchedulerFilter, first: Int, offset: Int, order: ActionSchedulerOrder): [ActionScheduler] @join__field(graph: DGRAPHSERVICE)
   queryActionTemplate(filter: ActionTemplateFilter, first: Int, offset: Int, order: ActionTemplateOrder): [ActionTemplate] @join__field(graph: DGRAPHSERVICE)
@@ -8882,29 +8917,31 @@ input ReportFilterInput {
 }
 
 type Resource {
+  actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
+  changeItems(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem]
+  changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   crossConnection(filter: ResourceFilter): Resource
-  crossconnectionInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
-  crossconnectionInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  crossconnectionInv(filter: ResourceFilter): Resource
   externalId: String
   id: ID!
-  isDelete: Boolean!
+  isDeleted: Boolean!
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink(filter: ResourceFilter): Resource
   logicalLinkInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  logicalLinks(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
+  logicalLinksAggregate(filter: ResourceFilter): ResourceAggregateResult
   name: String!
-  numericPool(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
-  numericPoolAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
+  numericPools(filter: NumericPoolFilter, first: Int, offset: Int, order: NumericPoolOrder): [NumericPool]
+  numericPoolsAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
   operationalSubStatus: OperationalSubStatus
   physicalLink(filter: ResourceFilter): Resource
-  physicalLinkInv(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
-  physicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
+  physicalLinkInv(filter: ResourceFilter): Resource
   planningSubStatus: PlanningSubStatus
   resourceProperties(filter: ResourcePropertyFilter, first: Int, offset: Int, order: ResourcePropertyOrder): [ResourceProperty]
   resourcePropertiesAggregate(filter: ResourcePropertyFilter): ResourcePropertyAggregateResult
@@ -8937,20 +8974,22 @@ input ResourceFilter {
 }
 
 enum ResourceHasFilter {
+  actionScheduler
   available
   belongsTo
+  changeItems
   composedOf
   crossConnection
   crossconnectionInv
   externalId
-  isDelete
+  isDeleted
   isEditable
   lifecycleStatus
   locatedIn
-  logicalLink
   logicalLinkInv
+  logicalLinks
   name
-  numericPool
+  numericPools
   operationalSubStatus
   physicalLink
   physicalLinkInv
@@ -9105,23 +9144,25 @@ enum ResourceOrderable {
 }
 
 input ResourcePatch {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   externalId: String
-  isDelete: Boolean
+  isDeleted: Boolean
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
+  logicalLinks: [ResourceRef]
   name: String
-  numericPool: [NumericPoolRef]
+  numericPools: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
+  physicalLinkInv: ResourceRef
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
@@ -9290,24 +9331,26 @@ type ResourcePropertyType implements Node {
 }
 
 input ResourceRef {
+  actionScheduler: ActionSchedulerRef
   available: Boolean
   belongsTo: ResourceRef
+  changeItems: [ChangeItemRef]
   composedOf: [ResourceRef]
   crossConnection: ResourceRef
-  crossconnectionInv: [ResourceRef]
+  crossconnectionInv: ResourceRef
   externalId: String
   id: ID
-  isDelete: Boolean
+  isDeleted: Boolean
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
-  logicalLink: ResourceRef
   logicalLinkInv: [ResourceRef]
+  logicalLinks: [ResourceRef]
   name: String
-  numericPool: [NumericPoolRef]
+  numericPools: [NumericPoolRef]
   operationalSubStatus: OperationalSubStatus
   physicalLink: ResourceRef
-  physicalLinkInv: [ResourceRef]
+  physicalLinkInv: ResourceRef
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
@@ -9389,7 +9432,10 @@ type ResourceSpecification implements Node {
   name: String!
   quantity: Int
   resourcePropertyTypes: [ResourcePropertyType]!
+  resourceSpecificationItems: [ResourceSpecificationItems]
+  resourceSpecificationRelationship: [ResourceSpecificationRelationship]
   resourceType: ResourceType
+  vendor: Vendor
 }
 
 """A connection to a list of ResourceSpecification."""
@@ -9423,6 +9469,7 @@ input ResourceSpecificationFilterInput {
 }
 
 enum ResourceSpecificationFilterType {
+  ID
   NAME
   RESOURCE_TYPE
 }
@@ -9490,14 +9537,11 @@ enum ResourceSpecificationOrderField {
   UPDATED_AT
 }
 
-input ResourceSpecificationRelationShipListInput {
-  name: String!
-}
-
 type ResourceSpecificationRelationship implements Node {
   id: ID!
   name: String!
   resourceSpecification: ResourceSpecification!
+  resourceSpecificationItems: [ResourceSpecificationItems]
 }
 
 """A connection to a list of ResourceSpecificationRelationships."""
@@ -9535,10 +9579,6 @@ enum ResourceSpecificationRelationshipFilterType {
   RESOURCE_SPECIFICATION
 }
 
-input ResourceSpecificationRelationshipItemsInput {
-  id_destino: ID
-}
-
 """Ordering options for ResourceSpecificationRelationships connections."""
 input ResourceSpecificationRelationshipOrder {
   """The ordering direction."""
@@ -9565,6 +9605,7 @@ enum ResourceSpecificationRelationshipOrderField {
 type ResourceType implements Node {
   id: ID!
   name: String!
+  resourceSpecification: [ResourceSpecification]
   resourceTypeBaseType: ResourceTypeBaseTypeKind!
   resourceTypeClass: ResourceTypeClassKind!
 }
@@ -10824,7 +10865,7 @@ type StatusNumericPool {
   id: ID!
   numericPool(filter: NumericPoolFilter): NumericPool
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 type StatusNumericPoolAggregateResult {
@@ -10842,20 +10883,20 @@ input StatusNumericPoolFilter {
 enum StatusNumericPoolHasFilter {
   numericPool
   status
-  value
+  values
 }
 
 input StatusNumericPoolPatch {
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StatusNumericPoolRef {
   id: ID
   numericPool: NumericPoolRef
   status: UsageSubStatus
-  value: [Int]
+  values: [Int]
 }
 
 input StringExactFilter {
@@ -11437,7 +11478,7 @@ type UpdateActionExecutionItemPayload {
 }
 
 type UpdateActionExecutionPayload {
-  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int): [ActionExecution]
+  actionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution]
   numUids: Int
 }
 
@@ -12087,6 +12128,7 @@ input VariableValueInput {
 type Vendor implements Node {
   id: ID!
   name: String!
+  resourceSpecification: [ResourceSpecification!]
   vendorRecommendations: [Recommendations!]
 }
 
@@ -12666,6 +12708,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
   SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }
