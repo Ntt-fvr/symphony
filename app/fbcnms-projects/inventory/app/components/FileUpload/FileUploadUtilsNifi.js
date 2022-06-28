@@ -16,6 +16,8 @@ export async function uploadFileNifi(
   file: File,
   //onUpload: (File, string) => void
 ) {
+
+  console.log(file.type)
   const signingResponse = await axios.get('/store/putNifi' + '?contentType=text/csv', {
     params: {
       contentType: file.type
@@ -28,7 +30,7 @@ export async function uploadFileNifi(
     },
   };
   console.log(signingResponse.data.URL)
-  // await axios.put(signingResponse.data.URL, file, config);
+  await axios.put(signingResponse.data.URL, file, config);
   console.log(signingResponse.data.key)
 
   const onDocumentUploaded = (files, key) => {
@@ -37,7 +39,7 @@ export async function uploadFileNifi(
     const variables: AddImageMutationVariables = {
       input: {
         entityType: 'WORK_ORDER',
-        entityId:workOrderId,
+        entityId: workOrderId,
         imgKey: key,
         fileName: file.name,
         fileSize: file.size,
@@ -45,8 +47,8 @@ export async function uploadFileNifi(
         contentType: file.type,
       },
     };
+  
     
-    console.log(variables)
     const updater = store => {
       const newNode = store.getRootField('addImage');
       const workOrderProxy = store.get(workOrderId);

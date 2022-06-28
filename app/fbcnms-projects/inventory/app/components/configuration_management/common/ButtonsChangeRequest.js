@@ -78,7 +78,7 @@ const ButtonsChangeRequest = (props: Props) => {
       const fileId = shortid.generate();
 
       if (value == 'enrichment-data') {
-        uploadFileNifi(file, fileId);
+        uploadFileNifi(fileId,file);
       } else {
         const reader = new FileReader();
         reader.onload = function (e) {
