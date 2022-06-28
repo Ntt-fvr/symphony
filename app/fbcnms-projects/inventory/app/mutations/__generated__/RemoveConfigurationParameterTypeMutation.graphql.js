@@ -14,7 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type ConfigurationParameterTypeHasFilter = "booleanValue" | "category" | "externalId" | "floatValue" | "index" | "intValue" | "isDeleted" | "isEditable" | "isListable" | "isMandatory" | "isPrioritary" | "latitudeValue" | "longitudeValue" | "mappingIn" | "mappingOut" | "name" | "nodeType" | "parameters" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resourceSpecification" | "stringValue" | "tags" | "type" | "%future added value";
+export type ConfigurationParameterTypeHasFilter = "booleanValue" | "category" | "createTime" | "externalId" | "floatValue" | "index" | "intValue" | "isDeleted" | "isEditable" | "isListable" | "isMandatory" | "isPrioritary" | "latitudeValue" | "longitudeValue" | "mappingIn" | "mappingOut" | "name" | "nodeType" | "parameters" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resourceSpecification" | "stringValue" | "tags" | "type" | "updateTime" | "%future added value";
 export type ConfigurationParameterTypeFilter = {|
   and?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
   has?: ?$ReadOnlyArray<?ConfigurationParameterTypeHasFilter>,
