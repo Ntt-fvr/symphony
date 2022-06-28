@@ -14,6 +14,8 @@ import {render, screen} from '@testing-library/react';
 
 import GoToBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToBlockType';
 import GoToPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToPresentation';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
+import {setBlockSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
 describe('Suite Test Components /GoTo/: ', () => {
@@ -33,5 +35,19 @@ describe('Suite Test Components /GoTo/: ', () => {
     render(<TestComponent />);
     const text = screen.getByText(/goToBlock/i);
     expect(text).toBeInTheDocument();
+  });
+
+  it('AUT-FE-05046 Test setGoToSettings', () => {
+    const settings = {
+      goToType: null,
+      targetBlockCid: null,
+    };
+
+    const objectTest = setBlockSettings(TYPE, {
+      ...settings,
+      goToType: 'testParams',
+    });
+    expect(objectTest.goToType).toStrictEqual('testParams');
+    expect(objectTest.targetBlockCid).toStrictEqual(null);
   });
 });

@@ -12,8 +12,15 @@ import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
 
+import type {InvokeRestApiSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiSettings';
+
 import InvokeRestApiBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiBlockType';
 import InvokeRestApiPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiPresentation';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
+import {
+  getInitialBlockSettings,
+  setBlockSettings,
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
 describe('Suite Test Components /InvokeRestApi/: ', () => {
@@ -35,5 +42,19 @@ describe('Suite Test Components /InvokeRestApi/: ', () => {
     render(<TestComponent />);
     const text = screen.getByText(/actionBlock.invoke/i);
     expect(text).toBeInTheDocument();
+  });
+
+  test('AUT-FE-05047 Test setInvokeRestApiSettings', () => {
+    const objectTest: InvokeRestApiSettings = getInitialBlockSettings(TYPE);
+
+    expect(objectTest.body).toStrictEqual(null);
+    expect(objectTest.headers).toStrictEqual(null);
+
+    const setObjectTest: InvokeRestApiSettings = setBlockSettings(TYPE, {
+      ...objectTest,
+      body: 'testParams',
+    });
+    expect(setObjectTest.body).toStrictEqual('testParams');
+    expect(setObjectTest.headers).toStrictEqual(null);
   });
 });

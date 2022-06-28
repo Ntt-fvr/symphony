@@ -8,12 +8,19 @@
  * @format
  */
 
-import '@testing-library/jest-dom';
-import React, {useMemo} from 'react';
-import {render, screen} from '@testing-library/react';
+import type {EndSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndSettings';
 
+import '@testing-library/jest-dom';
 import DecisionPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndPresentation';
 import EndBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
+import React, {useMemo} from 'react';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/administrative/End';
+import {
+  getInitialBlockSettings,
+  setBlockSettings,
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
+import {render, screen} from '@testing-library/react';
+
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
 describe('Suite Test Components /End/: ', () => {
@@ -36,5 +43,16 @@ describe('Suite Test Components /End/: ', () => {
 
     const text = screen.getByText(/endblock/i);
     expect(text).toBeInTheDocument();
+  });
+
+  test('AUT-FE-05044 Test setEndSettings', () => {
+    const objectTest: EndSettings = getInitialBlockSettings(TYPE);
+
+    expect(objectTest.params).toStrictEqual(null);
+    const setObjectTest: EndSettings = setBlockSettings(TYPE, {
+      ...objectTest,
+      params: 'testParams',
+    });
+    expect(setObjectTest.params).toStrictEqual('testParams');
   });
 });

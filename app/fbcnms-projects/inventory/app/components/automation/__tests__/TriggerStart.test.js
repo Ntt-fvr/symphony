@@ -12,10 +12,16 @@ import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
 
+import type {TriggerStartSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartSettings';
+
 import TriggerStartBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartBlockType';
 import TriggerStartIconPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartPresentation';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
+import {
+  getInitialBlockSettings,
+  setBlockSettings,
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
-
 describe('Suite Test Components /TriggerStart/: ', () => {
   it('AUT-FE-05029 Render components <TriggerStartIconPresentation/>', () => {
     render(<TriggerStartIconPresentation />);
@@ -36,5 +42,16 @@ describe('Suite Test Components /TriggerStart/: ', () => {
 
     const text = screen.getByText(/triggerBlock.trigger_start/i);
     expect(text).toBeInTheDocument();
+  });
+
+  test('AUT-FE-05048 Test setTriggerStartSettings', () => {
+    const objectTest: TriggerStartSettings = getInitialBlockSettings(TYPE);
+
+    expect(objectTest.triggerStartSettings).toStrictEqual(null);
+    const setObjectTest: TriggerStartSettings = setBlockSettings(TYPE, {
+      ...objectTest,
+      triggerStartSettings: 'testParams',
+    });
+    expect(setObjectTest.triggerStartSettings).toStrictEqual('testParams');
   });
 });
