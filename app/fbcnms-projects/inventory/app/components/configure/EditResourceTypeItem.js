@@ -8,12 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
-import fbt from 'fbt';
-
-import {useFormInput} from '../assurance/common/useFormInput';
-
-import type {DataSelector} from './ResourceTypes';
+import type {DataSelectorsForm} from './ResourceTypes';
 import type {EditResourceTypeMutationVariables} from '../../mutations/__generated__/EditResourceTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
 
@@ -24,14 +19,18 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Divider from '@material-ui/core/Divider';
 import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
+import React, {useState} from 'react';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddEditResourceSpecification} from './AddEditResourceSpecification';
 import {Grid, MenuItem} from '@material-ui/core';
+import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
+import {useFormInput} from '../assurance/common/useFormInput';
 import {useValidationEdit} from '../assurance/common/useValidation';
 
 const useStyles = makeStyles(() => ({
@@ -100,6 +99,7 @@ export type ResourceSpecifications = {
   name: string,
   resourceType: {
     id: string,
+    resourceTypeClass: string,
   },
   resourcePropertyTypes: Array<PropertyType>,
 };
@@ -110,16 +110,17 @@ type Props = $ReadOnly<{|
     name: string,
     resourceType: {
       id: string,
+      resourceTypeClass: string,
     },
     resourceTypeBaseType: string,
     resourceTypeClass: string,
-    propertyTypes: Array<PropertyType>,
+    resourcePropertyTypes: Array<PropertyType>,
   },
   hideEditResourceTypeForm: void => void,
   isCompleted: void => void,
   resources: Array<Resource>,
   resourceSpecifications: ResourceSpecifications,
-  dataSelector: DataSelector,
+  dataSelectorsForm: DataSelectorsForm,
 |}>;
 
 export const EditResourceTypeItem = (props: Props) => {
@@ -129,7 +130,7 @@ export const EditResourceTypeItem = (props: Props) => {
     resources,
     isCompleted,
     resourceSpecifications,
-    dataSelector,
+    dataSelectorsForm,
   } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -204,8 +205,8 @@ export const EditResourceTypeItem = (props: Props) => {
     return (
       <AddEditResourceSpecification
         isCompleted={isCompleted}
-        dataForm={dataEdit.item}
-        formValues={dataEdit.item}
+        dataForm={dataEdit}
+        formValues={dataEdit}
         filterData={filterDataById}
         editMode={true}
         closeForm={() => setOpenFormEdit(false)}
@@ -275,9 +276,9 @@ export const EditResourceTypeItem = (props: Props) => {
                   name="resourceTypeClass"
                   fullWidth
                   {...resourceTypeClass}>
-                  {dataSelector.resourceTypeClass.map((item, index) => (
-                    <MenuItem key={index} value={item.name}>
-                      {item.name.toLowerCase()}
+                  {dataSelectorsForm.resourceTypeClass.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {startCase(camelCase(item))}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -294,9 +295,9 @@ export const EditResourceTypeItem = (props: Props) => {
                   type="string"
                   fullWidth
                   {...resourceTypeBaseType}>
-                  {dataSelector.resourceTypeBaseType.map((item, index) => (
-                    <MenuItem key={index} value={item.name}>
-                      {item.name.toLowerCase()}
+                  {dataSelectorsForm.resourceTypeBaseType.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {startCase(camelCase(item))}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -322,7 +323,7 @@ export const EditResourceTypeItem = (props: Props) => {
                   className={classes.buttonEdit}
                   disableRipple
                   style={{padding: '11px'}}
-                  onClick={() => showEditFormData({item})}>
+                  onClick={() => showEditFormData(item)}>
                   {item?.name}
                 </Button>
                 <Divider />

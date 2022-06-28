@@ -18,6 +18,7 @@ export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "
 export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
 export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
+export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
@@ -29,6 +30,7 @@ export type AddResourceInput = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
@@ -88,6 +90,7 @@ export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
@@ -110,40 +113,19 @@ export type ResourceRef = {|
   typePlanningSubStatus?: ?TypePlanningSubStatus,
   usageSubStatus?: ?UsageSubStatus,
 |};
-export type NumericPoolRef = {|
-  customLimit?: ?number,
-  description?: ?string,
-  id?: ?string,
-  isDeleted?: ?boolean,
-  limit?: ?number,
-  resources?: ?$ReadOnlyArray<ResourceRef>,
-  statusNumericPools?: ?$ReadOnlyArray<?StatusNumericPoolRef>,
-|};
-export type StatusNumericPoolRef = {|
-  id?: ?string,
-  numericPool?: ?NumericPoolRef,
-  status?: ?UsageSubStatus,
-  values?: ?$ReadOnlyArray<?number>,
-|};
-export type ResourcePropertyRef = {|
+export type ChangeItemRef = {|
   booleanValue?: ?boolean,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
+  parameterType?: ?ConfigurationParameterTypeRef,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  rawValue?: ?string,
   resource?: ?ResourceRef,
-  resourcePropertyType?: ?string,
+  status?: ?ChangeItemStatus,
   stringValue?: ?string,
-|};
-export type ActionTemplateItemRef = {|
-  actionTemplate?: ?ActionTemplateRef,
-  id?: ?string,
-  parameters?: ?ConfigurationParameterTypeRef,
-  value?: ?ParameterRef,
 |};
 export type ConfigurationParameterTypeRef = {|
   booleanValue?: ?boolean,
@@ -200,6 +182,41 @@ export type ConfigParamTagRef = {|
   id?: ?string,
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+|};
+export type NumericPoolRef = {|
+  customLimit?: ?number,
+  description?: ?string,
+  id?: ?string,
+  isDeleted?: ?boolean,
+  limit?: ?number,
+  resources?: ?$ReadOnlyArray<ResourceRef>,
+  statusNumericPools?: ?$ReadOnlyArray<?StatusNumericPoolRef>,
+|};
+export type StatusNumericPoolRef = {|
+  id?: ?string,
+  numericPool?: ?NumericPoolRef,
+  status?: ?UsageSubStatus,
+  values?: ?$ReadOnlyArray<?number>,
+|};
+export type ResourcePropertyRef = {|
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
+  id?: ?string,
+  intValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  rawValue?: ?string,
+  resource?: ?ResourceRef,
+  resourcePropertyType?: ?string,
+  stringValue?: ?string,
+|};
+export type ActionTemplateItemRef = {|
+  actionTemplate?: ?ActionTemplateRef,
+  id?: ?string,
+  parameters?: ?ConfigurationParameterTypeRef,
+  value?: ?ParameterRef,
 |};
 export type AddResourceMutationVariables = {|
   input: $ReadOnlyArray<AddResourceInput>
