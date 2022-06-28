@@ -33,7 +33,7 @@ import {makeStyles} from '@material-ui/styles';
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useMemo} from 'react';
 
-export const PROJECTS_PAGE_SIZE = 15;
+export const PROJECTS_PAGE_SIZE = 10;
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
@@ -56,94 +56,49 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ChangeRequestTypesQuery = graphql`
-  query ChangeRequestTypesQuery {
+  query ChangeRequestTypesQuery(
+    $filterBy: [ResourceSpecificationFilterInput!]
+  ) {
     queryChangeRequest {
-      activities {
-        author
-        id
-      }
-      description
-      aprobator
       id
-      requester
+      items {
+        id
+        resource {
+          id
+          resourceSpecification
+        }
+      }
       source
       status
-      type
+    }
+    resourceSpecifications(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          resourceType {
+            id
+            name
+          }
+        }
+      }
     }
   }
 `;
 
-const dataMock = [
-  {
-    id: '686876767',
-    key: '01',
-    creationDate: '01/03/22',
-    lastModificationDate: '01/03/22',
-    resourceType: 'RNCellDU01',
-    source: 'WORKFLOW',
-    affectedResources: '1',
-    status: 'SUCCESSFUL',
-  },
-  {
-    id: '686876768',
-    key: '02',
-    creationDate: '01/04/22',
-    lastModificationDate: '01/05/22',
-    resourceType: 'RNCellDU02',
-    source: 'MANUAL',
-    affectedResources: '6',
-    status: 'SCHEDULED',
-  },
-];
-
 const stringCapitalizeFisrt = string => {
   const convertString = string.toLowerCase();
-
   return convertString.charAt(0).toUpperCase() + convertString.slice(1);
 };
 
-const tableColumns = [
-  {
-    key: 'creation date',
-    title: 'Creation date',
-    render: row => row.creationDate ?? '01/03/22',
-    tooltip: row => row.creationDate ?? '01/03/22',
-  },
-  {
-    key: 'last modification date',
-    title: `${fbt('Last modification date', '')}`,
-    render: row => row.lastModificationDate ?? '01/05/22',
-    tooltip: row => row.lastModificationDate ?? '01/03/05',
-  },
-  {
-    key: 'resource type',
-    title: `${fbt('Resource type', '')}`,
-    render: row => row.resourceType ?? '',
-    tooltip: row => row.resourceType ?? '',
-  },
-  {
-    key: 'change source',
-    title: `${fbt('Change source', '')}`,
-    render: row => row.source ?? '',
-    tooltip: row => row.source ?? '',
-  },
-  {
-    key: 'affected resources',
-    title: `${fbt('Affected resources', '')}`,
-    render: row => <CircleIndicator>{row.affectedResources}</CircleIndicator>,
-    tooltip: row => row.affectedResources ?? '',
-  },
-  {
-    key: 'status',
-    title: `${fbt('Status', '')}`,
-    render: row => (
-      <ButtonAlarmStatus skin={row.status}>
-        {stringCapitalizeFisrt(row.status)}
-      </ButtonAlarmStatus>
-    ),
-    tooltip: row => row.status ?? '',
-  },
-];
+const countResources = items => {
+  const hash = {};
+  const itemsNotRepeated = items.filter(item =>
+    hash[item.resource.id] ? false : (hash[item.resource.id] = true),
+  );
+
+  return itemsNotRepeated.length;
+};
 
 export type Props = $ReadOnly<{||}>;
 
@@ -152,7 +107,8 @@ const ChangeRequestTypes = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const [dataRow, setDataRow] = useState({});
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
-  const [changeRequest, setChangeRequest] = useState(dataMock);
+  const [changeRequestInitial, setChangeRequestInitial] = useState([]);
+  const [changeRequest, setChangeRequest] = useState([]);
   const classes = useStyles();
 
   const locationTypesFilterConfigs = useLocationTypes();
@@ -173,11 +129,90 @@ const ChangeRequestTypes = () => {
     [locationTypesFilterConfigs, projectPropertiesFilterConfigs],
   );
 
-  // useEffect(() => {
-  //   fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {}).then(data => {
-  //     setChangeRequest(data.queryChangeRequest);
-  //   });
-  // }, []);
+  useEffect(() => {
+    dataListInitial();
+  }, []);
+
+  const dataListInitial = () => {
+    fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {
+      filterBy: [
+        {
+          filterType: 'ID',
+          operator: 'IS_ONE_OF',
+          idSet: [],
+        },
+      ],
+    }).then(data => {
+      const dataModify = data.queryChangeRequest.map(item => {
+        delete item.writable;
+        return {
+          ...item,
+        };
+      });
+      dataModify.forEach(item => {
+        delete item.writable;
+        fetchQuery(RelayEnvironment, ChangeRequestTypesQuery, {
+          filterBy: [
+            {
+              filterType: 'ID',
+              operator: 'IS_ONE_OF',
+              idSet: [item.items[0].resource.resourceSpecification],
+            },
+          ],
+        }).then(datas => {
+          item.type =
+            datas.resourceSpecifications.edges[0].node.resourceType.name;
+        });
+        setChangeRequestInitial(dataModify);
+        setChangeRequest(dataModify);
+      });
+    });
+  };
+
+  const tableColumns = [
+    {
+      key: 'creation date',
+      title: 'Creation date',
+      render: row => row.creationDate ?? '01/03/22',
+      tooltip: row => row.creationDate ?? '01/03/22',
+    },
+    {
+      key: 'last modification date',
+      title: `${fbt('Last modification date', '')}`,
+      render: row => row.lastModificationDate ?? '01/05/22',
+      tooltip: row => row.lastModificationDate ?? '01/03/05',
+    },
+    {
+      key: 'resource type',
+      title: `${fbt('Resource type', '')}`,
+      render: row => row.type ?? '',
+      tooltip: row => row.type ?? '',
+    },
+    {
+      key: 'change source',
+      title: `${fbt('Change source', '')}`,
+      render: row => row.source ?? '',
+      tooltip: row => row.source ?? '',
+    },
+    {
+      key: 'affected resources',
+      title: `${fbt('Affected resources', '')}`,
+      render: row => (
+        <CircleIndicator>{countResources(row.items)}</CircleIndicator>
+      ),
+      tooltip: row => countResources(row.items) ?? '',
+    },
+    {
+      key: 'status',
+      title: `${fbt('Status', '')}`,
+      render: row => (
+        <ButtonAlarmStatus skin={row.status}>
+          {stringCapitalizeFisrt(row.status)}
+        </ButtonAlarmStatus>
+      ),
+      tooltip: row => row.status ?? '',
+    },
+  ];
 
   const showInfo = data => {
     setDataRow(data);
@@ -210,11 +245,14 @@ const ChangeRequestTypes = () => {
       arrayFilters.push(data[filter.name]);
     });
 
-    const result = dataMock.filter(item => arrayFilters.every(f => f(item)));
+    const result = changeRequestInitial.filter(item =>
+      arrayFilters.every(f => f(item)),
+    );
 
     setChangeRequest(result);
     setFilters(filters);
   };
+
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -232,12 +270,12 @@ const ChangeRequestTypes = () => {
         <div className={classes.bar}>
           <div className={classes.searchBar}>
             <PowerSearchBar
-              placeholder="Configuration management"
+              placeholder="Filter"
               getSelectedFilter={filters => setFilters(filters)}
               filterConfigs={filterConfigs}
               filterValues={filters}
               searchConfig={ChangeRequestSearchConfig}
-              exportPath={'/configurations_types'}
+              exportPath={'/change_request_types'}
               entity={'CHANGE_REQUEST'}
               onFiltersChanged={filters => {
                 filterData(filters);

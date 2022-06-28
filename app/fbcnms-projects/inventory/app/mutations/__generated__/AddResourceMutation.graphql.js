@@ -18,6 +18,7 @@ export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "
 export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
 export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
+export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
@@ -29,6 +30,7 @@ export type AddResourceInput = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
@@ -88,6 +90,7 @@ export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
+  changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
@@ -110,40 +113,19 @@ export type ResourceRef = {|
   typePlanningSubStatus?: ?TypePlanningSubStatus,
   usageSubStatus?: ?UsageSubStatus,
 |};
-export type NumericPoolRef = {|
-  customLimit?: ?number,
-  description?: ?string,
-  id?: ?string,
-  isDeleted?: ?boolean,
-  limit?: ?number,
-  resources?: ?$ReadOnlyArray<ResourceRef>,
-  statusNumericPools?: ?$ReadOnlyArray<?StatusNumericPoolRef>,
-|};
-export type StatusNumericPoolRef = {|
-  id?: ?string,
-  numericPool?: ?NumericPoolRef,
-  status?: ?UsageSubStatus,
-  values?: ?$ReadOnlyArray<?number>,
-|};
-export type ResourcePropertyRef = {|
+export type ChangeItemRef = {|
   booleanValue?: ?boolean,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
+  parameterType?: ?ConfigurationParameterTypeRef,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  rawValue?: ?string,
   resource?: ?ResourceRef,
-  resourcePropertyType?: ?string,
+  status?: ?ChangeItemStatus,
   stringValue?: ?string,
-|};
-export type ActionTemplateItemRef = {|
-  actionTemplate?: ?ActionTemplateRef,
-  id?: ?string,
-  parameters?: ?ConfigurationParameterTypeRef,
-  value?: ?ParameterRef,
 |};
 export type ConfigurationParameterTypeRef = {|
   booleanValue?: ?boolean,
@@ -201,6 +183,41 @@ export type ConfigParamTagRef = {|
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
 |};
+export type NumericPoolRef = {|
+  customLimit?: ?number,
+  description?: ?string,
+  id?: ?string,
+  isDeleted?: ?boolean,
+  limit?: ?number,
+  resources?: ?$ReadOnlyArray<ResourceRef>,
+  statusNumericPools?: ?$ReadOnlyArray<?StatusNumericPoolRef>,
+|};
+export type StatusNumericPoolRef = {|
+  id?: ?string,
+  numericPool?: ?NumericPoolRef,
+  status?: ?UsageSubStatus,
+  values?: ?$ReadOnlyArray<?number>,
+|};
+export type ResourcePropertyRef = {|
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
+  id?: ?string,
+  intValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  rawValue?: ?string,
+  resource?: ?ResourceRef,
+  resourcePropertyType?: ?string,
+  stringValue?: ?string,
+|};
+export type ActionTemplateItemRef = {|
+  actionTemplate?: ?ActionTemplateRef,
+  id?: ?string,
+  parameters?: ?ConfigurationParameterTypeRef,
+  value?: ?ParameterRef,
+|};
 export type AddResourceMutationVariables = {|
   input: $ReadOnlyArray<AddResourceInput>
 |};
@@ -208,10 +225,17 @@ export type AddResourceMutationResponse = {|
   +addResource: ?{|
     +numUids: ?number,
     +resource: ?$ReadOnlyArray<?{|
-      +locatedIn: ?string,
+      +id: string,
       +name: string,
+      +externalId: ?string,
+      +locatedIn: ?string,
       +resourceSpecification: string,
       +isDeleted: boolean,
+      +lifecycleStatus: ?LifecycleStatus,
+      +planningSubStatus: ?PlanningSubStatus,
+      +typePlanningSubStatus: ?TypePlanningSubStatus,
+      +usageSubStatus: ?UsageSubStatus,
+      +operationalSubStatus: ?OperationalSubStatus,
     |}>,
   |}
 |};
@@ -229,11 +253,17 @@ mutation AddResourceMutation(
   addResource(input: $input) {
     numUids
     resource {
-      locatedIn
+      id
       name
+      externalId
+      locatedIn
       resourceSpecification
       isDeleted
-      id
+      lifecycleStatus
+      planningSubStatus
+      typePlanningSubStatus
+      usageSubStatus
+      operationalSubStatus
     }
   }
 }
@@ -249,81 +279,125 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
-  }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "numUids",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "locatedIn",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "resourceSpecification",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isDeleted",
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "AddResourceMutation",
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "AddResourcePayload",
+    "kind": "LinkedField",
+    "name": "addResource",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AddResourcePayload",
+        "args": null,
+        "kind": "ScalarField",
+        "name": "numUids",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Resource",
         "kind": "LinkedField",
-        "name": "addResource",
-        "plural": false,
+        "name": "resource",
+        "plural": true,
         "selections": [
-          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "Resource",
-            "kind": "LinkedField",
-            "name": "resource",
-            "plural": true,
-            "selections": [
-              (v3/*: any*/),
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v6/*: any*/)
-            ],
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "externalId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "locatedIn",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "resourceSpecification",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "isDeleted",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "lifecycleStatus",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "planningSubStatus",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "typePlanningSubStatus",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "usageSubStatus",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "operationalSubStatus",
             "storageKey": null
           }
         ],
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddResourceMutation",
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -332,54 +406,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddResourceMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AddResourcePayload",
-        "kind": "LinkedField",
-        "name": "addResource",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Resource",
-            "kind": "LinkedField",
-            "name": "resource",
-            "plural": true,
-            "selections": [
-              (v3/*: any*/),
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v6/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ad44a35aecd9d0bc019d4aa5aa5ae2c9",
+    "cacheID": "cd2e4d91336a814fe6cd60ccade8d351",
     "id": null,
     "metadata": {},
     "name": "AddResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      locatedIn\n      name\n      resourceSpecification\n      isDeleted\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'dc3617dde21af13d4d55fa51c7a11a3b';
+(node/*: any*/).hash = 'e38e20d634b635a273381f9445b38c76';
 
 module.exports = node;

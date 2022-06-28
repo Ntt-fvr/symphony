@@ -8,29 +8,22 @@
  * @format
  */
 
-import React, {useMemo, useState} from 'react';
-
-// COMPONENTS //
-import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMessage';
-
 import type {AddResourceTypeMutationVariables} from '../../mutations/__generated__/AddResourceTypeMutation.graphql';
+import type {DataSelectorsForm} from './ResourceTypes';
+import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
+import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
 
-// DESIGN SYSTEM //
+import AddResourceTypeMutation from '../../mutations/AddResourceTypeMutation';
+import AddedSuccessfullyMessage from './../assurance/common/AddedSuccessfullyMessage';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-
+import React, {useMemo, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
+import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
-
-import AddResourceTypeMutation from '../../mutations/AddResourceTypeMutation';
-
-import type {DataSelector} from './ResourceTypes';
-import type {ResourceTypeBaseTypeKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
-import type {ResourceTypeClassKind} from '../../components/configure/__generated__/ResourceTypesQuery.graphql';
-
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 
 const useStyles = makeStyles(theme => ({
@@ -93,7 +86,7 @@ type Node = {
 type Props = $ReadOnly<{|
   isCompleted: void => void,
   resourceNames?: Array<Node>,
-  dataSelector: DataSelector,
+  dataSelectorsForm: DataSelectorsForm,
 |}>;
 
 type Resources = {
@@ -105,7 +98,7 @@ type Resources = {
 };
 
 export default function AddResourceTypeForm(props: Props) {
-  const {isCompleted, resourceNames, dataSelector} = props;
+  const {isCompleted, resourceNames, dataSelectorsForm} = props;
   const classes = useStyles();
   const [resources, setResources] = useState<Resources>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
@@ -189,9 +182,9 @@ export default function AddResourceTypeForm(props: Props) {
           name="resourceTypeClass"
           variant="outlined"
           defaultValue="">
-          {dataSelector.resourceTypeClass.map((item, index) => (
-            <MenuItem key={index} value={item.name}>
-              {item.name.toLowerCase()}
+          {dataSelectorsForm?.resourceTypeClass?.map((item, index) => (
+            <MenuItem key={index} value={item}>
+              {startCase(camelCase(item))}
             </MenuItem>
           ))}
         </TextField>
@@ -205,9 +198,9 @@ export default function AddResourceTypeForm(props: Props) {
           name="resourceTypeBaseType"
           variant="outlined"
           defaultValue="">
-          {dataSelector.resourceTypeBaseType.map((item, index) => (
-            <MenuItem key={index} value={item.name}>
-              {item.name.toLowerCase()}
+          {dataSelectorsForm.resourceTypeBaseType.map((item, index) => (
+            <MenuItem key={index} value={item}>
+              {startCase(camelCase(item))}
             </MenuItem>
           ))}
         </TextField>

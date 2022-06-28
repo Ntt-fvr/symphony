@@ -26,32 +26,13 @@ export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added va
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
-export type AddConfigurationParameterTypeInput = {|
-  booleanValue?: ?boolean,
-  category?: ?string,
-  externalId?: ?string,
-  floatValue?: ?number,
-  index?: ?number,
-  intValue?: ?number,
-  isDeleted?: ?boolean,
-  isEditable?: ?boolean,
-  isListable?: ?boolean,
-  isMandatory?: ?boolean,
-  isPrioritary?: ?boolean,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  mappingIn?: ?string,
-  mappingOut?: ?string,
-  name: string,
-  nodeType?: ?string,
-  parameters?: ?$ReadOnlyArray<ParameterRef>,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
-  rawValue?: ?string,
-  resourceSpecification: string,
-  stringValue?: ?string,
-  tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
-  type: ParameterKind,
+export type AddCMVersionInput = {|
+  parameters: $ReadOnlyArray<ParameterRef>,
+  previous?: ?CMVersionRef,
+  resource: ResourceRef,
+  status: VersionStatus,
+  validFrom?: ?any,
+  validTo?: ?any,
 |};
 export type ParameterRef = {|
   booleanValue?: ?boolean,
@@ -219,68 +200,62 @@ export type ResourcePropertyRef = {|
   resourcePropertyType?: ?string,
   stringValue?: ?string,
 |};
-export type AddConfigurationParameterTypeMutationVariables = {|
-  input: $ReadOnlyArray<AddConfigurationParameterTypeInput>
+export type AddCMVersionMutationVariables = {|
+  input: $ReadOnlyArray<AddCMVersionInput>
 |};
-export type AddConfigurationParameterTypeMutationResponse = {|
-  +addConfigurationParameterType: ?{|
-    +configurationParameterType: ?$ReadOnlyArray<?{|
-      +booleanValue: ?boolean,
-      +category: ?string,
-      +externalId: ?string,
-      +floatValue: ?number,
+export type AddCMVersionMutationResponse = {|
+  +addCMVersion: ?{|
+    +cMVersion: ?$ReadOnlyArray<?{|
       +id: string,
-      +index: ?number,
-      +intValue: ?number,
-      +isDeleted: ?boolean,
-      +isEditable: ?boolean,
-      +isListable: ?boolean,
-      +isMandatory: ?boolean,
-      +isPrioritary: ?boolean,
-      +mappingIn: ?string,
-      +mappingOut: ?string,
-      +name: string,
-      +nodeType: ?string,
-      +rawValue: ?string,
-      +resourceSpecification: string,
-      +stringValue: ?string,
-      +type: ParameterKind,
+      +status: VersionStatus,
+      +resource: {|
+        +id: string,
+        +name: string,
+      |},
+      +parameters: $ReadOnlyArray<{|
+        +id: string,
+        +intValue: ?number,
+        +stringValue: ?string,
+        +booleanValue: ?boolean,
+        +floatValue: ?number,
+        +latitudeValue: ?number,
+        +longitudeValue: ?number,
+        +rangeFromValue: ?number,
+        +rangeToValue: ?number,
+      |}>,
     |}>
   |}
 |};
-export type AddConfigurationParameterTypeMutation = {|
-  variables: AddConfigurationParameterTypeMutationVariables,
-  response: AddConfigurationParameterTypeMutationResponse,
+export type AddCMVersionMutation = {|
+  variables: AddCMVersionMutationVariables,
+  response: AddCMVersionMutationResponse,
 |};
 */
 
 
 /*
-mutation AddConfigurationParameterTypeMutation(
-  $input: [AddConfigurationParameterTypeInput!]!
+mutation AddCMVersionMutation(
+  $input: [AddCMVersionInput!]!
 ) {
-  addConfigurationParameterType(input: $input) {
-    configurationParameterType {
-      booleanValue
-      category
-      externalId
-      floatValue
+  addCMVersion(input: $input) {
+    cMVersion {
       id
-      index
-      intValue
-      isDeleted
-      isEditable
-      isListable
-      isMandatory
-      isPrioritary
-      mappingIn
-      mappingOut
-      name
-      nodeType
-      rawValue
-      resourceSpecification
-      stringValue
-      type
+      status
+      resource {
+        id
+        name
+      }
+      parameters {
+        id
+        intValue
+        stringValue
+        booleanValue
+        floatValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+      }
     }
   }
 }
@@ -294,7 +269,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -304,157 +286,112 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "AddConfigurationParameterTypePayload",
+    "concreteType": "AddCMVersionPayload",
     "kind": "LinkedField",
-    "name": "addConfigurationParameterType",
+    "name": "addCMVersion",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ConfigurationParameterType",
+        "concreteType": "CMVersion",
         "kind": "LinkedField",
-        "name": "configurationParameterType",
+        "name": "cMVersion",
         "plural": true,
         "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "booleanValue",
+            "name": "status",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "category",
+            "concreteType": "Resource",
+            "kind": "LinkedField",
+            "name": "resource",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "externalId",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "floatValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "index",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "intValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "isDeleted",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "isEditable",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "isListable",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "isMandatory",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "isPrioritary",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "mappingIn",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "mappingOut",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "nodeType",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "rawValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "resourceSpecification",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "stringValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "type",
+            "concreteType": "Parameter",
+            "kind": "LinkedField",
+            "name": "parameters",
+            "plural": true,
+            "selections": [
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "intValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "stringValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "booleanValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "floatValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "latitudeValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "longitudeValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "rangeFromValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "rangeToValue",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -469,8 +406,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddConfigurationParameterTypeMutation",
-    "selections": (v1/*: any*/),
+    "name": "AddCMVersionMutation",
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -478,20 +415,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddConfigurationParameterTypeMutation",
-    "selections": (v1/*: any*/)
+    "name": "AddCMVersionMutation",
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "a9815c86c61afe970f1c43fab3fe143b",
+    "cacheID": "1ad5d4e3188949ebd0b6d5ce6cc2ae96",
     "id": null,
     "metadata": {},
-    "name": "AddConfigurationParameterTypeMutation",
+    "name": "AddCMVersionMutation",
     "operationKind": "mutation",
-    "text": "mutation AddConfigurationParameterTypeMutation(\n  $input: [AddConfigurationParameterTypeInput!]!\n) {\n  addConfigurationParameterType(input: $input) {\n    configurationParameterType {\n      booleanValue\n      category\n      externalId\n      floatValue\n      id\n      index\n      intValue\n      isDeleted\n      isEditable\n      isListable\n      isMandatory\n      isPrioritary\n      mappingIn\n      mappingOut\n      name\n      nodeType\n      rawValue\n      resourceSpecification\n      stringValue\n      type\n    }\n  }\n}\n"
+    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      status\n      resource {\n        id\n        name\n      }\n      parameters {\n        id\n        intValue\n        stringValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '2160194474728cc588e317a74bd7f109';
+(node/*: any*/).hash = '3aaf9d1eed54568a1ff1c08f8a1329e4';
 
 module.exports = node;

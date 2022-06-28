@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 
 // DESING SYSTEM //
 
@@ -23,6 +23,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
+import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -139,12 +140,16 @@ export default function ResourceTypeItem(props: Props) {
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Class: </span>
               <br />
-              <strong>{formValues.resourceTypeClass.toLowerCase()}</strong>
+              <strong>
+                {startCase(camelCase(formValues.resourceTypeClass))}
+              </strong>
             </Grid>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Resource type class:</span>
               <br />
-              <strong>{formValues.resourceTypeBaseType.toLowerCase()}</strong>
+              <strong>
+                {startCase(camelCase(formValues.resourceTypeBaseType))}
+              </strong>
             </Grid>
           </Grid>
         </AccordionDetails>
