@@ -7,7 +7,12 @@
  * @flow strict-local
  * @format
  */
+import type {
+  AddRequestChangeMutationResponse,
+  AddRequestChangeMutationVariables,
+} from '../../mutations/__generated__/AddRequestChangeMutation.graphql';
 
+import AddRequestChangeMutation from '../../mutations/AddRequestChangeMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -17,10 +22,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import React from 'react';
+import React, {useCallback} from 'react';
+import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import moment from 'moment';
+import {getGraphError} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
+import {useMainContext} from './../../components/MainContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -65,8 +75,108 @@ type Props = $ReadOnly<{|
   onClose: () => void,
 |}>;
 
+const TYPES = {
+  string: 'stringValue',
+  int: 'intValue',
+  float: 'floatValue',
+  enum: 'stringValue',
+};
+
+const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
+
 const DialogStatus = (props: Props) => {
-  const {onClose, name, onClick} = props;
+  const {
+    onClose,
+    name,
+    onClick,
+    description,
+    onChangeDescription,
+    parameters,
+    resource,
+    schedule,
+  } = props;
+  const enqueueSnackbar = useEnqueueSnackbar();
+  const {me} = useMainContext();
+
+  const _enqueueError = useCallback(
+    (message: string) => {
+      enqueueSnackbar(message, {
+        children: key => (
+          <SnackbarItem id={key} message={message} variant="error" />
+        ),
+      });
+    },
+    [enqueueSnackbar],
+  );
+
+  const handleOnClose = () => {
+    onChangeDescription('');
+    onClose();
+  };
+
+  const handleOnSave = () => {
+    const createdTime = moment(new Date()).format(DATE_FORMAT);
+    const variables: AddRequestChangeMutationVariables = {
+      input: [
+        {
+          description: description,
+          createTime: createdTime,
+          updateTime: createdTime,
+          items: parameters.map(param => {
+            return {
+              [TYPES[param.parameterType.type]]: param.newValue,
+              resource: {id: resource.id},
+              parameterType: {
+                id: param.parameterType.id,
+              },
+            };
+          }),
+          activities: [
+            {
+              activityType: 'CREATION_DATE',
+              author: me.user.id,
+              createTime: createdTime,
+            },
+            {
+              activityType: 'STATUS',
+              author: me.user.id,
+              createTime: createdTime,
+              oldValue: null,
+              newValue: 'SUBMITTED',
+            },
+          ],
+          type: 'MANUAL',
+          source: 'GUI',
+          status: 'SCHEDULED',
+          requester: me.user.id,
+          scheduler: {
+            time:
+              schedule.type === 'SCHEDULED_CHANGE'
+                ? moment(schedule.date).format(DATE_FORMAT)
+                : null,
+            weekDay: schedule.type === 'SCHEDULED_CHANGE' ? schedule.day : null,
+            type: schedule.type,
+          },
+        },
+      ],
+    };
+
+    const callbacks: MutationCallbacks<AddRequestChangeMutationResponse> = {
+      onCompleted: (response, errors) => {
+        if (errors && errors[0]) {
+          _enqueueError(errors[0].message);
+        } else {
+          // navigate to main page
+          onClick();
+        }
+      },
+      onError: (error: Error) => {
+        _enqueueError(getGraphError(error));
+      },
+    };
+
+    AddRequestChangeMutation(variables, callbacks);
+  };
 
   const classes = useStyles();
   return (
@@ -124,13 +234,14 @@ const DialogStatus = (props: Props) => {
           </Text>
         </Grid>
         <TextField
-          required
           fullWidth
           multiline
           rows={2}
           label="Description"
           variant="outlined"
           name="text_out"
+          onChange={e => onChangeDescription(e.target.value)}
+          value={description}
           className={classes.textarea}
           inputProps={{maxLength: 200}}
         />
@@ -141,11 +252,11 @@ const DialogStatus = (props: Props) => {
           className={classes.option}
           variant="outlined"
           color="primary"
-          onClick={onClose}>
+          onClick={handleOnClose}>
           Cancel
         </Button>
         <Button
-          onClick={onClick}
+          onClick={handleOnSave}
           className={classes.option}
           variant="contained"
           color="primary">

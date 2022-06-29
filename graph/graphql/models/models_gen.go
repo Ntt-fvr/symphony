@@ -169,6 +169,17 @@ type AddEventSeverityInput struct {
 	Name string `json:"name"`
 }
 
+type AddFilesInput struct {
+	ImgKey             string    `json:"imgKey"`
+	FileName           string    `json:"fileName"`
+	FileSize           int       `json:"fileSize"`
+	Modified           time.Time `json:"modified"`
+	ContentType        string    `json:"contentType"`
+	Category           *string   `json:"category"`
+	Annotation         *string   `json:"annotation"`
+	DocumentCategoryID *int      `json:"documentCategoryId"`
+}
+
 type AddFloorPlanInput struct {
 	Name             string         `json:"name"`
 	LocationID       int            `json:"locationID"`

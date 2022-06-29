@@ -1165,6 +1165,7 @@ type ComplexityRoot struct {
 		AddEquipmentPortType                     func(childComplexity int, input models.AddEquipmentPortTypeInput) int
 		AddEquipmentType                         func(childComplexity int, input models.AddEquipmentTypeInput) int
 		AddEventSeverity                         func(childComplexity int, input models.AddEventSeverityInput) int
+		AddFiles                                 func(childComplexity int, input models.AddFilesInput) int
 		AddFloorPlan                             func(childComplexity int, input models.AddFloorPlanInput) int
 		AddFlowDraft                             func(childComplexity int, input models.AddFlowDraftInput) int
 		AddFormula                               func(childComplexity int, input models.AddFormulaInput) int
@@ -2646,6 +2647,7 @@ type MutationResolver interface {
 	MoveEquipmentToPosition(ctx context.Context, parentEquipmentID *int, positionDefinitionID *int, equipmentID int) (*ent.EquipmentPosition, error)
 	AddComment(ctx context.Context, input models.CommentInput) (*ent.Comment, error)
 	AddImage(ctx context.Context, input models.AddImageInput) (*ent.File, error)
+	AddFiles(ctx context.Context, input models.AddFilesInput) (*ent.File, error)
 	AddHyperlink(ctx context.Context, input models.AddHyperlinkInput) (*ent.Hyperlink, error)
 	DeleteHyperlink(ctx context.Context, id int) (*ent.Hyperlink, error)
 	DeleteImage(ctx context.Context, entityType models.ImageEntity, entityID int, id int) (*ent.File, error)
@@ -7405,6 +7407,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddEventSeverity(childComplexity, args["input"].(models.AddEventSeverityInput)), true
+
+	case "Mutation.addFiles":
+		if e.complexity.Mutation.AddFiles == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addFiles_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddFiles(childComplexity, args["input"].(models.AddFilesInput)), true
 
 	case "Mutation.addFloorPlan":
 		if e.complexity.Mutation.AddFloorPlan == nil {
@@ -15796,6 +15810,17 @@ input AddImageInput {
   documentCategoryId: ID
 }
 
+input AddFilesInput {
+  imgKey: String!
+  fileName: String!
+  fileSize: Int!
+  modified: Time!
+  contentType: String!
+  category: String
+  annotation: String
+  documentCategoryId: ID
+}
+
 type Comment implements Node {
   id: ID!
   author: User!
@@ -23080,6 +23105,7 @@ type Mutation {
   ): EquipmentPosition!
   addComment(input: CommentInput!): Comment!
   addImage(input: AddImageInput!): File!
+  addFiles(input: AddFilesInput!): File!
   addHyperlink(input: AddHyperlinkInput!): Hyperlink!
   deleteHyperlink(id: ID!): Hyperlink!
   deleteImage(
@@ -25544,6 +25570,21 @@ func (ec *executionContext) field_Mutation_addEventSeverity_args(ctx context.Con
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddEventSeverityInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEventSeverityInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addFiles_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddFilesInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddFilesInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFilesInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -56060,6 +56101,48 @@ func (ec *executionContext) _Mutation_addImage(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddImage(rctx, args["input"].(models.AddImageInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.File)
+	fc.Result = res
+	return ec.marshalNFile2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFile(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addFiles(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addFiles_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddFiles(rctx, args["input"].(models.AddFilesInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -90110,6 +90193,82 @@ func (ec *executionContext) unmarshalInputAddEventSeverityInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddFilesInput(ctx context.Context, obj interface{}) (models.AddFilesInput, error) {
+	var it models.AddFilesInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "imgKey":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imgKey"))
+			it.ImgKey, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "fileName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileName"))
+			it.FileName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "fileSize":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileSize"))
+			it.FileSize, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "modified":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("modified"))
+			it.Modified, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "contentType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentType"))
+			it.ContentType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "category":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+			it.Category, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "annotation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("annotation"))
+			it.Annotation, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "documentCategoryId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentCategoryId"))
+			it.DocumentCategoryID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddFloorPlanInput(ctx context.Context, obj interface{}) (models.AddFloorPlanInput, error) {
 	var it models.AddFloorPlanInput
 	var asMap = obj.(map[string]interface{})
@@ -111538,6 +111697,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addFiles":
+			out.Values[i] = ec._Mutation_addFiles(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addHyperlink":
 			out.Values[i] = ec._Mutation_addHyperlink(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -120434,6 +120598,11 @@ func (ec *executionContext) unmarshalNAddEquipmentTypeInput2githubᚗcomᚋfaceb
 
 func (ec *executionContext) unmarshalNAddEventSeverityInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEventSeverityInput(ctx context.Context, v interface{}) (models.AddEventSeverityInput, error) {
 	res, err := ec.unmarshalInputAddEventSeverityInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddFilesInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFilesInput(ctx context.Context, v interface{}) (models.AddFilesInput, error) {
+	res, err := ec.unmarshalInputAddFilesInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -1,9 +1,11 @@
-directive @dgraph(
-  type: String
-  pred: String
-) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
 directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @auth(
   password: AuthRule
@@ -12,15 +14,6 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @lambdaOnMutate(
-  add: Boolean
-  update: Boolean
-  delete: Boolean
-) on OBJECT | INTERFACE
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @remoteResponse(name: String) on FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
@@ -32,6 +25,13 @@ directive @generate(
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -3574,7 +3574,6 @@ type Mutation {
   deleteParameter(filter: ParameterFilter!): DeleteParameterPayload
   addConfigurationParameterType(
     input: [AddConfigurationParameterTypeInput!]!
-    upsert: Boolean
   ): AddConfigurationParameterTypePayload
   updateConfigurationParameterType(
     input: UpdateConfigurationParameterTypeInput!
@@ -4455,10 +4454,7 @@ type Query {
     offset: Int
   ): [Parameter]
   aggregateParameter(filter: ParameterFilter): ParameterAggregateResult
-  getConfigurationParameterType(
-    id: ID
-    name: String
-  ): ConfigurationParameterType
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType
   queryConfigurationParameterType(
     filter: ConfigurationParameterTypeFilter
     order: ConfigurationParameterTypeOrder
@@ -7104,3 +7100,4 @@ enum WeekDay {
 input WithinFilter {
   polygon: PolygonRef!
 }
+

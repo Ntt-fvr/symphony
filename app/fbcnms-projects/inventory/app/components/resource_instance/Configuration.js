@@ -76,7 +76,7 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{||}>;
 
 const Configuration = (props: Props) => {
-  const {} = props;
+  const {cmVersion, resource} = props;
   const [filters, setFilters] = useState([]);
   const [checkedHidden, setCheckedHidden] = useState(true);
   const [isDialogInformation, setIsDialogInformation] = useState(false);
@@ -97,6 +97,8 @@ const Configuration = (props: Props) => {
   if (openSimpleChangeRequest) {
     return (
       <SimpleChangeRequest
+        cmVersion={cmVersion}
+        resource={resource}
         handleSimpleChangeRequest={handleSimpleChangeRequest}
       />
     );
