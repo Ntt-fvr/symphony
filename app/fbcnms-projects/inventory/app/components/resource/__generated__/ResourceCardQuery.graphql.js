@@ -31,7 +31,7 @@ export type ResourceCardQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
-    +isDelete: boolean,
+    +isDeleted: boolean,
     +resourceSpecification: string,
     +locatedIn: ?string,
   |}>,
@@ -70,7 +70,7 @@ query ResourceCardQuery(
   queryResource {
     id
     name
-    isDelete
+    isDeleted
     resourceSpecification
     locatedIn
   }
@@ -138,7 +138,7 @@ v4 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "isDelete",
+        "name": "isDeleted",
         "storageKey": null
       },
       {
@@ -260,16 +260,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "c46b9d5cbfbcc1e56e88a23ac3417752",
+    "cacheID": "754e461bc0375277c0db2a9f695baf03",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n) {\n  queryResource {\n    id\n    name\n    isDelete\n    resourceSpecification\n    locatedIn\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n) {\n  queryResource {\n    id\n    name\n    isDeleted\n    resourceSpecification\n    locatedIn\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f0643e0e08165b0768ef555245ad7b0b';
+(node/*: any*/).hash = '4a98ce9b6e901a71f171d9d4271569fb';
 
 module.exports = node;

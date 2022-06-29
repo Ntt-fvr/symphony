@@ -41,7 +41,7 @@ description: String
 limit: Int!
 customLimit: Int
 resources: [Resource!]!
-isDelete: Boolean!
+isDeleted: Boolean!
 statusNumericPools: [StatusNumericPool]
 }
 
@@ -52,11 +52,16 @@ status: UsageSubStatus
 values: [Int]
 }
 
-type Resource {
-  id: ID! 
+interface DefaultConfig {
+  id: ID!
+  createTime: DateTime
+  updateTime: DateTime
+}
+
+type Resource implements DefaultConfig{
   name: String! @id @search(by: [hash])
   available: Boolean
-  externalId: String
+  externalId: String @search(by: [hash])
   lifecycleStatus: LifecycleStatus
   typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
@@ -67,20 +72,20 @@ type Resource {
   locatedIn: String @search(by: [hash])
   #contains: String @search(by: [hash]) @hasInverse(field: locatedIn)
   physicalLink: Resource
-  physicalLinkInv: [Resource] @hasInverse(field: physicalLink)
-  logicalLink: Resource
-  logicalLinkInv: [Resource] @hasInverse(field: logicalLink)
+  physicalLinkInv: Resource @hasInverse(field: physicalLink)
+  logicalLinks: [Resource]
+  logicalLinkInv: [Resource] @hasInverse(field: logicalLinks)
   crossConnection: Resource
-  crossconnectionInv: [Resource] @hasInverse(field: crossConnection)
+  crossconnectionInv: Resource @hasInverse(field: crossConnection)
   resourceSpecification: String! @search(by: [hash])
   resourceProperties: [ResourceProperty]
-  isDelete: Boolean!
-  numericPool: [NumericPool]
+  isDeleted: Boolean!
+  numericPools: [NumericPool]
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
+  changeItems: [ChangeItem] @hasInverse(field: resource)
 }
-type ResourceProperty{
-  id: ID!
+type ResourceProperty implements DefaultConfig{
   stringValue: String @search(by: [term])
   intValue: Int
   booleanValue: Boolean
@@ -97,8 +102,7 @@ enum VersionStatus{
   CURRENT
   REPLACED
 }
-type CMVersion {
-  id: ID!
+type CMVersion implements DefaultConfig{
   parameters: [Parameter!]!
   previous: CMVersion
   validFrom: DateTime
@@ -106,11 +110,10 @@ type CMVersion {
   status: VersionStatus! @search(by: [hash])
   resource: Resource!
 }
-type Parameter {
-  id: ID!
+type Parameter implements DefaultConfig{
   parameterType: ConfigurationParameterType!
   previous: Parameter
-  versionCM: [CMVersion]!
+  versionCMs: [CMVersion]!
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -132,8 +135,7 @@ enum ParameterKind{
   gps_location
   datetime_local
 }
-type ConfigurationParameterType {
-  id: ID!
+type ConfigurationParameterType implements DefaultConfig{
   externalId: String
   name: String! @id
   type: ParameterKind!
@@ -158,10 +160,9 @@ type ConfigurationParameterType {
   mappingOut: String
   tags: [ConfigParamTag!]
   parameters: [Parameter!]
-  resourceSpecification: String! @id @search(by: [hash])
+  resourceSpecification: String! @search(by: [hash])
 }
-type ConfigParamTag{
-  id: ID!
+type ConfigParamTag implements DefaultConfig{
   name: String!
   parameters: [ConfigurationParameterType]
 }
@@ -172,8 +173,7 @@ enum ChangeItemStatus{
   SUCCESSFUL
   FAILED
 }
-type ChangeItem{
-  id: ID!
+type ChangeItem implements DefaultConfig{
   resource: Resource
   parameterType: ConfigurationParameterType! 
   stringValue: String
@@ -186,10 +186,7 @@ type ChangeItem{
   rangeToValue: Float
   status: ChangeItemStatus!
 }
-enum SchedulerConfigStatus {
-  APPROVED
-  REJECTED
-}
+
 enum RollbackPolicyConfig {
   APPROVED
   REJECTED
@@ -203,16 +200,20 @@ enum WeekDay {
   SATURDAY
   SUNDAY
 }
-type SchedulerConfig{
-  id: ID!
+enum TypeSchedulerConfig {
+  AS_SOON_AS_APPROVED
+  SCHEDULED_CHANGE
+}
+
+type SchedulerConfig implements DefaultConfig{
   name: String
-  weekDay: WeekDay!
+  weekDay: WeekDay
   time: DateTime
-  createTime: DateTime!
-  status: SchedulerConfigStatus!
+  type: TypeSchedulerConfig!
   changeRequest: ChangeRequest!
   rollbackPolicy: RollbackPolicyConfig
 }
+
 enum ChangeRequestType{
   MANUAL
   AUTOMATIC
@@ -234,8 +235,7 @@ enum ChangeRequestStatus{
   SUCCESSFUL_WITH_WARNINGS
   FAILED
 }
-type ChangeRequest{
-  id: ID!
+type ChangeRequest implements DefaultConfig{
   description: String!
   items: [ChangeItem!]!
   scheduler: SchedulerConfig
@@ -254,8 +254,7 @@ enum ChangeRequestActivityField {
   NAME
   DESCRIPTION
 }
-type ChangeRequestActivity{
-  id: ID!
+type ChangeRequestActivity implements DefaultConfig{
   author: String! @search(by: [hash])
   isCreate: Boolean!
   activityType: ChangeRequestActivityField!
@@ -263,7 +262,6 @@ type ChangeRequestActivity{
   # oldRelatedNode: Node
   oldValue: String
   newValue: String
-  createTime: DateTime!
   changeRequest: ChangeRequest!
 }
 
@@ -418,7 +416,8 @@ type RelatedEntity{
 }
 
 type ResourceReference {
-  id: String! @id
+  id: ID!
+  externalId: String @search(by: [hash])
   href: String
   name: String
 }
@@ -681,8 +680,8 @@ type ServiceReference {
 }
 
 type ResourceOrderIM{
-  id: String
-  reservationId: String
+  id: ID!
+  reservationId: String @search(by: [hash])
   lineId: String
   category: String
   description: String
@@ -704,19 +703,17 @@ enum ActionTemplateType {
   AUTOMATION_FLOW
   CONFIGURATION_PARAMETER
 }
-type ActionTemplate{
-  id:ID!
+type ActionTemplate implements DefaultConfig{
   name:String!
   type:ActionTemplateType!
   resourceSpecifications: String! @search(by: [hash])
-  actionTemplateItem:[ActionTemplateItem!]!
-  ActionExecution: [ActionExecution!]
+  actionTemplateItems:[ActionTemplateItem!]!
+  actionExecutions: [ActionExecution!]
 }
-type ActionTemplateItem{
-  id:ID!
+type ActionTemplateItem implements DefaultConfig{
   parameters:ConfigurationParameterType!
   value:Parameter!
-  actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItem)
+  actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItems)
 }
 enum ActionSchedulerType {
   MANUAL_EXECUTION
@@ -727,8 +724,7 @@ enum ActionSchedulerStatus {
   ACTIVED
   DEACTIVATED
 }
-type ActionScheduler{
-  id:ID!
+type ActionScheduler implements DefaultConfig{
   name:String!
   description:String!
   type:ActionSchedulerType!
@@ -746,15 +742,13 @@ enum ActionExecutionItemStatus {
   FAILED
 }
 
-type ActionExecutionItem {
-  id:ID!
+type ActionExecutionItem implements DefaultConfig{
   action: ActionExecution! @hasInverse(field: items)
   resources: [Resource]!
   status: ActionExecutionItemStatus
 }
 
-type ActionExecution {
-  id:ID!
+type ActionExecution implements DefaultConfig{
   scheduler:ActionScheduler
   template: ActionTemplate!
   items: [ActionExecutionItem]
