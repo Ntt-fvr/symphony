@@ -41,18 +41,15 @@ const days = [
   'SATURDAY',
   'SUNDAY',
 ];
-const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
 const CardChangeRequestSchedule = (props: Props) => {
   const {schedule, onSchedule} = props;
   const [dataSchedule, setDataSchedule] = useState(schedule);
   const [checkedHidden, setCheckedHidden] = useState();
 
-  console.log('card', dataSchedule, checkedHidden);
-
   dataSchedule?.type === 'AS_SOON_AS_APPROVED'
     ? () => setCheckedHidden(true)
-    : () => setCheckedHidden(false); //() => setCheckedHidden(checkedHidden)
+    : () => setCheckedHidden(false);
 
   return (
     <Grid container>
@@ -63,7 +60,6 @@ const CardChangeRequestSchedule = (props: Props) => {
           checked={
             dataSchedule?.type === 'AS_SOON_AS_APPROVED' && !checkedHidden
           }
-          // checked={checkedHidden}
           value="approved"
           control={<Radio color="primary" />}
           label="As soon as approved "
@@ -73,8 +69,6 @@ const CardChangeRequestSchedule = (props: Props) => {
           checked={
             dataSchedule?.type !== 'AS_SOON_AS_APPROVED' && !checkedHidden
           }
-          // checked={checkedHidden}
-          // () => setCheckedHidden(checkedHidden))
           value="approval"
           control={<Radio color="primary" />}
           label="Schedule with approval"
@@ -106,7 +100,6 @@ const CardChangeRequestSchedule = (props: Props) => {
                 }}
                 label="Day"
                 name="day"
-                // onChange={handleOnSelectDay}
                 value={
                   schedule?.type === 'SCHEDULED_CHANGE' && dataSchedule?.weekDay
                 }
@@ -122,7 +115,6 @@ const CardChangeRequestSchedule = (props: Props) => {
               <MuiPickersUtilsProvider utils={MomentUtils}>
                 <KeyboardTimePicker
                   keyboardIcon={<AccessTimeIcon />}
-                  // label="Masked timepicker"
                   placeholder={''}
                   mask="__:__ _M"
                   inputVariant="outlined"
@@ -130,7 +122,6 @@ const CardChangeRequestSchedule = (props: Props) => {
                     schedule?.type === 'SCHEDULED_CHANGE' &&
                     dataSchedule?.time.slice(0, schedule?.time.length - 1)
                   }
-                  // onChange={date => handleDateChange(date)}
                 />
               </MuiPickersUtilsProvider>
             </Grid>

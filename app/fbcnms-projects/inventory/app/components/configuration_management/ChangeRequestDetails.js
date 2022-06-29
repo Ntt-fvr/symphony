@@ -140,27 +140,27 @@ const ChangeRequestDetails = (props: Props) => {
     return convertString.charAt(0).toUpperCase() + convertString.slice(1);
   };
   const classes = useStyles();
-  const response = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
+  const dataChRq = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
     filter: {
       id: idChangeRequest,
     },
   });
 
-  const filterChangeRequest = response?.queryChangeRequest?.find(
+  const filterChangeRequest = dataChRq?.queryChangeRequest?.find(
     itemChRq => itemChRq?.id === idChangeRequest,
   );
 
   const rs = filterChangeRequest?.items.map(
     itemRS => itemRS?.parameterType?.resourceSpecification,
   );
-  const te = rs[0].toString();
+  const idRS = rs[0].toString();
 
-  const response2 = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
+  const dataQuery = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
     filterBy: [
       {
         filterType: 'ID',
         operator: 'IS_ONE_OF',
-        idSet: [te],
+        idSet: [idRS],
       },
     ],
     filter: {
@@ -168,21 +168,21 @@ const ChangeRequestDetails = (props: Props) => {
     },
   });
 
-  const CHRQ = response2?.queryChangeRequest?.find(
+  const changeRequest = dataQuery?.queryChangeRequest?.find(
     chRq => chRq?.id === idChangeRequest,
   );
 
-  const dateSchedule = CHRQ?.scheduler;
+  const dateSchedule = changeRequest?.scheduler;
 
   const [schedule, setSchedule] = useState(dateSchedule);
 
-  const RT = response2?.resourceSpecifications?.edges?.find(
-    chRq => chRq?.node?.id === te,
+  const resourceTypeFilter = dataQuery?.resourceSpecifications?.edges?.find(
+    chRq => chRq?.node?.id === idRS,
   );
-  console.log('RES2', response2, CHRQ);
-  const resourceType = useFormInput(RT.node.resourceType.name);
-  const changeSource = useFormInput(CHRQ.source);
-  const description = useFormInput(CHRQ.description);
+
+  const resourceType = useFormInput(resourceTypeFilter.node.resourceType.name);
+  const changeSource = useFormInput(changeRequest.source);
+  const description = useFormInput(changeRequest.description);
 
   return (
     <div>
@@ -207,8 +207,8 @@ const ChangeRequestDetails = (props: Props) => {
         <Grid style={{}}>
           <ButtonAlarmStatus
             className={classes.buttonStatus}
-            skin={CHRQ.status}>
-            Status: {stringCapitalizeFisrt(CHRQ.status)}
+            skin={changeRequest.status}>
+            Status: {stringCapitalizeFisrt(changeRequest.status)}
           </ButtonAlarmStatus>
         </Grid>
         <Grid container spacing={2}>
@@ -225,7 +225,7 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Id"
                       variant="outlined"
                       name="ID"
-                      value={CHRQ.id}
+                      value={changeRequest.id}
                       disabled
                     />
                   </Grid>
@@ -268,7 +268,7 @@ const ChangeRequestDetails = (props: Props) => {
               </FormField>
             </CardAccordion>
             <CardAccordion title={'Target parameters'}>
-              <TableResource valuesTable={CHRQ} />
+              <TableResource valuesTable={changeRequest} />
             </CardAccordion>
             <CardAccordion title={'Change request schedule'}>
               <CardChangeRequestSchedule
