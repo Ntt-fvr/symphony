@@ -8,10 +8,13 @@
  * @format
  */
 
+import type {EditScheduleChangeRequestMutationVariables} from '../../mutations/__generated__/EditScheduleChangeRequestMutation.graphql';
+
 import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
+import EditScheduleChangeRequestMutation from '../../mutations/EditScheduleChangeRequestMutation';
 import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
@@ -175,6 +178,7 @@ const ChangeRequestDetails = (props: Props) => {
   const dateSchedule = changeRequest?.scheduler;
 
   const [schedule, setSchedule] = useState(dateSchedule);
+  console.log('FRIST ', schedule, changeRequest);
 
   const resourceTypeFilter = dataQuery?.resourceSpecifications?.edges?.find(
     chRq => chRq?.node?.id === idRS,
@@ -183,6 +187,26 @@ const ChangeRequestDetails = (props: Props) => {
   const resourceType = useFormInput(resourceTypeFilter.node.resourceType.name);
   const changeSource = useFormInput(changeRequest.source);
   const description = useFormInput(changeRequest.description);
+
+  const editSchedule = () => {
+    const variables: EditScheduleChangeRequestMutationVariables = {
+      input: {
+        filter: {
+          id: changeRequest.id,
+        },
+        set: {
+          scheduler: {
+            time: schedule.time,
+            type: schedule.type,
+            weekDay: schedule.weekDay,
+          },
+        },
+      },
+    };
+    EditScheduleChangeRequestMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
+  };
 
   return (
     <div>
@@ -199,7 +223,10 @@ const ChangeRequestDetails = (props: Props) => {
               variant="outlined">
               Cancel
             </ButtonSaveDelete>
-            <ButtonSaveDelete onClick={() => setOpenDetails()}>
+            <ButtonSaveDelete
+              onClick={() => {
+                setOpenDetails(), editSchedule();
+              }}>
               Save
             </ButtonSaveDelete>
           </Grid>
@@ -272,7 +299,7 @@ const ChangeRequestDetails = (props: Props) => {
             </CardAccordion>
             <CardAccordion title={'Change request schedule'}>
               <CardChangeRequestSchedule
-                onSchedule={setSchedule}
+                setSchedule={setSchedule}
                 schedule={schedule}
               />
             </CardAccordion>

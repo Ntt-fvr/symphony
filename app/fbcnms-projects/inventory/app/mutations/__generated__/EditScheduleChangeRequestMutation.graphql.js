@@ -20,6 +20,7 @@ export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "P
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
 export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type ChangeRequestActivityField = "CREATION_DATE" | "DESCRIPTION" | "NAME" | "PRIORITY" | "REQUESTER" | "STATUS" | "%future added value";
+export type ChangeRequestHasFilter = "activities" | "aprobator" | "createTime" | "description" | "items" | "requester" | "scheduler" | "source" | "status" | "type" | "updateTime" | "%future added value";
 export type ChangeRequestSource = "GUI" | "NON_RT_RIC" | "NSSMF" | "WORKFLOW" | "%future added value";
 export type ChangeRequestStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING_APPROVAL" | "REJECTED" | "SCHEDULED" | "SUBMITTED" | "SUCCESSFUL" | "SUCCESSFUL_WITH_WARNINGS" | "%future added value";
 export type ChangeRequestType = "AUTOMATIC" | "MANUAL" | "%future added value";
@@ -33,16 +34,34 @@ export type TypeSchedulerConfig = "AS_SOON_AS_APPROVED" | "SCHEDULED_CHANGE" | "
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type WeekDay = "FRIDAY" | "MONDAY" | "SATURDAY" | "SUNDAY" | "THURSDAY" | "TUESDAY" | "WEDNESDAY" | "%future added value";
-export type AddChangeRequestInput = {|
+export type UpdateChangeRequestInput = {|
+  filter: ChangeRequestFilter,
+  remove?: ?ChangeRequestPatch,
+  set?: ?ChangeRequestPatch,
+|};
+export type ChangeRequestFilter = {|
+  and?: ?$ReadOnlyArray<?ChangeRequestFilter>,
+  aprobator?: ?StringHashFilter,
+  has?: ?$ReadOnlyArray<?ChangeRequestHasFilter>,
+  id?: ?$ReadOnlyArray<string>,
+  not?: ?ChangeRequestFilter,
+  or?: ?$ReadOnlyArray<?ChangeRequestFilter>,
+  requester?: ?StringHashFilter,
+|};
+export type StringHashFilter = {|
+  eq?: ?string,
+  in?: ?$ReadOnlyArray<?string>,
+|};
+export type ChangeRequestPatch = {|
   activities?: ?$ReadOnlyArray<?ChangeRequestActivityRef>,
   aprobator?: ?string,
   createTime?: ?any,
-  description: string,
-  items: $ReadOnlyArray<ChangeItemRef>,
-  requester: string,
+  description?: ?string,
+  items?: ?$ReadOnlyArray<ChangeItemRef>,
+  requester?: ?string,
   scheduler?: ?SchedulerConfigRef,
   source?: ?ChangeRequestSource,
-  status: ChangeRequestStatus,
+  status?: ?ChangeRequestStatus,
   type?: ?ChangeRequestType,
   updateTime?: ?any,
 |};
@@ -272,32 +291,41 @@ export type SchedulerConfigRef = {|
   updateTime?: ?any,
   weekDay?: ?WeekDay,
 |};
-export type AddRequestChangeMutationVariables = {|
-  input: $ReadOnlyArray<AddChangeRequestInput>
+export type EditScheduleChangeRequestMutationVariables = {|
+  input: UpdateChangeRequestInput
 |};
-export type AddRequestChangeMutationResponse = {|
-  +addChangeRequest: ?{|
+export type EditScheduleChangeRequestMutationResponse = {|
+  +updateChangeRequest: ?{|
     +changeRequest: ?$ReadOnlyArray<?{|
       +id: string,
-      +description: string,
+      +scheduler: ?{|
+        +time: ?any,
+        +type: TypeSchedulerConfig,
+        +weekDay: ?WeekDay,
+      |},
     |}>
   |}
 |};
-export type AddRequestChangeMutation = {|
-  variables: AddRequestChangeMutationVariables,
-  response: AddRequestChangeMutationResponse,
+export type EditScheduleChangeRequestMutation = {|
+  variables: EditScheduleChangeRequestMutationVariables,
+  response: EditScheduleChangeRequestMutationResponse,
 |};
 */
 
 
 /*
-mutation AddRequestChangeMutation(
-  $input: [AddChangeRequestInput!]!
+mutation EditScheduleChangeRequestMutation(
+  $input: UpdateChangeRequestInput!
 ) {
-  addChangeRequest(input: $input) {
+  updateChangeRequest(input: $input) {
     changeRequest {
       id
-      description
+      scheduler {
+        time
+        type
+        weekDay
+        id
+      }
     }
   }
 }
@@ -313,55 +341,84 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "AddChangeRequestPayload",
-    "kind": "LinkedField",
-    "name": "addChangeRequest",
-    "plural": false,
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
+  }
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "time",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "weekDay",
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EditScheduleChangeRequestMutation",
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "concreteType": "ChangeRequest",
+        "args": (v1/*: any*/),
+        "concreteType": "UpdateChangeRequestPayload",
         "kind": "LinkedField",
-        "name": "changeRequest",
-        "plural": true,
+        "name": "updateChangeRequest",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "description",
+            "concreteType": "ChangeRequest",
+            "kind": "LinkedField",
+            "name": "changeRequest",
+            "plural": true,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "SchedulerConfig",
+                "kind": "LinkedField",
+                "name": "scheduler",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "AddRequestChangeMutation",
-    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -369,20 +426,59 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddRequestChangeMutation",
-    "selections": (v1/*: any*/)
+    "name": "EditScheduleChangeRequestMutation",
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "UpdateChangeRequestPayload",
+        "kind": "LinkedField",
+        "name": "updateChangeRequest",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ChangeRequest",
+            "kind": "LinkedField",
+            "name": "changeRequest",
+            "plural": true,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "SchedulerConfig",
+                "kind": "LinkedField",
+                "name": "scheduler",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "ff344eaec19392cb0deef43974a9cb6f",
+    "cacheID": "bfef0bf9e1198c98e09457acc538a6d9",
     "id": null,
     "metadata": {},
-    "name": "AddRequestChangeMutation",
+    "name": "EditScheduleChangeRequestMutation",
     "operationKind": "mutation",
-    "text": "mutation AddRequestChangeMutation(\n  $input: [AddChangeRequestInput!]!\n) {\n  addChangeRequest(input: $input) {\n    changeRequest {\n      id\n      description\n    }\n  }\n}\n"
+    "text": "mutation EditScheduleChangeRequestMutation(\n  $input: UpdateChangeRequestInput!\n) {\n  updateChangeRequest(input: $input) {\n    changeRequest {\n      id\n      scheduler {\n        time\n        type\n        weekDay\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f41bc3daec9c35b960675b826e8929f2';
+(node/*: any*/).hash = 'c71f4b080b62ff11fc4d476a1c63fbbe';
 
 module.exports = node;
