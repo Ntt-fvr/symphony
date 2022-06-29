@@ -30,37 +30,29 @@ export type StringHashFilter = {|
   eq?: ?string,
   in?: ?$ReadOnlyArray<?string>,
 |};
-export type ModalSteperQueryVariables = {|
+export type DialogStatusBulkQueryVariables = {|
   filter?: ?ResourceFilter
 |};
-export type ModalSteperQueryResponse = {|
+export type DialogStatusBulkQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
-    +logicalLinks: ?$ReadOnlyArray<?{|
-      +id: string,
-      +name: string,
-    |}>,
   |}>
 |};
-export type ModalSteperQuery = {|
-  variables: ModalSteperQueryVariables,
-  response: ModalSteperQueryResponse,
+export type DialogStatusBulkQuery = {|
+  variables: DialogStatusBulkQueryVariables,
+  response: DialogStatusBulkQueryResponse,
 |};
 */
 
 
 /*
-query ModalSteperQuery(
+query DialogStatusBulkQuery(
   $filter: ResourceFilter
 ) {
   queryResource(filter: $filter) {
     id
     name
-    logicalLinks {
-      id
-      name
-    }
   }
 }
 */
@@ -73,21 +65,7 @@ var v0 = [
     "name": "filter"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v3 = [
+v1 = [
   {
     "alias": null,
     "args": [
@@ -102,19 +80,18 @@ v3 = [
     "name": "queryResource",
     "plural": true,
     "selections": [
-      (v1/*: any*/),
-      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "Resource",
-        "kind": "LinkedField",
-        "name": "logicalLinks",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          (v2/*: any*/)
-        ],
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
         "storageKey": null
       }
     ],
@@ -126,8 +103,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ModalSteperQuery",
-    "selections": (v3/*: any*/),
+    "name": "DialogStatusBulkQuery",
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -135,20 +112,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ModalSteperQuery",
-    "selections": (v3/*: any*/)
+    "name": "DialogStatusBulkQuery",
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "91039da7a7cdf62fb4463540b9f17703",
+    "cacheID": "d4cdfc2e5cf7a40304536f5aedde6674",
     "id": null,
     "metadata": {},
-    "name": "ModalSteperQuery",
+    "name": "DialogStatusBulkQuery",
     "operationKind": "query",
-    "text": "query ModalSteperQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    logicalLinks {\n      id\n      name\n    }\n  }\n}\n"
+    "text": "query DialogStatusBulkQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7ae9174c6b095d876c5dbe3876c25023';
+(node/*: any*/).hash = 'dbb7711db27be40eb16d565d62f6f226';
 
 module.exports = node;

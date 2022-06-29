@@ -22,7 +22,6 @@ import {ChangeRequestByBulk} from './ChangeRequestByBulk';
 import {ChangeRequestDetails} from './ChangeRequestDetails';
 import {ChangeRequestSearchConfig} from './ChangeRequestSearchConfig';
 import {CircleIndicator} from '../resource_instance/CircleIndicator';
-import {ConstructionOutlined} from '@material-ui/icons';
 import {Grid} from '@material-ui/core';
 import {
   buildPropertyFilterConfigs,
@@ -30,7 +29,6 @@ import {
 } from '../comparison_view/FilterUtils';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useMemo} from 'react';
 
 export const PROJECTS_PAGE_SIZE = 10;
@@ -105,10 +103,12 @@ export type Props = $ReadOnly<{||}>;
 const ChangeRequestTypes = () => {
   const [filters, setFilters] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
-  const [dataRow, setDataRow] = useState({});
+  const [dataIdChangeRequest, setDataIdChangeRequest] = useState('');
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
   const [changeRequestInitial, setChangeRequestInitial] = useState([]);
   const [changeRequest, setChangeRequest] = useState([]);
+  const [infoCSV, setinfoCSV] = useState([]);
+  const [nameFile, setNameFile] = useState('');
   const classes = useStyles();
 
   const locationTypesFilterConfigs = useLocationTypes();
@@ -215,23 +215,30 @@ const ChangeRequestTypes = () => {
   ];
 
   const showInfo = data => {
-    setDataRow(data);
+    setDataIdChangeRequest(data);
   };
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
-  const bulk = () => {
+  const bulk = (infoCSV, nameFile) => {
     setOpenBulkRequest(prevStateBulk => !prevStateBulk);
+    setinfoCSV(infoCSV);
+    setNameFile(nameFile);
   };
   if (openDetails) {
     return (
-      <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails} />
+      <ChangeRequestDetails
+        idChangeRequest={dataIdChangeRequest}
+        setOpenDetails={setOpenDetails}
+      />
     );
   }
   if (openBulkRequest) {
     return (
       <ChangeRequestByBulk
         onClick={() => setOpenBulkRequest(prevStateBulk => !prevStateBulk)}
+        infoCSV={infoCSV}
+        nameFile={nameFile}
       />
     );
   }
@@ -253,7 +260,6 @@ const ChangeRequestTypes = () => {
     setFilters(filters);
   };
 
-
   return (
     <Grid className={classes.root} container spacing={0}>
       <Grid className={classes.titleCounter} item xs={12}>
@@ -271,7 +277,6 @@ const ChangeRequestTypes = () => {
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Filter"
-              getSelectedFilter={filters => setFilters(filters)}
               filterConfigs={filterConfigs}
               filterValues={filters}
               searchConfig={ChangeRequestSearchConfig}
@@ -299,7 +304,7 @@ const ChangeRequestTypes = () => {
                 <Button
                   onClick={() => {
                     handleOpenDetails();
-                    showInfo(row);
+                    showInfo(row.id);
                   }}
                   variant="text"
                   tooltip={row.id ?? ''}>

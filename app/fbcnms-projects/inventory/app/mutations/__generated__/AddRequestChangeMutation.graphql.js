@@ -28,14 +28,15 @@ export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added va
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type RollbackPolicyConfig = "APPROVED" | "REJECTED" | "%future added value";
-export type SchedulerConfigStatus = "APPROVED" | "REJECTED" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
+export type TypeSchedulerConfig = "AS_SOON_AS_APPROVED" | "SCHEDULED_CHANGE" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type WeekDay = "FRIDAY" | "MONDAY" | "SATURDAY" | "SUNDAY" | "THURSDAY" | "TUESDAY" | "WEDNESDAY" | "%future added value";
 export type AddChangeRequestInput = {|
   activities?: ?$ReadOnlyArray<?ChangeRequestActivityRef>,
   aprobator?: ?string,
+  createTime?: ?any,
   description: string,
   items: $ReadOnlyArray<ChangeItemRef>,
   requester: string,
@@ -43,6 +44,7 @@ export type AddChangeRequestInput = {|
   source?: ?ChangeRequestSource,
   status: ChangeRequestStatus,
   type?: ?ChangeRequestType,
+  updateTime?: ?any,
 |};
 export type ChangeRequestActivityRef = {|
   activityType?: ?ChangeRequestActivityField,
@@ -53,10 +55,12 @@ export type ChangeRequestActivityRef = {|
   isCreate?: ?boolean,
   newValue?: ?string,
   oldValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ChangeRequestRef = {|
   activities?: ?$ReadOnlyArray<?ChangeRequestActivityRef>,
   aprobator?: ?string,
+  createTime?: ?any,
   description?: ?string,
   id?: ?string,
   items?: ?$ReadOnlyArray<ChangeItemRef>,
@@ -65,9 +69,11 @@ export type ChangeRequestRef = {|
   source?: ?ChangeRequestSource,
   status?: ?ChangeRequestStatus,
   type?: ?ChangeRequestType,
+  updateTime?: ?any,
 |};
 export type ChangeItemRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -79,10 +85,12 @@ export type ChangeItemRef = {|
   resource?: ?ResourceRef,
   status?: ?ChangeItemStatus,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ConfigurationParameterTypeRef = {|
   booleanValue?: ?boolean,
   category?: ?string,
+  createTime?: ?any,
   externalId?: ?string,
   floatValue?: ?number,
   id?: ?string,
@@ -107,9 +115,11 @@ export type ConfigurationParameterTypeRef = {|
   stringValue?: ?string,
   tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
   type?: ?ParameterKind,
+  updateTime?: ?any,
 |};
 export type ParameterRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -120,14 +130,17 @@ export type ParameterRef = {|
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   stringValue?: ?string,
+  updateTime?: ?any,
   versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
 |};
 export type CMVersionRef = {|
+  createTime?: ?any,
   id?: ?string,
   parameters?: ?$ReadOnlyArray<ParameterRef>,
   previous?: ?CMVersionRef,
   resource?: ?ResourceRef,
   status?: ?VersionStatus,
+  updateTime?: ?any,
   validFrom?: ?any,
   validTo?: ?any,
 |};
@@ -137,6 +150,7 @@ export type ResourceRef = {|
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
+  createTime?: ?any,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
@@ -156,11 +170,13 @@ export type ResourceRef = {|
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
+  updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
 export type ActionSchedulerRef = {|
   actionTemplate?: ?ActionTemplateRef,
   actions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  createTime?: ?any,
   cron?: ?string,
   date?: ?any,
   description?: ?string,
@@ -169,33 +185,42 @@ export type ActionSchedulerRef = {|
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
+  updateTime?: ?any,
 |};
 export type ActionTemplateRef = {|
   actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
   actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
+  createTime?: ?any,
   id?: ?string,
   name?: ?string,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
+  updateTime?: ?any,
 |};
 export type ActionExecutionRef = {|
+  createTime?: ?any,
   endTime?: ?any,
   id?: ?string,
   items?: ?$ReadOnlyArray<?ActionExecutionItemRef>,
   scheduler?: ?ActionSchedulerRef,
   starTime?: ?any,
   template?: ?ActionTemplateRef,
+  updateTime?: ?any,
 |};
 export type ActionExecutionItemRef = {|
   action?: ?ActionExecutionRef,
+  createTime?: ?any,
   id?: ?string,
   resources?: ?$ReadOnlyArray<?ResourceRef>,
   status?: ?ActionExecutionItemStatus,
+  updateTime?: ?any,
 |};
 export type ActionTemplateItemRef = {|
   actionTemplate?: ?ActionTemplateRef,
+  createTime?: ?any,
   id?: ?string,
   parameters?: ?ConfigurationParameterTypeRef,
+  updateTime?: ?any,
   value?: ?ParameterRef,
 |};
 export type NumericPoolRef = {|
@@ -215,6 +240,7 @@ export type StatusNumericPoolRef = {|
 |};
 export type ResourcePropertyRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -226,11 +252,14 @@ export type ResourcePropertyRef = {|
   resource?: ?ResourceRef,
   resourcePropertyType?: ?string,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ConfigParamTagRef = {|
+  createTime?: ?any,
   id?: ?string,
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+  updateTime?: ?any,
 |};
 export type SchedulerConfigRef = {|
   changeRequest?: ?ChangeRequestRef,
@@ -238,8 +267,9 @@ export type SchedulerConfigRef = {|
   id?: ?string,
   name?: ?string,
   rollbackPolicy?: ?RollbackPolicyConfig,
-  status?: ?SchedulerConfigStatus,
   time?: ?any,
+  type?: ?TypeSchedulerConfig,
+  updateTime?: ?any,
   weekDay?: ?WeekDay,
 |};
 export type AddRequestChangeMutationVariables = {|
