@@ -25,11 +25,11 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 export type Props = $ReadOnly<{|
   schedule?: any,
-  onSchedule?: any,
+  setSchedule?: () => void,
 |}>;
 
 const days = [
@@ -42,41 +42,82 @@ const days = [
   'SUNDAY',
 ];
 
-const CardChangeRequestSchedule = (props: Props) => {
-  const {schedule, onSchedule} = props;
-  const [dataSchedule, setDataSchedule] = useState(schedule);
-  const [checkedHidden, setCheckedHidden] = useState();
+const TYPE_SCHEDULE = {
+  AS_SOON_AS_APROVED: 'AS_SOON_AS_APPROVED',
+  SCHEDULE_CHANGE: 'SCHEDULED_CHANGE',
+};
+const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss[Z]';
 
-  dataSchedule?.type === 'AS_SOON_AS_APPROVED'
-    ? () => setCheckedHidden(true)
-    : () => setCheckedHidden(false);
+const CardChangeRequestSchedule = (props: Props) => {
+  const {schedule, setSchedule} = props;
+  const [dataSchedule, setDataSchedule] = useState(schedule);
+  const [checkedHidden, setCheckedHidden] = useState({
+    asSoonAsAproved: false,
+    scheduleChange: true,
+  });
+
+  useEffect(() => {
+    dataSchedule?.type == TYPE_SCHEDULE.AS_SOON_AS_APROVED
+      ? setCheckedHidden({
+          asSoonAsAproved: true,
+          scheduleChange: false,
+        })
+      : checkedHidden;
+  }, [dataSchedule?.type]);
+
+  const handleChangeSchedule = () => {
+    setDataSchedule({
+      ...dataSchedule,
+      type: TYPE_SCHEDULE.SCHEDULE_CHANGE,
+    });
+    setCheckedHidden({
+      asSoonAsAproved: false,
+      scheduleChange: true,
+    });
+    console.log(dataSchedule, {...checkedHidden});
+  };
+  const handleChangeAproved = () => {
+    setDataSchedule({
+      ...dataSchedule,
+      type: TYPE_SCHEDULE.AS_SOON_AS_APROVED,
+    });
+    setCheckedHidden({
+      asSoonAsAproved: true,
+      scheduleChange: false,
+    });
+  };
+  const handleDateChange = date => {
+    const timeUp = moment(date).format(DATE_FORMAT);
+    setSchedule({...schedule, time: timeUp});
+    setDataSchedule({...dataSchedule, time: timeUp});
+  };
+
+  const handleOnSelectDay = e => {
+    setSchedule({...schedule, weekDay: e.target.value});
+    setDataSchedule({...dataSchedule, weekDay: e.target.value});
+  };
 
   return (
     <Grid container>
       <Grid item xs={12}>
         <FormControlLabel
           style={{padding: '0 0 0 40px'}}
-          onChange={() => setCheckedHidden(!checkedHidden)}
-          checked={
-            dataSchedule?.type === 'AS_SOON_AS_APPROVED' && !checkedHidden
-          }
+          onChange={handleChangeAproved}
+          checked={checkedHidden.asSoonAsAproved}
           value="approved"
           control={<Radio color="primary" />}
           label="As soon as approved "
         />
         <FormControlLabel
-          onChange={() => setCheckedHidden(!checkedHidden)}
-          checked={
-            dataSchedule?.type !== 'AS_SOON_AS_APPROVED' && !checkedHidden
-          }
+          onChange={handleChangeSchedule}
+          checked={checkedHidden.scheduleChange}
           value="approval"
           control={<Radio color="primary" />}
           label="Schedule with approval"
         />
         <Divider />
       </Grid>
-      <Hidden
-        xsUp={dataSchedule?.type === 'AS_SOON_AS_APPROVED' && !checkedHidden}>
+      <Hidden xsUp={!checkedHidden.scheduleChange}>
         <Grid style={{margin: '0 0 20px 0'}} item xs={12}>
           <Text
             style={{padding: '33px 0 0 40px'}}
@@ -100,8 +141,10 @@ const CardChangeRequestSchedule = (props: Props) => {
                 }}
                 label="Day"
                 name="day"
+                onChange={handleOnSelectDay}
                 value={
-                  schedule?.type === 'SCHEDULED_CHANGE' && dataSchedule?.weekDay
+                  dataSchedule?.type === 'SCHEDULED_CHANGE' &&
+                  dataSchedule?.weekDay
                 }
                 variant="outlined">
                 {days.map((item, index) => (
@@ -119,9 +162,10 @@ const CardChangeRequestSchedule = (props: Props) => {
                   mask="__:__ _M"
                   inputVariant="outlined"
                   value={
-                    schedule?.type === 'SCHEDULED_CHANGE' &&
-                    dataSchedule?.time.slice(0, schedule?.time.length - 1)
+                    dataSchedule?.type === 'SCHEDULED_CHANGE' &&
+                    dataSchedule?.time?.slice(0, schedule?.time?.length - 1)
                   }
+                  onChange={handleDateChange}
                 />
               </MuiPickersUtilsProvider>
             </Grid>
