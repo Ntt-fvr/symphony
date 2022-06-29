@@ -148,44 +148,67 @@ export default function RelationshipTypeItem(props: Props) {
     <>
       {!dataForm.resourceType?.resourceTypeClass ? null : (
         <>
-          <Grid className={classes.relationship} item xs={12}>
-            <Text weight={'bold'} variant={'h6'}>
-              Relationship types definition
-            </Text>
-          </Grid>
           {getdataAllRelationShips.includes('CARD') && (
-            <TableTypesDispatcher.Provider
-              value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
-              <TableContextForm
-                data={search('CARD')}
-                nameCard="Cards"
-                selectMultiple
-                tableTypes={tableTypesCards}
-              />
-            </TableTypesDispatcher.Provider>
+            <>
+              <Grid className={classes.relationship} item xs={12}>
+                <Text weight={'bold'} variant={'h6'}>
+                  Relationship types definition
+                </Text>
+              </Grid>
+              <TableTypesDispatcher.Provider
+                value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
+                <TableContextForm
+                  data={search('CARD')}
+                  nameCard="Cards"
+                  selectMultiple
+                  tableTypes={tableTypesCards}
+                />
+              </TableTypesDispatcher.Provider>
+            </>
           )}
           {getdataAllRelationShips.includes('PORT') && (
-            <TableTypesDispatcher.Provider
-              value={{dispatch: tableTypesDispatcherPorts, tableTypesPorts}}>
-              <TableContextForm
-                data={search('PORT')}
-                nameCard="Ports"
-                tableTypes={tableTypesPorts}
-              />
-            </TableTypesDispatcher.Provider>
+            <>
+              <Grid className={classes.relationship} item xs={12}>
+                <Text weight={'bold'} variant={'h6'}>
+                  Relationship types definition
+                </Text>
+              </Grid>
+              <TableTypesDispatcher.Provider
+                value={{dispatch: tableTypesDispatcherPorts, tableTypesPorts}}>
+                <TableContextForm
+                  data={search('PORT')}
+                  nameCard="Ports"
+                  tableTypes={tableTypesPorts}
+                />
+              </TableTypesDispatcher.Provider>
+            </>
           )}
           {getdataAllRelationShips.includes('SLOT') && (
-            <TableTypesDispatcher.Provider
-              value={{dispatch: tableTypesDispatcherSlots, tableTypesSlots}}>
-              <TableContextForm
-                data={search('SLOT')}
-                nameCard="Slots"
-                tableTypes={tableTypesSlots}
-              />
-            </TableTypesDispatcher.Provider>
+            <>
+              <Grid className={classes.relationship} item xs={12}>
+                <Text weight={'bold'} variant={'h6'}>
+                  Relationship types definition
+                </Text>
+              </Grid>
+              <TableTypesDispatcher.Provider
+                value={{dispatch: tableTypesDispatcherSlots, tableTypesSlots}}>
+                <TableContextForm
+                  data={search('SLOT')}
+                  nameCard="Slots"
+                  tableTypes={tableTypesSlots}
+                />
+              </TableTypesDispatcher.Provider>
+            </>
           )}
-          {getdataAllRelationShips.includes('VLAN') && (
-            <RelationshipFormValidation nameForm="Vlan" />
+          {getdataAllRelationShips.includes('VLA') && (
+            <>
+              <Grid className={classes.relationship} item xs={12}>
+                <Text weight={'bold'} variant={'h6'}>
+                  Relationship types definition
+                </Text>
+              </Grid>
+              <RelationshipFormValidation nameForm="Vlan" />
+            </>
           )}
         </>
       )}

@@ -49,6 +49,10 @@ const ResourceTypesQuery = graphql`
         node {
           id
           name
+          vendor {
+            id
+            name
+          }
           resourceType {
             id
             resourceTypeClass
@@ -73,6 +77,14 @@ const ResourceTypesQuery = graphql`
             isDeleted
             category
           }
+        }
+      }
+    }
+    vendors {
+      edges {
+        node {
+          id
+          name
         }
       }
     }
@@ -148,10 +160,7 @@ const ResourceTypes = () => {
         isCompleted={isCompleted}
         dataSelectorsForm={dataSelectorsForm}
         formValues={dataEdit.item.node}
-        resources={resourceTypes.resourceTypes?.edges.map(item => item.node)}
-        resourceSpecifications={resourceTypes.resourceSpecifications?.edges.map(
-          item => item.node,
-        )}
+        dataFormQuery={resourceTypes}
         hideEditResourceTypeForm={hideEditResourceItemForm}
       />
     );

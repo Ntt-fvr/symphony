@@ -54,6 +54,10 @@ export type AddResourceSpecificationMutationResponse = {|
   +addResourceSpecification: {|
     +id: string,
     +name: string,
+    +vendor: ?{|
+      +id: string,
+      +name: string,
+    |},
     +resourcePropertyTypes: $ReadOnlyArray<?{|
       +externalId: ?string,
       +name: string,
@@ -91,6 +95,10 @@ mutation AddResourceSpecificationMutation(
   addResourceSpecification(input: $input) {
     id
     name
+    vendor {
+      id
+      name
+    }
     resourcePropertyTypes {
       externalId
       name
@@ -149,123 +157,136 @@ v3 = {
 v4 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "externalId",
+  "concreteType": "Vendor",
+  "kind": "LinkedField",
+  "name": "vendor",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    (v3/*: any*/)
+  ],
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "type",
+  "name": "externalId",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "nodeType",
+  "name": "type",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "index",
+  "name": "nodeType",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "category",
+  "name": "index",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "stringValue",
+  "name": "category",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "intValue",
+  "name": "stringValue",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "booleanValue",
+  "name": "intValue",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "floatValue",
+  "name": "booleanValue",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "latitudeValue",
+  "name": "floatValue",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "longitudeValue",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rangeFromValue",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rangeToValue",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isEditable",
+  "name": "rangeToValue",
   "storageKey": null
 },
 v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isInstanceProperty",
+  "name": "isEditable",
   "storageKey": null
 },
 v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isMandatory",
+  "name": "isInstanceProperty",
   "storageKey": null
 },
 v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isDeleted",
+  "name": "isMandatory",
   "storageKey": null
 },
 v21 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isDeleted",
+  "storageKey": null
+},
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -289,6 +310,7 @@ return {
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -297,9 +319,8 @@ return {
             "name": "resourcePropertyTypes",
             "plural": true,
             "selections": [
-              (v4/*: any*/),
-              (v3/*: any*/),
               (v5/*: any*/),
+              (v3/*: any*/),
               (v6/*: any*/),
               (v7/*: any*/),
               (v8/*: any*/),
@@ -315,7 +336,8 @@ return {
               (v18/*: any*/),
               (v19/*: any*/),
               (v20/*: any*/),
-              (v21/*: any*/)
+              (v21/*: any*/),
+              (v22/*: any*/)
             ],
             "storageKey": null
           }
@@ -342,6 +364,7 @@ return {
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -350,9 +373,8 @@ return {
             "name": "resourcePropertyTypes",
             "plural": true,
             "selections": [
-              (v4/*: any*/),
-              (v3/*: any*/),
               (v5/*: any*/),
+              (v3/*: any*/),
               (v6/*: any*/),
               (v7/*: any*/),
               (v8/*: any*/),
@@ -369,6 +391,7 @@ return {
               (v19/*: any*/),
               (v20/*: any*/),
               (v21/*: any*/),
+              (v22/*: any*/),
               (v2/*: any*/)
             ],
             "storageKey": null
@@ -379,16 +402,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "96fc9097fba423e793a00cc6b54f8fa0",
+    "cacheID": "87a7e490de20631175b1101baca6b9db",
     "id": null,
     "metadata": {},
     "name": "AddResourceSpecificationMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceSpecificationMutation(\n  $input: AddResourceSpecificationInput!\n) {\n  addResourceSpecification(input: $input) {\n    id\n    name\n    resourcePropertyTypes {\n      externalId\n      name\n      type\n      nodeType\n      index\n      category\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      isDeleted\n      isListable\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceSpecificationMutation(\n  $input: AddResourceSpecificationInput!\n) {\n  addResourceSpecification(input: $input) {\n    id\n    name\n    vendor {\n      id\n      name\n    }\n    resourcePropertyTypes {\n      externalId\n      name\n      type\n      nodeType\n      index\n      category\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      isDeleted\n      isListable\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7cb5b9d746fb08c3a3a9317ffab59a8f';
+(node/*: any*/).hash = 'c21a37598c58ab62ec4037690aa10972';
 
 module.exports = node;

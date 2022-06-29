@@ -32,6 +32,7 @@ import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
+import {camelCase, omit, startCase} from 'lodash';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {convertTableTypeToMutationInput} from '../context/TableTypeState';
 import {makeStyles} from '@material-ui/styles';
@@ -66,11 +67,13 @@ const useStyles = makeStyles(() => ({
 type ResourceSpecification = {
   data: {
     name: string,
+    vendor: string,
   },
 };
 
 type Props = $ReadOnly<{|
-  dataForm: ResourceSpecifications,
+  dataForm: any,
+  vendorData?: any,
   formValues: ResourceSpecifications,
   editMode: boolean,
   closeForm: () => void,
@@ -86,6 +89,7 @@ export const AddEditResourceSpecification = (props: Props) => {
     isCompleted,
     editMode,
     filterData,
+    vendorData,
   } = props;
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
@@ -108,6 +112,8 @@ export const AddEditResourceSpecification = (props: Props) => {
 
   const nameEdit = useFormInput(dataForm.name);
 
+  const vendorEdit = useFormInput(dataForm.vendor);
+
   const namesFilter = filterData?.map(item => item.name);
 
   const inputFilter = () => {
@@ -118,10 +124,11 @@ export const AddEditResourceSpecification = (props: Props) => {
     );
   };
   const handleDisable = useDisabledButton(
-    resourceSpecification.data,
+    omit(resourceSpecification.data, 'vendor'),
     namesFilter,
     1,
   );
+
   const dataInputsObject = [nameEdit.value];
 
   const handleDisableEdit = useDisabledButtonEdit(
@@ -154,6 +161,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         name: resourceSpecification.data.name,
         resourceType: formValues.id,
+        vendor: resourceSpecification.data.vendor,
         resourcePropertyTypes: convertPropertyTypeToMutationInput(
           propertyTypes,
         ),
@@ -173,6 +181,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         id: dataForm.id,
         name: nameEdit.value,
+        vendor: vendorEdit.value,
         resourceType: dataForm.resourceType.id,
         resourcePropertyTypes: convertPropertyTypeToMutationInput(
           propertyTypes,
@@ -185,6 +194,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         closeForm();
       },
     });
+
     const variablesPort: AddResourceSpecificationRelationshipListMutationVariables = {
       input: convertTableTypeToMutationInput(dataCallback),
     };
@@ -205,7 +215,9 @@ export const AddEditResourceSpecification = (props: Props) => {
         alignItems="center">
         <Grid item xs>
           <ConfigureTitleSubItem
-            title={fbt('Resources/', '') + ` ${dataForm.name}/`}
+            title={
+              fbt('Resources/', '') + ` ${editMode ? dataForm.name + '/' : ''}`
+            }
             tag={' Resource specification'}
           />
         </Grid>
@@ -263,14 +275,36 @@ export const AddEditResourceSpecification = (props: Props) => {
           </Grid>
           <Grid item xs={4}>
             <form className={classes.formField} autoComplete="off">
-              <TextField
-                required
-                select
-                label="Vendor"
-                variant="outlined"
-                fullWidth>
-                <MenuItem>Nokia</MenuItem>
-              </TextField>
+              {editMode ? (
+                <TextField
+                  required
+                  select
+                  label="Vendor"
+                  variant="outlined"
+                  fullWidth
+                  {...vendorEdit}>
+                  {vendorData?.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {startCase(camelCase(item.name))}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              ) : (
+                <TextField
+                  required
+                  select
+                  label="Vendor"
+                  name="vendor"
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth>
+                  {vendorData?.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {startCase(camelCase(item.name))}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
             </form>
           </Grid>
         </Grid>
