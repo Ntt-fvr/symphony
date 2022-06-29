@@ -3211,6 +3211,7 @@ type BlockMutation struct {
 	timer_expression                   *string
 	timer_specific_date                *time.Time
 	url_method                         *block.URLMethod
+	url                                *string
 	connection_timeout                 *int
 	addconnection_timeout              *int
 	body                               *string
@@ -4942,6 +4943,56 @@ func (m *BlockMutation) ResetURLMethod() {
 	delete(m.clearedFields, block.FieldURLMethod)
 }
 
+// SetURL sets the url field.
+func (m *BlockMutation) SetURL(s string) {
+	m.url = &s
+}
+
+// URL returns the url value in the mutation.
+func (m *BlockMutation) URL() (r string, exists bool) {
+	v := m.url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURL returns the old url value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldURL is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURL: %w", err)
+	}
+	return oldValue.URL, nil
+}
+
+// ClearURL clears the value of url.
+func (m *BlockMutation) ClearURL() {
+	m.url = nil
+	m.clearedFields[block.FieldURL] = struct{}{}
+}
+
+// URLCleared returns if the field url was cleared in this mutation.
+func (m *BlockMutation) URLCleared() bool {
+	_, ok := m.clearedFields[block.FieldURL]
+	return ok
+}
+
+// ResetURL reset all changes of the "url" field.
+func (m *BlockMutation) ResetURL() {
+	m.url = nil
+	delete(m.clearedFields, block.FieldURL)
+}
+
 // SetConnectionTimeout sets the connection_timeout field.
 func (m *BlockMutation) SetConnectionTimeout(i int) {
 	m.connection_timeout = &i
@@ -5720,7 +5771,7 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 40)
+	fields := make([]string, 0, 41)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
@@ -5820,6 +5871,9 @@ func (m *BlockMutation) Fields() []string {
 	if m.url_method != nil {
 		fields = append(fields, block.FieldURLMethod)
 	}
+	if m.url != nil {
+		fields = append(fields, block.FieldURL)
+	}
 	if m.connection_timeout != nil {
 		fields = append(fields, block.FieldConnectionTimeout)
 	}
@@ -5915,6 +5969,8 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.TimerSpecificDate()
 	case block.FieldURLMethod:
 		return m.URLMethod()
+	case block.FieldURL:
+		return m.URL()
 	case block.FieldConnectionTimeout:
 		return m.ConnectionTimeout()
 	case block.FieldBody:
@@ -6004,6 +6060,8 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldTimerSpecificDate(ctx)
 	case block.FieldURLMethod:
 		return m.OldURLMethod(ctx)
+	case block.FieldURL:
+		return m.OldURL(ctx)
 	case block.FieldConnectionTimeout:
 		return m.OldConnectionTimeout(ctx)
 	case block.FieldBody:
@@ -6258,6 +6316,13 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetURLMethod(v)
 		return nil
+	case block.FieldURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURL(v)
+		return nil
 	case block.FieldConnectionTimeout:
 		v, ok := value.(int)
 		if !ok {
@@ -6472,6 +6537,9 @@ func (m *BlockMutation) ClearedFields() []string {
 	if m.FieldCleared(block.FieldURLMethod) {
 		fields = append(fields, block.FieldURLMethod)
 	}
+	if m.FieldCleared(block.FieldURL) {
+		fields = append(fields, block.FieldURL)
+	}
 	if m.FieldCleared(block.FieldConnectionTimeout) {
 		fields = append(fields, block.FieldConnectionTimeout)
 	}
@@ -6578,6 +6646,9 @@ func (m *BlockMutation) ClearField(name string) error {
 		return nil
 	case block.FieldURLMethod:
 		m.ClearURLMethod()
+		return nil
+	case block.FieldURL:
+		m.ClearURL()
 		return nil
 	case block.FieldConnectionTimeout:
 		m.ClearConnectionTimeout()
@@ -6707,6 +6778,9 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldURLMethod:
 		m.ResetURLMethod()
+		return nil
+	case block.FieldURL:
+		m.ResetURL()
 		return nil
 	case block.FieldConnectionTimeout:
 		m.ResetConnectionTimeout()

@@ -122,12 +122,14 @@ func (Block) Fields() []ent.Field {
 
 		field.Enum("url_method").
 			NamedValues(
-				"POST", "fixed_interval",
-				"GET", "specific_time",
+				"POST", "post",
+				"GET", "get",
 				"PUT", "put",
 				"DELETE", "delete",
 				"PATCH", "patch",
 			).
+			Optional(),
+		field.String("url").
 			Optional(),
 		field.Int("connection_timeout").
 			Optional(),
@@ -138,8 +140,11 @@ func (Block) Fields() []ent.Field {
 
 		field.Enum("signal_type").
 			NamedValues(
-				"POST", "fixed_interval",
-				"GET", "specific_time",
+				"NOTIFICATION", "notification",
+				"WOCREATION", "wo_creation",
+				"CRCREATION", "cr_creation",
+				"WOUPDATE", "wo_update",
+				"CRUPDATE", "cr_update",
 			).Optional(),
 		field.Enum("signal_module").
 			NamedValues(

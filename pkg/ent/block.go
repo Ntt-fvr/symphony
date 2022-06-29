@@ -93,6 +93,8 @@ type Block struct {
 	TimerSpecificDate time.Time `json:"timer_specific_date,omitempty"`
 	// URLMethod holds the value of the "url_method" field.
 	URLMethod block.URLMethod `json:"url_method,omitempty"`
+	// URL holds the value of the "url" field.
+	URL string `json:"url,omitempty"`
 	// ConnectionTimeout holds the value of the "connection_timeout" field.
 	ConnectionTimeout int `json:"connection_timeout,omitempty"`
 	// Body holds the value of the "body" field.
@@ -290,6 +292,7 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullString{}, // timer_expression
 		&sql.NullTime{},   // timer_specific_date
 		&sql.NullString{}, // url_method
+		&sql.NullString{}, // url
 		&sql.NullInt64{},  // connection_timeout
 		&sql.NullString{}, // body
 		&[]byte{},         // headers
@@ -499,45 +502,50 @@ func (b *Block) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		b.URLMethod = block.URLMethod(value.String)
 	}
-	if value, ok := values[33].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field connection_timeout", values[33])
+	if value, ok := values[33].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field url", values[33])
+	} else if value.Valid {
+		b.URL = value.String
+	}
+	if value, ok := values[34].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field connection_timeout", values[34])
 	} else if value.Valid {
 		b.ConnectionTimeout = int(value.Int64)
 	}
-	if value, ok := values[34].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field body", values[34])
+	if value, ok := values[35].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field body", values[35])
 	} else if value.Valid {
 		b.Body = value.String
 	}
 
-	if value, ok := values[35].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field headers", values[35])
+	if value, ok := values[36].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field headers", values[36])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &b.Headers); err != nil {
 			return fmt.Errorf("unmarshal field headers: %v", err)
 		}
 	}
-	if value, ok := values[36].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field signal_type", values[36])
+	if value, ok := values[37].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field signal_type", values[37])
 	} else if value.Valid {
 		b.SignalType = block.SignalType(value.String)
 	}
-	if value, ok := values[37].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field signal_module", values[37])
+	if value, ok := values[38].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field signal_module", values[38])
 	} else if value.Valid {
 		b.SignalModule = block.SignalModule(value.String)
 	}
-	if value, ok := values[38].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field custom_filter", values[38])
+	if value, ok := values[39].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field custom_filter", values[39])
 	} else if value.Valid {
 		b.CustomFilter = value.String
 	}
-	if value, ok := values[39].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field block_flow", values[39])
+	if value, ok := values[40].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field block_flow", values[40])
 	} else if value.Valid {
 		b.BlockFlow = value.Bool
 	}
-	values = values[40:]
+	values = values[41:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -711,6 +719,8 @@ func (b *Block) String() string {
 	builder.WriteString(b.TimerSpecificDate.Format(time.ANSIC))
 	builder.WriteString(", url_method=")
 	builder.WriteString(fmt.Sprintf("%v", b.URLMethod))
+	builder.WriteString(", url=")
+	builder.WriteString(b.URL)
 	builder.WriteString(", connection_timeout=")
 	builder.WriteString(fmt.Sprintf("%v", b.ConnectionTimeout))
 	builder.WriteString(", body=")

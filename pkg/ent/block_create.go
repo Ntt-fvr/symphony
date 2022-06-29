@@ -414,6 +414,20 @@ func (bc *BlockCreate) SetNillableURLMethod(bm *block.URLMethod) *BlockCreate {
 	return bc
 }
 
+// SetURL sets the url field.
+func (bc *BlockCreate) SetURL(s string) *BlockCreate {
+	bc.mutation.SetURL(s)
+	return bc
+}
+
+// SetNillableURL sets the url field if the given value is not nil.
+func (bc *BlockCreate) SetNillableURL(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetURL(*s)
+	}
+	return bc
+}
+
 // SetConnectionTimeout sets the connection_timeout field.
 func (bc *BlockCreate) SetConnectionTimeout(i int) *BlockCreate {
 	bc.mutation.SetConnectionTimeout(i)
@@ -1109,6 +1123,14 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldURLMethod,
 		})
 		_node.URLMethod = value
+	}
+	if value, ok := bc.mutation.URL(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldURL,
+		})
+		_node.URL = value
 	}
 	if value, ok := bc.mutation.ConnectionTimeout(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

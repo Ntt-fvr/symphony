@@ -565,6 +565,26 @@ func (bu *BlockUpdate) ClearURLMethod() *BlockUpdate {
 	return bu
 }
 
+// SetURL sets the url field.
+func (bu *BlockUpdate) SetURL(s string) *BlockUpdate {
+	bu.mutation.SetURL(s)
+	return bu
+}
+
+// SetNillableURL sets the url field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableURL(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetURL(*s)
+	}
+	return bu
+}
+
+// ClearURL clears the value of url.
+func (bu *BlockUpdate) ClearURL() *BlockUpdate {
+	bu.mutation.ClearURL()
+	return bu
+}
+
 // SetConnectionTimeout sets the connection_timeout field.
 func (bu *BlockUpdate) SetConnectionTimeout(i int) *BlockUpdate {
 	bu.mutation.ResetConnectionTimeout()
@@ -1515,6 +1535,19 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Column: block.FieldURLMethod,
+		})
+	}
+	if value, ok := bu.mutation.URL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldURL,
+		})
+	}
+	if bu.mutation.URLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldURL,
 		})
 	}
 	if value, ok := bu.mutation.ConnectionTimeout(); ok {
@@ -2531,6 +2564,26 @@ func (buo *BlockUpdateOne) ClearURLMethod() *BlockUpdateOne {
 	return buo
 }
 
+// SetURL sets the url field.
+func (buo *BlockUpdateOne) SetURL(s string) *BlockUpdateOne {
+	buo.mutation.SetURL(s)
+	return buo
+}
+
+// SetNillableURL sets the url field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableURL(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetURL(*s)
+	}
+	return buo
+}
+
+// ClearURL clears the value of url.
+func (buo *BlockUpdateOne) ClearURL() *BlockUpdateOne {
+	buo.mutation.ClearURL()
+	return buo
+}
+
 // SetConnectionTimeout sets the connection_timeout field.
 func (buo *BlockUpdateOne) SetConnectionTimeout(i int) *BlockUpdateOne {
 	buo.mutation.ResetConnectionTimeout()
@@ -3479,6 +3532,19 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Column: block.FieldURLMethod,
+		})
+	}
+	if value, ok := buo.mutation.URL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldURL,
+		})
+	}
+	if buo.mutation.URLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldURL,
 		})
 	}
 	if value, ok := buo.mutation.ConnectionTimeout(); ok {

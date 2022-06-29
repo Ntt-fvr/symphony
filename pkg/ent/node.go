@@ -463,7 +463,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 40),
+		Fields: make([]*Field, 41),
 		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
@@ -731,10 +731,18 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "url_method",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(b.ConnectionTimeout); err != nil {
+	if buf, err = json.Marshal(b.URL); err != nil {
 		return nil, err
 	}
 	node.Fields[33] = &Field{
+		Type:  "string",
+		Name:  "url",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.ConnectionTimeout); err != nil {
+		return nil, err
+	}
+	node.Fields[34] = &Field{
 		Type:  "int",
 		Name:  "connection_timeout",
 		Value: string(buf),
@@ -742,7 +750,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.Body); err != nil {
 		return nil, err
 	}
-	node.Fields[34] = &Field{
+	node.Fields[35] = &Field{
 		Type:  "string",
 		Name:  "body",
 		Value: string(buf),
@@ -750,7 +758,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.Headers); err != nil {
 		return nil, err
 	}
-	node.Fields[35] = &Field{
+	node.Fields[36] = &Field{
 		Type:  "[]string",
 		Name:  "headers",
 		Value: string(buf),
@@ -758,7 +766,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.SignalType); err != nil {
 		return nil, err
 	}
-	node.Fields[36] = &Field{
+	node.Fields[37] = &Field{
 		Type:  "block.SignalType",
 		Name:  "signal_type",
 		Value: string(buf),
@@ -766,7 +774,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.SignalModule); err != nil {
 		return nil, err
 	}
-	node.Fields[37] = &Field{
+	node.Fields[38] = &Field{
 		Type:  "block.SignalModule",
 		Name:  "signal_module",
 		Value: string(buf),
@@ -774,7 +782,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.CustomFilter); err != nil {
 		return nil, err
 	}
-	node.Fields[38] = &Field{
+	node.Fields[39] = &Field{
 		Type:  "string",
 		Name:  "custom_filter",
 		Value: string(buf),
@@ -782,7 +790,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.BlockFlow); err != nil {
 		return nil, err
 	}
-	node.Fields[39] = &Field{
+	node.Fields[40] = &Field{
 		Type:  "bool",
 		Name:  "block_flow",
 		Value: string(buf),

@@ -89,6 +89,8 @@ const (
 	FieldTimerSpecificDate = "timer_specific_date"
 	// FieldURLMethod holds the string denoting the url_method field in the database.
 	FieldURLMethod = "url_method"
+	// FieldURL holds the string denoting the url field in the database.
+	FieldURL = "url"
 	// FieldConnectionTimeout holds the string denoting the connection_timeout field in the database.
 	FieldConnectionTimeout = "connection_timeout"
 	// FieldBody holds the string denoting the body field in the database.
@@ -220,6 +222,7 @@ var Columns = []string{
 	FieldTimerExpression,
 	FieldTimerSpecificDate,
 	FieldURLMethod,
+	FieldURL,
 	FieldConnectionTimeout,
 	FieldBody,
 	FieldHeaders,
@@ -420,8 +423,8 @@ type URLMethod string
 
 // URLMethod values.
 const (
-	URLMethodPOST   URLMethod = "fixed_interval"
-	URLMethodGET    URLMethod = "specific_time"
+	URLMethodPOST   URLMethod = "post"
+	URLMethodGET    URLMethod = "get"
 	URLMethodPUT    URLMethod = "put"
 	URLMethodDELETE URLMethod = "delete"
 	URLMethodPATCH  URLMethod = "patch"
@@ -446,8 +449,11 @@ type SignalType string
 
 // SignalType values.
 const (
-	SignalTypePOST SignalType = "fixed_interval"
-	SignalTypeGET  SignalType = "specific_time"
+	SignalTypeNOTIFICATION SignalType = "notification"
+	SignalTypeWOCREATION   SignalType = "wo_creation"
+	SignalTypeCRCREATION   SignalType = "cr_creation"
+	SignalTypeWOUPDATE     SignalType = "wo_update"
+	SignalTypeCRUPDATE     SignalType = "cr_update"
 )
 
 func (st SignalType) String() string {
@@ -457,7 +463,7 @@ func (st SignalType) String() string {
 // SignalTypeValidator is a validator for the "signal_type" field enum values. It is called by the builders before save.
 func SignalTypeValidator(st SignalType) error {
 	switch st {
-	case SignalTypePOST, SignalTypeGET:
+	case SignalTypeNOTIFICATION, SignalTypeWOCREATION, SignalTypeCRCREATION, SignalTypeWOUPDATE, SignalTypeCRUPDATE:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for signal_type field: %q", st)

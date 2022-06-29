@@ -178,11 +178,12 @@ var (
 		{Name: "enable_timer_expression", Type: field.TypeBool, Nullable: true},
 		{Name: "timer_expression", Type: field.TypeString, Nullable: true},
 		{Name: "timer_specific_date", Type: field.TypeTime, Nullable: true},
-		{Name: "url_method", Type: field.TypeEnum, Nullable: true, Enums: []string{"fixed_interval", "specific_time", "put", "delete", "patch"}},
+		{Name: "url_method", Type: field.TypeEnum, Nullable: true, Enums: []string{"post", "get", "put", "delete", "patch"}},
+		{Name: "url", Type: field.TypeString, Nullable: true},
 		{Name: "connection_timeout", Type: field.TypeInt, Nullable: true},
 		{Name: "body", Type: field.TypeString, Nullable: true},
 		{Name: "headers", Type: field.TypeJSON, Nullable: true},
-		{Name: "signal_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"fixed_interval", "specific_time"}},
+		{Name: "signal_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"notification", "wo_creation", "cr_creation", "wo_update", "cr_update"}},
 		{Name: "signal_module", Type: field.TypeEnum, Nullable: true, Enums: []string{"inventory", "cm"}},
 		{Name: "custom_filter", Type: field.TypeString, Nullable: true},
 		{Name: "block_flow", Type: field.TypeBool, Nullable: true},
@@ -200,35 +201,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "blocks_flows_sub_flow",
-				Columns: []*schema.Column{BlocksColumns[41]},
+				Columns: []*schema.Column{BlocksColumns[42]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_blocks_goto_block",
-				Columns: []*schema.Column{BlocksColumns[42]},
+				Columns: []*schema.Column{BlocksColumns[43]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flows_blocks",
-				Columns: []*schema.Column{BlocksColumns[43]},
+				Columns: []*schema.Column{BlocksColumns[44]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_drafts_blocks",
-				Columns: []*schema.Column{BlocksColumns[44]},
+				Columns: []*schema.Column{BlocksColumns[45]},
 
 				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_execution_templates_blocks",
-				Columns: []*schema.Column{BlocksColumns[45]},
+				Columns: []*schema.Column{BlocksColumns[46]},
 
 				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -238,17 +239,17 @@ var (
 			{
 				Name:    "block_cid_flow_draft_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[44]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[45]},
 			},
 			{
 				Name:    "block_cid_flow_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[43]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[44]},
 			},
 			{
 				Name:    "block_cid_flow_execution_template_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[45]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[46]},
 			},
 		},
 	}
