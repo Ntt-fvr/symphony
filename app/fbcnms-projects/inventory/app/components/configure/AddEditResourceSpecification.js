@@ -8,12 +8,6 @@
  * @format
  */
 
-import Button from '@material-ui/core/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
-import Grid from '@material-ui/core/Grid';
-import React, {useMemo, useState} from 'react';
 import RelationshipTypeItem from './RelationshipTypeItem';
 
 import TextField from '@material-ui/core/TextField';
@@ -23,7 +17,7 @@ import {makeStyles} from '@material-ui/styles';
 import type {AddConfigurationParameterTypeMutationResponse} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
-import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
+import type {AddResourceSpecificationRelationshipListMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
 import type {EditConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/EditConfigurationParameterTypeMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
@@ -31,19 +25,27 @@ import type {ResourceSpecifications} from './EditResourceTypeItem';
 
 import AddConfigurationParameterTypeMutation from '../../mutations/AddConfigurationParameterTypeMutation';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
+import AddResourceSpecificationRelationshipListMutation from '../../mutations/AddResourceSpecificationRelationshipListMutation';
+import Button from '@material-ui/core/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import EditConfigurationParameterTypeMutation from '../../mutations/EditConfigurationParameterTypeMutation';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
+import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import React, {useMemo, useState} from 'react';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import inventoryTheme from '../../common/theme';
 import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
+import {convertTableTypeToMutationInput} from '../context/TableTypeState';
 import {graphql} from 'relay-runtime';
 import {isTempId} from '../../common/EntUtils';
 import {toMutableParameterType} from '../../common/ParameterType';
@@ -51,7 +53,7 @@ import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useFormInput} from '../assurance/common/useFormInput';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useLazyLoadQuery} from 'react-relay';
 import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 import {useValidationEdit} from '../assurance/common/useValidation';
@@ -134,12 +136,18 @@ export const AddEditResourceSpecification = (props: Props) => {
   } = props;
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
+
   const [configurationParameters, setConfigurationParameters] = useState(
     useLazyLoadQuery<AddEditResourceSpecificationQuery>(
       ConfigurationParameters,
     ),
   );
 
+  const [dataCallback, setDataCallback] = useState();
+
+  const callback = data => {
+    setDataCallback(data);
+  };
   const classes = useStyles();
 
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
@@ -313,6 +321,14 @@ export const AddEditResourceSpecification = (props: Props) => {
         },
       });
     });
+    const variablesPort: AddResourceSpecificationRelationshipListMutationVariables = {
+      input: convertTableTypeToMutationInput(dataCallback),
+    };
+    AddResourceSpecificationRelationshipListMutation(variablesPort, {
+      onCompleted: () => {
+        isCompleted();
+      },
+    });
   }
 
   return (
@@ -464,7 +480,7 @@ export const AddEditResourceSpecification = (props: Props) => {
           }
         />
       )}
-      <RelationshipTypeItem dataForm={formValues} />
+      <RelationshipTypeItem callback={callback} dataForm={formValues} />
     </div>
   );
 };
