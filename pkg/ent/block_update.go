@@ -148,8 +148,8 @@ func (bu *BlockUpdate) ClearEnableInputTransformation() *BlockUpdate {
 }
 
 // SetInputTransfStrategy sets the input_transf_strategy field.
-func (bu *BlockUpdate) SetInputTransfStrategy(bts block.InputTransfStrategy) *BlockUpdate {
-	bu.mutation.SetInputTransfStrategy(bts)
+func (bu *BlockUpdate) SetInputTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
+	bu.mutation.SetInputTransfStrategy(es)
 	return bu
 }
 
@@ -194,8 +194,8 @@ func (bu *BlockUpdate) ClearEnableOutputTransformation() *BlockUpdate {
 }
 
 // SetOutputTransfStrategy sets the output_transf_strategy field.
-func (bu *BlockUpdate) SetOutputTransfStrategy(bts block.OutputTransfStrategy) *BlockUpdate {
-	bu.mutation.SetOutputTransfStrategy(bts)
+func (bu *BlockUpdate) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
+	bu.mutation.SetOutputTransfStrategy(es)
 	return bu
 }
 
@@ -240,8 +240,8 @@ func (bu *BlockUpdate) ClearEnableInputStateTransformation() *BlockUpdate {
 }
 
 // SetInputStateTransfStrategy sets the input_state_transf_strategy field.
-func (bu *BlockUpdate) SetInputStateTransfStrategy(bsts block.InputStateTransfStrategy) *BlockUpdate {
-	bu.mutation.SetInputStateTransfStrategy(bsts)
+func (bu *BlockUpdate) SetInputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
+	bu.mutation.SetInputStateTransfStrategy(es)
 	return bu
 }
 
@@ -2114,8 +2114,8 @@ func (buo *BlockUpdateOne) ClearEnableInputTransformation() *BlockUpdateOne {
 }
 
 // SetInputTransfStrategy sets the input_transf_strategy field.
-func (buo *BlockUpdateOne) SetInputTransfStrategy(bts block.InputTransfStrategy) *BlockUpdateOne {
-	buo.mutation.SetInputTransfStrategy(bts)
+func (buo *BlockUpdateOne) SetInputTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
+	buo.mutation.SetInputTransfStrategy(es)
 	return buo
 }
 
@@ -2160,8 +2160,8 @@ func (buo *BlockUpdateOne) ClearEnableOutputTransformation() *BlockUpdateOne {
 }
 
 // SetOutputTransfStrategy sets the output_transf_strategy field.
-func (buo *BlockUpdateOne) SetOutputTransfStrategy(bts block.OutputTransfStrategy) *BlockUpdateOne {
-	buo.mutation.SetOutputTransfStrategy(bts)
+func (buo *BlockUpdateOne) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
+	buo.mutation.SetOutputTransfStrategy(es)
 	return buo
 }
 
@@ -2206,8 +2206,8 @@ func (buo *BlockUpdateOne) ClearEnableInputStateTransformation() *BlockUpdateOne
 }
 
 // SetInputStateTransfStrategy sets the input_state_transf_strategy field.
-func (buo *BlockUpdateOne) SetInputStateTransfStrategy(bsts block.InputStateTransfStrategy) *BlockUpdateOne {
-	buo.mutation.SetInputStateTransfStrategy(bsts)
+func (buo *BlockUpdateOne) SetInputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
+	buo.mutation.SetInputStateTransfStrategy(es)
 	return buo
 }
 

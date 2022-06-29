@@ -551,7 +551,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[10] = &Field{
-		Type:  "block.InputTransfStrategy",
+		Type:  "enum.TransfStrategy",
 		Name:  "input_transf_strategy",
 		Value: string(buf),
 	}
@@ -575,7 +575,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[13] = &Field{
-		Type:  "block.OutputTransfStrategy",
+		Type:  "enum.TransfStrategy",
 		Name:  "output_transf_strategy",
 		Value: string(buf),
 	}
@@ -599,7 +599,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[16] = &Field{
-		Type:  "block.InputStateTransfStrategy",
+		Type:  "enum.TransfStrategy",
 		Name:  "input_state_transf_strategy",
 		Value: string(buf),
 	}

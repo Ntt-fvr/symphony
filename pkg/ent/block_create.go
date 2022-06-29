@@ -133,8 +133,8 @@ func (bc *BlockCreate) SetNillableEnableInputTransformation(b *bool) *BlockCreat
 }
 
 // SetInputTransfStrategy sets the input_transf_strategy field.
-func (bc *BlockCreate) SetInputTransfStrategy(bts block.InputTransfStrategy) *BlockCreate {
-	bc.mutation.SetInputTransfStrategy(bts)
+func (bc *BlockCreate) SetInputTransfStrategy(es enum.TransfStrategy) *BlockCreate {
+	bc.mutation.SetInputTransfStrategy(es)
 	return bc
 }
 
@@ -167,8 +167,8 @@ func (bc *BlockCreate) SetNillableEnableOutputTransformation(b *bool) *BlockCrea
 }
 
 // SetOutputTransfStrategy sets the output_transf_strategy field.
-func (bc *BlockCreate) SetOutputTransfStrategy(bts block.OutputTransfStrategy) *BlockCreate {
-	bc.mutation.SetOutputTransfStrategy(bts)
+func (bc *BlockCreate) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockCreate {
+	bc.mutation.SetOutputTransfStrategy(es)
 	return bc
 }
 
@@ -201,8 +201,8 @@ func (bc *BlockCreate) SetNillableEnableInputStateTransformation(b *bool) *Block
 }
 
 // SetInputStateTransfStrategy sets the input_state_transf_strategy field.
-func (bc *BlockCreate) SetInputStateTransfStrategy(bsts block.InputStateTransfStrategy) *BlockCreate {
-	bc.mutation.SetInputStateTransfStrategy(bsts)
+func (bc *BlockCreate) SetInputStateTransfStrategy(es enum.TransfStrategy) *BlockCreate {
+	bc.mutation.SetInputStateTransfStrategy(es)
 	return bc
 }
 

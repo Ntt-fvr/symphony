@@ -48,19 +48,19 @@ type Block struct {
 	// EnableInputTransformation holds the value of the "enable_input_transformation" field.
 	EnableInputTransformation bool `json:"enable_input_transformation,omitempty"`
 	// InputTransfStrategy holds the value of the "input_transf_strategy" field.
-	InputTransfStrategy block.InputTransfStrategy `json:"input_transf_strategy,omitempty"`
+	InputTransfStrategy enum.TransfStrategy `json:"input_transf_strategy,omitempty"`
 	// InputTransformation holds the value of the "input_transformation" field.
 	InputTransformation string `json:"input_transformation,omitempty"`
 	// EnableOutputTransformation holds the value of the "enable_output_transformation" field.
 	EnableOutputTransformation bool `json:"enable_output_transformation,omitempty"`
 	// OutputTransfStrategy holds the value of the "output_transf_strategy" field.
-	OutputTransfStrategy block.OutputTransfStrategy `json:"output_transf_strategy,omitempty"`
+	OutputTransfStrategy enum.TransfStrategy `json:"output_transf_strategy,omitempty"`
 	// OutputTransformation holds the value of the "output_transformation" field.
 	OutputTransformation string `json:"output_transformation,omitempty"`
 	// EnableInputStateTransformation holds the value of the "enable_input_state_transformation" field.
 	EnableInputStateTransformation bool `json:"enable_input_state_transformation,omitempty"`
 	// InputStateTransfStrategy holds the value of the "input_state_transf_strategy" field.
-	InputStateTransfStrategy block.InputStateTransfStrategy `json:"input_state_transf_strategy,omitempty"`
+	InputStateTransfStrategy enum.TransfStrategy `json:"input_state_transf_strategy,omitempty"`
 	// InputStateTransformation holds the value of the "input_state_transformation" field.
 	InputStateTransformation string `json:"input_state_transformation,omitempty"`
 	// EnableOutputStateTransformation holds the value of the "enable_output_state_transformation" field.
@@ -387,7 +387,7 @@ func (b *Block) assignValues(values ...interface{}) error {
 	if value, ok := values[10].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_transf_strategy", values[10])
 	} else if value.Valid {
-		b.InputTransfStrategy = block.InputTransfStrategy(value.String)
+		b.InputTransfStrategy = enum.TransfStrategy(value.String)
 	}
 	if value, ok := values[11].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_transformation", values[11])
@@ -402,7 +402,7 @@ func (b *Block) assignValues(values ...interface{}) error {
 	if value, ok := values[13].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field output_transf_strategy", values[13])
 	} else if value.Valid {
-		b.OutputTransfStrategy = block.OutputTransfStrategy(value.String)
+		b.OutputTransfStrategy = enum.TransfStrategy(value.String)
 	}
 	if value, ok := values[14].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field output_transformation", values[14])
@@ -417,7 +417,7 @@ func (b *Block) assignValues(values ...interface{}) error {
 	if value, ok := values[16].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_state_transf_strategy", values[16])
 	} else if value.Valid {
-		b.InputStateTransfStrategy = block.InputStateTransfStrategy(value.String)
+		b.InputStateTransfStrategy = enum.TransfStrategy(value.String)
 	}
 	if value, ok := values[17].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_state_transformation", values[17])

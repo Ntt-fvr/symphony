@@ -3184,13 +3184,13 @@ type BlockMutation struct {
 	input_params                       *[]*flowschema.VariableExpression
 	ui_representation                  **flowschema.BlockUIRepresentation
 	enable_input_transformation        *bool
-	input_transf_strategy              *block.InputTransfStrategy
+	input_transf_strategy              *enum.TransfStrategy
 	input_transformation               *string
 	enable_output_transformation       *bool
-	output_transf_strategy             *block.OutputTransfStrategy
+	output_transf_strategy             *enum.TransfStrategy
 	output_transformation              *string
 	enable_input_state_transformation  *bool
-	input_state_transf_strategy        *block.InputStateTransfStrategy
+	input_state_transf_strategy        *enum.TransfStrategy
 	input_state_transformation         *string
 	enable_output_state_transformation *bool
 	output_state_transf_strategy       *enum.TransfStrategy
@@ -3774,12 +3774,12 @@ func (m *BlockMutation) ResetEnableInputTransformation() {
 }
 
 // SetInputTransfStrategy sets the input_transf_strategy field.
-func (m *BlockMutation) SetInputTransfStrategy(bts block.InputTransfStrategy) {
-	m.input_transf_strategy = &bts
+func (m *BlockMutation) SetInputTransfStrategy(es enum.TransfStrategy) {
+	m.input_transf_strategy = &es
 }
 
 // InputTransfStrategy returns the input_transf_strategy value in the mutation.
-func (m *BlockMutation) InputTransfStrategy() (r block.InputTransfStrategy, exists bool) {
+func (m *BlockMutation) InputTransfStrategy() (r enum.TransfStrategy, exists bool) {
 	v := m.input_transf_strategy
 	if v == nil {
 		return
@@ -3791,7 +3791,7 @@ func (m *BlockMutation) InputTransfStrategy() (r block.InputTransfStrategy, exis
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldInputTransfStrategy(ctx context.Context) (v block.InputTransfStrategy, err error) {
+func (m *BlockMutation) OldInputTransfStrategy(ctx context.Context) (v enum.TransfStrategy, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldInputTransfStrategy is allowed only on UpdateOne operations")
 	}
@@ -3911,12 +3911,12 @@ func (m *BlockMutation) ResetEnableOutputTransformation() {
 }
 
 // SetOutputTransfStrategy sets the output_transf_strategy field.
-func (m *BlockMutation) SetOutputTransfStrategy(bts block.OutputTransfStrategy) {
-	m.output_transf_strategy = &bts
+func (m *BlockMutation) SetOutputTransfStrategy(es enum.TransfStrategy) {
+	m.output_transf_strategy = &es
 }
 
 // OutputTransfStrategy returns the output_transf_strategy value in the mutation.
-func (m *BlockMutation) OutputTransfStrategy() (r block.OutputTransfStrategy, exists bool) {
+func (m *BlockMutation) OutputTransfStrategy() (r enum.TransfStrategy, exists bool) {
 	v := m.output_transf_strategy
 	if v == nil {
 		return
@@ -3928,7 +3928,7 @@ func (m *BlockMutation) OutputTransfStrategy() (r block.OutputTransfStrategy, ex
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldOutputTransfStrategy(ctx context.Context) (v block.OutputTransfStrategy, err error) {
+func (m *BlockMutation) OldOutputTransfStrategy(ctx context.Context) (v enum.TransfStrategy, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldOutputTransfStrategy is allowed only on UpdateOne operations")
 	}
@@ -4048,12 +4048,12 @@ func (m *BlockMutation) ResetEnableInputStateTransformation() {
 }
 
 // SetInputStateTransfStrategy sets the input_state_transf_strategy field.
-func (m *BlockMutation) SetInputStateTransfStrategy(bsts block.InputStateTransfStrategy) {
-	m.input_state_transf_strategy = &bsts
+func (m *BlockMutation) SetInputStateTransfStrategy(es enum.TransfStrategy) {
+	m.input_state_transf_strategy = &es
 }
 
 // InputStateTransfStrategy returns the input_state_transf_strategy value in the mutation.
-func (m *BlockMutation) InputStateTransfStrategy() (r block.InputStateTransfStrategy, exists bool) {
+func (m *BlockMutation) InputStateTransfStrategy() (r enum.TransfStrategy, exists bool) {
 	v := m.input_state_transf_strategy
 	if v == nil {
 		return
@@ -4065,7 +4065,7 @@ func (m *BlockMutation) InputStateTransfStrategy() (r block.InputStateTransfStra
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldInputStateTransfStrategy(ctx context.Context) (v block.InputStateTransfStrategy, err error) {
+func (m *BlockMutation) OldInputStateTransfStrategy(ctx context.Context) (v enum.TransfStrategy, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldInputStateTransfStrategy is allowed only on UpdateOne operations")
 	}
@@ -6098,7 +6098,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetEnableInputTransformation(v)
 		return nil
 	case block.FieldInputTransfStrategy:
-		v, ok := value.(block.InputTransfStrategy)
+		v, ok := value.(enum.TransfStrategy)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -6119,7 +6119,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetEnableOutputTransformation(v)
 		return nil
 	case block.FieldOutputTransfStrategy:
-		v, ok := value.(block.OutputTransfStrategy)
+		v, ok := value.(enum.TransfStrategy)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -6140,7 +6140,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetEnableInputStateTransformation(v)
 		return nil
 	case block.FieldInputStateTransfStrategy:
-		v, ok := value.(block.InputStateTransfStrategy)
+		v, ok := value.(enum.TransfStrategy)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

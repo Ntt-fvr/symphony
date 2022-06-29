@@ -67,28 +67,19 @@ func (Block) Fields() []ent.Field {
 		field.Bool("enable_input_transformation").
 			Optional(),
 		field.Enum("input_transf_strategy").
-			NamedValues(
-				"Replace", "REPLACE",
-				"Merge", "MERGE",
-			),
+			GoType(enum.TransfStrategy("")),
 		field.String("input_transformation").
 			Optional(),
 		field.Bool("enable_output_transformation").
 			Optional(),
 		field.Enum("output_transf_strategy").
-			NamedValues(
-				"Replace", "REPLACE",
-				"Merge", "MERGE",
-			),
+			GoType(enum.TransfStrategy("")),
 		field.String("output_transformation").
 			Optional(),
 		field.Bool("enable_input_state_transformation").
 			Optional(),
 		field.Enum("input_state_transf_strategy").
-			NamedValues(
-				"Replace", "REPLACE",
-				"Merge", "MERGE",
-			),
+			GoType(enum.TransfStrategy("")),
 		field.String("input_state_transformation").
 			Optional(),
 		field.Bool("enable_output_state_transformation").

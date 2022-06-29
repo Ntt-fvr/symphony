@@ -328,69 +328,30 @@ func TriggerTypeValidator(tt flowschema.TriggerTypeID) error {
 	}
 }
 
-// InputTransfStrategy defines the type for the input_transf_strategy enum field.
-type InputTransfStrategy string
-
-// InputTransfStrategy values.
-const (
-	InputTransfStrategyReplace InputTransfStrategy = "REPLACE"
-	InputTransfStrategyMerge   InputTransfStrategy = "MERGE"
-)
-
-func (its InputTransfStrategy) String() string {
-	return string(its)
-}
-
 // InputTransfStrategyValidator is a validator for the "input_transf_strategy" field enum values. It is called by the builders before save.
-func InputTransfStrategyValidator(its InputTransfStrategy) error {
+func InputTransfStrategyValidator(its enum.TransfStrategy) error {
 	switch its {
-	case InputTransfStrategyReplace, InputTransfStrategyMerge:
+	case "replace", "merge":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for input_transf_strategy field: %q", its)
 	}
 }
 
-// OutputTransfStrategy defines the type for the output_transf_strategy enum field.
-type OutputTransfStrategy string
-
-// OutputTransfStrategy values.
-const (
-	OutputTransfStrategyReplace OutputTransfStrategy = "REPLACE"
-	OutputTransfStrategyMerge   OutputTransfStrategy = "MERGE"
-)
-
-func (ots OutputTransfStrategy) String() string {
-	return string(ots)
-}
-
 // OutputTransfStrategyValidator is a validator for the "output_transf_strategy" field enum values. It is called by the builders before save.
-func OutputTransfStrategyValidator(ots OutputTransfStrategy) error {
+func OutputTransfStrategyValidator(ots enum.TransfStrategy) error {
 	switch ots {
-	case OutputTransfStrategyReplace, OutputTransfStrategyMerge:
+	case "replace", "merge":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for output_transf_strategy field: %q", ots)
 	}
 }
 
-// InputStateTransfStrategy defines the type for the input_state_transf_strategy enum field.
-type InputStateTransfStrategy string
-
-// InputStateTransfStrategy values.
-const (
-	InputStateTransfStrategyReplace InputStateTransfStrategy = "REPLACE"
-	InputStateTransfStrategyMerge   InputStateTransfStrategy = "MERGE"
-)
-
-func (ists InputStateTransfStrategy) String() string {
-	return string(ists)
-}
-
 // InputStateTransfStrategyValidator is a validator for the "input_state_transf_strategy" field enum values. It is called by the builders before save.
-func InputStateTransfStrategyValidator(ists InputStateTransfStrategy) error {
+func InputStateTransfStrategyValidator(ists enum.TransfStrategy) error {
 	switch ists {
-	case InputStateTransfStrategyReplace, InputStateTransfStrategyMerge:
+	case "replace", "merge":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for input_state_transf_strategy field: %q", ists)
@@ -558,59 +519,26 @@ var (
 	_ graphql.Unmarshaler = (*flowschema.TriggerTypeID)(nil)
 )
 
-// MarshalGQL implements graphql.Marshaler interface.
-func (its InputTransfStrategy) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(its.String()))
-}
+var (
+	// enum.TransfStrategy must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.TransfStrategy("")
+	// enum.TransfStrategy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.TransfStrategy)(nil)
+)
 
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (its *InputTransfStrategy) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*its = InputTransfStrategy(str)
-	if err := InputTransfStrategyValidator(*its); err != nil {
-		return fmt.Errorf("%s is not a valid InputTransfStrategy", str)
-	}
-	return nil
-}
+var (
+	// enum.TransfStrategy must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.TransfStrategy("")
+	// enum.TransfStrategy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.TransfStrategy)(nil)
+)
 
-// MarshalGQL implements graphql.Marshaler interface.
-func (ots OutputTransfStrategy) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(ots.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (ots *OutputTransfStrategy) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*ots = OutputTransfStrategy(str)
-	if err := OutputTransfStrategyValidator(*ots); err != nil {
-		return fmt.Errorf("%s is not a valid OutputTransfStrategy", str)
-	}
-	return nil
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (ists InputStateTransfStrategy) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(ists.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (ists *InputStateTransfStrategy) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*ists = InputStateTransfStrategy(str)
-	if err := InputStateTransfStrategyValidator(*ists); err != nil {
-		return fmt.Errorf("%s is not a valid InputStateTransfStrategy", str)
-	}
-	return nil
-}
+var (
+	// enum.TransfStrategy must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.TransfStrategy("")
+	// enum.TransfStrategy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.TransfStrategy)(nil)
+)
 
 var (
 	// enum.TransfStrategy must implement graphql.Marshaler.

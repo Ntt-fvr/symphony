@@ -777,21 +777,23 @@ func EnableInputTransformationNotNil() predicate.Block {
 }
 
 // InputTransfStrategyEQ applies the EQ predicate on the "input_transf_strategy" field.
-func InputTransfStrategyEQ(v InputTransfStrategy) predicate.Block {
+func InputTransfStrategyEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldInputTransfStrategy), v))
+		s.Where(sql.EQ(s.C(FieldInputTransfStrategy), vc))
 	})
 }
 
 // InputTransfStrategyNEQ applies the NEQ predicate on the "input_transf_strategy" field.
-func InputTransfStrategyNEQ(v InputTransfStrategy) predicate.Block {
+func InputTransfStrategyNEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldInputTransfStrategy), v))
+		s.Where(sql.NEQ(s.C(FieldInputTransfStrategy), vc))
 	})
 }
 
 // InputTransfStrategyIn applies the In predicate on the "input_transf_strategy" field.
-func InputTransfStrategyIn(vs ...InputTransfStrategy) predicate.Block {
+func InputTransfStrategyIn(vs ...enum.TransfStrategy) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -808,7 +810,7 @@ func InputTransfStrategyIn(vs ...InputTransfStrategy) predicate.Block {
 }
 
 // InputTransfStrategyNotIn applies the NotIn predicate on the "input_transf_strategy" field.
-func InputTransfStrategyNotIn(vs ...InputTransfStrategy) predicate.Block {
+func InputTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -978,21 +980,23 @@ func EnableOutputTransformationNotNil() predicate.Block {
 }
 
 // OutputTransfStrategyEQ applies the EQ predicate on the "output_transf_strategy" field.
-func OutputTransfStrategyEQ(v OutputTransfStrategy) predicate.Block {
+func OutputTransfStrategyEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOutputTransfStrategy), v))
+		s.Where(sql.EQ(s.C(FieldOutputTransfStrategy), vc))
 	})
 }
 
 // OutputTransfStrategyNEQ applies the NEQ predicate on the "output_transf_strategy" field.
-func OutputTransfStrategyNEQ(v OutputTransfStrategy) predicate.Block {
+func OutputTransfStrategyNEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldOutputTransfStrategy), v))
+		s.Where(sql.NEQ(s.C(FieldOutputTransfStrategy), vc))
 	})
 }
 
 // OutputTransfStrategyIn applies the In predicate on the "output_transf_strategy" field.
-func OutputTransfStrategyIn(vs ...OutputTransfStrategy) predicate.Block {
+func OutputTransfStrategyIn(vs ...enum.TransfStrategy) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1009,7 +1013,7 @@ func OutputTransfStrategyIn(vs ...OutputTransfStrategy) predicate.Block {
 }
 
 // OutputTransfStrategyNotIn applies the NotIn predicate on the "output_transf_strategy" field.
-func OutputTransfStrategyNotIn(vs ...OutputTransfStrategy) predicate.Block {
+func OutputTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1179,21 +1183,23 @@ func EnableInputStateTransformationNotNil() predicate.Block {
 }
 
 // InputStateTransfStrategyEQ applies the EQ predicate on the "input_state_transf_strategy" field.
-func InputStateTransfStrategyEQ(v InputStateTransfStrategy) predicate.Block {
+func InputStateTransfStrategyEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldInputStateTransfStrategy), v))
+		s.Where(sql.EQ(s.C(FieldInputStateTransfStrategy), vc))
 	})
 }
 
 // InputStateTransfStrategyNEQ applies the NEQ predicate on the "input_state_transf_strategy" field.
-func InputStateTransfStrategyNEQ(v InputStateTransfStrategy) predicate.Block {
+func InputStateTransfStrategyNEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldInputStateTransfStrategy), v))
+		s.Where(sql.NEQ(s.C(FieldInputStateTransfStrategy), vc))
 	})
 }
 
 // InputStateTransfStrategyIn applies the In predicate on the "input_state_transf_strategy" field.
-func InputStateTransfStrategyIn(vs ...InputStateTransfStrategy) predicate.Block {
+func InputStateTransfStrategyIn(vs ...enum.TransfStrategy) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1210,7 +1216,7 @@ func InputStateTransfStrategyIn(vs ...InputStateTransfStrategy) predicate.Block 
 }
 
 // InputStateTransfStrategyNotIn applies the NotIn predicate on the "input_state_transf_strategy" field.
-func InputStateTransfStrategyNotIn(vs ...InputStateTransfStrategy) predicate.Block {
+func InputStateTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
