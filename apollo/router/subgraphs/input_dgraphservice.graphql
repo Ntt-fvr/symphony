@@ -84,6 +84,7 @@ type Resource implements DefaultConfig{
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
   changeItems: [ChangeItem] @hasInverse(field: resource)
+  cmVersions: [CMVersion] @hasInverse(field: resource)
 }
 type ResourceProperty implements DefaultConfig{
   stringValue: String @search(by: [term])
