@@ -14,6 +14,7 @@ export type PropertyType = {|
   index?: ?number,
   isDeleted?: ?boolean,
   options?: string,
+  resourceSpecification?: string,
 |};
 
 import type {TableDispatcherActionType} from './TableDispatcherActionType';
@@ -73,6 +74,7 @@ export function reducer(
         ...pt,
         name: action.name,
         options: action.options,
+        resourceSpecification: action.resourceSpecification,
       }));
     default:
       return state;
